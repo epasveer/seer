@@ -13,7 +13,7 @@ desired features to my email.
 Build
 =====
 
-Download the tar file and extract its contents.
+Download the latest code using 'clone'.
 
     % git clone https://github.com/epasveer/seer
 
