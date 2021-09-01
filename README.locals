@@ -1,0 +1,36 @@
+
+    ^done,variables=[
+            {name="argc",
+             arg="1",
+             value="1"
+            },
+            {name="argv",
+             arg="1",
+             value="0x7fffffffd558"
+            },
+            {name="app",
+             value="<incomplete type>"
+            },
+            {name="parser",
+             value="{d = 0xffffffffffffffff}"
+            },
+            {name="runOption",
+             value="{d = {d = 0xffffffffffffffff}}"
+            },
+            {name="startOption",
+             value="{d = {d = 0x0}}"
+            },
+            {name="positionalArguments",
+             value="{<QList<QString>> = {<QListSpecialMethods<QString>> = {<No data fields>}, {p = {static shared_null = {ref = {atomic = {_q_value = {<std::__atomic_base<int>> = {static _S_alignment = 4, _M_i = -1}, <No data fields>}}}, alloc = 0, begin = 0, end = 0, array = {0x0}}, d = 0x0}, d = 0x0}}, <No data fields>}"
+            },
+            {name="executableName",
+             value="{static null = {<No data fields>}, d = 0x0}"
+            },
+            {name="launchMode",
+             value="{static null = {<No data fields>}, d = 0x0}"
+            },
+            {name="seer",
+             value="{<QMainWindow> = {<No data fields>}, <Ui::SeerMainWindowForm> = {<Ui_SeerMainWindowForm> = {actionGdbQuit = 0x0, actionFileQuit = 0x0, actionGdbStart = 0x0, actionGdbRun = 0x0, actionGdbNext = 0x0, actionGdbStep = 0x0, actionGdbFinish = 0x0, actionGdbContinue = 0x0, actionFileDebug = 0x0, actionFileArguments = 0x0, centralwidget = 0x0, menubar = 0x0, menuFile = 0x0, menuEdit = 0x0, menuView = 0x0, menuSettings = 0x0, menuWindow = 0x0, menuHelp = 0x0, statusbar = 0x74006c0075006d, toolBar = 0x72006100700069}, <No data fields>}, static staticMetaObject = {d = {superdata = 0x7ffff09363c0 <QMainWindow::staticMetaObject>, stringdata = 0x7ffff374cae0 <qt_meta_stringdata_SeerMainWindow>, data = 0x7ffff374cbe0 <qt_meta_data_SeerMainWindow>, static_metacall = 0x7ffff3718776 <SeerMainWindow::qt_static_metacall(QObject*, QMetaObject::Call, int, void**)>, relatedMetaObjects = 0x0, extradata = 0x0}}}"
+            }
+        ]
+

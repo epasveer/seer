@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerConsoleWidgetForm</class>
+ <widget class="QWidget" name="SeerConsoleWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>891</width>
+    <height>589</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Seer Console</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" rowspan="5">
+    <widget class="QPlainTextEdit" name="textEdit">
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>[program output text]</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="clearButton">
+     <property name="toolTip">
+      <string>Clear the log output.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-clear">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="printButton">
+     <property name="toolTip">
+      <string>Print the log output.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="document-print">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QPushButton" name="saveButton">
+     <property name="toolTip">
+      <string>Save the log output to a file.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="document-save-as">
+       <normaloff>.</normaloff>.</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="wrapTextCheckBox">
+     <property name="toolTip">
+      <string>Wrap long lines to the next line.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>Wrap Text</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" rowspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>266</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLineEdit" name="stdinLineEdit">
+     <property name="placeholderText">
+      <string>[stdin input text]</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

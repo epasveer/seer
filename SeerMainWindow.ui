@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerMainWindowForm</class>
+ <widget class="QMainWindow" name="SeerMainWindowForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1250</width>
+    <height>1000</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Seer Debugger</string>
+  </property>
+  <widget class="SeerGdbWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1250</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionFileDebug"/>
+    <addaction name="actionFileArguments"/>
+    <addaction name="actionFileQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuSettings"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionGdbRun"/>
+   <addaction name="actionGdbStart"/>
+   <addaction name="actionGdbNext"/>
+   <addaction name="actionGdbStep"/>
+   <addaction name="actionGdbFinish"/>
+   <addaction name="actionGdbContinue"/>
+   <addaction name="actionGdbQuit"/>
+   <addaction name="separator"/>
+   <addaction name="actionInterruptProcess"/>
+  </widget>
+  <action name="actionGdbQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit GDB.</string>
+   </property>
+  </action>
+  <action name="actionFileQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quit the  Seer debugger</string>
+   </property>
+  </action>
+  <action name="actionGdbStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start the program in GDB. Stop in main().</string>
+   </property>
+  </action>
+  <action name="actionGdbRun">
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="toolTip">
+    <string>Start the program in GDB. Honor breakpoints, if any.</string>
+   </property>
+  </action>
+  <action name="actionGdbNext">
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute next step, step over functions.&lt;/p&gt;&lt;p&gt;Shortcut - F5&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionGdbStep">
+   <property name="text">
+    <string>Step</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute next step, step into functions.&lt;/p&gt;&lt;p&gt;Shortcut - F6&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionGdbFinish">
+   <property name="text">
+    <string>Finish</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execute the remaining function, stop after it exits.&lt;/p&gt;&lt;p&gt;Shortcut - F7&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionGdbContinue">
+   <property name="text">
+    <string>Continue</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Continue executing the program. &lt;/p&gt;&lt;p&gt;Stop at any breakpoints, or when the program exits.&lt;/p&gt;&lt;p&gt;Shortcut - F8&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionFileDebug">
+   <property name="text">
+    <string>Debug...</string>
+   </property>
+   <property name="toolTip">
+    <string>Load an Executable to Debug</string>
+   </property>
+  </action>
+  <action name="actionFileArguments">
+   <property name="text">
+    <string>Arguments...</string>
+   </property>
+  </action>
+  <action name="actionInterruptProcess">
+   <property name="text">
+    <string>Interrupt</string>
+   </property>
+   <property name="toolTip">
+    <string>Send a 'Terminate' signal to the process.</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeerGdbWidget</class>
+   <extends>QWidget</extends>
+   <header>SeerGdbWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

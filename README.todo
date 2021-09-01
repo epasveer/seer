@@ -1,0 +1,125 @@
+
+LEGEND
+------
+
+✓ == done (i ^v u2713)
+✗ == cancelled (i ^v u2717)
+
+
+TODO
+----
+
+*   Populate 'working directory' from executable name or current working directory.
+*   Add menu for 'Debug'. step/next/continue/finish.
+*   SeerCodeManager: A full QTreeWidget slows resizing of the Seer application.
+*   SeerCodeBrowser: Busy cursor when populating tree. Seems hard to do for some reason.
+*   Add binary path and name to Seer title bar.
+*   Add seer icon to application icon.
+*   Find debug icons (step, next, etc.)
+*   SeerBreakpoints: Need to display when an error occurs trying to set a breakpoint.
+*   Switch to use cmake.
+*   SeerThreadBrowser: Step/next by individual thread, or by all threads.
+*   SeerCodeWidget: Move add handleText logic into SeerCodeManager.
+*   With -run option, Load source file for main before running program.
+*   Add gdb 'pretty printers' for custom display of some objects. QString, etc.
+*   Add 'seer -remote host:port executable'  to debug a remotely running application.
+*   Improve 'debug' dialog to include -attach, -run, -start, -corefile, -remote options.
+*   SeerTracepoints and SeerTracepointsLog.
+    Only works with gdbserver. There is no gdb/mi command. Use gdb 'trace' command.
+*   SeerDataVisualizer      -data-read-memory-bytes
+
+
+DONE
+----
+
+* ✗ Add logic to check if executable has changed (size,time) each time 'run' or 'start' is used.
+    No need. Seer reloads the executable every time anyway.
+* ✓ Add multiple source dialogs in source file manager.
+* ✓ Inherit from UI class instead of having an instance of one.
+* ✓ Change all includes to <QtSomething/QClass> format.
+* ✓ Add 'cd to working directory' gdb call.
+* ✓ Change UI clases to have 'Form' as the postfix part of the ui name.
+* ✓ Change signal/slots to use the non-macro version.
+* ✓ Add -start flag to 'start' the debug session when seer starts. (break in 'main')
+* ✓ Add --launch-mode option to 'start' or 'run' the debug session when seer starts.
+* ✓ Rename SeerWidget to something more meaningful (SeerGdbWidget?)
+* ✓ Handle step/next/continue/finish when program has not been start with 'run' or 'start'.
+* ✓ Add widget for code browser.
+* ✓ SeerCodeBrowser: Sort by File column.
+* ✓ SeerCodeBrowser: Separate tree by Source, Header, Other.
+* ✓ SeerCodeBrowser: Clear tree when new program is debugged.
+* ✓ SeerCodeBrowser: Populate tree when program is loaded. Refresh will always refresh.
+* ✓ SeerCodeBrowser: Resize column 0 to contents.
+* ✓ A QSplitter between SeerCodeBrowser and SeerCodeManager.
+* ✓ SeerCodeManager: Add 'search in tree' feature.
+* ✓ SeerStackBrowser: Add a widget to show/manipulate the stack.
+* ✓ SeerLocalsBrowser: Add a widget to show local variables.
+* ✓ Add a QSplitter above the log widgets.
+* ✓ Rename SeerArgumentsBrowser, SeerStackBrowser, SeerLocalsBrowser => SeerStackArgumentsBrowser, SeerStackFramesBrowser, SeerStackLocalsBrowser.
+* ✓ Add SeerArgumentsBrowser, SeerStackBrowser, SeerLocalsBrowser to a tab widget.
+* ✓ Add refresh icon to refresh buttons.
+* ✓ SeerArgumentsBrowser: Add a widget to show stack function arguments.
+* ✓ SeerBreakpointsBrowser.
+* ✓ SeerBreakpoints - add/disable when double-click on code margin.
+* ✓ SeerBreakpoints - line/breakpoint mismatch in codewidget when inserting breakpoint on a non-line.
+* ✓ SeerBreakpoints - code widget sometimes stores wrong breakpoint number for a line number.
+* ✓ SeerBreakpoints - add breakpoint enable/disable state to code widget.
+* ✓ SeerBreakpoints - show enabled/disabled icon in code widgets.
+* ✓ change to:  seer [--run|--start]  executable arg1 arg2 ...
+* ✓ SeerBreakpoints - double click on breakpoint in breakpoint browser will change selected line.
+                      it should only scroll to.
+                      Have a separate "scrollToLine" signal and "selectLine" signals.
+* ✓ When stepping/stopping, update the highlited line in each code window. Also when a source file is loaded.
+* ✓ SeerCodeWidget: If line # not set, don't highlite a line.
+* ✓ SeerBreakpoints: Refresh list/editors when temporary breakpoint is reached.
+* ✓ SeerBreakpoints: Change toggle to separate enable/disable tool buttons. Add icons to context menu in SeerCodeWidget.
+* ✓ SeerStackFrame: StackFrameUp and StackFrameDown. hightlight current frame.
+                    Local variables and frame arguments should reflect which frame is selected.
+* ✓ SeerStackFrame: Selecting frame selects current stack-frame. Locals will show variables for that.
+* ✓ Implement 'run to here' feature.    -exec-until recursive2.c:6
+* ✓ SeerCodeWidget: Doesn't highlight multiple lines for the call stack if there are in a single file.
+* ✓ SeerCodeWidget: Add prettier icons for breakpoints. gradient circles.
+* ✓ SeerBreakpoints: Implement 'run to here'.
+* ✓ SeerStackLocals: Doesn't parse complicated variables.  Debug 'seer' and show locals from main().
+* ✓ Convert all QRegularExpression to SeerUtl::parse.
+* ✓ Handle process signals like sigsegv.
+* ✓ SeerWatchpoints: Implement. Very similiar to breakpoints.
+* ✓ SeerRegisters: Implement. View cpu registers.
+* ✓ SeerVariables: Implement. View a list of user selected variables.
+* ✓ Browser: Implement a visible/hidden mode to not parse the 'text'. Refresh when made visiable.
+* ✓ Window updates: Smarten the updates by SeerGdbWidget having a 'stoppingPointReached' signal.
+                    Windows will get the signal and update if they are visable.
+* ✓ Interrupt: Add an 'interrupt' button to stop a running process. Need to put gdb/mi in async mode. Affects how windows
+                    are updated after a stop point is reached.
+* ✓ Double refresh: Fixed double refresh bug after switching to async mode. The stackFrame widget was setting the current frame
+                    after each update, thus doing another refresh.
+* ✓ Change qDebug to this format : qDebug() << __PRETTY_FUNCTION__ << ":" << somedebug;
+* ✓ Add search bar to code editor. CTRL+F to show.
+* ✓ Show variable value as a tooltip in the code editor when the variable name is selected in the text.
+* ✓ Show variable value as an entry in a Variable Log view.
+* ✓ GdbMonitor: Programs the require text from stdin aren't handled well to get the input. Need to fix.
+                Use a separate tty for the running executable for its stdin/stdout/stderr. The main tty is for gdb/mi interaction.
+* ✓ Remove log for specific gdb channels. Keep just one for all channel output.
+* ✓ GdbMonitor: Doesn't handle stdout text longer than 65536 reliably. Key off last char being a \n???
+                Fixed. Changed from QProcess::readAll() to QProcess::readLine().
+                Also, Explorer uses shared libraries that are not all loaded when Explorer is started. A manual refresh is needed.
+* ✓ Display dialog on errors -  ^error,msg="malformed line offset: \"%2\""
+* ✓ Add 'seer -core core.file executable'  to debug core files.
+* ✓ Add 'seer -attach pid# executable'  to debug a running application.
+* ✓ Add a log for "~" and "=" text.  Call it "GDB log"
+    Add a log for all text. Call it "SEER log".
+* ✓ Renamed SeedCodeWidget to SeerEditorWidget
+* ✓ Renamed SeedCodeManager to SeerEditorManager
+* ✓ Renamed SeedCodeBrowser to SeerSourceBrowser
+* ✓ SeerSharedLibraries: -file-list-shared-libraries  (Need to manually refresh. Won't happen automatically after executable is
+    loadded)
+        (gdb)
+        -file-list-shared-libraries
+        ^done,shared-libraries=[
+            {id="/lib/libfoo.so",target-name="/lib/libfoo.so",host-name="/lib/libfoo.so",symbols-loaded="1",thread-group="i1",ranges=[{from="0x72815989",to="0x728162c0"}]},
+            {id="/lib/libbar.so",target-name="/lib/libbar.so",host-name="/lib/libbar.so",symbols-loaded="1",thread-group="i1",ranges=[{from="0x76ee48c0",to="0x76ee9160"}]}
+        ]
+        (gdb)
+* ✓ Display debug dialog if no launch method is specified on the seer command line.
+
+

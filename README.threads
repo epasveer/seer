@@ -1,0 +1,134 @@
+
+
+SeerRunStatusIndicator::handleText: "*running,thread-id=\"2\""
+
+-thread-info
+
+    ^done,threads=[
+            {
+                id="1",
+                target-id="process 31132",
+                name="helloworld",
+                frame={
+                    level="0",
+                    addr="0x0000000000400c17",
+                    func="main",
+                    args=[{name="argc",value="1"},{name="argv",value="0x7fffffffd4e8"}],
+                    file="helloworld.cpp",
+                    fullname="/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp",
+                    line="8",
+                    arch="i386:x86-64"
+                },
+                state="stopped",
+                core="0"
+            }
+        ],
+        current-thread-id="1"
+
+    ^done,threads=[
+            {
+                id=\"1\",
+                target-id=\"Thread 0x7ffff7fbd740 (LWP 22356)\",
+                name=\"hellothreads\",
+                frame={
+                    level=\"0\",
+                    addr=\"0x00000000004006bf\",
+                    func=\"main\",
+                    args=[],
+                    file=\"hellothreads.cpp\",
+                    fullname=\"/home/erniep/Development/Peak/src/Seer/hellothreads/hellothreads.cpp\",
+                    line=\"27\",
+                    arch=\"i386:x86-64\"
+                },
+                state=\"stopped\",
+                core=\"0\"
+            },
+
+            {
+                id=\"2\",
+                target-id=\"Thread 0x7ffff6ed1700 (LWP 22370)\",
+                details=\"Exiting\",
+                name=\"hellothreads\",
+                frame={
+                    level=\"0\",
+                    addr=\"0x00007ffff6f0b1c3\",
+                    func=\"__longjmp\",
+                    args=[],
+                    from=\"/lib64/libc.so.6\",
+                    arch=\"i386:x86-64\"
+                },
+                state=\"stopped\",
+                core=\"6\"
+            }
+        ],
+        current-thread-id=\"1\"
+
+    "^done,threads=[
+            {
+                id=\"1\",
+                target-id=\"Thread 0x7ffff7fbd740 (LWP 25094)\",
+                name=\"hellothreads\",
+                frame={
+                    level=\"0\",
+                    addr=\"0x00007ffff72968bd\",
+                    func=\"pthread_join\",
+                    args=[],
+                    from=\"/lib64/libpthread.so.0\",
+                    arch=\"i386:x86-64\"
+                },
+                state=\"stopped\",
+                core=\"5\"
+            },
+
+            {
+                id=\"2\",
+                target-id=\"Thread 0x7ffff6ed1700 (LWP 25095)\",
+                name=\"hellothreads\",
+                frame={
+                    level=\"0\",
+                    addr=\"0x0000000000400662\",
+                    func=\"bar\",args=[{name=\"v\",value=\"1\"}],
+                    file=\"hellothreads.cpp\",
+                    fullname=\"/home/erniep/Development/Peak/src/Seer/hellothreads/hellothreads.cpp\",
+                    line=\"9\",
+                    arch=\"i386:x86-64\"
+                },
+                state=\"stopped\",
+                core=\"4\"
+            }
+        ],
+        current-thread-id=\"1\""
+
+-thread-list-ids
+
+    ^done,thread-ids={
+            thread-id=\"1\",
+            thread-id=\"2\"
+        },
+        current-thread-id=\"1\",
+        number-of-threads=\"2\"
+
+
+-list-thread-groups
+
+    ^done,groups=[
+            {
+                id="i1",
+                type="process",
+                pid="4964",
+                executable="/home/erniep/Development/Peak/src/Seer/helloworld/helloworld",
+                cores=["0"]
+            }
+        ]
+
+    ^done,groups=[
+            {
+                id="i1",
+                type="process",
+                pid="5141",
+                executable="/home/erniep/Development/Peak/src/Seer/hellothreads2/hellothreads2",
+                cores=["1","2","4","5","7"]
+            }
+        ]
+
+

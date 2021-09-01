@@ -1,0 +1,7 @@
+
+Programs asking for standard input works. See the helloname test program.
+
+When prompted, enter the text on the [Manually enter a gdb/mi command] line edit.
+
+The prompt and response will show in the "GDB output" and "GDB all output" log tabs.
+

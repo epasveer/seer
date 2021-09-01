@@ -1,0 +1,108 @@
+
+Notes for using a psuedo tty device instead of the default one that gdb uses.
+This allows the executable's stdin and stdout to be separate from gdb's.
+Thus any stdin or stdout from gdb's is only gdb/mi commands and results.
+
+
+
+    // Create a special tty.
+    int m_ptsFd;
+
+    m_ptsFd = openPseudoTerminal() {
+
+        int ptsFd = posix_openpt(O_RDWR | O_NOCTTY);
+
+        if(grantpt(ptsFd))
+            critMsg("Failed to grantpt");
+        if(unlockpt(ptsFd))
+            critMsg("Failed to unlock pt");
+
+        // Set window size
+        struct winsize term_winsize;
+        term_winsize.ws_col = 80;
+        term_winsize.ws_row = 20;
+        term_winsize.ws_xpixel = 80 * 8;
+        term_winsize.ws_ypixel = 20 * 8;
+
+        if(ioctl(ptsFd, TIOCSWINSZ, &term_winsize) < 0) {
+            errorMsg("ioctl TIOCSWINSZ failed (%s)", strerror(errno));
+        }
+
+        // Set controlling
+        if (ioctl(ptsFd, TIOCSCTTY, (char *)0) < 0) {
+            errorMsg("ioctl TIOCSCTTY failed (%s)", strerror(errno));
+        }
+        return ptsFd;
+    }
+
+
+
+
+
+
+    // Get the tty's name.
+    QString ptsDevPath = ptsname(m_ptsFd);
+
+    // Tell GDB about the special tty.
+    com.commandF(&resultData, "-inferior-tty-set %s", stringToCStr(ptsDevPath)
+
+
+    // Close the special tty (when Seer exits).
+    close(m_ptsFd);
+
+
+
+    // Create a socket notifier to read stdout of special tty.
+    // When there's something to read, call 'read' function.
+    // The socket notifier is set up just before 'run' or 'start'.
+    // Always delete the old one an create a new one. The special
+    // tty is never reopened.
+    if (m_ptsListener) {
+        delete m_ptsListener;
+    }
+
+    m_ptsListener = new QSocketNotifier(m_ptsFd, QSocketNotifier::Read);
+
+    connect(m_ptsListener, SIGNAL(activated(int)), this, SLOT(onGdbOutput(int)));
+
+
+
+    // Writes to stdin of the special tty.
+    void writeTargetStdin (QString text) {
+
+        QByteArray rawData = text.toLocal8Bit();
+        int bytesWritten = 0;
+        int n;
+
+        do {
+            n = write(m_ptsFd, rawData.constData()+bytesWritten, rawData.size()-bytesWritten);
+            if (n > 0) {
+                bytesWritten += n;
+            }else if (n < 0) {
+                errorMsg("Failed to write data to target stdin");
+            }
+        } while(n > 0 && bytesWritten != rawData.size());
+
+        fsync(m_ptsFd);
+    }
+
+    // Reads from stdout of the special tty.
+    void Core::onGdbOutput(int socketFd) {
+
+        Q_UNUSED(socketFd);
+        char buff[128];
+        buff[0] = '\0';
+
+        int n =  read(m_ptsFd, buff, sizeof(buff)-1);
+
+        if(n > 0) {
+            buff[n] = '\0';
+
+            QString str = QString::fromUtf8(buff);
+            m_inf->ICore_onTargetOutput(str);
+        }else{
+            delete m_ptsListener;
+            m_ptsListener = NULL;
+        }
+    }
+

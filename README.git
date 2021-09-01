@@ -1,0 +1,9 @@
+
+% git branch better_refresh     # Create a branch.
+% git branch                    # List branches.
+
+% git checkout better_refresh   # Switch to a branch.
+% git checkout master           # Switch back to the mainline.
+% git merge better_refresh      # Merge a branch back with the mainline.
+
+

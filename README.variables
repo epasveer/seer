@@ -1,0 +1,35 @@
+
+    com.commandF(&resultData, "-var-create %s @ %s", stringToCStr(watchId), stringToCStr(varName));
+    com.commandF(&resultData, "-data-evaluate-expression %s", stringToCStr(expr));
+    com.commandF(&resultData, "-var-update --all-values *");
+    com.commandF(&resultData, "-var-list-children --simple-values %s", stringToCStr(watchId));
+    com.commandF(&resultData, "-var-delete %s", stringToCStr(watchId));
+    com.commandF(&resultData, "-var-info-path-expression %s", stringToCStr(w.getWatchId()));
+    com.commandF(&resultData, "-data-evaluate-expression &(%s)", stringToCStr(expr));
+
+
+    The following is the complete set of GDB/MI operations defined to access this functionality:
+
+        Operation                   Description
+        -enable-pretty-printing     enable Python-based pretty-printing
+        -var-create                 create a variable object
+        -var-delete                 delete the variable object and/or its children
+        -var-set-format             set the display format of this variable
+        -var-show-format            show the display format of this variable
+        -var-info-num-children      tells how many children this object has
+        -var-list-children          return a list of the object’s children
+        -var-info-type              show the type of this variable object
+        -var-info-expression        print parent-relative expression that this variable object represents
+        -var-info-path-expression   print full expression that this variable object represents
+        -var-show-attributes        is this variable editable? does it exist here?
+        -var-evaluate-expression    get the value of this variable
+        -var-assign                 set the value of this variable
+        -var-update                 update the variable and its children
+        -var-set-frozen             set frozeness attribute
+        -var-set-update-range       set range of children to display on update
+
+    "-data-evaluate-expression %s"
+    "-data-add-expression %s"
+    "-data-delete-expression id1 id2 ..."
+    "-data-list-expressions"
+
