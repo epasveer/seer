@@ -15,7 +15,7 @@ Build
 
 Download the tar file and extract its contents.
 
-    % tar zxvf seer.1.0.1.tgz
+    % git clone https://github.com/epasveer/seer
 
 Setup cmake and build
 
