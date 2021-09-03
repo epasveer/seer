@@ -13,9 +13,9 @@ desired features to my email.
 Build
 =====
 
-Download the tar file and extract its contents.
+Download the latest code using 'clone'.
 
-    % tar zxvf seer.1.0.1.tgz
+    % git clone https://github.com/epasveer/seer
 
 Setup cmake and build
 
