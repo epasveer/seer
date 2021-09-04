@@ -69,7 +69,7 @@ Main View
 ---------
 
 The main view for Seer looks like:
-![](images/opendialog.png)
+![](images/mainview.png)
 
     * Source/Libraries
         * The list of source/header files that were used in the program.
