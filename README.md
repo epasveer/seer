@@ -1,4 +1,3 @@
-
 Introduction
 ============
 
@@ -9,6 +8,7 @@ This project is actively worked on. The aim is a simple, yet pleasing gui to gdb
 This is the initial release. So it is considered beta. Please report any bugs or
 desired features to my email.
 
+
 Requirements
 ============
 
@@ -17,53 +17,11 @@ Requirements
     * QT5
     * gdb with "mi" interpreter
 
-Build
-=====
-
-Download the latest code using 'clone'.
-
-    % git clone https://github.com/epasveer/seer
-
-Setup cmake and build
-
-    % cd seer
-    % mkdir build
-    % cd build
-    % cmake ..
-
-    % make seer
-
-Copy the seer binary to your bin directory of choice. One of the below. May need
-root access.
-
-    % cp seer ~/bin/seer
-    % cp seer /usr/local/bin/seer
-    % cp seer /usr/bin/seer
-    % rehash
-
-
-Starting seer
-=============
-
-Seer is meant to easily start the program to debug from the command line. gdb has multiple
-methods for debugging a program. So seer natually does too.
-
-    % seer --start myprog arg1 arg2             # Debug myprog with its arguments. Break in main().
-    % seer --run   myprog arg1 arg2             # Debug myprog with its arguments. Run it immediately without breaking.
-    % seer --attach <pid>  myprog               # Debug myprog by attaching to the currently running pid.
-    % seer --connect <host:port> myprog         # Debug myprog by connecting to the currently started gdbserver process.
-    % seer --core <corefile> myprog             # Debug a corefile for myprog.
-
-    % seer                                      # Bring up a dialog box to set the program and debug method.
-    % seer myprog arg1 arg2                     # Bring up a dialog box to set the debug method.
-
-
-
 
 GUI overview
 ============
 
-Examples of the various Seer dialogs and views.
+Examples of the various Seer views and dialogs.
 
 Main View
 ---------
@@ -105,7 +63,7 @@ The main view for Seer looks like:
         * Watchpoint manager. Create and manage watchpoints. A watchpoint monitors when a variable is accessed
           (read, write, read/write).
         * GDB output. A log of any output from the gdb program itself.
-        * Seer output. A log of any output from the seer program itself. As diagnostics.
+        * Seer output. A log of any output from the Seer program itself. As diagnostics.
 
     * Stack frame information.
         * Stack frame list. A frame can be double clicked to change the scope (the current function).
@@ -134,9 +92,50 @@ Memory Visualizer
 When looking at the contents of raw memory in the Memory Visualizer, it looks like this :
 ![](images/memoryvisualizer.png)
 
+
+Starting Seer
+=============
+
+Seer is meant to easily start the program to debug from the command line. gdb has multiple
+methods for debugging a program. So Seer natually does too.
+
+    % seer --start myprog arg1 arg2             # Debug myprog with its arguments. Break in main().
+    % seer --run   myprog arg1 arg2             # Debug myprog with its arguments. Run it immediately without breaking.
+    % seer --attach <pid>  myprog               # Debug myprog by attaching to the currently running pid.
+    % seer --connect <host:port> myprog         # Debug myprog by connecting to the currently started gdbserver process.
+    % seer --core <corefile> myprog             # Debug a corefile for myprog.
+
+    % seer                                      # Bring up a dialog box to set the program and debug method.
+    % seer myprog arg1 arg2                     # Bring up a dialog box to set the debug method.
+
+
+Building Seer
+=============
+
+Download the latest code using 'clone'.
+
+    % git clone https://github.com/epasveer/seer
+
+Setup cmake and build
+
+    % cd seer/src
+    % mkdir build
+    % cd build
+    % cmake ..
+
+    % make seer
+
+Copy the seer binary to your bin directory of choice. One of the below. May need
+root access.
+
+    % cp seer ~/bin/seer
+    % cp seer /usr/local/bin/seer
+    % cp seer /usr/bin/seer
+    % rehash
+
+
 Support/Contact
 ===============
 
     Send an email to epasveer@att.net for any bugs or features.
-
 
