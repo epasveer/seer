@@ -144,9 +144,13 @@ Open Dialog
 ===========
 
 When the open exectable dialog is invoked, it looks like this :
-
 ![](images/opendialog.png)
 
+Seer Console
+============
+
+All text output from the executable will go to the Seer console.  Text input for the executable can be entered via the console too.
+![](images/console.png)
 
 Support/Contact
 ===============
