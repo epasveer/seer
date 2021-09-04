@@ -140,6 +140,14 @@ GUI overview
 
             Thread frames. For each thread, list its stack frames.
 
+Open Dialog
+===========
+
+When the open exectable dialog is invoked, it looks like this :
+
+![](images/opendialog.png)
+
+
 Support/Contact
 ===============
 
