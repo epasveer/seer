@@ -9,6 +9,13 @@ This project is actively worked on. The aim is a simple, yet pleasing gui to gdb
 This is the initial release. So it is considered beta. Please report any bugs or
 desired features to my email.
 
+Requirements
+============
+
+    * Linux
+    * C++17
+    * QT5
+    * gdb with "mi" interpreter
 
 Build
 =====
@@ -56,101 +63,76 @@ methods for debugging a program. So seer natually does too.
 GUI overview
 ============
 
-    +-------------+----------------------------------------------------------------------------------------+-------------+
-    |             |                                                                                        |             |
-    |   AAA       |                                     CCC                                                |   DDD       |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    +-------------+                                                                                        +-------------+
-    |             |                                                                                        |             |
-    |   BBB       |                                                                                        |   EEE       |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    |             +----------------------------------------------------------------------------------------+             |
-    |             |                                                                                        |             |
-    |             |                                    FFF                                                 |             |
-    |             |                                                                                        |             |
-    |             |                                                                                        |             |
-    +-------------+----------------------------------------------------------------------------------------+-------------+
+Examples of the various Seer dialogs and views.
 
+Main View
+---------
 
-    "AAA" - The list of source/header files that were used in the program.
-            The list of shared libraries referenced by the program.
-            The list of source/header files can be searched in. This will "shrink" the list of files shown.
-            Double clicking on a file will open it in the code manager ("CCC").
+The main view for Seer looks like:
+![](images/opendialog.png)
 
-    "BBB" - Show variable and register values.
+    * Source/Libraries
+        * The list of source/header files that were used in the program.
+        * The list of shared libraries referenced by the program.
+        * The list of source/header files can be searched in. This will "shrink" the list of files shown.
+        * Double clicking on a file will open it in the Code Manager.
 
-            "Logs" - log the value of a variable. Manually enter it or double click on the variable in the file
-            that is opened in the code manager ("CCC").
+    * Variable/Register Info
+        * Show variable and register values.
+        * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
+            that is opened in the code manager.
+        * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
+          (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
+          their potentially new value.
+        * "Registers" - show the values of all cpu registgers.
 
-            "Watches" - create a list of variables to show the value for whenever gdb reaches a stopping point.
-            (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
-            their potentially new value.
+    * Code Manager.
+        * The large area of the middle part of the Seer gui.
+        * Source files are opened in this view.
+        * Text in a file can be seached for with ^F.
+        * Variables can be added to the "Logger" by double clicking the variable name.
+        * Variables can be added to the "Tracker" by selecting the varible name and RMB and select
+          "Add variable to Tracker".
+        * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
+          "Add variable to Memory Visualizer".
+        * A breakpoint can be created by RMB on a specific line.
+        * Can execute to a specific line by RMB on a specific line.
 
-            "Registers" - show the values of all cpu registgers.
+    * Breakpoints, Watchpoints, manual gdb commands, and logs.
+        * The area below the Code Manager.
+        * Manual commands.  Manually enter a gdb or gdbmi command.
+        * Breakpoint manager. Create and manage breakpoints.
+        * Watchpoint manager. Create and manage watchpoints. A watchpoint monitors when a variable is accessed
+          (read, write, read/write).
+        * GDB output. A log of any output from the gdb program itself.
+        * Seer output. A log of any output from the seer program itself. As diagnostics.
 
-    "CCC" - Code manager. Files are opened in this view. Text in a file can be seached for with ^F.
+    * Stack frame information.
+        * Stack frame list. A frame can be double clicked to change the scope (the current function).
+        * Stack frame arguments. For each frame, print the arguments passed to each function.
+        * Stack locals. For the current function, print the values of the local variables.
 
-            Variables can be added to the "Logs" ("BBB") by double clicking the variable name.
-
-            Variables can be added to the "Watch" ("BBB") by selecting the varible name and RMB and select
-            "Add variable to Watches".
-
-            Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
-            "Add variable to Memory Visualizer".
-
-            A breakpoint can be created by RMB on a specific line.
-
-            Can execute to a specific line by RMB on a specific line.
-
-    "FFF" - Manual commands.  Manually enter a gdb or gdbmi command.
-
-            Breakpoint manager. Create and manage breakpoints.
-
-            Watchpoint manager. Create and manage watchpoints. A watchpoint monitors when a variable is accessed
-            (read, write, read/write).
-
-            GDB output. A log of any output from the gdb program itself.
-
-            Seer output. A log of any output from the seer program itself. As diagnostics.
-
-    "DDD" - Stack frame information.
-
-            Stack frame list. A frame can be double clicked to change the scope (the current function).
-
-            Stack frame arguments. For each frame, print the arguments passed to each function.
-
-            Stack locals. For the current function, print the values of the local variables.
-
-    "EEE"   Thread information.
-
-            Thread ids. A list of all threads. Double click on a thread id to change the scope (the current thread).
-
-            Thread frames. For each thread, list its stack frames.
+    * Thread information.
+        * Thread ids. A list of all threads. Double click on a thread id to change the scope (the current thread).
+        * Thread frames. For each thread, list its stack frames.
 
 Open Dialog
-===========
+-----------
 
 When the open exectable dialog is invoked, it looks like this :
 ![](images/opendialog.png)
 
 Seer Console
-============
+------------
 
 All text output from the executable will go to the Seer console.  Text input for the executable can be entered via the console too.
 ![](images/console.png)
+
+Memory Visualizer
+-----------------
+
+When looking at the contents of raw memory in the Memory Visualizer, it looks like this :
+![](images/memoryvisualizer.png)
 
 Support/Contact
 ===============
