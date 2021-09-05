@@ -1,0 +1,5 @@
+moc_*.cpp
+ui_*.h
+.objs
+.deps
+*.ini
