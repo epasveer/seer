@@ -8,6 +8,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QRadialGradient>
 #include <QtGui/QHelpEvent>
+#include <QtGui/QPainterPath>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
@@ -114,10 +115,7 @@ int SeerEditorWidgetSourceArea::lineNumberAreaWidth () {
         digits++;
     }
 
-  // Use this when QT5.11 is installed.
-  //int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
-  //
-    int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
 
     return space;
 }
@@ -313,8 +311,8 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
             while (block.isValid()) {
 
-                if (fm.width(block.text()) > pixmapWidth) {
-                    pixmapWidth = fm.width(block.text());
+                if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
+                    pixmapWidth = fm.horizontalAdvance(block.text());
                 }
 
                 pixmapHeight += fm.height();

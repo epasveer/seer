@@ -117,5 +117,7 @@ endif()
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport)
 

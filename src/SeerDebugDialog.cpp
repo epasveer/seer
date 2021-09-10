@@ -10,8 +10,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Set up the UI.
     setupUi(this);
 
-    attachProgramPidLineEdit->setMaximumWidth(fontMetrics().width("888888888888888"));
-    connectProgramHostPortLineEdit->setMaximumWidth(fontMetrics().width("XXXXXXXXXXXXXXX"));
+    attachProgramPidLineEdit->setMaximumWidth(fontMetrics().horizontalAdvance("888888888888888"));
+    connectProgramHostPortLineEdit->setMaximumWidth(fontMetrics().horizontalAdvance("XXXXXXXXXXXXXXX"));
 
     _runModeButtonGroup = new QButtonGroup(this); // ID's 1 thru 4.
     _runModeButtonGroup->addButton(runProgramRadioButton,     1); // "run" or "start". See breakInMain().

@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("Seer");
-    QCoreApplication::setApplicationVersion("1.0.1 - Ernie Pasveer (c)2021");
+    QCoreApplication::setApplicationVersion("1.0.2 - Ernie Pasveer (c)2021");
 
     //
     // Parse arguments.

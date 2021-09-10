@@ -22,7 +22,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     setupUi(this);
 
     // Set the widgets.
-    int space = fontMetrics().width("Go to line ##") + 5;
+    int space = fontMetrics().horizontalAdvance("Go to line ##") + 5;
 
     lineNumberLineEdit->setMaximumWidth(space);
 

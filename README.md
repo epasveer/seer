@@ -128,11 +128,17 @@ Setup cmake and build
 Copy the seer binary to your bin directory of choice. One of the below. May need
 root access.
 
+    % cd seer/src/build
     % cp seer ~/bin/seer
     % cp seer /usr/local/bin/seer
     % cp seer /usr/bin/seer
     % rehash
 
+Or use the 'install' make target. Which will usually copy it to /usr/local/bin.
+May need root access.
+
+    % cd seer/src/build
+    % sudo make install
 
 Support/Contact
 ===============
