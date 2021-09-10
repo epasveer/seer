@@ -1,0 +1,5 @@
+Create a tar file to add to github.
+
+    % cd /peak/src
+    % tar --exclude='seer/.git' -zcvf seer-1.0.1.tar.gz seer
+
