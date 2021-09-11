@@ -54,7 +54,10 @@
          <string>Open a dialog to select an executable.</string>
         </property>
         <property name="text">
-         <string>...</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="document-open"/>
         </property>
        </widget>
       </item>
@@ -89,7 +92,10 @@
          <string>Open a dialog to select a path.</string>
         </property>
         <property name="text">
-         <string>...</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="document-open"/>
         </property>
        </widget>
       </item>
@@ -212,7 +218,10 @@
          <string>Open a dialog to select a core file.</string>
         </property>
         <property name="text">
-         <string>...</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="document-open"/>
         </property>
        </widget>
       </item>
