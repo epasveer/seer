@@ -46,6 +46,35 @@ SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : Q
 SeerBreakpointsBrowserWidget::~SeerBreakpointsBrowserWidget () {
 }
 
+QStringList SeerBreakpointsBrowserWidget::breakpointsText () const {
+
+    QStringList breakpointList;
+
+    QTreeWidgetItemIterator it(breakpointsTreeWidget);
+
+    while (*it) {
+
+        // Build a breakpoint specification.
+        QString breakpointParameters;
+
+        // Handle all breakpoints as pending.
+        // Some breakpoints may point to source files that have not been
+        // loaded (by programs that use runtime shared libaries).
+        breakpointParameters += " -f " + (*it)->text(11);
+
+        breakpointParameters.replace(" -source ", " --source ");
+        breakpointParameters.replace(" -line ",   " --line ");
+
+        breakpointList.append(breakpointParameters);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpointParameters;
+
+        ++it;
+    }
+
+    return breakpointList;
+}
+
 void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

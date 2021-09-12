@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include "ui_SeerBreakpointsBrowserWidget.h"
 
 class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpointsBrowserWidgetForm {
@@ -11,6 +12,8 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
     public:
         explicit SeerBreakpointsBrowserWidget (QWidget* parent = 0);
        ~SeerBreakpointsBrowserWidget ();
+
+       QStringList          breakpointsText             () const;
 
     public slots:
         void                handleText                  (const QString& text);

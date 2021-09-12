@@ -1,4 +1,5 @@
 #include "SeerBreakpointCreateDialog.h"
+#include <QtCore/QDebug>
 
 SeerBreakpointCreateDialog::SeerBreakpointCreateDialog (QWidget* parent) : QDialog(parent) {
 
@@ -204,3 +205,4 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
 
     return breakpointParameters;
 }
+
