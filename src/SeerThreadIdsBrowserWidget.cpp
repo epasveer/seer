@@ -64,7 +64,7 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
         // Clear the selection and select the one for the current thread-id.
         idsTreeWidget->clearSelection();
 
-        QList<QTreeWidgetItem*> matches = idsTreeWidget->findItems(currentthreadid_text, 0);
+        QList<QTreeWidgetItem*> matches = idsTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 0);
         if (matches.size() > 0) {
             idsTreeWidget->setCurrentItem(matches.first());
         }

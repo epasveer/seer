@@ -12,7 +12,6 @@ set(CMAKE_PREFIX_PATH ${QTDIR})
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdeprecated-declarations")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
@@ -115,6 +114,8 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel
     endif()
     message("System type is" ${SYSTEM_TYPE})
 endif()
+
+add_compile_definitions(QT_DEPRECATED_WARNINGS)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 

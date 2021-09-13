@@ -99,7 +99,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
             // ??? Perhaps show the current frame level somehow.
             stackTreeWidget->clearSelection();
 
-            QList<QTreeWidgetItem*> matches = stackTreeWidget->findItems("0", 0);
+            QList<QTreeWidgetItem*> matches = stackTreeWidget->findItems("0", Qt::MatchExactly, 0);
             if (matches.size() > 0) {
                 stackTreeWidget->setCurrentItem(matches.first());
             }

@@ -141,7 +141,7 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
             // Select the current thread id.
             threadTreeWidget->clearSelection();
 
-            QList<QTreeWidgetItem*> matches = threadTreeWidget->findItems(currentthreadid_text, 0);
+            QList<QTreeWidgetItem*> matches = threadTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 0);
             if (matches.size() > 0) {
                 threadTreeWidget->setCurrentItem(matches.first());
             }
