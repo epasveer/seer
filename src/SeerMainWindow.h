@@ -3,6 +3,7 @@
 #include "ui_SeerMainWindow.h"
 #include <QtWidgets/QMainWindow>
 #include <QtGui/QCloseEvent>
+#include <QtGui/QResizeEvent>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
@@ -38,6 +39,9 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                handleText                      (const QString& text);
 
     protected:
+        void                writeSettings                   ();
+        void                readSettings                    ();
+        void                resizeEvent                     (QResizeEvent* event);
         void                closeEvent                      (QCloseEvent* event);
 
     private:

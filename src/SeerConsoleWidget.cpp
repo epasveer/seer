@@ -8,6 +8,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
 #include <QtCore/QTextStream>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <unistd.h>
 #include <stdlib.h>
@@ -49,6 +50,9 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleSaveButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleWrapTextCheckBox);
     QObject::connect(stdinLineEdit,     &QLineEdit::returnPressed,  this,  &SeerConsoleWidget::handleStdinLineEdit);
+
+    // Restore window settings.
+    readSettings();
 }
 
 SeerConsoleWidget::~SeerConsoleWidget () {
@@ -303,5 +307,35 @@ void SeerConsoleWidget::deleteConsole () {
     _ttyDeviceName = "";
 
     ::close(_ptsFD); _ptsFD = -1;
+}
+
+void SeerConsoleWidget::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow");
+    settings.setValue("size", size());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerConsoleWidget::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow");
+    resize(settings.value("size", QSize(800, 600)).toSize());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerConsoleWidget::resizeEvent (QResizeEvent* event) {
+
+    // Write window settings.
+    writeSettings();
+
+    QWidget::resizeEvent(event);
 }
 

@@ -35,10 +35,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
 
-    _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
-    _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
-    _gdbOutputLog             = new SeerTildeEqualAmpersandLogWidget(this);
-    _seerOutputLog            = new SeerCaretAsteriskLogWidget(this);
+    _breakpointsBrowserWidget             = new SeerBreakpointsBrowserWidget(this);
+    _watchpointsBrowserWidget             = new SeerWatchpointsBrowserWidget(this);
+    _gdbOutputLog                         = new SeerTildeEqualAmpersandLogWidget(this);
+    _seerOutputLog                        = new SeerCaretAsteriskLogWidget(this);
 
     logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
@@ -148,6 +148,14 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
+
+    QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+
+    // Restore window settings.
+    readSettings();
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -331,13 +339,22 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         return;
     }
 
-    // Delete old console.
-    deleteConsole();
-
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
+
+        int result = QMessageBox::warning(this, "Seer",
+                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+        if (result == QMessageBox::Cancel) {
+            return;
+        }
+
         killGdb();
     }
+
+    // Delete old console.
+    deleteConsole();
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
@@ -385,13 +402,22 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     //qDebug() << __PRETTY_FUNCTION__ << ": newExecutableFlag = " << newExecutableFlag();
 
-    // Delete old console.
-    deleteConsole();
-
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
+
+        int result = QMessageBox::warning(this, "Seer",
+                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+        if (result == QMessageBox::Cancel) {
+            return;
+        }
+
         killGdb();
     }
+
+    // Delete old console.
+    deleteConsole();
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
@@ -1007,6 +1033,13 @@ void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString
     handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
 }
 
+void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Splitter moved to " << pos << index;
+
+    writeSettings();
+}
+
 void SeerGdbWidget::handleFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
     Q_UNUSED(exitCode);
@@ -1014,6 +1047,30 @@ void SeerGdbWidget::handleFinished (int exitCode, QProcess::ExitStatus exitStatu
 
     // For now, terminate Seer.
     qApp->exit();
+}
+
+void SeerGdbWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("mainwindowsplitters");
+    settings.setValue("leftCenterRightSplitter",              leftCenterRightSplitter->saveState());
+    settings.setValue("codeManagerLogTabsSplitter",           codeManagerLogTabsSplitter->saveState());
+    settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
+    settings.setValue("stackThreadManagersplitter",           stackThreadManagersplitter->saveState());
+    settings.endGroup();
+}
+
+void SeerGdbWidget::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("mainwindowsplitters");
+    leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
+    codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
+    sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
+    stackThreadManagersplitter->restoreState(settings.value("stackThreadManagersplitter").toByteArray());
+    settings.endGroup();
 }
 
 bool SeerGdbWidget::isGdbRuning () const {

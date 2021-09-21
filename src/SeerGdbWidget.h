@@ -95,11 +95,16 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbDataDeleteExpressions      (QString expressionids);
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleSplitterMoved                 (int pos, int index);
 
         void                                handleFinished                      (int exitCode, QProcess::ExitStatus exitStatus);
 
     signals:
         void                                stoppingPointReached                ();
+
+    protected:
+        void                                writeSettings                       ();
+        void                                readSettings                        ();
 
     private:
         bool                                isGdbRuning                         () const;

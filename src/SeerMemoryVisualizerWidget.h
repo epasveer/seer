@@ -33,6 +33,10 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         void                handleSaveButton                    ();
 
     protected:
+        void                writeSettings                       ();
+        void                readSettings                        ();
+        void                resizeEvent                         (QResizeEvent* event);
+
     private:
         int                 _variableId;
         int                 _memoryId;

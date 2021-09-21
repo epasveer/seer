@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtGui/QTextCursor>
+#include <QtGui/QResizeEvent>
 #include <QtCore/QString>
 #include <QtCore/QSocketNotifier>
 #include "ui_SeerConsoleWidget.h"
@@ -30,6 +31,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                connectConsole              ();
         void                disconnectConsole           ();
         void                deleteConsole               ();
+        void                writeSettings               ();
+        void                readSettings                ();
+        void                resizeEvent                 (QResizeEvent* event);
 
     private:
         QTextCursor         _cursor;

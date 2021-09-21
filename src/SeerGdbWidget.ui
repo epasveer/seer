@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1085</width>
-    <height>1128</height>
+    <width>997</width>
+    <height>566</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,11 +15,11 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QSplitter" name="splitter">
+    <widget class="QSplitter" name="leftCenterRightSplitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QSplitter" name="splitter_3">
+     <widget class="QSplitter" name="sourceLibraryVariableManagerSplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>20</horstretch>
@@ -52,7 +52,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QSplitter" name="splitter_1">
+     <widget class="QSplitter" name="codeManagerLogTabsSplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>60</horstretch>
@@ -92,7 +92,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QSplitter" name="splitter_2">
+     <widget class="QSplitter" name="stackThreadManagersplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>20</horstretch>

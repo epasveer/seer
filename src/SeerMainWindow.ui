@@ -76,11 +76,10 @@
    </attribute>
    <addaction name="actionGdbRun"/>
    <addaction name="actionGdbStart"/>
+   <addaction name="actionGdbContinue"/>
    <addaction name="actionGdbNext"/>
    <addaction name="actionGdbStep"/>
    <addaction name="actionGdbFinish"/>
-   <addaction name="actionGdbContinue"/>
-   <addaction name="actionGdbQuit"/>
    <addaction name="separator"/>
    <addaction name="actionInterruptProcess"/>
   </widget>

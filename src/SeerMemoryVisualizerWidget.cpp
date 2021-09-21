@@ -5,8 +5,9 @@
 #include <QtGui/QIntValidator>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
-#include <QtCore/QDebug>
 #include <QtCore/QRegExp>
+#include <QtCore/QSettings>
+#include <QtCore/QDebug>
 
 SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -52,6 +53,9 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,  &SeerMemoryVisualizerWidget::handleColumnCountSpinBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleSaveButton);
+
+    // Restore window settings.
+    readSettings();
 }
 
 SeerMemoryVisualizerWidget::~SeerMemoryVisualizerWidget () {
@@ -124,7 +128,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
-            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ',QString::SkipEmptyParts);
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
 
             setVariableAddress(words.first());
         }
@@ -321,5 +325,34 @@ void SeerMemoryVisualizerWidget::handleSaveButton () {
         QMessageBox::critical(this, tr("Error"), tr("Cannot save display to file."));
         return;
     }
+}
+
+void SeerMemoryVisualizerWidget::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("memoryvisualizerwindow");
+    settings.setValue("size", size());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerMemoryVisualizerWidget::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("memoryvisualizerwindow");
+    resize(settings.value("size", QSize(800, 400)).toSize());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerMemoryVisualizerWidget::resizeEvent (QResizeEvent* event) {
+
+    writeSettings();
+
+    QWidget::resizeEvent(event);
 }
 

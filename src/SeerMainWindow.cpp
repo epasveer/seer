@@ -9,6 +9,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
@@ -42,10 +43,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
     QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionGdbContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionGdbStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionGdbFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionGdbContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionInterruptProcess,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(nextKeyF5,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
@@ -56,6 +57,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
     QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
+
+    // Restore window settings.
+    readSettings();
 
     //
     // Initialize contents.
@@ -412,5 +416,35 @@ void SeerMainWindow::closeEvent (QCloseEvent* event) {
     event->accept();
 
     QCoreApplication::exit(0);
+}
+
+void SeerMainWindow::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("mainwindow");
+    settings.setValue("size", size());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerMainWindow::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("mainwindow");
+    resize(settings.value("size", QSize(1250, 1000)).toSize());
+    settings.endGroup();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerMainWindow::resizeEvent (QResizeEvent* event) {
+
+    // Write window settings.
+    writeSettings();
+
+    QMainWindow::resizeEvent(event);
 }
 
