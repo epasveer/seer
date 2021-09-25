@@ -102,6 +102,8 @@ set(SOURCE_FILES
     SeerWatchpointsBrowserWidget.cpp
     )
 
+qt5_add_resources(SOURCE_FILES resource.qrc)
+
 # Set non-Debug build as GUI application.
 # Debug build remains consle application.
 if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel

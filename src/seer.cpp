@@ -1,5 +1,6 @@
 #include "SeerMainWindow.h"
 #include <QtWidgets/QApplication>
+#include <QtGui/QIcon>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
 #include <QtCore/QStringList>
@@ -98,6 +99,7 @@ int main (int argc, char* argv[]) {
     //
     SeerMainWindow seer;
 
+    seer.setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     seer.setExecutableName(executableName);
     seer.setExecutableArguments(positionalArguments);
     seer.setExecutablePid(executablePid);

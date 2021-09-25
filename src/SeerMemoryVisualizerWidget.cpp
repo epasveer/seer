@@ -3,6 +3,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
+#include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QRegExp>
@@ -19,6 +20,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
+    setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Memory Visualizer");
 
     memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));

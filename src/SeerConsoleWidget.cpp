@@ -7,6 +7,7 @@
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
+#include <QtGui/QIcon>
 #include <QtCore/QTextStream>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -27,6 +28,9 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
+    setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
+    setWindowTitle("Seer Console");
+
     QFont font;
     font.setFamily("monospace [Consolas]");
     font.setFixedPitch(true);
