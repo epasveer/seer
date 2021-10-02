@@ -104,7 +104,8 @@
   </action>
   <action name="actionGdbStart">
    <property name="icon">
-    <iconset theme="debug-run"/>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -115,7 +116,8 @@
   </action>
   <action name="actionGdbRun">
    <property name="icon">
-    <iconset theme="debug-run"/>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
    </property>
    <property name="text">
     <string>Run</string>
@@ -126,7 +128,8 @@
   </action>
   <action name="actionGdbNext">
    <property name="icon">
-    <iconset theme="debug-step-over"/>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
    </property>
    <property name="text">
     <string>Next</string>
@@ -137,7 +140,8 @@
   </action>
   <action name="actionGdbStep">
    <property name="icon">
-    <iconset theme="debug-step-into"/>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
    </property>
    <property name="text">
     <string>Step</string>
@@ -148,7 +152,8 @@
   </action>
   <action name="actionGdbFinish">
    <property name="icon">
-    <iconset theme="debug-step-out"/>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_out.png</normaloff>:/seer/resources/step_out.png</iconset>
    </property>
    <property name="text">
     <string>Finish</string>
@@ -158,6 +163,10 @@
    </property>
   </action>
   <action name="actionGdbContinue">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/continue.png</normaloff>:/seer/resources/continue.png</iconset>
+   </property>
    <property name="text">
     <string>Continue</string>
    </property>
@@ -179,6 +188,10 @@
    </property>
   </action>
   <action name="actionInterruptProcess">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/stop.png</normaloff>:/seer/resources/stop.png</iconset>
+   </property>
    <property name="text">
     <string>Interrupt</string>
    </property>
@@ -195,6 +208,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

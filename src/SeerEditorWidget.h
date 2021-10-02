@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SeerCppSourceHighlighter.h"
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtGui/QPaintEvent>
@@ -118,6 +119,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         QWidget*                _miniMapArea;
 
         QPixmap*                _miniMapPixmap;
+        SeerCppSourceHighlighter*    _sourceHighlighter;
 };
 
 class SeerEditorWidgetLineNumberArea : public QWidget {

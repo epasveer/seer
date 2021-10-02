@@ -34,6 +34,8 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlain
     font.setStyleHint(QFont::Monospace);
     setFont(font);
 
+    _sourceHighlighter = new SeerCppSourceHighlighter(document());
+
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
     setLineWrapMode(QPlainTextEdit::NoWrap);
