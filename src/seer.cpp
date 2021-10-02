@@ -13,7 +13,7 @@ int main (int argc, char* argv[]) {
     QCoreApplication::setApplicationName("Seer");
     QCoreApplication::setOrganizationName("Pasvix");
     QCoreApplication::setOrganizationName("pasvix.com");
-    QCoreApplication::setApplicationVersion("1.0.4 - Ernie Pasveer (c)2021");
+    QCoreApplication::setApplicationVersion("1.0.5 - Ernie Pasveer (c)2021");
 
     //
     // Parse arguments.
