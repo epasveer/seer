@@ -19,6 +19,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlainTextEdit(parent) {
@@ -27,6 +28,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlain
     _enableBreakPointArea = false;
     _enableMiniMapArea    = false;
     _ctrlKeyPressed       = false;
+    _sourceHighlighter    = 0;
 
   //QFont font("Monospace");
   //font.setStyleHint(QFont::TypeWriter);
@@ -34,7 +36,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlain
     font.setStyleHint(QFont::Monospace);
     setFont(font);
 
-    _sourceHighlighter = new SeerCppSourceHighlighter(document());
 
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
@@ -586,26 +587,36 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     QTextStream stream(&inputFile);
 
     QString line = stream.readLine();
-    QString document;
+    QString text;
 
     while (!line.isNull()) {
 
-        if (document != "") {
-            document += "\n";
+        if (text != "") {
+            text += "\n";
         }
 
-        document += line;
+        text += line;
 
         line = stream.readLine();
     };
 
     // Put the contents in the editor.
-    setPlainText(document);
+    setPlainText(text);
 
     // Set the text cursor to the first line.
     QTextCursor cursor = textCursor();
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     setTextCursor(cursor);
+
+    // Add a syntax highlighter for C++ files.
+    if (_sourceHighlighter) {
+        delete _sourceHighlighter;
+    }
+
+    QRegExp cpp_re("(?:.c|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX)$");
+    if (_fullname.contains(cpp_re)) {
+        _sourceHighlighter = new SeerCppSourceHighlighter(document());
+    }
 }
 
 const QString& SeerEditorWidgetSourceArea::fullname () const {
