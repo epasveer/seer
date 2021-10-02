@@ -36,6 +36,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                handleFileDebug                 ();
         void                handleFileArguments             ();
         void                handleFileQuit                  ();
+        void                handleHelpAbout                 ();
         void                handleText                      (const QString& text);
 
     protected:

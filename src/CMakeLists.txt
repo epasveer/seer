@@ -58,6 +58,7 @@ set(HEADER_FILES
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
     SeerCppSourceHighlighter.h
+    SeerAboutDialog.h
     )
 
 set(SOURCE_FILES
@@ -102,6 +103,7 @@ set(SOURCE_FILES
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
     SeerCppSourceHighlighter.cpp
+    SeerAboutDialog.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)

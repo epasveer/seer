@@ -55,6 +55,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionHelpAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -197,6 +198,11 @@
    </property>
    <property name="toolTip">
     <string>Send a 'Terminate' signal to the process.</string>
+   </property>
+  </action>
+  <action name="actionHelpAbout">
+   <property name="text">
+    <string>About Seer</string>
    </property>
   </action>
  </widget>

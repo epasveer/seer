@@ -2,6 +2,7 @@
 #include "SeerRunStatusIndicator.h"
 #include "SeerDebugDialog.h"
 #include "SeerArgumentsDialog.h"
+#include "SeerAboutDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QShortcut>
@@ -40,6 +41,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionFileDebug,               &QAction::triggered,                    this,           &SeerMainWindow::handleFileDebug);
     QObject::connect(actionFileArguments,           &QAction::triggered,                    this,           &SeerMainWindow::handleFileArguments);
     QObject::connect(actionFileQuit,                &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
+    QObject::connect(actionHelpAbout,               &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
     QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
     QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
@@ -205,7 +207,15 @@ void SeerMainWindow::handleFileArguments () {
 }
 
 void SeerMainWindow::handleFileQuit () {
+
     QCoreApplication::exit(0);
+}
+
+void SeerMainWindow::handleHelpAbout () {
+
+    SeerAboutDialog dlg(this);
+
+    dlg.exec();
 }
 
 void SeerMainWindow::handleText (const QString& text) {
