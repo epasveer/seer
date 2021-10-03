@@ -4,6 +4,8 @@
 
 namespace Seer {
 
+    QString         version         ();
+
     QString         filterEscapes   (const QString& str);
     QStringList     parse           (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearch);
     QString         parseFirst      (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearch);

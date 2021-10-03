@@ -1,4 +1,5 @@
 #include "SeerMainWindow.h"
+#include "SeerUtl.h"
 #include <QtWidgets/QApplication>
 #include <QtGui/QIcon>
 #include <QtCore/QCommandLineParser>
@@ -11,9 +12,8 @@ int main (int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("Seer");
-    QCoreApplication::setOrganizationName("Pasvix");
     QCoreApplication::setOrganizationName("pasvix.com");
-    QCoreApplication::setApplicationVersion("1.0.5 - Ernie Pasveer (c)2021");
+    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021");
 
     //
     // Parse arguments.
