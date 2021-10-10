@@ -17,6 +17,9 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
         void                handleStoppingPointReached  ();
         void                refresh                     ();
 
+    protected slots:
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
+
     signals:
         void                refreshStackArguments       ();
 

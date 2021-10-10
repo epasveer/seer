@@ -11,6 +11,7 @@ SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* paren
     setupUi(this);
 
     // Setup the widgets
+    argumentsTreeWidget->setMouseTracking(true);
     argumentsTreeWidget->setSortingEnabled(false);
     argumentsTreeWidget->resizeColumnToContents(0); // level
     argumentsTreeWidget->resizeColumnToContents(1); // Name
@@ -19,6 +20,7 @@ SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* paren
     argumentsTreeWidget->clear();
 
     // Connect things.
+    QObject::connect(argumentsTreeWidget, &QTreeWidget::itemEntered,      this,  &SeerStackArgumentsBrowserWidget::handleItemEntered);
 }
 
 SeerStackArgumentsBrowserWidget::~SeerStackArgumentsBrowserWidget () {
@@ -125,6 +127,26 @@ void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {
 
 void SeerStackArgumentsBrowserWidget::refresh () {
     emit refreshStackArguments();
+}
+
+void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    if (item->text(0) != "") {
+        for (int i=0; i<argumentsTreeWidget->columnCount(); i++) { // The "level" item does not have a tooltip.
+            item->setToolTip(i, "");
+        }
+
+    }else{
+        QTreeWidgetItem* parent = item->parent(); // Get parent item, which is the level.
+
+        item->setToolTip(0, parent->text(0) + " : " + item->text(1) + " : " + item->text(2));
+
+        for (int i=1; i<argumentsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
+            item->setToolTip(i, item->toolTip(0));
+        }
+    }
 }
 
 void SeerStackArgumentsBrowserWidget::showEvent (QShowEvent* event) {

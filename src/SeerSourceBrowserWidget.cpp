@@ -16,6 +16,7 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     // Setup the widgets
     sourceSearchLineEdit->setPlaceholderText("Search...");
     sourceSearchLineEdit->setClearButtonEnabled(true);
+    sourceTreeWidget->setMouseTracking(true);
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
     sourceTreeWidget->clear();
@@ -26,8 +27,9 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     _miscFilesItems   = 0;
 
     // Connect things.
-    QObject::connect(sourceTreeWidget,            &QTreeWidget::itemDoubleClicked,    this,  &SeerSourceBrowserWidget::handleItemDoubleClicked);
-    QObject::connect(sourceSearchLineEdit,        &QLineEdit::textChanged,            this,  &SeerSourceBrowserWidget::handleSearchLineEdit);
+    QObject::connect(sourceTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerSourceBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(sourceTreeWidget,      &QTreeWidget::itemEntered,          this,  &SeerSourceBrowserWidget::handleItemEntered);
+    QObject::connect(sourceSearchLineEdit,  &QLineEdit::textChanged,            this,  &SeerSourceBrowserWidget::handleSearchLineEdit);
 }
 
 SeerSourceBrowserWidget::~SeerSourceBrowserWidget () {
@@ -127,6 +129,24 @@ void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, in
     Q_UNUSED(column);
 
     emit selectedFile(item->text(0), item->text(1), 0);
+}
+
+void SeerSourceBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    if (item->text(1) == "") { // Look at the FullName.
+        for (int i=0; i<sourceTreeWidget->columnCount(); i++) { // The top-level items do not have a tooltip.
+            item->setToolTip(i, "");
+        }
+
+    }else{
+        item->setToolTip(0, item->text(0) + " : " + item->text(1));
+
+        for (int i=1; i<sourceTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
+            item->setToolTip(i, item->toolTip(0));
+        }
+    }
 }
 
 void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {

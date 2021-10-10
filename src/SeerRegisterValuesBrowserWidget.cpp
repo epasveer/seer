@@ -11,6 +11,7 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     setupUi(this);
 
     // Setup the widgets
+    registersTreeWidget->setMouseTracking(true);
     registersTreeWidget->setSortingEnabled(false);
     registersTreeWidget->resizeColumnToContents(0); // number
     registersTreeWidget->resizeColumnToContents(1); // name
@@ -23,6 +24,7 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->clear();
 
     // Connect things.
+    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,          this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -149,6 +151,17 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
 void SeerRegisterValuesBrowserWidget::refresh () {
     emit refreshRegisterNames();
     emit refreshRegisterValues();
+}
+
+void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(1) + " : " + item->text(2));
+
+    for (int i=1; i<registersTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

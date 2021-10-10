@@ -1,0 +1,29 @@
+
+-data-read-memory [-o offset] address word-format word-size nr-rows nr-cols
+
+word-format
+    d   signed int
+    u   unsigned int
+    f   float
+
+word-size
+    2,4,8,16
+
+ "^done,addr=\"0x0000000000657c90\",
+        nr-bytes=\"40\",
+        total-bytes=\"40\",
+        next-row=\"0x0000000000657c94\",
+        prev-row=\"0x0000000000657c8c\",
+        next-page=\"0x0000000000657cb8\",
+        prev-page=\"0x0000000000657c68\",
+        memory=[{addr=\"0x0000000000657c90\",data=[\"0\"]},
+                {addr=\"0x0000000000657c94\",data=[\"0\"]},
+                {addr=\"0x0000000000657c98\",data=[\"0\"]},
+                {addr=\"0x0000000000657c9c\",data=[\"0\"]},
+                {addr=\"0x0000000000657ca0\",data=[\"0\"]},
+                {addr=\"0x0000000000657ca4\",data=[\"0\"]},
+                {addr=\"0x0000000000657ca8\",data=[\"0\"]},
+                {addr=\"0x0000000000657cac\",data=[\"0\"]},
+                {addr=\"0x0000000000657cb0\",data=[\"0\"]},
+                {addr=\"0x0000000000657cb4\",data=[\"0\"]}]"
+

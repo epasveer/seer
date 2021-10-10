@@ -14,6 +14,7 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     setupUi(this);
 
     // Setup the widgets
+    variablesTreeWidget->setMouseTracking(true);
     variablesTreeWidget->setSortingEnabled(false);
     variablesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variablesTreeWidget->resizeColumnToContents(0); // id
@@ -26,10 +27,11 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     variablesTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(this,                           &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,      this,  &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
-    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                                         this,  &SeerVariableLoggerBrowserWidget::handleAddLineEdit);
-    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                                             this,  &SeerVariableLoggerBrowserWidget::handleDeleteToolButton);
-    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,                                             this,  &SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(this,                           &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,      this, &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
+    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                                         this, &SeerVariableLoggerBrowserWidget::handleAddLineEdit);
+    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteToolButton);
+    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                                         this, &SeerVariableLoggerBrowserWidget::handleItemEntered);
 }
 
 SeerVariableLoggerBrowserWidget::~SeerVariableLoggerBrowserWidget () {
@@ -165,5 +167,16 @@ void SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton () {
     variablesTreeWidget->resizeColumnToContents(1);
     variablesTreeWidget->resizeColumnToContents(2);
     variablesTreeWidget->resizeColumnToContents(3);
+}
+
+void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(1) + " : " + item->text(2) + " : " + item->text(3));
+
+    for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 

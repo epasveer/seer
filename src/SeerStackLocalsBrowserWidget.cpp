@@ -11,6 +11,7 @@ SeerStackLocalsBrowserWidget::SeerStackLocalsBrowserWidget (QWidget* parent) : Q
     setupUi(this);
 
     // Setup the widgets
+    localsTreeWidget->setMouseTracking(true);
     localsTreeWidget->setSortingEnabled(false);
     localsTreeWidget->resizeColumnToContents(0); // name
     localsTreeWidget->resizeColumnToContents(1); // arg
@@ -26,6 +27,7 @@ SeerStackLocalsBrowserWidget::SeerStackLocalsBrowserWidget (QWidget* parent) : Q
     // Connect things.
     QObject::connect(localsTreeWidget, &QTreeWidget::itemCollapsed,    this,  &SeerStackLocalsBrowserWidget::handleItemCollapsed);
     QObject::connect(localsTreeWidget, &QTreeWidget::itemExpanded,     this,  &SeerStackLocalsBrowserWidget::handleItemExpanded);
+    QObject::connect(localsTreeWidget, &QTreeWidget::itemEntered,      this,  &SeerStackLocalsBrowserWidget::handleItemEntered);
 }
 
 SeerStackLocalsBrowserWidget::~SeerStackLocalsBrowserWidget () {
@@ -203,6 +205,17 @@ void SeerStackLocalsBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item) {
     localsTreeWidget->resizeColumnToContents(1);
     localsTreeWidget->resizeColumnToContents(2);
     localsTreeWidget->resizeColumnToContents(3);
+}
+
+void SeerStackLocalsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(0) + " : " + item->text(2));
+
+    for (int i=1; i<localsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerStackLocalsBrowserWidget::showEvent (QShowEvent* event) {

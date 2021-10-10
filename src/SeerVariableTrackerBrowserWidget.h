@@ -22,6 +22,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleAddLineEdit               ();
         void                handleDeleteToolButton          ();
         void                handleDeleteAllToolButton       ();
+        void                handleItemEntered               (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshVariableNames            ();

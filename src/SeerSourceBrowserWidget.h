@@ -14,9 +14,12 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
 
     public slots:
         void                handleText                  (const QString& text);
-        void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
-        void                handleSearchLineEdit        (const QString& text);
         void                refresh                     ();
+
+    protected slots:
+        void                handleSearchLineEdit        (const QString& text);
+        void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshSourceList           ();

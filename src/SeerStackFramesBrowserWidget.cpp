@@ -13,6 +13,7 @@ SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : Q
     _previousStackFrameText = "";
 
     // Setup the widgets
+    stackTreeWidget->setMouseTracking(true);
     stackTreeWidget->setSortingEnabled(false);
     stackTreeWidget->resizeColumnToContents(0); // level
     stackTreeWidget->resizeColumnToContents(1); // addr
@@ -30,7 +31,8 @@ SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : Q
     stackTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(stackTreeWidget,            &QTreeWidget::itemDoubleClicked,    this,  &SeerStackFramesBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(stackTreeWidget, &QTreeWidget::itemDoubleClicked,    this,  &SeerStackFramesBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(stackTreeWidget, &QTreeWidget::itemEntered,          this,  &SeerStackFramesBrowserWidget::handleItemEntered);
 }
 
 SeerStackFramesBrowserWidget::~SeerStackFramesBrowserWidget () {
@@ -123,18 +125,6 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
-void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
-
-    Q_UNUSED(column);
-
-    int lineno = item->text(5).toInt();
-
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
-
-    emit selectedFile(item->text(3), item->text(4), lineno);
-    emit selectedFrame(item->text(0).toInt());
-}
-
 void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
 
     // Don't do any work if the widget is hidden.
@@ -147,6 +137,29 @@ void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
 
 void SeerStackFramesBrowserWidget::refresh () {
     emit refreshStackFrames();
+}
+
+void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+
+    Q_UNUSED(column);
+
+    int lineno = item->text(5).toInt();
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
+
+    emit selectedFile(item->text(3), item->text(4), lineno);
+    emit selectedFrame(item->text(0).toInt());
+}
+
+void SeerStackFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(0) + " : " + item->text(2) + " : " + item->text(3) + " : " + item->text(5));
+
+    for (int i=1; i<stackTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerStackFramesBrowserWidget::showEvent (QShowEvent* event) {

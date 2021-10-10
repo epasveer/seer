@@ -14,6 +14,7 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     setupUi(this);
 
     // Setup the widgets
+    variablesTreeWidget->setMouseTracking(true);
     variablesTreeWidget->setSortingEnabled(false);
     variablesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variablesTreeWidget->resizeColumnToContents(0); // id
@@ -25,9 +26,10 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     variablesTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,          this,  &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
-    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,              this,  &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
-    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,              this,  &SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,          this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
+    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
+    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,          this, &SeerVariableTrackerBrowserWidget::handleItemEntered);
 }
 
 SeerVariableTrackerBrowserWidget::~SeerVariableTrackerBrowserWidget () {
@@ -230,6 +232,17 @@ void SeerVariableTrackerBrowserWidget::handleDeleteToolButton () {
 
 void SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton () {
     emit deleteVariableExpressions("*");
+}
+
+void SeerVariableTrackerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(1) + " : " + item->text(2));
+
+    for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerVariableTrackerBrowserWidget::showEvent (QShowEvent* event) {

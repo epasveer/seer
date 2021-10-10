@@ -20,6 +20,7 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                handleAddLineEdit                   ();
         void                handleDeleteToolButton              ();
         void                handleDeleteAllToolButton           ();
+        void                handleItemEntered                   (QTreeWidgetItem* item, int column);
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);

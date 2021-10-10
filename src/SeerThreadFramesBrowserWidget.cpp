@@ -11,6 +11,7 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     setupUi(this);
 
     // Setup the widgets
+    threadTreeWidget->setMouseTracking(true);
     threadTreeWidget->setSortingEnabled(false);
     threadTreeWidget->resizeColumnToContents(0); // id
     threadTreeWidget->resizeColumnToContents(1); // target-id
@@ -30,6 +31,7 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
 
     // Connect things.
     QObject::connect(threadTreeWidget, &QTreeWidget::itemDoubleClicked,    this, &SeerThreadFramesBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(threadTreeWidget, &QTreeWidget::itemEntered,          this, &SeerThreadFramesBrowserWidget::handleItemEntered);
 }
 
 SeerThreadFramesBrowserWidget::~SeerThreadFramesBrowserWidget () {
@@ -171,6 +173,20 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {
+
+    // Don't do any work if the widget is hidden.
+    if (isHidden()) {
+        return;
+    }
+
+    refresh();
+}
+
+void SeerThreadFramesBrowserWidget::refresh () {
+    emit refreshThreadFrames();
+}
+
 void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
@@ -185,18 +201,15 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
     //emit selectedFrame(item->text(3).toInt());
 }
 
-void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {
+void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    // Don't do any work if the widget is hidden.
-    if (isHidden()) {
-        return;
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+
+    item->setToolTip(0, item->text(0) + " : " + item->text(11) + " : " + item->text(5) + " : " + item->text(7) + " : " + item->text(9));
+
+    for (int i=1; i<threadTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
+        item->setToolTip(i, item->toolTip(0));
     }
-
-    refresh();
-}
-
-void SeerThreadFramesBrowserWidget::refresh () {
-    emit refreshThreadFrames();
 }
 
 void SeerThreadFramesBrowserWidget::showEvent (QShowEvent* event) {

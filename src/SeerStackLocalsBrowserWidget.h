@@ -20,6 +20,7 @@ class SeerStackLocalsBrowserWidget : public QWidget, protected Ui::SeerStackLoca
     protected slots:
         void                handleItemExpanded          (QTreeWidgetItem* item);
         void                handleItemCollapsed         (QTreeWidgetItem* item);
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshStackLocals          ();

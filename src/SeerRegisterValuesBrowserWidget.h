@@ -18,6 +18,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                refresh                     ();
 
     protected slots:
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshRegisterNames        ();
