@@ -1,6 +1,7 @@
 #include "SeerDebugDialog.h"
 #include "SeerExecutableFilterProxyModel.h"
 #include "SeerDirectoryFilterProxyModel.h"
+#include "SeerSlashProcDialog.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
@@ -32,6 +33,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableNameToolButton,             &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableNameToolButton);
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
+    QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
     QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::buttonClicked),   this, &SeerDebugDialog::handleRunModeChanged);
 
     // Set initial run mode.
@@ -245,6 +247,16 @@ void SeerDebugDialog::handleLoadCoreFilenameToolButton () {
     }
 }
 
+void SeerDebugDialog::handleProgramPidToolButton () {
+
+    SeerSlashProcDialog dlg(this);
+
+    // Execute the dialog and get the result.
+    if (dlg.exec()) {
+        setAttachPid(dlg.selectedPid());
+    }
+}
+
 void SeerDebugDialog::handleRunModeChanged (int id) {
 
     //
@@ -257,6 +269,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 2
     attachProgramPidLineEdit->setEnabled(false);
+    attachProgramPidToolButton->setEnabled(false);
 
     // ID == 3
     connectProgramHostPortLineEdit->setEnabled(false);
@@ -264,6 +277,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 4
     loadCoreFilenameLineEdit->setEnabled(false);
+    loadCoreFilenameToolButton->setEnabled(false);
 
     //
     // Enable the newly selected one.
@@ -278,6 +292,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 2
     if (id == 2) {
         attachProgramPidLineEdit->setEnabled(true);
+        attachProgramPidToolButton->setEnabled(true);
     }
 
     // ID == 3
@@ -289,6 +304,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 4
     if (id == 4) {
         loadCoreFilenameLineEdit->setEnabled(true);
+        loadCoreFilenameToolButton->setEnabled(true);
     }
 
 }

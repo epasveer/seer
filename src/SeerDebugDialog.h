@@ -49,6 +49,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleExecutableNameToolButton                  ();
         void                    handleExecutableWorkingDirectoryToolButton      ();
         void                    handleLoadCoreFilenameToolButton                ();
+        void                    handleProgramPidToolButton                      ();
         void                    handleRunModeChanged                            (int id);
 
     private:
