@@ -15,6 +15,7 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
     public slots:
         void                handleText                          (const QString& text);
         void                handleEvaluateVariableExpression    (int expressionid, QString expression);
+        void                addVariableExpression               (QString expression);
 
     private slots:
         void                handleAddLineEdit                   ();

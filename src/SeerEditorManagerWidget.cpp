@@ -617,8 +617,9 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableExpression,         this, &SeerEditorManagerWidget::handleAddVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableValues,         this, &SeerEditorManagerWidget::handleRefreshVariableValues);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues , this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
 
@@ -653,8 +654,9 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableExpression,         this, &SeerEditorManagerWidget::handleAddVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableValues,         this, &SeerEditorManagerWidget::handleRefreshVariableValues);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
 
@@ -760,20 +762,28 @@ void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
     emit runToLine (fullname, lineno);
 }
 
-void SeerEditorManagerWidget::handleAddVariableExpression (QString expression) {
+void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << expression;
 
     // rethrow
-    emit addVariableExpression (expression);
+    emit addVariableLoggerExpression (expression);
 }
 
-void SeerEditorManagerWidget::handleRefreshVariableValues () {
+void SeerEditorManagerWidget::handleAddVariableTrackerExpression (QString expression) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << expression;
+
+    // rethrow
+    emit addVariableTrackerExpression (expression);
+}
+
+void SeerEditorManagerWidget::handleRefreshVariableTrackerValues () {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":";
 
     // rethrow
-    emit refreshVariableValues ();
+    emit refreshVariableTrackerValues ();
 }
 
 void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {

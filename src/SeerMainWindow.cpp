@@ -315,6 +315,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text == "^exit") {
         return;
 
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done"))) {
+        return;
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
         return;
 

@@ -177,12 +177,12 @@ void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerVariableTrackerBrowserWidget::refresh () {
-    emit refreshVariableNames();
-    emit refreshVariableValues();
+    emit refreshVariableTrackerNames();
+    emit refreshVariableTrackerValues();
 }
 
 void SeerVariableTrackerBrowserWidget::refreshValues () {
-    emit refreshVariableValues();
+    emit refreshVariableTrackerValues();
 }
 
 void SeerVariableTrackerBrowserWidget::handleAddLineEdit () {

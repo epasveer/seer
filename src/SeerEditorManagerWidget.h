@@ -35,8 +35,9 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
         void                                            handleRunToLine                     (QString fullname, int lineno);
-        void                                            handleAddVariableExpression         (QString expression);
-        void                                            handleRefreshVariableValues         ();
+        void                                            handleAddVariableLoggerExpression   (QString expression);
+        void                                            handleAddVariableTrackerExpression  (QString expression);
+        void                                            handleRefreshVariableTrackerValues  ();
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
 
@@ -52,8 +53,9 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);
         void                                            runToLine                           (QString file, int lineno);
-        void                                            addVariableExpression               (QString expression);
-        void                                            refreshVariableValues               ();
+        void                                            addVariableLoggerExpression         (QString expression);
+        void                                            addVariableTrackerExpression        (QString expression);
+        void                                            refreshVariableTrackerValues        ();
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
         void                                            addMemoryVisualize                  (QString expression);
 

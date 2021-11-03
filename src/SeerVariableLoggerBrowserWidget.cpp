@@ -124,6 +124,18 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
     variablesTreeWidget->resizeColumnToContents(3);
 }
 
+void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":";
+
+    if (expression != "") {
+
+        int id = Seer::createID();
+
+        emit evaluateVariableExpression(id, expression);
+    }
+}
+
 void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":";

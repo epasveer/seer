@@ -25,8 +25,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleItemEntered               (QTreeWidgetItem* item, int column);
 
     signals:
-        void                refreshVariableNames            ();
-        void                refreshVariableValues           ();
+        void                refreshVariableTrackerNames     ();
+        void                refreshVariableTrackerValues    ();
         void                addVariableExpression           (QString expression);
         void                deleteVariableExpressions       (QString expressionids);
 
