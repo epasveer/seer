@@ -70,10 +70,10 @@ void GdbMonitor::handleReadyReadStandardOutput () {
             buf.chop(1);
         }
 
-        // qDebug() << __PRETTY_FUNCTION__ << ":" << "Read buffer" << buf.size() << (int)buf[buf.size()-1];
-
         // Convert to a string.
         QString text(buf);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
 
         // Start broadcasting it around.
         emit allTextOutput(text);
@@ -108,6 +108,8 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 
 void GdbMonitor::handleTextOutput (QString text) {
 
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Ready to handle text output";
+
     emit allTextOutput(text);
 
     if (text[0] == '~') {
@@ -133,20 +135,13 @@ void GdbMonitor::handleTextOutput (QString text) {
     }else{
         emit textOutput(text);
     }
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Finished handling text output";
 }
 
 void GdbMonitor::handleStarted() {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":";
-
-    /*
-    process()->write("-file-list-exec-source-files\n");
-    process()->write("-exec-run --start\n");
-    process()->write("-exec-step\n");
-    process()->write("-exec-continue\n");
-    process()->write("-exec-finish\n");
-    process()->write("-gdb-exit\n");
-    */
 }
 
 void GdbMonitor::handleStateChanged(QProcess::ProcessState newState) {
