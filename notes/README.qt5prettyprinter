@@ -1,0 +1,9 @@
+
+See this project to install GDB pretty printers for the QT5 objects (QString, QMap, etc...)
+
+    https://github.com/Lekensteyn/qt5printers
+
+See this GDB documentation for writing/using pretty printers.
+
+    https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html
+
