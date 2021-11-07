@@ -14,17 +14,17 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     threadTreeWidget->setMouseTracking(true);
     threadTreeWidget->setSortingEnabled(false);
     threadTreeWidget->resizeColumnToContents(0); // id
-    threadTreeWidget->resizeColumnToContents(1); // target-id
-    threadTreeWidget->resizeColumnToContents(2); // name
-    threadTreeWidget->resizeColumnToContents(3); // level
-    threadTreeWidget->resizeColumnToContents(4); // addr
-    threadTreeWidget->resizeColumnToContents(5); // func
-    threadTreeWidget->resizeColumnToContents(6); // args
-    threadTreeWidget->resizeColumnToContents(7); // file
-    threadTreeWidget->resizeColumnToContents(8); // fullname
-    threadTreeWidget->resizeColumnToContents(9); // line
-    threadTreeWidget->resizeColumnToContents(10); // arch
-    threadTreeWidget->resizeColumnToContents(11); // state
+    threadTreeWidget->resizeColumnToContents(1); // state
+    threadTreeWidget->resizeColumnToContents(2); // level
+    threadTreeWidget->resizeColumnToContents(3); // func
+    threadTreeWidget->resizeColumnToContents(4); // file
+    threadTreeWidget->resizeColumnToContents(5); // line
+    threadTreeWidget->resizeColumnToContents(6); // fullname
+    threadTreeWidget->resizeColumnToContents(7); // args
+    threadTreeWidget->resizeColumnToContents(8); // name
+    threadTreeWidget->resizeColumnToContents(9); // target-id
+    threadTreeWidget->resizeColumnToContents(10); // addr
+    threadTreeWidget->resizeColumnToContents(11); // arch
     threadTreeWidget->resizeColumnToContents(12); // core
 
     threadTreeWidget->clear();
@@ -121,22 +121,30 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
 
                 //qDebug() << __PRETTY_FUNCTION__ << ":" << file_text << fullname_text;
 
-                // Add the frame to the tree.
+                // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
                 item->setText(0, id_text);
-                item->setText(1, targetid_text);
-                item->setText(2, name_text);
-                item->setText(3, level_text);
-                item->setText(4, addr_text);
-                item->setText(5, func_text);
-                item->setText(6, args_text);
-                item->setText(7, file_text);
-                item->setText(8, fullname_text);
-                item->setText(9, line_text);
-                item->setText(10, arch_text);
-                item->setText(11, state_text);
+                item->setText(1, state_text);
+                item->setText(2, level_text);
+                item->setText(3, func_text);
+                item->setText(4, file_text);
+                item->setText(5, line_text);
+                item->setText(6, fullname_text);
+                item->setText(7, args_text);
+                item->setText(8, name_text);
+                item->setText(9, targetid_text);
+                item->setText(10, addr_text);
+                item->setText(11, arch_text);
                 item->setText(12, core_text);
 
+                // Enable/disable interaction with this row depending if there is a valid file and line number.
+                if (file_text != "" && fullname_text != "" && line_text != "") {
+                    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+                }else{
+                    item->setFlags(Qt::NoItemFlags);
+                }
+
+                // Add the frame to the tree.
                 threadTreeWidget->addTopLevelItem(item);
             }
 
@@ -162,8 +170,8 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
     threadTreeWidget->resizeColumnToContents(3);
     threadTreeWidget->resizeColumnToContents(4);
     threadTreeWidget->resizeColumnToContents(5);
-  //threadTreeWidget->resizeColumnToContents(6);  // Don't resize.
-    threadTreeWidget->resizeColumnToContents(7);
+    threadTreeWidget->resizeColumnToContents(6);
+  //threadTreeWidget->resizeColumnToContents(7); // Don't resize args.
     threadTreeWidget->resizeColumnToContents(8);
     threadTreeWidget->resizeColumnToContents(9);
     threadTreeWidget->resizeColumnToContents(10);
@@ -191,11 +199,11 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
 
     Q_UNUSED(column);
 
-    int lineno = item->text(9).toInt();
+    int lineno = item->text(5).toInt();
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
 
-    emit selectedFile(item->text(7), item->text(8), lineno);
+    emit selectedFile(item->text(4), item->text(6), lineno);
 
     // Comment out this signal. The frame number is always 0 from gdb. Why?
     //emit selectedFrame(item->text(3).toInt());
@@ -205,7 +213,7 @@ void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, in
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(11) + " : " + item->text(5) + " : " + item->text(7) + " : " + item->text(9));
+    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(3) + " : " + item->text(4) + " : " + item->text(5));
 
     for (int i=1; i<threadTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));

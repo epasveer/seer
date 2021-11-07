@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0">
     <widget class="QTreeWidget" name="stackTreeWidget">
      <property name="columnCount">
       <number>7</number>
@@ -22,11 +22,6 @@
      <column>
       <property name="text">
        <string>Level</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Address</string>
       </property>
      </column>
      <column>
@@ -41,12 +36,17 @@
      </column>
      <column>
       <property name="text">
+       <string>Line</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Fullname</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Line</string>
+       <string>Address</string>
       </property>
      </column>
      <column>
