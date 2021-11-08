@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtGui/QFont>
 #include <QtCore/QDebug>
 
 SeerThreadIdsBrowserWidget::SeerThreadIdsBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -54,10 +55,21 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
 
             //qDebug() << __PRETTY_FUNCTION__ << ":" << threadid_text;
 
-            // Add the frame to the tree.
+            // Construct the item
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, threadid_text);
 
+            // Set the text to bold if the ID is the same as the CURRENT ID.
+            QFont fnormal = item->font(0); fnormal.setBold(false);
+            QFont fbold   = item->font(0); fbold.setBold(true);
+
+            if (threadid_text == currentthreadid_text) {
+                item->setFont(0, fbold);
+            }else{
+                item->setFont(0, fnormal);
+            }
+
+            // Add the frame to the tree.
             idsTreeWidget->addTopLevelItem(item);
         }
 
