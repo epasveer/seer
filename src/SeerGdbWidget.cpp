@@ -1097,7 +1097,6 @@ void SeerGdbWidget::startGdb () {
 
     // Build the gdb argument list.
     QStringList args;
-  //args << "-nh" << "--interpreter=mi"; // XXX
     args << "--interpreter=mi";
 
     // Give the gdb process the argument list.
