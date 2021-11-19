@@ -10,13 +10,14 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     _executableName             = "";
     _executableArguments        = "";
     _executableWorkingDirectory = "";
-    _executablePid              = -1;
+    _executablePid              = 0;
     _gdbMonitor                 = 0;
     _gdbProcess                 = 0;
     _consoleWidget              = 0;
@@ -88,6 +89,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
 
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshBreakpointsList,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointWatchpointList);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshStackFrames,                                               this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
@@ -297,6 +299,15 @@ void SeerGdbWidget::handleText (const QString& text) {
     }else if (text.startsWith("*stopped,reason=\"exited\"")) {
         emit stoppingPointReached();
 
+    }else if (text.startsWith("=thread-group-started,")) {
+        // =thread-group-started,id="i1",pid="30916"
+
+        QString pid_text = Seer::parseFirst(text, "pid=", '"', '"', false);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Inferior pid = " << pid_text;
+
+        setExecutablePid(pid_text.toLong());
+
     }else{
         // All other text is ignored by this widget.
     }
@@ -370,6 +381,7 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     createConsole();
 
     setExecutableLaunchMode("run");
+    setExecutablePid(0);
 
     // Get list of breakpoints.
     QStringList breakpointsList;
@@ -433,6 +445,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     createConsole();
 
     setExecutableLaunchMode("start");
+    setExecutablePid(0);
 
     // Get list of breakpoints.
     QStringList breakpointsList;
@@ -523,6 +536,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     createConsole();
 
     setExecutableLaunchMode("connect");
+    setExecutablePid(0);
 
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
 
@@ -566,6 +580,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     createConsole();
 
     setExecutableLaunchMode("corefile");
+    setExecutablePid(0);
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
@@ -624,11 +639,37 @@ void SeerGdbWidget::handleGdbContinue () {
 
 void SeerGdbWidget::handleGdbInterrupt () {
 
-    if (executableLaunchMode() == "") {
-        return;
-    }
+    sendGdbInterrupt(-1);
+}
 
-    handleGdbCommand("-exec-interrupt");
+void SeerGdbWidget::handleGdbInterruptSIGINT () {
+
+    sendGdbInterrupt(SIGINT);
+}
+
+void SeerGdbWidget::handleGdbInterruptSIGKILL () {
+
+    sendGdbInterrupt(SIGKILL);
+}
+
+void SeerGdbWidget::handleGdbInterruptSIGFPE () {
+
+    sendGdbInterrupt(SIGFPE);
+}
+
+void SeerGdbWidget::handleGdbInterruptSIGSEGV () {
+
+    sendGdbInterrupt(SIGSEGV);
+}
+
+void SeerGdbWidget::handleGdbInterruptSIGUSR1 () {
+
+    sendGdbInterrupt(SIGUSR1);
+}
+
+void SeerGdbWidget::handleGdbInterruptSIGUSR2 () {
+
+    sendGdbInterrupt(SIGUSR2);
 }
 
 void SeerGdbWidget::handleGdbExecutableSources () {
@@ -1147,6 +1188,32 @@ void SeerGdbWidget::deleteConsole () {
     if (_consoleWidget) {
         delete _consoleWidget;
         _consoleWidget = 0;
+    }
+}
+
+void SeerGdbWidget::sendGdbInterrupt (int signal) {
+
+    qDebug() << __PRETTY_FUNCTION__ << "Sending an interrupt to the program. Signal =" << signal;
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (executablePid() < 1) {
+        return;
+    }
+
+    // Use kill() to send the signal to the inferior.
+    // -exec-interrupt does not work for -exec-until when the line
+    // number is not in the current function. In this case, -exec-until
+    // behaves like -exec-continue but -exec-interrupt has no effect. :^(
+    // We do kill the ability to use a different signal, though. :^)
+
+    if (signal < 0) {
+        handleGdbCommand("-exec-interrupt");
+
+    }else{
+        int stat = kill(executablePid(), signal);
     }
 }
 

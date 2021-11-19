@@ -6,6 +6,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/QMenu>
 #include <QtGui/QKeySequence>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
@@ -36,6 +37,21 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QShortcut* continueKeyF8 = new QShortcut(QKeySequence(Qt::Key_F8), this);
 
     //
+    // Set up Interrupt menu.
+    //
+    QMenu* interruptMenu = new QMenu(this);
+    QAction* interruptAction = interruptMenu->addAction("GDB Interrupt");
+    interruptMenu->addSeparator();
+    QAction* interruptActionSIGINT  = interruptMenu->addAction("SIGINT");
+    QAction* interruptActionSIGKILL = interruptMenu->addAction("SIGKILL");
+    QAction* interruptActionSIGFPE  = interruptMenu->addAction("SIGFPE");
+    QAction* interruptActionSIGSEGV = interruptMenu->addAction("SIGSEGV");
+    QAction* interruptActionSIGUSR1 = interruptMenu->addAction("SIGUSR1");
+    QAction* interruptActionSIGUSR2 = interruptMenu->addAction("SIGUSR2");
+
+    actionInterruptProcess->setMenu(interruptMenu);
+
+    //
     // Set up signals/slots.
     //
     QObject::connect(actionFileDebug,               &QAction::triggered,                    this,           &SeerMainWindow::handleFileDebug);
@@ -50,6 +66,13 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionGdbStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionGdbFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
     QObject::connect(actionInterruptProcess,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(interruptAction,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(interruptActionSIGINT,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGINT);
+    QObject::connect(interruptActionSIGKILL,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGKILL);
+    QObject::connect(interruptActionSIGFPE,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGFPE);
+    QObject::connect(interruptActionSIGSEGV,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGSEGV);
+    QObject::connect(interruptActionSIGUSR1,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR1);
+    QObject::connect(interruptActionSIGUSR2,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR2);
 
     QObject::connect(nextKeyF5,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
     QObject::connect(stepKeyF6,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbStep);
