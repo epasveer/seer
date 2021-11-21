@@ -1195,7 +1195,7 @@ void SeerGdbWidget::deleteConsole () {
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {
 
-    qDebug() << __PRETTY_FUNCTION__ << "Sending an interrupt to the program. Signal =" << signal;
+    //qDebug() << __PRETTY_FUNCTION__ << "Sending an interrupt to the program. Signal =" << signal;
 
     if (executableLaunchMode() == "") {
         return;
