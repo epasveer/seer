@@ -11,6 +11,8 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <signal.h>
+#include <string.h>
+#include <errno.h>
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
@@ -1200,6 +1202,9 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
     }
 
     if (executablePid() < 1) {
+        QMessageBox::warning(this, "Seer",
+                                   QString("No executable is running or I don't know the PID of the process."),
+                                   QMessageBox::Ok);
         return;
     }
 
@@ -1214,6 +1219,11 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
 
     }else{
         int stat = kill(executablePid(), signal);
+        if (stat < 0) {
+            QMessageBox::warning(this, "Seer",
+                                       QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
+                                       QMessageBox::Ok);
+        }
     }
 }
 
