@@ -47,6 +47,7 @@ SeerSlashProcWidget::SeerSlashProcWidget (QWidget* parent) : QWidget(parent) {
     processTreeWidget->resizeColumnToContents(2);
     processTreeWidget->setSortingEnabled(true);
     processTreeWidget->clear();
+    systemProcessesCheckBox->setChecked(false);
 
     // Connect things.
     QObject::connect(searchLineEdit,     &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::handleSearchLineEdit);
@@ -97,7 +98,7 @@ void SeerSlashProcWidget::refresh () {
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Scan the /proc file system.
-    QProcessList list = QProcessInfo::enumerate();
+    QProcessList list = QProcessInfo::populate(systemProcessesCheckBox->isChecked());
 
     // Loop through each entry and add it to our view.
     processTreeWidget->clear();

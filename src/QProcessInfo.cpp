@@ -11,7 +11,7 @@
 #include <QStandardPaths>
 #include <QTextStream>
 
-QProcessList QProcessInfo::enumerate() {
+QProcessList QProcessInfo::populate(bool showSystemProcesses) {
 
     QProcessList ret;
 
@@ -90,7 +90,15 @@ QProcessList QProcessInfo::enumerate() {
                 cmdline.close();
             }
 
-            ret.push_back(info);
+            // Add the process to the list. If it is a system process ([]), only add it
+            // if we're allowed.
+            if (info.name()[0] == '[') {
+                if (showSystemProcesses == true) {
+                    ret.push_back(info);
+                }
+            }else{
+                ret.push_back(info);
+            }
         }
     }
 
