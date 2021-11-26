@@ -13,14 +13,15 @@ class SeerSlashProcWidget : public QWidget, protected Ui::SeerSlashProcWidgetFor
        ~SeerSlashProcWidget ();
 
         int                 selectedPid                     () const;
+        QString             selectedUsername                () const;
         QString             selectedName                    () const;
         QString             selectedCommandLine             () const;
 
     public slots:
-        void                refresh                         ();
 
     protected slots:
-        void                handleSearchLineEdit            (const QString& text);
+        void                refreshList                     ();
+        void                refreshView                     ();
 
     protected:
     private:

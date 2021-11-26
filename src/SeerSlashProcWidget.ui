@@ -15,6 +15,19 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="2">
+    <widget class="QCheckBox" name="systemProcessesCheckBox">
+     <property name="toolTip">
+      <string>Show system processes or hide them.</string>
+     </property>
+     <property name="text">
+      <string>System Processes</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
     <widget class="QToolButton" name="refreshToolButton">
      <property name="toolTip">
       <string>Refresh the list of processes.</string>
@@ -28,13 +41,13 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
+   <item row="1" column="0" colspan="4">
     <widget class="QTreeWidget" name="processTreeWidget">
      <property name="sortingEnabled">
       <bool>true</bool>
      </property>
      <property name="columnCount">
-      <number>3</number>
+      <number>4</number>
      </property>
      <column>
       <property name="text">
@@ -43,7 +56,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Name</string>
+       <string>User Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Program  Name</string>
       </property>
      </column>
      <column>
@@ -54,28 +72,31 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QLineEdit" name="searchLineEdit">
+    <widget class="QLineEdit" name="programNameLineEdit">
      <property name="toolTip">
-      <string>Search in the list of processes. &quot;*&quot; is allowed.</string>
+      <string>Search program name in the list of processes. &quot;*&quot; is allowed.</string>
      </property>
      <property name="statusTip">
       <string/>
      </property>
      <property name="placeholderText">
-      <string>Search...</string>
+      <string>Search Program Name...</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="systemProcessesCheckBox">
+    <widget class="QLineEdit" name="userNameLineEdit">
      <property name="toolTip">
-      <string>Show system processes or hide them.</string>
+      <string>Search user name in the list of processes. &quot;*&quot; is allowed.</string>
      </property>
-     <property name="text">
-      <string>System Processes</string>
+     <property name="placeholderText">
+      <string>Search User Name...</string>
      </property>
-     <property name="checked">
-      <bool>false</bool>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

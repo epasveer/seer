@@ -39,22 +39,23 @@ SeerSlashProcWidget::SeerSlashProcWidget (QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
-    searchLineEdit->setPlaceholderText("Search...");
-    searchLineEdit->setClearButtonEnabled(true);
     processTreeWidget->setMouseTracking(true);
     processTreeWidget->resizeColumnToContents(0);
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
+    processTreeWidget->resizeColumnToContents(3);
     processTreeWidget->setSortingEnabled(true);
     processTreeWidget->clear();
     systemProcessesCheckBox->setChecked(false);
 
     // Connect things.
-    QObject::connect(searchLineEdit,     &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::handleSearchLineEdit);
-    QObject::connect(refreshToolButton,  &QToolButton::clicked,              this,  &SeerSlashProcWidget::refresh);
+    QObject::connect(programNameLineEdit,     &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::refreshView);
+    QObject::connect(userNameLineEdit,        &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::refreshView);
+    QObject::connect(systemProcessesCheckBox, &QCheckBox::clicked,                this,  &SeerSlashProcWidget::refreshView);
+    QObject::connect(refreshToolButton,       &QToolButton::clicked,              this,  &SeerSlashProcWidget::refreshList);
 
     // Load the initial process list.
-    refresh();
+    refreshList();
 }
 
 SeerSlashProcWidget::~SeerSlashProcWidget () {
@@ -71,7 +72,7 @@ int SeerSlashProcWidget::selectedPid () const {
     return items[0]->text(0).toLong();
 }
 
-QString SeerSlashProcWidget::selectedName () const {
+QString SeerSlashProcWidget::selectedUsername () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -82,7 +83,7 @@ QString SeerSlashProcWidget::selectedName () const {
     return items[0]->text(1);
 }
 
-QString SeerSlashProcWidget::selectedCommandLine () const {
+QString SeerSlashProcWidget::selectedName () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -93,24 +94,34 @@ QString SeerSlashProcWidget::selectedCommandLine () const {
     return items[0]->text(2);
 }
 
-void SeerSlashProcWidget::refresh () {
+QString SeerSlashProcWidget::selectedCommandLine () const {
+
+    QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
+
+    if (items.size() == 0) {
+        return "";
+    }
+
+    return items[0]->text(3);
+}
+
+void SeerSlashProcWidget::refreshList () {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Scan the /proc file system.
-    QProcessList list = QProcessInfo::populate(systemProcessesCheckBox->isChecked());
+    QProcessList list = QProcessInfo::populate();
 
     // Loop through each entry and add it to our view.
     processTreeWidget->clear();
 
     for (const QProcessInfo& info : list) {
 
-        //qDebug() << info.pid() << " " << info.name() << " " << info.commandLine();
-
         QTreeWidgetItem* item = new QProcessInfoWidgetItem;
         item->setText(0, QString::number(info.pid()));
-        item->setText(1, info.name());
-        item->setText(2, info.commandLine());
+        item->setText(1, info.username());
+        item->setText(2, info.name());
+        item->setText(3, info.commandLine());
 
         processTreeWidget->addTopLevelItem(item);
     }
@@ -120,90 +131,81 @@ void SeerSlashProcWidget::refresh () {
     processTreeWidget->resizeColumnToContents(0);
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
+    processTreeWidget->resizeColumnToContents(3);
 
-    searchLineEdit->clear();
+    // Don't clear the line edits.
+    // programNameLineEdit->clear();
+    // userNameLineEdit->clear();
+
+    refreshView();
 
     QApplication::restoreOverrideCursor();
 }
 
-void SeerSlashProcWidget::handleSearchLineEdit (const QString& text) {
+void SeerSlashProcWidget::refreshView () {
 
+    // Get this list of program name matches. Or all if there is no program name provided.
+    QList<QTreeWidgetItem*> programNameMatches;
 
-    // Set everything to a normal font. If there is no search text, unhide everything.
-    // If there is search text, hide everything so the matching ones can be unhidden later on.
+    if (programNameLineEdit->text() == "") {
+        programNameMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 2);
+
+    }else{
+        if (programNameLineEdit->text().contains('*')) {
+            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchWildcard   | Qt::MatchRecursive, 2);
+        }else{
+            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchStartsWith | Qt::MatchRecursive, 2);
+        }
+    }
+
+    // Get this list of user name matches. Or all if there is no user name provided.
+    QList<QTreeWidgetItem*> userNameMatches;
+
+    if (userNameLineEdit->text() == "") {
+        userNameMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 1);
+
+    }else{
+        if (userNameLineEdit->text().contains('*')) {
+            userNameMatches = processTreeWidget->findItems(userNameLineEdit->text(), Qt::MatchWildcard   | Qt::MatchRecursive, 1);
+        }else{
+            userNameMatches = processTreeWidget->findItems(userNameLineEdit->text(), Qt::MatchStartsWith | Qt::MatchRecursive, 1);
+        }
+    }
+
+    // Get this list of process matches. Include one's with [xxx]) or not.
+    QList<QTreeWidgetItem*> processMatches;
+
+    if (systemProcessesCheckBox->isChecked() == true) {
+        processMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 2);
+        //qDebug() << __PRETTY_FUNCTION__ << ": Checkbox is on." << processMatches.size();
+
+    }else{
+        // To find [xxx] processes   :  "^(\\[).*(\\])$"
+        // To exclude [xxx] processes:  "^(?!\\[).*(?!\\])$"
+        processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegExp | Qt::MatchRecursive, 2);
+        //qDebug() << __PRETTY_FUNCTION__ << ": Checkbox is off." << processMatches.size();
+    }
+
+    // Go through each item in the tree. If it's in the user, program, and process matches, show it.
+    // Otherwise, hide it.
     QTreeWidgetItemIterator it(processTreeWidget);
 
-    if (*it) {
+    while (*it) {
 
-        QFont f0 = (*it)->font(0);
-        QFont f1 = (*it)->font(1);
-        QFont f2 = (*it)->font(2);
-
-        f0.setBold(false);
-        f1.setBold(false);
-        f2.setBold(false);
-
-        if (text == "") {
-            while (*it) {
-                (*it)->setHidden(false); // No search text, unhide everything.
-                (*it)->setFont(0,f0);
-                (*it)->setFont(1,f1);
-                (*it)->setFont(2,f2);
-                ++it;
-            }
+        if (programNameMatches.contains(*it) && userNameMatches.contains(*it) && processMatches.contains(*it)) {
+            (*it)->setHidden(false);
 
         }else{
-            while (*it) {
-                (*it)->setHidden(true); // Has serach text, hide everything. Matching items to be unhidden below.
-                (*it)->setFont(0,f0);
-                (*it)->setFont(1,f1);
-                (*it)->setFont(2,f2);
-                ++it;
-            }
+            (*it)->setHidden(true);
         }
+
+        ++it;
     }
 
-    // Set selected items to a bold font and unhidden. Move to the first match.
-    if (text != "") {
-
-        QList<QTreeWidgetItem*> matches;
-
-        if (text.contains('*')) {
-            matches = processTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 1);
-        }else{
-            matches = processTreeWidget->findItems(text, Qt::MatchStartsWith | Qt::MatchRecursive, 1);
-        }
-
-        QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
-        QList<QTreeWidgetItem*>::const_iterator e  = matches.end();
-
-        if (it != e) {
-
-            processTreeWidget->setCurrentItem(*it);
-
-            QFont f0 = (*it)->font(0);
-            QFont f1 = (*it)->font(1);
-            QFont f2 = (*it)->font(2);
-
-            f0.setBold(false);
-            f1.setBold(true);
-            f2.setBold(false);
-
-            while (it != e) {
-                (*it)->setHidden(false);
-                (*it)->setFont(0,f0);
-                (*it)->setFont(1,f1);
-                (*it)->setFont(2,f2);
-
-                it++;
-            }
-        }
-
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text << matches.size();
-    }
-
+    // Resize the columns.
     processTreeWidget->resizeColumnToContents(0);
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
+    processTreeWidget->resizeColumnToContents(3);
 }
 

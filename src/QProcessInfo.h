@@ -10,10 +10,13 @@ class QProcessInfo {
     public:
         QProcessInfo();
 
-        static QProcessList populate(bool showSystemProcesses);
+        static QProcessList populate();
 
         uint32_t            pid                 () const;
         void                setPid              (uint32_t pid);
+
+        const QString&      username            () const;
+        void                setUsername         (const QString& username);
 
         const QString&      name                () const;
         void                setName             (const QString& name);
@@ -23,6 +26,7 @@ class QProcessInfo {
 
     private:
         uint32_t            _pid;
+        QString             _username;
         QString             _name;
         QString             _cmdLine;
 };

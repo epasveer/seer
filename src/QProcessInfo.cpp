@@ -1,17 +1,26 @@
+//
 // My version is based on this person's code.
 //
 // Copyright (c) 2016, Baldur Karlsson
 // Licensed under BSD 2-Clause License, see LICENSE file.
 // Obtained from https://github.com/baldurk/qprocessinfo
+//
 
 #include "QProcessInfo.h"
-#include <QDir>
-#include <QProcess>
-#include <QRegExp>
-#include <QStandardPaths>
-#include <QTextStream>
+#include <QtCore/QDir>
+#include <QtCore/QProcess>
+#include <QtCore/QRegExp>
+#include <QtCore/QStandardPaths>
+#include <QtCore/QTextStream>
+#include <QtCore/QDebug>
+#include <stdlib.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
 
-QProcessList QProcessInfo::populate(bool showSystemProcesses) {
+
+QProcessList QProcessInfo::populate() {
 
     QProcessList ret;
 
@@ -60,7 +69,35 @@ QProcessList QProcessInfo::populate(bool showSystemProcesses) {
                 }
             }
 
-            // get the command line
+            // Get the username.
+            QFile status(processDir.absoluteFilePath(QStringLiteral("status")));
+            if (status.open(QIODevice::ReadOnly)) {
+
+                QByteArray contents = status.readAll();
+
+                QTextStream in(&contents);
+
+                while(!in.atEnd()) {
+                    QString line = in.readLine();
+
+                    if (line.startsWith(QStringLiteral("Uid:"))) {
+                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line;
+                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line.split(QRegExp("\\s+")).at(0);
+                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line.split(QRegExp("\\s+")).at(1);
+                        //qDebug() << "";
+                        info.setUsername(line.split(QRegExp("\\s+")).at(1));
+                        break;
+                    }
+                }
+                status.close();
+
+                struct passwd* pw = getpwuid(info.username().toULong());
+                if (pw) {
+                    info.setUsername(pw->pw_name);
+                }
+            }
+
+            // Get the command line
             QFile cmdline(processDir.absoluteFilePath(QStringLiteral("cmdline")));
 
             if (cmdline.open(QIODevice::ReadOnly)) {
@@ -90,15 +127,8 @@ QProcessList QProcessInfo::populate(bool showSystemProcesses) {
                 cmdline.close();
             }
 
-            // Add the process to the list. If it is a system process ([]), only add it
-            // if we're allowed.
-            if (info.name()[0] == '[') {
-                if (showSystemProcesses == true) {
-                    ret.push_back(info);
-                }
-            }else{
-                ret.push_back(info);
-            }
+            // Add the process to the list.
+            ret.push_back(info);
         }
     }
 
@@ -115,6 +145,14 @@ uint32_t QProcessInfo::pid() const {
 
 void QProcessInfo::setPid(uint32_t pid) {
     _pid = pid;
+}
+
+const QString &QProcessInfo::username() const {
+    return _username;
+}
+
+void QProcessInfo::setUsername(const QString &username) {
+    _username = username;
 }
 
 const QString &QProcessInfo::name() const {
