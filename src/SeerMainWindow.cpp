@@ -360,6 +360,7 @@ void SeerMainWindow::handleText (const QString& text) {
 
     }else if (text.startsWith("*stopped,frame=")) {
         //*stopped,frame={addr=\"0x00007f0ee0d2d954\",func=\"rfft\",args=[{name=\"a\",value=\"...\"},...
+        //*stopped,frame={addr="0x00007f608ec49fc0",func="__pthread_clockjoin_ex",args=[],from="/lib64/libpthread.so.0",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
         return;
 
     }else if (text.startsWith("^connected,frame=")) {

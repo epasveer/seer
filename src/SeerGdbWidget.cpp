@@ -301,6 +301,9 @@ void SeerGdbWidget::handleText (const QString& text) {
     }else if (text.startsWith("*stopped,reason=\"exited\"")) {
         emit stoppingPointReached();
 
+    }else if (text.startsWith("*stopped,frame=")) {
+        emit stoppingPointReached();
+
     }else if (text.startsWith("=thread-group-started,")) {
         // =thread-group-started,id="i1",pid="30916"
 
