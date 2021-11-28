@@ -53,6 +53,7 @@ SeerSlashProcWidget::SeerSlashProcWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(userNameLineEdit,        &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::refreshView);
     QObject::connect(systemProcessesCheckBox, &QCheckBox::clicked,                this,  &SeerSlashProcWidget::refreshView);
     QObject::connect(refreshToolButton,       &QToolButton::clicked,              this,  &SeerSlashProcWidget::refreshList);
+    QObject::connect(processTreeWidget,       &QTreeWidget::itemDoubleClicked,    this,  &SeerSlashProcWidget::handleDoubleClicked);
 
     // Load the initial process list.
     refreshList();
@@ -207,5 +208,9 @@ void SeerSlashProcWidget::refreshView () {
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
     processTreeWidget->resizeColumnToContents(3);
+}
+
+void SeerSlashProcWidget::handleDoubleClicked () {
+    emit pidSelected();
 }
 

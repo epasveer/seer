@@ -17,11 +17,15 @@ class SeerSlashProcWidget : public QWidget, protected Ui::SeerSlashProcWidgetFor
         QString             selectedName                    () const;
         QString             selectedCommandLine             () const;
 
+    signals:
+        void                pidSelected                     ();
+
     public slots:
 
     protected slots:
         void                refreshList                     ();
         void                refreshView                     ();
+        void                handleDoubleClicked             ();
 
     protected:
     private:
