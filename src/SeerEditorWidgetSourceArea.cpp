@@ -1369,6 +1369,49 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
         return;
 
+    }else if (text.startsWith("*stopped,frame=")) {
+
+        // *stopped,
+        //
+        // frame={addr="0x00007ff831151329",
+        //        func="cfft",
+        //        args=[{name="a",value="..."},
+        //              {name="n",value="512"},
+        //              {name="iflg",value="1"}],
+        //        file="sssMathlib.f",
+        //        fullname="/home/erniep/Development/Peak/src/Core/Math/sssMathlib.f",
+        //        line="767",
+        //        arch="i386:x86-64"},
+        //
+        // thread-id="1",
+        // stopped-threads="all",
+        // core="3"
+
+        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+
+        QString frame_text = Seer::parseFirst(newtext, "frame=", '{', '}', false);
+
+        if (frame_text == "") {
+            return;
+        }
+
+        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+        QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
+        QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << file_text << line_text;
+
+        // Read the file if it hasn't been read before or if we are reading a different file.
+        if (fullname_text != fullname()) {
+            open(fullname_text, file_text);
+        }
+
+        // Set to the line number.
+        setCurrentLine(line_text.toInt());
+
+        return;
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
 
         // 10^done,value="1"

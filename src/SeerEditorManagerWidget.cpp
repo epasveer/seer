@@ -380,6 +380,59 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         return;
 
+    }else if (text.startsWith("*stopped,frame=")) {
+
+        // *stopped,
+        //
+        // frame={addr="0x00007ff831151329",
+        //        func="cfft",
+        //        args=[{name="a",value="..."},
+        //              {name="n",value="512"},
+        //              {name="iflg",value="1"}],
+        //        file="sssMathlib.f",
+        //        fullname="/home/erniep/Development/Peak/src/Core/Math/sssMathlib.f",
+        //        line="767",
+        //        arch="i386:x86-64"},
+        //
+        // thread-id="1",
+        // stopped-threads="all",
+        // core="3"
+
+        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+
+        QString frame_text = Seer::parseFirst(newtext, "frame=", '{', '}', false);
+
+        if (frame_text == "") {
+            return;
+        }
+
+        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+        QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
+        QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << file_text << line_text;
+
+        // If there is no file to open, just exit.
+        if (fullname_text == "" || file_text == "") {
+            return;
+        }
+
+        // Get the EditorWidget for the file. Create one if needed.
+        SeerEditorWidget* editorWidget = editorWidgetTab(fullname_text);
+
+        if (editorWidget == 0) {
+            editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
+        }
+
+        // Push this tab to the top.
+        tabWidget->setCurrentWidget(editorWidget);
+
+        // Give the EditorWidget the command text (read file, set line number, etc.).
+        editorWidget->sourceArea()->handleText(text);
+
+        return;
+
     }else if (text.startsWith("^done,BreakpointTable={") && text.endsWith("}")) {
 
         //
