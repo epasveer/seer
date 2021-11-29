@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1250</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -40,15 +40,12 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionViewMemoryVisualizer"/>
+    <addaction name="actionViewArrayVisualizer"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Settings</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -61,7 +58,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
    <addaction name="menuSettings"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -86,6 +82,9 @@
    <addaction name="actionGdbFinish"/>
    <addaction name="separator"/>
    <addaction name="actionInterruptProcess"/>
+   <addaction name="separator"/>
+   <addaction name="actionMemoryVisualizer"/>
+   <addaction name="actionArrayVisualizer"/>
   </widget>
   <action name="actionGdbQuit">
    <property name="text">
@@ -96,6 +95,10 @@
    </property>
   </action>
   <action name="actionFileQuit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/exit.png</normaloff>:/seer/resources/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
@@ -176,6 +179,10 @@
    </property>
   </action>
   <action name="actionFileDebug">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/debug.png</normaloff>:/seer/resources/debug.png</iconset>
+   </property>
    <property name="text">
     <string>Debug...</string>
    </property>
@@ -184,6 +191,10 @@
    </property>
   </action>
   <action name="actionFileArguments">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/arguments.png</normaloff>:/seer/resources/arguments.png</iconset>
+   </property>
    <property name="text">
     <string>Arguments...</string>
    </property>
@@ -197,12 +208,58 @@
     <string>Interrupt</string>
    </property>
    <property name="toolTip">
-    <string>Send a 'Terminate' signal to the process.</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send a 'Terminate' signal to the process.&lt;br/&gt;&lt;br/&gt;Hold down for alternate signals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="actionHelpAbout">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/seer_32x32.png</normaloff>:/seer/resources/seer_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>About Seer</string>
+   </property>
+  </action>
+  <action name="actionMemoryVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Memory</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Memory Visualizer</string>
+   </property>
+  </action>
+  <action name="actionArrayVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Array</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Array Visualizer</string>
+   </property>
+  </action>
+  <action name="actionViewMemoryVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Memory Visualizer</string>
+   </property>
+  </action>
+  <action name="actionViewArrayVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Array Visualizer</string>
    </property>
   </action>
  </widget>

@@ -1083,6 +1083,13 @@ void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString
     handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
 }
 
+void SeerGdbWidget::handleGdbMemoryVisualizer () {
+    handleGdbMemoryAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbArrayVisualizer () {
+}
+
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << "Splitter moved to " << pos << index;

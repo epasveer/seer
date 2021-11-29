@@ -101,6 +101,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbDataDeleteExpressions      (QString expressionids);
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleGdbMemoryVisualizer           ();
+        void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
 
         void                                handleFinished                      (int exitCode, QProcess::ExitStatus exitStatus);

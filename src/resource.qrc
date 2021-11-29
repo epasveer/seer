@@ -1,19 +1,24 @@
 <RCC>
-    <qresource prefix="/seer">
-        <file>resources/next.png</file>
-        <file>resources/stop.png</file>
-        <file>resources/quit.png</file>
-        <file>resources/restart.png</file>
-        <file>resources/step_over.png</file>
-        <file>resources/step_into.png</file>
-        <file>resources/continue.png</file>
-        <file>resources/file.png</file>
-        <file>resources/folder.png</file>
-        <file>resources/step_out.png</file>
-        <file>resources/seer_256x256.png</file>
-        <file>resources/seer_32x32.png</file>
-        <file>resources/seer_512x512.png</file>
-        <file>resources/seer_64x64.png</file>
-    </qresource>
+  <qresource prefix="/seer">
+    <file>resources/about.txt</file>
+    <file>resources/next.png</file>
+    <file>resources/stop.png</file>
+    <file>resources/quit.png</file>
+    <file>resources/restart.png</file>
+    <file>resources/step_over.png</file>
+    <file>resources/step_into.png</file>
+    <file>resources/continue.png</file>
+    <file>resources/file.png</file>
+    <file>resources/folder.png</file>
+    <file>resources/memory.png</file>
+    <file>resources/array.png</file>
+    <file>resources/exit.png</file>
+    <file>resources/arguments.png</file>
+    <file>resources/debug.png</file>
+    <file>resources/step_out.png</file>
+    <file>resources/seer_256x256.png</file>
+    <file>resources/seer_32x32.png</file>
+    <file>resources/seer_512x512.png</file>
+    <file>resources/seer_64x64.png</file>
+  </qresource>
 </RCC>
-
