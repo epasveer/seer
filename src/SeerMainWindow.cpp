@@ -61,6 +61,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewArrayVisualizer,     &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
     QObject::connect(actionHelpAbout,               &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
+    QObject::connect(actionControlRun,              &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionControlStart,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionControlContinue,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlFinish,           &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlInterrupt,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+
     QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
     QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
     QObject::connect(actionGdbContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
