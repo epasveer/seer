@@ -1,6 +1,7 @@
 #include "SeerGdbWidget.h"
 #include "SeerLogWidget.h"
 #include "SeerMemoryVisualizerWidget.h"
+#include "SeerArrayVisualizerWidget.h"
 #include "SeerUtl.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QMessageBox>
@@ -1087,7 +1088,29 @@ void SeerGdbWidget::handleGdbMemoryVisualizer () {
     handleGdbMemoryAddExpression("");
 }
 
+void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
+
+    Q_UNUSED(expression);
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerArrayVisualizerWidget* w = new SeerArrayVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                           w,    &SeerArrayVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerArrayVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+
+    // Tell the visualizer what variable to use.
+    w->setVariableName(expression);
+}
+
 void SeerGdbWidget::handleGdbArrayVisualizer () {
+    handleGdbArrayAddExpression("");
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

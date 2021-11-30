@@ -102,6 +102,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
         void                                handleGdbMemoryVisualizer           ();
+        void                                handleGdbArrayAddExpression         (QString expression);
         void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
 

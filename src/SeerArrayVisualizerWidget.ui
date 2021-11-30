@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerMemoryVisualizerWidgetForm</class>
- <widget class="QWidget" name="SeerMemoryVisualizerWidgetForm">
+ <class>SeerArrayVisualizerWidgetForm</class>
+ <widget class="QWidget" name="SeerArrayVisualizerWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
+    <width>640</width>
     <height>657</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="memoryLengthLineEdit">
+      <widget class="QLineEdit" name="arrayLengthLineEdit">
        <property name="toolTip">
         <string>Number of bytes to display.</string>
        </property>
@@ -51,7 +51,7 @@
         <string/>
        </property>
        <property name="placeholderText">
-        <string># Bytes</string>
+        <string># Elements</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>false</bool>
@@ -59,45 +59,33 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="memoryDisplayFormatComboBox">
+      <widget class="QComboBox" name="arrayDisplayFormatComboBox">
        <property name="toolTip">
-        <string>Memory display format.</string>
+        <string>Array display format.</string>
        </property>
        <item>
         <property name="text">
-         <string>hex</string>
+         <string>int16</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>octal</string>
+         <string>int32</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>binary</string>
+         <string>int64</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>decimal</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="charDisplayFormatComboBox">
-       <property name="toolTip">
-        <string>Character display format.</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>ascii</string>
+         <string>float32</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>ebcdic</string>
+         <string>float64</string>
         </property>
        </item>
       </widget>

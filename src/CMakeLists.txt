@@ -36,6 +36,7 @@ set(HEADER_FILES
     SeerHexWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
+    SeerArrayVisualizerWidget.h
     SeerMemoryVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRunStatusIndicator.h
@@ -84,6 +85,7 @@ set(SOURCE_FILES
     SeerHexWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
+    SeerArrayVisualizerWidget.cpp
     SeerMemoryVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRunStatusIndicator.cpp
