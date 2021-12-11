@@ -9,13 +9,25 @@
 
 Git token refreshing.
 
+On github
+    https://github.com/settings/tokens
+    https://github.com/settings/tokens/new
+
+    Selected scopes:
+        repo
+        workflow
+        admin:org
+
+
+On Client.
+
     erniep@gracie:/peak/src/seer$ gh auth login
-    ? What account do you want to log into? GitHub.com
-    ? What is your preferred protocol for Git operations? HTTPS
-    ? How would you like to authenticate GitHub CLI? Paste an authentication token
+    ? What account do you want to log into?                                         <Select 'GitHub.com'>
+    ? What is your preferred protocol for Git operations?                           <Select 'HTTPS'>
+    ? How would you like to authenticate GitHub CLI?                                <Select 'Paste an authentication token'>
     Tip: you can generate a Personal Access Token here https://github.com/settings/tokens
     The minimum required scopes are 'repo', 'read:org', 'workflow'.
-    ? Paste your authentication token: ****************************************
+    ? Paste your authentication token:                                              <Enter ****************************************>
     - gh config set -h github.com git_protocol https
     ✓ Configured git protocol
     ✓ Logged in as epasveer
