@@ -6,15 +6,88 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1359</width>
-    <height>907</height>
+    <width>838</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerEditorWidgetForm</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="alternateBarLayout">
+     <item row="1" column="3">
+      <widget class="QToolButton" name="alternateAcceptToolButton">
+       <property name="toolTip">
+        <string>Accept alternate location.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="5">
+      <widget class="QLabel" name="alternateLabel">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QToolButton" name="alternateCloseToolButton">
+       <property name="toolTip">
+        <string>Close the alternate bar.  CTRL+O to reshow it.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="list-remove">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="alternateLineEdit">
+       <property name="toolTip">
+        <string>Enter path for alternate location.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Enter /path/to/alternate/location</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QToolButton" name="alternateFileOpenToolButton">
+       <property name="toolTip">
+        <string>Open file dialog for alternate location.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="document-open">
+         <normaloff>.</normaloff>.</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="SeerEditorWidgetSourceArea" name="sourceWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -24,7 +97,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <layout class="QHBoxLayout" name="searchBarLayout">
      <item>
       <widget class="QLineEdit" name="searchTextLineEdit">

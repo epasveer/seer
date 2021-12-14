@@ -13,6 +13,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QToolTip>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
 #include <QtCore/QList>
@@ -419,6 +420,10 @@ void SeerEditorWidgetSourceArea::keyPressEvent (QKeyEvent* event) {
         emit showSearchBar(true);
     }
 
+    if (event->key() == Qt::Key_O && event->modifiers() == Qt::ControlModifier) {
+        emit showAlternateBar(true);
+    }
+
     QPlainTextEdit::keyPressEvent(event);
 }
 
@@ -580,6 +585,11 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     inputFile.open(QIODevice::ReadOnly);
 
     if (!inputFile.isOpen()) {
+
+        QMessageBox::critical(this, "Can't open source file.",  "Can't open : " + _fullname + "\nIts location may have changed.");
+
+        emit showAlternateBar(true);
+
         return;
     }
 

@@ -1,0 +1,17 @@
+void SeerMainWindow::handleText(const QString&) : "^done,OSDataTable={nr_rows=\"10\",nr_cols=\"3\",
+
+        hdr=[{width=\"10\",alignment=\"-1\",col_name=\"col0\",colhdr=\"Type\"},{width=\"10\",alignment=\"-1\",col_name=\"col1\",colhdr=\"Description\"},{width=\"10\",alignment=\"-1\",col_name=\"col2\",colhdr=\"Title\"}],
+        body=[
+            item={col0=\"cpus\",col1=\"Listing of all cpus/cores on the system\",col2=\"CPUs\"},
+            item={col0=\"files\",col1=\"Listing of all file descriptors\",col2=\"File descriptors\"},
+            item={col0=\"modules\",col1=\"Listing of all loaded kernel modules\",col2=\"Kernel modules\"},
+            item={col0=\"msg\",col1=\"Listing of all message queues\",col2=\"Message queues\"},
+            item={col0=\"processes\",col1=\"Listing of all processes\",col2=\"Processes\"},
+            item={col0=\"procgroups\",col1=\"Listing of all process groups\",col2=\"Process groups\"},
+            item={col0=\"semaphores\",col1=\"Listing of all semaphores\",col2=\"Semaphores\"},
+            item={col0=\"shm\",col1=\"Listing of all shared-memory regions\",col2=\"Shared-memory regions\"},
+            item={col0=\"sockets\",col1=\"Listing of all internet-domain sockets\",col2=\"Sockets\"},
+            item={col0=\"threads\",col1=\"Listing of all threads\",col2=\"Threads\"}
+            ]}"
+
+

@@ -717,7 +717,11 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
         return;
     }
 
-    w->showSearchBar(true);
+    if (w->isSearchBarShown() == true) {
+        w->showSearchBar(false);
+    }else{
+        w->showSearchBar(true);
+    }
 }
 
 void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {

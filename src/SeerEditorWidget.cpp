@@ -26,7 +26,8 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
 
     lineNumberLineEdit->setMaximumWidth(space);
 
-    showSearchBar(false); // Hide the search bar. ctrl+F to show it again.
+    showSearchBar(false);    // Hide the search bar. ctrl+F to show it again.
+    showAlternateBar(false); // Hide the alternate bar. ctrl+O to show it again.
 
     // Connect things.
     QObject::connect(searchTextLineEdit,    &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
@@ -35,6 +36,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     QObject::connect(lineNumberLineEdit,    &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleLineNumberLineEdit);
     QObject::connect(closeToolButton,       &QToolButton::clicked,                          this,  &SeerEditorWidget::handleCloseToolButton);
     QObject::connect(sourceWidget,          &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
+    QObject::connect(sourceWidget,          &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -113,6 +115,59 @@ void SeerEditorWidget::showSearchBar (bool flag) {
 
     // Update the layout.
     searchBarLayout->update();
+}
+
+bool SeerEditorWidget::isSearchBarShown () const {
+
+    bool shown = false;
+
+    // Go through the widgets in the search bar to see if any are visable.
+    for (int i = 0; i != searchBarLayout->count(); ++i) {
+        QWidget* w = searchBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            if (w->isVisible()) {
+                shown = true;
+            }
+        }
+    }
+
+    return shown;
+}
+
+void SeerEditorWidget::showAlternateBar (bool flag) {
+
+    // Go through the widgets in the search bar and hide/show them.
+    for (int i = 0; i != alternateBarLayout->count(); ++i) {
+        QWidget* w = alternateBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            w->setVisible(flag);
+        }
+    }
+
+    // If 'show', give the searchTextLineEdit the focus.
+    if (flag) {
+        alternateLineEdit->setFocus(Qt::MouseFocusReason);
+    }
+
+    // Update the layout.
+    alternateBarLayout->update();
+}
+
+bool SeerEditorWidget::isAlternateBarShown () const {
+
+    bool shown = false;
+
+    // Go through the widgets in the search bar to see if any are visable.
+    for (int i = 0; i != alternateBarLayout->count(); ++i) {
+        QWidget* w = alternateBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            if (w->isVisible()) {
+                shown = true;
+            }
+        }
+    }
+
+    return shown;
 }
 
 void SeerEditorWidget::handleCloseToolButton () {

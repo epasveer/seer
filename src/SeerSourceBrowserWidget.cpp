@@ -89,11 +89,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
                 continue;
             }
 
-            // Skip files that can't be found on disk???
-            if (fileInfo.exists() == false) {
-                continue;
-            }
-
             // Look at the filename suffix.
             if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "f" || fileInfo.suffix() == "f90") {
                 _sourceFilesItems->addChild(item);

@@ -76,6 +76,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         void                            evaluateVariableExpression  (int expressionid, QString expression);
         void                            addMemoryVisualize          (QString expression);
         void                            showSearchBar               (bool flag);
+        void                            showAlternateBar            (bool flag);
 
     public slots:
         void                            handleText                  (const QString& text);
@@ -196,5 +197,8 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
 
     public slots:
         void                            showSearchBar               (bool flag);
+        bool                            isSearchBarShown            () const;
+        void                            showAlternateBar            (bool flag);
+        bool                            isAlternateBarShown         () const;
 };
 
