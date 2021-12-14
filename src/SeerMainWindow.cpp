@@ -6,6 +6,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/QMenu>
 #include <QtGui/QKeySequence>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
@@ -36,12 +37,37 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QShortcut* continueKeyF8 = new QShortcut(QKeySequence(Qt::Key_F8), this);
 
     //
+    // Set up Interrupt menu.
+    //
+    QMenu* interruptMenu = new QMenu(this);
+    QAction* interruptAction = interruptMenu->addAction("GDB Interrupt");
+    interruptMenu->addSeparator();
+    QAction* interruptActionSIGINT  = interruptMenu->addAction("SIGINT");
+    QAction* interruptActionSIGKILL = interruptMenu->addAction("SIGKILL");
+    QAction* interruptActionSIGFPE  = interruptMenu->addAction("SIGFPE");
+    QAction* interruptActionSIGSEGV = interruptMenu->addAction("SIGSEGV");
+    QAction* interruptActionSIGUSR1 = interruptMenu->addAction("SIGUSR1");
+    QAction* interruptActionSIGUSR2 = interruptMenu->addAction("SIGUSR2");
+
+    actionInterruptProcess->setMenu(interruptMenu);
+
+    //
     // Set up signals/slots.
     //
     QObject::connect(actionFileDebug,               &QAction::triggered,                    this,           &SeerMainWindow::handleFileDebug);
     QObject::connect(actionFileArguments,           &QAction::triggered,                    this,           &SeerMainWindow::handleFileArguments);
     QObject::connect(actionFileQuit,                &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
+    QObject::connect(actionViewMemoryVisualizer,    &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
+    QObject::connect(actionViewArrayVisualizer,     &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
     QObject::connect(actionHelpAbout,               &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
+
+    QObject::connect(actionControlRun,              &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionControlStart,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionControlContinue,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlFinish,           &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlInterrupt,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
     QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
@@ -50,6 +76,15 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionGdbStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionGdbFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
     QObject::connect(actionInterruptProcess,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionMemoryVisualizer,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbMemoryVisualizer);
+    QObject::connect(actionArrayVisualizer,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(interruptAction,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(interruptActionSIGINT,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGINT);
+    QObject::connect(interruptActionSIGKILL,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGKILL);
+    QObject::connect(interruptActionSIGFPE,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGFPE);
+    QObject::connect(interruptActionSIGSEGV,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGSEGV);
+    QObject::connect(interruptActionSIGUSR1,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR1);
+    QObject::connect(interruptActionSIGUSR2,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR2);
 
     QObject::connect(nextKeyF5,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
     QObject::connect(stepKeyF6,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbStep);
@@ -211,6 +246,16 @@ void SeerMainWindow::handleFileQuit () {
     QCoreApplication::exit(0);
 }
 
+void SeerMainWindow::handleViewMemoryVisualizer () {
+
+    centralwidget->handleGdbMemoryVisualizer();
+}
+
+void SeerMainWindow::handleViewArrayVisualizer () {
+
+    centralwidget->handleGdbArrayVisualizer();
+}
+
 void SeerMainWindow::handleHelpAbout () {
 
     SeerAboutDialog dlg(this);
@@ -315,6 +360,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text == "^exit") {
         return;
 
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done"))) {
+        return;
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
         return;
 
@@ -334,6 +382,8 @@ void SeerMainWindow::handleText (const QString& text) {
 
     }else if (text.startsWith("*stopped,frame=")) {
         //*stopped,frame={addr=\"0x00007f0ee0d2d954\",func=\"rfft\",args=[{name=\"a\",value=\"...\"},...
+        //*stopped,frame={addr="0x00007f608ec49fc0",func="__pthread_clockjoin_ex",args=[],from="/lib64/libpthread.so.0",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
+        //*stopped,frame={addr="0x00007ff831151329",func="cfft",args=[{name="a",value="..."},{name="n",value="512"},{name="iflg",value="1"}],file="sssMathlib.f",fullname="/home/erniep/Development/Peak/src/Core/Math/sssMathlib.f",line="767",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
         return;
 
     }else if (text.startsWith("^connected,frame=")) {

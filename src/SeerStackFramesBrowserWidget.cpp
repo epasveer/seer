@@ -16,17 +16,12 @@ SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : Q
     stackTreeWidget->setMouseTracking(true);
     stackTreeWidget->setSortingEnabled(false);
     stackTreeWidget->resizeColumnToContents(0); // level
-    stackTreeWidget->resizeColumnToContents(1); // addr
-    stackTreeWidget->resizeColumnToContents(2); // func
-    stackTreeWidget->resizeColumnToContents(3); // file
+    stackTreeWidget->resizeColumnToContents(1); // func
+    stackTreeWidget->resizeColumnToContents(2); // file
+    stackTreeWidget->resizeColumnToContents(3); // line
     stackTreeWidget->resizeColumnToContents(4); // fullname
-    stackTreeWidget->resizeColumnToContents(5); // line
+    stackTreeWidget->resizeColumnToContents(5); // addr
     stackTreeWidget->resizeColumnToContents(6); // arch
-
-    /*
-    stackTreeWidget->setColumnHidden(1, true); // ??? Hide or have a config to hide/show columns.
-    stackTreeWidget->setColumnHidden(6, true);
-    */
 
     stackTreeWidget->clear();
 
@@ -83,16 +78,24 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
 
                     //qDebug() << __PRETTY_FUNCTION__ << ":" << file_text << fullname_text;
 
-                    // Add the frame to the tree.
+                    // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;
                     item->setText(0, level_text);
-                    item->setText(1, addr_text);
-                    item->setText(2, func_text);
-                    item->setText(3, file_text);
+                    item->setText(1, func_text);
+                    item->setText(2, file_text);
+                    item->setText(3, line_text);
                     item->setText(4, fullname_text);
-                    item->setText(5, line_text);
+                    item->setText(5, addr_text);
                     item->setText(6, arch_text);
 
+                    // Enable/disable interaction with this row depending if there is a valid file and line number.
+                    if (file_text != "" && fullname_text != "" && line_text != "") {
+                        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+                    }else{
+                        item->setFlags(Qt::NoItemFlags);
+                    }
+
+                    // Add the frame to the tree.
                     stackTreeWidget->addTopLevelItem(item);
                 }
             }
@@ -143,11 +146,11 @@ void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
     Q_UNUSED(column);
 
-    int lineno = item->text(5).toInt();
+    int lineno = item->text(3).toInt();
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
 
-    emit selectedFile(item->text(3), item->text(4), lineno);
+    emit selectedFile(item->text(2), item->text(4), lineno);
     emit selectedFrame(item->text(0).toInt());
 }
 
@@ -155,7 +158,7 @@ void SeerStackFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(2) + " : " + item->text(3) + " : " + item->text(5));
+    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2) + " : " + item->text(3));
 
     for (int i=1; i<stackTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));

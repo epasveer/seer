@@ -1,0 +1,29 @@
+
+See this project to install GDB pretty printers for the QT5 objects (QString, QMap, etc...)
+
+    https://github.com/Lekensteyn/qt5printers
+
+See this GDB documentation for writing/using pretty printers.
+
+    https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html
+
+
+Note, this "old" style of printing a QString has a problem in Seer. It only prints on
+the "GDB output" log and each letter of the string appears on its own line. Not recommended
+to use it.
+
+    define printqs5dynamic
+        set $d=(QStringData*)$arg0.d
+        printf "(Qt5 QString)0x%x length=%i: \"",&$arg0,$d->size
+        set $i=0
+        while $i < $d->size
+            set $c=$d->data()[$i++]
+            if $c < 32 || $c > 127
+                printf "\\u%04x", $c
+            else
+                printf "%c" , (char)$c
+            end
+        end
+        printf "\"\n"
+    end
+

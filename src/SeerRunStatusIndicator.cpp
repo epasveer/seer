@@ -90,6 +90,12 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
     }else if (text.startsWith("*stopped,reason=\"signal-received\"")) {
         setRunStatus(SeerRunStatusIndicator::Stopped);
 
+    }else if (text.startsWith("*stopped,frame=")) {
+        //*stopped,frame={addr=\"0x00007f0ee0d2d954\",func=\"rfft\",args=[{name=\"a\",value=\"...\"},...
+        //*stopped,frame={addr="0x00007f608ec49fc0",func="__pthread_clockjoin_ex",args=[],from="/lib64/libpthread.so.0",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
+        //*stopped,frame={addr="0x00007ff831151329",func="cfft",args=[{name="a",value="..."},{name="n",value="512"},{name="iflg",value="1"}],file="sssMathlib.f",fullname="/home/erniep/Development/Peak/src/Core/Math/sssMathlib.f",line="767",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
+        setRunStatus(SeerRunStatusIndicator::Stopped);
+
     }else if (text.startsWith("*stopped,reason=\"exited-normally\"")) {
         setRunStatus(SeerRunStatusIndicator::Idle);
 
@@ -100,10 +106,6 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
 
     }else if (text.startsWith("*stopped,reason=\"exited\"")) {
         setRunStatus(SeerRunStatusIndicator::Idle);
-
-    }else if (text.startsWith("*stopped,frame=")) {
-        //*stopped,frame={addr=\"0x00007f0ee0d2d954\",func=\"rfft\",args=[{name=\"a\",value=\"...\"},...
-        return;
 
     }else if (text.startsWith("^connected,frame=")) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"

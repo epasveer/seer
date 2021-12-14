@@ -795,10 +795,14 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* enableAction;
     QAction* disableAction;
     QAction* runToLineAction;
-    QAction* addVariableExpressionAction;
-    QAction* addVariableAsteriskExpressionAction;
-    QAction* addVariableAmpersandExpressionAction;
-    QAction* addVariableAsteriskAmpersandExpressionAction;
+    QAction* addVariableLoggerExpressionAction;
+    QAction* addVariableLoggerAsteriskExpressionAction;
+    QAction* addVariableLoggerAmpersandExpressionAction;
+    QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerExpressionAction;
+    QAction* addVariableTrackerAsteriskExpressionAction;
+    QAction* addVariableTrackerAmpersandExpressionAction;
+    QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
@@ -834,13 +838,17 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         runToLineAction->setEnabled(true);
     }
 
-    addVariableExpressionAction                  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addVariableAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addVariableAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addVariableAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
-    addMemoryVisualizerAction                    = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addMemoryAsteriskVisualizerAction            = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addMemoryAmpersandVisualizerAction           = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
+    addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
+    addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
@@ -850,11 +858,18 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     menu.addAction(disableAction);
     menu.addAction(runToLineAction);
 
+    QMenu loggerMenu("Add variable to Logger");
+    loggerMenu.addAction(addVariableLoggerExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    menu.addMenu(&loggerMenu);
+
     QMenu trackerMenu("Add variable to Tracker");
-    trackerMenu.addAction(addVariableExpressionAction);
-    trackerMenu.addAction(addVariableAsteriskExpressionAction);
-    trackerMenu.addAction(addVariableAmpersandExpressionAction);
-    trackerMenu.addAction(addVariableAsteriskAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
     menu.addMenu(&trackerMenu);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
@@ -865,18 +880,26 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Enable/disable items based on something being selected or not.
     if (textCursor().selectedText() == "") {
-        addVariableExpressionAction->setEnabled(false);
-        addVariableAsteriskExpressionAction->setEnabled(false);
-        addVariableAmpersandExpressionAction->setEnabled(false);
-        addVariableAsteriskAmpersandExpressionAction->setEnabled(false);
+        addVariableLoggerExpressionAction->setEnabled(false);
+        addVariableLoggerAsteriskExpressionAction->setEnabled(false);
+        addVariableLoggerAmpersandExpressionAction->setEnabled(false);
+        addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(false);
+        addVariableTrackerExpressionAction->setEnabled(false);
+        addVariableTrackerAsteriskExpressionAction->setEnabled(false);
+        addVariableTrackerAmpersandExpressionAction->setEnabled(false);
+        addVariableTrackerAsteriskAmpersandExpressionAction->setEnabled(false);
         addMemoryVisualizerAction->setEnabled(false);
         addMemoryAsteriskVisualizerAction->setEnabled(false);
         addMemoryAmpersandVisualizerAction->setEnabled(false);
     }else{
-        addVariableExpressionAction->setEnabled(true);
-        addVariableAsteriskExpressionAction->setEnabled(true);
-        addVariableAmpersandExpressionAction->setEnabled(true);
-        addVariableAsteriskAmpersandExpressionAction->setEnabled(true);
+        addVariableLoggerExpressionAction->setEnabled(true);
+        addVariableLoggerAsteriskExpressionAction->setEnabled(true);
+        addVariableLoggerAmpersandExpressionAction->setEnabled(true);
+        addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(true);
+        addVariableTrackerExpressionAction->setEnabled(true);
+        addVariableTrackerAsteriskExpressionAction->setEnabled(true);
+        addVariableTrackerAmpersandExpressionAction->setEnabled(true);
+        addVariableTrackerAsteriskAmpersandExpressionAction->setEnabled(true);
         addMemoryVisualizerAction->setEnabled(true);
         addMemoryAsteriskVisualizerAction->setEnabled(true);
         addMemoryAmpersandVisualizerAction->setEnabled(true);
@@ -955,57 +978,109 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
-    // Handle adding a variable to track.
-    if (action == addVariableExpressionAction) {
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableExpression" << lineno;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addVariableExpression(textCursor().selectedText());
-            emit refreshVariableValues();
+            emit addVariableLoggerExpression(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAsteriskExpressionAction) {
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAsteriskExpression" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableLoggerExpression(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAmpersandExpressionAction) {
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAmpersandExpression" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableLoggerExpression(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAsteriskAmpersandExpression" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableLoggerExpression(QString("*&") + textCursor().selectedText());
         }
 
         return;
     }
 
     // Handle adding a variable to track.
-    if (action == addVariableAsteriskExpressionAction) {
+    if (action == addVariableTrackerExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableAsteriskExpression" << lineno;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addVariableExpression(QString("*") + textCursor().selectedText());
-            emit refreshVariableValues();
+            emit addVariableTrackerExpression(textCursor().selectedText());
+            emit refreshVariableTrackerValues();
         }
 
         return;
     }
 
     // Handle adding a variable to track.
-    if (action == addVariableAmpersandExpressionAction) {
+    if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableAmpersandExpression" << lineno;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAsteriskExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addVariableExpression(QString("&") + textCursor().selectedText());
-            emit refreshVariableValues();
+            emit addVariableTrackerExpression(QString("*") + textCursor().selectedText());
+            emit refreshVariableTrackerValues();
         }
 
         return;
     }
 
     // Handle adding a variable to track.
-    if (action == addVariableAsteriskAmpersandExpressionAction) {
+    if (action == addVariableTrackerAmpersandExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableAsteriskAmpersandExpression" << lineno;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addVariableExpression(QString("*&") + textCursor().selectedText());
-            emit refreshVariableValues();
+            emit addVariableTrackerExpression(QString("&") + textCursor().selectedText());
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAsteriskAmpersandExpression" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableTrackerExpression(QString("*&") + textCursor().selectedText());
+            emit refreshVariableTrackerValues();
         }
 
         return;
@@ -1278,6 +1353,49 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         // thread-id=\"1\",
         // stopped-threads=\"all\",
         // core=\"6\"
+
+        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+
+        QString frame_text = Seer::parseFirst(newtext, "frame=", '{', '}', false);
+
+        if (frame_text == "") {
+            return;
+        }
+
+        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+        QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
+        QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << file_text << line_text;
+
+        // Read the file if it hasn't been read before or if we are reading a different file.
+        if (fullname_text != fullname()) {
+            open(fullname_text, file_text);
+        }
+
+        // Set to the line number.
+        setCurrentLine(line_text.toInt());
+
+        return;
+
+    }else if (text.startsWith("*stopped,frame=")) {
+
+        // *stopped,
+        //
+        // frame={addr="0x00007ff831151329",
+        //        func="cfft",
+        //        args=[{name="a",value="..."},
+        //              {name="n",value="512"},
+        //              {name="iflg",value="1"}],
+        //        file="sssMathlib.f",
+        //        fullname="/home/erniep/Development/Peak/src/Core/Math/sssMathlib.f",
+        //        line="767",
+        //        arch="i386:x86-64"},
+        //
+        // thread-id="1",
+        // stopped-threads="all",
+        // core="3"
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 

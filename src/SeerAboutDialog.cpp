@@ -2,6 +2,8 @@
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
 
@@ -10,13 +12,18 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
 
     // Setup the widgets
 
-    // Add the Version number to the end of the About text.
-    // Scroll back to the top.
-    textEdit->moveCursor (QTextCursor::End);
-    textEdit->insertPlainText ("\n");
-    textEdit->insertPlainText ("\n");
-    textEdit->insertPlainText ("Version: " + Seer::version());
-    textEdit->insertPlainText ("\n");
+    // Add the Version number to the beggining of the About text.
+    textEdit->moveCursor (QTextCursor::Start);
+    textEdit->setText ("\n");
+    textEdit->append ("Version: " + Seer::version());
+
+    // Add the About text from the resource.
+    QFile file(":/seer/resources/about.txt");
+    file.open(QFile::ReadOnly | QFile::Text);
+
+    QTextStream stream(&file);
+    textEdit->append(stream.readAll());
+
     textEdit->moveCursor (QTextCursor::Start);
 
     // Set the TextEdit's background to the same as the window's.

@@ -63,6 +63,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbFinish                     ();
         void                                handleGdbContinue                   ();
         void                                handleGdbInterrupt                  ();
+        void                                handleGdbInterruptSIGINT            ();
+        void                                handleGdbInterruptSIGKILL           ();
+        void                                handleGdbInterruptSIGFPE            ();
+        void                                handleGdbInterruptSIGSEGV           ();
+        void                                handleGdbInterruptSIGUSR1           ();
+        void                                handleGdbInterruptSIGUSR2           ();
         void                                handleGdbExecutableSources          ();
         void                                handleGdbExecutableSharedLibraries  ();
         void                                handleGdbExecutableName             ();
@@ -95,6 +101,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbDataDeleteExpressions      (QString expressionids);
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleGdbMemoryVisualizer           ();
+        void                                handleGdbArrayAddExpression         (QString expression);
+        void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
 
         void                                handleFinished                      (int exitCode, QProcess::ExitStatus exitStatus);
@@ -112,6 +121,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
+        void                                sendGdbInterrupt                    (int signal);
 
 
         QString                             _executableName;

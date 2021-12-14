@@ -21,7 +21,13 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
         SeerStackLocalsBrowserWidget*                   stackLocalsBrowserWidget            ();
 
     signals:
+        void                                            refreshThreadFrames                 ();
+
     public slots:
+        void                                            handleText                          (const QString& text);
+        void                                            handleStoppingPointReached          ();
+        void                                            refresh                             ();
+
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
 

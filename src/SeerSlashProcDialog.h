@@ -18,6 +18,8 @@ class SeerSlashProcDialog : public QDialog, protected Ui::SeerSlashProcDialogFor
         QString             selectedCommandLine         () const;
 
     public slots:
+    private slots:
+        void                handlePidSelected           ();
 
     private:
 };

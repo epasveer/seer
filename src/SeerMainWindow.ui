@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1250</width>
-    <height>1000</height>
+    <width>726</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1250</width>
-     <height>26</height>
+     <width>726</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -40,15 +40,12 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionViewMemoryVisualizer"/>
+    <addaction name="actionViewArrayVisualizer"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
      <string>Settings</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuWindow">
-    <property name="title">
-     <string>Window</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -57,11 +54,24 @@
     </property>
     <addaction name="actionHelpAbout"/>
    </widget>
+   <widget class="QMenu" name="menuControl">
+    <property name="title">
+     <string>Control</string>
+    </property>
+    <addaction name="actionControlRun"/>
+    <addaction name="actionControlStart"/>
+    <addaction name="actionControlContinue"/>
+    <addaction name="actionControlNext"/>
+    <addaction name="actionControlStep"/>
+    <addaction name="actionControlFinish"/>
+    <addaction name="separator"/>
+    <addaction name="actionControlInterrupt"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuControl"/>
    <addaction name="menuView"/>
    <addaction name="menuSettings"/>
-   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -86,6 +96,9 @@
    <addaction name="actionGdbFinish"/>
    <addaction name="separator"/>
    <addaction name="actionInterruptProcess"/>
+   <addaction name="separator"/>
+   <addaction name="actionMemoryVisualizer"/>
+   <addaction name="actionArrayVisualizer"/>
   </widget>
   <action name="actionGdbQuit">
    <property name="text">
@@ -96,11 +109,18 @@
    </property>
   </action>
   <action name="actionFileQuit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/exit.png</normaloff>:/seer/resources/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
    <property name="toolTip">
-    <string>Quit the  Seer debugger</string>
+    <string>Quit</string>
+   </property>
+   <property name="statusTip">
+    <string>Quit the  Seer debugger.</string>
    </property>
   </action>
   <action name="actionGdbStart">
@@ -176,16 +196,33 @@
    </property>
   </action>
   <action name="actionFileDebug">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/debug.png</normaloff>:/seer/resources/debug.png</iconset>
+   </property>
    <property name="text">
     <string>Debug...</string>
    </property>
    <property name="toolTip">
-    <string>Load an Executable to Debug</string>
+    <string>Debug</string>
+   </property>
+   <property name="statusTip">
+    <string>Load an executable to debug.</string>
    </property>
   </action>
   <action name="actionFileArguments">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/arguments.png</normaloff>:/seer/resources/arguments.png</iconset>
+   </property>
    <property name="text">
     <string>Arguments...</string>
+   </property>
+   <property name="toolTip">
+    <string>Arguments</string>
+   </property>
+   <property name="statusTip">
+    <string>Specify new arguments to the current executable.</string>
    </property>
   </action>
   <action name="actionInterruptProcess">
@@ -197,12 +234,172 @@
     <string>Interrupt</string>
    </property>
    <property name="toolTip">
-    <string>Send a 'Terminate' signal to the process.</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send a 'Terminate' signal to the process.&lt;br/&gt;&lt;br/&gt;Hold down for alternate signals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="actionHelpAbout">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/seer_32x32.png</normaloff>:/seer/resources/seer_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>About Seer</string>
+   </property>
+   <property name="statusTip">
+    <string>About Seer</string>
+   </property>
+  </action>
+  <action name="actionMemoryVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Memory</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Memory Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionArrayVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Array</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Array Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionViewMemoryVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Memory Visualizer</string>
+   </property>
+   <property name="statusTip">
+    <string>Launch a blank Memory Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionViewArrayVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Array Visualizer</string>
+   </property>
+   <property name="statusTip">
+    <string>Launch a blank Array Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionControlRun">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+   <property name="toolTip">
+    <string>Run</string>
+   </property>
+   <property name="statusTip">
+    <string>Start the program in GDB. Honor breakpoints, if any.</string>
+   </property>
+  </action>
+  <action name="actionControlStart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start</string>
+   </property>
+   <property name="statusTip">
+    <string>Start the program in GDB. Stop in main().</string>
+   </property>
+  </action>
+  <action name="actionControlContinue">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/continue.png</normaloff>:/seer/resources/continue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Continue</string>
+   </property>
+   <property name="toolTip">
+    <string>Continue</string>
+   </property>
+   <property name="statusTip">
+    <string>Continue executing the program. Stop at any breakpoints, or when the program exits.</string>
+   </property>
+  </action>
+  <action name="actionControlNext">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next</string>
+   </property>
+   <property name="toolTip">
+    <string>Next</string>
+   </property>
+   <property name="statusTip">
+    <string>Execute next step, step over functions.</string>
+   </property>
+  </action>
+  <action name="actionControlStep">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
+   </property>
+   <property name="text">
+    <string>Step</string>
+   </property>
+   <property name="toolTip">
+    <string>Step</string>
+   </property>
+   <property name="statusTip">
+    <string>Execute next step, step into functions.</string>
+   </property>
+  </action>
+  <action name="actionControlFinish">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_out.png</normaloff>:/seer/resources/step_out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Finish</string>
+   </property>
+   <property name="toolTip">
+    <string>Finish</string>
+   </property>
+   <property name="statusTip">
+    <string>Execute the remaining function, stop after it exits.</string>
+   </property>
+  </action>
+  <action name="actionControlInterrupt">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/stop.png</normaloff>:/seer/resources/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Interrupt</string>
+   </property>
+   <property name="toolTip">
+    <string>Interrupt</string>
+   </property>
+   <property name="statusTip">
+    <string>Send a 'Terminate' signal to the process.</string>
    </property>
   </action>
  </widget>

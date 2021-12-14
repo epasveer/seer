@@ -12,15 +12,20 @@ class SeerSlashProcWidget : public QWidget, protected Ui::SeerSlashProcWidgetFor
         explicit SeerSlashProcWidget (QWidget* parent = 0);
        ~SeerSlashProcWidget ();
 
-        int                 selectedPid                 () const;
-        QString             selectedName                () const;
-        QString             selectedCommandLine         () const;
+        int                 selectedPid                     () const;
+        QString             selectedUsername                () const;
+        QString             selectedName                    () const;
+        QString             selectedCommandLine             () const;
+
+    signals:
+        void                pidSelected                     ();
 
     public slots:
-        void                refresh                     ();
 
     protected slots:
-        void                handleSearchLineEdit        (const QString& text);
+        void                refreshList                     ();
+        void                refreshView                     ();
+        void                handleDoubleClicked             ();
 
     protected:
     private:
