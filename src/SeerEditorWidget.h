@@ -77,6 +77,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         void                            evaluateVariableExpression      (int expressionid, QString expression);
         void                            addMemoryVisualize              (QString expression);
         void                            showSearchBar                   (bool flag);
+        void                            showAlternateBar                (bool flag);
 
     public slots:
         void                            handleText                      (const QString& text);
