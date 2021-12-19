@@ -20,5 +20,7 @@
     <file>resources/seer_32x32.png</file>
     <file>resources/seer_512x512.png</file>
     <file>resources/seer_64x64.png</file>
+    <file>resources/gdb.png</file>
+    <file>resources/editor.png</file>
   </qresource>
 </RCC>

@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>726</width>
-     <height>30</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -47,6 +47,7 @@
     <property name="title">
      <string>Settings</string>
     </property>
+    <addaction name="actionSettingsConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -400,6 +401,15 @@
    </property>
    <property name="statusTip">
     <string>Send a 'Terminate' signal to the process.</string>
+   </property>
+  </action>
+  <action name="actionSettingsConfiguration">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/arguments.png</normaloff>:/seer/resources/arguments.png</iconset>
+   </property>
+   <property name="text">
+    <string>Configuration...</string>
    </property>
   </action>
  </widget>

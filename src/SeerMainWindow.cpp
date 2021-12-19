@@ -1,6 +1,7 @@
 #include "SeerMainWindow.h"
 #include "SeerRunStatusIndicator.h"
 #include "SeerDebugDialog.h"
+#include "SeerConfigDialog.h"
 #include "SeerArgumentsDialog.h"
 #include "SeerAboutDialog.h"
 #include "SeerUtl.h"
@@ -68,6 +69,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlStep,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionControlFinish,           &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
     QObject::connect(actionControlInterrupt,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+
+    QObject::connect(actionSettingsConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
 
     QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
     QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
@@ -254,6 +257,44 @@ void SeerMainWindow::handleViewMemoryVisualizer () {
 void SeerMainWindow::handleViewArrayVisualizer () {
 
     centralwidget->handleGdbArrayVisualizer();
+}
+
+void SeerMainWindow::handleSettingsConfiguration () {
+
+    SeerConfigDialog dlg(this);
+
+    /*
+    dlg.setExecutableName(executableName());
+    dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
+    dlg.setExecutableArguments(executableArguments());
+    dlg.setAttachPid(executablePid());
+    dlg.setConnectHostPort(executableHostPort());
+    dlg.setCoreFilename(executableCoreFilename());
+    dlg.setLaunchMode(executableLaunchMode());
+    */
+
+    int ret = dlg.exec();
+
+    if (ret == 0) {
+        return;
+    }
+
+    /*
+    QString launchMode = dlg.launchMode();
+
+    if (launchMode == "") {
+        return;
+    }
+
+    setExecutableName(dlg.executableName());
+    setExecutableWorkingDirectory(dlg.executableWorkingDirectory());
+    setExecutableArguments(dlg.executableArguments());
+    setExecutablePid(dlg.attachPid());
+    setExecutableHostPort(dlg.connectHostPort());
+    setExecutableCoreFilename(dlg.coreFilename());
+
+    launchExecutable(launchMode);
+    */
 }
 
 void SeerMainWindow::handleHelpAbout () {

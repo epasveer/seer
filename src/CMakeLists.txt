@@ -25,6 +25,9 @@ set(HEADER_FILES
     SeerBreakpointsBrowserWidget.h
     SeerCaretAsteriskLogWidget.h
     SeerConsoleWidget.h
+    SeerConfigDialog.h
+    SeerGdbConfigPage.h
+    SeerEditorConfigPage.h
     SeerDebugDialog.h
     SeerDirectoryFilterProxyModel.h
     SeerEditorManagerEntry.h
@@ -66,13 +69,16 @@ set(HEADER_FILES
     )
 
 set(SOURCE_FILES
+    seer.cpp
     GdbMonitor.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
     SeerBreakpointsBrowserWidget.cpp
     SeerCaretAsteriskLogWidget.cpp
     SeerConsoleWidget.cpp
-    seer.cpp
+    SeerConfigDialog.cpp
+    SeerGdbConfigPage.cpp
+    SeerEditorConfigPage.cpp
     SeerDebugDialog.cpp
     SeerEditorManagerWidget.cpp
     SeerEditorOptionsBarWidget.cpp
