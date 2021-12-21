@@ -1,11 +1,8 @@
+#include "SeerConfigDialog.h"
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QStackedWidget>
 #include <QtCore/QDebug>
-
-#include "SeerConfigDialog.h"
-#include "SeerGdbConfigPage.h"
-#include "SeerEditorConfigPage.h"
 
 SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
 
@@ -19,12 +16,20 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     contentsListWidget->setMaximumWidth(128);
     contentsListWidget->setSpacing(12);
 
-    //pagesStackedWidget->addWidget(new SeerGdbConfigPage);
-    //pagesStackedWidget->addWidget(new UpdatePage);
-    //pagesStackedWidget->addWidget(new QueryPage);
-    SeerGdbConfigPage* gdbConfigPage = dynamic_cast<SeerGdbConfigPage*>(pagesStackedWidget->widget(0));
-    gdbConfigPage->gdbProgramLineEdit->setText("/usr/bin/gdb");
-    gdbConfigPage->gdbArgumentsLineEdit->setText("--interpreter=mi");
+    // Create pages.
+    _gdbConfigPage    = new SeerGdbConfigPage;
+    _editorConfigPage = new SeerEditorConfigPage;
+    _sourceConfigPage = new SeerSourceConfigPage;
+    _seerConfigPage   = new SeerSeerConfigPage;
+
+    // Add the pages to the stacked widget.
+    pagesStackedWidget->addWidget(_gdbConfigPage);
+    pagesStackedWidget->addWidget(_editorConfigPage);
+    pagesStackedWidget->addWidget(_sourceConfigPage);
+    pagesStackedWidget->addWidget(_seerConfigPage);
+
+    _gdbConfigPage->gdbProgramLineEdit->setText("/usr/bin/gdb");
+    _gdbConfigPage->gdbArgumentsLineEdit->setText("--interpreter=mi");
 
     // Create icons.
     QListWidgetItem* configGdbButton = new QListWidgetItem(contentsListWidget);
@@ -39,11 +44,23 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configEditorButton->setTextAlignment(Qt::AlignHCenter);
     configEditorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-    // Set to first page.
-    contentsListWidget->setCurrentRow(0);
+    QListWidgetItem* configSourceButton = new QListWidgetItem(contentsListWidget);
+    configSourceButton->setIcon(QIcon(":/seer/resources/source.png"));
+    configSourceButton->setText(tr("Source"));
+    configSourceButton->setTextAlignment(Qt::AlignHCenter);
+    configSourceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
+    configSeerButton->setIcon(QIcon(":/seer/resources/seer_128x128.png"));
+    configSeerButton->setText(tr("Seer"));
+    configSeerButton->setTextAlignment(Qt::AlignHCenter);
+    configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     // Connect things.
     connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::changePage);
+
+    // Set to first page.
+    contentsListWidget->setCurrentRow(0);
 }
 
 SeerConfigDialog::~SeerConfigDialog() {

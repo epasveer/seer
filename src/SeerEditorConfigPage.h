@@ -4,7 +4,7 @@
 
 #include "ui_SeerEditorConfigPage.h"
 
-class SeerEditorConfigPage : public QWidget, protected Ui::SeerEditorConfigPage {
+class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
 
     Q_OBJECT
 

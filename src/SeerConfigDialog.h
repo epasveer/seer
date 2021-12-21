@@ -1,12 +1,17 @@
 #pragma once
 
+#include "SeerGdbConfigPage.h"
+#include "SeerEditorConfigPage.h"
+#include "SeerSourceConfigPage.h"
+#include "SeerSeerConfigPage.h"
+
 #include <QtWidgets/QDialog>
+
+#include "ui_SeerConfigDialog.h"
 
 class QListWidget;
 class QListWidgetItem;
 class QStackedWidget;
-
-#include "ui_SeerConfigDialog.h"
 
 class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
 
@@ -20,6 +25,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                    changePage              (QListWidgetItem* current, QListWidgetItem* previous);
 
     private:
-
+        SeerGdbConfigPage*      _gdbConfigPage;
+        SeerEditorConfigPage*   _editorConfigPage;
+        SeerSourceConfigPage*   _sourceConfigPage;
+        SeerSeerConfigPage*     _seerConfigPage;
 };
 

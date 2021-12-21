@@ -32,20 +32,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <widget class="QWidget" name="page_1">
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="SeerGdbConfigPage" name="gdbConfigPage" native="true"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_2">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="SeerEditorConfigPage" name="editorConfigPage" native="true"/>
-       </item>
-      </layout>
-     </widget>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
     </widget>
    </item>
    <item row="1" column="1">
@@ -60,20 +49,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SeerGdbConfigPage</class>
-   <extends>QWidget</extends>
-   <header location="global">SeerGdbConfigPage.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SeerEditorConfigPage</class>
-   <extends>QWidget</extends>
-   <header location="global">SeerEditorConfigPage.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>
