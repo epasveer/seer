@@ -263,15 +263,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
 
     SeerConfigDialog dlg(this);
 
-    /*
-    dlg.setExecutableName(executableName());
-    dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
-    dlg.setExecutableArguments(executableArguments());
-    dlg.setAttachPid(executablePid());
-    dlg.setConnectHostPort(executableHostPort());
-    dlg.setCoreFilename(executableCoreFilename());
-    dlg.setLaunchMode(executableLaunchMode());
-    */
+    dlg.setGdbProgram(centralwidget->gdbProgram());
+    dlg.setGdbArguments(centralwidget->gdbArguments());
+    dlg.setGdbAsyncMode(centralwidget->gdbAsyncMode());
 
     int ret = dlg.exec();
 
@@ -279,22 +273,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
         return;
     }
 
-    /*
-    QString launchMode = dlg.launchMode();
-
-    if (launchMode == "") {
-        return;
-    }
-
-    setExecutableName(dlg.executableName());
-    setExecutableWorkingDirectory(dlg.executableWorkingDirectory());
-    setExecutableArguments(dlg.executableArguments());
-    setExecutablePid(dlg.attachPid());
-    setExecutableHostPort(dlg.connectHostPort());
-    setExecutableCoreFilename(dlg.coreFilename());
-
-    launchExecutable(launchMode);
-    */
+    centralwidget->setGdbProgram(dlg.gdbProgram());
+    centralwidget->setGdbArguments(dlg.gdbArguments());
+    centralwidget->setGdbAsyncMode(dlg.gdbAsyncMode());
 }
 
 void SeerMainWindow::handleHelpAbout () {

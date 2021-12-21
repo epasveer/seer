@@ -47,6 +47,16 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableLaunchMode             (const QString& launchMode);
         const QString&                      executableLaunchMode                () const;
 
+        // Gdb settings.
+        void                                setGdbProgram                       (const QString& program);
+        QString                             gdbProgram                          () const;
+
+        void                                setGdbArguments                     (const QString& arguments);
+        QString                             gdbArguments                        () const;
+
+        void                                setGdbAsyncMode                     (bool flag);
+        bool                                gdbAsyncMode                        () const;
+
     public slots:
         void                                handleText                          (const QString& text);
         void                                handleExecute                       ();
@@ -124,6 +134,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                sendGdbInterrupt                    (int signal);
 
 
+        QString                             _gdbProgram;
+        QString                             _gdbArguments;
+        bool                                _gdbASyncMode;
         QString                             _executableName;
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;

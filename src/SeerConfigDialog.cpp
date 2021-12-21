@@ -28,9 +28,6 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     pagesStackedWidget->addWidget(_sourceConfigPage);
     pagesStackedWidget->addWidget(_seerConfigPage);
 
-    _gdbConfigPage->gdbProgramLineEdit->setText("/usr/bin/gdb");
-    _gdbConfigPage->gdbArgumentsLineEdit->setText("--interpreter=mi");
-
     // Create icons.
     QListWidgetItem* configGdbButton = new QListWidgetItem(contentsListWidget);
     configGdbButton->setIcon(QIcon(":/seer/resources/gdb.png"));
@@ -75,5 +72,35 @@ void SeerConfigDialog::changePage(QListWidgetItem* current, QListWidgetItem* pre
     }
 
     pagesStackedWidget->setCurrentIndex(contentsListWidget->row(current));
+}
+
+QString SeerConfigDialog::gdbProgram () const {
+
+    return _gdbConfigPage->gdbProgram();
+}
+
+QString SeerConfigDialog::gdbArguments () const {
+
+    return _gdbConfigPage->gdbArguments();
+}
+
+bool SeerConfigDialog::gdbAsyncMode () const {
+
+    return _gdbConfigPage->gdbAsyncMode();
+}
+
+void SeerConfigDialog::setGdbProgram (const QString& program) {
+
+    _gdbConfigPage->setGdbProgram(program);
+}
+
+void SeerConfigDialog::setGdbArguments (const QString& arguments) {
+
+    _gdbConfigPage->setGdbArguments(arguments);
+}
+
+void SeerConfigDialog::setGdbAsyncMode (bool flag) {
+
+    _gdbConfigPage->setGdbAsyncMode(flag);
 }
 

@@ -21,6 +21,15 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         explicit SeerConfigDialog (QWidget* parent = 0);
        ~SeerConfigDialog ();
 
+        // Gdb settings.
+        QString                 gdbProgram                                      () const;
+        QString                 gdbArguments                                    () const;
+        bool                    gdbAsyncMode                                    () const;
+
+        void                    setGdbProgram                                   (const QString& program);
+        void                    setGdbArguments                                 (const QString& arguments);
+        void                    setGdbAsyncMode                                 (bool flag);
+
     public slots:
         void                    changePage              (QListWidgetItem* current, QListWidgetItem* previous);
 

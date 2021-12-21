@@ -28,6 +28,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _watchpointsBrowserWidget   = 0;
     _gdbOutputLog               = 0;
     _seerOutputLog              = 0;
+    _gdbProgram                 = "/usr/bin/gdb";
+    _gdbArguments               = "--interpreter=mi";
+    _gdbASyncMode               = true;
 
     setNewExecutableFlag(true);
 
@@ -259,6 +262,36 @@ const QString& SeerGdbWidget::executableLaunchMode () const {
     return _executableLaunchMode;
 }
 
+void SeerGdbWidget::setGdbProgram (const QString& program) {
+
+    _gdbProgram = program;
+}
+
+QString SeerGdbWidget::gdbProgram () const {
+
+    return _gdbProgram;
+}
+
+void SeerGdbWidget::setGdbArguments (const QString& arguments) {
+
+    _gdbArguments = arguments;
+}
+
+QString SeerGdbWidget::gdbArguments () const {
+
+    return _gdbArguments;
+}
+
+void SeerGdbWidget::setGdbAsyncMode (bool flag) {
+
+    _gdbASyncMode = flag;
+}
+
+bool SeerGdbWidget::gdbAsyncMode () const {
+
+    return _gdbASyncMode;
+}
+
 void SeerGdbWidget::handleText (const QString& text) {
 
     if (text.startsWith("*running,thread-id=\"all\"")) {
@@ -380,7 +413,10 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
         startGdb();
-        handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+
+        if (gdbAsyncMode()) {
+            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
     }
 
     // Create a new console.
@@ -444,7 +480,10 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
         startGdb();
-        handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+
+        if (gdbAsyncMode()) {
+            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
     }
 
     // Create a new console.
@@ -498,7 +537,10 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
         startGdb();
-        handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+
+        if (gdbAsyncMode()) {
+            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
     }
 
     // Create a new console.
@@ -535,7 +577,10 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
         startGdb();
-        handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+
+        if (gdbAsyncMode()) {
+            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
     }
 
     // Create a new console.
@@ -579,7 +624,10 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
         startGdb();
-        handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+
+        if (gdbAsyncMode()) {
+            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
     }
 
     // Create a new console.
@@ -1173,13 +1221,13 @@ void SeerGdbWidget::startGdb () {
 
     // Build the gdb argument list.
     QStringList args;
-    args << "--interpreter=mi";
+    args << gdbArguments();
 
     // Give the gdb process the argument list.
     _gdbProcess->setArguments(args);
 
     // Set the gdb program name to use.
-    _gdbProcess->setProgram("/usr/bin/gdb");
+    _gdbProcess->setProgram(gdbProgram());
 
     // Start the gdb process.
     _gdbProcess->start();

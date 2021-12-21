@@ -1,6 +1,5 @@
-#include <QtWidgets/QWidget>
-
 #include "SeerSeerConfigPage.h"
+#include <QtWidgets/QWidget>
 
 SeerSeerConfigPage::SeerSeerConfigPage(QWidget* parent) : QWidget(parent) {
 

@@ -24,17 +24,6 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="gdbProgramLineEdit"/>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="fileBrowserPushButton">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset theme="document-open">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="gdbArgumentsLabel">
      <property name="text">
@@ -65,6 +54,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interupting of a running program possble.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="gdbProgramToolButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="document-open">
+       <normaloff>.</normaloff>.</iconset>
      </property>
     </widget>
    </item>
