@@ -55,51 +55,55 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
     // Set up signals/slots.
     //
-    QObject::connect(actionFileDebug,               &QAction::triggered,                    this,           &SeerMainWindow::handleFileDebug);
-    QObject::connect(actionFileArguments,           &QAction::triggered,                    this,           &SeerMainWindow::handleFileArguments);
-    QObject::connect(actionFileQuit,                &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
-    QObject::connect(actionViewMemoryVisualizer,    &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
-    QObject::connect(actionViewArrayVisualizer,     &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
-    QObject::connect(actionHelpAbout,               &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
+    QObject::connect(actionFileDebug,                   &QAction::triggered,                    this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionFileArguments,               &QAction::triggered,                    this,           &SeerMainWindow::handleFileArguments);
+    QObject::connect(actionFileQuit,                    &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
+    QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
+    QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionHelpAbout,                   &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRun,              &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionControlStart,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
-    QObject::connect(actionControlContinue,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionControlNext,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionControlStep,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionControlFinish,           &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionControlInterrupt,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionControlRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionControlStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionControlContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlInterrupt,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
 
-    QObject::connect(actionSettingsConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
+    QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
+    QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionGdbStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
-    QObject::connect(actionGdbContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionGdbNext,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionGdbStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionGdbFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionInterruptProcess,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
-    QObject::connect(actionMemoryVisualizer,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbMemoryVisualizer);
-    QObject::connect(actionArrayVisualizer,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbArrayVisualizer);
-    QObject::connect(interruptAction,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
-    QObject::connect(interruptActionSIGINT,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGINT);
-    QObject::connect(interruptActionSIGKILL,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGKILL);
-    QObject::connect(interruptActionSIGFPE,         &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGFPE);
-    QObject::connect(interruptActionSIGSEGV,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGSEGV);
-    QObject::connect(interruptActionSIGUSR1,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR1);
-    QObject::connect(interruptActionSIGUSR2,        &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR2);
+    QObject::connect(actionGdbRun,                      &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionGdbStart,                    &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionGdbContinue,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionGdbNext,                     &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionGdbStep,                     &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionGdbFinish,                   &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionInterruptProcess,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionMemoryVisualizer,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbMemoryVisualizer);
+    QObject::connect(actionArrayVisualizer,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(interruptAction,                   &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(interruptActionSIGINT,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGINT);
+    QObject::connect(interruptActionSIGKILL,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGKILL);
+    QObject::connect(interruptActionSIGFPE,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGFPE);
+    QObject::connect(interruptActionSIGSEGV,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGSEGV);
+    QObject::connect(interruptActionSIGUSR1,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR1);
+    QObject::connect(interruptActionSIGUSR2,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR2);
 
-    QObject::connect(nextKeyF5,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(stepKeyF6,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(finishKeyF7,                   &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(continueKeyF8,                 &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(nextKeyF5,                         &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
+    QObject::connect(stepKeyF6,                         &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbStep);
+    QObject::connect(finishKeyF7,                       &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(continueKeyF8,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbContinue);
 
-    QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
-    QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
-    QObject::connect(centralwidget->gdbMonitor(),   &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
+    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
+    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
+    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
 
     // Restore window settings.
     readSettings();
+
+    // Restore configuration settings.
+    readConfigSettings();
 
     //
     // Initialize contents.
@@ -276,6 +280,21 @@ void SeerMainWindow::handleSettingsConfiguration () {
     centralwidget->setGdbProgram(dlg.gdbProgram());
     centralwidget->setGdbArguments(dlg.gdbArguments());
     centralwidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+}
+
+void SeerMainWindow::handleSettingsSaveConfiguration () {
+
+    int result = QMessageBox::warning(this, "Seer - Settings",
+                                      QString("Write the configuration settings?"),
+                                      QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+    if (result == QMessageBox::Cancel) {
+        return;
+    }
+
+    writeConfigSettings();
+
+    QMessageBox::information(this, "Seer", "Saved.");
 }
 
 void SeerMainWindow::handleHelpAbout () {
@@ -520,6 +539,26 @@ void SeerMainWindow::readSettings() {
     settings.endGroup();
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+}
+
+void SeerMainWindow::writeConfigSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("gdb");
+    settings.setValue("program",   centralwidget->gdbProgram());
+    settings.setValue("arguments", centralwidget->gdbArguments());
+    settings.endGroup();
+}
+
+void SeerMainWindow::readConfigSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("gdb");
+    centralwidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+    centralwidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
+    settings.endGroup();
 }
 
 void SeerMainWindow::resizeEvent (QResizeEvent* event) {

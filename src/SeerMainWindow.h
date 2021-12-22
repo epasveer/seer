@@ -39,12 +39,15 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                handleViewMemoryVisualizer      ();
         void                handleViewArrayVisualizer       ();
         void                handleSettingsConfiguration     ();
+        void                handleSettingsSaveConfiguration ();
         void                handleHelpAbout                 ();
         void                handleText                      (const QString& text);
 
     protected:
         void                writeSettings                   ();
         void                readSettings                    ();
+        void                writeConfigSettings             ();
+        void                readConfigSettings              ();
         void                resizeEvent                     (QResizeEvent* event);
         void                closeEvent                      (QCloseEvent* event);
 

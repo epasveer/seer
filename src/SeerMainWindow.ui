@@ -48,6 +48,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionSettingsConfiguration"/>
+    <addaction name="actionSettingsSaveConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -410,6 +411,14 @@
    </property>
    <property name="text">
     <string>Configuration...</string>
+   </property>
+  </action>
+  <action name="actionSettingsSaveConfiguration">
+   <property name="icon">
+    <iconset theme="document-save"/>
+   </property>
+   <property name="text">
+    <string>Save Configuration...</string>
    </property>
   </action>
  </widget>
