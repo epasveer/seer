@@ -116,7 +116,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
 
-        void                                handleFinished                      (int exitCode, QProcess::ExitStatus exitStatus);
+        void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
+        void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
 
     signals:
         void                                stoppingPointReached                ();

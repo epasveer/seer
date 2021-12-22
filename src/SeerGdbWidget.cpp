@@ -71,7 +71,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardError,                                                          _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardError);
-  //QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),            _gdbMonitor,                                                    &GdbMonitor::handleFinished); // ??? Do we care about the gdb process ending? For now, terminate Seer.
+    QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),            this,                                                           &SeerGdbWidget::handleGdbProcessFinished); // ??? Do we care about the gdb process ending? For now, terminate Seer.
+    QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::errorOccurred),          this,                                                           &SeerGdbWidget::handleGdbProcessErrored);
 
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               _gdbOutputLog,                                                  &SeerTildeEqualAmpersandLogWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               _gdbOutputLog,                                                  &SeerTildeEqualAmpersandLogWidget::handleText);
@@ -1168,13 +1169,26 @@ void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
     writeSettings();
 }
 
-void SeerGdbWidget::handleFinished (int exitCode, QProcess::ExitStatus exitStatus) {
+void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);
 
-    // For now, terminate Seer.
-    qApp->exit();
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Gdb process finished. Exit code =" << exitCode << "Exit status =" << exitStatus;
+}
+
+void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus) {
+
+    Q_UNUSED(errorStatus);
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Error launching gdb process. Error =" << errorStatus;
+
+    if (errorStatus == QProcess::FailedToStart) {
+        QMessageBox::warning(this, "Seer",
+                                   QString("Unable to launch the GDB program.\n\n") +
+                                   QString("(%1 %2)").arg(gdbProgram()).arg(gdbArguments()),
+                                   QMessageBox::Ok);
+    }
 }
 
 void SeerGdbWidget::writeSettings () {
@@ -1219,15 +1233,14 @@ void SeerGdbWidget::startGdb () {
         return;
     }
 
+    // Set the gdb program name to use.
+    _gdbProcess->setProgram(gdbProgram());
+
     // Build the gdb argument list.
-    QStringList args;
-    args << gdbArguments();
+    QStringList args = gdbArguments().split(' ', QString::SkipEmptyParts);
 
     // Give the gdb process the argument list.
     _gdbProcess->setArguments(args);
-
-    // Set the gdb program name to use.
-    _gdbProcess->setProgram(gdbProgram());
 
     // Start the gdb process.
     _gdbProcess->start();
