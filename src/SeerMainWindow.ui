@@ -412,13 +412,20 @@
    <property name="text">
     <string>Configuration...</string>
    </property>
+   <property name="statusTip">
+    <string>Configure Seer.</string>
+   </property>
   </action>
   <action name="actionSettingsSaveConfiguration">
    <property name="icon">
-    <iconset theme="document-save"/>
+    <iconset theme="document-save">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Save Configuration...</string>
+   </property>
+   <property name="statusTip">
+    <string>Save the configurations so future Seer sessions will use them.</string>
    </property>
   </action>
  </widget>

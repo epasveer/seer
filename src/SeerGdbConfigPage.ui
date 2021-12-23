@@ -22,7 +22,11 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="gdbProgramLineEdit"/>
+    <widget class="QLineEdit" name="gdbProgramLineEdit">
+     <property name="toolTip">
+      <string>Specify the path and name of the gdb debugger.</string>
+     </property>
+    </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="gdbArgumentsLabel">
@@ -32,10 +36,17 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="gdbArgumentsLineEdit"/>
+    <widget class="QLineEdit" name="gdbArgumentsLineEdit">
+     <property name="toolTip">
+      <string>Arguments to pass to the gdb debugger.</string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+     <property name="toolTip">
+      <string>Turn gdb 'async' mode on or off.</string>
+     </property>
      <property name="text">
       <string>GDB asycn mode</string>
      </property>
@@ -52,13 +63,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. If a different debugger is used, it must provide that.  So, usually, the &amp;quot;--interpreter=mi&amp;quot; argument is a must.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interupting of a running program possble.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="gdbProgramToolButton">
+     <property name="toolTip">
+      <string>Open a file dialog to locate the gdb debugger.</string>
+     </property>
      <property name="text">
       <string/>
      </property>
