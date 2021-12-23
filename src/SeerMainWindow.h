@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ui_SeerMainWindow.h"
+#include "SeerRunStatusIndicator.h"
+#include "QProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QResizeEvent>
@@ -42,6 +44,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                handleSettingsSaveConfiguration ();
         void                handleHelpAbout                 ();
         void                handleText                      (const QString& text);
+        void                handleRunStatusChanged          (SeerRunStatusIndicator::RunStatus status);
 
     protected:
         void                writeSettings                   ();
@@ -52,5 +55,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                closeEvent                      (QCloseEvent* event);
 
     private:
+        QProgressIndicator* _progressIndicator;
 };
 

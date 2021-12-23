@@ -35,6 +35,8 @@ void SeerRunStatusIndicator::setRunStatus (SeerRunStatusIndicator::RunStatus sta
         QApplication::restoreOverrideCursor();
         setText("Unknown");
     }
+
+    emit statusChanged(status);
 }
 
 SeerRunStatusIndicator::RunStatus SeerRunStatusIndicator::runStatus () const {

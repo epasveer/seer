@@ -1,5 +1,4 @@
 #include "SeerMainWindow.h"
-#include "SeerRunStatusIndicator.h"
 #include "SeerDebugDialog.h"
 #include "SeerConfigDialog.h"
 #include "SeerArgumentsDialog.h"
@@ -25,9 +24,23 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
     // Set up other parts of the UI.
     //
+
+    // Add status bar indicator.
     SeerRunStatusIndicator* runStatus = new SeerRunStatusIndicator(this);
 
     statusBar()->addPermanentWidget(runStatus);
+
+    // Add progress spin widget.
+    QWidget* spacerWidget = new QWidget(this);
+    spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    toolBar->addWidget(spacerWidget);
+
+    _progressIndicator = new QProgressIndicator(this);
+    _progressIndicator->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+    _progressIndicator->setFixedWidth(96);
+    _progressIndicator->setType(QProgressIndicator::ball_rotate);
+
+    toolBar->addWidget(_progressIndicator);
 
     //
     // Set up shortcut keys.
@@ -98,6 +111,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
     QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
+
+    QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
 
     // Restore window settings.
     readSettings();
@@ -510,6 +525,23 @@ void SeerMainWindow::handleText (const QString& text) {
     }
 
     qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+}
+
+void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus status) {
+
+    if (status == SeerRunStatusIndicator::RunStatus::Idle) {
+        _progressIndicator->stop();
+
+    }else if (status == SeerRunStatusIndicator::RunStatus::Stopped) {
+        _progressIndicator->stop();
+
+    }else if (status == SeerRunStatusIndicator::RunStatus::Running) {
+        _progressIndicator->start();
+
+    }else{
+        _progressIndicator->stop();
+    }
+
 }
 
 void SeerMainWindow::closeEvent (QCloseEvent* event) {
