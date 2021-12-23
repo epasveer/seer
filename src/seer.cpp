@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("Seer");
-    QCoreApplication::setOrganizationName("pasvix.com");
+    QCoreApplication::setOrganizationName("Seer");
     QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021");
 
     //
