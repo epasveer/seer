@@ -24,5 +24,6 @@
     <file>resources/gdb.png</file>
     <file>resources/editor.png</file>
     <file>resources/source.png</file>
+    <file>resources/font.png</file>
   </qresource>
 </RCC>
