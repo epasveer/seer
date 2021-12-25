@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QFontComboBox" name="fontComboBox">
+      <widget class="QFontComboBox" name="fontNameComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>50</horstretch>
@@ -30,10 +30,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="fontSpinBox"/>
+      <widget class="QComboBox" name="fontSizeComboBox"/>
      </item>
      <item>
-      <widget class="QToolButton" name="fontButton">
+      <widget class="QToolButton" name="fontDialogButton">
        <property name="text">
         <string/>
        </property>

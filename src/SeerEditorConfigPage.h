@@ -14,12 +14,11 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
        ~SeerEditorConfigPage ();
 
     protected slots:
-        void            handlePointSizeChanged          (int i);
+        void            handleSizeChanged               (const QString& text);
         void            handleFontChanged               (const QFont& font);
         void            handleFontDialog                ();
 
     private:
-        void            _updateCodeTextEdit             ();
         QFont           _font;
 };
 
