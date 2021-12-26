@@ -11,15 +11,34 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
-    handleFontChanged(QFont("Source Code Pro"));
+    editorWidget->sourceArea()->openText("int main(int argc, char* argv[]) {\n"
+                                         "\n"
+                                         "    std::cout << \"Hello, Seer!\";\n"
+                                         "\n"
+                                         "    return 0;\n"
+                                         "}",
+                                         "sample.cpp");
 
     // Connect things.
     QObject::connect(fontSizeComboBox,  &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleSizeChanged);
     QObject::connect(fontNameComboBox,  &QFontComboBox::currentFontChanged,             this, &SeerEditorConfigPage::handleFontChanged);
     QObject::connect(fontDialogButton,  &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleFontDialog);
+
+    // Set the default font.
+    handleFontChanged(QFont("Source Code Pro", 10));
 }
 
 SeerEditorConfigPage::~SeerEditorConfigPage() {
+}
+
+void SeerEditorConfigPage::setEditorFont (const QFont& font) {
+
+    handleFontChanged(font);
+}
+
+const QFont& SeerEditorConfigPage::editorFont () const {
+
+    return _font;
 }
 
 void SeerEditorConfigPage::handleSizeChanged (const QString& text) {
@@ -36,7 +55,7 @@ void SeerEditorConfigPage::handleSizeChanged (const QString& text) {
     _font.setPointSize(size);
 
     // Display our example text with the new font.
-    codePlainTextEdit->setFont(_font);
+    editorWidget->sourceArea()->setFont(_font);
 }
 
 void SeerEditorConfigPage::handleFontChanged (const QFont& font) {
@@ -62,7 +81,7 @@ void SeerEditorConfigPage::handleFontChanged (const QFont& font) {
     fontNameComboBox->setCurrentFont(font);
 
     // Display our example text with the new font.
-    codePlainTextEdit->setFont(font);
+    editorWidget->sourceArea()->setFont(font);
 
     // Save the new font.
     _font = font;

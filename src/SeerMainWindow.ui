@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Seer Debugger</string>
   </property>
-  <widget class="SeerGdbWidget" name="centralwidget"/>
+  <widget class="SeerGdbWidget" name="gdbWidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>

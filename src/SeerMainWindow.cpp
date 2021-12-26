@@ -75,42 +75,42 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRun,                  &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionControlStart,                &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
-    QObject::connect(actionControlContinue,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionControlNext,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionControlStep,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionControlFinish,               &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionControlInterrupt,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionControlRun,                  &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionControlStart,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionControlContinue,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlFinish,               &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlInterrupt,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbRun,                      &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionGdbStart,                    &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStartExecutable);
-    QObject::connect(actionGdbContinue,                 &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionGdbNext,                     &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionGdbStep,                     &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionGdbFinish,                   &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionInterruptProcess,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
-    QObject::connect(actionMemoryVisualizer,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbMemoryVisualizer);
-    QObject::connect(actionArrayVisualizer,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbArrayVisualizer);
-    QObject::connect(interruptAction,                   &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterrupt);
-    QObject::connect(interruptActionSIGINT,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGINT);
-    QObject::connect(interruptActionSIGKILL,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGKILL);
-    QObject::connect(interruptActionSIGFPE,             &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGFPE);
-    QObject::connect(interruptActionSIGSEGV,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGSEGV);
-    QObject::connect(interruptActionSIGUSR1,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR1);
-    QObject::connect(interruptActionSIGUSR2,            &QAction::triggered,                    centralwidget,  &SeerGdbWidget::handleGdbInterruptSIGUSR2);
+    QObject::connect(actionGdbRun,                      &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(actionGdbStart,                    &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionGdbContinue,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionGdbNext,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionGdbStep,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionGdbFinish,                   &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionInterruptProcess,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionMemoryVisualizer,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
+    QObject::connect(actionArrayVisualizer,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(interruptAction,                   &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(interruptActionSIGINT,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGINT);
+    QObject::connect(interruptActionSIGKILL,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGKILL);
+    QObject::connect(interruptActionSIGFPE,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGFPE);
+    QObject::connect(interruptActionSIGSEGV,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGSEGV);
+    QObject::connect(interruptActionSIGUSR1,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGUSR1);
+    QObject::connect(interruptActionSIGUSR2,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGUSR2);
 
-    QObject::connect(nextKeyF5,                         &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbNext);
-    QObject::connect(stepKeyF6,                         &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbStep);
-    QObject::connect(finishKeyF7,                       &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(continueKeyF8,                     &QShortcut::activated,                  centralwidget,  &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(nextKeyF5,                         &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(stepKeyF6,                         &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(finishKeyF7,                       &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(continueKeyF8,                     &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbContinue);
 
-    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
-    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
-    QObject::connect(centralwidget->gdbMonitor(),       &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
 
@@ -130,15 +130,15 @@ SeerMainWindow::~SeerMainWindow() {
 }
 
 void SeerMainWindow::setExecutableName (const QString& executableName) {
-    centralwidget->setExecutableName(executableName);
+    gdbWidget->setExecutableName(executableName);
 }
 
 const QString& SeerMainWindow::executableName () const {
-    return centralwidget->executableName();
+    return gdbWidget->executableName();
 }
 
 void SeerMainWindow::setExecutableArguments (const QString& executableArguments) {
-    centralwidget->setExecutableArguments(executableArguments);
+    gdbWidget->setExecutableArguments(executableArguments);
 }
 
 void SeerMainWindow::setExecutableArguments (const QStringList& executableArguments) {
@@ -149,57 +149,57 @@ void SeerMainWindow::setExecutableArguments (const QStringList& executableArgume
 }
 
 const QString& SeerMainWindow::executableArguments () const {
-    return centralwidget->executableArguments();
+    return gdbWidget->executableArguments();
 }
 
 void SeerMainWindow::setExecutableWorkingDirectory (const QString& executableWorkingDirectory) {
-    centralwidget->setExecutableWorkingDirectory(executableWorkingDirectory);
+    gdbWidget->setExecutableWorkingDirectory(executableWorkingDirectory);
 }
 
 const QString& SeerMainWindow::executableWorkingDirectory () const {
-    return centralwidget->executableWorkingDirectory();
+    return gdbWidget->executableWorkingDirectory();
 }
 
 void SeerMainWindow::setExecutablePid (int pid) {
-    centralwidget->setExecutablePid(pid);
+    gdbWidget->setExecutablePid(pid);
 }
 
 int SeerMainWindow::executablePid () const {
-    return centralwidget->executablePid();
+    return gdbWidget->executablePid();
 }
 
 void SeerMainWindow::setExecutableHostPort (const QString& executableHostPort) {
-    centralwidget->setExecutableHostPort(executableHostPort);
+    gdbWidget->setExecutableHostPort(executableHostPort);
 }
 
 const QString& SeerMainWindow::executableHostPort () const {
-    return centralwidget->executableHostPort();
+    return gdbWidget->executableHostPort();
 }
 
 void SeerMainWindow::setExecutableCoreFilename (const QString& executableCoreFilename) {
-    centralwidget->setExecutableCoreFilename(executableCoreFilename);
+    gdbWidget->setExecutableCoreFilename(executableCoreFilename);
 }
 
 const QString& SeerMainWindow::executableCoreFilename () const {
-    return centralwidget->executableCoreFilename();
+    return gdbWidget->executableCoreFilename();
 }
 
 void SeerMainWindow::launchExecutable (const QString& launchMode) {
 
     if (launchMode == "start") {
-        centralwidget->handleGdbStartExecutable();
+        gdbWidget->handleGdbStartExecutable();
 
     }else if (launchMode == "run") {
-        centralwidget->handleGdbRunExecutable();
+        gdbWidget->handleGdbRunExecutable();
 
     }else if (launchMode == "attach") {
-        centralwidget->handleGdbAttachExecutable();
+        gdbWidget->handleGdbAttachExecutable();
 
     }else if (launchMode == "connect") {
-        centralwidget->handleGdbConnectExecutable();
+        gdbWidget->handleGdbConnectExecutable();
 
     }else if (launchMode == "corefile") {
-        centralwidget->handleGdbCoreFileExecutable();
+        gdbWidget->handleGdbCoreFileExecutable();
 
     }else if (launchMode == "none") {
 
@@ -212,7 +212,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode) {
 }
 
 const QString& SeerMainWindow::executableLaunchMode () const {
-    return centralwidget->executableLaunchMode();
+    return gdbWidget->executableLaunchMode();
 }
 
 void SeerMainWindow::handleFileDebug () {
@@ -270,21 +270,22 @@ void SeerMainWindow::handleFileQuit () {
 
 void SeerMainWindow::handleViewMemoryVisualizer () {
 
-    centralwidget->handleGdbMemoryVisualizer();
+    gdbWidget->handleGdbMemoryVisualizer();
 }
 
 void SeerMainWindow::handleViewArrayVisualizer () {
 
-    centralwidget->handleGdbArrayVisualizer();
+    gdbWidget->handleGdbArrayVisualizer();
 }
 
 void SeerMainWindow::handleSettingsConfiguration () {
 
     SeerConfigDialog dlg(this);
 
-    dlg.setGdbProgram(centralwidget->gdbProgram());
-    dlg.setGdbArguments(centralwidget->gdbArguments());
-    dlg.setGdbAsyncMode(centralwidget->gdbAsyncMode());
+    dlg.setGdbProgram(gdbWidget->gdbProgram());
+    dlg.setGdbArguments(gdbWidget->gdbArguments());
+    dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
+    dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
 
     int ret = dlg.exec();
 
@@ -292,9 +293,10 @@ void SeerMainWindow::handleSettingsConfiguration () {
         return;
     }
 
-    centralwidget->setGdbProgram(dlg.gdbProgram());
-    centralwidget->setGdbArguments(dlg.gdbArguments());
-    centralwidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+    gdbWidget->setGdbProgram(dlg.gdbProgram());
+    gdbWidget->setGdbArguments(dlg.gdbArguments());
+    gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+    gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
@@ -578,8 +580,12 @@ void SeerMainWindow::writeConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("gdb");
-    settings.setValue("program",   centralwidget->gdbProgram());
-    settings.setValue("arguments", centralwidget->gdbArguments());
+    settings.setValue("program",   gdbWidget->gdbProgram());
+    settings.setValue("arguments", gdbWidget->gdbArguments());
+    settings.endGroup();
+
+    settings.beginGroup("editor");
+    settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
     settings.endGroup();
 }
 
@@ -588,9 +594,19 @@ void SeerMainWindow::readConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("gdb");
-    centralwidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
-    centralwidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
+    gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+    gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
     settings.endGroup();
+
+    settings.beginGroup("editor"); {
+        QFont f;
+        if (settings.contains("font")) {
+            f.fromString(settings.value("font").toString());
+        }else{
+            f = QFont("Source Code Pro", 10);
+        }
+        gdbWidget->editorManager()->setEditorFont(f);
+    } settings.endGroup();
 }
 
 void SeerMainWindow::resizeEvent (QResizeEvent* event) {

@@ -23,7 +23,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
-SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlainTextEdit(parent) {
+SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : QPlainTextEdit(parent) {
 
     _enableLineNumberArea = false;
     _enableBreakPointArea = false;
@@ -31,12 +31,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget *parent) : QPlain
     _ctrlKeyPressed       = false;
     _sourceHighlighter    = 0;
 
-  //QFont font("Monospace");
-  //font.setStyleHint(QFont::TypeWriter);
     QFont font("Source Code Pro");
     font.setStyleHint(QFont::Monospace);
     setFont(font);
-
 
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
@@ -611,6 +608,12 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     };
 
     // Put the contents in the editor.
+    openText(text, _fullname);
+}
+
+void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& file) {
+
+    // Put the contents in the editor.
     setPlainText(text);
 
     // Set the text cursor to the first line.
@@ -624,7 +627,7 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     }
 
     QRegExp cpp_re("(?:.c|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX)$");
-    if (_fullname.contains(cpp_re)) {
+    if (file.contains(cpp_re)) {
         _sourceHighlighter = new SeerCppSourceHighlighter(document());
     }
 }

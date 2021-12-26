@@ -293,6 +293,11 @@ bool SeerGdbWidget::gdbAsyncMode () const {
     return _gdbASyncMode;
 }
 
+SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
+
+    return editorManagerWidget;
+}
+
 void SeerGdbWidget::handleText (const QString& text) {
 
     if (text.startsWith("*running,thread-id=\"all\"")) {

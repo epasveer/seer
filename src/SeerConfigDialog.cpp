@@ -74,24 +74,14 @@ void SeerConfigDialog::changePage(QListWidgetItem* current, QListWidgetItem* pre
     pagesStackedWidget->setCurrentIndex(contentsListWidget->row(current));
 }
 
-QString SeerConfigDialog::gdbProgram () const {
-
-    return _gdbConfigPage->gdbProgram();
-}
-
-QString SeerConfigDialog::gdbArguments () const {
-
-    return _gdbConfigPage->gdbArguments();
-}
-
-bool SeerConfigDialog::gdbAsyncMode () const {
-
-    return _gdbConfigPage->gdbAsyncMode();
-}
-
 void SeerConfigDialog::setGdbProgram (const QString& program) {
 
     _gdbConfigPage->setGdbProgram(program);
+}
+
+QString SeerConfigDialog::gdbProgram () const {
+
+    return _gdbConfigPage->gdbProgram();
 }
 
 void SeerConfigDialog::setGdbArguments (const QString& arguments) {
@@ -99,8 +89,28 @@ void SeerConfigDialog::setGdbArguments (const QString& arguments) {
     _gdbConfigPage->setGdbArguments(arguments);
 }
 
+QString SeerConfigDialog::gdbArguments () const {
+
+    return _gdbConfigPage->gdbArguments();
+}
+
 void SeerConfigDialog::setGdbAsyncMode (bool flag) {
 
     _gdbConfigPage->setGdbAsyncMode(flag);
+}
+
+bool SeerConfigDialog::gdbAsyncMode () const {
+
+    return _gdbConfigPage->gdbAsyncMode();
+}
+
+void SeerConfigDialog::setEditorFont (const QFont& font) {
+
+    _editorConfigPage->setEditorFont(font);
+}
+
+const QFont& SeerConfigDialog::editorFont () const {
+
+    return _editorConfigPage->editorFont();
 }
 

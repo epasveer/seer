@@ -39,6 +39,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
 
         bool                            isOpen                          () const;
         void                            open                            (const QString& fullname, const QString& file);
+        void                            openText                        (const QString& text,     const QString& file);
         const QString&                  fullname                        () const;
         const QString&                  file                            () const;
         void                            close                           ();

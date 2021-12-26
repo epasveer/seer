@@ -22,13 +22,18 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
        ~SeerConfigDialog ();
 
         // Gdb settings.
+        void                    setGdbProgram                                   (const QString& program);
         QString                 gdbProgram                                      () const;
+
+        void                    setGdbArguments                                 (const QString& arguments);
         QString                 gdbArguments                                    () const;
+
+        void                    setGdbAsyncMode                                 (bool flag);
         bool                    gdbAsyncMode                                    () const;
 
-        void                    setGdbProgram                                   (const QString& program);
-        void                    setGdbArguments                                 (const QString& arguments);
-        void                    setGdbAsyncMode                                 (bool flag);
+        // Editor settings.
+        void                    setEditorFont                                   (const QFont& font);
+        const QFont&            editorFont                                      () const;
 
     public slots:
         void                    changePage              (QListWidgetItem* current, QListWidgetItem* previous);

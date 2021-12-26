@@ -57,6 +57,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbAsyncMode                     (bool flag);
         bool                                gdbAsyncMode                        () const;
 
+        // Editor manager.
+        SeerEditorManagerWidget*            editorManager                       ();
+
     public slots:
         void                                handleText                          (const QString& text);
         void                                handleExecute                       ();

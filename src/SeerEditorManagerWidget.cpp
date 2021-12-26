@@ -12,6 +12,7 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
+    _editorFont = QFont("Source Code Pro", 10); // Default font.
 
     // Setup UI
     setupUi(this);
@@ -95,6 +96,24 @@ SeerEditorManagerEntries::const_iterator SeerEditorManagerWidget::endEntry () co
 
 void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i) {
     _entries.erase(i);
+}
+
+void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
+
+    _editorFont = font;
+
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setFont(_editorFont);
+        b++;
+    }
+}
+
+const QFont& SeerEditorManagerWidget::editorFont () const {
+
+    return _editorFont;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -661,6 +680,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
 
     // Create the Editor widget and add it to the tab.
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
+    editorWidget->sourceArea()->setFont(editorFont());
 
     tabWidget->addTab(editorWidget, file);
 
@@ -698,6 +718,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
 
     // Create the Editor widget and add it to the tab.
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
+    editorWidget->sourceArea()->setFont(editorFont());
 
     tabWidget->addTab(editorWidget, file);
 
