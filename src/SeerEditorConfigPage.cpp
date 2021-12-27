@@ -1,8 +1,10 @@
 #include "SeerEditorConfigPage.h"
+#include "QColorButton.h"
 #include <QtGui/QFontDatabase>
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QFontDialog>
+#include <QtWidgets/QComboBox>
 #include <QtCore/QDebug>
 
 SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
@@ -10,7 +12,11 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     // Set up the UI.
     setupUi(this);
 
+    //
     // Setup the widgets
+    //
+
+    // Set example text.
     editorWidget->sourceArea()->openText("int main(int argc, char* argv[]) {\n"
                                          "\n"
                                          "    std::cout << \"Hello, Seer!\";\n"
@@ -18,6 +24,25 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
                                          "    return 0;\n"
                                          "}",
                                          "sample.cpp");
+    // Setup syntax table.
+    for (int r=0; r<syntaxTableWidget->rowCount(); r++) {
+
+        QComboBox* fontWeightBox = new QComboBox;
+        fontWeightBox->addItem("Normal");
+        fontWeightBox->addItem("Bold");
+
+        syntaxTableWidget->setCellWidget(r, 0, fontWeightBox);
+
+        QComboBox* fontStyleBox = new QComboBox;
+        fontStyleBox->addItem("Normal");
+        fontStyleBox->addItem("Italic");
+
+        syntaxTableWidget->setCellWidget(r, 1, fontStyleBox);
+
+        QColorButton* fontColorButton = new QColorButton;
+
+        syntaxTableWidget->setCellWidget(r, 2, fontColorButton);
+    }
 
     // Connect things.
     QObject::connect(fontSizeComboBox,  &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleSizeChanged);
@@ -97,4 +122,22 @@ void SeerEditorConfigPage::handleFontDialog () {
         handleFontChanged(font);
     }
 }
+
+// class
+// quotation
+// function
+// comment
+// multiline comment
+// keyword
+
+//  5     // Define formats.
+//  6     _classFormat.setFontWeight(QFont::Bold);
+//  7     _classFormat.setForeground(Qt::darkMagenta);
+//  8     _quotationFormat.setForeground(Qt::darkGreen);
+//  9     _functionFormat.setFontItalic(true);
+// 10     _functionFormat.setForeground(Qt::blue);
+// 11     _singleLineCommentFormat.setForeground(Qt::red);
+// 12     _multiLineCommentFormat.setForeground(Qt::red);
+// 13     _keywordFormat.setForeground(Qt::darkBlue);
+// 14     _keywordFormat.setFontWeight(QFont::Bold);
 

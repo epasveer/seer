@@ -14,7 +14,90 @@
    <string>SeerEditorConfigPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="SeerEditorWidget" name="editorWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>50</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="0">
+    <widget class="QTableWidget" name="syntaxTableWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>50</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderStretchLastSection">
+      <bool>false</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>Class</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Quotation</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Function</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Comment</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Multiline Comment</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Keyword</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Font Weight</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Font Style</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Font Color</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QTextBrowser" name="helpTextBrowser">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -58,22 +141,12 @@ p, li { white-space: pre-wrap; }
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../../../../../../peak/src/seer/src/resource.qrc">
+        <iconset resource="resource.qrc">
          <normaloff>:/seer/resources/font.png</normaloff>:/seer/resources/font.png</iconset>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="SeerEditorWidget" name="editorWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
@@ -86,7 +159,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../../../../peak/src/seer/src/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

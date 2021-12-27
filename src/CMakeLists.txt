@@ -69,6 +69,7 @@ set(HEADER_FILES
     SeerSlashProcDialog.h
     QProcessInfo.h
     QProgressIndicator.h
+    QColorButton.h
     )
 
 set(SOURCE_FILES
@@ -124,6 +125,7 @@ set(SOURCE_FILES
     SeerSlashProcDialog.cpp
     QProcessInfo.cpp
     QProgressIndicator.cpp
+    QColorButton.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)
