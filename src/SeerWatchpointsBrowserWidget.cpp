@@ -49,6 +49,40 @@ SeerWatchpointsBrowserWidget::SeerWatchpointsBrowserWidget (QWidget* parent) : Q
 SeerWatchpointsBrowserWidget::~SeerWatchpointsBrowserWidget () {
 }
 
+QStringList SeerWatchpointsBrowserWidget::watchpointsText () const {
+
+    QStringList watchpointList;
+
+    QTreeWidgetItemIterator it(watchpointsTreeWidget);
+
+    while (*it) {
+
+        // Build a watchpoint specification.
+        // Note, it may not work as the expression may be out of scope.
+        QString watchpointParameters;
+
+        QString type = (*it)->text(1).split(' ')[0];
+
+        if (type == "read") {
+            type = "-r";
+        }else if (type == "acc") {
+            type = "-a";
+        }else{
+            type = "";
+        }
+
+        watchpointParameters += type + " " + (*it)->text(11);
+
+        watchpointList.append(watchpointParameters);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << watchpointParameters;
+
+        ++it;
+    }
+
+    return watchpointList;
+}
+
 void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

@@ -12,6 +12,8 @@ class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpoin
         explicit SeerWatchpointsBrowserWidget (QWidget* parent = 0);
        ~SeerWatchpointsBrowserWidget ();
 
+        QStringList         watchpointsText             () const;
+
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();

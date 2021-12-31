@@ -450,10 +450,12 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
     // Get list of breakpoints and catchpoints.
     QStringList breakpointsList;
+    QStringList watchpointsList;
     QStringList catchpointsList;
 
     if (newExecutableFlag() == false) {
         breakpointsList = _breakpointsBrowserWidget->breakpointsText();
+        watchpointsList = _watchpointsBrowserWidget->watchpointsText();
         catchpointsList = _catchpointsBrowserWidget->catchpointsText();
     }
 
@@ -467,6 +469,7 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     // Reload old breakpoints and catchpoints.
     if (newExecutableFlag() == false) {
         handleGdbBreakpointReload(breakpointsList);
+      //handleGdbWatchpointReload(watchpointsList); // Doesn't work. The 'expression' is no longer in scope.
         handleGdbCatchpointReload(catchpointsList);
     }
 
@@ -521,10 +524,12 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Get list of breakpoints.
     QStringList breakpointsList;
+    QStringList watchpointsList;
     QStringList catchpointsList;
 
     if (newExecutableFlag() == false) {
         breakpointsList = _breakpointsBrowserWidget->breakpointsText();
+        watchpointsList = _watchpointsBrowserWidget->watchpointsText();
         catchpointsList = _catchpointsBrowserWidget->catchpointsText();
     }
 
@@ -538,6 +543,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     // Reload old breakpoints.
     if (newExecutableFlag() == false) {
         handleGdbBreakpointReload(breakpointsList);
+      //handleGdbWatchpointReload(watchpointsList); // Doesn't work. The 'expression' is no longer in scope.
         handleGdbCatchpointReload(catchpointsList);
     }
 
@@ -905,6 +911,13 @@ void SeerGdbWidget::handleGdbBreakpointReload (QStringList breakpointsText) {
 
       for (int i=0; i<breakpointsText.size(); i++) {
            handleGdbBreakpointInsert(breakpointsText[i]);
+      }
+}
+
+void SeerGdbWidget::handleGdbWatchpointReload (QStringList watchpointsText) {
+
+      for (int i=0; i<watchpointsText.size(); i++) {
+           handleGdbWatchpointInsert(watchpointsText[i]);
       }
 }
 
