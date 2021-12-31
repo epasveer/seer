@@ -99,6 +99,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbBreakpointDisable          (QString breakpoints);
         void                                handleGdbBreakpointInsert           (QString breakpoint);
         void                                handleGdbBreakpointReload           (QStringList breakpointsText);
+        void                                handleGdbCatchpointReload           (QStringList catchpointsText);
         void                                handleGdbWatchpointDelete           (QString watchpoints);
         void                                handleGdbWatchpointEnable           (QString watchpoints);
         void                                handleGdbWatchpointDisable          (QString watchpoints);

@@ -40,6 +40,37 @@ SeerCatchpointsBrowserWidget::SeerCatchpointsBrowserWidget (QWidget* parent) : Q
 SeerCatchpointsBrowserWidget::~SeerCatchpointsBrowserWidget () {
 }
 
+QStringList SeerCatchpointsBrowserWidget::catchpointsText () const {
+
+    QStringList catchpointList;
+
+    QTreeWidgetItemIterator it(catchpointsTreeWidget);
+
+    while (*it) {
+
+        // Build a catchpoint specification.
+        QString catchpointParameters;
+
+        catchpointParameters += (*it)->text(5);
+
+        if ((*it)->text(2) == "del") {
+            catchpointParameters += " -t";
+        }
+
+        if ((*it)->text(6) != "") {
+            catchpointParameters += " -r " + (*it)->text(6);
+        }
+
+        catchpointList.append(catchpointParameters);
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << catchpointParameters;
+
+        ++it;
+    }
+
+    return catchpointList;
+}
+
 void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

@@ -448,10 +448,13 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     setExecutableLaunchMode("run");
     setExecutablePid(0);
 
-    // Get list of breakpoints.
+    // Get list of breakpoints and catchpoints.
     QStringList breakpointsList;
+    QStringList catchpointsList;
+
     if (newExecutableFlag() == false) {
         breakpointsList = _breakpointsBrowserWidget->breakpointsText();
+        catchpointsList = _catchpointsBrowserWidget->catchpointsText();
     }
 
     handleGdbExecutableName();              // Load the program into the gdb process.
@@ -461,9 +464,10 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
 
-    // Reload old breakpoints.
+    // Reload old breakpoints and catchpoints.
     if (newExecutableFlag() == false) {
         handleGdbBreakpointReload(breakpointsList);
+        handleGdbCatchpointReload(catchpointsList);
     }
 
     setNewExecutableFlag(false);
@@ -517,8 +521,11 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Get list of breakpoints.
     QStringList breakpointsList;
+    QStringList catchpointsList;
+
     if (newExecutableFlag() == false) {
         breakpointsList = _breakpointsBrowserWidget->breakpointsText();
+        catchpointsList = _catchpointsBrowserWidget->catchpointsText();
     }
 
     handleGdbExecutableName();              // Load the program into the gdb process.
@@ -531,6 +538,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     // Reload old breakpoints.
     if (newExecutableFlag() == false) {
         handleGdbBreakpointReload(breakpointsList);
+        handleGdbCatchpointReload(catchpointsList);
     }
 
     setNewExecutableFlag(false);
@@ -897,6 +905,13 @@ void SeerGdbWidget::handleGdbBreakpointReload (QStringList breakpointsText) {
 
       for (int i=0; i<breakpointsText.size(); i++) {
            handleGdbBreakpointInsert(breakpointsText[i]);
+      }
+}
+
+void SeerGdbWidget::handleGdbCatchpointReload (QStringList catchpointsText) {
+
+      for (int i=0; i<catchpointsText.size(); i++) {
+           handleGdbCatchpointInsert(catchpointsText[i]);
       }
 }
 
