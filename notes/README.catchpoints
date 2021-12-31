@@ -1,0 +1,13 @@
+
+# Setting a catchpoint.
+-catch-throw
+-catch-throw [ -t ] [ -r regexp]
+-catch-rethrow [ -t ] [ -r regexp]
+-catch-catch [ -t ] [ -r regexp]
+
+# When a catchpoint is reached.
+*stopped,bkptno="2",reason="breakpoint-hit",disp="keep",frame={addr="0x00007fffed933b72",func="__cxa_throw",args=[],from="/usr/lib64/libstdc++.so.6",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="5"
+
+# List catchpoints using the same method as listing breakpoints and watchpoints, except a different 'type'.
+-break-list
+
