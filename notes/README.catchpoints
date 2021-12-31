@@ -1,13 +1,56 @@
 
 # Setting a catchpoint.
--catch-throw
--catch-throw [ -t ] [ -r regexp]
+-catch-throw   [ -t ] [ -r regexp]
 -catch-rethrow [ -t ] [ -r regexp]
--catch-catch [ -t ] [ -r regexp]
+-catch-catch   [ -t ] [ -r regexp]
 
 # When a catchpoint is reached.
-*stopped,bkptno="2",reason="breakpoint-hit",disp="keep",frame={addr="0x00007fffed933b72",func="__cxa_throw",args=[],from="/usr/lib64/libstdc++.so.6",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="5"
+*stopped,
+    bkptno="2",
+    reason="breakpoint-hit",
+    disp="keep",
+    frame={addr="0x00007fffed933b72",
+           func="__cxa_throw",
+           args=[],
+           from="/usr/lib64/libstdc++.so.6",
+           arch="i386:x86-64"
+           },
+    thread-id="1",
+    stopped-threads="all",
+    core="5"
+
+# Return status from '-catch-xxxx' command.
+^done,bkpt={number="2",type="catchpoint",disp="keep",enabled="y",what="exception catch",catch-type="catch",thread-groups=["i1"],times="0"}
+^done,bkpt={number="3",type="catchpoint",disp="keep",enabled="y",what="exception throw",catch-type="throw",thread-groups=["i1"],times="0"}
+^done,bkpt={number="4",type="catchpoint",disp="keep",enabled="y",what="exception rethrow",catch-type="rethrow",thread-groups=["i1"],times="0"}
+^done,bkpt={number="2",type="catchpoint",disp="del",enabled="y",what="exception catch",catch-type="catch",thread-groups=["i1"],regexp="Exception*",times="0"}
+
 
 # List catchpoints using the same method as listing breakpoints and watchpoints, except a different 'type'.
 -break-list
+
+^done,
+    BreakpointTable={
+        nr_rows="3",
+        nr_cols="6",
+        hdr=[
+                {width="7",alignment="-1",col_name="number",colhdr="Num"},
+                {width="14",alignment="-1",col_name="type",colhdr="Type"},
+                {width="4",alignment="-1",col_name="disp",colhdr="Disp"},
+                {width="3",alignment="-1",col_name="enabled",colhdr="Enb"},
+                {width="18",alignment="-1",col_name="addr",colhdr="Address"},
+                {width="40",alignment="2",col_name="what",colhdr="What"}
+            ],
+        body=[
+                bkpt={
+                    number="2",type="catchpoint",disp="keep",enabled="y",what="exception catch",catch-type="catch",thread-groups=["i1"],times="0"
+                },
+                bkpt={
+                    number="3",type="catchpoint",disp="keep",enabled="y",what="exception throw",catch-type="throw",thread-groups=["i1"],times="0"
+                },
+                bkpt={
+                    number="4",type="catchpoint",disp="keep",enabled="y",what="exception rethrow",catch-type="rethrow",thread-groups=["i1"],times="0"
+               }
+            ]
+    }
 

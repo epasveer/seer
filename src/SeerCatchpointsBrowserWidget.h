@@ -2,22 +2,21 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
-#include "ui_SeerWatchpointsBrowserWidget.h"
+#include "ui_SeerCatchpointsBrowserWidget.h"
 
-class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpointsBrowserWidgetForm {
+class SeerCatchpointsBrowserWidget : public QWidget, protected Ui::SeerCatchpointsBrowserWidgetForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerWatchpointsBrowserWidget (QWidget* parent = 0);
-       ~SeerWatchpointsBrowserWidget ();
+        explicit SeerCatchpointsBrowserWidget (QWidget* parent = 0);
+       ~SeerCatchpointsBrowserWidget ();
 
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
 
     private slots:
-        void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
         void                handleRefreshToolButton     ();
         void                handleAddToolButton         ();
         void                handleDeleteToolButton      ();
@@ -25,12 +24,11 @@ class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpoin
         void                handleDisableToolButton     ();
 
     signals:
-        void                refreshWatchpointsList      ();
-        void                deleteWatchpoints           (QString watchpoints);
-        void                enableWatchpoints           (QString watchpoints);
-        void                disableWatchpoints          (QString watchpoints);
-        void                insertWatchpoint            (QString watchpoint);
-        void                selectedFile                (QString file, QString fullname, int lineno);
+        void                refreshCatchpointsList      ();
+        void                deleteCatchpoints           (QString catchpoints);
+        void                enableCatchpoints           (QString catchpoints);
+        void                disableCatchpoints          (QString catchpoints);
+        void                insertCatchpoint            (QString catchpoint);
 
     protected:
         void                showEvent                   (QShowEvent* event);

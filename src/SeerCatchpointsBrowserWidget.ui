@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerWatchpointsBrowserWidgetForm</class>
- <widget class="QWidget" name="SeerWatchpointsBrowserWidgetForm">
+ <class>SeerCatchpointsBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerCatchpointsBrowserWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,9 +15,9 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTreeWidget" name="watchpointsTreeWidget">
+    <widget class="QTreeWidget" name="catchpointsTreeWidget">
      <property name="columnCount">
-      <number>15</number>
+      <number>10</number>
      </property>
      <column>
       <property name="text">
@@ -41,27 +41,17 @@
      </column>
      <column>
       <property name="text">
-       <string>Address</string>
+       <string>What</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Function</string>
+       <string>Catch Type</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>File</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Fullname</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Line</string>
+       <string>Name</string>
       </property>
      </column>
      <column>
@@ -76,21 +66,6 @@
      </column>
      <column>
       <property name="text">
-       <string>Expression</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>New Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
        <string>Used</string>
       </property>
      </column>
@@ -99,9 +74,9 @@
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QToolButton" name="refreshWatchpointsToolButton">
+      <widget class="QToolButton" name="refreshCatchpointsToolButton">
        <property name="toolTip">
-        <string>Refresh the list of watchpoints.</string>
+        <string>Refresh the list of catchpoints.</string>
        </property>
        <property name="text">
         <string/>
@@ -113,9 +88,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="addWatchpointToolButton">
+      <widget class="QToolButton" name="addCatchpointToolButton">
        <property name="toolTip">
-        <string>Add a new watchpoint.</string>
+        <string>Add a new catchpoint.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -127,9 +102,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="deleteWatchpointsToolButton">
+      <widget class="QToolButton" name="deleteCatchpointsToolButton">
        <property name="toolTip">
-        <string>Delete selected watchpoints.</string>
+        <string>Delete selected catchpoints.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -141,9 +116,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="enableWatchpointsToolButton">
+      <widget class="QToolButton" name="enableCatchpointsToolButton">
        <property name="toolTip">
-        <string>Enable selected watchpoints.</string>
+        <string>Enable selected catchpoints.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -155,9 +130,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="disableWatchpointsToolButton">
+      <widget class="QToolButton" name="disableCatchpointsToolButton">
        <property name="toolTip">
-        <string>Disable selected watchpoints.</string>
+        <string>Disable selected catchpoints.</string>
        </property>
        <property name="text">
         <string>...</string>

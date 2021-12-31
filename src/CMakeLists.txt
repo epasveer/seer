@@ -23,6 +23,8 @@ set(HEADER_FILES
     SeerArgumentsDialog.h
     SeerBreakpointCreateDialog.h
     SeerBreakpointsBrowserWidget.h
+    SeerCatchpointCreateDialog.h
+    SeerCatchpointsBrowserWidget.h
     SeerCaretAsteriskLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
@@ -78,6 +80,8 @@ set(SOURCE_FILES
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
     SeerBreakpointsBrowserWidget.cpp
+    SeerCatchpointCreateDialog.cpp
+    SeerCatchpointsBrowserWidget.cpp
     SeerCaretAsteriskLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp

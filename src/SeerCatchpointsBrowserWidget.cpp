@@ -1,94 +1,82 @@
-#include "SeerWatchpointsBrowserWidget.h"
-#include "SeerWatchpointCreateDialog.h"
+#include "SeerCatchpointsBrowserWidget.h"
+#include "SeerCatchpointCreateDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
 
-SeerWatchpointsBrowserWidget::SeerWatchpointsBrowserWidget (QWidget* parent) : QWidget(parent) {
+SeerCatchpointsBrowserWidget::SeerCatchpointsBrowserWidget (QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
 
     // Setup the widgets
-    watchpointsTreeWidget->clear();
+    catchpointsTreeWidget->clear();
 
-    watchpointsTreeWidget->setSortingEnabled(false);
-    watchpointsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    watchpointsTreeWidget->resizeColumnToContents(0); // number
-    watchpointsTreeWidget->resizeColumnToContents(1); // type
-    watchpointsTreeWidget->resizeColumnToContents(2); // disp
-    watchpointsTreeWidget->resizeColumnToContents(3); // enabled
-    watchpointsTreeWidget->resizeColumnToContents(4); // addr
-  //watchpointsTreeWidget->resizeColumnToContents(5); // func      Too long to show
-    watchpointsTreeWidget->resizeColumnToContents(6); // file
-  //watchpointsTreeWidget->resizeColumnToContents(7); // fullname  Too long to show
-    watchpointsTreeWidget->resizeColumnToContents(8); // line
-    watchpointsTreeWidget->resizeColumnToContents(9); // thread-groups
-    watchpointsTreeWidget->resizeColumnToContents(10); // times
-    watchpointsTreeWidget->resizeColumnToContents(11); // original-location / expression
-    watchpointsTreeWidget->resizeColumnToContents(12); // value
-    watchpointsTreeWidget->resizeColumnToContents(13); // new value
-    watchpointsTreeWidget->resizeColumnToContents(14); // used
+    catchpointsTreeWidget->setSortingEnabled(false);
+    catchpointsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    catchpointsTreeWidget->resizeColumnToContents(0); // number
+    catchpointsTreeWidget->resizeColumnToContents(1); // type
+    catchpointsTreeWidget->resizeColumnToContents(2); // disp
+    catchpointsTreeWidget->resizeColumnToContents(3); // enabled
+    catchpointsTreeWidget->resizeColumnToContents(4); // what
+    catchpointsTreeWidget->resizeColumnToContents(5); // catch-type
+    catchpointsTreeWidget->resizeColumnToContents(6); // name
+    catchpointsTreeWidget->resizeColumnToContents(7); // thread-groups
+    catchpointsTreeWidget->resizeColumnToContents(8); // times
 
-    watchpointsTreeWidget->setColumnHidden(4, true); // Hide the 'addr' column.
-    watchpointsTreeWidget->setColumnHidden(5, true); // Hide the 'func' column.
-    watchpointsTreeWidget->setColumnHidden(14, true); // Hide the 'used' column.
-    watchpointsTreeWidget->clear();
+    catchpointsTreeWidget->setColumnHidden(9, true);  // Hide the 'used' column.
+    catchpointsTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(watchpointsTreeWidget,         &QTreeWidget::itemDoubleClicked,    this,  &SeerWatchpointsBrowserWidget::handleItemDoubleClicked);
-    QObject::connect(refreshWatchpointsToolButton,  &QToolButton::clicked,              this,  &SeerWatchpointsBrowserWidget::handleRefreshToolButton);
-    QObject::connect(addWatchpointToolButton,       &QToolButton::clicked,              this,  &SeerWatchpointsBrowserWidget::handleAddToolButton);
-    QObject::connect(deleteWatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerWatchpointsBrowserWidget::handleDeleteToolButton);
-    QObject::connect(enableWatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerWatchpointsBrowserWidget::handleEnableToolButton);
-    QObject::connect(disableWatchpointsToolButton,  &QToolButton::clicked,              this,  &SeerWatchpointsBrowserWidget::handleDisableToolButton);
+    QObject::connect(refreshCatchpointsToolButton,  &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleRefreshToolButton);
+    QObject::connect(addCatchpointToolButton,       &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleAddToolButton);
+    QObject::connect(deleteCatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleDeleteToolButton);
+    QObject::connect(enableCatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleEnableToolButton);
+    QObject::connect(disableCatchpointsToolButton,  &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleDisableToolButton);
 }
 
-SeerWatchpointsBrowserWidget::~SeerWatchpointsBrowserWidget () {
+SeerCatchpointsBrowserWidget::~SeerCatchpointsBrowserWidget () {
 }
 
-void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
+void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
         return;
     }
 
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     if (text.startsWith("^done,BreakpointTable={") && text.endsWith("}")) {
 
-        //
         // ^done,BreakpointTable={
-        //     nr_rows="2",nr_cols="6",
+        //    nr_rows="3", nr_cols="6",
         //
-        //     hdr=[
-        //             {width="7",alignment="-1",col_name="number",colhdr="Num"},
-        //             {width="14",alignment="-1",col_name="type",colhdr="Type"},
-        //             {width="4",alignment="-1",col_name="disp",colhdr="Disp"},
-        //             {width="3",alignment="-1",col_name="enabled",colhdr="Enb"},
-        //             {width="18",alignment="-1",col_name="addr",colhdr="Address"},
-        //             {width="40",alignment="2",col_name="what",colhdr="What"}
-        //         ],
+        //    hdr=[
+        //            {width="7",alignment="-1",col_name="number",colhdr="Num"},
+        //            {width="14",alignment="-1",col_name="type",colhdr="Type"},
+        //            {width="4",alignment="-1",col_name="disp",colhdr="Disp"},
+        //            {width="3",alignment="-1",col_name="enabled",colhdr="Enb"},
+        //            {width="18",alignment="-1",col_name="addr",colhdr="Address"},
+        //            {width="40",alignment="2",col_name="what",colhdr="What"}
+        //        ],
         //
-        //     body=[
-        //             bkpt={number="2",type="breakpoint",disp="keep",enabled="y",addr="0x0000000000400c17",func="main(int, char**)",file="helloworld.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp",line="8",thread-groups=["i1"],times="0",original-location="main"},
-        //             bkpt={number="3",
-        //                   type="breakpoint",
-        //                   disp="keep",
-        //                   enabled="y",
-        //                   addr="0x0000000000400d72",
-        //                   func="function1(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)",
-        //                   file="function1.cpp",
-        //                   fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",
-        //                   line="7",
-        //                   thread-groups=["i1"],
-        //                   times="0",
-        //                   original-location="function1"}
+        //    body=[
+        //            bkpt={number="2",type="catchpoint",disp="keep",enabled="y",what="exception catch",catch-type="catch",thread-groups=["i1"],times="0"},
+        //            bkpt={number="3",
+        //                  type="catchpoint",
+        //                  disp="keep",
+        //                  enabled="y",
+        //                  what="exception throw",
+        //                  catch-type="throw",
+        //                  thread-groups=["i1"],
+        //                  regexp="Exception*",
+        //                  times="0"}
         //          ]
-        // }
         //
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
@@ -99,7 +87,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
 
         // No rows? Just clear the tree.
         if (body_text == "") {
-            watchpointsTreeWidget->clear();
+            catchpointsTreeWidget->clear();
 
         // Otherwise, populate it.
         }else{
@@ -107,9 +95,9 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             // Mark each entry initially as "unused".
             // Later, some will be marked as "reused" or "new". Then the "unused" ones will
             // be deleted.
-            QTreeWidgetItemIterator it(watchpointsTreeWidget);
+            QTreeWidgetItemIterator it(catchpointsTreeWidget);
             while (*it) {
-                (*it)->setText(14, "unused");
+                (*it)->setText(9, "unused");
                 ++it;
             }
 
@@ -121,23 +109,20 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                 QString type_text              = Seer::parseFirst(bkpt_text, "type=",              '"', '"', false);
                 QString disp_text              = Seer::parseFirst(bkpt_text, "disp=",              '"', '"', false);
                 QString enabled_text           = Seer::parseFirst(bkpt_text, "enabled=",           '"', '"', false);
-                QString addr_text              = Seer::parseFirst(bkpt_text, "addr=",              '"', '"', false);
-                QString func_text              = Seer::parseFirst(bkpt_text, "func=",              '"', '"', false);
-                QString file_text              = Seer::parseFirst(bkpt_text, "file=",              '"', '"', false);
-                QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
-                QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
+                QString what_text              = Seer::parseFirst(bkpt_text, "what=",              '"', '"', false);
+                QString catch_type_text        = Seer::parseFirst(bkpt_text, "catch-type=",        '"', '"', false);
+                QString name_text              = Seer::parseFirst(bkpt_text, "regexp=",            '"', '"', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
-                QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
-                // Only look for 'watchpoint' type break points.
-                if (type_text != "hw watchpoint" && type_text != "watchpoint" && type_text != "read watchpoint" && type_text != "acc watchpoint") {
+                // Only look for 'catchpoint' type break points.
+                if (type_text != "catchpoint") {
                     continue;
                 }
 
                 // Instead of creating a new tree each time, we will reuse existing items, if they are there.
                 // This allows the expanded items to remain expanded.
-                QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
+                QList<QTreeWidgetItem*> matches = catchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
 
                 // No matches. So can't reuse. Add the new entry.
                 if (matches.size() == 0) {
@@ -148,22 +133,16 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(1, type_text);
                     topItem->setText(2, disp_text);
                     topItem->setText(3, enabled_text);
-                    topItem->setText(4, addr_text);
-                    topItem->setText(5, func_text);
-                    topItem->setText(6, file_text);
-                    topItem->setText(7, fullname_text);
-                    topItem->setText(8, line_text);
-                    topItem->setText(9, thread_groups_text);
-                    topItem->setText(10, times_text);
-                    topItem->setText(11, original_location_text);
-                    topItem->setText(12, "");
-                    topItem->setText(13, "");
-                    topItem->setText(14, "new");
+                    topItem->setText(4, what_text);
+                    topItem->setText(5, catch_type_text);
+                    topItem->setText(6, name_text);
+                    topItem->setText(7, thread_groups_text);
+                    topItem->setText(8, times_text);
+                    topItem->setText(9, "new");
 
-                    watchpointsTreeWidget->addTopLevelItem(topItem);
+                    catchpointsTreeWidget->addTopLevelItem(topItem);
 
                 // Found a match. Reuse it.
-                // But don't overwrite the file, fullname, line, value, and new value.
                 }else{
 
                     QTreeWidgetItem* topItem = matches.takeFirst();
@@ -172,107 +151,20 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(1, type_text);
                     topItem->setText(2, disp_text);
                     topItem->setText(3, enabled_text);
-                    topItem->setText(4, addr_text);
-                    topItem->setText(5, func_text);
-                  //topItem->setText(6, file_text);
-                  //topItem->setText(7, fullname_text);
-                  //topItem->setText(8, line_text);
-                    topItem->setText(9, thread_groups_text);
-                    topItem->setText(10, times_text);
-                    topItem->setText(11, original_location_text);
-                  //topItem->setText(12, "");
-                  //topItem->setText(13, "");
-                    topItem->setText(14, "reused");
+                    topItem->setText(4, what_text);
+                    topItem->setText(5, catch_type_text);
+                    topItem->setText(6, name_text);
+                    topItem->setText(7, thread_groups_text);
+                    topItem->setText(8, times_text);
+                    topItem->setText(9, "reused");
                 }
             }
 
             // At this point, there are some new entries, some reused entries, and some unused ones.
             // Delete the unused ones. They are obsolete.
-            QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems("unused", Qt::MatchExactly, 14);
+            QList<QTreeWidgetItem*> matches = catchpointsTreeWidget->findItems("unused", Qt::MatchExactly, 9);
 
             qDeleteAll(matches);
-        }
-
-    }else if (text.startsWith("*stopped,reason=\"") || text.startsWith("*stopped,hw-awpt={")) {
-
-        QString reason_text = Seer::parseFirst(text, "reason=", '"', '"', false);
-
-        if (reason_text == "watchpoint-trigger") {
-            //*stopped,reason="watchpoint-trigger",wpt={number="3",exp="i"},value={old="32767",new="42"},frame={addr="0x0000000000400d79",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="9",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="0"
-
-            QString wpt_text       = Seer::parseFirst(text,       "wpt=",       '{', '}', false);
-            QString number_text    = Seer::parseFirst(wpt_text,   "number=",    '"', '"', false);
-            QString exp_text       = Seer::parseFirst(wpt_text,   "exp=",       '"', '"', false);
-            QString value_text     = Seer::parseFirst(text,       "value=",     '{', '}', false);
-            QString old_text       = Seer::parseFirst(value_text, "old=",       '"', '"', false);
-            QString new_text       = Seer::parseFirst(value_text, "new=",       '"', '"', false);
-            QString frame_text     = Seer::parseFirst(text,       "frame=",     '{', '}', false);
-            QString file_text      = Seer::parseFirst(frame_text, "file=",      '"', '"', false);
-            QString fullname_text  = Seer::parseFirst(frame_text, "fullname=",  '"', '"', false);
-            QString line_text      = Seer::parseFirst(frame_text, "line=",      '"', '"', false);
-
-            // Find watchpoint number in the tree
-            QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
-            if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
-                QTreeWidgetItem* item = matches.first();
-                item->setText(6, file_text);
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(12, old_text);
-                item->setText(13, new_text);
-            }
-
-        }else if (reason_text == "read-watchpoint-trigger") {
-            //*stopped,reason="read-watchpoint-trigger",hw-rwpt={number="5",exp="i"},value={value="42"},frame={addr="0x0000000000400d9a",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="11",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="4"
-
-            QString hwwpt_text     = Seer::parseFirst(text,       "hw-rwpt=",   '{', '}', false);
-            QString number_text    = Seer::parseFirst(hwwpt_text, "number=",    '"', '"', false);
-            QString exp_text       = Seer::parseFirst(hwwpt_text, "exp=",       '"', '"', false);
-            QString value_text     = Seer::parseFirst(text,       "value=",     '{', '}', false);
-            QString value_text2    = Seer::parseFirst(value_text, "value=",     '"', '"', false);
-            QString frame_text     = Seer::parseFirst(text,       "frame=",     '{', '}', false);
-            QString file_text      = Seer::parseFirst(frame_text, "file=",      '"', '"', false);
-            QString fullname_text  = Seer::parseFirst(frame_text, "fullname=",  '"', '"', false);
-            QString line_text      = Seer::parseFirst(frame_text, "line=",      '"', '"', false);
-
-            // Find watchpoint number in the tree
-            QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
-            if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
-                QTreeWidgetItem* item = matches.first();
-                item->setText(6, file_text);
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(12, value_text2);
-                item->setText(13, "");
-            }
-
-        }else if (reason_text == "access-watchpoint-trigger") {
-            //*stopped,reason="access-watchpoint-trigger",hw-awpt={number="3",exp="v"},value={old="1",new="11"},frame={addr="0x000000000040059a",func="bar",args=[{name="v",value="11"}],file="helloonefile.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloonefile/helloonefile.cpp",line="15",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
-
-            QString hwawpt_text    = Seer::parseFirst(text,        "hw-awpt=",  '{', '}', false);
-            QString number_text    = Seer::parseFirst(hwawpt_text, "number=",   '"', '"', false);
-            QString exp_text       = Seer::parseFirst(hwawpt_text, "exp=",      '"', '"', false);
-            QString value_text     = Seer::parseFirst(text,        "value=",    '{', '}', false);
-            QString old_text       = Seer::parseFirst(value_text,  "old=",      '"', '"', false);
-            QString new_text       = Seer::parseFirst(value_text,  "new=",      '"', '"', false);
-            QString frame_text     = Seer::parseFirst(text,       "frame=",     '{', '}', false);
-            QString file_text      = Seer::parseFirst(frame_text, "file=",      '"', '"', false);
-            QString fullname_text  = Seer::parseFirst(frame_text, "fullname=",  '"', '"', false);
-            QString line_text      = Seer::parseFirst(frame_text, "line=",      '"', '"', false);
-
-            // Find watchpoint number in the tree
-            QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
-            if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
-                QTreeWidgetItem* item = matches.first();
-                item->setText(6, file_text);
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(12, old_text);
-                item->setText(13, new_text);
-            }
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
@@ -282,52 +174,38 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
         // Ignore others.
     }
 
-    watchpointsTreeWidget->resizeColumnToContents(0);
-    watchpointsTreeWidget->resizeColumnToContents(1);
-    watchpointsTreeWidget->resizeColumnToContents(2);
-    watchpointsTreeWidget->resizeColumnToContents(3);
-    watchpointsTreeWidget->resizeColumnToContents(4);
-  //watchpointsTreeWidget->resizeColumnToContents(5);
-    watchpointsTreeWidget->resizeColumnToContents(6);
-  //watchpointsTreeWidget->resizeColumnToContents(7);
-    watchpointsTreeWidget->resizeColumnToContents(8);
-    watchpointsTreeWidget->resizeColumnToContents(9);
-    watchpointsTreeWidget->resizeColumnToContents(10);
-    watchpointsTreeWidget->resizeColumnToContents(11);
-    watchpointsTreeWidget->resizeColumnToContents(12);
-    watchpointsTreeWidget->resizeColumnToContents(13);
-    watchpointsTreeWidget->resizeColumnToContents(14);
+    catchpointsTreeWidget->resizeColumnToContents(0);
+    catchpointsTreeWidget->resizeColumnToContents(1);
+    catchpointsTreeWidget->resizeColumnToContents(2);
+    catchpointsTreeWidget->resizeColumnToContents(3);
+    catchpointsTreeWidget->resizeColumnToContents(4);
+    catchpointsTreeWidget->resizeColumnToContents(5);
+    catchpointsTreeWidget->resizeColumnToContents(6);
+    catchpointsTreeWidget->resizeColumnToContents(7);
+    catchpointsTreeWidget->resizeColumnToContents(8);
+    catchpointsTreeWidget->resizeColumnToContents(9);
 
     QApplication::restoreOverrideCursor();
 }
 
-void SeerWatchpointsBrowserWidget::handleStoppingPointReached () {
+void SeerCatchpointsBrowserWidget::handleStoppingPointReached () {
 
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
         return;
     }
 
-    emit refreshWatchpointsList();
+    emit refreshCatchpointsList();
 }
 
-void SeerWatchpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+void SeerCatchpointsBrowserWidget::handleRefreshToolButton () {
 
-    Q_UNUSED(column);
-
-    int lineno = item->text(8).toInt();
-
-    emit selectedFile(item->text(6), item->text(7), lineno);
+    emit refreshCatchpointsList();
 }
 
-void SeerWatchpointsBrowserWidget::handleRefreshToolButton () {
+void SeerCatchpointsBrowserWidget::handleAddToolButton () {
 
-    emit refreshWatchpointsList();
-}
-
-void SeerWatchpointsBrowserWidget::handleAddToolButton () {
-
-    SeerWatchpointCreateDialog dlg(this);
+    SeerCatchpointCreateDialog dlg(this);
 
     int ret = dlg.exec();
 
@@ -335,101 +213,101 @@ void SeerWatchpointsBrowserWidget::handleAddToolButton () {
         return;
     }
 
-    // Build a watchpoint specification.
-    QString watchpointParameters = dlg.watchpointText();
+    // Build a catchpoint specification.
+    QString catchpointParameters = dlg.catchpointText();
 
     // If nothing, just return.
-    if (watchpointParameters == "") {
+    if (catchpointParameters == "") {
         return;
     }
 
-    // Otherwise send the command to create the watchpoint.
-    emit insertWatchpoint(watchpointParameters);
+    // Otherwise send the command to create the catchpoint.
+    emit insertCatchpoint(catchpointParameters);
 }
 
-void SeerWatchpointsBrowserWidget::handleDeleteToolButton () {
+void SeerCatchpointsBrowserWidget::handleDeleteToolButton () {
 
     // Get selected tree items.
-    QList<QTreeWidgetItem*> items =  watchpointsTreeWidget->selectedItems();
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
 
-    // Build a string that is a list of watchpoints.
-    QString watchpoints;
+    // Build a string that is a list of catchpoints.
+    QString catchpoints;
 
     QList<QTreeWidgetItem*>::iterator i;
     for (i = items.begin(); i != items.end(); ++i) {
         if (i != items.begin()) {
-            watchpoints += " ";
+            catchpoints += " ";
         }
-        watchpoints += (*i)->text(0);
+        catchpoints += (*i)->text(0);
     }
 
-    // Don't do anything if the list of watchpoints is empty.
-    if (watchpoints == "") {
+    // Don't do anything if the list of catchpoints is empty.
+    if (catchpoints == "") {
         return;
     }
 
     // Send the signal.
-    emit deleteWatchpoints(watchpoints);
+    emit deleteCatchpoints(catchpoints);
 }
 
-void SeerWatchpointsBrowserWidget::handleEnableToolButton () {
+void SeerCatchpointsBrowserWidget::handleEnableToolButton () {
 
     // Get selected tree items.
-    QList<QTreeWidgetItem*> items = watchpointsTreeWidget->selectedItems();
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
 
-    // Build a string that is a list of watchpoints.
-    QString watchpoints;
-
-    QList<QTreeWidgetItem*>::iterator i;
-    for (i = items.begin(); i != items.end(); ++i) {
-
-        if (i != items.begin()) {
-            watchpoints += " ";
-        }
-
-        watchpoints += (*i)->text(0);
-    }
-
-    // Don't do anything if the list of watchpoints is empty.
-    if (watchpoints == "") {
-        return;
-    }
-
-    // Send the signal.
-    emit enableWatchpoints(watchpoints);
-}
-
-void SeerWatchpointsBrowserWidget::handleDisableToolButton () {
-
-    // Get selected tree items.
-    QList<QTreeWidgetItem*> items = watchpointsTreeWidget->selectedItems();
-
-    // Build a string that is a list of watchpoints.
-    QString watchpoints;
+    // Build a string that is a list of catchpoints.
+    QString catchpoints;
 
     QList<QTreeWidgetItem*>::iterator i;
     for (i = items.begin(); i != items.end(); ++i) {
 
         if (i != items.begin()) {
-            watchpoints += " ";
+            catchpoints += " ";
         }
 
-        watchpoints += (*i)->text(0);
+        catchpoints += (*i)->text(0);
     }
 
-    // Don't do anything if the list of watchpoints is empty.
-    if (watchpoints == "") {
+    // Don't do anything if the list of catchpoints is empty.
+    if (catchpoints == "") {
         return;
     }
 
     // Send the signal.
-    emit disableWatchpoints(watchpoints);
+    emit enableCatchpoints(catchpoints);
 }
 
-void SeerWatchpointsBrowserWidget::showEvent (QShowEvent* event) {
+void SeerCatchpointsBrowserWidget::handleDisableToolButton () {
+
+    // Get selected tree items.
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
+
+    // Build a string that is a list of catchpoints.
+    QString catchpoints;
+
+    QList<QTreeWidgetItem*>::iterator i;
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        if (i != items.begin()) {
+            catchpoints += " ";
+        }
+
+        catchpoints += (*i)->text(0);
+    }
+
+    // Don't do anything if the list of catchpoints is empty.
+    if (catchpoints == "") {
+        return;
+    }
+
+    // Send the signal.
+    emit disableCatchpoints(catchpoints);
+}
+
+void SeerCatchpointsBrowserWidget::showEvent (QShowEvent* event) {
 
     QWidget::showEvent(event);
 
-    emit refreshWatchpointsList();
+    emit refreshCatchpointsList();
 }
 

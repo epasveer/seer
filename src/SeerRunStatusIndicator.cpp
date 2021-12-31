@@ -92,6 +92,11 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
     }else if (text.startsWith("*stopped,reason=\"signal-received\"")) {
         setRunStatus(SeerRunStatusIndicator::Stopped);
 
+    }else if (text.startsWith("*stopped,bkptno=")) {
+        if (text.contains("reason=\"breakpoint-hit\"")) {
+            setRunStatus(SeerRunStatusIndicator::Stopped);
+        }
+
     }else if (text.startsWith("*stopped,frame=")) {
         //*stopped,frame={addr=\"0x00007f0ee0d2d954\",func=\"rfft\",args=[{name=\"a\",value=\"...\"},...
         //*stopped,frame={addr="0x00007f608ec49fc0",func="__pthread_clockjoin_ex",args=[],from="/lib64/libpthread.so.0",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"

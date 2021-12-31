@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>395</height>
+    <width>521</width>
+    <height>304</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,223 +15,73 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="catchpointLocationGroupBox">
+    <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Catchpoint Location</string>
+      <string>Catchpoint Type</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="filenameLabel">
+       <widget class="QRadioButton" name="throwRadioButton">
         <property name="text">
-         <string>Filename</string>
+         <string>Catch on 'throw'</string>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QLineEdit" name="filenameLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="lineNumberLabel">
+       <widget class="QRadioButton" name="rethrowRadioButton">
         <property name="text">
-         <string>Line number</string>
+         <string>Catch on 'rethrow'</string>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
        </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineNumberLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <spacer name="lineNumberHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="functionLabel">
+       <widget class="QRadioButton" name="catchRadioButton">
         <property name="text">
-         <string>Function</string>
+         <string>Catch on 'catch'</string>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
        </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="functionLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="labelLabel">
-        <property name="text">
-         <string>Label</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="labelLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <spacer name="labelHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="catchpointTypeGroupBox">
+    <widget class="QGroupBox" name="catchpointLocationGroupBox">
      <property name="title">
-      <string>Catchpoint Type</string>
+      <string>Catchpoint Location</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="nameCheckBox">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="nameLineEdit">
+        <property name="placeholderText">
+         <string>Exception name as a regular expression.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QCheckBox" name="temporaryCheckBox">
         <property name="text">
          <string>Temporary</string>
         </property>
        </widget>
-      </item>
-      <item row="0" column="1">
-       <spacer name="temporaryHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="conditionalCheckBox">
-        <property name="text">
-         <string>Conditional</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLineEdit" name="conditionalLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="hardwareCheckBox">
-        <property name="text">
-         <string>Hardware</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <spacer name="hardwareHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="ignoreCountCheckBox">
-        <property name="text">
-         <string>Ignore Count</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLineEdit" name="ignoreCountLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="pendingCheckBox">
-        <property name="text">
-         <string>Pending</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <spacer name="pendingHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="2">
-       <widget class="QCheckBox" name="threadIdCheckBox">
-        <property name="text">
-         <string>Thread Id</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QLineEdit" name="threadIdLineEdit">
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="disabledCheckBox">
-        <property name="text">
-         <string>Disabled</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <spacer name="disabledHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
@@ -283,4 +133,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="typeButtonGroup"/>
+ </buttongroups>
 </ui>
