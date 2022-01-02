@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SeerHighlighterSettings.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QWidget>
 
@@ -13,15 +14,19 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         explicit SeerEditorConfigPage (QWidget* parent = 0);
        ~SeerEditorConfigPage ();
 
-        void            setEditorFont                   (const QFont& font);
-        const QFont&    editorFont                      () const;
+        void                                setEditorFont                   (const QFont& font);
+        const QFont&                        editorFont                      () const;
+
+        void                                setHighlighterSettings          (const SeerHighlighterSettings& settings);
+        const SeerHighlighterSettings&      highlighterSettings             () const;
 
     protected slots:
-        void            handleSizeChanged               (const QString& text);
-        void            handleFontChanged               (const QFont& font);
-        void            handleFontDialog                ();
+        void                                handleFontSizeChanged           (const QString& text);
+        void                                handleFontChanged               (const QFont& font);
+        void                                handleFontDialog                ();
 
     private:
-        QFont           _font;
+        QFont                               _font;
+        SeerHighlighterSettings             _highlighterSettings;
 };
 

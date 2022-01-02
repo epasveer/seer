@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SeerEditorManagerEntry.h"
+#include "SeerHighlighterSettings.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QWidget>
 #include <QtCore/QMap>
@@ -29,6 +30,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         void                                            setEditorFont                       (const QFont& font);
         const QFont&                                    editorFont                          () const;
+        void                                            setEditorHighlighterSettings        (const SeerHighlighterSettings& settings);
+        const SeerHighlighterSettings&                  editorHighlighterSettings           () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -71,6 +74,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEditorWidgetTab               (int index);
 
         SeerEditorManagerEntries                        _entries;
+        SeerHighlighterSettings                         _editorHighlighterSettings;
         QFont                                           _editorFont;
 };
 

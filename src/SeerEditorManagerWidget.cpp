@@ -12,7 +12,8 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
-    _editorFont = QFont("Source Code Pro", 10); // Default font.
+    _editorFont                = QFont("Source Code Pro", 10); // Default font.
+    _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP();
 
     // Setup UI
     setupUi(this);
@@ -114,6 +115,16 @@ void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
 const QFont& SeerEditorManagerWidget::editorFont () const {
 
     return _editorFont;
+}
+
+void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighterSettings& settings) {
+
+    _editorHighlighterSettings = settings;
+}
+
+const SeerHighlighterSettings& SeerEditorManagerWidget::editorHighlighterSettings () const {
+
+    return _editorHighlighterSettings;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SeerHighlighterSettings.h"
+
 #include <QtGui/QSyntaxHighlighter>
 #include <QtGui/QTextDocument>
 #include <QtGui/QTextCharFormat>
@@ -13,6 +15,9 @@ class SeerCppSourceHighlighter : public QSyntaxHighlighter {
 
     public:
         SeerCppSourceHighlighter (QTextDocument* parent = 0);
+
+        const SeerHighlighterSettings&  highlighterSettings             ();
+        void                            setHighlighterSettings          (const SeerHighlighterSettings& settings);
 
     protected:
         void                            highlightBlock                  (const QString& text) override;
@@ -28,6 +33,7 @@ class SeerCppSourceHighlighter : public QSyntaxHighlighter {
         QRegularExpression              _commentStartExpression;
         QRegularExpression              _commentEndExpression;
 
+        SeerHighlighterSettings         _highlighterSettings;
         QTextCharFormat                 _keywordFormat;
         QTextCharFormat                 _classFormat;
         QTextCharFormat                 _singleLineCommentFormat;

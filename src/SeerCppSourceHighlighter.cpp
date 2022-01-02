@@ -2,16 +2,26 @@
 
 SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {
 
-    // Define formats.
-    _classFormat.setFontWeight(QFont::Bold);
-    _classFormat.setForeground(Qt::darkMagenta);
-    _quotationFormat.setForeground(Qt::darkGreen);
-    _functionFormat.setFontItalic(true);
-    _functionFormat.setForeground(Qt::blue);
-    _singleLineCommentFormat.setForeground(Qt::red);
-    _multiLineCommentFormat.setForeground(Qt::red);
-    _keywordFormat.setForeground(Qt::darkBlue);
-    _keywordFormat.setFontWeight(QFont::Bold);
+    // Set to default formats.
+    setHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+}
+
+const SeerHighlighterSettings& SeerCppSourceHighlighter::highlighterSettings() {
+
+    return _highlighterSettings;
+}
+
+void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSettings& settings) {
+
+    _highlighterSettings     = settings;
+
+    _classFormat             = _highlighterSettings.get("Class");
+    _quotationFormat         = _highlighterSettings.get("Quotation");
+    _functionFormat          = _highlighterSettings.get("Function");
+    _singleLineCommentFormat = _highlighterSettings.get("Comment");
+    _multiLineCommentFormat  = _highlighterSettings.get("Multiline Comment");
+    _keywordFormat           = _highlighterSettings.get("Keyword");
+
 
     /* List from QT example.
     const QString keywordPatterns[] = {
@@ -60,6 +70,8 @@ SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : QSy
         QStringLiteral("\\bwhile\\b"),      QStringLiteral("\\bxor\\b"),                QStringLiteral("\\bxor_eq\\b"),
         QStringLiteral("\\bslots\\b"),      QStringLiteral("\\bsignals\\b")
     };
+
+    _highlightingRules.clear(); // Clear old rules.
 
     HighlightingRule rule;
 

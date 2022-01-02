@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QTableWidget" name="syntaxTableWidget">
+    <widget class="QTableWidget" name="highlighterTableWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -50,49 +50,19 @@
      <attribute name="verticalHeaderStretchLastSection">
       <bool>false</bool>
      </attribute>
-     <row>
-      <property name="text">
-       <string>Class</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Quotation</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Function</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Comment</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Multiline Comment</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>Keyword</string>
-      </property>
-     </row>
      <column>
       <property name="text">
-       <string>Font Weight</string>
+       <string>Weight</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Font Style</string>
+       <string>Style</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Font Color</string>
+       <string>Color</string>
       </property>
      </column>
     </widget>
