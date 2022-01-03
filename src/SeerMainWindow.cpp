@@ -297,6 +297,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
+    gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {

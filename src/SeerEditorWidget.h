@@ -66,6 +66,8 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
 
         void                            clearExpression                 ();
 
+        void                            setHighlighterSettings          (const SeerHighlighterSettings& settings);
+
     signals:
         void                            insertBreakpoint                (QString breakpoint);
         void                            deleteBreakpoints               (QString breakpoints);

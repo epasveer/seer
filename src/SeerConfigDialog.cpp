@@ -114,3 +114,13 @@ const QFont& SeerConfigDialog::editorFont () const {
     return _editorConfigPage->editorFont();
 }
 
+void SeerConfigDialog::setEditorHighlighterSettings (const SeerHighlighterSettings& settings) {
+
+    _editorConfigPage->setHighlighterSettings(settings);
+}
+
+const SeerHighlighterSettings& SeerConfigDialog::editorHighlighterSettings () const {
+
+    return _editorConfigPage->highlighterSettings();
+}
+

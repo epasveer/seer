@@ -22,26 +22,29 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
        ~SeerConfigDialog ();
 
         // Gdb settings.
-        void                    setGdbProgram                                   (const QString& program);
-        QString                 gdbProgram                                      () const;
+        void                                setGdbProgram                                   (const QString& program);
+        QString                             gdbProgram                                      () const;
 
-        void                    setGdbArguments                                 (const QString& arguments);
-        QString                 gdbArguments                                    () const;
+        void                                setGdbArguments                                 (const QString& arguments);
+        QString                             gdbArguments                                    () const;
 
-        void                    setGdbAsyncMode                                 (bool flag);
-        bool                    gdbAsyncMode                                    () const;
+        void                                setGdbAsyncMode                                 (bool flag);
+        bool                                gdbAsyncMode                                    () const;
 
         // Editor settings.
-        void                    setEditorFont                                   (const QFont& font);
-        const QFont&            editorFont                                      () const;
+        void                                setEditorFont                                   (const QFont& font);
+        const QFont&                        editorFont                                      () const;
+
+        void                                setEditorHighlighterSettings                    (const SeerHighlighterSettings& settings);
+        const SeerHighlighterSettings&      editorHighlighterSettings                       () const;
 
     public slots:
-        void                    changePage              (QListWidgetItem* current, QListWidgetItem* previous);
+        void                                changePage                                      (QListWidgetItem* current, QListWidgetItem* previous);
 
     private:
-        SeerGdbConfigPage*      _gdbConfigPage;
-        SeerEditorConfigPage*   _editorConfigPage;
-        SeerSourceConfigPage*   _sourceConfigPage;
-        SeerSeerConfigPage*     _seerConfigPage;
+        SeerGdbConfigPage*                  _gdbConfigPage;
+        SeerEditorConfigPage*               _editorConfigPage;
+        SeerSourceConfigPage*               _sourceConfigPage;
+        SeerSeerConfigPage*                 _seerConfigPage;
 };
 

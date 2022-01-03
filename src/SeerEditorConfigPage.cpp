@@ -17,10 +17,10 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     //
 
     // Set example text.
-    editorWidget->sourceArea()->openText("//\n"
-                                         "// Seer, Copyright 2021 (c)\n"
-                                         "// Ernie Pasveer (epasveer@att.net)\n"
-                                         "//\n"
+    editorWidget->sourceArea()->openText("/*\n"
+                                         " * Seer, Copyright 2021 (c)\n"
+                                         " * Ernie Pasveer (epasveer@att.net)\n"
+                                         " */\n"
                                          "int main(int argc, char* argv[]) {\n"
                                          "\n"
                                          "    std::cout << \"Hello, Seer!\"; // Greetings\n"
@@ -28,34 +28,6 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
                                          "    return 0;\n"
                                          "}",
                                          "sample.cpp");
-    // Setup highlighter table.
-    /*
-    for (int r=0; r<highlighterTableWidget->rowCount(); r++) {
-
-        QComboBox* fontWeightBox = new QComboBox;
-        fontWeightBox->addItem("Normal");
-        fontWeightBox->addItem("Bold");
-
-        highlighterTableWidget->setCellWidget(r, 0, fontWeightBox);
-
-        QComboBox* fontStyleBox = new QComboBox;
-        fontStyleBox->addItem("Normal");
-        fontStyleBox->addItem("Italic");
-
-        highlighterTableWidget->setCellWidget(r, 1, fontStyleBox);
-
-        QColorButton* fontColorButton = new QColorButton;
-
-        highlighterTableWidget->setCellWidget(r, 2, fontColorButton);
-
-        // If it's the first row, don't eanable weight or style.
-        // It doesn't make sense for the background.
-        if (r == 0) {
-            fontWeightBox->setEnabled(false);
-            fontStyleBox->setEnabled(false);
-        }
-    }
-    */
 
     // Connect things.
     QObject::connect(fontSizeComboBox,  &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleFontSizeChanged);
@@ -85,7 +57,7 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     _highlighterSettings = settings;
 
     // Clear the table contents.
-    highlighterTableWidget->clearContents();
+    highlighterTableWidget->setRowCount(0);
 
     // Get a list of keys from the highlighter.
     QStringList keys = _highlighterSettings.keys();
@@ -133,8 +105,14 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
         // Insert the font color.
         QColorButton* fontColorButton = new QColorButton;
         fontColorButton->setColor(format.foreground().color());
+        fontColorButton->setFixedWidth(100);
 
         highlighterTableWidget->setCellWidget(r, 2, fontColorButton);
+
+        // Connect things to watch for changes.
+        QObject::connect(fontWeightBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontItalicBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontColorButton,  &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
     }
 
     highlighterTableWidget->setVerticalHeaderLabels(keys);
@@ -142,6 +120,9 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     highlighterTableWidget->resizeColumnToContents(0); // Weight
     highlighterTableWidget->resizeColumnToContents(1); // Italic
     highlighterTableWidget->resizeColumnToContents(2); // Color
+
+    // Update our sample editor.
+    editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
 }
 
 const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const {
@@ -206,21 +187,49 @@ void SeerEditorConfigPage::handleFontDialog () {
     }
 }
 
-// class
-// quotation
-// function
-// comment
-// multiline comment
-// keyword
+void SeerEditorConfigPage::handleHighlighterChanged () {
 
-//  5     // Define formats.
-//  6     _classFormat.setFontWeight(QFont::Bold);
-//  7     _classFormat.setForeground(Qt::darkMagenta);
-//  8     _quotationFormat.setForeground(Qt::darkGreen);
-//  9     _functionFormat.setFontItalic(true);
-// 10     _functionFormat.setForeground(Qt::blue);
-// 11     _singleLineCommentFormat.setForeground(Qt::red);
-// 12     _multiLineCommentFormat.setForeground(Qt::red);
-// 13     _keywordFormat.setForeground(Qt::darkBlue);
-// 14     _keywordFormat.setFontWeight(QFont::Bold);
+    SeerHighlighterSettings cppSettings;
+
+    for (int r=0; r<highlighterTableWidget->rowCount(); r++) {
+
+        // Get the key (label) for this row.
+        QString key = highlighterTableWidget->verticalHeaderItem(r)->text();
+
+        // Get widgets for this row.
+        QComboBox*    fontWeightBox   = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,0));
+        QComboBox*    fontItalicBox   = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,1));
+        QColorButton* fontColorButton = dynamic_cast<QColorButton*>(highlighterTableWidget->cellWidget(r,2));
+
+        // Create an empty format.
+        QTextCharFormat format;
+
+        // Set the font weight.
+        if (fontWeightBox->currentText() == "Normal") {
+            format.setFontWeight(QFont::Normal);
+        }else if (fontWeightBox->currentText() == "Bold") {
+            format.setFontWeight(QFont::Bold);
+        }else{
+            format.setFontWeight(QFont::Normal);
+        }
+
+        // Set the font italic.
+        if (fontItalicBox->currentText() == "Normal") {
+            format.setFontItalic(false);
+        }else if (fontItalicBox->currentText() == "Italic") {
+            format.setFontItalic(true);
+        }else{
+            format.setFontItalic(false);
+        }
+
+        // Set the font color.
+        format.setForeground(fontColorButton->color());
+
+        // Add the format to our settings.
+        cppSettings.add(key, format);
+    }
+
+    // Update our view.
+    setHighlighterSettings(cppSettings);
+}
 

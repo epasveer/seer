@@ -1163,6 +1163,14 @@ void SeerEditorWidgetSourceArea::clearExpression() {
     _selectedExpressionValue  = "";
 }
 
+void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
+
+    if (_sourceHighlighter) {
+        _sourceHighlighter->setHighlighterSettings(settings);
+        _sourceHighlighter->rehighlight();
+    }
+}
+
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped,reason=\"end-stepping-range\"")) {

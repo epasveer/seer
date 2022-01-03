@@ -12,8 +12,8 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
-    _editorFont                = QFont("Source Code Pro", 10); // Default font.
-    _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP();
+    _editorFont                = QFont("Source Code Pro", 10);              // Default font.
+    _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(); // Default syntax highlighting.
 
     // Setup UI
     setupUi(this);
@@ -120,6 +120,14 @@ const QFont& SeerEditorManagerWidget::editorFont () const {
 void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighterSettings& settings) {
 
     _editorHighlighterSettings = settings;
+
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setHighlighterSettings(_editorHighlighterSettings);
+        b++;
+    }
 }
 
 const SeerHighlighterSettings& SeerEditorManagerWidget::editorHighlighterSettings () const {
@@ -692,6 +700,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     // Create the Editor widget and add it to the tab.
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
     editorWidget->sourceArea()->setFont(editorFont());
+    editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
 
     tabWidget->addTab(editorWidget, file);
 
@@ -730,6 +739,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     // Create the Editor widget and add it to the tab.
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
     editorWidget->sourceArea()->setFont(editorFont());
+    editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
 
     tabWidget->addTab(editorWidget, file);
 
