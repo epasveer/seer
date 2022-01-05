@@ -39,7 +39,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         const SeerHighlighterSettings&      editorHighlighterSettings                       () const;
 
     public slots:
-        void                                changePage                                      (QListWidgetItem* current, QListWidgetItem* previous);
+        void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
+        void                                handleButtonClicked                             (QAbstractButton* button);
 
     private:
         SeerGdbConfigPage*                  _gdbConfigPage;

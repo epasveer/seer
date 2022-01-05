@@ -2,6 +2,7 @@
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QMessageBox>
 #include <QtCore/QDebug>
 
 SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
@@ -54,24 +55,14 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     // Connect things.
-    connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::changePage);
+    connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::handleChangePage);
+    connect(buttonBox,          &QDialogButtonBox::clicked,         this, &SeerConfigDialog::handleButtonClicked);
 
     // Set to first page.
     contentsListWidget->setCurrentRow(0);
 }
 
 SeerConfigDialog::~SeerConfigDialog() {
-}
-
-void SeerConfigDialog::changePage(QListWidgetItem* current, QListWidgetItem* previous) {
-
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
-
-    if (!current) {
-        current = previous;
-    }
-
-    pagesStackedWidget->setCurrentIndex(contentsListWidget->row(current));
 }
 
 void SeerConfigDialog::setGdbProgram (const QString& program) {
@@ -122,5 +113,55 @@ void SeerConfigDialog::setEditorHighlighterSettings (const SeerHighlighterSettin
 const SeerHighlighterSettings& SeerConfigDialog::editorHighlighterSettings () const {
 
     return _editorConfigPage->highlighterSettings();
+}
+
+void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
+
+    if (!current) {
+        current = previous;
+    }
+
+    pagesStackedWidget->setCurrentIndex(contentsListWidget->row(current));
+}
+
+void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
+
+    // Handle resetting the config pages if "Reset" is clicked.
+    if (buttonBox->buttonRole(button) == QDialogButtonBox::ResetRole) {
+
+        QString itemLabel = contentsListWidget->currentItem()->text();
+
+        if (itemLabel == "GDB") {
+
+            int result = QMessageBox::warning(this, "Seer",
+                                          QString("Reset settings for '") + itemLabel + "'?",
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Ok) {
+                setGdbProgram("/usr/bin/gdb");
+                setGdbArguments("--interpreter=mi");
+                setGdbAsyncMode(true);
+            }
+
+        }else if (itemLabel == "Editor") {
+
+            int result = QMessageBox::warning(this, "Seer",
+                                          QString("Reset settings for '") + itemLabel + "'?",
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Ok) {
+                setEditorFont(QFont("Source Code Pro"));
+                setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+            }
+
+        }else if (itemLabel == "Source") {
+
+        }else if (itemLabel == "Seer") {
+
+        }else{
+        }
+    }
 }
 

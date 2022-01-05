@@ -286,6 +286,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
+    dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
 
     int ret = dlg.exec();
 
@@ -590,6 +591,23 @@ void SeerMainWindow::writeConfigSettings () {
 
     settings.beginGroup("editor");
     settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
+
+    settings.beginGroup("highlighter"); {
+
+        SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
+        QStringList keys = highlighter.keys();
+
+        for (int i=0; i<keys.size(); i++) {
+            settings.beginGroup(keys[i]); {
+                QTextCharFormat f = highlighter.get(keys[i]);
+                settings.setValue("fontweight", f.fontWeight());
+                settings.setValue("fontitalic", f.fontItalic());
+                settings.setValue("color",      f.foreground().color());
+            } settings.endGroup();
+        }
+
+    } settings.endGroup();
+
     settings.endGroup();
 }
 
