@@ -623,12 +623,14 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
 
     // Add a syntax highlighter for C++ files.
     if (_sourceHighlighter) {
-        delete _sourceHighlighter;
+        delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
     QRegExp cpp_re("(?:.c|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX)$");
     if (file.contains(cpp_re)) {
         _sourceHighlighter = new SeerCppSourceHighlighter(document());
+        _sourceHighlighter->setHighlighterSettings(_sourceHighlighterSettings);
+        _sourceHighlighter->rehighlight();
     }
 }
 
@@ -1165,10 +1167,17 @@ void SeerEditorWidgetSourceArea::clearExpression() {
 
 void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
 
+    _sourceHighlighterSettings = settings;
+
     if (_sourceHighlighter) {
         _sourceHighlighter->setHighlighterSettings(settings);
         _sourceHighlighter->rehighlight();
     }
+}
+
+const SeerHighlighterSettings& SeerEditorWidgetSourceArea::highlighterSettings () const {
+
+    return _sourceHighlighterSettings;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {

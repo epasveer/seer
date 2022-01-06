@@ -67,6 +67,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         void                            clearExpression                 ();
 
         void                            setHighlighterSettings          (const SeerHighlighterSettings& settings);
+        const SeerHighlighterSettings&  highlighterSettings             () const;
 
     signals:
         void                            insertBreakpoint                (QString breakpoint);
@@ -125,6 +126,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
 
         QPixmap*                        _miniMapPixmap;
         SeerCppSourceHighlighter*       _sourceHighlighter;
+        SeerHighlighterSettings         _sourceHighlighterSettings;
 };
 
 class SeerEditorWidgetLineNumberArea : public QWidget {

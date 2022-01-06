@@ -562,9 +562,9 @@ void SeerMainWindow::writeSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("mainwindow");
-    settings.setValue("size", size());
-    settings.endGroup();
+    settings.beginGroup("mainwindow"); {
+        settings.setValue("size", size());
+    } settings.endGroup();
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
 }
@@ -573,9 +573,9 @@ void SeerMainWindow::readSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("mainwindow");
-    resize(settings.value("size", QSize(1250, 1000)).toSize());
-    settings.endGroup();
+    settings.beginGroup("mainwindow"); {
+        resize(settings.value("size", QSize(1250, 1000)).toSize());
+    } settings.endGroup();
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
 }
@@ -584,43 +584,44 @@ void SeerMainWindow::writeConfigSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("gdb");
-    settings.setValue("program",   gdbWidget->gdbProgram());
-    settings.setValue("arguments", gdbWidget->gdbArguments());
-    settings.endGroup();
-
-    settings.beginGroup("editor");
-    settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
-
-    settings.beginGroup("highlighter"); {
-
-        SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
-        QStringList keys = highlighter.keys();
-
-        for (int i=0; i<keys.size(); i++) {
-            settings.beginGroup(keys[i]); {
-                QTextCharFormat f = highlighter.get(keys[i]);
-                settings.setValue("fontweight", f.fontWeight());
-                settings.setValue("fontitalic", f.fontItalic());
-                settings.setValue("color",      f.foreground().color());
-            } settings.endGroup();
-        }
-
+    settings.beginGroup("gdb"); {
+        settings.setValue("program",   gdbWidget->gdbProgram());
+        settings.setValue("arguments", gdbWidget->gdbArguments());
     } settings.endGroup();
 
-    settings.endGroup();
+    settings.beginGroup("editor"); {
+
+        settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
+
+        settings.beginGroup("highlighter"); {
+
+            SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
+            QStringList keys = highlighter.keys();
+
+            for (int i=0; i<keys.size(); i++) {
+                settings.beginGroup(keys[i]); {
+                    QTextCharFormat f = highlighter.get(keys[i]);
+                    settings.setValue("fontweight", f.fontWeight());
+                    settings.setValue("fontitalic", f.fontItalic());
+                    settings.setValue("color",      f.foreground().color());
+                } settings.endGroup();
+            }
+
+        } settings.endGroup();
+    } settings.endGroup();
 }
 
 void SeerMainWindow::readConfigSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("gdb");
-    gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
-    gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
-    settings.endGroup();
+    settings.beginGroup("gdb"); {
+        gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+        gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
+    } settings.endGroup();
 
     settings.beginGroup("editor"); {
+
         QFont f;
         if (settings.contains("font")) {
             f.fromString(settings.value("font").toString());
@@ -628,6 +629,35 @@ void SeerMainWindow::readConfigSettings () {
             f = QFont("Source Code Pro", 10);
         }
         gdbWidget->editorManager()->setEditorFont(f);
+
+        settings.beginGroup("highlighter"); {
+
+            SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
+            QStringList keys = highlighter.keys();
+
+            for (int i=0; i<keys.size(); i++) {
+                settings.beginGroup(keys[i]); {
+                    QTextCharFormat f = highlighter.get(keys[i]);
+
+                    if (settings.contains("fontweight")) {
+                        f.setFontWeight(settings.value("fontweight").toInt());
+                    }
+
+                    if (settings.contains("fontitalic")) {
+                        f.setFontItalic(settings.value("fontitalic").toBool());
+                    }
+
+                    if (settings.contains("color")) {
+                        f.setForeground(settings.value("color").value<QColor>());
+                    }
+
+                    highlighter.add(keys[i], f);
+                } settings.endGroup();
+            }
+
+            gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);
+
+        } settings.endGroup();
     } settings.endGroup();
 }
 
