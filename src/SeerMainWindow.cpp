@@ -287,6 +287,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
+    dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
 
     int ret = dlg.exec();
 
@@ -299,6 +300,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
+    gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
@@ -595,15 +597,18 @@ void SeerMainWindow::writeConfigSettings () {
 
         settings.beginGroup("highlighter"); {
 
+            settings.setValue("enabled", gdbWidget->editorManager()->editorHighlighterEnabled());
+
             SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
             QStringList keys = highlighter.keys();
 
             for (int i=0; i<keys.size(); i++) {
                 settings.beginGroup(keys[i]); {
                     QTextCharFormat f = highlighter.get(keys[i]);
-                    settings.setValue("fontweight", f.fontWeight());
-                    settings.setValue("fontitalic", f.fontItalic());
-                    settings.setValue("color",      f.foreground().color());
+                    settings.setValue("fontweight",      f.fontWeight());
+                    settings.setValue("fontitalic",      f.fontItalic());
+                    settings.setValue("foregroundcolor", f.foreground().color());
+                    settings.setValue("backgroundcolor", f.background().color());
                 } settings.endGroup();
             }
 
@@ -632,6 +637,8 @@ void SeerMainWindow::readConfigSettings () {
 
         settings.beginGroup("highlighter"); {
 
+            gdbWidget->editorManager()->setEditorHighlighterEnabled(settings.value("enabled",true).toBool());
+
             SeerHighlighterSettings highlighter = gdbWidget->editorManager()->editorHighlighterSettings();
             QStringList keys = highlighter.keys();
 
@@ -647,8 +654,12 @@ void SeerMainWindow::readConfigSettings () {
                         f.setFontItalic(settings.value("fontitalic").toBool());
                     }
 
-                    if (settings.contains("color")) {
-                        f.setForeground(settings.value("color").value<QColor>());
+                    if (settings.contains("foregroundcolor")) {
+                        f.setForeground(settings.value("foregroundcolor").value<QColor>());
+                    }
+
+                    if (settings.contains("backgroundcolor")) {
+                        f.setBackground(settings.value("backgroundcolor").value<QColor>());
                     }
 
                     highlighter.add(keys[i], f);

@@ -20,11 +20,15 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setHighlighterSettings          (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&      highlighterSettings             () const;
 
+        void                                setHighlighterEnabled           (bool flag);
+        bool                                highlighterEnabled              () const;
+
     protected slots:
         void                                handleFontSizeChanged           (const QString& text);
         void                                handleFontChanged               (const QFont& font);
         void                                handleFontDialog                ();
         void                                handleHighlighterChanged        ();
+        void                                handleEnabledChanged            ();
 
     private:
         QFont                               _font;

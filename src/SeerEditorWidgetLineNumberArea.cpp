@@ -1,4 +1,5 @@
 #include "SeerEditorWidget.h"
+#include <QtCore/QDebug>
 
 SeerEditorWidgetLineNumberArea::SeerEditorWidgetLineNumberArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
     _editorWidget = editorWidget;

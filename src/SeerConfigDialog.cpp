@@ -115,6 +115,16 @@ const SeerHighlighterSettings& SeerConfigDialog::editorHighlighterSettings () co
     return _editorConfigPage->highlighterSettings();
 }
 
+void SeerConfigDialog::setEditorHighlighterEnabled (bool flag) {
+
+    _editorConfigPage->setHighlighterEnabled(flag);
+}
+
+bool SeerConfigDialog::editorHighlighterEnabled () const {
+
+    return _editorConfigPage->highlighterEnabled();
+}
+
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
@@ -152,8 +162,9 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
                                           QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
 
             if (result == QMessageBox::Ok) {
-                setEditorFont(QFont("Source Code Pro"));
+                setEditorFont(QFont("Source Code Pro", 10));
                 setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+                setEditorHighlighterEnabled(true);
             }
 
         }else if (itemLabel == "Source") {

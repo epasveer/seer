@@ -52,51 +52,43 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP () {
 
     QTextCharFormat f;
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::white);
-    cppSettings.add("Background", f);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black); f.setBackground(Qt::white);
+    cppSettings.add("Text", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black);
-    cppSettings.add("Foreground", f);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black); f.setBackground(Qt::lightGray);
+    cppSettings.add("Margin", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::lightGray);
-    cppSettings.add("Margin Background", f);
-    f = QTextCharFormat();
-
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black);
-    cppSettings.add("Margin Foreground", f);
-    f = QTextCharFormat();
-
-    f.setFontWeight(QFont::Bold); f.setFontItalic(false); f.setForeground(Qt::darkMagenta);
+    f.setFontWeight(QFont::Bold); f.setFontItalic(false); f.setForeground(Qt::darkMagenta); f.setBackground(Qt::white);
     cppSettings.add("Class", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::darkGreen);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::darkGreen); f.setBackground(Qt::white);
     cppSettings.add("Quotation", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(true); f.setForeground(Qt::blue);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(true); f.setForeground(Qt::blue); f.setBackground(Qt::white);
     cppSettings.add("Function", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::red);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::red); f.setBackground(Qt::white);
     cppSettings.add("Comment", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::red);
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::red); f.setBackground(Qt::white);
     cppSettings.add("Multiline Comment", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Bold); f.setFontItalic(false); f.setForeground(Qt::darkBlue);
+    f.setFontWeight(QFont::Bold); f.setFontItalic(false); f.setForeground(Qt::darkBlue); f.setBackground(Qt::white);
     cppSettings.add("Keyword", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(QColor(Qt::yellow).lighter(160));
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black); f.setBackground(QColor(Qt::yellow).lighter(160));
     cppSettings.add("Current Line", f);
     f = QTextCharFormat();
 
-    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(QColor(Qt::lightGray).lighter(120));
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black); f.setBackground(QColor(Qt::lightGray).lighter(120));
     cppSettings.add("Current Line2", f);
     f = QTextCharFormat();
 

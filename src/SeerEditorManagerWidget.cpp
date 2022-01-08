@@ -14,6 +14,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     // Initialize private data
     _editorFont                = QFont("Source Code Pro", 10);              // Default font.
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(); // Default syntax highlighting.
+    _editorHighlighterEnabled  = true;
 
     // Setup UI
     setupUi(this);
@@ -133,6 +134,24 @@ void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighte
 const SeerHighlighterSettings& SeerEditorManagerWidget::editorHighlighterSettings () const {
 
     return _editorHighlighterSettings;
+}
+
+void SeerEditorManagerWidget::setEditorHighlighterEnabled (bool flag) {
+
+    _editorHighlighterEnabled = flag;
+
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setHighlighterEnabled(_editorHighlighterEnabled);
+        b++;
+    }
+}
+
+bool SeerEditorManagerWidget::editorHighlighterEnabled () const {
+
+    return _editorHighlighterEnabled;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -701,6 +720,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
+    editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
 
     tabWidget->addTab(editorWidget, file);
 
@@ -740,6 +760,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
+    editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
 
     tabWidget->addTab(editorWidget, file);
 

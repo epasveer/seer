@@ -38,6 +38,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setEditorHighlighterSettings                    (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&      editorHighlighterSettings                       () const;
 
+        void                                setEditorHighlighterEnabled                     (bool flag);
+        bool                                editorHighlighterEnabled                        () const;
+
     public slots:
         void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
         void                                handleButtonClicked                             (QAbstractButton* button);

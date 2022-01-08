@@ -30,13 +30,15 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
                                          "sample.cpp");
 
     // Connect things.
-    QObject::connect(fontSizeComboBox,  &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleFontSizeChanged);
-    QObject::connect(fontNameComboBox,  &QFontComboBox::currentFontChanged,             this, &SeerEditorConfigPage::handleFontChanged);
-    QObject::connect(fontDialogButton,  &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleFontDialog);
+    QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleFontSizeChanged);
+    QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,             this, &SeerEditorConfigPage::handleFontChanged);
+    QObject::connect(fontDialogButton,            &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleFontDialog);
+    QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleEnabledChanged);
 
     // Set the default font and highlighter.
     handleFontChanged(QFont("Source Code Pro", 10));
     setHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+    setHighlighterEnabled(true);
 }
 
 SeerEditorConfigPage::~SeerEditorConfigPage() {
@@ -103,23 +105,30 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
         highlighterTableWidget->setCellWidget(r, 1, fontItalicBox);
 
         // Insert the font color.
-        QColorButton* fontColorButton = new QColorButton;
-        fontColorButton->setColor(format.foreground().color());
-        fontColorButton->setFixedWidth(100);
+        QColorButton* foregroundColorButton = new QColorButton;
+        foregroundColorButton->setColor(format.foreground().color());
+      //foregroundColorButton->setFixedWidth(50);
 
-        highlighterTableWidget->setCellWidget(r, 2, fontColorButton);
+        QColorButton* backgroundColorButton = new QColorButton;
+        backgroundColorButton->setColor(format.background().color());
+      //backgroundColorButton->setFixedWidth(50);
+
+        highlighterTableWidget->setCellWidget(r, 2, foregroundColorButton);
+        highlighterTableWidget->setCellWidget(r, 3, backgroundColorButton);
 
         // Connect things to watch for changes.
-        QObject::connect(fontWeightBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(fontItalicBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(fontColorButton,  &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontWeightBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontItalicBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(foregroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(backgroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
     }
 
     highlighterTableWidget->setVerticalHeaderLabels(keys);
 
     highlighterTableWidget->resizeColumnToContents(0); // Weight
     highlighterTableWidget->resizeColumnToContents(1); // Italic
-    highlighterTableWidget->resizeColumnToContents(2); // Color
+    highlighterTableWidget->resizeColumnToContents(2); // Foreground color
+    highlighterTableWidget->resizeColumnToContents(3); // Background color
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
@@ -128,6 +137,18 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
 const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const {
 
     return _highlighterSettings;
+}
+
+void SeerEditorConfigPage::setHighlighterEnabled (bool flag) {
+
+    highlighterEnabledCheckBox->setChecked(flag);
+
+    editorWidget->sourceArea()->setHighlighterEnabled(flag);
+}
+
+bool SeerEditorConfigPage::highlighterEnabled () const {
+
+    return editorWidget->sourceArea()->highlighterEnabled();
 }
 
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
@@ -197,9 +218,10 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         QString key = highlighterTableWidget->verticalHeaderItem(r)->text();
 
         // Get widgets for this row.
-        QComboBox*    fontWeightBox   = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,0));
-        QComboBox*    fontItalicBox   = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,1));
-        QColorButton* fontColorButton = dynamic_cast<QColorButton*>(highlighterTableWidget->cellWidget(r,2));
+        QComboBox*    fontWeightBox         = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,0));
+        QComboBox*    fontItalicBox         = dynamic_cast<QComboBox*>(highlighterTableWidget->cellWidget(r,1));
+        QColorButton* foregroundColorButton = dynamic_cast<QColorButton*>(highlighterTableWidget->cellWidget(r,2));
+        QColorButton* backgroundColorButton = dynamic_cast<QColorButton*>(highlighterTableWidget->cellWidget(r,3));
 
         // Create an empty format.
         QTextCharFormat format;
@@ -223,7 +245,8 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         }
 
         // Set the font color.
-        format.setForeground(fontColorButton->color());
+        format.setForeground(foregroundColorButton->color());
+        format.setBackground(backgroundColorButton->color());
 
         // Add the format to our settings.
         cppSettings.add(key, format);
@@ -231,5 +254,10 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
 
     // Update our view.
     setHighlighterSettings(cppSettings);
+}
+
+void SeerEditorConfigPage::handleEnabledChanged () {
+
+    setHighlighterEnabled(highlighterEnabledCheckBox->isChecked());
 }
 

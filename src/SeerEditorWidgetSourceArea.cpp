@@ -25,11 +25,12 @@
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : QPlainTextEdit(parent) {
 
-    _enableLineNumberArea = false;
-    _enableBreakPointArea = false;
-    _enableMiniMapArea    = false;
-    _ctrlKeyPressed       = false;
-    _sourceHighlighter    = 0;
+    _enableLineNumberArea       = false;
+    _enableBreakPointArea       = false;
+    _enableMiniMapArea          = false;
+    _ctrlKeyPressed             = false;
+    _sourceHighlighter          = 0;
+    _sourceHighlighterEnabled   = true;
 
     QFont font("Source Code Pro");
     font.setStyleHint(QFont::Monospace);
@@ -48,11 +49,12 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : QPlain
     enableBreakPointArea(true);
     enableMiniMapArea(false);  // Doesn't work yet. Need to work on the "mini" part.
 
-  //QObject::connect(this, &SeerEditorWidgetSourceArea::cursorPositionChanged, this, &SeerEditorWidgetSourceArea::highlightCurrentLine);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,     this, &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,         this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,         this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,         this, &SeerEditorWidgetSourceArea::updateMiniMapArea);
+  //QObject::connect(this, &SeerEditorWidgetSourceArea::cursorPositionChanged,              this,            &SeerEditorWidgetSourceArea::highlightCurrentLine);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this,            &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateLineNumberArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateBreakPointArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateMiniMapArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this,            &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
     setCurrentLine(0);
 
@@ -200,9 +202,16 @@ void SeerEditorWidgetSourceArea::lineNumberAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
+    QTextCharFormat format = highlighterSettings().get("Margin");
+
     QPainter painter(_lineNumberArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
-    painter.setPen(Qt::black);
+    painter.fillRect(event->rect(), format.background().color());
+    painter.setPen(format.foreground().color());
+
+    QFont font = painter.font();
+    font.setItalic(format.fontItalic());
+    font.setWeight(format.fontWeight());
+    painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
     int        blockNumber = block.blockNumber();
@@ -230,8 +239,16 @@ void SeerEditorWidgetSourceArea::breakPointAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
+    QTextCharFormat format = highlighterSettings().get("Margin");
+
     QPainter painter(_breakPointArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
+    painter.fillRect(event->rect(), format.background().color());
+    painter.setPen(format.foreground().color());
+
+    QFont font = painter.font();
+    font.setItalic(format.fontItalic());
+    font.setWeight(format.fontWeight());
+    painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
     int        blockNumber = block.blockNumber();
@@ -324,11 +341,13 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
         qDebug() << __PRETTY_FUNCTION__ << ":" << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
 
+        QTextCharFormat format = highlighterSettings().get("Margin");
+
         _miniMapPixmap = new QPixmap(pixmapWidth, pixmapHeight);
-        _miniMapPixmap->fill(Qt::lightGray);
+        _miniMapPixmap->fill(format.background().color());
 
         QPainter painter(_miniMapPixmap);
-        painter.setPen(Qt::black);
+        painter.setPen(format.foreground().color());
         painter.setFont(font);
 
         QTextBlock block       = document()->begin();
@@ -365,9 +384,11 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
     font.setStyleHint(QFont::Monospace);
   //font.setPointSize(2);
 
+    QTextCharFormat format = highlighterSettings().get("Margin");
+
     QPainter painter(_miniMapArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
-    painter.setPen(Qt::black);
+    painter.fillRect(event->rect(), format.background().color());
+    painter.setPen(format.foreground().color());
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -500,8 +521,10 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
 void SeerEditorWidgetSourceArea::highlightCurrentLines () {
 
     // Any line will be highlighted with a yellow line.
-    QColor yellowLineColor = QColor(Qt::yellow).lighter(160);
-    QColor grayLineColor   = QColor(Qt::lightGray).lighter(120);
+    // The 'yellow' color is for the current line of the most recent stack frame.
+    // The 'grey' color is for older stack frames.
+    QColor yellowLineColor = highlighterSettings().get("Current Line").background().color();
+    QColor grayLineColor   = highlighterSettings().get("Current Line2").background().color();
 
     // Create an empty list of selections.
     QList<QTextEdit::ExtraSelection> extraSelections;
@@ -528,7 +551,7 @@ void SeerEditorWidgetSourceArea::highlightCurrentLine () {
 
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    QColor lineColor = QColor(Qt::yellow).lighter(160);
+    QColor lineColor = highlighterSettings().get("Current Line").background().color();
 
     QTextEdit::ExtraSelection selection;
     selection.format.setBackground(lineColor);
@@ -628,7 +651,14 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
 
     QRegExp cpp_re("(?:.c|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX)$");
     if (file.contains(cpp_re)) {
-        _sourceHighlighter = new SeerCppSourceHighlighter(document());
+        _sourceHighlighter = new SeerCppSourceHighlighter(0);
+
+        if (highlighterEnabled()) {
+            _sourceHighlighter->setDocument(document());
+        }else{
+            _sourceHighlighter->setDocument(0);
+        }
+
         _sourceHighlighter->setHighlighterSettings(_sourceHighlighterSettings);
         _sourceHighlighter->rehighlight();
     }
@@ -1169,15 +1199,24 @@ void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSe
 
     _sourceHighlighterSettings = settings;
 
-    if (_sourceHighlighter) {
-        _sourceHighlighter->setHighlighterSettings(settings);
-        _sourceHighlighter->rehighlight();
-    }
+    emit highlighterSettingsChanged();
 }
 
 const SeerHighlighterSettings& SeerEditorWidgetSourceArea::highlighterSettings () const {
 
     return _sourceHighlighterSettings;
+}
+
+void SeerEditorWidgetSourceArea::setHighlighterEnabled (bool flag) {
+
+    _sourceHighlighterEnabled = flag;
+
+    emit highlighterSettingsChanged();
+}
+
+bool SeerEditorWidgetSourceArea::highlighterEnabled () const {
+
+    return _sourceHighlighterEnabled;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
@@ -1480,5 +1519,39 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
     }
 
     qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+}
+
+void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
+
+    // Set base color for background and text color.
+    // Use the palette to do this. Some people say to use the stylesheet.
+    // But the palettle method works (for now).
+    QTextCharFormat format = highlighterSettings().get("Text");
+
+    // qDebug() << __PRETTY_FUNCTION__ << ":" << QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name());
+    // #cecece
+    // setStyleSheet( QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name()) );
+    // setStyleSheet( QString("QPlainTextEdit {foreground-color: %1;}").arg(format.foreground().color().name()) );
+
+    QPalette p = palette();
+    p.setColor(QPalette::Base, format.background().color());
+    p.setColor(QPalette::Text, format.foreground().color());
+    setPalette(p);
+
+    // Update the syntax highlighter.
+    if (_sourceHighlighter) {
+
+        if (highlighterEnabled()) {
+            _sourceHighlighter->setDocument(document());
+        }else{
+            _sourceHighlighter->setDocument(0);
+        }
+
+        _sourceHighlighter->setHighlighterSettings(highlighterSettings());
+        _sourceHighlighter->rehighlight();
+    }
+
+    // Note. The margins are automatically updated by their own paint events.
+    //       The new highlighter settings will be used.
 }
 

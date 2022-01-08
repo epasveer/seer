@@ -32,6 +32,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const QFont&                                    editorFont                          () const;
         void                                            setEditorHighlighterSettings        (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&                  editorHighlighterSettings           () const;
+        void                                            setEditorHighlighterEnabled         (bool flag);
+        bool                                            editorHighlighterEnabled            () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -75,6 +77,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
+        bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
 };
 
