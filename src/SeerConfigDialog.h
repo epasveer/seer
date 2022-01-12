@@ -41,6 +41,13 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setEditorHighlighterEnabled                     (bool flag);
         bool                                editorHighlighterEnabled                        () const;
 
+        // Seer settings.
+        void                                setSeerRememberWindowSizes                      (bool flag);
+        bool                                seerRememberWindowSizes                         () const;
+
+        void                                setSeerConsoleMode                              (const QString& mode);
+        QString                             seerConsoleMode                                 () const;
+
     public slots:
         void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
         void                                handleButtonClicked                             (QAbstractButton* button);

@@ -125,6 +125,26 @@ bool SeerConfigDialog::editorHighlighterEnabled () const {
     return _editorConfigPage->highlighterEnabled();
 }
 
+void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
+
+    _seerConfigPage->setRememberWindowSizes(flag);
+}
+
+bool SeerConfigDialog::seerRememberWindowSizes () const {
+
+    return _seerConfigPage->rememberWindowSizes();
+}
+
+void SeerConfigDialog::setSeerConsoleMode (const QString& mode) {
+
+    _seerConfigPage->setConsoleMode(mode);
+}
+
+QString SeerConfigDialog::seerConsoleMode () const {
+
+    return _seerConfigPage->consoleMode();
+}
+
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
@@ -170,6 +190,15 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         }else if (itemLabel == "Source") {
 
         }else if (itemLabel == "Seer") {
+
+            int result = QMessageBox::warning(this, "Seer",
+                                          QString("Reset settings for '") + itemLabel + "'?",
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Ok) {
+                setSeerRememberWindowSizes(true);
+                setSeerConsoleMode("normal");
+            }
 
         }else{
         }

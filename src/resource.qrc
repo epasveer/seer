@@ -25,5 +25,9 @@
     <file>resources/editor.png</file>
     <file>resources/source.png</file>
     <file>resources/font.png</file>
+    <file>resources/console.png</file>
+    <file>resources/hide.png</file>
+    <file>resources/maximize.png</file>
+    <file>resources/minimize.png</file>
   </qresource>
 </RCC>

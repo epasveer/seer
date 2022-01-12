@@ -40,8 +40,27 @@
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuConsole">
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="title">
+      <string>Console</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/console.png</normaloff>:/seer/resources/console.png</iconset>
+     </property>
+     <addaction name="actionConsoleNormal"/>
+     <addaction name="actionConsoleMinimized"/>
+     <addaction name="actionConsoleHidden"/>
+    </widget>
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
+    <addaction name="menuConsole"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -426,6 +445,42 @@
    </property>
    <property name="statusTip">
     <string>Save the configurations so future Seer sessions will use them.</string>
+   </property>
+  </action>
+  <action name="actionConsoleNormal">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/maximize.png</normaloff>:/seer/resources/maximize.png</iconset>
+   </property>
+   <property name="text">
+    <string>Normal</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the console window.</string>
+   </property>
+  </action>
+  <action name="actionConsoleHidden">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/hide.png</normaloff>:/seer/resources/hide.png</iconset>
+   </property>
+   <property name="text">
+    <string>Hidden</string>
+   </property>
+   <property name="statusTip">
+    <string>Hide the console window.</string>
+   </property>
+  </action>
+  <action name="actionConsoleMinimized">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/minimize.png</normaloff>:/seer/resources/minimize.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minimized</string>
+   </property>
+   <property name="statusTip">
+    <string>Minimize the console window.</string>
    </property>
   </action>
  </widget>

@@ -58,8 +58,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbAsyncMode                     (bool flag);
         bool                                gdbAsyncMode                        () const;
 
+        void                                setConsoleMode                      (const QString& mode);
+        QString                             consoleMode                         () const;
+
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
+
+        void                                writeSettings                       ();
+        void                                readSettings                        ();
 
     public slots:
         void                                handleText                          (const QString& text);
@@ -133,8 +139,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                stoppingPointReached                ();
 
     protected:
-        void                                writeSettings                       ();
-        void                                readSettings                        ();
 
     private:
         bool                                isGdbRuning                         () const;
@@ -158,6 +162,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _newExecutableFlag;
 
         SeerConsoleWidget*                  _consoleWidget;
+        QString                             _consoleMode;
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;

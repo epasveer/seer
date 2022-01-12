@@ -73,6 +73,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionFileQuit,                    &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionConsoleNormal,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleNormal);
+    QObject::connect(actionConsoleHidden,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleHidden);
+    QObject::connect(actionConsoleMinimized,            &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
     QObject::connect(actionControlRun,                  &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
@@ -278,6 +281,21 @@ void SeerMainWindow::handleViewArrayVisualizer () {
     gdbWidget->handleGdbArrayVisualizer();
 }
 
+void SeerMainWindow::handleViewConsoleNormal () {
+
+    gdbWidget->setConsoleMode("normal");
+}
+
+void SeerMainWindow::handleViewConsoleHidden () {
+
+    gdbWidget->setConsoleMode("hidden");
+}
+
+void SeerMainWindow::handleViewConsoleMinimized () {
+
+    gdbWidget->setConsoleMode("minimized");
+}
+
 void SeerMainWindow::handleSettingsConfiguration () {
 
     SeerConfigDialog dlg(this);
@@ -288,6 +306,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setSeerConsoleMode(gdbWidget->consoleMode());
 
     int ret = dlg.exec();
 
@@ -301,6 +320,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
+    gdbWidget->setConsoleMode(dlg.seerConsoleMode());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
@@ -314,6 +334,7 @@ void SeerMainWindow::handleSettingsSaveConfiguration () {
     }
 
     writeConfigSettings();
+    gdbWidget->writeSettings();
 
     QMessageBox::information(this, "Seer", "Saved.");
 }

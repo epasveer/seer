@@ -4,6 +4,7 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerUtl.h"
 #include <QtGui/QFont>
+#include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 #include <QtCore/QDebug>
 #include <unistd.h>
@@ -179,6 +180,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
 
     // Restore window settings.
+    setConsoleMode("normal");
     readSettings();
 }
 
@@ -1291,6 +1293,10 @@ void SeerGdbWidget::writeSettings () {
     settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
     settings.setValue("stackThreadManagersplitter",           stackThreadManagersplitter->saveState());
     settings.endGroup();
+
+    settings.beginGroup("consolewindow");
+    settings.setValue("start", consoleMode());
+    settings.endGroup();
 }
 
 void SeerGdbWidget::readSettings () {
@@ -1302,6 +1308,10 @@ void SeerGdbWidget::readSettings () {
     codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
     sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
     stackThreadManagersplitter->restoreState(settings.value("stackThreadManagersplitter").toByteArray());
+    settings.endGroup();
+
+    settings.beginGroup("consolewindow");
+    setConsoleMode(settings.value("start", "normal").toString());
     settings.endGroup();
 }
 
@@ -1365,7 +1375,8 @@ void SeerGdbWidget::createConsole () {
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
         _consoleWidget->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
-        _consoleWidget->show();
+
+        setConsoleMode(consoleMode());
     }
 }
 
@@ -1375,6 +1386,45 @@ void SeerGdbWidget::deleteConsole () {
         delete _consoleWidget;
         _consoleWidget = 0;
     }
+}
+
+void SeerGdbWidget::setConsoleMode (const QString& mode) {
+
+    _consoleMode = mode;
+
+    if (_consoleWidget != 0) {
+        if (_consoleMode == "normal") {
+            _consoleWidget->show();
+            _consoleWidget->setWindowState(Qt::WindowNoState);
+
+        }else if (_consoleMode == "minimized") {
+            _consoleWidget->show();
+            _consoleWidget->setWindowState(Qt::WindowMinimized);
+
+        }else if (_consoleMode == "hidden") {
+            _consoleWidget->hide();
+
+        }else if (_consoleMode == "") {
+            _consoleMode = "normal";
+            _consoleWidget->show();
+            _consoleWidget->setWindowState(Qt::WindowNoState);
+
+        }else{
+        }
+    }
+
+    //_consoleWidget->hide();                                 // Hide the console. Use show() to restore it.
+    //_consoleWidget->setWindowState(Qt::WindowNoState);      // Show it normally.
+    //_consoleWidget->setWindowState(Qt::WindowMinimized);    // Show it minimized.
+}
+
+QString SeerGdbWidget::consoleMode () const {
+
+    if (_consoleMode == "") {
+        return "normal";
+    }
+
+    return _consoleMode;
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {

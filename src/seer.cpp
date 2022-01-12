@@ -110,6 +110,7 @@ int main (int argc, char* argv[]) {
 
     seer.move(800, 400);
     seer.show();
+    seer.activateWindow();
 
     return app.exec();
 }
