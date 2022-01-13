@@ -19,6 +19,19 @@
     stopped-threads="all",
     core="5"
 
+*stopped,
+    bkptno="4",
+    disp="keep",
+    reason="solib-event",
+    added=[library="/peak/rel/modules/SampVar/libSampVar.so"],
+    frame={addr="0x00007ffff7deb290",
+        func="dl_open_worker",args=[],
+        from="/lib64/ld-linux-x86-64.so.2",
+        arch="i386:x86-64"},
+    thread-id="1",
+    stopped-threads="all",
+    core="1"
+
 # Return status from '-catch-xxxx' command.
 ^done,bkpt={number="2",type="catchpoint",disp="keep",enabled="y",what="exception catch",catch-type="catch",thread-groups=["i1"],times="0"}
 ^done,bkpt={number="3",type="catchpoint",disp="keep",enabled="y",what="exception throw",catch-type="throw",thread-groups=["i1"],times="0"}

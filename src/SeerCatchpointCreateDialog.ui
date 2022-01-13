@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="catchpointTypeGroupBox">
      <property name="title">
       <string>Catchpoint Type</string>
      </property>
@@ -30,10 +30,30 @@
         </attribute>
        </widget>
       </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="loadRadioButton">
+        <property name="text">
+         <string>Catch on library 'load'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QRadioButton" name="rethrowRadioButton">
         <property name="text">
          <string>Catch on 'rethrow'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QRadioButton" name="unloadRadioButton">
+        <property name="text">
+         <string>Catch on library 'unload'</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">typeButtonGroup</string>
@@ -69,7 +89,7 @@
       <item row="1" column="1">
        <widget class="QLineEdit" name="nameLineEdit">
         <property name="placeholderText">
-         <string>Exception name as a regular expression.</string>
+         <string>Exception/Library name as a regular expression.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>

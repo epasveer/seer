@@ -31,6 +31,12 @@ void SeerCatchpointCreateDialog::setType (const QString& text) {
     }else if (text == "catch") {
         catchRadioButton->setChecked(true);
 
+    }else if (text == "load") {
+        loadRadioButton->setChecked(true);
+
+    }else if (text == "unload") {
+        unloadRadioButton->setChecked(true);
+
     }else{
         throwRadioButton->setChecked(true);
     }
@@ -46,6 +52,12 @@ QString SeerCatchpointCreateDialog::typeText () const {
 
     }else if (catchRadioButton->isChecked()) {
         return "catch";
+
+    }else if (loadRadioButton->isChecked()) {
+        return "load";
+
+    }else if (unloadRadioButton->isChecked()) {
+        return "unload";
 
     }else{
         return "throw";
@@ -88,7 +100,7 @@ QString SeerCatchpointCreateDialog::catchpointText () const {
 
     if (nameEnabled()) {
         if (nameText() != "") {
-            catchpointParameters += " -r " + nameText();
+            catchpointParameters += " " + nameText();
         }
     }
 

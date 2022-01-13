@@ -316,52 +316,8 @@ void SeerGdbWidget::handleText (const QString& text) {
     if (text.startsWith("*running,thread-id=\"all\"")) {
 
     // Probably a better way to handle all these types of stops.
-    }else if (text.startsWith("*stopped,reason=\"breakpoint-hit\"")) {
+    }else if (text.startsWith("*stopped,")) {
         emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"watchpoint-trigger\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"read-watchpoint-trigger\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"access-watchpoint-trigger\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"watchpoint-scope\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,hw-awpt={")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"end-stepping-range\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"function-finished\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"location-reached\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"signal-received\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"exited-normally\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"exited-signalled\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,reason=\"exited\"")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,frame=")) {
-        emit stoppingPointReached();
-
-    }else if (text.startsWith("*stopped,bkptno=")) {
-        if (text.contains("reason=\"breakpoint-hit\"")) {
-            emit stoppingPointReached();
-        }
 
     }else if (text.startsWith("=thread-group-started,")) {
         // =thread-group-started,id="i1",pid="30916"
