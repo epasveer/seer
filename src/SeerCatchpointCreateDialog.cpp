@@ -11,10 +11,8 @@ SeerCatchpointCreateDialog::SeerCatchpointCreateDialog (QWidget* parent) : QDial
     setNameText("");
 
     setTemporaryEnabled (false);
-    setNameEnabled (false);
 
     // Connect things.
-    QObject::connect(nameCheckBox, &QCheckBox::clicked,     nameLineEdit, &QLineEdit::setEnabled);
 }
 
 SeerCatchpointCreateDialog::~SeerCatchpointCreateDialog () {
@@ -68,11 +66,6 @@ void SeerCatchpointCreateDialog::setTemporaryEnabled (bool flag) {
     temporaryCheckBox->setChecked(flag);
 }
 
-void SeerCatchpointCreateDialog::setNameEnabled (bool flag) {
-    nameCheckBox->setChecked(flag);
-    nameLineEdit->setEnabled(flag);
-}
-
 void SeerCatchpointCreateDialog::setNameText (const QString& text) {
     nameLineEdit->setText(text);
 }
@@ -85,10 +78,6 @@ bool SeerCatchpointCreateDialog::temporaryEnabled () const {
     return temporaryCheckBox->isChecked();
 }
 
-bool SeerCatchpointCreateDialog::nameEnabled () const {
-    return nameCheckBox->isChecked();
-}
-
 QString SeerCatchpointCreateDialog::catchpointText () const {
 
     // Build a catchpoint specification.
@@ -98,9 +87,12 @@ QString SeerCatchpointCreateDialog::catchpointText () const {
         catchpointParameters += " -t";
     }
 
-    if (nameEnabled()) {
+    if (typeText() == "load" || typeText() == "unload") { // These don't need a "-r"
+        catchpointParameters += " " + nameText();
+
+    }else{  // These do, but only if there is a name.
         if (nameText() != "") {
-            catchpointParameters += " " + nameText();
+            catchpointParameters += " -r " + nameText();
         }
     }
 

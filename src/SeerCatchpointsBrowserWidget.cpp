@@ -57,8 +57,13 @@ QStringList SeerCatchpointsBrowserWidget::catchpointsText () const {
             catchpointParameters += " -t";
         }
 
-        if ((*it)->text(6) != "") {
-            catchpointParameters += " -r " + (*it)->text(6);
+        if ((*it)->text(5) == "load" || (*it)->text(5) == "unload") { // These don't need a "-r"
+            catchpointParameters += " " + (*it)->text(6);
+
+        }else{ // These do, but only if there is a name
+            if ((*it)->text(6) != "") {
+                catchpointParameters += " -r " + (*it)->text(6);
+            }
         }
 
         catchpointList.append(catchpointParameters);
@@ -149,6 +154,27 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
                 // Only look for 'catchpoint' type break points.
                 if (type_text != "catchpoint") {
                     continue;
+                }
+
+                // Hack for library 'load' and 'unload' catchpoints.
+                // Unlike 'catch' catchpoints, the "regexp" field is blank. The
+                // name is buried in the "what" field. So extract it.
+                //
+                //  what="load of library matching libSampVar.so"
+                //  what="unload of library matching libSampVar.so"
+                //
+                if (name_text == "") {
+
+                    QString loadsearch("load of library matching ");
+                    QString unloadsearch("unload of library matching ");
+
+                    if (what_text.startsWith(loadsearch)) {
+                        name_text = what_text.mid(loadsearch.length());
+                    }
+
+                    if (what_text.startsWith(unloadsearch)) {
+                        name_text = what_text.mid(unloadsearch.length());
+                    }
                 }
 
                 // Instead of creating a new tree each time, we will reuse existing items, if they are there.

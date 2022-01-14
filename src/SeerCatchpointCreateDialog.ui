@@ -79,8 +79,15 @@
       <string>Catchpoint Location</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="temporaryCheckBox">
+        <property name="text">
+         <string>Temporary</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="nameCheckBox">
+       <widget class="QLabel" name="nameLabel">
         <property name="text">
          <string>Name</string>
         </property>
@@ -93,13 +100,6 @@
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="temporaryCheckBox">
-        <property name="text">
-         <string>Temporary</string>
         </property>
        </widget>
       </item>
