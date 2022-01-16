@@ -1264,7 +1264,7 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("start", consoleMode());
     }settings.endGroup();
 
-    settings.beginWriteArray("manualgdbcommands"); {
+    settings.beginWriteArray("manualgdbcommandshistory"); {
 
         QStringList commands = manualCommands(rememberManualCommandCount());
 
@@ -1293,7 +1293,7 @@ void SeerGdbWidget::readSettings () {
         setConsoleMode(settings.value("start", "normal").toString());
     } settings.endGroup();
 
-    int size = settings.beginReadArray("manualgdbcommands"); {
+    int size = settings.beginReadArray("manualgdbcommandshistory"); {
 
         QStringList commands;
 

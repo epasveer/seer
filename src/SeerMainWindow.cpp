@@ -636,6 +636,10 @@ void SeerMainWindow::writeConfigSettings () {
 
         } settings.endGroup();
     } settings.endGroup();
+
+    settings.beginGroup("manualgdbcommands"); {
+        settings.setValue("remembercount",   gdbWidget->rememberManualCommandCount());
+    } settings.endGroup();
 }
 
 void SeerMainWindow::readConfigSettings () {
@@ -691,6 +695,10 @@ void SeerMainWindow::readConfigSettings () {
             gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);
 
         } settings.endGroup();
+    } settings.endGroup();
+
+    settings.beginGroup("manualgdbcommands"); {
+        gdbWidget->setRememberManualCommandCount(settings.value("remembercount", 10).toInt());
     } settings.endGroup();
 }
 
