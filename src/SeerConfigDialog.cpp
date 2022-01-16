@@ -145,6 +145,26 @@ QString SeerConfigDialog::seerConsoleMode () const {
     return _seerConfigPage->consoleMode();
 }
 
+void SeerConfigDialog::setSeerRememberManualCommandCount (int count) {
+
+    _seerConfigPage->setRememberManualCommandCount(count);
+}
+
+int SeerConfigDialog::seerRememberManualCommandCount () const {
+
+    return _seerConfigPage->rememberManualCommandCount();
+}
+
+void SeerConfigDialog::setSeerClearManualCommandHistory (bool flag) {
+
+    _seerConfigPage->setClearManualCommandHistory(flag);
+}
+
+bool SeerConfigDialog::seerClearManualCommandHistory () const {
+
+    return _seerConfigPage->clearManualCommandHistory();
+}
+
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
     //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
@@ -163,42 +183,34 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
 
         QString itemLabel = contentsListWidget->currentItem()->text();
 
+        int result = QMessageBox::warning(this, "Seer",
+                                      QString("Reset settings for '") + itemLabel + "'?",
+                                      QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+        if (result != QMessageBox::Ok) {
+            return;
+        }
+
         if (itemLabel == "GDB") {
 
-            int result = QMessageBox::warning(this, "Seer",
-                                          QString("Reset settings for '") + itemLabel + "'?",
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Ok) {
-                setGdbProgram("/usr/bin/gdb");
-                setGdbArguments("--interpreter=mi");
-                setGdbAsyncMode(true);
-            }
+            setGdbProgram("/usr/bin/gdb");
+            setGdbArguments("--interpreter=mi");
+            setGdbAsyncMode(true);
 
         }else if (itemLabel == "Editor") {
 
-            int result = QMessageBox::warning(this, "Seer",
-                                          QString("Reset settings for '") + itemLabel + "'?",
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Ok) {
-                setEditorFont(QFont("Source Code Pro", 10));
-                setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP());
-                setEditorHighlighterEnabled(true);
-            }
+            setEditorFont(QFont("Source Code Pro", 10));
+            setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+            setEditorHighlighterEnabled(true);
 
         }else if (itemLabel == "Source") {
 
         }else if (itemLabel == "Seer") {
 
-            int result = QMessageBox::warning(this, "Seer",
-                                          QString("Reset settings for '") + itemLabel + "'?",
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Ok) {
-                setSeerRememberWindowSizes(true);
-                setSeerConsoleMode("normal");
-            }
+            setSeerConsoleMode("normal");
+            setSeerRememberWindowSizes(true);
+            setSeerRememberManualCommandCount(10);
+            setSeerClearManualCommandHistory(false);
 
         }else{
         }

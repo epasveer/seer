@@ -10,6 +10,10 @@ SeerTildeLogWidget::~SeerTildeLogWidget () {
 
 void SeerTildeLogWidget::processText (const QString& text) {
 
+    if (enableCheckBox->isChecked() == false) {
+        return;
+    }
+
     QString str = text.mid(1); // Remove leading "~"
 
     if (str.front() == '"') { // Remove leading """

@@ -13,44 +13,124 @@
   <property name="windowTitle">
    <string>SeerSeerConfigPage</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
    <property name="topMargin">
     <number>0</number>
    </property>
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="3" column="0">
-    <widget class="QLabel" name="rememberGdbCommandsLabel">
-     <property name="text">
-      <string>Number of manual gdb/mi commands to remember</string>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="consoleModeGroupBox">
+     <property name="title">
+      <string>Console mode on startup</string>
      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="normalRadioButton">
+        <property name="toolTip">
+         <string>The console is shown normally.</string>
+        </property>
+        <property name="text">
+         <string>Normal</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="minimizedRadioButton">
+        <property name="toolTip">
+         <string>The console is shown minimized in the task bar.</string>
+        </property>
+        <property name="text">
+         <string>Minimized</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="hiddenRadioButton">
+        <property name="toolTip">
+         <string>The console is totally hidden. Can be reshown with: View-&gt;Console-&gt;Normal</string>
+        </property>
+        <property name="text">
+         <string>Hidden</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="windowSizesGroupBox">
+     <property name="title">
+      <string>Window sizes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="rememberSizescheckBox">
+        <property name="text">
+         <string>Remember window sizes.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QCheckBox" name="rememberSizescheckBox">
-     <property name="text">
-      <string>Remember window sizes.</string>
+    <widget class="QGroupBox" name="manualGdbCommandsGroupBox">
+     <property name="title">
+      <string>Manual Gdb commands</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="rememberGdbCommandsSpinBox">
+        <property name="toolTip">
+         <string>Number of manual commands to rememvber. 0 means all.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="clearHistoryCheckBox">
+        <property name="toolTip">
+         <string>Clear all manual gdb commands.</string>
+        </property>
+        <property name="text">
+         <string>Clear history</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="rememberGdbCommandsLabel">
+        <property name="text">
+         <string>Number of manual gdb/mi commands to remember</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QSpinBox" name="rememberGdbCommandsSpinBox"/>
-   </item>
-   <item row="3" column="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="0" colspan="3">
+   <item row="3" column="0">
     <widget class="QTextBrowser" name="textBrowser">
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -63,51 +143,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The window sizes can be remembered if they get changed. On startup, Seer will start with the rembered sizes.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Also, 'N' number of the most recent gdb/mi commands will be remembered.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Also, 'N' number of the most recent gdb/mi commands will be remembered. 0 means all.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QGroupBox" name="modeGroupBox">
-     <property name="title">
-      <string>Console mode on startup</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QRadioButton" name="normalRadioButton">
-        <property name="text">
-         <string>Normal</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="minimizedRadioButton">
-        <property name="text">
-         <string>Minimized</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="hiddenRadioButton">
-        <property name="text">
-         <string>Hidden</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
+  <zorder>windowSizesGroupBox</zorder>
+  <zorder>textBrowser</zorder>
+  <zorder>consoleModeGroupBox</zorder>
+  <zorder>manualGdbCommandsGroupBox</zorder>
  </widget>
  <resources/>
  <connections/>

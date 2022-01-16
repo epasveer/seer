@@ -307,6 +307,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
+    dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
 
     int ret = dlg.exec();
 
@@ -314,6 +315,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
         return;
     }
 
+    // Update the GdbWidget with the new settings.
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
@@ -321,6 +323,14 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
+    gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
+
+    // Clear history, if we need to.
+    bool clearManualCommandHistory = dlg.seerClearManualCommandHistory();
+
+    if (clearManualCommandHistory) {
+        gdbWidget->clearManualCommandHistory();
+    }
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {

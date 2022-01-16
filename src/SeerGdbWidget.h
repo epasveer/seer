@@ -61,6 +61,13 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setConsoleMode                      (const QString& mode);
         QString                             consoleMode                         () const;
 
+        void                                setManualCommands                   (const QStringList& commands);
+        QStringList                         manualCommands                      (int count) const;
+
+        void                                setRememberManualCommandCount       (int count);
+        int                                 rememberManualCommandCount          () const;
+        void                                clearManualCommandHistory           ();
+
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
 
@@ -131,6 +138,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbArrayAddExpression         (QString expression);
         void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
+        void                                handleManualCommandChanged          ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
@@ -163,6 +171,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         SeerConsoleWidget*                  _consoleWidget;
         QString                             _consoleMode;
+        int                                 _rememberManualCommandCount;
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;

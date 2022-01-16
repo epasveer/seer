@@ -33,6 +33,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbProgram                 = "/usr/bin/gdb";
     _gdbArguments               = "--interpreter=mi";
     _gdbASyncMode               = true;
+    _consoleMode                = "";
+    _rememberManualCommandCount = 10;
 
     setNewExecutableFlag(true);
 
@@ -178,6 +180,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(manualCommandComboBox,                                     &QComboBox::editTextChanged,                                                                this,                                                           &SeerGdbWidget::handleManualCommandChanged);
 
     // Restore window settings.
     setConsoleMode("normal");
@@ -1217,6 +1220,13 @@ void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
     writeSettings();
 }
 
+void SeerGdbWidget::handleManualCommandChanged () {
+
+    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Manual Command ComboBox changed";
+
+    writeSettings();
+}
+
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
     Q_UNUSED(exitCode);
@@ -1243,32 +1253,58 @@ void SeerGdbWidget::writeSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("mainwindowsplitters");
-    settings.setValue("leftCenterRightSplitter",              leftCenterRightSplitter->saveState());
-    settings.setValue("codeManagerLogTabsSplitter",           codeManagerLogTabsSplitter->saveState());
-    settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
-    settings.setValue("stackThreadManagersplitter",           stackThreadManagersplitter->saveState());
-    settings.endGroup();
+    settings.beginGroup("mainwindowsplitters"); {
+        settings.setValue("leftCenterRightSplitter",              leftCenterRightSplitter->saveState());
+        settings.setValue("codeManagerLogTabsSplitter",           codeManagerLogTabsSplitter->saveState());
+        settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
+        settings.setValue("stackThreadManagersplitter",           stackThreadManagersplitter->saveState());
+    } settings.endGroup();
 
-    settings.beginGroup("consolewindow");
-    settings.setValue("start", consoleMode());
-    settings.endGroup();
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("start", consoleMode());
+    }settings.endGroup();
+
+    settings.beginWriteArray("manualgdbcommands"); {
+
+        QStringList commands = manualCommands(rememberManualCommandCount());
+
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Commands =" << commands;
+
+        for (int i = 0; i < commands.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("command", commands[i]);
+        }
+
+    } settings.endArray();
 }
 
 void SeerGdbWidget::readSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("mainwindowsplitters");
-    leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
-    codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
-    sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
-    stackThreadManagersplitter->restoreState(settings.value("stackThreadManagersplitter").toByteArray());
-    settings.endGroup();
+    settings.beginGroup("mainwindowsplitters"); {
+        leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
+        codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
+        sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
+        stackThreadManagersplitter->restoreState(settings.value("stackThreadManagersplitter").toByteArray());
+    } settings.endGroup();
 
-    settings.beginGroup("consolewindow");
-    setConsoleMode(settings.value("start", "normal").toString());
-    settings.endGroup();
+    settings.beginGroup("consolewindow"); {
+        setConsoleMode(settings.value("start", "normal").toString());
+    } settings.endGroup();
+
+    int size = settings.beginReadArray("manualgdbcommands"); {
+
+        QStringList commands;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            commands << settings.value("command").toString();
+        }
+
+        setManualCommands(commands);
+    } settings.endArray();
 }
 
 bool SeerGdbWidget::isGdbRuning () const {
@@ -1368,10 +1404,6 @@ void SeerGdbWidget::setConsoleMode (const QString& mode) {
         }else{
         }
     }
-
-    //_consoleWidget->hide();                                 // Hide the console. Use show() to restore it.
-    //_consoleWidget->setWindowState(Qt::WindowNoState);      // Show it normally.
-    //_consoleWidget->setWindowState(Qt::WindowMinimized);    // Show it minimized.
 }
 
 QString SeerGdbWidget::consoleMode () const {
@@ -1381,6 +1413,59 @@ QString SeerGdbWidget::consoleMode () const {
     }
 
     return _consoleMode;
+}
+
+void SeerGdbWidget::setManualCommands (const QStringList& commands) {
+
+    manualCommandComboBox->clear();
+
+    manualCommandComboBox->addItems(commands);
+}
+
+QStringList SeerGdbWidget::manualCommands(int count) const {
+
+    //qDebug() << __PRETTY_FUNCTION__ << "Count =" << count;
+
+    // Select all if a zero.
+    if (count == 0) {
+        count = manualCommandComboBox->count();
+    }
+
+    // No more than count.
+    if (count > manualCommandComboBox->count()) {
+        count = manualCommandComboBox->count();
+    }
+
+    // Calculate starting position in list.
+    int index = manualCommandComboBox->count() - count;
+
+    // Get the list.
+    QStringList list;
+
+    for (; index<count; index++) {
+        list << manualCommandComboBox->itemText(index);
+    }
+
+    return list;
+}
+
+void SeerGdbWidget::setRememberManualCommandCount (int count) {
+
+    _rememberManualCommandCount = count;
+}
+
+int SeerGdbWidget::rememberManualCommandCount () const {
+
+    return _rememberManualCommandCount;
+}
+
+void SeerGdbWidget::clearManualCommandHistory () {
+
+    // Zap the entries in the combobox.
+    manualCommandComboBox->clear();
+
+    // Write the settings.
+    writeSettings();
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {

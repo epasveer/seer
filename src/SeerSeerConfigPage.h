@@ -17,5 +17,11 @@ class SeerSeerConfigPage : public QWidget, public Ui::SeerSeerConfigPage {
 
         void                    setRememberWindowSizes                          (bool flag);
         bool                    rememberWindowSizes                             () const;
+
+        void                    setRememberManualCommandCount                   (int count);
+        int                     rememberManualCommandCount                      () const;
+
+        void                    setClearManualCommandHistory                    (bool flag);
+        bool                    clearManualCommandHistory                       () const;
 };
 

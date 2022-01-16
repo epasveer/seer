@@ -12,6 +12,10 @@ SeerCaretAsteriskLogWidget::~SeerCaretAsteriskLogWidget () {
 
 void SeerCaretAsteriskLogWidget::processText (const QString& text) {
 
+    if (enableCheckBox->isChecked() == false) {
+        return;
+    }
+
     // Only log '^' and '*' records.
     if (text.front() != '^' && text.front() != '*' && text.contains(QRegExp("^([0-9]+)\\^")) == false) {
         return;

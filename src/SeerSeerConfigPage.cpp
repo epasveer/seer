@@ -9,6 +9,8 @@ SeerSeerConfigPage::SeerSeerConfigPage(QWidget* parent) : QWidget(parent) {
     // Setup the widgets
     setConsoleMode("normal");
     setRememberWindowSizes(true);
+    setRememberManualCommandCount(10);
+    setClearManualCommandHistory(false);
 
     // Connect things.
 }
@@ -56,5 +58,25 @@ void SeerSeerConfigPage::setRememberWindowSizes (bool flag) {
 bool SeerSeerConfigPage::rememberWindowSizes () const {
 
     return rememberSizescheckBox->isChecked();
+}
+
+void SeerSeerConfigPage::setRememberManualCommandCount (int count) {
+
+    rememberGdbCommandsSpinBox->setValue(count);
+}
+
+int SeerSeerConfigPage::rememberManualCommandCount () const {
+
+    return rememberGdbCommandsSpinBox->value();
+}
+
+void SeerSeerConfigPage::setClearManualCommandHistory (bool flag) {
+
+    clearHistoryCheckBox->setChecked(flag);
+}
+
+bool SeerSeerConfigPage::clearManualCommandHistory () const {
+
+    return clearHistoryCheckBox->isChecked();
 }
 

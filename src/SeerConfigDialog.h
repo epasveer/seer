@@ -48,6 +48,11 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSeerConsoleMode                              (const QString& mode);
         QString                             seerConsoleMode                                 () const;
 
+        void                                setSeerRememberManualCommandCount               (int count);
+        int                                 seerRememberManualCommandCount                  () const;
+        void                                setSeerClearManualCommandHistory                (bool flag);
+        bool                                seerClearManualCommandHistory                   () const;
+
     public slots:
         void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
         void                                handleButtonClicked                             (QAbstractButton* button);

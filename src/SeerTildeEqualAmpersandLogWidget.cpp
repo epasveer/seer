@@ -11,6 +11,10 @@ SeerTildeEqualAmpersandLogWidget::~SeerTildeEqualAmpersandLogWidget () {
 
 void SeerTildeEqualAmpersandLogWidget::processText (const QString& text) {
 
+    if (enableCheckBox->isChecked() == false) {
+        return;
+    }
+
     QString str;
 
     // Remove leading "~"
