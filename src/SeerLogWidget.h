@@ -13,6 +13,7 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
        ~SeerLogWidget ();
 
         virtual void        processText                 (const QString& text);
+        virtual void        moveToEnd                   ();
 
     public slots:
         void                handleText                  (const QString& text);

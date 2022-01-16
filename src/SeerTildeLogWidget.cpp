@@ -31,6 +31,7 @@ void SeerTildeLogWidget::processText (const QString& text) {
     }
 
     textEdit->append(str);
-    textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
+
+    moveToEnd();
 }
 

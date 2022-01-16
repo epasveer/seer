@@ -35,7 +35,26 @@ SeerLogWidget::~SeerLogWidget () {
 }
 
 void SeerLogWidget::processText (const QString& text) {
+
+    // Add text to the end of the document.
     textEdit->append(text);
+
+    moveToEnd();
+}
+
+void SeerLogWidget::moveToEnd () {
+
+    // Move cursor to start of the last line.
+    // Move scrollbars to the last line.
+    int nlines = textEdit->document()->lineCount();
+
+    QTextCursor cursor = textEdit->textCursor();
+
+    cursor.setPosition(nlines-1);
+
+    textEdit->setTextCursor(cursor);
+    textEdit->moveCursor(QTextCursor::StartOfLine);
+
     textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
 }
 

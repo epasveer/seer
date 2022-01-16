@@ -85,6 +85,7 @@ void SeerTildeEqualAmpersandLogWidget::processText (const QString& text) {
 
     // Write the string to the log.
     textEdit->append(str);
-    textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
+
+    moveToEnd();
 }
 
