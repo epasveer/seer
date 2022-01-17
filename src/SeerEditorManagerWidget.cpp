@@ -158,6 +158,8 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     if (text.startsWith("*stopped,")) {
 
+        //qDebug() << __PRETTY_FUNCTION__ << ":stopped:" << text;
+
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
         QString frame_text = Seer::parseFirst(newtext, "frame=", '{', '}', false);
@@ -262,7 +264,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << __PRETTY_FUNCTION__ << ":stack:" << text;
 
         //
         // See SeerStackFramesBrowserWidget.cpp
@@ -270,8 +272,6 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         //     ...
         // ]
         //
-
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
 
         // Now parse the table and re-add the breakpoints.
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.

@@ -35,10 +35,12 @@ SeerStackFramesBrowserWidget::~SeerStackFramesBrowserWidget () {
 
 void SeerStackFramesBrowserWidget::handleText (const QString& text) {
 
+    // Stackframes is important. Always do it.
+    //
     // Don't do any work if the widget is hidden.
-    if (isHidden()) {
-        return;
-    }
+    // if (isHidden()) {
+    //     return;
+    // }
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -66,6 +68,11 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 // Parse through the frame list and set the current lines that are in the frame list.
                 QStringList frame_list = Seer::parse(text, "frame=", '{', '}', false);
 
+                QString firstLiveFrameLevel     = "";
+                QString firstLiveFrameFile      = "";
+                QString firstLiveFrameFullname  = "";
+                QString firstLiveFrameLine      = "";
+
                 for ( const auto& frame_text : frame_list  ) {
 
                     QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
@@ -90,13 +97,30 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
 
                     // Enable/disable interaction with this row depending if there is a valid file and line number.
                     if (file_text != "" && fullname_text != "" && line_text != "") {
+
                         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+
+                        // Save the first live frame (that has a valid file and lineno) so we can select it automatically.
+                        // This only happens if the stack text is different (a stop point is reached).
+                        if (firstLiveFrameLevel == "") {
+                            firstLiveFrameLevel    = level_text;
+                            firstLiveFrameFile     = file_text;
+                            firstLiveFrameFullname = fullname_text;
+                            firstLiveFrameLine     = line_text;
+                        }
+
                     }else{
                         item->setFlags(Qt::NoItemFlags);
                     }
 
                     // Add the frame to the tree.
                     stackTreeWidget->addTopLevelItem(item);
+                }
+
+                // Automatically bring up the file for the first live frame.
+                if (firstLiveFrameLevel != "") {
+                    emit selectedFile(firstLiveFrameFile, firstLiveFrameFullname, firstLiveFrameLine.toInt());
+                    emit selectedFrame(firstLiveFrameLevel.toInt());
                 }
             }
 
@@ -130,10 +154,12 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
 
 void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
 
+    // Stackframes is important. Always do it.
+    //
     // Don't do any work if the widget is hidden.
-    if (isHidden()) {
-        return;
-    }
+    // if (isHidden()) {
+    //     return;
+    // }
 
     refresh();
 }
