@@ -39,7 +39,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         argumentsTreeWidget->clear();
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << newtext;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
 
         // ^done,stack-args=[
         //     frame={level="0",args=[
@@ -56,7 +56,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         QStringList frame_list = Seer::parse(text, "frame=", '{', '}', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_list;
+        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_list.count() << frame_list;
 
         for ( const auto& frame_text : frame_list  ) {
 
@@ -68,15 +68,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
             //qDebug() << __PRETTY_FUNCTION__ << ":" << level_text;
             //qDebug() << __PRETTY_FUNCTION__ << ":" << args_text;
 
-            if (level_text == "" || args_text == "") {
-                break;
-            }
-
             QStringList namevalue_list  = Seer::parse(args_text, "",  '{', '}', false);
-
-            if (namevalue_list.size() == 0) {
-                break;
-            }
 
             // Add the level to the tree.
             QTreeWidgetItem* topItem = new QTreeWidgetItem;
