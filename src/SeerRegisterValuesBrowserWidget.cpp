@@ -52,7 +52,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         QString frame_text = Seer::parseFirst(newtext, "register-names=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
+        //qDebug() << frame_text;
 
         QStringList name_list = Seer::parse(frame_text, "", '"', '"', false);
 
@@ -89,7 +89,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         //                    {number=\"3\",value=\"0x7fffffffd548\"},{number=\"4\",value=\"0x7fffffffd538\"},{number=\"5\",value=\"0x1\"},...
         //                    {number=\"205\",value=\"0x0\"},{number=\"206\",value=\"0x0\"}]"
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -155,7 +155,7 @@ void SeerRegisterValuesBrowserWidget::refresh () {
 
 void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2));
 

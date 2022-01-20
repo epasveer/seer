@@ -51,7 +51,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
         //     frame={level=\"1\",addr=\"0x0000000000400cc3\",func=\"main\",file=\"helloworld.cpp\",fullname=\"/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp\",line=\"14\",arch=\"i386:x86-64\"}
         // ]
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // If we are simply moving up and down the stack (via frame-select) then the text won't change.
         // If it is different, reconstruct the tree. Select the first frame.
@@ -83,7 +83,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                     QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
                     QString arch_text     = Seer::parseFirst(frame_text, "arch=",     '"', '"', false);
 
-                    //qDebug() << __PRETTY_FUNCTION__ << ":" << file_text << fullname_text;
+                    //qDebug() << file_text << fullname_text;
 
                     // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -174,7 +174,7 @@ void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
     int lineno = item->text(3).toInt();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
+    //qDebug() << "Emit selectedFile and selectedFrame";
 
     emit selectedFile(item->text(2), item->text(4), lineno);
     emit selectedFrame(item->text(0).toInt());
@@ -182,7 +182,7 @@ void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
 void SeerStackFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2) + " : " + item->text(3));
 

@@ -75,7 +75,7 @@ QStringList SeerWatchpointsBrowserWidget::watchpointsText () const {
 
         watchpointList.append(watchpointParameters);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << watchpointParameters;
+        //qDebug() << watchpointParameters;
 
         ++it;
     }
@@ -129,7 +129,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
 
         QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << body_text;
+        //qDebug() << body_text;
 
         // No rows? Just clear the tree.
         if (body_text == "") {
@@ -248,7 +248,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             // Find watchpoint number in the tree
             QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
             if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+                //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
                 item->setText(6, file_text);
                 item->setText(7, fullname_text);
@@ -273,7 +273,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             // Find watchpoint number in the tree
             QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
             if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+                //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
                 item->setText(6, file_text);
                 item->setText(7, fullname_text);
@@ -299,7 +299,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             // Find watchpoint number in the tree
             QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
             if (matches.size() > 0) {
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+                //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
                 item->setText(6, file_text);
                 item->setText(7, fullname_text);

@@ -39,7 +39,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         argumentsTreeWidget->clear();
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // ^done,stack-args=[
         //     frame={level="0",args=[
@@ -56,17 +56,17 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         QStringList frame_list = Seer::parse(text, "frame=", '{', '}', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_list.count() << frame_list;
+        //qDebug() << frame_list.count() << frame_list;
 
         for ( const auto& frame_text : frame_list  ) {
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
+            //qDebug() << frame_text;
 
             QString level_text = Seer::parseFirst(frame_text, "level=", '"', '"', false);
             QString args_text  = Seer::parseFirst(frame_text, "args=",  '[', ']', false);
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << level_text;
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << args_text;
+            //qDebug() << level_text;
+            //qDebug() << args_text;
 
             QStringList namevalue_list  = Seer::parse(args_text, "",  '{', '}', false);
 
@@ -123,7 +123,7 @@ void SeerStackArgumentsBrowserWidget::refresh () {
 
 void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     if (item->text(0) != "") {
         for (int i=0; i<argumentsTreeWidget->columnCount(); i++) { // The "level" item does not have a tooltip.

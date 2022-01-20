@@ -53,7 +53,7 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
         // Add the thread-ids.
         for ( const auto& threadid_text : threadids_list  ) {
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << threadid_text;
+            //qDebug() << threadid_text;
 
             // Construct the item
             QTreeWidgetItem* item = new QTreeWidgetItem;

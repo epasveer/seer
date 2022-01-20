@@ -311,7 +311,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
-    qDebug() << __PRETTY_FUNCTION__ << ":" << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
+    qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
 
     if (_miniMapPixmap == 0) {
 
@@ -339,7 +339,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
             }
         }
 
-        qDebug() << __PRETTY_FUNCTION__ << ":" << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
+        qDebug() << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
 
         QTextCharFormat format = highlighterSettings().get("Margin");
 
@@ -681,7 +681,7 @@ void SeerEditorWidgetSourceArea::close () {
 
 void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << lineno << file();
+    //qDebug() << lineno << file();
 
     // Highlight if a valid line number is selected.
     if (lineno < 1) {
@@ -700,7 +700,7 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << lineno << file();
+    //qDebug() << lineno << file();
 
     // Scroll to the first line if we went before it.
     if (lineno < 1) {
@@ -723,7 +723,7 @@ void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
 void SeerEditorWidgetSourceArea::clearCurrentLines () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << file();
+    //qDebug() << file();
 
     _currentLineCursors.resize(0);
 
@@ -732,7 +732,7 @@ void SeerEditorWidgetSourceArea::clearCurrentLines () {
 
 void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << lineno << file();
+    //qDebug() << lineno << file();
 
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
     QTextCursor cursor = textCursor();
@@ -961,7 +961,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << dlg.breakpointText();
+        //qDebug() << dlg.breakpointText();
 
         // Emit the create breakpoint signal.
         emit insertBreakpoint(dlg.breakpointText());
@@ -972,7 +972,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle deleting a breakpoint.
     if (action == deleteAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "deleteBreakpoints" << lineno;
+        //qDebug() << "deleteBreakpoints" << lineno;
 
         // Emit the delete breakpoint signal.
         emit deleteBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
@@ -983,7 +983,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle enabling a breakpoint.
     if (action == enableAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "enableBreakpoints" << lineno;
+        //qDebug() << "enableBreakpoints" << lineno;
 
         // Emit the enable breakpoint signal.
         emit enableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
@@ -994,7 +994,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle disabling a breakpoint.
     if (action == disableAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "disableBreakpoints" << lineno;
+        //qDebug() << "disableBreakpoints" << lineno;
 
         // Emit the disable breakpoint signal.
         emit disableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
@@ -1005,7 +1005,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle running to a line number.
     if (action == runToLineAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "runToLine" << lineno;
+        //qDebug() << "runToLine" << lineno;
 
         // Emit the runToLine signal.
         emit runToLine(fullname(), lineno);
@@ -1016,7 +1016,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerExpression" << lineno;
+        //qDebug() << "addVariableLoggerExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1029,7 +1029,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAsteriskExpression" << lineno;
+        //qDebug() << "addVariableLoggerAsteriskExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1042,7 +1042,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerAmpersandExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAmpersandExpression" << lineno;
+        //qDebug() << "addVariableLoggerAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1055,7 +1055,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableLoggerAsteriskAmpersandExpression" << lineno;
+        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1068,7 +1068,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerExpression" << lineno;
+        //qDebug() << "addVariableTrackerExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1082,7 +1082,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAsteriskExpression" << lineno;
+        //qDebug() << "addVariableTrackerAsteriskExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1096,7 +1096,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerAmpersandExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAmpersandExpression" << lineno;
+        //qDebug() << "addVariableTrackerAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1110,7 +1110,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addVariableTrackerAsteriskAmpersandExpression" << lineno;
+        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1124,7 +1124,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addMemoryVisualizer" << lineno;
+        //qDebug() << "addMemoryVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1137,7 +1137,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding memory to visualize.
     if (action == addMemoryAsteriskVisualizerAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addMemoryAsteriskVisualizer" << lineno;
+        //qDebug() << "addMemoryAsteriskVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1150,7 +1150,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding memory to visualize.
     if (action == addMemoryAmpersandVisualizerAction) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "addMemoryAmpersandVisualizer" << lineno;
+        //qDebug() << "addMemoryAmpersandVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1251,8 +1251,8 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
         QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << file_text << line_text;
+        //qDebug() << frame_text;
+        //qDebug() << fullname_text << file_text << line_text;
 
         // Read the file if it hasn't been read before or if we are reading a different file.
         if (fullname_text != fullname()) {
@@ -1275,7 +1275,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << _selectedExpressionValue;
+            //qDebug() << _selectedExpressionValue;
         }
 
         return;
@@ -1291,7 +1291,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false));
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << _selectedExpressionValue;
+            //qDebug() << _selectedExpressionValue;
         }
 
         return;
@@ -1301,7 +1301,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         return;
     }
 
-    qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+    qDebug() << text;
 }
 
 void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
@@ -1311,7 +1311,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     // But the palettle method works (for now).
     QTextCharFormat format = highlighterSettings().get("Text");
 
-    // qDebug() << __PRETTY_FUNCTION__ << ":" << QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name());
+    // qDebug() << QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name());
     // #cecece
     // setStyleSheet( QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name()) );
     // setStyleSheet( QString("QPlainTextEdit {foreground-color: %1;}").arg(format.foreground().color().name()) );

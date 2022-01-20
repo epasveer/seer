@@ -67,7 +67,7 @@ QStringList SeerBreakpointsBrowserWidget::breakpointsText () const {
 
         breakpointList.append(breakpointParameters);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpointParameters;
+        //qDebug() << breakpointParameters;
 
         ++it;
     }
@@ -123,7 +123,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
         QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << body_text;
+        //qDebug() << body_text;
 
         if (body_text != "") {
 

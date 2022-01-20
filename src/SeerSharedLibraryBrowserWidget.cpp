@@ -55,7 +55,7 @@ void SeerSharedLibraryBrowserWidget::handleText (const QString& text) {
 
         QString libraries_text = Seer::parseFirst(text, "shared-libraries=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << libraries_text;
+        //qDebug() << libraries_text;
 
         QStringList libraries_list = Seer::parse(libraries_text, "", '{', '}', false);
 
@@ -154,7 +154,7 @@ void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) 
             }
         }
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text << matches.size();
+        //qDebug() << text << matches.size();
     }
 
     sharedLibraryTreeWidget->resizeColumnToContents(0);

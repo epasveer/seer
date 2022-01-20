@@ -363,7 +363,7 @@ void SeerMainWindow::handleText (const QString& text) {
         // ^error,msg="The program is not being run."
         // ^error,msg="ptrace: No such process."
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -555,7 +555,7 @@ void SeerMainWindow::handleText (const QString& text) {
         return;
     }
 
-    qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+    qDebug() << text;
 }
 
 void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus status) {
@@ -590,7 +590,7 @@ void SeerMainWindow::writeSettings() {
         settings.setValue("size", size());
     } settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerMainWindow::readSettings() {
@@ -601,7 +601,7 @@ void SeerMainWindow::readSettings() {
         resize(settings.value("size", QSize(1250, 1000)).toSize());
     } settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerMainWindow::writeConfigSettings () {

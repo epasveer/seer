@@ -241,18 +241,18 @@ void SeerConsoleWidget::createConsole () {
     _ptsFD = posix_openpt(O_RDWR | O_NOCTTY);
 
     if (_ptsFD < 0) {
-        qDebug() << __PRETTY_FUNCTION__ << "Failed to create tty" << strerror(errno);
+        qDebug() << "Failed to create tty" << strerror(errno);
         return;
     }
 
     if (grantpt(_ptsFD)) {
-        qDebug() << __PRETTY_FUNCTION__ << "Failed to grant pt" << strerror(errno);
+        qDebug() << "Failed to grant pt" << strerror(errno);
         ::close(_ptsFD); _ptsFD = -1;
         return;
     }
 
     if  (unlockpt(_ptsFD)) {
-        qDebug() << __PRETTY_FUNCTION__ << "Failed to unlock pt" << strerror(errno);
+        qDebug() << "Failed to unlock pt" << strerror(errno);
         ::close(_ptsFD); _ptsFD = -1;
         return;
     }
@@ -269,13 +269,13 @@ void SeerConsoleWidget::createConsole () {
     term_winsize.ws_ypixel = 20 * 8;
 
     if (ioctl(_ptsFD, TIOCSWINSZ, &term_winsize) < 0) {
-        qDebug() << __PRETTY_FUNCTION__ << "ioctl TIOCSWINSZ failed" << strerror(errno);
+        qDebug() << "ioctl TIOCSWINSZ failed" << strerror(errno);
     }
 
     // Set controlling
     if (ioctl(_ptsFD, TIOCSCTTY, (char *)0) < 0) {
         // Seems to work even though this fails.
-        // qDebug() << __PRETTY_FUNCTION__ << "ioctl TIOCSCTTY failed" << strerror(errno);
+        // qDebug() << "ioctl TIOCSCTTY failed" << strerror(errno);
     }
 
     // Save the device name.
@@ -322,7 +322,7 @@ void SeerConsoleWidget::writeSettings() {
     settings.setValue("size", size());
     settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerConsoleWidget::readSettings() {
@@ -333,7 +333,7 @@ void SeerConsoleWidget::readSettings() {
     resize(settings.value("size", QSize(800, 600)).toSize());
     settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerConsoleWidget::resizeEvent (QResizeEvent* event) {

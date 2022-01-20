@@ -108,7 +108,7 @@ void SeerMemoryVisualizerWidget::setVariableAddress (const QString& address) {
         offset = 0;
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << address << offset << ok;
+    //qDebug() << address << offset << ok;
 
     memoryHexEditor->setAddressOffset(offset);
 }
@@ -119,7 +119,7 @@ QString SeerMemoryVisualizerWidget::variableAddress () const {
 
 void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+    //qDebug() << text;
 
     if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
 
@@ -144,7 +144,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _memoryId) {
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+            //qDebug() << text;
 
             QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
 
@@ -155,7 +155,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
                 QString contents_text = Seer::parseFirst(range_text, "contents=", '"', '"', false);
 
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << contents_text;
+                //qDebug() << contents_text;
 
                 // Convert hex string to byte array.
                 QByteArray array;
@@ -337,7 +337,7 @@ void SeerMemoryVisualizerWidget::writeSettings() {
     settings.setValue("size", size());
     settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerMemoryVisualizerWidget::readSettings() {
@@ -348,7 +348,7 @@ void SeerMemoryVisualizerWidget::readSettings() {
     resize(settings.value("size", QSize(800, 400)).toSize());
     settings.endGroup();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << size();
+    //qDebug() << size();
 }
 
 void SeerMemoryVisualizerWidget::resizeEvent (QResizeEvent* event) {

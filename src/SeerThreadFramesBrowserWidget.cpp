@@ -88,14 +88,14 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
         // current-thread-id=\"1\"
         //
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         threadTreeWidget->clear();
 
         QString threads_text         = Seer::parseFirst(text, "threads=", '[', ']', false);
         QString currentthreadid_text = Seer::parseFirst(text, "current-thread-id=", '"', '"', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << threads_text;
+        //qDebug() << threads_text;
 
         if (threads_text != "") {
 
@@ -119,7 +119,7 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 QString state_text    = Seer::parseFirst(thread_text, "state=",     '"', '"', false);
                 QString core_text     = Seer::parseFirst(thread_text, "core=",      '"', '"', false);
 
-                //qDebug() << __PRETTY_FUNCTION__ << ":" << file_text << fullname_text;
+                //qDebug() << file_text << fullname_text;
 
                 // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -201,7 +201,7 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
 
     int lineno = item->text(5).toInt();
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Emit selectedFile and selectedFrame";
+    //qDebug() << "Emit selectedFile and selectedFrame";
 
     emit selectedFile(item->text(4), item->text(6), lineno);
 
@@ -211,7 +211,7 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
 
 void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(3) + " : " + item->text(4) + " : " + item->text(5));
 

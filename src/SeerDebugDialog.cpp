@@ -139,7 +139,7 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
         setBreakInMain(true);
 
     }else{
-        qDebug() << __PRETTY_FUNCTION__ << ":" << "Unknown launch mode of:" << mode;
+        qDebug() << "Unknown launch mode of:" << mode;
     }
 }
 

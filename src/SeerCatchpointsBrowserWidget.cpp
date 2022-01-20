@@ -68,7 +68,7 @@ QStringList SeerCatchpointsBrowserWidget::catchpointsText () const {
 
         catchpointList.append(catchpointParameters);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << catchpointParameters;
+        //qDebug() << catchpointParameters;
 
         ++it;
     }
@@ -83,7 +83,7 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
         return;
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+    //qDebug() << text;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -119,7 +119,7 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
 
         QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << body_text;
+        //qDebug() << body_text;
 
         // No rows? Just clear the tree.
         if (body_text == "") {

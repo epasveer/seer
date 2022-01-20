@@ -327,7 +327,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         QString pid_text = Seer::parseFirst(text, "pid=", '"', '"', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Inferior pid = " << pid_text;
+        //qDebug() << "Inferior pid = " << pid_text;
 
         setExecutablePid(pid_text.toLong());
 
@@ -338,7 +338,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
 void SeerGdbWidget::handleExecute () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "QComboBox: " << manualCommandComboBox->currentText();
+    //qDebug() << "QComboBox: " << manualCommandComboBox->currentText();
 
     QString command = manualCommandComboBox->currentText();
     manualCommandComboBox->clearEditText();
@@ -449,7 +449,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         return;
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ": newExecutableFlag = " << newExecutableFlag();
+    //qDebug() << ": newExecutableFlag = " << newExecutableFlag();
 
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
@@ -775,7 +775,7 @@ void SeerGdbWidget::handleGdbTtyDeviceName () {
 
     if (_consoleWidget->ttyDeviceName() != "") {
 
-        //qDebug() << __PRETTY_FUNCTION__ << "Setting TTY name to" << _consoleWidget->ttyDeviceName();
+        //qDebug() << "Setting TTY name to" << _consoleWidget->ttyDeviceName();
 
         handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->ttyDeviceName());
     }
@@ -1085,7 +1085,7 @@ void SeerGdbWidget::handleGdbDataAddExpression (QString expression) {
 
     QString text = QString("^done,DataExpressionAdded={id=\"%1\",expression=\"%2\"}").arg(_dataExpressionId.back()).arg(_dataExpressionName.back());
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+    //qDebug() << text;
 
     gdbMonitor()->handleTextOutput(text);
 }
@@ -1215,14 +1215,14 @@ void SeerGdbWidget::handleGdbArrayVisualizer () {
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Splitter moved to " << pos << index;
+    //qDebug() << "Splitter moved to " << pos << index;
 
     writeSettings();
 }
 
 void SeerGdbWidget::handleManualCommandChanged () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Manual Command ComboBox changed";
+    //qDebug() << "Manual Command ComboBox changed";
 
     writeSettings();
 }
@@ -1232,14 +1232,14 @@ void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Gdb process finished. Exit code =" << exitCode << "Exit status =" << exitStatus;
+    //qDebug() << "Gdb process finished. Exit code =" << exitCode << "Exit status =" << exitStatus;
 }
 
 void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus) {
 
     Q_UNUSED(errorStatus);
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Error launching gdb process. Error =" << errorStatus;
+    //qDebug() << "Error launching gdb process. Error =" << errorStatus;
 
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
@@ -1268,7 +1268,7 @@ void SeerGdbWidget::writeSettings () {
 
         QStringList commands = manualCommands(rememberManualCommandCount());
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Commands =" << commands;
+        //qDebug() << "Commands =" << commands;
 
         for (int i = 0; i < commands.size(); ++i) {
             settings.setArrayIndex(i);
@@ -1320,7 +1320,7 @@ void SeerGdbWidget::startGdb () {
 
     // Don't do anything, if already running.
     if (isGdbRuning()) {
-        qDebug() << __PRETTY_FUNCTION__ << ":" << "Already running";
+        qDebug() << "Already running";
 
         return;
     }
@@ -1353,7 +1353,7 @@ void SeerGdbWidget::killGdb () {
 
     // Sanity check.
     if (isGdbRuning()) {
-        qDebug() << __PRETTY_FUNCTION__ << ":" << "Is running but shouldn't be.";
+        qDebug() << "Is running but shouldn't be.";
     }
 
     // Clear the launch mode.
@@ -1424,7 +1424,7 @@ void SeerGdbWidget::setManualCommands (const QStringList& commands) {
 
 QStringList SeerGdbWidget::manualCommands(int count) const {
 
-    //qDebug() << __PRETTY_FUNCTION__ << "Count =" << count;
+    //qDebug() << "Count =" << count;
 
     // Select all if a zero.
     if (count == 0) {
@@ -1470,7 +1470,7 @@ void SeerGdbWidget::clearManualCommandHistory () {
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << "Sending an interrupt to the program. Signal =" << signal;
+    //qDebug() << "Sending an interrupt to the program. Signal =" << signal;
 
     if (executableLaunchMode() == "") {
         return;

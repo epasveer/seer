@@ -41,13 +41,13 @@ SeerEditorManagerWidget::~SeerEditorManagerWidget () {
 
 void SeerEditorManagerWidget::dumpEntries () const {
 
-    qDebug() << __PRETTY_FUNCTION__ << ":";
+    qDebug();
 
     SeerEditorManagerEntries::const_iterator b = beginEntry();
     SeerEditorManagerEntries::const_iterator e = endEntry();
 
     while (b != e) {
-        qDebug() << __PRETTY_FUNCTION__ << ":" << "\tFullname:" << b->fullname << "File:" << b->file;
+        qDebug() << "\tFullname:" << b->fullname << "File:" << b->file;
         b++;
     }
 }
@@ -158,7 +158,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     if (text.startsWith("*stopped,")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":stopped:" << text;
+        //qDebug() << ":stopped:" << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -172,8 +172,8 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
         QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << frame_text;
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << file_text << line_text;
+        //qDebug() << frame_text;
+        //qDebug() << fullname_text << file_text << line_text;
 
         // If there is no file to open, just exit.
         if (fullname_text == "" || file_text == "") {
@@ -233,7 +233,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << body_text;
+        //qDebug() << body_text;
 
         if (body_text != "") {
 
@@ -264,7 +264,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":stack:" << text;
+        //qDebug() << ":stack:" << text;
 
         //
         // See SeerStackFramesBrowserWidget.cpp
@@ -306,7 +306,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 SeerEditorManagerEntries::iterator e = endEntry();
 
                 if (i != e) {
-                    //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname_text << line_text;
+                    //qDebug() << fullname_text << line_text;
                     i->widget->sourceArea()->addCurrentLine(line_text.toInt());
                 }
             }
@@ -314,7 +314,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // Clear current lines in all opened editor widgets.
         SeerEditorManagerEntries::iterator b = beginEntry();
@@ -355,7 +355,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
 void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << index << tabWidget->count() << tabWidget->tabText(0);
+    //qDebug() << index << tabWidget->count() << tabWidget->tabText(0);
 
     // If it is the place holder, don't delete it.
     if (tabWidget->tabText(index) == "") {
@@ -425,7 +425,7 @@ SeerEditorWidget* SeerEditorManagerWidget::editorWidgetTab (const QString& fulln
 
 SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file, const QString& text) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname << file << text << tabWidget->count() << tabWidget->tabText(0);
+    //qDebug() << fullname << file << text << tabWidget->count() << tabWidget->tabText(0);
 
     // Remove the place holder tab, if present.
     if (tabWidget->count() == 1 && tabWidget->tabText(0) == "") {
@@ -465,7 +465,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
 
 SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname << file << tabWidget->count() << tabWidget->tabText(0);
+    //qDebug() << fullname << file << tabWidget->count() << tabWidget->tabText(0);
 
     // Remove the place holder tab, if present.
     if (tabWidget->count() == 1 && tabWidget->tabText(0) == "") {
@@ -505,7 +505,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
 
 void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << index << tabWidget->count() << tabWidget->tabText(index);
+    //qDebug() << index << tabWidget->count() << tabWidget->tabText(index);
 
     // Get the editor widget.
     SeerEditorWidget* editorWidget = static_cast<SeerEditorWidget*>(tabWidget->widget(index));
@@ -560,7 +560,7 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpoint;
+    //qDebug() << breakpoint;
 
     // rethrow
     emit insertBreakpoint (breakpoint);
@@ -568,7 +568,7 @@ void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
 
 void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpoints;
+    //qDebug() << breakpoints;
 
     // rethrow
     emit deleteBreakpoints (breakpoints);
@@ -576,7 +576,7 @@ void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {
 
 void SeerEditorManagerWidget::handleEnableBreakpoints (QString breakpoints) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpoints;
+    //qDebug() << breakpoints;
 
     // rethrow
     emit enableBreakpoints (breakpoints);
@@ -584,7 +584,7 @@ void SeerEditorManagerWidget::handleEnableBreakpoints (QString breakpoints) {
 
 void SeerEditorManagerWidget::handleDisableBreakpoints (QString breakpoints) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << breakpoints;
+    //qDebug() << breakpoints;
 
     // rethrow
     emit disableBreakpoints (breakpoints);
@@ -592,7 +592,7 @@ void SeerEditorManagerWidget::handleDisableBreakpoints (QString breakpoints) {
 
 void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << fullname << lineno;
+    //qDebug() << fullname << lineno;
 
     // rethrow
     emit runToLine (fullname, lineno);
@@ -600,7 +600,7 @@ void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 
 void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << expression;
+    //qDebug() << expression;
 
     // rethrow
     emit addVariableLoggerExpression (expression);
@@ -608,7 +608,7 @@ void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString express
 
 void SeerEditorManagerWidget::handleAddVariableTrackerExpression (QString expression) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << expression;
+    //qDebug() << expression;
 
     // rethrow
     emit addVariableTrackerExpression (expression);
@@ -616,7 +616,7 @@ void SeerEditorManagerWidget::handleAddVariableTrackerExpression (QString expres
 
 void SeerEditorManagerWidget::handleRefreshVariableTrackerValues () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     // rethrow
     emit refreshVariableTrackerValues ();
@@ -624,7 +624,7 @@ void SeerEditorManagerWidget::handleRefreshVariableTrackerValues () {
 
 void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     // rethrow
     emit evaluateVariableExpression (expressionid, expression);
@@ -632,7 +632,7 @@ void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid
 
 void SeerEditorManagerWidget::handleAddMemoryVisualizer (QString expression) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << expression;
+    //qDebug() << expression;
 
     // rethrow
     emit addMemoryVisualize (expression);

@@ -43,7 +43,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "6^done,value=\"\\\"abc\\\"\""
 
@@ -58,7 +58,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
 
@@ -126,7 +126,7 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
 
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     if (expression != "") {
 
@@ -138,7 +138,7 @@ void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression)
 
 void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     QString variable = variableAddLineEdit->text();
 
@@ -183,7 +183,7 @@ void SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton () {
 
 void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2) + " : " + item->text(3));
 

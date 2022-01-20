@@ -81,9 +81,9 @@ QProcessList QProcessInfo::populate() {
                     QString line = in.readLine();
 
                     if (line.startsWith(QStringLiteral("Uid:"))) {
-                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line;
-                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line.split(QRegExp("\\s+")).at(0);
-                        //qDebug() << __PRETTY_FUNCTION__ << ":" << line.split(QRegExp("\\s+")).at(1);
+                        //qDebug() << line;
+                        //qDebug() << line.split(QRegExp("\\s+")).at(0);
+                        //qDebug() << line.split(QRegExp("\\s+")).at(1);
                         //qDebug() << "";
                         info.setUsername(line.split(QRegExp("\\s+")).at(1));
                         break;

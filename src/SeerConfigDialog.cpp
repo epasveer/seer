@@ -167,7 +167,7 @@ bool SeerConfigDialog::seerClearManualCommandHistory () const {
 
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << current << previous;
+    //qDebug() << current << previous;
 
     if (!current) {
         current = previous;

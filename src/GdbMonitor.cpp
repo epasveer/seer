@@ -15,7 +15,7 @@ void GdbMonitor::handleErrorOccurred (QProcess::ProcessError error) {
 
     Q_UNUSED(error);
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << error;
+    //qDebug() << error;
 
     qApp->exit();
 }
@@ -25,14 +25,14 @@ void GdbMonitor::handleFinished (int exitCode, QProcess::ExitStatus exitStatus) 
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << exitCode << exitStatus;
+    //qDebug() << exitCode << exitStatus;
 
     qApp->exit();
 }
 
 void GdbMonitor::handleReadyReadStandardError () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Ready to read stderr";
+    //qDebug() << "Ready to read stderr";
 
     QProcess* p = (QProcess*)sender();
 
@@ -56,7 +56,7 @@ void GdbMonitor::handleReadyReadStandardError () {
 
 void GdbMonitor::handleReadyReadStandardOutput () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Ready to read stdout";
+    //qDebug() << "Ready to read stdout";
 
     QProcess* p = (QProcess*)sender();
 
@@ -73,7 +73,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         // Convert to a string.
         QString text(buf);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
+        //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
 
         // Start broadcasting it around.
         emit allTextOutput(text);
@@ -103,12 +103,12 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         }
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Finished reading stdout";
+    //qDebug() << "Finished reading stdout";
 }
 
 void GdbMonitor::handleTextOutput (QString text) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Ready to handle text output";
+    //qDebug() << "Ready to handle text output";
 
     emit allTextOutput(text);
 
@@ -136,19 +136,19 @@ void GdbMonitor::handleTextOutput (QString text) {
         emit textOutput(text);
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << "Finished handling text output";
+    //qDebug() << "Finished handling text output";
 }
 
 void GdbMonitor::handleStarted() {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 }
 
 void GdbMonitor::handleStateChanged(QProcess::ProcessState newState) {
 
     Q_UNUSED(newState);
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << newState;
+    //qDebug() << newState;
 }
 
 void GdbMonitor::setProcess (QProcess* process) {

@@ -58,7 +58,7 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
         //     {name=\"something\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"}
         // ]
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         QString frame_text = Seer::parseFirst(text, "variables=", '[', ']', false);
 
@@ -209,7 +209,7 @@ void SeerStackLocalsBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item) {
 
 void SeerStackLocalsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(0) + " : " + item->text(2));
 

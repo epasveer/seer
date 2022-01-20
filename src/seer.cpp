@@ -6,8 +6,11 @@
 #include <QtCore/QCommandLineOption>
 #include <QtCore/QStringList>
 #include <QtCore/QString>
+#include <QtCore/QDebug>
 
 int main (int argc, char* argv[]) {
+
+    qSetMessagePattern("[%{file}:%{line}] %{message}");
 
     QApplication app(argc, argv);
 

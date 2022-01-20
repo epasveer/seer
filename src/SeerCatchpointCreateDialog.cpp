@@ -96,7 +96,7 @@ QString SeerCatchpointCreateDialog::catchpointText () const {
         }
     }
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << catchpointParameters;
+    //qDebug() << catchpointParameters;
 
     return catchpointParameters;
 }

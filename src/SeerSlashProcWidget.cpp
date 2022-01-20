@@ -178,13 +178,13 @@ void SeerSlashProcWidget::refreshView () {
 
     if (systemProcessesCheckBox->isChecked() == true) {
         processMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 2);
-        //qDebug() << __PRETTY_FUNCTION__ << ": Checkbox is on." << processMatches.size();
+        //qDebug() << "Checkbox is on." << processMatches.size();
 
     }else{
         // To find [xxx] processes   :  "^(\\[).*(\\])$"
         // To exclude [xxx] processes:  "^(?!\\[).*(?!\\])$"
         processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegExp | Qt::MatchRecursive, 2);
-        //qDebug() << __PRETTY_FUNCTION__ << ": Checkbox is off." << processMatches.size();
+        //qDebug() << "Checkbox is off." << processMatches.size();
     }
 
     // Go through each item in the tree. If it's in the user, program, and process matches, show it.

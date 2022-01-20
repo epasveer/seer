@@ -46,7 +46,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,DataExpressionTable={") && text.endsWith("}")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "^done,DataExpressionTable={
         //          entry={id=\"1\",expression=\"s\"},
@@ -78,7 +78,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^done,DataExpressionAdded={") && text.endsWith("}")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << "Refresh";
+        //qDebug() << "Refresh";
 
         // "^done,DataExpressionAdded={
         //          id=\"5\",
@@ -99,7 +99,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^done,DataExpressionDeleted={") && text.endsWith("}")) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "^done,DataExpressionDeleted={
         //          entry={id=\"1\",expression=\"s\"},
@@ -124,7 +124,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "6^done,value=\"\\\"abc\\\"\""
 
@@ -139,7 +139,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text;
+        //qDebug() << text;
 
         // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
 
@@ -187,7 +187,7 @@ void SeerVariableTrackerBrowserWidget::refreshValues () {
 
 void SeerVariableTrackerBrowserWidget::handleAddLineEdit () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     QString variable = variableAddLineEdit->text();
 
@@ -203,7 +203,7 @@ void SeerVariableTrackerBrowserWidget::handleAddLineEdit () {
 
 void SeerVariableTrackerBrowserWidget::handleDeleteToolButton () {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":";
+    //qDebug();
 
     // Get selected tree items.
     QList<QTreeWidgetItem*> items = variablesTreeWidget->selectedItems();
@@ -236,7 +236,7 @@ void SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton () {
 
 void SeerVariableTrackerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2));
 

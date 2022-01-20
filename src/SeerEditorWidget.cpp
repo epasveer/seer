@@ -6,6 +6,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QRadialGradient>
 #include <QtWidgets/QScrollBar>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
 #include <QtGui/QTextCursor>
@@ -24,19 +25,21 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     // Set the widgets.
     int space = fontMetrics().horizontalAdvance("Go to line ##") + 5;
 
-    lineNumberLineEdit->setMaximumWidth(space);
+    searchLineNumberLineEdit->setMaximumWidth(space);
 
     showSearchBar(false);    // Hide the search bar. ctrl+F to show it again.
     showAlternateBar(false); // Hide the alternate bar. ctrl+O to show it again.
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,    &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
-    QObject::connect(searchDownToolButton,  &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
-    QObject::connect(searchUpToolButton,    &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
-    QObject::connect(lineNumberLineEdit,    &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleLineNumberLineEdit);
-    QObject::connect(closeToolButton,       &QToolButton::clicked,                          this,  &SeerEditorWidget::handleCloseToolButton);
-    QObject::connect(sourceWidget,          &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
-    QObject::connect(sourceWidget,          &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
+    QObject::connect(searchTextLineEdit,            &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
+    QObject::connect(searchDownToolButton,          &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
+    QObject::connect(searchUpToolButton,            &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
+    QObject::connect(searchLineNumberLineEdit,      &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchLineNumberLineEdit);
+    QObject::connect(searchCloseToolButton,         &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchCloseToolButton);
+    QObject::connect(alternateCloseToolButton,      &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
+    QObject::connect(alternateFileOpenToolButton,   &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
+    QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
+    QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -46,9 +49,9 @@ SeerEditorWidgetSourceArea* SeerEditorWidget::sourceArea () {
     return sourceWidget;
 }
 
-void SeerEditorWidget::handleLineNumberLineEdit () {
+void SeerEditorWidget::handleSearchLineNumberLineEdit () {
 
-    QString str = lineNumberLineEdit->text();
+    QString str = searchLineNumberLineEdit->text();
 
     if (str == "") {
         return;
@@ -60,7 +63,7 @@ void SeerEditorWidget::handleLineNumberLineEdit () {
         return;
     }
 
-    lineNumberLineEdit->clear();
+    searchLineNumberLineEdit->clear();
 
     sourceArea()->scrollToLine(lineno);
 }
@@ -170,7 +173,22 @@ bool SeerEditorWidget::isAlternateBarShown () const {
     return shown;
 }
 
-void SeerEditorWidget::handleCloseToolButton () {
+void SeerEditorWidget::handleSearchCloseToolButton () {
     showSearchBar(false);
+}
+
+void SeerEditorWidget::handleAlternateCloseToolButton () {
+    showAlternateBar(false);
+}
+
+void SeerEditorWidget::handleAlternateFileOpenToolButton () {
+
+    qDebug() << "fullname=" << sourceArea()->fullname();
+    qDebug() << "file    =" << sourceArea()->file();
+
+    QString fileName = QFileDialog::getOpenFileName(this, "Locate File", sourceArea()->fullname(), QString("File (%1)").arg(sourceArea()->file()), nullptr, QFileDialog::DontUseNativeDialog);
+
+    qDebug() << "location=" << fileName;
+    qDebug() << "path    =" << QFileInfo(fileName).absolutePath();
 }
 

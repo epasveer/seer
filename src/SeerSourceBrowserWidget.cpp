@@ -65,7 +65,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
         QString files_text = Seer::parseFirst(text, "files=", '[', ']', false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << files_text;
+        //qDebug() << files_text;
 
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
 
@@ -74,7 +74,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QString file_text     = Seer::parseFirst(entry_text, "file=",     '"', '"', false);
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
 
-            //qDebug() << __PRETTY_FUNCTION__ << ":" << file_text << fullname_text;
+            //qDebug() << file_text << fullname_text;
 
             // Get information about the file.
             QFileInfo fileInfo(fullname_text);
@@ -128,7 +128,7 @@ void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, in
 
 void SeerSourceBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
-    //qDebug() << __PRETTY_FUNCTION__ << ":" << item->text(0) << column;
+    //qDebug() << item->text(0) << column;
 
     if (item->text(1) == "") { // Look at the FullName.
         for (int i=0; i<sourceTreeWidget->columnCount(); i++) { // The top-level items do not have a tooltip.
@@ -217,7 +217,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
         _headerFilesItems->setExpanded(false);
         _miscFilesItems->setExpanded(false);
 
-        //qDebug() << __PRETTY_FUNCTION__ << ":" << text << matches.size();
+        //qDebug() << text << matches.size();
     }
 
     sourceTreeWidget->resizeColumnToContents(0);
