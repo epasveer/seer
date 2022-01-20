@@ -48,7 +48,7 @@ void SeerGdbConfigPage::setGdbAsyncMode (bool flag) {
 
 void SeerGdbConfigPage::handleGdbProgramToolButton () {
 
-    QString program = QFileDialog::getOpenFileName(this, "Select a gdb program to use as the debugger.", gdbProgram());
+    QString program = QFileDialog::getOpenFileName(this, "Select a gdb program to use as the debugger.", gdbProgram(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (program != "") {
         setGdbProgram(program);

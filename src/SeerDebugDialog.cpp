@@ -196,7 +196,7 @@ void SeerDebugDialog::handleExecutableNameToolButton () {
 
     */
 
-    QString name = QFileDialog::getOpenFileName(this, "Select an Executable to debug.", executableName());
+    QString name = QFileDialog::getOpenFileName(this, "Select an Executable to debug.", executableName(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setExecutableName(name);
@@ -231,7 +231,7 @@ void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
 
     */
 
-    QString name = QFileDialog::getExistingDirectory(this, "Select a Working Directory to run in.", executableWorkingDirectory());
+    QString name = QFileDialog::getExistingDirectory(this, "Select a Working Directory to run in.", executableWorkingDirectory(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setExecutableWorkingDirectory(name);
@@ -240,7 +240,7 @@ void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
 
 void SeerDebugDialog::handleLoadCoreFilenameToolButton () {
 
-    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.*)");
+    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.*)", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setCoreFilename(name);
