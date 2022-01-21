@@ -154,7 +154,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineNumberLineEdit">
+      <widget class="QLineEdit" name="searchLineNumberLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>20</horstretch>
@@ -177,7 +177,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="closeToolButton">
+      <widget class="QToolButton" name="searchCloseToolButton">
        <property name="toolTip">
         <string>Close the search bar.  CTRL+F to reshow it.</string>
        </property>

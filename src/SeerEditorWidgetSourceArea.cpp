@@ -581,7 +581,7 @@ bool SeerEditorWidgetSourceArea::isOpen () const {
     return false;
 }
 
-void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& file) {
+void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& file, const QString& alternateDirectory) {
 
     // Close the previous file, if any.
     if (isOpen()) {
@@ -589,8 +589,9 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     }
 
     // Save the filename.
-    _fullname = fullname;
-    _file     = file;
+    _fullname           = fullname;
+    _file               = file;
+    _alternateDirectory = alternateDirectory;
 
     setDocumentTitle(_fullname);
 
@@ -599,14 +600,37 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
         return;
     }
 
+    // If the file is null, don't do anything.
+    if (_file == "") {
+        qDebug() << "'file' is null. Skipping.";
+        return;
+    }
+
+    //
     // Open the file.
-    QFile inputFile(_fullname);
+    //
+    // Build the filename to open. If there is no alternateDirectory,
+    // use fullname.  If alternateDirectory is provided, then use
+    //
+    //      alternateDirectory/file
+    //
+    QString filename;
+
+    if (alternateDirectory == "") {
+        filename = _fullname;
+    }else{
+        filename = _alternateDirectory + "/" + _file;
+    }
+
+    //qDebug() << "Loading" << _file << "from" << filename;
+
+    QFile inputFile(filename);
 
     inputFile.open(QIODevice::ReadOnly);
 
     if (!inputFile.isOpen()) {
 
-        QMessageBox::critical(this, "Can't open source file.",  "Can't open : " + _fullname + "\nIts location may have changed.");
+        QMessageBox::critical(this, "Can't open source file.",  "Can't open : " + filename + "\nIts location may have changed.");
 
         emit showAlternateBar(true);
 
@@ -678,6 +702,17 @@ void SeerEditorWidgetSourceArea::close () {
 
     clearExpression();
 }
+
+void SeerEditorWidgetSourceArea::setAlternateDirectory (const QString& alternateDirectory) {
+
+    _alternateDirectory = alternateDirectory;
+}
+
+const QString& SeerEditorWidgetSourceArea::alternateDirectory () const {
+
+    return _alternateDirectory;
+}
+
 
 void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 

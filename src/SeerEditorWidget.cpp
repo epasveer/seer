@@ -38,6 +38,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     QObject::connect(searchCloseToolButton,         &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchCloseToolButton);
     QObject::connect(alternateCloseToolButton,      &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
     QObject::connect(alternateFileOpenToolButton,   &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
+    QObject::connect(alternateAcceptToolButton,     &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateAcceptToolButton);
     QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
     QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 }
@@ -183,12 +184,29 @@ void SeerEditorWidget::handleAlternateCloseToolButton () {
 
 void SeerEditorWidget::handleAlternateFileOpenToolButton () {
 
-    qDebug() << "fullname=" << sourceArea()->fullname();
-    qDebug() << "file    =" << sourceArea()->file();
+    //qDebug() << "fullname =" << sourceArea()->fullname();
+    //qDebug() << "file     =" << sourceArea()->file();
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Locate File", sourceArea()->fullname(), QString("File (%1)").arg(sourceArea()->file()), nullptr, QFileDialog::DontUseNativeDialog);
+    QString filename = QFileDialog::getOpenFileName(this, "Locate File", sourceArea()->fullname(), QString("File (%1)").arg(sourceArea()->file()), nullptr, QFileDialog::DontUseNativeDialog);
 
-    qDebug() << "location=" << fileName;
-    qDebug() << "path    =" << QFileInfo(fileName).absolutePath();
+    //qDebug() << "location =" << filename;
+    //qDebug() << "directory=" << QFileInfo(filename).absolutePath();
+
+    if (filename != "") {
+        alternateLineEdit->setText(QFileInfo(filename).absolutePath());
+    }
+}
+
+void SeerEditorWidget::handleAlternateAcceptToolButton () {
+
+    showAlternateBar(false);
+
+    QString dirname = alternateLineEdit->text();
+
+    //qDebug() << "alternate dirname=" << dirname;
+
+    if (dirname != "") {
+        sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
+    }
 }
 

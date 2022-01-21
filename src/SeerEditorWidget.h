@@ -42,11 +42,14 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         int                             miniMapAreaWidth                    ();
 
         bool                            isOpen                              () const;
-        void                            open                                (const QString& fullname, const QString& file);
+        void                            open                                (const QString& fullname, const QString& file, const QString& alternateDirectory="");
         void                            openText                            (const QString& text,     const QString& file);
         const QString&                  fullname                            () const;
         const QString&                  file                                () const;
         void                            close                               ();
+        void                            setAlternateDirectory               (const QString& alternateDirectory);
+        const QString&                  alternateDirectory                  () const;
+
         void                            setCurrentLine                      (int lineno);
         void                            scrollToLine                        (int lineno);
 
@@ -115,6 +118,8 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
     private:
         QString                         _fullname;
         QString                         _file;
+        QString                         _alternateDirectory;
+
         bool                            _enableLineNumberArea;
         bool                            _enableBreakPointArea;
         bool                            _enableMiniMapArea;
@@ -209,18 +214,21 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         explicit SeerEditorWidget (QWidget* parent = 0);
        ~SeerEditorWidget ();
 
-        SeerEditorWidgetSourceArea*     sourceArea                  ();
+        SeerEditorWidgetSourceArea*     sourceArea                          ();
 
-        void                            handleLineNumberLineEdit    ();
-        void                            handleSearchTextLineEdit    ();
-        void                            handleSearchDownToolButton  ();
-        void                            handleSearchUpToolButton    ();
-        void                            handleCloseToolButton       ();
+        void                            handleSearchLineNumberLineEdit      ();
+        void                            handleSearchTextLineEdit            ();
+        void                            handleSearchDownToolButton          ();
+        void                            handleSearchUpToolButton            ();
+        void                            handleSearchCloseToolButton         ();
+        void                            handleAlternateCloseToolButton      ();
+        void                            handleAlternateFileOpenToolButton   ();
+        void                            handleAlternateAcceptToolButton     ();
 
     public slots:
-        void                            showSearchBar               (bool flag);
-        bool                            isSearchBarShown            () const;
-        void                            showAlternateBar            (bool flag);
-        bool                            isAlternateBarShown         () const;
+        void                            showSearchBar                       (bool flag);
+        bool                            isSearchBarShown                    () const;
+        void                            showAlternateBar                    (bool flag);
+        bool                            isAlternateBarShown                 () const;
 };
 
