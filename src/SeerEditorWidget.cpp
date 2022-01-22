@@ -39,6 +39,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     QObject::connect(alternateCloseToolButton,      &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
     QObject::connect(alternateFileOpenToolButton,   &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
     QObject::connect(alternateAcceptToolButton,     &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateAcceptToolButton);
+    QObject::connect(alternateLineEdit,             &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleAlternateAcceptToolButton);
     QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
     QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 }
@@ -140,6 +141,9 @@ bool SeerEditorWidget::isSearchBarShown () const {
 
 void SeerEditorWidget::showAlternateBar (bool flag) {
 
+    // Set the label's text.
+    alternateLabel->setText("Enter directory path for '" + sourceArea()->file() + "'");
+
     // Go through the widgets in the search bar and hide/show them.
     for (int i = 0; i != alternateBarLayout->count(); ++i) {
         QWidget* w = alternateBarLayout->itemAt(i)->widget();
@@ -205,8 +209,6 @@ void SeerEditorWidget::handleAlternateAcceptToolButton () {
 
     //qDebug() << "alternate dirname=" << dirname;
 
-    if (dirname != "") {
-        sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
-    }
+    sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
 }
 

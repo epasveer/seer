@@ -214,21 +214,21 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         explicit SeerEditorWidget (QWidget* parent = 0);
        ~SeerEditorWidget ();
 
-        SeerEditorWidgetSourceArea*     sourceArea                          ();
+        SeerEditorWidgetSourceArea*             sourceArea                          ();
 
-        void                            handleSearchLineNumberLineEdit      ();
-        void                            handleSearchTextLineEdit            ();
-        void                            handleSearchDownToolButton          ();
-        void                            handleSearchUpToolButton            ();
-        void                            handleSearchCloseToolButton         ();
-        void                            handleAlternateCloseToolButton      ();
-        void                            handleAlternateFileOpenToolButton   ();
-        void                            handleAlternateAcceptToolButton     ();
+        void                                    handleSearchLineNumberLineEdit      ();
+        void                                    handleSearchTextLineEdit            ();
+        void                                    handleSearchDownToolButton          ();
+        void                                    handleSearchUpToolButton            ();
+        void                                    handleSearchCloseToolButton         ();
+        void                                    handleAlternateCloseToolButton      ();
+        void                                    handleAlternateFileOpenToolButton   ();
+        void                                    handleAlternateAcceptToolButton     ();
 
     public slots:
-        void                            showSearchBar                       (bool flag);
-        bool                            isSearchBarShown                    () const;
-        void                            showAlternateBar                    (bool flag);
-        bool                            isAlternateBarShown                 () const;
+        void                                    showSearchBar                       (bool flag);
+        bool                                    isSearchBarShown                    () const;
+        void                                    showAlternateBar                    (bool flag);
+        bool                                    isAlternateBarShown                 () const;
 };
 
