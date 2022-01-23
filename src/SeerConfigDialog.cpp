@@ -3,6 +3,8 @@
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QMessageBox>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
 SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
@@ -125,6 +127,16 @@ bool SeerConfigDialog::editorHighlighterEnabled () const {
     return _editorConfigPage->highlighterEnabled();
 }
 
+void SeerConfigDialog::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
+
+    _sourceConfigPage->setAlternateDirectories(alternateDirectories);
+}
+
+QStringList SeerConfigDialog::sourceAlternateDirectories () const {
+
+    return _sourceConfigPage->alternateDirectories();
+}
+
 void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
 
     _seerConfigPage->setRememberWindowSizes(flag);
@@ -204,6 +216,12 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             setEditorHighlighterEnabled(true);
 
         }else if (itemLabel == "Source") {
+
+            QStringList alternateDirectories;
+
+            alternateDirectories << "./";
+
+            setSourceAlternateDirectories(alternateDirectories);
 
         }else if (itemLabel == "Seer") {
 

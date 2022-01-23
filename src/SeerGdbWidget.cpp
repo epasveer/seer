@@ -180,7 +180,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
-    QObject::connect(manualCommandComboBox,                                     &QComboBox::editTextChanged,                                                                this,                                                           &SeerGdbWidget::handleManualCommandChanged);
+    QObject::connect(manualCommandComboBox,                                     QOverload<int>::of(&QComboBox::activated),                                                  this,                                                           &SeerGdbWidget::handleManualCommandChanged);
 
     // Restore window settings.
     setConsoleMode("normal");
@@ -310,6 +310,11 @@ bool SeerGdbWidget::gdbAsyncMode () const {
 }
 
 SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
+
+    return editorManagerWidget;
+}
+
+const SeerEditorManagerWidget* SeerGdbWidget::editorManager () const {
 
     return editorManagerWidget;
 }
@@ -1268,11 +1273,20 @@ void SeerGdbWidget::writeSettings () {
 
         QStringList commands = manualCommands(rememberManualCommandCount());
 
-        //qDebug() << "Commands =" << commands;
-
         for (int i = 0; i < commands.size(); ++i) {
             settings.setArrayIndex(i);
             settings.setValue("command", commands[i]);
+        }
+
+    } settings.endArray();
+
+    settings.beginWriteArray("sourcealternatedirectories"); {
+
+        QStringList directories = sourceAlternateDirectories();
+
+        for (int i = 0; i < directories.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("directory", directories[i]);
         }
 
     } settings.endArray();
@@ -1304,6 +1318,20 @@ void SeerGdbWidget::readSettings () {
         }
 
         setManualCommands(commands);
+    } settings.endArray();
+
+    size = settings.beginReadArray("sourcealternatedirectories"); {
+
+        QStringList directories;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            directories << settings.value("directory").toString();
+        }
+
+        setSourceAlternateDirectories(directories);
+
     } settings.endArray();
 }
 
@@ -1466,6 +1494,16 @@ void SeerGdbWidget::clearManualCommandHistory () {
 
     // Write the settings.
     writeSettings();
+}
+
+const QStringList& SeerGdbWidget::sourceAlternateDirectories() const {
+
+    return editorManager()->editorAlternateDirectories();
+}
+
+void SeerGdbWidget::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
+
+    editorManager()->setEditorAlternateDirectories(alternateDirectories);
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {

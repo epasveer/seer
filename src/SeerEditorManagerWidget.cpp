@@ -154,6 +154,24 @@ bool SeerEditorManagerWidget::editorHighlighterEnabled () const {
     return _editorHighlighterEnabled;
 }
 
+void SeerEditorManagerWidget::setEditorAlternateDirectories (const QStringList alternateDirectories) {
+
+    _editorAlternateDirectories = alternateDirectories;
+
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setAlternateDirectories(_editorAlternateDirectories);
+        b++;
+    }
+}
+
+const QStringList& SeerEditorManagerWidget::editorAlternateDirectories () const {
+
+    return _editorAlternateDirectories;
+}
+
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
     if (text.startsWith("*stopped,")) {

@@ -306,6 +306,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
 
@@ -322,6 +323,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
+    gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
 

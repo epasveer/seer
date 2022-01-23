@@ -10,7 +10,7 @@
 
 int main (int argc, char* argv[]) {
 
-    qSetMessagePattern("[%{file}:%{line}] %{message}");
+    qSetMessagePattern("[%{function}:%{line}] %{message}");
 
     QApplication app(argc, argv);
 

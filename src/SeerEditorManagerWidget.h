@@ -6,6 +6,7 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QMap>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -34,6 +35,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const SeerHighlighterSettings&                  editorHighlighterSettings           () const;
         void                                            setEditorHighlighterEnabled         (bool flag);
         bool                                            editorHighlighterEnabled            () const;
+        void                                            setEditorAlternateDirectories       (const QStringList alternateDirectories);
+        const QStringList&                              editorAlternateDirectories          () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -79,5 +82,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerHighlighterSettings                         _editorHighlighterSettings;
         bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
+        QStringList                                     _editorAlternateDirectories;
 };
 

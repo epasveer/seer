@@ -20,6 +20,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
@@ -609,20 +610,19 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     //
     // Open the file.
     //
-    // Build the filename to open. If there is no alternateDirectory,
-    // use fullname.  If alternateDirectory is provided, then use
+    // See findFile() to see the search paths and order.
     //
-    //      alternateDirectory/file
-    //
-    QString filename;
-
-    if (alternateDirectory == "") {
-        filename = _fullname;
-    }else{
-        filename = _alternateDirectory + "/" + _file;
-    }
+    QString filename = findFile(_file, _fullname, _alternateDirectory, _alternateDirectories);
 
     //qDebug() << "Loading" << _file << "from" << filename;
+
+    if (filename == "") {
+        QMessageBox::critical(this, "Can't find source file.",  "Can't find : " + _file + "\nIts location may have changed.");
+
+        emit showAlternateBar(true);
+
+        return;
+    }
 
     QFile inputFile(filename);
 
@@ -630,7 +630,7 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     if (!inputFile.isOpen()) {
 
-        QMessageBox::critical(this, "Can't open source file.",  "Can't open : " + filename + "\nIts location may have changed.");
+        QMessageBox::critical(this, "Can't read source file.",  "Can't read : " + filename + "\nThe file is there but can't be opened.");
 
         emit showAlternateBar(true);
 
@@ -713,6 +713,73 @@ const QString& SeerEditorWidgetSourceArea::alternateDirectory () const {
     return _alternateDirectory;
 }
 
+void SeerEditorWidgetSourceArea::setAlternateDirectories (const QStringList& alternateDirectories) {
+
+    _alternateDirectories = alternateDirectories;
+}
+
+const QStringList& SeerEditorWidgetSourceArea::alternateDirectories () const {
+
+    return _alternateDirectories;
+}
+
+QString SeerEditorWidgetSourceArea::findFile (const QString& file, const QString& fullname, const QString& alternateDirectory, const QStringList& alternateDirectories) {
+
+    //
+    // This function returns the filename to use to load the source file.
+    //
+    // 'file' is the short version of the filename. eg: 'source.cpp'
+    // 'fullname' is the long version. eg: '/path/to/locate/source.cpp'
+    // 'alternateDirectory' is the alternate directory to use if 'fullname' is not found.
+    // 'alternateDirectories' is a list of alternate directories if 'fullname' is not found
+    // and if 'file' is not in 'alternateDirectory'.
+    //
+    // 'alternateDirectory' can be blank ("") and usually is. If it isn't blank, then it
+    // takes presedence over 'fullname' and 'alternateDirectories'.
+    //
+    // 'alternateDirectories' is a list of directory locations. It defines the search order.
+    // Once a location has the 'file', the search stops and that directory is used.
+    //
+    // If the 'file' can't be found in any of the locations, a "" is returned.
+    //
+    // One note about 'fullname'. This is the path that gdb knows of. Gdb extracts the path
+    // from the debug information in the executable when it was compiled and linked.
+    //
+
+    // Use 'alternateDirectory', if provided.
+    if (alternateDirectory != "") {
+
+        QString filename = alternateDirectory + "/" + file;
+
+        if (QFileInfo::exists(filename) == false) {
+            return "";
+        }
+
+        return filename;
+    }
+
+    // Handle 'fullname'.
+    if (QFileInfo::exists(fullname) == true) {
+        return fullname;
+    }
+
+    // Handle 'alternateDirectories'.
+    QStringListIterator iter(alternateDirectories);
+
+    while (iter.hasNext()) {
+
+        //qDebug() << iter.next();
+
+        QString filename = iter.next() + "/" + file;
+
+        if (QFileInfo::exists(filename) == true) {
+            return filename;
+        }
+    }
+
+    // Not found anywhere.
+    return "";
+}
 
 void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 

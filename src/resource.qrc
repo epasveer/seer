@@ -29,5 +29,7 @@
     <file>resources/hide.png</file>
     <file>resources/maximize.png</file>
     <file>resources/minimize.png</file>
+    <file>resources/up_arrow.png</file>
+    <file>resources/down_arrow.png</file>
   </qresource>
 </RCC>

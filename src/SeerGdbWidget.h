@@ -68,8 +68,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         int                                 rememberManualCommandCount          () const;
         void                                clearManualCommandHistory           ();
 
+        void                                setSourceAlternateDirectories       (const QStringList& alternateDirectories);
+        const QStringList&                  sourceAlternateDirectories          () const;
+
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
+        const SeerEditorManagerWidget*      editorManager                       () const;
 
         void                                writeSettings                       ();
         void                                readSettings                        ();
