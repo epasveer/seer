@@ -31,17 +31,17 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     showAlternateBar(false); // Hide the alternate bar. ctrl+O to show it again.
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,            &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
-    QObject::connect(searchDownToolButton,          &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
-    QObject::connect(searchUpToolButton,            &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
-    QObject::connect(searchLineNumberLineEdit,      &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchLineNumberLineEdit);
-    QObject::connect(searchCloseToolButton,         &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchCloseToolButton);
-    QObject::connect(alternateCloseToolButton,      &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
-    QObject::connect(alternateFileOpenToolButton,   &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
-    QObject::connect(alternateAcceptToolButton,     &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateAcceptToolButton);
-    QObject::connect(alternateLineEdit,             &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleAlternateAcceptToolButton);
-    QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
-    QObject::connect(sourceWidget,                  &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
+    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
+    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
+    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
+    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchLineNumberLineEdit);
+    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchCloseToolButton);
+    QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
+    QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
+    QObject::connect(alternateAddToGlobalToolButton,    &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateAddToGlobalToolButton);
+    QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleAlternateLineEdit);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -201,7 +201,7 @@ void SeerEditorWidget::handleAlternateFileOpenToolButton () {
     }
 }
 
-void SeerEditorWidget::handleAlternateAcceptToolButton () {
+void SeerEditorWidget::handleAlternateLineEdit () {
 
     showAlternateBar(false);
 
@@ -210,5 +210,16 @@ void SeerEditorWidget::handleAlternateAcceptToolButton () {
     //qDebug() << "alternate dirname=" << dirname;
 
     sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
+}
+
+void SeerEditorWidget::handleAlternateAddToGlobalToolButton () {
+
+    if (alternateLineEdit->text() == "") {
+        return;
+    }
+
+    //qDebug() << "alternate dirname=" << alternateLineEdit->text();
+
+    emit addAlternateDirectory(alternateLineEdit->text());
 }
 

@@ -17,9 +17,9 @@
    <item>
     <layout class="QGridLayout" name="alternateBarLayout">
      <item row="1" column="3">
-      <widget class="QToolButton" name="alternateAcceptToolButton">
+      <widget class="QToolButton" name="alternateAddToGlobalToolButton">
        <property name="toolTip">
-        <string>Accept alternate location.</string>
+        <string>Add path to global list of alternate directories.</string>
        </property>
        <property name="text">
         <string>...</string>

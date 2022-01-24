@@ -56,6 +56,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
         void                                            handleTextSearchToolButtonClicked   ();
+        void                                            handleAddAlternateDirectory         (QString path);
 
     signals:
         void                                            refreshBreakpointsList              ();

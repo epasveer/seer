@@ -4,6 +4,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -469,6 +470,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues , this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget,               &SeerEditorWidget::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -509,6 +511,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget,               &SeerEditorWidget::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, file);
@@ -574,6 +577,31 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
     }else{
         w->showSearchBar(true);
     }
+}
+
+void SeerEditorManagerWidget::handleAddAlternateDirectory (QString path) {
+
+    // Don't re-add it if it already exists in the list.
+    if (_editorAlternateDirectories.contains(path) == true) {
+
+        QMessageBox::warning(this, "Note.", "The directory '" + path +"' is already in the alternate directories list.");
+
+        return;
+    }
+
+    // Add the new path to our list.
+    _editorAlternateDirectories << path;
+
+    // Update any open editors. Future editors will get the updated list normally.
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setAlternateDirectories(_editorAlternateDirectories);
+        b++;
+    }
+
+    QMessageBox::information(this, "Note.", "Added '" + path +"' to the alternate directories list.");
 }
 
 void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
