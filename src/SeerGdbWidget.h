@@ -6,6 +6,7 @@
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
+#include "SeerPrintpointsBrowserWidget.h"
 #include "GdbMonitor.h"
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
@@ -110,7 +111,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbStackSelectFrame           (int frameno);
         void                                handleGdbStackListLocals            ();
         void                                handleGdbStackListArguments         ();
-        void                                handleGdbBreakpointWatchpointCatchpointList   ();
+        void                                handleGdbGenericpointList           ();
         void                                handleGdbBreakpointDelete           (QString breakpoints);
         void                                handleGdbBreakpointEnable           (QString breakpoints);
         void                                handleGdbBreakpointDisable          (QString breakpoints);
@@ -126,6 +127,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbCatchpointEnable           (QString catchpoints);
         void                                handleGdbCatchpointDisable          (QString catchpoints);
         void                                handleGdbCatchpointInsert           (QString catchpoint);
+        void                                handleGdbPrintpointDelete           (QString breakpoints);
+        void                                handleGdbPrintpointEnable           (QString breakpoints);
+        void                                handleGdbPrintpointDisable          (QString breakpoints);
+        void                                handleGdbPrintpointInsert           (QString printpoint);
         void                                handleGdbThreadListIds              ();
         void                                handleGdbThreadListFrames           ();
         void                                handleGdbThreadSelectId             (int threadid);
@@ -179,6 +184,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
+        SeerPrintpointsBrowserWidget*       _printpointsBrowserWidget;
         SeerTildeEqualAmpersandLogWidget*   _gdbOutputLog;
         SeerCaretAsteriskLogWidget*         _seerOutputLog;
 

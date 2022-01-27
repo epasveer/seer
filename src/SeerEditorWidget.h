@@ -84,6 +84,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
 
     signals:
         void                            insertBreakpoint                    (QString breakpoint);
+        void                            insertPrintpoint                    (QString printpoint);
         void                            deleteBreakpoints                   (QString breakpoints);
         void                            enableBreakpoints                   (QString breakpoints);
         void                            disableBreakpoints                  (QString breakpoints);

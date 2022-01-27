@@ -43,6 +43,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTabCloseRequested             (int index);
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
         void                                            handleInsertBreakpoint              (QString breakpoint);
+        void                                            handleInsertPrintpoint              (QString printpoint);
         void                                            handleDeleteBreakpoints             (QString breakpoints);
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
@@ -62,6 +63,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            refreshBreakpointsList              ();
         void                                            refreshStackFrames                  ();
         void                                            insertBreakpoint                    (QString breakpoint);
+        void                                            insertPrintpoint                    (QString printpoint);
         void                                            deleteBreakpoints                   (QString breakpoints);
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);

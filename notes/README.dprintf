@@ -1,0 +1,39 @@
+
+-dprintf-insert [ -t ] [ -f ] [ -d ] [ --qualified ]
+    [ -c condition ] [--force-condition] [ -i ignore-count ]
+    [ -p thread-id ] [ location ] [ format ]
+    [ argument ]
+
+ -break-insert [ -t ] [ -h ] [ -f ] [ -d ] [ -a ] [ --qualified ]
+    [ -c condition ] [ --force-condition ] [ -i ignore-count ]
+    [ -p thread-id ] [ location ]
+
+    -h = hardware breakpoint (not supported in dprintf)
+    -a = create a tracepoint (not supported in dprintf)
+
+If supplied, location and --qualified may be specified the same way as for the -break-insert command. See -break-insert.
+
+The possible optional parameters of this command are:
+
+‘-t’
+Insert a temporary breakpoint.
+
+‘-f’
+If location cannot be parsed (for example, if it refers to unknown files or functions), create a pending breakpoint. Without this flag,
+GDB will report an error, and won’t create a breakpoint, if location cannot be parsed.
+
+‘-d’
+Create a disabled breakpoint.
+
+‘-c condition’
+Make the breakpoint conditional on condition.
+
+‘--force-condition’
+Forcibly define the breakpoint even if the condition is invalid at all of the breakpoint locations.
+
+‘-i ignore-count’
+Set the ignore count of the breakpoint (see ignore count) to ignore-count.
+
+‘-p thread-id’
+Restrict the breakpoint to the thread with the specified global thread-id.
+

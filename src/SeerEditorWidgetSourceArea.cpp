@@ -1,5 +1,6 @@
 #include "SeerEditorWidget.h"
 #include "SeerBreakpointCreateDialog.h"
+#include "SeerPrintpointCreateDialog.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -927,7 +928,8 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     int lineno = cursor.blockNumber()+1;
 
     // Create the menu actions.
-    QAction* createAction;
+    QAction* createBreakpointAction;
+    QAction* createPrintpointAction;
     QAction* deleteAction;
     QAction* enableAction;
     QAction* disableAction;
@@ -949,26 +951,30 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
-        createAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create breakpoint on line %1").arg(lineno), this);
-        deleteAction    = new QAction(QIcon::fromTheme("edit-delete"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        enableAction    = new QAction(QIcon::fromTheme("list-add"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        disableAction   = new QAction(QIcon::fromTheme("list-remove"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        runToLineAction = new QAction(QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon::fromTheme("edit-delete"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        enableAction              = new QAction(QIcon::fromTheme("list-add"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        disableAction             = new QAction(QIcon::fromTheme("list-remove"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
 
-        createAction->setEnabled(false);
+        createBreakpointAction->setEnabled(false);
+        createPrintpointAction->setEnabled(false);
         deleteAction->setEnabled(true);
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
         runToLineAction->setEnabled(true);
 
     }else{
-        createAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create breakpoint on line %1").arg(lineno), this);
-        deleteAction    = new QAction(QIcon::fromTheme("edit-delete"),  QString("Delete breakpoint on line %1").arg(lineno), this);
-        enableAction    = new QAction(QIcon::fromTheme("list-add"),     QString("Enable breakpoint on line %1").arg(lineno), this);
-        disableAction   = new QAction(QIcon::fromTheme("list-remove"),  QString("Disable breakpoint on line %1").arg(lineno), this);
-        runToLineAction = new QAction(QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon::fromTheme("document-new"), QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon::fromTheme("edit-delete"),  QString("Delete breakpoint on line %1").arg(lineno), this);
+        enableAction              = new QAction(QIcon::fromTheme("list-add"),     QString("Enable breakpoint on line %1").arg(lineno), this);
+        disableAction             = new QAction(QIcon::fromTheme("list-remove"),  QString("Disable breakpoint on line %1").arg(lineno), this);
+        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
 
-        createAction->setEnabled(true);
+        createBreakpointAction->setEnabled(true);
+        createPrintpointAction->setEnabled(true);
         deleteAction->setEnabled(false);
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
@@ -989,7 +995,8 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
-    menu.addAction(createAction);
+    menu.addAction(createBreakpointAction);
+    menu.addAction(createPrintpointAction);
     menu.addAction(deleteAction);
     menu.addAction(enableAction);
     menu.addAction(disableAction);
@@ -1051,7 +1058,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     }
 
     // Handle creating a new breakpoint.
-    if (action == createAction) {
+    if (action == createBreakpointAction) {
 
         SeerBreakpointCreateDialog dlg(this);
         dlg.setFilename(fullname());
@@ -1067,6 +1074,27 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the create breakpoint signal.
         emit insertBreakpoint(dlg.breakpointText());
+
+        return;
+    }
+
+    // Handle creating a new printpoint.
+    if (action == createPrintpointAction) {
+
+        SeerPrintpointCreateDialog dlg(this);
+        dlg.setFilename(fullname());
+        dlg.setLineNumber(QString("%1").arg(lineno));
+
+        int ret = dlg.exec();
+
+        if (ret == 0) {
+            return;
+        }
+
+        //qDebug() << dlg.printpointText();
+
+        // Emit the create breakpoint signal.
+        emit insertPrintpoint(dlg.printpointText());
 
         return;
     }
