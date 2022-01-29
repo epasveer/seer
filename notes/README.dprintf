@@ -37,3 +37,21 @@ Set the ignore count of the breakpoint (see ignore count) to ignore-count.
 ‘-p thread-id’
 Restrict the breakpoint to the thread with the specified global thread-id.
 
+
+
+Output to a log file.
+--------------------
+
+As an example, if you wanted dprintf output to go to a logfile that is a standard I/O stream assigned to the variable mylog, you could do the following:
+
+    (gdb) set dprintf-style call
+    (gdb) set dprintf-function fprintf
+    (gdb) set dprintf-channel mylog
+    (gdb) dprintf 25,"at line 25, glob=%d\n",glob
+    Dprintf 1 at 0x123456: file main.c, line 25.
+    (gdb) info break
+    1       dprintf        keep y   0x00123456 in main at main.c:25
+            call (void) fprintf (mylog,"at line 25, glob=%d\n",glob)
+            continue
+    (gdb)
+

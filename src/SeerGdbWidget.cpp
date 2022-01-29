@@ -417,6 +417,10 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+
+        // Set dprint parameters.
+        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
     // Create a new console.
@@ -491,6 +495,10 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+
+        // Set dprint parameters.
+        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
     // Create a new console.
@@ -555,6 +563,10 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+
+        // Set dprint parameters.
+        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
     // Create a new console.
@@ -595,6 +607,10 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+
+        // Set dprint parameters.
+        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
     // Create a new console.
@@ -642,6 +658,10 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+
+        // Set dprint parameters.
+        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
     // Create a new console.
@@ -1020,6 +1040,8 @@ void SeerGdbWidget::handleGdbPrintpointInsert (QString printpoint) {
     if (executableLaunchMode() == "") {
         return;
     }
+
+    //qDebug() << printpoint;
 
     handleGdbCommand("-dprintf-insert " + printpoint);
     handleGdbGenericpointList();

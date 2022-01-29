@@ -119,15 +119,15 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
         //          ]
         // }
 
-        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
-        QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
+        // Don't filter characters. It messes up \n in the the dprintf_text.
+        // QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
-        //qDebug() << body_text;
+        QString body_text = Seer::parseFirst(text, "body=", '[', ']', false);
 
         if (body_text != "") {
 
-            QStringList bkpt_list = Seer::parse(newtext, "bkpt=", '{', '}', false);
+            QStringList bkpt_list = Seer::parse(text, "bkpt=", '{', '}', false);
 
             for ( const auto& bkpt_text : bkpt_list  ) {
                 QString number_text            = Seer::parseFirst(bkpt_text, "number=",            '"', '"', false);

@@ -215,7 +215,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
         printpointParameters += " --line " + lineNumberText();
     }
 
-    printpointParameters += " " + format();
+    printpointParameters += " \"" + format() + "\"";
     printpointParameters += " " + arguments();
 
     return printpointParameters;
