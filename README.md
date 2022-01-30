@@ -5,8 +5,8 @@ Seer - a gui frontend to gdb for Linux.   (Ernie Pasveer  epasveer@att.net)
 
 This project is actively worked on. The aim is a simple, yet pleasing gui to gdb.
 
-This is the initial release. So it is considered beta. Please report any bugs or
-desired features to my email.
+Please report any bugs or desired features to my email or create a task in my
+github project page.
 
 
 Requirements
@@ -53,15 +53,21 @@ The main view for Seer looks like:
           "Add variable to Tracker".
         * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
           "Add variable to Memory Visualizer".
-        * A breakpoint can be created by RMB on a specific line.
+        * A breakpoint/printpoint can be created by RMB on a specific line.
         * Can execute to a specific line by RMB on a specific line.
 
-    * Breakpoints, Watchpoints, manual gdb commands, and logs.
+    * Breakpoints, Watchpoints, Catchpoint, Printpoint, manual gdb commands, and logs.
         * The area below the Code Manager.
         * Manual commands.  Manually enter a gdb or gdbmi command.
+          The commands are remembered for the next Seer use.
         * Breakpoint manager. Create and manage breakpoints.
-        * Watchpoint manager. Create and manage watchpoints. A watchpoint monitors when a variable is accessed
-          (read, write, read/write).
+        * Watchpoint manager. Create and manage watchpoints.
+          A watchpoint monitors when a variable is accessed (read, write, read/write).
+        * Catchpoint manager. Create and manage catchpoints.
+          A catchpoint stops execution on a C++ throw/rethrow/catch call.
+        * Printpoint manager. Create and manage printpoints.
+          A printpoint is like a breakpoint but it allows you to print variables at
+          that printpoint. See gdb's 'dprintf' call.
         * GDB output. A log of any output from the gdb program itself.
         * Seer output. A log of any output from the Seer program itself. As diagnostics.
 
@@ -143,5 +149,6 @@ May need root access.
 Support/Contact
 ===============
 
-    Send an email to epasveer@att.net for any bugs or features.
+    Send an email to epasveer@att.net for any bugs or features. Or create a task
+    in my github project page.
 
