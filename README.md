@@ -56,7 +56,7 @@ The main view for Seer looks like:
         * A breakpoint/printpoint can be created by RMB on a specific line.
         * Can execute to a specific line by RMB on a specific line.
 
-    * Breakpoints, Watchpoints, Catchpoint, Printpoint, manual gdb commands, and logs.
+    * Breakpoints, Watchpoints, Catchpoints, Printpoints, manual gdb commands, and logs.
         * The area below the Code Manager.
         * Manual commands.  Manually enter a gdb or gdbmi command.
           The commands are remembered for the next Seer use.
