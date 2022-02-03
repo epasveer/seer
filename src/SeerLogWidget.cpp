@@ -8,6 +8,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
 #include <QtCore/QTextStream>
+#include <QtCore/QDebug>
 
 SeerLogWidget::SeerLogWidget (QWidget* parent) : QWidget(parent) {
 
@@ -29,12 +30,18 @@ SeerLogWidget::SeerLogWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(printButton,       &QPushButton::clicked,      this,  &SeerLogWidget::handlePrintButton);
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerLogWidget::handleSaveButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerLogWidget::handleWrapTextCheckBox);
+    QObject::connect(enableCheckBox,    &QCheckBox::clicked,        this,  &SeerLogWidget::handleEnableCheckBox);
 }
 
 SeerLogWidget::~SeerLogWidget () {
 }
 
 void SeerLogWidget::processText (const QString& text) {
+
+    // Don't do anything if we're not enabled.
+    if (isLogEnabled() == false) {
+        return;
+    }
 
     // Add text to the end of the document.
     textEdit->append(text);
@@ -56,6 +63,16 @@ void SeerLogWidget::moveToEnd () {
     textEdit->moveCursor(QTextCursor::StartOfLine);
 
     textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
+}
+
+bool SeerLogWidget::isLogEnabled () const {
+
+    return enableCheckBox->isChecked();
+}
+
+void SeerLogWidget::setLogEnabled (bool flag) {
+
+    enableCheckBox->setChecked(flag);
 }
 
 void SeerLogWidget::handleText (const QString& text) {
@@ -131,5 +148,12 @@ void SeerLogWidget::handleWrapTextCheckBox () {
     }else{
         textEdit->setLineWrapMode(QTextEdit::WidgetWidth);  // Wrap at end of widget
     }
+}
+
+void SeerLogWidget::handleEnableCheckBox () {
+
+    //qDebug() << "Enabled clicked!";
+
+    emit logEnabledChanged(enableCheckBox->isChecked());
 }
 

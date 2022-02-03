@@ -11,7 +11,8 @@ SeerTildeEqualAmpersandLogWidget::~SeerTildeEqualAmpersandLogWidget () {
 
 void SeerTildeEqualAmpersandLogWidget::processText (const QString& text) {
 
-    if (enableCheckBox->isChecked() == false) {
+    // Don't do anything if we're not enabled.
+    if (isLogEnabled() == false) {
         return;
     }
 

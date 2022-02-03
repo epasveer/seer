@@ -72,6 +72,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSourceAlternateDirectories       (const QStringList& alternateDirectories);
         const QStringList&                  sourceAlternateDirectories          () const;
 
+        void                                setGdbOutputLogEnabled              (bool flag);
+        bool                                isGdbOutputLogEnabled               () const;
+
+        void                                setSeerOutputLogEnabled             (bool flag);
+        bool                                isSeerOutputLogEnabled              () const;
+
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
         const SeerEditorManagerWidget*      editorManager                       () const;
@@ -148,6 +154,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);
         void                                handleManualCommandChanged          ();
+        void                                handleLogOuputChanged               ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);

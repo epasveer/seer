@@ -15,12 +15,19 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
         virtual void        processText                 (const QString& text);
         virtual void        moveToEnd                   ();
 
+        bool                isLogEnabled                () const;
+        void                setLogEnabled               (bool flag);
+
+    signals:
+        void                logEnabledChanged           (bool flag);
+
     public slots:
         void                handleText                  (const QString& text);
         void                handleClearButton           ();
         void                handlePrintButton           ();
         void                handleSaveButton            ();
         void                handleWrapTextCheckBox      ();
+        void                handleEnableCheckBox        ();
 
     protected:
 };

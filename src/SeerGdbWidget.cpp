@@ -46,19 +46,19 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
 
-    _breakpointsBrowserWidget             = new SeerBreakpointsBrowserWidget(this);
-    _watchpointsBrowserWidget             = new SeerWatchpointsBrowserWidget(this);
-    _catchpointsBrowserWidget             = new SeerCatchpointsBrowserWidget(this);
-    _printpointsBrowserWidget             = new SeerPrintpointsBrowserWidget(this);
-    _gdbOutputLog                         = new SeerTildeEqualAmpersandLogWidget(this);
-    _seerOutputLog                        = new SeerCaretAsteriskLogWidget(this);
+    _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
+    _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
+    _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
+    _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
+    _gdbOutputLog             = new SeerTildeEqualAmpersandLogWidget(this);
+    _seerOutputLog            = new SeerCaretAsteriskLogWidget(this);
 
     logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
     logsTabWidget->addTab(_catchpointsBrowserWidget, "Catchpoints");
     logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
-    logsTabWidget->addTab(_gdbOutputLog,  "GDB  output");
-    logsTabWidget->addTab(_seerOutputLog, "Seer output");
+    logsTabWidget->addTab(_gdbOutputLog,             "GDB  output");
+    logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
     manualCommandComboBox->setFont(font);
@@ -192,6 +192,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(manualCommandComboBox,                                     QOverload<int>::of(&QComboBox::activated),                                                  this,                                                           &SeerGdbWidget::handleManualCommandChanged);
+    QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
+    QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
 
     // Restore window settings.
     setConsoleMode("normal");
@@ -1306,6 +1308,13 @@ void SeerGdbWidget::handleManualCommandChanged () {
     writeSettings();
 }
 
+void SeerGdbWidget::handleLogOuputChanged () {
+
+    //qDebug() << "Log Output changed";
+
+    writeSettings();
+}
+
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
     Q_UNUSED(exitCode);
@@ -1329,6 +1338,8 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
 }
 
 void SeerGdbWidget::writeSettings () {
+
+    //qDebug() << "Write Settings";
 
     QSettings settings;
 
@@ -1364,6 +1375,14 @@ void SeerGdbWidget::writeSettings () {
         }
 
     } settings.endArray();
+
+    settings.beginGroup("gdboutputlog"); {
+        settings.setValue("enabled", isGdbOutputLogEnabled());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        settings.setValue("enabled", isSeerOutputLogEnabled());
+    } settings.endGroup();
 }
 
 void SeerGdbWidget::readSettings () {
@@ -1407,6 +1426,14 @@ void SeerGdbWidget::readSettings () {
         setSourceAlternateDirectories(directories);
 
     } settings.endArray();
+
+    settings.beginGroup("gdboutputlog"); {
+        setGdbOutputLogEnabled(settings.value("enabled", true).toBool());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
+    } settings.endGroup();
 }
 
 bool SeerGdbWidget::isGdbRuning () const {
@@ -1580,6 +1607,26 @@ void SeerGdbWidget::setSourceAlternateDirectories (const QStringList& alternateD
     editorManager()->setEditorAlternateDirectories(alternateDirectories);
 }
 
+void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {
+
+    _gdbOutputLog->setLogEnabled(flag);
+}
+
+bool SeerGdbWidget::isGdbOutputLogEnabled () const {
+
+    return _gdbOutputLog->isLogEnabled();
+}
+
+void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
+
+    _seerOutputLog->setLogEnabled(flag);
+}
+
+bool SeerGdbWidget::isSeerOutputLogEnabled () const {
+
+    return _seerOutputLog->isLogEnabled();
+}
+
 void SeerGdbWidget::sendGdbInterrupt (int signal) {
 
     //qDebug() << "Sending an interrupt to the program. Signal =" << signal;
@@ -1599,7 +1646,7 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
     // -exec-interrupt does not work for -exec-until when the line
     // number is not in the current function. In this case, -exec-until
     // behaves like -exec-continue but -exec-interrupt has no effect. :^(
-    // We do kill the ability to use a different signal, though. :^)
+    // We do have the ability to use a different signal, though. :^)
 
     if (signal < 0) {
         handleGdbCommand("-exec-interrupt");
