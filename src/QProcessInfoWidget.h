@@ -2,15 +2,15 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
-#include "ui_SeerSlashProcWidget.h"
+#include "ui_QProcessInfoWidget.h"
 
-class SeerSlashProcWidget : public QWidget, protected Ui::SeerSlashProcWidgetForm {
+class QProcessInfoWidget : public QWidget, protected Ui::QProcessInfoWidget {
 
     Q_OBJECT
 
     public:
-        explicit SeerSlashProcWidget (QWidget* parent = 0);
-       ~SeerSlashProcWidget ();
+        explicit QProcessInfoWidget (QWidget* parent = 0);
+       ~QProcessInfoWidget ();
 
         int                 selectedPid                     () const;
         QString             selectedUsername                () const;
@@ -18,7 +18,7 @@ class SeerSlashProcWidget : public QWidget, protected Ui::SeerSlashProcWidgetFor
         QString             selectedCommandLine             () const;
 
     signals:
-        void                pidSelected                     ();
+        void                pidSelected                     (int pid);
 
     public slots:
 

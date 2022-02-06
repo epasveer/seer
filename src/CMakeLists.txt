@@ -69,10 +69,10 @@ set(HEADER_FILES
     SeerWatchpointsBrowserWidget.h
     SeerCppSourceHighlighter.h
     SeerAboutDialog.h
-    SeerSlashProcWidget.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
     QProcessInfo.h
+    QProcessInfoWidget.h
     QProgressIndicator.h
     QColorButton.h
     )
@@ -130,10 +130,10 @@ set(SOURCE_FILES
     SeerWatchpointsBrowserWidget.cpp
     SeerCppSourceHighlighter.cpp
     SeerAboutDialog.cpp
-    SeerSlashProcWidget.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
     QProcessInfo.cpp
+    QProcessInfoWidget.cpp
     QProgressIndicator.cpp
     QColorButton.cpp
     )

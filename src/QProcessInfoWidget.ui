@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerSlashProcWidgetForm</class>
- <widget class="QWidget" name="SeerSlashProcWidgetForm">
+ <class>QProcessInfoWidget</class>
+ <widget class="QWidget" name="QProcessInfoWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

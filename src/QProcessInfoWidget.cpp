@@ -1,4 +1,4 @@
-#include "SeerSlashProcWidget.h"
+#include "QProcessInfoWidget.h"
 #include "QProcessInfo.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -33,7 +33,7 @@ class QProcessInfoWidgetItem : public QTreeWidgetItem {
 //
 // The main widget starts here.
 //
-SeerSlashProcWidget::SeerSlashProcWidget (QWidget* parent) : QWidget(parent) {
+QProcessInfoWidget::QProcessInfoWidget (QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
@@ -49,20 +49,20 @@ SeerSlashProcWidget::SeerSlashProcWidget (QWidget* parent) : QWidget(parent) {
     systemProcessesCheckBox->setChecked(false);
 
     // Connect things.
-    QObject::connect(programNameLineEdit,     &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::refreshView);
-    QObject::connect(userNameLineEdit,        &QLineEdit::textChanged,            this,  &SeerSlashProcWidget::refreshView);
-    QObject::connect(systemProcessesCheckBox, &QCheckBox::clicked,                this,  &SeerSlashProcWidget::refreshView);
-    QObject::connect(refreshToolButton,       &QToolButton::clicked,              this,  &SeerSlashProcWidget::refreshList);
-    QObject::connect(processTreeWidget,       &QTreeWidget::itemDoubleClicked,    this,  &SeerSlashProcWidget::handleDoubleClicked);
+    QObject::connect(programNameLineEdit,     &QLineEdit::textChanged,            this,  &QProcessInfoWidget::refreshView);
+    QObject::connect(userNameLineEdit,        &QLineEdit::textChanged,            this,  &QProcessInfoWidget::refreshView);
+    QObject::connect(systemProcessesCheckBox, &QCheckBox::clicked,                this,  &QProcessInfoWidget::refreshView);
+    QObject::connect(refreshToolButton,       &QToolButton::clicked,              this,  &QProcessInfoWidget::refreshList);
+    QObject::connect(processTreeWidget,       &QTreeWidget::itemDoubleClicked,    this,  &QProcessInfoWidget::handleDoubleClicked);
 
     // Load the initial process list.
     refreshList();
 }
 
-SeerSlashProcWidget::~SeerSlashProcWidget () {
+QProcessInfoWidget::~QProcessInfoWidget () {
 }
 
-int SeerSlashProcWidget::selectedPid () const {
+int QProcessInfoWidget::selectedPid () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -73,7 +73,7 @@ int SeerSlashProcWidget::selectedPid () const {
     return items[0]->text(0).toLong();
 }
 
-QString SeerSlashProcWidget::selectedUsername () const {
+QString QProcessInfoWidget::selectedUsername () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -84,7 +84,7 @@ QString SeerSlashProcWidget::selectedUsername () const {
     return items[0]->text(1);
 }
 
-QString SeerSlashProcWidget::selectedName () const {
+QString QProcessInfoWidget::selectedName () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -95,7 +95,7 @@ QString SeerSlashProcWidget::selectedName () const {
     return items[0]->text(2);
 }
 
-QString SeerSlashProcWidget::selectedCommandLine () const {
+QString QProcessInfoWidget::selectedCommandLine () const {
 
     QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
 
@@ -106,7 +106,7 @@ QString SeerSlashProcWidget::selectedCommandLine () const {
     return items[0]->text(3);
 }
 
-void SeerSlashProcWidget::refreshList () {
+void QProcessInfoWidget::refreshList () {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -143,7 +143,7 @@ void SeerSlashProcWidget::refreshList () {
     QApplication::restoreOverrideCursor();
 }
 
-void SeerSlashProcWidget::refreshView () {
+void QProcessInfoWidget::refreshView () {
 
     // Get this list of program name matches. Or all if there is no program name provided.
     QList<QTreeWidgetItem*> programNameMatches;
@@ -210,7 +210,8 @@ void SeerSlashProcWidget::refreshView () {
     processTreeWidget->resizeColumnToContents(3);
 }
 
-void SeerSlashProcWidget::handleDoubleClicked () {
-    emit pidSelected();
+void QProcessInfoWidget::handleDoubleClicked () {
+
+    emit pidSelected(selectedPid());
 }
 

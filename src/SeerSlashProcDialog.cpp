@@ -8,7 +8,7 @@ SeerSlashProcDialog::SeerSlashProcDialog (QWidget* parent) : QDialog(parent) {
     // Setup the widgets
 
     // Connect things.
-    QObject::connect(slashProcWidget,     &SeerSlashProcWidget::pidSelected,      this,  &SeerSlashProcDialog::handlePidSelected);
+    QObject::connect(processInfoWidget, &QProcessInfoWidget::pidSelected,      this, &SeerSlashProcDialog::handlePidSelected);
 }
 
 SeerSlashProcDialog::~SeerSlashProcDialog () {
@@ -16,17 +16,17 @@ SeerSlashProcDialog::~SeerSlashProcDialog () {
 
 int SeerSlashProcDialog::selectedPid () const {
 
-    return slashProcWidget->selectedPid();
+    return processInfoWidget->selectedPid();
 }
 
 QString SeerSlashProcDialog::selectedName () const {
 
-    return slashProcWidget->selectedName();
+    return processInfoWidget->selectedName();
 }
 
 QString SeerSlashProcDialog::selectedCommandLine () const {
 
-    return slashProcWidget->selectedCommandLine();
+    return processInfoWidget->selectedCommandLine();
 }
 
 void SeerSlashProcDialog::handlePidSelected() {

@@ -22,7 +22,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="SeerSlashProcWidget" name="slashProcWidget" native="true"/>
+    <widget class="QProcessInfoWidget" name="processInfoWidget" native="true"/>
    </item>
    <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -38,9 +38,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SeerSlashProcWidget</class>
+   <class>QProcessInfoWidget</class>
    <extends>QWidget</extends>
-   <header>SeerSlashProcWidget.h</header>
+   <header>QProcessInfoWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
