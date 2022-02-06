@@ -35,6 +35,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbASyncMode               = true;
     _consoleMode                = "";
     _rememberManualCommandCount = 10;
+    _currentFrame               = -1;
 
     setNewExecutableFlag(true);
 
@@ -834,7 +835,11 @@ void SeerGdbWidget::handleGdbStackSelectFrame (int frameno) {
         return;
     }
 
-    handleGdbCommand(QString("-stack-select-frame %1").arg(frameno));
+    // This is not supported anymore with gdbmi.
+    // handleGdbCommand(QString("-stack-select-frame %1").arg(frameno));
+
+    // So resort to calling the non-gdbmi version.
+    handleGdbCommand(QString("frame %1").arg(frameno));
 
     emit stoppingPointReached();
 }

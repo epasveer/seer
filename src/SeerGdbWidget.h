@@ -172,7 +172,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                deleteConsole                       ();
         void                                sendGdbInterrupt                    (int signal);
 
-
         QString                             _gdbProgram;
         QString                             _gdbArguments;
         bool                                _gdbASyncMode;
@@ -184,6 +183,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         bool                                _newExecutableFlag;
+        int                                 _currentFrame;
 
         SeerConsoleWidget*                  _consoleWidget;
         QString                             _consoleMode;
