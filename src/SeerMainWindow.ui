@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
+    <width>984</width>
     <height>628</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>726</width>
+     <width>984</width>
      <height>26</height>
     </rect>
    </property>
@@ -437,8 +437,8 @@
   </action>
   <action name="actionSettingsSaveConfiguration">
    <property name="icon">
-    <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/HighContrast/document-save.png</normaloff>:/seer/resources/HighContrast/document-save.png</iconset>
    </property>
    <property name="text">
     <string>Save Configuration...</string>

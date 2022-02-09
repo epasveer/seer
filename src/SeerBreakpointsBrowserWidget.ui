@@ -92,8 +92,8 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset theme="view-refresh">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
        </property>
       </widget>
      </item>
@@ -106,8 +106,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-new">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/document-new.png</normaloff>:/seer/resources/HighContrast/document-new.png</iconset>
        </property>
       </widget>
      </item>
@@ -120,8 +120,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="edit-delete">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
        </property>
       </widget>
      </item>
@@ -134,8 +134,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-add">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
        </property>
       </widget>
      </item>
@@ -148,8 +148,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-remove">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -170,6 +170,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

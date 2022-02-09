@@ -124,8 +124,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-print">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/document-print.png</normaloff>:/seer/resources/HighContrast/document-print.png</iconset>
        </property>
       </widget>
      </item>
@@ -138,8 +138,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-save-as">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/document-save-as.png</normaloff>:/seer/resources/HighContrast/document-save-as.png</iconset>
        </property>
       </widget>
      </item>
@@ -152,8 +152,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="view-refresh">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
        </property>
       </widget>
      </item>
@@ -179,6 +179,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

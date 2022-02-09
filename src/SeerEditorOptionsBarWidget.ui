@@ -41,8 +41,8 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="document-open">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
      </property>
     </widget>
    </item>
@@ -61,13 +61,15 @@
       <string>...</string>
      </property>
      <property name="icon">
-      <iconset theme="edit-find">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/edit-find.png</normaloff>:/seer/resources/HighContrast/edit-find.png</iconset>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

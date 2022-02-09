@@ -39,8 +39,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="edit-clear">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/edit-clear.png</normaloff>:/seer/resources/HighContrast/edit-clear.png</iconset>
      </property>
     </widget>
    </item>
@@ -56,8 +56,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="document-print">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/document-print.png</normaloff>:/seer/resources/HighContrast/document-print.png</iconset>
      </property>
     </widget>
    </item>
@@ -73,8 +73,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="document-save-as">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/document-save-as.png</normaloff>:/seer/resources/HighContrast/document-save-as.png</iconset>
      </property>
     </widget>
    </item>
@@ -113,6 +113,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -25,8 +25,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-add">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
        </property>
       </widget>
      </item>
@@ -46,8 +46,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-remove">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -80,8 +80,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="document-open">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
        </property>
       </widget>
      </item>
@@ -127,8 +127,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="go-down">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/go-down.png</normaloff>:/seer/resources/HighContrast/go-down.png</iconset>
        </property>
       </widget>
      </item>
@@ -141,8 +141,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="go-up">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/go-up.png</normaloff>:/seer/resources/HighContrast/go-up.png</iconset>
        </property>
       </widget>
      </item>
@@ -185,8 +185,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-remove">
-         <normaloff>.</normaloff>.</iconset>
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -202,6 +202,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

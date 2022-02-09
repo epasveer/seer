@@ -21,7 +21,7 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->addTab(_threadFramesBrowserWidget, "Frames");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
-    refreshToolButton->setIcon(QIcon::fromTheme("view-refresh"));
+    refreshToolButton->setIcon(QIcon(":/seer/resources/HighContrast/view-refresh.png"));
     refreshToolButton->setToolTip("Refresh the thread information.");
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 

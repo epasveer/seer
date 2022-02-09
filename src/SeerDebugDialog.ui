@@ -57,7 +57,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="document-open"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -95,7 +96,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="document-open"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -221,7 +223,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="document-open"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -349,7 +352,9 @@
   <zorder>executableWorkingDirectoryGroupBox</zorder>
   <zorder>buttonBox</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

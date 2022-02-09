@@ -35,7 +35,8 @@ Its location may have changed.  How would you like to handle this?</string>
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="document-open"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -52,7 +53,8 @@ Its location may have changed.  How would you like to handle this?</string>
          <string/>
         </property>
         <property name="icon">
-         <iconset theme="document-open"/>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -109,7 +111,9 @@ Its location may have changed.  How would you like to handle this?</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

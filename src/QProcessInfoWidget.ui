@@ -36,8 +36,8 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="view-refresh">
-       <normaloff>.</normaloff>.</iconset>
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/HighContrast/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
      </property>
     </widget>
    </item>
@@ -102,6 +102,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
