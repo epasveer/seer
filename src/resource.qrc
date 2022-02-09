@@ -44,6 +44,19 @@
     <file>resources/HighContrast/list-add.png</file>
     <file>resources/HighContrast/list-remove.png</file>
     <file>resources/HighContrast/view-refresh.png</file>
+    <file>resources/oxygen/document-new.png</file>
+    <file>resources/oxygen/document-open.png</file>
+    <file>resources/oxygen/document-print.png</file>
+    <file>resources/oxygen/document-save-as.png</file>
+    <file>resources/oxygen/document-save.png</file>
+    <file>resources/oxygen/edit-clear.png</file>
+    <file>resources/oxygen/edit-delete.png</file>
+    <file>resources/oxygen/edit-find.png</file>
+    <file>resources/oxygen/go-down.png</file>
+    <file>resources/oxygen/go-up.png</file>
+    <file>resources/oxygen/list-add.png</file>
+    <file>resources/oxygen/list-remove.png</file>
+    <file>resources/oxygen/view-refresh.png</file>
   </qresource>
 </RCC>
 
