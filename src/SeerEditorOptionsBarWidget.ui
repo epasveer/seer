@@ -42,7 +42,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/oxygen/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
+       <normaloff>:/seer/resources/Adwaita/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
      </property>
     </widget>
    </item>
@@ -62,7 +62,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/oxygen/edit-find.png</normaloff>:/seer/resources/HighContrast/edit-find.png</iconset>
+       <normaloff>:/seer/resources/Adwaita/edit-find.png</normaloff>:/seer/resources/HighContrast/edit-find.png</iconset>
      </property>
     </widget>
    </item>

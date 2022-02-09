@@ -36,7 +36,7 @@ Its location may have changed.  How would you like to handle this?</string>
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/oxygen/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
+          <normaloff>:/seer/resources/Adwaita/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>
@@ -54,7 +54,7 @@ Its location may have changed.  How would you like to handle this?</string>
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/oxygen/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
+          <normaloff>:/seer/resources/Adwaita/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
         </property>
        </widget>
       </item>

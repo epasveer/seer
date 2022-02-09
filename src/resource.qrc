@@ -57,6 +57,32 @@
     <file>resources/oxygen/list-add.png</file>
     <file>resources/oxygen/list-remove.png</file>
     <file>resources/oxygen/view-refresh.png</file>
+    <file>resources/Mint-X/document-new.png</file>
+    <file>resources/Mint-X/document-open.png</file>
+    <file>resources/Mint-X/document-print.png</file>
+    <file>resources/Mint-X/document-save-as.png</file>
+    <file>resources/Mint-X/document-save.png</file>
+    <file>resources/Mint-X/edit-clear.png</file>
+    <file>resources/Mint-X/edit-delete.png</file>
+    <file>resources/Mint-X/edit-find.png</file>
+    <file>resources/Mint-X/go-down.png</file>
+    <file>resources/Mint-X/go-up.png</file>
+    <file>resources/Mint-X/list-add.png</file>
+    <file>resources/Mint-X/list-remove.png</file>
+    <file>resources/Mint-X/view-refresh.png</file>
+    <file>resources/Adwaita/document-new.png</file>
+    <file>resources/Adwaita/document-open.png</file>
+    <file>resources/Adwaita/document-print.png</file>
+    <file>resources/Adwaita/document-save-as.png</file>
+    <file>resources/Adwaita/document-save.png</file>
+    <file>resources/Adwaita/edit-clear.png</file>
+    <file>resources/Adwaita/edit-delete.png</file>
+    <file>resources/Adwaita/edit-find.png</file>
+    <file>resources/Adwaita/go-down.png</file>
+    <file>resources/Adwaita/go-up.png</file>
+    <file>resources/Adwaita/list-add.png</file>
+    <file>resources/Adwaita/list-remove.png</file>
+    <file>resources/Adwaita/view-refresh.png</file>
   </qresource>
 </RCC>
 

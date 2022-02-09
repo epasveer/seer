@@ -21,7 +21,7 @@ SeerSourceLibraryManagerWidget::SeerSourceLibraryManagerWidget (QWidget* parent)
     tabWidget->addTab(_sharedLibraryBrowserWidget, "Libraries");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
-    refreshToolButton->setIcon(QIcon(":/seer/resources/oxygen/view-refresh.png"));
+    refreshToolButton->setIcon(QIcon(":/seer/resources/Adwaita/view-refresh.png"));
     refreshToolButton->setToolTip("Refresh the source/libraries information.");
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 

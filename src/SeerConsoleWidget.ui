@@ -40,7 +40,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/oxygen/edit-clear.png</normaloff>:/seer/resources/HighContrast/edit-clear.png</iconset>
+       <normaloff>:/seer/resources/Adwaita/edit-clear.png</normaloff>:/seer/resources/HighContrast/edit-clear.png</iconset>
      </property>
     </widget>
    </item>
@@ -57,7 +57,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/oxygen/document-print.png</normaloff>:/seer/resources/HighContrast/document-print.png</iconset>
+       <normaloff>:/seer/resources/Adwaita/document-print.png</normaloff>:/seer/resources/HighContrast/document-print.png</iconset>
      </property>
     </widget>
    </item>
@@ -74,7 +74,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/oxygen/document-save-as.png</normaloff>:/seer/resources/HighContrast/document-save-as.png</iconset>
+       <normaloff>:/seer/resources/Adwaita/document-save-as.png</normaloff>:/seer/resources/HighContrast/document-save-as.png</iconset>
      </property>
     </widget>
    </item>
