@@ -24,7 +24,7 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     tabWidget->addTab(_stackLocalsBrowserWidget,    "Locals");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
-    refreshToolButton->setIcon(QIcon(":/seer/resources/HighContrast/view-refresh.png"));
+    refreshToolButton->setIcon(QIcon(":/seer/resources/oxygen/view-refresh.png"));
     refreshToolButton->setToolTip("Refresh the stack information.");
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 

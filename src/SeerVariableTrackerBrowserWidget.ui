@@ -39,7 +39,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -53,7 +53,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
+         <normaloff>:/seer/resources/oxygen/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
        </property>
       </widget>
      </item>

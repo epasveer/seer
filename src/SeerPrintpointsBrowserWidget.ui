@@ -98,7 +98,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
+         <normaloff>:/seer/resources/oxygen/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
        </property>
       </widget>
      </item>
@@ -112,7 +112,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/document-new.png</normaloff>:/seer/resources/HighContrast/document-new.png</iconset>
+         <normaloff>:/seer/resources/oxygen/document-new.png</normaloff>:/seer/resources/HighContrast/document-new.png</iconset>
        </property>
       </widget>
      </item>
@@ -126,7 +126,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
+         <normaloff>:/seer/resources/oxygen/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
        </property>
       </widget>
      </item>
@@ -140,7 +140,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
        </property>
       </widget>
      </item>
@@ -154,7 +154,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>

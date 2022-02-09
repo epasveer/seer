@@ -438,7 +438,7 @@
   <action name="actionSettingsSaveConfiguration">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/HighContrast/document-save.png</normaloff>:/seer/resources/HighContrast/document-save.png</iconset>
+     <normaloff>:/seer/resources/oxygen/document-save.png</normaloff>:/seer/resources/HighContrast/document-save.png</iconset>
    </property>
    <property name="text">
     <string>Save Configuration...</string>

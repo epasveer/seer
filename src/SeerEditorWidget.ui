@@ -26,7 +26,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
        </property>
       </widget>
      </item>
@@ -47,7 +47,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -81,7 +81,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
+         <normaloff>:/seer/resources/oxygen/document-open.png</normaloff>:/seer/resources/HighContrast/document-open.png</iconset>
        </property>
       </widget>
      </item>
@@ -128,7 +128,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/go-down.png</normaloff>:/seer/resources/HighContrast/go-down.png</iconset>
+         <normaloff>:/seer/resources/oxygen/go-down.png</normaloff>:/seer/resources/HighContrast/go-down.png</iconset>
        </property>
       </widget>
      </item>
@@ -142,7 +142,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/go-up.png</normaloff>:/seer/resources/HighContrast/go-up.png</iconset>
+         <normaloff>:/seer/resources/oxygen/go-up.png</normaloff>:/seer/resources/HighContrast/go-up.png</iconset>
        </property>
       </widget>
      </item>
@@ -186,7 +186,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/HighContrast/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
+         <normaloff>:/seer/resources/oxygen/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
        </property>
       </widget>
      </item>
