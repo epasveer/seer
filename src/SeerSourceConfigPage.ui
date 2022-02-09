@@ -27,7 +27,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/Adwaita/document-new.png</normaloff>:/seer/resources/HighContrast/document-new.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/document-new.svg</normaloff>:/seer/resources/HighContrast/document-new.svg</iconset>
      </property>
     </widget>
    </item>
@@ -41,7 +41,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/Adwaita/go-up.png</normaloff>:/seer/resources/HighContrast/go-up.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/HighContrast/go-up.svg</iconset>
      </property>
     </widget>
    </item>
@@ -55,7 +55,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/Adwaita/go-down.png</normaloff>:/seer/resources/HighContrast/go-down.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/HighContrast/go-down.svg</iconset>
      </property>
     </widget>
    </item>
@@ -69,7 +69,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/Adwaita/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/HighContrast/edit-delete.svg</iconset>
      </property>
     </widget>
    </item>

@@ -37,7 +37,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/Adwaita/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
      </property>
     </widget>
    </item>

@@ -93,7 +93,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
        </property>
       </widget>
      </item>
@@ -107,7 +107,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/document-new.png</normaloff>:/seer/resources/HighContrast/document-new.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-new.svg</normaloff>:/seer/resources/RelaxLightIcons/document-new.svg</iconset>
        </property>
       </widget>
      </item>
@@ -121,7 +121,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/edit-delete.png</normaloff>:/seer/resources/HighContrast/edit-delete.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
        </property>
       </widget>
      </item>
@@ -135,7 +135,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/list-add.png</normaloff>:/seer/resources/HighContrast/list-add.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
        </property>
       </widget>
      </item>
@@ -149,7 +149,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/list-remove.png</normaloff>:/seer/resources/HighContrast/list-remove.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
        </property>
       </widget>
      </item>

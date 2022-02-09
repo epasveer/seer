@@ -951,11 +951,11 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/Adwaita/document-new.png"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/Adwaita/document-new.png"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/Adwaita/edit-delete.png"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/Adwaita/list-add.png"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/Adwaita/list-remove.png"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
 
         createBreakpointAction->setEnabled(false);
@@ -966,11 +966,11 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         runToLineAction->setEnabled(true);
 
     }else{
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/Adwaita/document-new.png"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/Adwaita/document-new.png"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/Adwaita/edit-delete.png"),  QString("Delete breakpoint on line %1").arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/Adwaita/list-add.png"),     QString("Enable breakpoint on line %1").arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/Adwaita/list-remove.png"),  QString("Disable breakpoint on line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on line %1").arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
 
         createBreakpointAction->setEnabled(true);

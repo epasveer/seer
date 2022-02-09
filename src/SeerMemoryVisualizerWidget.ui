@@ -125,7 +125,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/document-print.png</normaloff>:/seer/resources/HighContrast/document-print.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/HighContrast/document-print.svg</iconset>
        </property>
       </widget>
      </item>
@@ -139,7 +139,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/document-save-as.png</normaloff>:/seer/resources/HighContrast/document-save-as.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/HighContrast/document-save-as.svg</iconset>
        </property>
       </widget>
      </item>
@@ -153,7 +153,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/Adwaita/view-refresh.png</normaloff>:/seer/resources/HighContrast/view-refresh.png</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
        </property>
       </widget>
      </item>

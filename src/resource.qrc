@@ -31,58 +31,19 @@
     <file>resources/minimize.png</file>
     <file>resources/up_arrow.png</file>
     <file>resources/down_arrow.png</file>
-    <file>resources/HighContrast/document-new.png</file>
-    <file>resources/HighContrast/document-open.png</file>
-    <file>resources/HighContrast/document-print.png</file>
-    <file>resources/HighContrast/document-save-as.png</file>
-    <file>resources/HighContrast/document-save.png</file>
-    <file>resources/HighContrast/edit-clear.png</file>
-    <file>resources/HighContrast/edit-delete.png</file>
-    <file>resources/HighContrast/edit-find.png</file>
-    <file>resources/HighContrast/go-down.png</file>
-    <file>resources/HighContrast/go-up.png</file>
-    <file>resources/HighContrast/list-add.png</file>
-    <file>resources/HighContrast/list-remove.png</file>
-    <file>resources/HighContrast/view-refresh.png</file>
-    <file>resources/oxygen/document-new.png</file>
-    <file>resources/oxygen/document-open.png</file>
-    <file>resources/oxygen/document-print.png</file>
-    <file>resources/oxygen/document-save-as.png</file>
-    <file>resources/oxygen/document-save.png</file>
-    <file>resources/oxygen/edit-clear.png</file>
-    <file>resources/oxygen/edit-delete.png</file>
-    <file>resources/oxygen/edit-find.png</file>
-    <file>resources/oxygen/go-down.png</file>
-    <file>resources/oxygen/go-up.png</file>
-    <file>resources/oxygen/list-add.png</file>
-    <file>resources/oxygen/list-remove.png</file>
-    <file>resources/oxygen/view-refresh.png</file>
-    <file>resources/Mint-X/document-new.png</file>
-    <file>resources/Mint-X/document-open.png</file>
-    <file>resources/Mint-X/document-print.png</file>
-    <file>resources/Mint-X/document-save-as.png</file>
-    <file>resources/Mint-X/document-save.png</file>
-    <file>resources/Mint-X/edit-clear.png</file>
-    <file>resources/Mint-X/edit-delete.png</file>
-    <file>resources/Mint-X/edit-find.png</file>
-    <file>resources/Mint-X/go-down.png</file>
-    <file>resources/Mint-X/go-up.png</file>
-    <file>resources/Mint-X/list-add.png</file>
-    <file>resources/Mint-X/list-remove.png</file>
-    <file>resources/Mint-X/view-refresh.png</file>
-    <file>resources/Adwaita/document-new.png</file>
-    <file>resources/Adwaita/document-open.png</file>
-    <file>resources/Adwaita/document-print.png</file>
-    <file>resources/Adwaita/document-save-as.png</file>
-    <file>resources/Adwaita/document-save.png</file>
-    <file>resources/Adwaita/edit-clear.png</file>
-    <file>resources/Adwaita/edit-delete.png</file>
-    <file>resources/Adwaita/edit-find.png</file>
-    <file>resources/Adwaita/go-down.png</file>
-    <file>resources/Adwaita/go-up.png</file>
-    <file>resources/Adwaita/list-add.png</file>
-    <file>resources/Adwaita/list-remove.png</file>
-    <file>resources/Adwaita/view-refresh.png</file>
+    <file>resources/RelaxLightIcons/document-new.svg</file>
+    <file>resources/RelaxLightIcons/document-open.svg</file>
+    <file>resources/RelaxLightIcons/document-print.svg</file>
+    <file>resources/RelaxLightIcons/document-save-as.svg</file>
+    <file>resources/RelaxLightIcons/document-save.svg</file>
+    <file>resources/RelaxLightIcons/edit-clear.svg</file>
+    <file>resources/RelaxLightIcons/edit-delete.svg</file>
+    <file>resources/RelaxLightIcons/edit-find.svg</file>
+    <file>resources/RelaxLightIcons/go-down.svg</file>
+    <file>resources/RelaxLightIcons/go-up.svg</file>
+    <file>resources/RelaxLightIcons/list-add.svg</file>
+    <file>resources/RelaxLightIcons/list-remove.svg</file>
+    <file>resources/RelaxLightIcons/view-refresh.svg</file>
   </qresource>
 </RCC>
 
