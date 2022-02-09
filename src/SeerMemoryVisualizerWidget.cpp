@@ -164,7 +164,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
                     QString num = contents_text.mid(i, 2);
                     bool ok = false;
                     array.push_back(num.toInt(&ok, 16));
-                    assert(ok);
+                    Q_ASSERT(ok);
                 }
 
                 // Give the byte array to the hex widget.
