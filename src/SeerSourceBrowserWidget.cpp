@@ -84,10 +84,12 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             item->setText(0, file_text);
             item->setText(1, fullname_text);
 
+            /* Why have this?
             // Skip fully specified paths. Include files???
             if (file_text[0] == '/') {
                 continue;
             }
+            */
 
             // Look at the filename suffix.
             if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "f" || fileInfo.suffix() == "f90") {
