@@ -457,7 +457,10 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
 
-    tabWidget->addTab(editorWidget, file);
+    // Set the tooltip for the tab.
+    int tabno = tabWidget->addTab(editorWidget, file);
+
+    tabWidget->setTabToolTip(tabno, file + " : " + fullname);
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
@@ -499,7 +502,10 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
 
-    tabWidget->addTab(editorWidget, file);
+    // Set the tooltip for the tab.
+    int tabno = tabWidget->addTab(editorWidget, file);
+
+    tabWidget->setTabToolTip(tabno, file + " : " + fullname);
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
