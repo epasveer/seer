@@ -80,7 +80,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTabWidget" name="logsTabWidget">
+         <widget class="QDetachTabWidget" name="logsTabWidget">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -152,6 +152,12 @@
    <class>SeerVariableManagerWidget</class>
    <extends>QWidget</extends>
    <header location="global">SeerVariableManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QDetachTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">QDetachTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

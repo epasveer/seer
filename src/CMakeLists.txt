@@ -75,6 +75,7 @@ set(HEADER_FILES
     QProcessInfoWidget.h
     QProgressIndicator.h
     QColorButton.h
+    QDetachTabWidget.h
     )
 
 set(SOURCE_FILES
@@ -136,6 +137,7 @@ set(SOURCE_FILES
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
     QColorButton.cpp
+    QDetachTabWidget.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)
