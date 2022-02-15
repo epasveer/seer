@@ -27,7 +27,7 @@ set(HEADER_FILES
     SeerCatchpointsBrowserWidget.h
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
-    SeerCaretAsteriskLogWidget.h
+    SeerSeerLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
     SeerGdbConfigPage.h
@@ -59,7 +59,7 @@ set(HEADER_FILES
     SeerThreadFramesBrowserWidget.h
     SeerThreadIdsBrowserWidget.h
     SeerThreadManagerWidget.h
-    SeerTildeEqualAmpersandLogWidget.h
+    SeerGdbLogWidget.h
     SeerTildeLogWidget.h
     SeerUtl.h
     SeerVariableLoggerBrowserWidget.h
@@ -88,7 +88,7 @@ set(SOURCE_FILES
     SeerCatchpointsBrowserWidget.cpp
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
-    SeerCaretAsteriskLogWidget.cpp
+    SeerSeerLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp
     SeerGdbConfigPage.cpp
@@ -121,7 +121,7 @@ set(SOURCE_FILES
     SeerThreadFramesBrowserWidget.cpp
     SeerThreadIdsBrowserWidget.cpp
     SeerThreadManagerWidget.cpp
-    SeerTildeEqualAmpersandLogWidget.cpp
+    SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
     SeerUtl.cpp
     SeerVariableLoggerBrowserWidget.cpp

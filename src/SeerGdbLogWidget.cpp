@@ -1,15 +1,15 @@
-#include "SeerTildeEqualAmpersandLogWidget.h"
+#include "SeerGdbLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
 #include <QtCore/QDebug>
 
-SeerTildeEqualAmpersandLogWidget::SeerTildeEqualAmpersandLogWidget (QWidget* parent) : SeerLogWidget(parent) {
+SeerGdbLogWidget::SeerGdbLogWidget (QWidget* parent) : SeerLogWidget(parent) {
 }
 
-SeerTildeEqualAmpersandLogWidget::~SeerTildeEqualAmpersandLogWidget () {
+SeerGdbLogWidget::~SeerGdbLogWidget () {
 }
 
-void SeerTildeEqualAmpersandLogWidget::processText (const QString& text) {
+void SeerGdbLogWidget::processText (const QString& text) {
 
     // Don't do anything if we're not enabled.
     if (isLogEnabled() == false) {
@@ -39,13 +39,6 @@ void SeerTildeEqualAmpersandLogWidget::processText (const QString& text) {
         if (str.back() == '\n') {
             str.chop(1);
         }
-
-
-    // Remove leading "="
-    }else if (text.front() == '=') {
-
-        str = text.mid(1);
-
 
     // Remove leading "&"
     // &"p name

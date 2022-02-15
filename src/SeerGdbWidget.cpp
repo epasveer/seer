@@ -51,8 +51,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
     _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
     _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
-    _gdbOutputLog             = new SeerTildeEqualAmpersandLogWidget(this);
-    _seerOutputLog            = new SeerCaretAsteriskLogWidget(this);
+    _gdbOutputLog             = new SeerGdbLogWidget(this);
+    _seerOutputLog            = new SeerSeerLogWidget(this);
 
     logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
@@ -83,11 +83,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),            this,                                                           &SeerGdbWidget::handleGdbProcessFinished); // ??? Do we care about the gdb process ending? For now, terminate Seer.
     QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::errorOccurred),          this,                                                           &SeerGdbWidget::handleGdbProcessErrored);
 
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               _gdbOutputLog,                                                  &SeerTildeEqualAmpersandLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               _gdbOutputLog,                                                  &SeerTildeEqualAmpersandLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::ampersandTextOutput,                                                           _gdbOutputLog,                                                  &SeerTildeEqualAmpersandLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _seerOutputLog,                                                 &SeerCaretAsteriskLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _seerOutputLog,                                                 &SeerCaretAsteriskLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::ampersandTextOutput,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              editorManagerWidget,                                            &SeerEditorManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleText);
@@ -422,7 +422,7 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-style gdb");
         handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
@@ -500,7 +500,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-style gdb");
         handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
@@ -568,7 +568,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-style gdb");
         handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
@@ -612,7 +612,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-style gdb");
         handleGdbCommand("-gdb-set dprintf-function printf");
     }
 
@@ -663,7 +663,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style call");
+        handleGdbCommand("-gdb-set dprintf-style gdb");
         handleGdbCommand("-gdb-set dprintf-function printf");
     }
 

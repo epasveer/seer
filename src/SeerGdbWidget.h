@@ -1,8 +1,8 @@
 #pragma once
 
 #include "SeerConsoleWidget.h"
-#include "SeerTildeEqualAmpersandLogWidget.h"
-#include "SeerCaretAsteriskLogWidget.h"
+#include "SeerGdbLogWidget.h"
+#include "SeerSeerLogWidget.h"
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
@@ -192,8 +192,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
         SeerPrintpointsBrowserWidget*       _printpointsBrowserWidget;
-        SeerTildeEqualAmpersandLogWidget*   _gdbOutputLog;
-        SeerCaretAsteriskLogWidget*         _seerOutputLog;
+        SeerGdbLogWidget*                   _gdbOutputLog;
+        SeerSeerLogWidget*                  _seerOutputLog;
 
         GdbMonitor*                         _gdbMonitor;
         QProcess*                           _gdbProcess;
