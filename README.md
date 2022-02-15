@@ -55,6 +55,7 @@ The main view for Seer looks like:
           "Add variable to Memory Visualizer".
         * A breakpoint/printpoint can be created by RMB on a specific line.
         * Can execute to a specific line by RMB on a specific line.
+        * Tabs in this view can be detached by double-clicking a tab.
 
     * Breakpoints, Watchpoints, Catchpoints, Printpoints, manual gdb commands, and logs.
         * The area below the Code Manager.
@@ -70,6 +71,7 @@ The main view for Seer looks like:
           that printpoint. See gdb's 'dprintf' call.
         * GDB output. A log of any output from the gdb program itself.
         * Seer output. A log of any output from the Seer program itself. As diagnostics.
+        * Tabs in this view can be detached by double-clicking a tab.
 
     * Stack frame information.
         * Stack frame list. A frame can be double clicked to change the scope (the current function).
