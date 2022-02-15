@@ -146,7 +146,29 @@ void SeerMainWindow::setExecutableArguments (const QString& executableArguments)
 
 void SeerMainWindow::setExecutableArguments (const QStringList& executableArguments) {
 
-    QString arguments = executableArguments.join(" ");
+    //
+    // Convert the list of arguments into a single argument string.
+    // Becareful of arguments that contain a space. These need to be surrounded by
+    // a ' character to retain the argument grouping.
+    //
+    //  ie: myprog  42.0 "This is a multi-worded argument"
+    //
+    // Has 2 arguments. Not 6.
+    //
+    QString arguments;
+
+    for (auto arg : executableArguments) {
+
+        if (arg.contains(' ')) {
+            arg = "'" + arg + "'";
+        }
+
+        if (arguments == "") {
+            arguments = arg;
+        }else{
+            arguments += " " + arg;
+        }
+    }
 
     setExecutableArguments(arguments);
 }
