@@ -49,6 +49,9 @@ The main view for Seer looks like:
         * Source files are opened in this view.
         * Text in a file can be seached for with ^F.
         * Variables can be added to the "Logger" by double clicking the variable name.
+          Double click with CTLR key pressed will prepend variable with "*".
+          Double click with SHIFT key pressed will prepend variable with "&".
+          Double click with CTRL+SHIFT key pressed will prepend variable with "*&".
         * Variables can be added to the "Tracker" by selecting the varible name and RMB and select
           "Add variable to Tracker".
         * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
