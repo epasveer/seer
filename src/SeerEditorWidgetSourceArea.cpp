@@ -10,6 +10,7 @@
 #include <QtGui/QRadialGradient>
 #include <QtGui/QHelpEvent>
 #include <QtGui/QPainterPath>
+#include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
@@ -30,7 +31,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : QPlain
     _enableLineNumberArea       = false;
     _enableBreakPointArea       = false;
     _enableMiniMapArea          = false;
-    _ctrlKeyPressed             = false;
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
 
@@ -461,8 +461,18 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
     _selectedExpressionValue  = "";
     _selectedExpressionId     = Seer::createID();
 
-    if (_ctrlKeyPressed == true) {
+    // Look for a keyboard modifier to prepend a '*', '&', or '*&'.
+    Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
+
+    if (modifiers == Qt::ControlModifier) {
         _selectedExpressionName = QString("*") + textCursor().selectedText();
+
+    }else if (modifiers == Qt::ShiftModifier) {
+        _selectedExpressionName = QString("&") + textCursor().selectedText();
+
+    }else if (modifiers == (Qt::ShiftModifier + Qt::ControlModifier)) {
+        _selectedExpressionName = QString("*&") + textCursor().selectedText();
+
     }else{
         _selectedExpressionName = textCursor().selectedText();
     }
@@ -496,25 +506,6 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
 
         return true;
     }
-
-    // Handle the Key Press/Release event.
-    // To handle when Ctrl is pressed or released.
-    if (event->type() == QEvent::KeyPress) {
-        QKeyEvent* keyEvent = (QKeyEvent*)event;
-
-        if (keyEvent->key() == Qt::Key_Control) {
-            _ctrlKeyPressed = true;
-        }
-    }
-
-    if (event->type() == QEvent::KeyRelease) {
-        QKeyEvent* keyEvent = (QKeyEvent*)event;
-
-        if (keyEvent->key() == Qt::Key_Control) {
-            _ctrlKeyPressed = false;
-        }
-    }
-
 
     // Pass any others to the base class.
     return QPlainTextEdit::event(event);

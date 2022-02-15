@@ -138,7 +138,6 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         int                             _selectedExpressionId;
         QString                         _selectedExpressionName;
         QString                         _selectedExpressionValue;
-        bool                            _ctrlKeyPressed;
 
         SeerEditorWidgetLineNumberArea* _lineNumberArea;
         SeerEditorWidgetBreakPointArea* _breakPointArea;
