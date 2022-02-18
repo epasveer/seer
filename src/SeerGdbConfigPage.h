@@ -20,7 +20,16 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         void                    setGdbArguments                                 (const QString& arguments);
         void                    setGdbAsyncMode                                 (bool flag);
 
+        QString                 dprintfStyle                                    () const;
+        QString                 dprintfFunction                                 () const;
+        QString                 dprintfChannel                                  () const;
+
+        void                    setDprintfStyle                                 (const QString& style);
+        void                    setDprintfFunction                              (const QString& function);
+        void                    setDprintfChannel                               (const QString& channel);
+
     protected slots:
         void                    handleGdbProgramToolButton                      ();
+        void                    handleDprintfButtonGroup                        ();
 };
 

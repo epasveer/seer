@@ -325,6 +325,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
+    dlg.setDprintfStyle(gdbWidget->dprintfStyle());
+    dlg.setDprintfFunction(gdbWidget->dprintfFunction());
+    dlg.setDprintfChannel(gdbWidget->dprintfChannel());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
@@ -342,6 +345,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+    gdbWidget->setDprintfStyle(dlg.dprintfStyle());
+    gdbWidget->setDprintfFunction(dlg.dprintfFunction());
+    gdbWidget->setDprintfChannel(dlg.dprintfChannel());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
@@ -355,6 +361,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     if (clearManualCommandHistory) {
         gdbWidget->clearManualCommandHistory();
     }
+
+    // Reset the dprintf, in case it was changed.
+    gdbWidget->resetDprintf();
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
@@ -637,6 +646,12 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("arguments", gdbWidget->gdbArguments());
     } settings.endGroup();
 
+    settings.beginGroup("printpoints"); {
+        settings.setValue("style",    gdbWidget->dprintfStyle());
+        settings.setValue("function", gdbWidget->dprintfFunction());
+        settings.setValue("channel",  gdbWidget->dprintfChannel());
+    } settings.endGroup();
+
     settings.beginGroup("editor"); {
 
         settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
@@ -673,6 +688,12 @@ void SeerMainWindow::readConfigSettings () {
     settings.beginGroup("gdb"); {
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
+    } settings.endGroup();
+
+    settings.beginGroup("printpoints"); {
+        gdbWidget->setDprintfStyle(settings.value("style", "gdb").toString());
+        gdbWidget->setDprintfFunction(settings.value("function", "printf").toString());
+        gdbWidget->setDprintfChannel(settings.value("channel", "").toString());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {

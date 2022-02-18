@@ -323,6 +323,36 @@ bool SeerGdbWidget::gdbAsyncMode () const {
     return _gdbASyncMode;
 }
 
+void SeerGdbWidget::setDprintfStyle (const QString& style) {
+
+    _dprintfStyle = style;
+}
+
+QString SeerGdbWidget::dprintfStyle () const {
+
+    return _dprintfStyle;
+}
+
+void SeerGdbWidget::setDprintfFunction (const QString& function) {
+
+    _dprintfFunction = function;
+}
+
+QString SeerGdbWidget::dprintfFunction () const {
+
+    return _dprintfFunction;
+}
+
+void SeerGdbWidget::setDprintfChannel (const QString& channel) {
+
+    _dprintfChannel = channel;
+}
+
+QString SeerGdbWidget::dprintfChannel () const {
+
+    return _dprintfChannel;
+}
+
 SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
 
     return editorManagerWidget;
@@ -422,8 +452,7 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style gdb");
-        handleGdbCommand("-gdb-set dprintf-function printf");
+        resetDprintf();
     }
 
     // Create a new console.
@@ -500,8 +529,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style gdb");
-        handleGdbCommand("-gdb-set dprintf-function printf");
+        resetDprintf();
     }
 
     // Create a new console.
@@ -568,8 +596,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style gdb");
-        handleGdbCommand("-gdb-set dprintf-function printf");
+        resetDprintf();
     }
 
     // Create a new console.
@@ -612,8 +639,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style gdb");
-        handleGdbCommand("-gdb-set dprintf-function printf");
+        resetDprintf();
     }
 
     // Create a new console.
@@ -663,8 +689,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         }
 
         // Set dprint parameters.
-        handleGdbCommand("-gdb-set dprintf-style gdb");
-        handleGdbCommand("-gdb-set dprintf-function printf");
+        resetDprintf();
     }
 
     // Create a new console.
@@ -1439,6 +1464,17 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("seeroutputlog"); {
         setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
     } settings.endGroup();
+}
+
+void SeerGdbWidget::resetDprintf () {
+
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    handleGdbCommand("-gdb-set dprintf-style "    + dprintfStyle());
+    handleGdbCommand("-gdb-set dprintf-function " + dprintfFunction());
+    handleGdbCommand("-gdb-set dprintf-channel "  + dprintfChannel());
 }
 
 bool SeerGdbWidget::isGdbRuning () const {

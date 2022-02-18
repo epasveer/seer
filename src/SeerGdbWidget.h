@@ -59,6 +59,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbAsyncMode                     (bool flag);
         bool                                gdbAsyncMode                        () const;
 
+        void                                setDprintfStyle                     (const QString& style);
+        QString                             dprintfStyle                        () const;
+
+        void                                setDprintfFunction                  (const QString& function);
+        QString                             dprintfFunction                     () const;
+
+        void                                setDprintfChannel                   (const QString& channel);
+        QString                             dprintfChannel                      () const;
+
         void                                setConsoleMode                      (const QString& mode);
         QString                             consoleMode                         () const;
 
@@ -82,8 +91,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerEditorManagerWidget*            editorManager                       ();
         const SeerEditorManagerWidget*      editorManager                       () const;
 
+        // Settings
         void                                writeSettings                       ();
         void                                readSettings                        ();
+
+        // Printpoints
+        void                                resetDprintf                        ();
 
     public slots:
         void                                handleText                          (const QString& text);
@@ -175,6 +188,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbProgram;
         QString                             _gdbArguments;
         bool                                _gdbASyncMode;
+        QString                             _dprintfStyle;
+        QString                             _dprintfFunction;
+        QString                             _dprintfChannel;
         QString                             _executableName;
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;

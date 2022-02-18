@@ -10,7 +10,8 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
     // Setup the widgets
 
     // Connect things.
-    QObject::connect(gdbProgramToolButton, &QToolButton::clicked,       this, &SeerGdbConfigPage::handleGdbProgramToolButton);
+    QObject::connect(gdbProgramToolButton, &QToolButton::clicked,                                  this, &SeerGdbConfigPage::handleGdbProgramToolButton);
+    QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::buttonClicked),       this, &SeerGdbConfigPage::handleDprintfButtonGroup);
 }
 
 SeerGdbConfigPage::~SeerGdbConfigPage() {
@@ -46,12 +47,70 @@ void SeerGdbConfigPage::setGdbAsyncMode (bool flag) {
     gdbAsyncModeCheckBox->setChecked(flag);
 }
 
+QString SeerGdbConfigPage::dprintfStyle () const {
+
+    if (styleGdbRadioButton->isChecked()) {
+        return "gdb";
+    }else if (styleCallRadioButton->isChecked()) {
+        return "call";
+    }else if (styleAgentRadioButton->isChecked()) {
+        return "agent";
+    }else{
+        return "";
+    }
+}
+
+QString SeerGdbConfigPage::dprintfFunction () const {
+
+    return functionLineEdit->text();
+}
+
+QString SeerGdbConfigPage::dprintfChannel () const {
+
+    return channelLineEdit->text();
+}
+
+void SeerGdbConfigPage::setDprintfStyle (const QString& style) {
+
+    if (style == "gdb") {
+        styleGdbRadioButton->setChecked(true);
+    }else if (style == "call") {
+        styleCallRadioButton->setChecked(true);
+    }else if (style == "agent") {
+        styleAgentRadioButton->setChecked(true);
+    }else{
+    }
+
+    handleDprintfButtonGroup();
+}
+
+void SeerGdbConfigPage::setDprintfFunction (const QString& function) {
+
+    functionLineEdit->setText(function);
+}
+
+void SeerGdbConfigPage::setDprintfChannel (const QString& channel) {
+
+    channelLineEdit->setText(channel);
+}
+
 void SeerGdbConfigPage::handleGdbProgramToolButton () {
 
     QString program = QFileDialog::getOpenFileName(this, "Select a gdb program to use as the debugger.", gdbProgram(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (program != "") {
         setGdbProgram(program);
+    }
+}
+
+void SeerGdbConfigPage::handleDprintfButtonGroup () {
+
+    functionLineEdit->setEnabled(false);
+    channelLineEdit->setEnabled(false);
+
+    if (styleCallRadioButton->isChecked()) {
+        functionLineEdit->setEnabled(true);
+        channelLineEdit->setEnabled(true);
     }
 }
 

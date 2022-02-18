@@ -6,59 +6,198 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>445</height>
+    <width>861</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerGdbConfigPage</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_3">
    <item row="0" column="0">
-    <widget class="QLabel" name="gdbProgramLabel">
-     <property name="text">
-      <string>GDB program</string>
+    <widget class="QGroupBox" name="gdbGroupBox">
+     <property name="title">
+      <string>Gdb Settings</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="gdbProgramLineEdit">
-     <property name="toolTip">
-      <string>Specify the path and name of the gdb debugger.</string>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="gdbProgramLabel">
+        <property name="text">
+         <string>GDB program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="gdbProgramLineEdit">
+        <property name="toolTip">
+         <string>Specify the path and name of the gdb debugger.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="gdbProgramToolButton">
+        <property name="toolTip">
+         <string>Open a file dialog to locate the gdb debugger.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="gdbArgumentsLabel">
+        <property name="text">
+         <string>GDB arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
+        <property name="toolTip">
+         <string>Arguments to pass to the gdb debugger.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+        <property name="toolTip">
+         <string>Turn gdb 'async' mode on or off.</string>
+        </property>
+        <property name="text">
+         <string>GDB asycn mode</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="gdbArgumentsLabel">
-     <property name="text">
-      <string>GDB arguments</string>
+    <widget class="QGroupBox" name="printPointGroupBox">
+     <property name="title">
+      <string>Printpoint/Dprintf Settings</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="styleLabel">
+        <property name="text">
+         <string>Style</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="styleGdbRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output goes the Gdb Ouput tab.</string>
+        </property>
+        <property name="text">
+         <string>gdb</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">styleButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="styleCallRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output goes to the Seer Console.</string>
+        </property>
+        <property name="text">
+         <string>call</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">styleButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QRadioButton" name="styleAgentRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output is handled by the gdbserver.</string>
+        </property>
+        <property name="text">
+         <string>agent</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">styleButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>561</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="functionLabel">
+        <property name="text">
+         <string>Function</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QLineEdit" name="functionLineEdit">
+        <property name="toolTip">
+         <string>The name of a function in your program to use.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" colspan="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>626</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="channelLabel">
+        <property name="text">
+         <string>Channel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLineEdit" name="channelLineEdit">
+        <property name="toolTip">
+         <string>The channel value, if required by the function.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" colspan="2">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>626</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="gdbArgumentsLineEdit">
-     <property name="toolTip">
-      <string>Arguments to pass to the gdb debugger.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
-     <property name="toolTip">
-      <string>Turn gdb 'async' mode on or off.</string>
-     </property>
-     <property name="text">
-      <string>GDB asycn mode</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="3">
+   <item row="2" column="0">
     <widget class="QTextBrowser" name="textBrowser">
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -70,28 +209,26 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. If a different debugger is used, it must provide that.  So, usually, the &amp;quot;--interpreter=mi&amp;quot; argument is a must.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Printpoints use the 'dprintf' command available in gdb. The output of 'dprintf' can be sent to the Seer Console ('call') or the GDB output tab ('gdb'). A value of 'agent' is meant for use with a gdbserver.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;'Function' specifies what function to use when the style is 'call'. Typically it is 'printf'. Your program must provide the function. Most programs have 'printf' linked in. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;'Channel' specifies the alternate channel to use when the style is 'call'. For example, if 'Function' is &amp;quot;fprintf&amp;quot;, the 'Channel' would be the value to pass to the first argument of the 'fprintf' call. eg: &amp;quot;fp&amp;quot;. Again, your program needs to provied the channel variable.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QToolButton" name="gdbProgramToolButton">
-     <property name="toolTip">
-      <string>Open a file dialog to locate the gdb debugger.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/HighContrast/document-open.svg</iconset>
-     </property>
-    </widget>
-   </item>
   </layout>
+  <zorder>gdbGroupBox</zorder>
+  <zorder>textBrowser</zorder>
+  <zorder>printPointGroupBox</zorder>
  </widget>
  <resources>
   <include location="resource.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="styleButtonGroup"/>
+ </buttongroups>
 </ui>

@@ -97,6 +97,36 @@ bool SeerConfigDialog::gdbAsyncMode () const {
     return _gdbConfigPage->gdbAsyncMode();
 }
 
+void SeerConfigDialog::setDprintfStyle (const QString& style) {
+
+    _gdbConfigPage->setDprintfStyle(style);
+}
+
+QString SeerConfigDialog::dprintfStyle () const {
+
+    return _gdbConfigPage->dprintfStyle();
+}
+
+void SeerConfigDialog::setDprintfFunction (const QString& function) {
+
+    _gdbConfigPage->setDprintfFunction(function);
+}
+
+QString SeerConfigDialog::dprintfFunction () const {
+
+    return _gdbConfigPage->dprintfFunction();
+}
+
+void SeerConfigDialog::setDprintfChannel (const QString& channel) {
+
+    _gdbConfigPage->setDprintfChannel(channel);
+}
+
+QString SeerConfigDialog::dprintfChannel () const {
+
+    return _gdbConfigPage->dprintfChannel();
+}
+
 void SeerConfigDialog::setEditorFont (const QFont& font) {
 
     _editorConfigPage->setEditorFont(font);
@@ -209,6 +239,10 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             setGdbArguments("--interpreter=mi");
             setGdbAsyncMode(true);
 
+            setDprintfStyle("gdb");
+            setDprintfFunction("printf");
+            setDprintfChannel("");
+
         }else if (itemLabel == "Editor") {
 
             setEditorFont(QFont("Source Code Pro", 10));
@@ -229,8 +263,6 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             setSeerRememberWindowSizes(true);
             setSeerRememberManualCommandCount(10);
             setSeerClearManualCommandHistory(false);
-
-        }else{
         }
     }
 }
