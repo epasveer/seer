@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
-    <height>817</height>
+    <width>901</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerKeysConfigPage</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+  <layout class="QGridLayout" name="gridLayout_4">
    <item row="0" column="0">
     <widget class="QGroupBox" name="gdbKeysGroupBox">
      <property name="title">
@@ -372,6 +372,29 @@
     </widget>
    </item>
    <item row="2" column="0">
+    <widget class="QGroupBox" name="gdbAndEditorKeysGroupBox">
+     <property name="title">
+      <string>Gdb and Editor Keys</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QTableWidget" name="keysTableWidget">
+        <column>
+         <property name="text">
+          <string>Shortcut</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Description</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QTextBrowser" name="textBrowser">
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -388,6 +411,7 @@ p, li { white-space: pre-wrap; }
   <zorder>gdbKeysGroupBox</zorder>
   <zorder>textBrowser</zorder>
   <zorder>editorKeysGroupBox</zorder>
+  <zorder>gdbAndEditorKeysGroupBox</zorder>
  </widget>
  <resources>
   <include location="resource.qrc"/>

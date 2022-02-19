@@ -55,6 +55,10 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;
 
+        // Key settings.
+        void                                setKeySettings                                  (const SeerKeySettings& settings);
+        const SeerKeySettings&              keySettings                                     () const;
+
         // Seer settings.
         void                                setSeerRememberWindowSizes                      (bool flag);
         bool                                seerRememberWindowSizes                         () const;

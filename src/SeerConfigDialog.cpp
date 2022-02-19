@@ -175,6 +175,16 @@ QStringList SeerConfigDialog::sourceAlternateDirectories () const {
     return _sourceConfigPage->alternateDirectories();
 }
 
+void SeerConfigDialog::setKeySettings (const SeerKeySettings& settings) {
+
+    _keysConfigPage->setKeySettings(settings);
+}
+
+const SeerKeySettings& SeerConfigDialog::keySettings () const {
+
+    return _keysConfigPage->keySettings();
+}
+
 void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
 
     _seerConfigPage->setRememberWindowSizes(flag);
@@ -264,6 +274,10 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             alternateDirectories << "./";
 
             setSourceAlternateDirectories(alternateDirectories);
+
+        }else if (itemLabel == "Keys") {
+
+            setKeySettings(SeerKeySettings::populate());
 
         }else if (itemLabel == "Seer") {
 
