@@ -23,12 +23,14 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     _gdbConfigPage    = new SeerGdbConfigPage;
     _editorConfigPage = new SeerEditorConfigPage;
     _sourceConfigPage = new SeerSourceConfigPage;
+    _keysConfigPage   = new SeerKeysConfigPage;
     _seerConfigPage   = new SeerSeerConfigPage;
 
     // Add the pages to the stacked widget.
     pagesStackedWidget->addWidget(_gdbConfigPage);
     pagesStackedWidget->addWidget(_editorConfigPage);
     pagesStackedWidget->addWidget(_sourceConfigPage);
+    pagesStackedWidget->addWidget(_keysConfigPage);
     pagesStackedWidget->addWidget(_seerConfigPage);
 
     // Create icons.
@@ -49,6 +51,12 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configSourceButton->setText(tr("Source"));
     configSourceButton->setTextAlignment(Qt::AlignHCenter);
     configSourceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QListWidgetItem* configKeysButton = new QListWidgetItem(contentsListWidget);
+    configKeysButton->setIcon(QIcon(":/seer/resources/keyboard-key.png"));
+    configKeysButton->setText(tr("Keys"));
+    configKeysButton->setTextAlignment(Qt::AlignHCenter);
+    configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
     configSeerButton->setIcon(QIcon(":/seer/resources/seer_128x128.png"));

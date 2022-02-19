@@ -34,6 +34,7 @@ set(HEADER_FILES
     SeerEditorConfigPage.h
     SeerSourceConfigPage.h
     SeerSeerConfigPage.h
+    SeerKeysConfigPage.h
     SeerDebugDialog.h
     SeerDirectoryFilterProxyModel.h
     SeerEditorManagerEntry.h
@@ -71,6 +72,7 @@ set(HEADER_FILES
     SeerAboutDialog.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
+    SeerKeySettings.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -95,6 +97,7 @@ set(SOURCE_FILES
     SeerEditorConfigPage.cpp
     SeerSourceConfigPage.cpp
     SeerSeerConfigPage.cpp
+    SeerKeysConfigPage.cpp
     SeerDebugDialog.cpp
     SeerEditorManagerWidget.cpp
     SeerEditorOptionsBarWidget.cpp
@@ -133,6 +136,7 @@ set(SOURCE_FILES
     SeerAboutDialog.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
+    SeerKeySettings.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
