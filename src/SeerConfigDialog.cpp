@@ -180,7 +180,7 @@ void SeerConfigDialog::setKeySettings (const SeerKeySettings& settings) {
     _keysConfigPage->setKeySettings(settings);
 }
 
-const SeerKeySettings& SeerConfigDialog::keySettings () const {
+SeerKeySettings SeerConfigDialog::keySettings () const {
 
     return _keysConfigPage->keySettings();
 }

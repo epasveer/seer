@@ -57,7 +57,7 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
 
         // Key settings.
         void                                setKeySettings                                  (const SeerKeySettings& settings);
-        const SeerKeySettings&              keySettings                                     () const;
+        SeerKeySettings                     keySettings                                     () const;
 
         // Seer settings.
         void                                setSeerRememberWindowSizes                      (bool flag);

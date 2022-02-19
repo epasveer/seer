@@ -9,6 +9,7 @@ SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
+    setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
 }
@@ -18,13 +19,11 @@ SeerKeysConfigPage::~SeerKeysConfigPage() {
 
 void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
 
-    _keySettings = settings;
-
     // Clear the table contents.
     keysTableWidget->setRowCount(0);
 
     // Get a list of keys from the highlighter.
-    QStringList keys = _keySettings.keys();
+    QStringList keys = settings.keys();
 
     // Loop through each key and get its info.
     // Construct a table entry.
@@ -32,7 +31,7 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
 
         QString key = keys[r];
 
-        SeerKeySetting setting = _keySettings.get(key);
+        SeerKeySetting setting = settings.get(key);
 
         keysTableWidget->insertRow(r);
 
@@ -44,14 +43,7 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
 
         // Insert the Description.
         QLabel* descriptionLabel = new QLabel(setting._help);
-
         keysTableWidget->setCellWidget(r, 1, descriptionLabel);
-
-        // Connect things to watch for changes.
-        //QObject::connect(fontWeightBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        //QObject::connect(fontItalicBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        //QObject::connect(foregroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
-        //QObject::connect(backgroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
     }
 
     keysTableWidget->setVerticalHeaderLabels(keys);
@@ -60,8 +52,26 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
     keysTableWidget->resizeColumnToContents(1); // Description
 }
 
-const SeerKeySettings& SeerKeysConfigPage::keySettings() const {
+SeerKeySettings SeerKeysConfigPage::keySettings() const {
 
-    return _keySettings;
+    SeerKeySettings settings;
+
+    for (int r=0; r<keysTableWidget->rowCount(); r++) {
+
+        // Get the key (label) for this row.
+        QString key = keysTableWidget->verticalHeaderItem(r)->text();
+
+        // Get widgets for this row.
+        QKeySequenceEdit* keySequenceEdit  = dynamic_cast<QKeySequenceEdit*>(keysTableWidget->cellWidget(r,0));
+        QLabel*           descriptionLabel = dynamic_cast<QLabel*>(keysTableWidget->cellWidget(r,1));
+
+        // Create key setting.
+        SeerKeySetting setting(key, keySequenceEdit->keySequence(), descriptionLabel->text());
+
+        // Add the setting to our settings.
+        settings.add(key, setting);
+    }
+
+    return settings;
 }
 

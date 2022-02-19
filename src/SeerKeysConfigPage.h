@@ -14,11 +14,10 @@ class SeerKeysConfigPage : public QWidget, protected Ui::SeerKeysConfigPage {
        ~SeerKeysConfigPage ();
 
         void                        setKeySettings              (const SeerKeySettings& settings);
-        const SeerKeySettings&      keySettings                 () const;
+        SeerKeySettings             keySettings                 () const;
 
     protected slots:
 
     private:
-        SeerKeySettings             _keySettings;
 };
 
