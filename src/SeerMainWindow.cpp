@@ -5,7 +5,6 @@
 #include "SeerAboutDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
-#include <QtWidgets/QShortcut>
 #include <QtWidgets/QMenu>
 #include <QtGui/QKeySequence>
 #include <QtCore/QCoreApplication>
@@ -43,12 +42,15 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     toolBar->addWidget(_progressIndicator);
 
     //
-    // Set up shortcut keys.
+    // Set up shortcut keys with defaults.
+    // Will be changed by refreshShortCuts().
     //
-    QShortcut* nextKeyF5     = new QShortcut(QKeySequence(Qt::Key_F5), this);
-    QShortcut* stepKeyF6     = new QShortcut(QKeySequence(Qt::Key_F6), this);
-    QShortcut* finishKeyF7   = new QShortcut(QKeySequence(Qt::Key_F7), this);
-    QShortcut* continueKeyF8 = new QShortcut(QKeySequence(Qt::Key_F8), this);
+    _runKey      = new QShortcut(QKeySequence(Qt::Key_F1), this);
+    _startKey    = new QShortcut(QKeySequence(Qt::Key_F2), this);
+    _nextKey     = new QShortcut(QKeySequence(Qt::Key_F5), this);
+    _stepKey     = new QShortcut(QKeySequence(Qt::Key_F6), this);
+    _finishKey   = new QShortcut(QKeySequence(Qt::Key_F7), this);
+    _continueKey = new QShortcut(QKeySequence(Qt::Key_F8), this);
 
     //
     // Set up Interrupt menu.
@@ -64,6 +66,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* interruptActionSIGUSR2 = interruptMenu->addAction("SIGUSR2");
 
     actionInterruptProcess->setMenu(interruptMenu);
+
+    // Set the inital key settings.
+    setKeySettings(SeerKeySettings::populate());
 
     //
     // Set up signals/slots.
@@ -106,10 +111,12 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(interruptActionSIGUSR1,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGUSR1);
     QObject::connect(interruptActionSIGUSR2,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGUSR2);
 
-    QObject::connect(nextKeyF5,                         &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbNext);
-    QObject::connect(stepKeyF6,                         &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStep);
-    QObject::connect(finishKeyF7,                       &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(continueKeyF8,                     &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(_runKey,                           &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
+    QObject::connect(_startKey,                         &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(_nextKey,                          &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(_stepKey,                          &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(_finishKey,                        &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(_continueKey,                      &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbContinue);
 
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
@@ -364,6 +371,8 @@ void SeerMainWindow::handleSettingsConfiguration () {
 
     // Reset the dprintf, in case it was changed.
     gdbWidget->resetDprintf();
+
+    setKeySettings(dlg.keySettings());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
@@ -608,13 +617,6 @@ void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus s
 
 }
 
-void SeerMainWindow::closeEvent (QCloseEvent* event) {
-
-    event->accept();
-
-    QCoreApplication::exit(0);
-}
-
 void SeerMainWindow::writeSettings() {
 
     QSettings settings;
@@ -753,5 +755,81 @@ void SeerMainWindow::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QMainWindow::resizeEvent(event);
+}
+
+void SeerMainWindow::closeEvent (QCloseEvent* event) {
+
+    event->accept();
+
+    QCoreApplication::exit(0);
+}
+
+void SeerMainWindow::setKeySettings (const SeerKeySettings& settings) {
+
+    _keySettings = settings;
+
+    refreshShortCuts();
+}
+
+const SeerKeySettings SeerMainWindow::keySettings () const {
+
+    return _keySettings;
+}
+
+void SeerMainWindow::refreshShortCuts () {
+
+    if (_keySettings.has("Run")) {
+
+        SeerKeySetting setting = _keySettings.get("Run");
+
+        _runKey->setKey(setting._sequence);
+        actionGdbRun->setToolTip(setting._help);
+        actionGdbRun->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("Start")) {
+
+        SeerKeySetting setting = _keySettings.get("Start");
+
+        _startKey->setKey(setting._sequence);
+        actionGdbStart->setToolTip(setting._help);
+        actionGdbStart->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("Next")) {
+
+        SeerKeySetting setting = _keySettings.get("Next");
+
+        _nextKey->setKey(setting._sequence);
+        actionGdbNext->setToolTip(setting._help);
+        actionGdbNext->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("Step")) {
+
+        SeerKeySetting setting = _keySettings.get("Step");
+
+        _stepKey->setKey(setting._sequence);
+        actionGdbStep->setToolTip(setting._help);
+        actionGdbStep->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("Finish")) {
+
+        SeerKeySetting setting = _keySettings.get("Finish");
+
+        _finishKey->setKey(setting._sequence);
+        actionGdbFinish->setToolTip(setting._help);
+        actionGdbFinish->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("Continue")) {
+
+        SeerKeySetting setting = _keySettings.get("Continue");
+
+        _continueKey->setKey(setting._sequence);
+        actionGdbContinue->setToolTip(setting._help);
+        actionGdbContinue->setText(setting._name + " (" + setting._sequence.toString() + ")");
+    }
 }
 
