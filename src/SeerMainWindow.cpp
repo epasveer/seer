@@ -341,6 +341,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
+    dlg.setKeySettings(keySettings());
 
     int ret = dlg.exec();
 
@@ -372,6 +373,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     // Reset the dprintf, in case it was changed.
     gdbWidget->resetDprintf();
 
+    // Set the key shortcuts.
     setKeySettings(dlg.keySettings());
 }
 
@@ -681,6 +683,24 @@ void SeerMainWindow::writeConfigSettings () {
     settings.beginGroup("manualgdbcommands"); {
         settings.setValue("remembercount",   gdbWidget->rememberManualCommandCount());
     } settings.endGroup();
+
+    settings.beginWriteArray("shortcuts"); {
+
+        SeerKeySettings keysettings = keySettings();
+        QStringList keys = keysettings.keys();
+
+        for (int i=0; i<keys.size(); i++) {
+
+            SeerKeySetting keysetting = keysettings.get(keys[i]);
+
+            settings.setArrayIndex(i);
+            settings.setValue("name", keysetting._name);
+            settings.setValue("key",  keysetting._sequence.toString());
+            settings.setValue("help", keysetting._help);
+        }
+
+    } settings.endArray();
+
 }
 
 void SeerMainWindow::readConfigSettings () {
@@ -747,6 +767,25 @@ void SeerMainWindow::readConfigSettings () {
     settings.beginGroup("manualgdbcommands"); {
         gdbWidget->setRememberManualCommandCount(settings.value("remembercount", 10).toInt());
     } settings.endGroup();
+
+    int size = settings.beginReadArray("shortcuts"); {
+
+        SeerKeySettings keysettings;
+
+        for (int i = 0; i < size; ++i) {
+
+            settings.setArrayIndex(i);
+
+            QString      name = settings.value("name").toString();
+            QKeySequence key  = QKeySequence::fromString(settings.value("key").toString());
+            QString      help = settings.value("help").toString();
+
+            keysettings.add(name, SeerKeySetting(name, key, help));
+        }
+
+        setKeySettings(keysettings);
+
+    } settings.endArray();
 }
 
 void SeerMainWindow::resizeEvent (QResizeEvent* event) {
