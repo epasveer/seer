@@ -56,8 +56,6 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("Step",         SeerKeySetting("Step",         QKeySequence::fromString("F6"),     "Execute the next line. Step into functions."));
     keySettings.add("Finish",       SeerKeySetting("Finish",       QKeySequence::fromString("F7"),     "Finish the current function."));
     keySettings.add("Debug",        SeerKeySetting("Debug",        QKeySequence::fromString("Alt+D"),  "Open the debug dialog."));
-    keySettings.add("FindText",     SeerKeySetting("FindText",     QKeySequence::fromString("Ctrl+F"), "Seach for text in the code editor."));
-    keySettings.add("AlternateDir", SeerKeySetting("AlternateDir", QKeySequence::fromString("Ctrl+O"), "Look for source file in an alternate directory."));
     keySettings.add("Arguments",    SeerKeySetting("Arguments",    QKeySequence::fromString("Alt+A"),  "Open the argument dialog."));
     keySettings.add("Quit",         SeerKeySetting("Quit",         QKeySequence::fromString("Alt+Q"),  "Quit Seer."));
 

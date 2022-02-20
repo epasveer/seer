@@ -436,6 +436,13 @@ void SeerEditorWidgetSourceArea::contextMenuEvent (QContextMenuEvent* event) {
 
 void SeerEditorWidgetSourceArea::keyPressEvent (QKeyEvent* event) {
 
+    /*
+    qDebug() << event->key();
+    qDebug() << event->modifiers();
+    qDebug() << QKeySequence(event->modifiers()+event->key()).toString();
+    qDebug() << "";
+    */
+
     if (event->key() == Qt::Key_F && event->modifiers() == Qt::ControlModifier) {
         emit showSearchBar(true);
     }
