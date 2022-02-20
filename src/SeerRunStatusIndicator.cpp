@@ -51,7 +51,8 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
         // *running,thread-id="2"
         setRunStatus(SeerRunStatusIndicator::Running);
 
-    }else if (text.startsWith("*stopped,")) {
+    }else if (text.startsWith("*stopped")) {
+
         setRunStatus(SeerRunStatusIndicator::Stopped);
 
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"

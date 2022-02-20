@@ -1349,7 +1349,7 @@ bool SeerEditorWidgetSourceArea::highlighterEnabled () const {
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
-    if (text.startsWith("*stopped,")) {
+    if (text.startsWith("*stopped")) {
 
         // *stopped,
         //

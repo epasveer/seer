@@ -175,7 +175,7 @@ const QStringList& SeerEditorManagerWidget::editorAlternateDirectories () const 
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
-    if (text.startsWith("*stopped,")) {
+    if (text.startsWith("*stopped")) {
 
         //qDebug() << ":stopped:" << text;
 

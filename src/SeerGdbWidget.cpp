@@ -368,7 +368,7 @@ void SeerGdbWidget::handleText (const QString& text) {
     if (text.startsWith("*running,thread-id=\"all\"")) {
 
     // Probably a better way to handle all these types of stops.
-    }else if (text.startsWith("*stopped,")) {
+    }else if (text.startsWith("*stopped")) {
         emit stoppingPointReached();
 
     }else if (text.startsWith("=thread-group-started,")) {

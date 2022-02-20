@@ -503,9 +503,13 @@ void SeerMainWindow::handleText (const QString& text) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
 
-    }else if (text.startsWith("*stopped,")) {
+    }else if (text.startsWith("*stopped")) {
 
         QString reason_text = Seer::parseFirst(text, "reason=", '"', '"', false);
+
+        if (reason_text == "") {
+            reason_text = "unknown";
+        }
 
         statusBar()->showMessage("Program stopped. Reason: " + reason_text, 3000);
 
@@ -576,6 +580,10 @@ void SeerMainWindow::handleText (const QString& text) {
             QString signalname_text = Seer::parseFirst(text, "signal-name=", '"', '"', false);
 
             QMessageBox::warning(this, "Error.", "Program exited abnormally.\n\nIt encountered a '" + signalname_text + "' signal.");
+
+        }else if (reason_text == "unknown") {
+
+            QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
         }
 
         return;
