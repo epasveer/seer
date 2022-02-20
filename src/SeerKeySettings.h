@@ -7,12 +7,12 @@
 
 struct SeerKeySetting {
 
-    SeerKeySetting(QString name, QKeySequence sequence, QString help) : _name(name), _sequence(sequence), _help(help) {}
+    SeerKeySetting(QString action, QKeySequence sequence, QString description) : _action(action), _sequence(sequence), _description(description) {}
     SeerKeySetting() {};
 
-    QString         _name;
+    QString         _action;
     QKeySequence    _sequence;
-    QString         _help;
+    QString         _description;
 };
 
 
@@ -26,9 +26,9 @@ class SeerKeySettings {
         SeerKeySettings& operator== (const SeerKeySettings& rhs);
 
         QStringList                             keys                () const;
-        bool                                    has                 (const QString& name) const;
-        SeerKeySetting                          get                 (const QString& name) const;
-        void                                    add                 (const QString& name, const SeerKeySetting& setting);
+        bool                                    has                 (const QString& action) const;
+        SeerKeySetting                          get                 (const QString& action) const;
+        void                                    add                 (const QString& action, const SeerKeySetting& setting);
 
         static SeerKeySettings                  populate            ();
 

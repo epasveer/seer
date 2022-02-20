@@ -30,19 +30,19 @@ QStringList SeerKeySettings::keys () const {
     return keys;
 }
 
-bool SeerKeySettings::has (const QString& name) const {
+bool SeerKeySettings::has (const QString& action) const {
 
-    return _keys.contains(name);
+    return _keys.contains(action);
 }
 
-SeerKeySetting SeerKeySettings::get (const QString& name) const {
+SeerKeySetting SeerKeySettings::get (const QString& action) const {
 
-    return _keys[name];
+    return _keys[action];
 }
 
-void SeerKeySettings::add (const QString& name, const SeerKeySetting& setting) {
+void SeerKeySettings::add (const QString& action, const SeerKeySetting& setting) {
 
-    _keys[name] = setting;
+    _keys[action] = setting;
 }
 
 SeerKeySettings SeerKeySettings::populate () {

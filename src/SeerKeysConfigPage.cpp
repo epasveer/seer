@@ -42,7 +42,7 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
         keysTableWidget->setCellWidget(r, 0, keySequenceEdit);
 
         // Insert the Description.
-        QLabel* descriptionLabel = new QLabel(setting._help);
+        QLabel* descriptionLabel = new QLabel(setting._description);
         keysTableWidget->setCellWidget(r, 1, descriptionLabel);
     }
 

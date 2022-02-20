@@ -694,9 +694,9 @@ void SeerMainWindow::writeConfigSettings () {
             SeerKeySetting keysetting = keysettings.get(keys[i]);
 
             settings.setArrayIndex(i);
-            settings.setValue("name", keysetting._name);
+            settings.setValue("name", keysetting._action);
             settings.setValue("key",  keysetting._sequence.toString());
-            settings.setValue("help", keysetting._help);
+            settings.setValue("help", keysetting._description);
         }
 
     } settings.endArray();
@@ -822,8 +822,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Run");
 
         _runKey->setKey(setting._sequence);
-        actionGdbRun->setToolTip(setting._help);
-        actionGdbRun->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbRun->setToolTip(setting._description);
+        actionGdbRun->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 
     if (_keySettings.has("Start")) {
@@ -831,8 +831,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Start");
 
         _startKey->setKey(setting._sequence);
-        actionGdbStart->setToolTip(setting._help);
-        actionGdbStart->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbStart->setToolTip(setting._description);
+        actionGdbStart->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 
     if (_keySettings.has("Next")) {
@@ -840,8 +840,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Next");
 
         _nextKey->setKey(setting._sequence);
-        actionGdbNext->setToolTip(setting._help);
-        actionGdbNext->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbNext->setToolTip(setting._description);
+        actionGdbNext->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 
     if (_keySettings.has("Step")) {
@@ -849,8 +849,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Step");
 
         _stepKey->setKey(setting._sequence);
-        actionGdbStep->setToolTip(setting._help);
-        actionGdbStep->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbStep->setToolTip(setting._description);
+        actionGdbStep->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 
     if (_keySettings.has("Finish")) {
@@ -858,8 +858,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Finish");
 
         _finishKey->setKey(setting._sequence);
-        actionGdbFinish->setToolTip(setting._help);
-        actionGdbFinish->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbFinish->setToolTip(setting._description);
+        actionGdbFinish->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 
     if (_keySettings.has("Continue")) {
@@ -867,8 +867,8 @@ void SeerMainWindow::refreshShortCuts () {
         SeerKeySetting setting = _keySettings.get("Continue");
 
         _continueKey->setKey(setting._sequence);
-        actionGdbContinue->setToolTip(setting._help);
-        actionGdbContinue->setText(setting._name + " (" + setting._sequence.toString() + ")");
+        actionGdbContinue->setToolTip(setting._description);
+        actionGdbContinue->setText(setting._action + " (" + setting._sequence.toString() + ")");
     }
 }
 
