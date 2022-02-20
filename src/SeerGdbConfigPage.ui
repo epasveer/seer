@@ -14,6 +14,9 @@
    <string>SeerGdbConfigPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="gdbGroupBox">
      <property name="title">

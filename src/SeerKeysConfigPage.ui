@@ -14,6 +14,12 @@
    <string>SeerKeysConfigPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item row="1" column="0">
     <widget class="QTextBrowser" name="textBrowser">
      <property name="sizePolicy">
@@ -63,8 +69,6 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
-  <zorder>textBrowser</zorder>
-  <zorder>gdbAndEditorKeysGroupBox</zorder>
  </widget>
  <resources>
   <include location="resource.qrc"/>

@@ -65,11 +65,5 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
     private:
         QProgressIndicator*         _progressIndicator;
         SeerKeySettings             _keySettings;
-        QShortcut*                  _runKey;
-        QShortcut*                  _startKey;
-        QShortcut*                  _nextKey;
-        QShortcut*                  _stepKey;
-        QShortcut*                  _finishKey;
-        QShortcut*                  _continueKey;
 };
 
