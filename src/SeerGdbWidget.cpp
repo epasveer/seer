@@ -474,7 +474,6 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableSharedLibraries();   // Load the program shared libraries.
     handleGdbExecutableArguments();         // Set the program's arguments before running.
     handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
@@ -551,7 +550,6 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableSharedLibraries();   // Load the program shared libraries.
     handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     handleGdbExecutableArguments();         // Set the program's arguments before running.
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
@@ -606,7 +604,6 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableSharedLibraries();   // Load the program shared libraries.
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
 
     handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
@@ -654,7 +651,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableSharedLibraries();   // Load the program shared libraries.
     handleGdbCommand("-target-download");
 
     // "-file-symbol-file %s"
@@ -700,7 +696,6 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     handleGdbExecutableName();              // Load the program into the gdb process.
     handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableSharedLibraries();   // Load the program shared libraries.
     handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
 
     handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
