@@ -31,6 +31,9 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
     setSearchMatchCase(true);  // Search with case sensitivity.
 
+    _textSearchShortcut         = new QShortcut(QKeySequence(tr("F11")), this);
+    _alternateDirectoryShortcut = new QShortcut(QKeySequence(tr("F12")), this);
+
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
@@ -43,6 +46,9 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleAlternateLineEdit);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
+
+    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidget::handleTextSearchShortcut);
+    QObject::connect(_alternateDirectoryShortcut,       &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -233,5 +239,23 @@ void SeerEditorWidget::handleAlternateAddToGlobalToolButton () {
     //qDebug() << "alternate dirname=" << alternateLineEdit->text();
 
     emit addAlternateDirectory(alternateLineEdit->text());
+}
+
+void SeerEditorWidget::handleTextSearchShortcut () {
+
+    if (isSearchBarShown() == true) {
+        showSearchBar(false);
+    }else{
+        showSearchBar(true);
+    }
+}
+
+void SeerEditorWidget::handleAlternateDirectoryShortcut () {
+
+    if (isAlternateBarShown() == true) {
+        showAlternateBar(false);
+    }else{
+        showAlternateBar(true);
+    }
 }
 

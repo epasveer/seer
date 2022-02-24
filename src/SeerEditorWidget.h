@@ -1,8 +1,9 @@
 #pragma once
 
 #include "SeerCppSourceHighlighter.h"
-#include <QtWidgets/QWidget>
 #include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QShortcut>
+#include <QtWidgets/QWidget>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QPixmap>
@@ -239,10 +240,14 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         void                            handleAlternateFileOpenToolButton       ();
         void                            handleAlternateLineEdit                 ();
         void                            handleAlternateAddToGlobalToolButton    ();
+        void                            handleTextSearchShortcut                ();
+        void                            handleAlternateDirectoryShortcut        ();
 
     signals:
         void                            addAlternateDirectory                   (QString path);
 
     private:
+        QShortcut*                      _textSearchShortcut;
+        QShortcut*                      _alternateDirectoryShortcut;
 };
 

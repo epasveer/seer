@@ -3,7 +3,6 @@
 #include "SeerEditorManagerEntry.h"
 #include "SeerHighlighterSettings.h"
 #include <QtGui/QFont>
-#include <QtWidgets/QShortcut>
 #include <QtWidgets/QWidget>
 #include <QtCore/QMap>
 #include <QtCore/QString>
@@ -54,8 +53,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRefreshVariableTrackerValues  ();
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
-        void                                            handleTextSearchShortcut            ();
-        void                                            handleAlternateDirectoryShortcut    ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -89,7 +86,5 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
-        QShortcut*                                      _textSearchShortcut;
-        QShortcut*                                      _alternateDirectoryShortcut;
 };
 

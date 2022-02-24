@@ -28,9 +28,6 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     tabWidget->setCornerWidget(editorOptionsBar, Qt::TopRightCorner);
 
-    _textSearchShortcut         = new QShortcut(QKeySequence(tr("F11")), this);
-    _alternateDirectoryShortcut = new QShortcut(QKeySequence(tr("F12")), this);
-
     // Create a place holder tab with a special name of "".
     createEditorWidgetTab("", "");
 
@@ -38,8 +35,6 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(tabWidget,                                 &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
     QObject::connect(editorOptionsBar->fileOpenToolButton(),    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
     QObject::connect(editorOptionsBar->textSearchToolButton(),  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
-    QObject::connect(_textSearchShortcut,                       &QShortcut::activated,             this, &SeerEditorManagerWidget::handleTextSearchShortcut);
-    QObject::connect(_alternateDirectoryShortcut,               &QShortcut::activated,             this, &SeerEditorManagerWidget::handleAlternateDirectoryShortcut);
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -703,35 +698,5 @@ void SeerEditorManagerWidget::handleAddMemoryVisualizer (QString expression) {
 
     // rethrow
     emit addMemoryVisualize (expression);
-}
-
-void SeerEditorManagerWidget::handleTextSearchShortcut () {
-
-    SeerEditorWidget* w = currentEditorWidgetTab();
-
-    if (w == nullptr) {
-        return;
-    }
-
-    if (w->isSearchBarShown() == true) {
-        w->showSearchBar(false);
-    }else{
-        w->showSearchBar(true);
-    }
-}
-
-void SeerEditorManagerWidget::handleAlternateDirectoryShortcut () {
-
-    SeerEditorWidget* w = currentEditorWidgetTab();
-
-    if (w == nullptr) {
-        return;
-    }
-
-    if (w->isAlternateBarShown() == true) {
-        w->showAlternateBar(false);
-    }else{
-        w->showAlternateBar(true);
-    }
 }
 
