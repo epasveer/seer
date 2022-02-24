@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SeerCppSourceHighlighter.h"
+#include "SeerKeySettings.h"
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QWidget>
@@ -224,6 +225,8 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         bool                            isSearchBarShown                        () const;
         bool                            searchMatchCase                         () const;
         bool                            isAlternateBarShown                     () const;
+        void                            setKeySettings                          (const SeerKeySettings& settings);
+        const SeerKeySettings&          keySettings                             () const;
 
     public slots:
         void                            showSearchBar                           (bool flag);
@@ -247,7 +250,8 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         void                            addAlternateDirectory                   (QString path);
 
     private:
+        SeerKeySettings                 _keySettings;
         QShortcut*                      _textSearchShortcut;
-        QShortcut*                      _alternateDirectoryShortcut;
+        QShortcut*                      _alternateDirShortcut;
 };
 

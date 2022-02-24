@@ -16,6 +16,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorFont                = QFont("Source Code Pro", 10);              // Default font.
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(); // Default syntax highlighting.
     _editorHighlighterEnabled  = true;
+    _editorKeySettings         = SeerKeySettings::populate();               // Defualt key settings.
 
     // Setup UI
     setupUi(this);
@@ -171,6 +172,24 @@ void SeerEditorManagerWidget::setEditorAlternateDirectories (const QStringList a
 const QStringList& SeerEditorManagerWidget::editorAlternateDirectories () const {
 
     return _editorAlternateDirectories;
+}
+
+void SeerEditorManagerWidget::setEditorKeySettings (const SeerKeySettings& settings) {
+
+    _editorKeySettings = settings;
+
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->setKeySettings(_editorKeySettings);
+        b++;
+    }
+}
+
+const SeerKeySettings& SeerEditorManagerWidget::editorKeySettings () const {
+
+    return _editorKeySettings;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -456,6 +475,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
+    editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
     int tabno = tabWidget->addTab(editorWidget, file);
@@ -501,6 +521,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
+    editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
     int tabno = tabWidget->addTab(editorWidget, file);

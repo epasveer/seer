@@ -887,5 +887,7 @@ void SeerMainWindow::refreshShortCuts () {
 
         actionFileQuit->setShortcut(setting._sequence);
     }
+
+    gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 

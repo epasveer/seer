@@ -58,6 +58,8 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("Debug",        SeerKeySetting("Debug",        QKeySequence::fromString("Alt+D"),  "Open the debug dialog."));
     keySettings.add("Arguments",    SeerKeySetting("Arguments",    QKeySequence::fromString("Alt+A"),  "Open the argument dialog."));
     keySettings.add("Quit",         SeerKeySetting("Quit",         QKeySequence::fromString("Alt+Q"),  "Quit Seer."));
+    keySettings.add("SearchText",   SeerKeySetting("SearchText",   QKeySequence::fromString("Ctrl+F"), "Seach for text in the code editor."));
+    keySettings.add("AlternateDir", SeerKeySetting("AlternateDir", QKeySequence::fromString("Ctrl+O"), "Look for source file in an alternate directory."));
 
     return keySettings;
 }

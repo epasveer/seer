@@ -17,7 +17,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
+SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
@@ -31,8 +31,10 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
     setSearchMatchCase(true);  // Search with case sensitivity.
 
-    _textSearchShortcut         = new QShortcut(QKeySequence(tr("F11")), this);
-    _alternateDirectoryShortcut = new QShortcut(QKeySequence(tr("F12")), this);
+    _textSearchShortcut   = new QShortcut(QKeySequence(tr("Ctrl-F")), this);
+    _alternateDirShortcut = new QShortcut(QKeySequence(tr("Ctrl-O")), this);
+
+    setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
@@ -48,7 +50,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidget::handleTextSearchShortcut);
-    QObject::connect(_alternateDirectoryShortcut,       &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
+    QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -97,6 +99,23 @@ bool SeerEditorWidget::isAlternateBarShown () const {
     return shown;
 }
 
+void SeerEditorWidget::setKeySettings (const SeerKeySettings& settings) {
+
+    _keySettings = settings;
+
+    if (_keySettings.has("SearchText") == true) {
+        _textSearchShortcut->setKey(_keySettings.get("SearchText")._sequence);
+    }
+
+    if (_keySettings.has("AlternateDir") == true) {
+        _alternateDirShortcut->setKey(_keySettings.get("AlternateDir")._sequence);
+    }
+}
+
+const SeerKeySettings& SeerEditorWidget::keySettings () const {
+
+    return _keySettings;
+}
 
 void SeerEditorWidget::showSearchBar (bool flag) {
 
