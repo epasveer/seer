@@ -106,7 +106,6 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
     protected:
         void                            resizeEvent                         (QResizeEvent* event);
         void                            contextMenuEvent                    (QContextMenuEvent* event);
-        void                            keyPressEvent                       (QKeyEvent* event);
         void                            mouseReleaseEvent                   (QMouseEvent* event);
         bool                            event                               (QEvent* event);
 
@@ -221,6 +220,16 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
 
         SeerEditorWidgetSourceArea*     sourceArea                              ();
 
+        bool                            isSearchBarShown                        () const;
+        bool                            searchMatchCase                         () const;
+        bool                            isAlternateBarShown                     () const;
+
+    public slots:
+        void                            showSearchBar                           (bool flag);
+        void                            setSearchMatchCase                      (bool flag);
+        void                            showAlternateBar                        (bool flag);
+
+    private slots:
         void                            handleSearchLineNumberLineEdit          ();
         void                            handleSearchTextLineEdit                ();
         void                            handleSearchDownToolButton              ();
@@ -231,13 +240,9 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
         void                            handleAlternateLineEdit                 ();
         void                            handleAlternateAddToGlobalToolButton    ();
 
-    public slots:
-        void                            showSearchBar                           (bool flag);
-        bool                            isSearchBarShown                        () const;
-        void                            showAlternateBar                        (bool flag);
-        bool                            isAlternateBarShown                     () const;
-
     signals:
         void                            addAlternateDirectory                   (QString path);
+
+    private:
 };
 

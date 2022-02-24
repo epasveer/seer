@@ -26,7 +26,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/HighContrast/list-add.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
        </property>
       </widget>
      </item>
@@ -47,7 +47,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/HighContrast/list-remove.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
        </property>
       </widget>
      </item>
@@ -81,7 +81,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/HighContrast/document-open.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
        </property>
       </widget>
      </item>
@@ -119,6 +119,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="matchCaseCheckBox">
+       <property name="text">
+        <string>Match Case</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="currentMatchLabel">
+       <property name="text">
+        <string>0 / 0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="searchDownToolButton">
        <property name="toolTip">
         <string>Search for the next occurance.</string>
@@ -128,7 +142,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/HighContrast/go-down.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</iconset>
        </property>
       </widget>
      </item>
@@ -142,7 +156,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/HighContrast/go-up.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</iconset>
        </property>
       </widget>
      </item>
@@ -186,7 +200,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/HighContrast/list-remove.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
        </property>
       </widget>
      </item>

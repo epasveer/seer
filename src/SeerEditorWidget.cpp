@@ -27,8 +27,9 @@ SeerEditorWidget::SeerEditorWidget(QWidget *parent) : QWidget(parent) {
 
     searchLineNumberLineEdit->setMaximumWidth(space);
 
-    showSearchBar(false);    // Hide the search bar. ctrl+F to show it again.
-    showAlternateBar(false); // Hide the alternate bar. ctrl+O to show it again.
+    showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
+    showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
+    setSearchMatchCase(true);  // Search with case sensitivity.
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
@@ -49,6 +50,92 @@ SeerEditorWidget::~SeerEditorWidget () {
 
 SeerEditorWidgetSourceArea* SeerEditorWidget::sourceArea () {
     return sourceWidget;
+}
+
+bool SeerEditorWidget::isSearchBarShown () const {
+
+    bool shown = false;
+
+    // Go through the widgets in the search bar to see if any are visable.
+    for (int i = 0; i != searchBarLayout->count(); ++i) {
+        QWidget* w = searchBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            if (w->isVisible()) {
+                shown = true;
+            }
+        }
+    }
+
+    return shown;
+}
+
+bool SeerEditorWidget::searchMatchCase () const {
+
+    return matchCaseCheckBox->isChecked();
+}
+
+bool SeerEditorWidget::isAlternateBarShown () const {
+
+    bool shown = false;
+
+    // Go through the widgets in the search bar to see if any are visable.
+    for (int i = 0; i != alternateBarLayout->count(); ++i) {
+        QWidget* w = alternateBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            if (w->isVisible()) {
+                shown = true;
+            }
+        }
+    }
+
+    return shown;
+}
+
+
+void SeerEditorWidget::showSearchBar (bool flag) {
+
+    // Go through the widgets in the search bar and hide/show them.
+    for (int i = 0; i != searchBarLayout->count(); ++i) {
+        QWidget* w = searchBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            w->setVisible(flag);
+        }
+    }
+
+    // If 'show', give the searchTextLineEdit the focus.
+    if (flag) {
+        searchTextLineEdit->setFocus(Qt::MouseFocusReason);
+    }
+
+    // Update the layout.
+    searchBarLayout->update();
+}
+
+void SeerEditorWidget::setSearchMatchCase (bool flag) {
+
+    matchCaseCheckBox->setChecked(flag);
+}
+
+void SeerEditorWidget::showAlternateBar (bool flag) {
+
+    // Set the label's text.
+    alternateLabel->setText("Enter directory path for '" + sourceArea()->file() + "'");
+
+    // Go through the widgets in the search bar and hide/show them.
+    for (int i = 0; i != alternateBarLayout->count(); ++i) {
+        QWidget* w = alternateBarLayout->itemAt(i)->widget();
+        if (w != 0) {
+            w->setVisible(flag);
+        }
+    }
+
+    // If 'show', give the searchTextLineEdit the focus.
+    if (flag) {
+        alternateLineEdit->setFocus(Qt::MouseFocusReason);
+    }
+
+    // Update the layout.
+    alternateBarLayout->update();
 }
 
 void SeerEditorWidget::handleSearchLineNumberLineEdit () {
@@ -78,7 +165,7 @@ void SeerEditorWidget::handleSearchTextLineEdit () {
         return;
     }
 
-    sourceArea()->find(str, QTextDocument::FindCaseSensitively);
+    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
 }
 
 void SeerEditorWidget::handleSearchDownToolButton () {
@@ -89,7 +176,7 @@ void SeerEditorWidget::handleSearchDownToolButton () {
         return;
     }
 
-    sourceArea()->find(str, QTextDocument::FindCaseSensitively);
+    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
 }
 
 void SeerEditorWidget::handleSearchUpToolButton () {
@@ -100,82 +187,7 @@ void SeerEditorWidget::handleSearchUpToolButton () {
         return;
     }
 
-    sourceArea()->find(str, QTextDocument::FindCaseSensitively|QTextDocument::FindBackward);
-}
-
-void SeerEditorWidget::showSearchBar (bool flag) {
-
-    // Go through the widgets in the search bar and hide/show them.
-    for (int i = 0; i != searchBarLayout->count(); ++i) {
-        QWidget* w = searchBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            w->setVisible(flag);
-        }
-    }
-
-    // If 'show', give the searchTextLineEdit the focus.
-    if (flag) {
-        searchTextLineEdit->setFocus(Qt::MouseFocusReason);
-    }
-
-    // Update the layout.
-    searchBarLayout->update();
-}
-
-bool SeerEditorWidget::isSearchBarShown () const {
-
-    bool shown = false;
-
-    // Go through the widgets in the search bar to see if any are visable.
-    for (int i = 0; i != searchBarLayout->count(); ++i) {
-        QWidget* w = searchBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            if (w->isVisible()) {
-                shown = true;
-            }
-        }
-    }
-
-    return shown;
-}
-
-void SeerEditorWidget::showAlternateBar (bool flag) {
-
-    // Set the label's text.
-    alternateLabel->setText("Enter directory path for '" + sourceArea()->file() + "'");
-
-    // Go through the widgets in the search bar and hide/show them.
-    for (int i = 0; i != alternateBarLayout->count(); ++i) {
-        QWidget* w = alternateBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            w->setVisible(flag);
-        }
-    }
-
-    // If 'show', give the searchTextLineEdit the focus.
-    if (flag) {
-        alternateLineEdit->setFocus(Qt::MouseFocusReason);
-    }
-
-    // Update the layout.
-    alternateBarLayout->update();
-}
-
-bool SeerEditorWidget::isAlternateBarShown () const {
-
-    bool shown = false;
-
-    // Go through the widgets in the search bar to see if any are visable.
-    for (int i = 0; i != alternateBarLayout->count(); ++i) {
-        QWidget* w = alternateBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            if (w->isVisible()) {
-                shown = true;
-            }
-        }
-    }
-
-    return shown;
+    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)) | QTextDocument::FindBackward);
 }
 
 void SeerEditorWidget::handleSearchCloseToolButton () {
