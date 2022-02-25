@@ -18,6 +18,7 @@ class SeerHighlighterSettings {
         bool                                    has                 (const QString& name) const;
         QTextCharFormat                         get                 (const QString& name) const;
         void                                    add                 (const QString& name, QTextCharFormat& format);
+        int                                     count               () const;
 
         static SeerHighlighterSettings          populateForCPP      ();
 

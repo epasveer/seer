@@ -45,6 +45,11 @@ void SeerHighlighterSettings::add (const QString& name, QTextCharFormat& format)
     _formats[name] = format;
 }
 
+int SeerHighlighterSettings::count () const {
+
+    return _formats.size();
+}
+
 SeerHighlighterSettings SeerHighlighterSettings::populateForCPP () {
 
     SeerHighlighterSettings cppSettings;
