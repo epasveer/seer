@@ -760,7 +760,7 @@ void SeerMainWindow::readConfigSettings () {
 
     int size = settings.beginReadArray("shortcuts"); {
 
-        SeerKeySettings keysettings;
+        SeerKeySettings keysettings = keySettings(); // Start with defaults. The add() will overwrite.
 
         for (int i = 0; i < size; ++i) {
 

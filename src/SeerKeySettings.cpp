@@ -45,6 +45,11 @@ void SeerKeySettings::add (const QString& action, const SeerKeySetting& setting)
     _keys[action] = setting;
 }
 
+int SeerKeySettings::count () const {
+
+    return _keys.size();
+}
+
 SeerKeySettings SeerKeySettings::populate () {
 
     SeerKeySettings keySettings;

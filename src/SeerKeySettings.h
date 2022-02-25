@@ -29,6 +29,7 @@ class SeerKeySettings {
         bool                                    has                 (const QString& action) const;
         SeerKeySetting                          get                 (const QString& action) const;
         void                                    add                 (const QString& action, const SeerKeySetting& setting);
+        int                                     count               () const;
 
         static SeerKeySettings                  populate            ();
 
