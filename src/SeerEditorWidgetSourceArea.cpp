@@ -51,7 +51,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : QPlain
     enableBreakPointArea(true);
     enableMiniMapArea(false);  // Doesn't work yet. Need to work on the "mini" part.
 
-  //QObject::connect(this, &SeerEditorWidgetSourceArea::cursorPositionChanged,              this,            &SeerEditorWidgetSourceArea::highlightCurrentLine);
     QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this,            &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateBreakPointArea);
@@ -498,57 +497,26 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
     return QPlainTextEdit::event(event);
 }
 
-void SeerEditorWidgetSourceArea::highlightCurrentLines () {
+void SeerEditorWidgetSourceArea::refreshExtraSelections () {
 
-    // Any line will be highlighted with a yellow line.
-    // The 'yellow' color is for the current line of the most recent stack frame.
-    // The 'grey' color is for older stack frames.
-    QColor yellowLineColor = highlighterSettings().get("Current Line").background().color();
-    QColor grayLineColor   = highlighterSettings().get("Current Line2").background().color();
+    //
+    // Merge all the extra selections into one.
+    //
+    // The current line(s)
+    // The searched text.
+    //
 
     // Create an empty list of selections.
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    // Loop through each highlighted line. Get its text cursor.
-    for (int i=0; i<_currentLineCursors.size(); i++) {
+    // Append the 'current lines' extra selections.
+    extraSelections.append(_currentLinesExtraSelections);
 
-        // Create a selection at the cursor.
-        QTextEdit::ExtraSelection selection;
-        selection.format.setBackground((i == 0 ? yellowLineColor : grayLineColor));
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = _currentLineCursors[i];
-        selection.cursor.clearSelection();
-
-        // Add it to the list.
-        extraSelections.append(selection);
-    }
+    // Append the 'searched text' extra selections.
+    extraSelections.append(_findExtraSelections);
 
     // Give the editor the list of selections.
-    setExtraSelections(extraSelections);
-}
-
-void SeerEditorWidgetSourceArea::highlightCurrentLine () {
-
-    QList<QTextEdit::ExtraSelection> extraSelections;
-
-    QColor lineColor = highlighterSettings().get("Current Line").background().color();
-
-    QTextEdit::ExtraSelection selection;
-    selection.format.setBackground(lineColor);
-    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-    selection.cursor = textCursor();
-    selection.cursor.clearSelection();
-
-    extraSelections.append(selection);
-
-    setExtraSelections(extraSelections);
-}
-
-void SeerEditorWidgetSourceArea::unhighlightCurrentLine () {
-
-    QList<QTextEdit::ExtraSelection> extraSelections;
-
-    // No need to unhighlight the lines. Creating an empty extraSelections list will do that.
+    // This will remove the old selections and select the new ones.
     setExtraSelections(extraSelections);
 }
 
@@ -764,19 +732,33 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
     //qDebug() << lineno << file();
 
+    // Clear current line selections.
+    _currentLinesExtraSelections.clear();
+
     // Highlight if a valid line number is selected.
-    if (lineno < 1) {
-        unhighlightCurrentLine();
-        return;
+    if (lineno >= 1) {
+
+        QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+        QTextCursor cursor = textCursor();
+
+        cursor.setPosition(block.position());
+        setTextCursor(cursor);
+
+        _currentLinesExtraSelections.clear();
+
+        QColor lineColor = highlighterSettings().get("Current Line").background().color();
+
+        QTextEdit::ExtraSelection selection;
+        selection.format.setBackground(lineColor);
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.clearSelection();
+
+        _currentLinesExtraSelections.append(selection);
     }
 
-    QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
-    QTextCursor cursor = textCursor();
-
-    cursor.setPosition(block.position());
-    setTextCursor(cursor);
-
-    highlightCurrentLine();
+    // Refresh all the extra selections.
+    refreshExtraSelections();
 }
 
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
@@ -806,27 +788,75 @@ void SeerEditorWidgetSourceArea::clearCurrentLines () {
 
     //qDebug() << file();
 
-    _currentLineCursors.resize(0);
+    _currentLinesExtraSelections.clear();
 
-    highlightCurrentLines();
+    refreshExtraSelections();
 }
 
 void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
 
     //qDebug() << lineno << file();
 
+    // Any line will be highlighted with a yellow line.
+    // The 'yellow' color is for the current line of the most recent stack frame.
+    // The 'grey' color is for older stack frames.
+    QColor currentLineColor = highlighterSettings().get("Current Line").background().color();
+
+    // Create a selection at the cursor.
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
     QTextCursor cursor = textCursor();
 
     cursor.setPosition(block.position());
 
-    _currentLineCursors.push_back(cursor);
+    QTextEdit::ExtraSelection selection;
+    selection.format.setBackground(currentLineColor);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
 
-    highlightCurrentLines();
+    // Add it to the extra selection list.
+    _currentLinesExtraSelections.append(selection);
+
+    // Refresh all the extra selections.
+    refreshExtraSelections();
 }
 
+int SeerEditorWidgetSourceArea::findText (const QString& text, QTextDocument::FindFlags flags) {
+
+    _findExtraSelections.clear();
+
+    if (document()) {
+
+        QColor color(Qt::lightGray);
+
+        QTextCursor cursor(document());
+        cursor = document()->find(text, cursor, flags);
+
+        while (cursor.isNull() == false) {
+
+            QTextEdit::ExtraSelection extra;
+            extra.format.setBackground(color);
+            extra.cursor = cursor;
+            _findExtraSelections.append(extra);
+
+            cursor = document()->find(text, cursor, flags);
+        }
+    }
+
+    refreshExtraSelections();
+
+    return _findExtraSelections.size();
+}
+
+void SeerEditorWidgetSourceArea::clearFindText () {
+
+    _findExtraSelections.clear();
+
+    refreshExtraSelections();
+}
 
 void SeerEditorWidgetSourceArea::clearBreakpoints () {
+
     _breakpointsLineNumbers.clear();
     _breakpointsNumbers.clear();
     _breakpointsEnableds.clear();
@@ -835,6 +865,7 @@ void SeerEditorWidgetSourceArea::clearBreakpoints () {
 }
 
 void SeerEditorWidgetSourceArea::addBreakpoint (int number, int lineno, bool enabled) {
+
     _breakpointsNumbers.push_back(number);
     _breakpointsLineNumbers.push_back(lineno);
     _breakpointsEnableds.push_back(enabled);

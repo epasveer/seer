@@ -126,9 +126,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="currentMatchLabel">
+      <widget class="QLabel" name="matchesLabel">
        <property name="text">
-        <string>0 / 0</string>
+        <string></string>
        </property>
       </widget>
      </item>

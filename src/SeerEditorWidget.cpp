@@ -38,6 +38,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerEditorWidget::handleSearchTextLineEdit);
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchLineNumberLineEdit);
@@ -51,6 +52,15 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidget::handleTextSearchShortcut);
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
+
+    // This is a hack to get at the QLineEdit's clear button.
+    // QLineEdit doesn't have its own signal for this. Also, QLineEdit doesn't
+    // emit a signal when the text goes blank. I don't want to handle each time
+    // the text changes. Just when the user hits RETURN or when the text is cleared.
+    QAction* clearAction = searchTextLineEdit->findChild<QAction*>();
+    if (clearAction) {
+        QObject::connect(clearAction, &QAction::triggered,   this, &SeerEditorWidget::handleClearSearchTextLineEdit);
+    }
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -154,7 +164,7 @@ void SeerEditorWidget::showAlternateBar (bool flag) {
         }
     }
 
-    // If 'show', give the searchTextLineEdit the focus.
+    // If 'show', give the alternateLineEdit the focus.
     if (flag) {
         alternateLineEdit->setFocus(Qt::MouseFocusReason);
     }
@@ -182,15 +192,35 @@ void SeerEditorWidget::handleSearchLineNumberLineEdit () {
     sourceArea()->scrollToLine(lineno);
 }
 
+void SeerEditorWidget::handleClearSearchTextLineEdit () {
+
+    /*
+     * We don't need to call the setText method to clear it.
+     * The QLineEdit widget will do that on its own.
+     searchTextLineEdit->setText("");
+    */
+
+    // Clear the matches label.
+    matchesLabel->setText("");
+
+    // Clear any previous highlights.
+    sourceArea()->clearFindText();
+}
+
 void SeerEditorWidget::handleSearchTextLineEdit () {
 
     QString str = searchTextLineEdit->text();
 
+    matchesLabel->setText("");
+
     if (str == "") {
+        sourceArea()->clearFindText();
         return;
     }
 
-    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
+    int nMatches = sourceArea()->findText(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
+
+    matchesLabel->setText(QString("(%1)").arg(nMatches));
 }
 
 void SeerEditorWidget::handleSearchDownToolButton () {

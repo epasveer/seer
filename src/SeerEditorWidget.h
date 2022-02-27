@@ -61,6 +61,8 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
 
         void                            clearCurrentLines                   ();
         void                            addCurrentLine                      (int lineno);
+        int                             findText                            (const QString& text, QTextDocument::FindFlags flags);
+        void                            clearFindText                       ();
 
         void                            clearBreakpoints                    ();
         void                            addBreakpoint                       (int number, int lineno, bool enabled);
@@ -112,9 +114,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         bool                            event                               (QEvent* event);
 
     private slots:
-        void                            highlightCurrentLines               ();
-        void                            highlightCurrentLine                ();
-        void                            unhighlightCurrentLine              ();
+        void                            refreshExtraSelections              ();
 
         void                            updateMarginAreasWidth              (int newBlockCount);
         void                            updateLineNumberArea                (const QRect& rect, int dy);
@@ -133,7 +133,8 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         QVector<int>                    _breakpointsNumbers;
         QVector<int>                    _breakpointsLineNumbers;
         QVector<bool>                   _breakpointsEnableds;
-        QVector<QTextCursor>            _currentLineCursors;
+        QList<QTextEdit::ExtraSelection> _findExtraSelections;
+        QList<QTextEdit::ExtraSelection> _currentLinesExtraSelections;
 
         QTextCursor                     _selectedExpressionCursor;
         int                             _selectedExpressionId;
@@ -235,6 +236,7 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
 
     private slots:
         void                            handleSearchLineNumberLineEdit          ();
+        void                            handleClearSearchTextLineEdit           ();
         void                            handleSearchTextLineEdit                ();
         void                            handleSearchDownToolButton              ();
         void                            handleSearchUpToolButton                ();
