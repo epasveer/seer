@@ -40,7 +40,7 @@
      <item row="1" column="4">
       <widget class="QToolButton" name="alternateCloseToolButton">
        <property name="toolTip">
-        <string>Close the alternate bar.  CTRL+O to reshow it.</string>
+        <string>Close the alternate bar.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -193,7 +193,7 @@
      <item>
       <widget class="QToolButton" name="searchCloseToolButton">
        <property name="toolTip">
-        <string>Close the search bar.  CTRL+F to reshow it.</string>
+        <string>Close the search bar.</string>
        </property>
        <property name="text">
         <string>...</string>

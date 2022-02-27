@@ -10,10 +10,12 @@ SeerEditorOptionsBarWidget::~SeerEditorOptionsBarWidget () {
 }
 
 QToolButton* SeerEditorOptionsBarWidget::fileOpenToolButton () {
+
     return fileOpenTB;
 }
 
 QToolButton* SeerEditorOptionsBarWidget::textSearchToolButton () {
+
     return textSearchTB;
 }
 
