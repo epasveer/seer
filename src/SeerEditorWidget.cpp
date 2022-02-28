@@ -31,8 +31,10 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
     showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
     setSearchMatchCase(true);  // Search with case sensitivity.
 
-    _textSearchShortcut   = new QShortcut(QKeySequence(tr("Ctrl-F")), this);
-    _alternateDirShortcut = new QShortcut(QKeySequence(tr("Ctrl-O")), this);
+    _textSearchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")), this);
+    _textSearchNextShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")), this);
+    _textSearchPrevShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+    _alternateDirShortcut   = new QShortcut(QKeySequence(tr("Ctrl+O")), this);
 
     setKeySettings(SeerKeySettings::populate());
 
@@ -51,6 +53,8 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidget::handleTextSearchShortcut);
+    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
+    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
 
     // This is a hack to get at the QLineEdit's clear button.
@@ -115,6 +119,14 @@ void SeerEditorWidget::setKeySettings (const SeerKeySettings& settings) {
 
     if (_keySettings.has("SearchText") == true) {
         _textSearchShortcut->setKey(_keySettings.get("SearchText")._sequence);
+    }
+
+    if (_keySettings.has("SearchTextNext") == true) {
+        _textSearchNextShortcut->setKey(_keySettings.get("SearchTextNext")._sequence);
+    }
+
+    if (_keySettings.has("SearchTextPrev") == true) {
+        _textSearchPrevShortcut->setKey(_keySettings.get("SearchTextPrev")._sequence);
     }
 
     if (_keySettings.has("AlternateDir") == true) {

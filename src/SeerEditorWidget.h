@@ -254,6 +254,8 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
     private:
         SeerKeySettings                     _keySettings;
         QShortcut*                          _textSearchShortcut;
+        QShortcut*                          _textSearchNextShortcut;
+        QShortcut*                          _textSearchPrevShortcut;
         QShortcut*                          _alternateDirShortcut;
 };
 
