@@ -23,11 +23,11 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-        <string>Source/Libraries</string>
+      <string>Source/Libraries</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QDetachTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>-1</number>
         </property>
@@ -38,6 +38,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDetachTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">QDetachTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
