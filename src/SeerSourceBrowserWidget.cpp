@@ -81,7 +81,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
-            item->setText(0, file_text);
+            item->setText(0, QFileInfo(file_text).fileName());
             item->setText(1, fullname_text);
 
             /* Why have this?

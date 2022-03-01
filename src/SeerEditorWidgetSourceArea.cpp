@@ -1395,7 +1395,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
         // Read the file if it hasn't been read before or if we are reading a different file.
         if (fullname_text != fullname()) {
-            open(fullname_text, file_text);
+            open(fullname_text, QFileInfo(file_text).fileName());
         }
 
         // Set to the line number.

@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
 SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -89,7 +90,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                     QTreeWidgetItem* item = new QTreeWidgetItem;
                     item->setText(0, level_text);
                     item->setText(1, func_text);
-                    item->setText(2, file_text);
+                    item->setText(2, QFileInfo(file_text).fileName());
                     item->setText(3, line_text);
                     item->setText(4, fullname_text);
                     item->setText(5, addr_text);
@@ -104,7 +105,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                         // This only happens if the stack text is different (a stop point is reached).
                         if (firstLiveFrameLevel == "") {
                             firstLiveFrameLevel    = level_text;
-                            firstLiveFrameFile     = file_text;
+                            firstLiveFrameFile     = QFileInfo(file_text).fileName();
                             firstLiveFrameFullname = fullname_text;
                             firstLiveFrameLine     = line_text;
                         }

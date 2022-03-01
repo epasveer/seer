@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
 SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -127,7 +128,7 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 item->setText(1, state_text);
                 item->setText(2, level_text);
                 item->setText(3, func_text);
-                item->setText(4, file_text);
+                item->setText(4, QFileInfo(file_text).fileName());
                 item->setText(5, line_text);
                 item->setText(6, fullname_text);
                 item->setText(7, args_text);

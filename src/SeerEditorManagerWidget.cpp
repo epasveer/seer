@@ -8,6 +8,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
@@ -478,9 +479,9 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
-    int tabno = tabWidget->addTab(editorWidget, file);
+    int tabno = tabWidget->addTab(editorWidget, QFileInfo(file).fileName());
 
-    tabWidget->setTabToolTip(tabno, file + " : " + fullname);
+    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + fullname);
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
@@ -500,7 +501,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->handleText(text);
 
     // Add an entry to our table.
-    SeerEditorManagerEntries::iterator i = addEntry(fullname, file);
+    SeerEditorManagerEntries::iterator i = addEntry(fullname, QFileInfo(file).fileName());
     i->widget = editorWidget;
 
     // Return the editor widget.
@@ -524,9 +525,9 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
-    int tabno = tabWidget->addTab(editorWidget, file);
+    int tabno = tabWidget->addTab(editorWidget, QFileInfo(file).fileName());
 
-    tabWidget->setTabToolTip(tabno, file + " : " + fullname);
+    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + fullname);
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
@@ -543,10 +544,10 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget,               &SeerEditorWidget::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Load the file.
-    editorWidget->sourceArea()->open(fullname, file);
+    editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
 
     // Add an entry to our table.
-    SeerEditorManagerEntries::iterator i = addEntry(fullname, file);
+    SeerEditorManagerEntries::iterator i = addEntry(fullname, QFileInfo(file).fileName());
     i->widget = editorWidget;
 
     // Return the editor widget.

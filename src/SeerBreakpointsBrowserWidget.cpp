@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
 SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -156,7 +157,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(3, enabled_text);
                 topItem->setText(4, addr_text);
                 topItem->setText(5, func_text);
-                topItem->setText(6, file_text);
+                topItem->setText(6, QFileInfo(file_text).fileName());
                 topItem->setText(7, fullname_text);
                 topItem->setText(8, line_text);
                 topItem->setText(9, thread_groups_text);
