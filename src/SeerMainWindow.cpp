@@ -314,6 +314,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
+    dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setDprintfStyle(gdbWidget->dprintfStyle());
     dlg.setDprintfFunction(gdbWidget->dprintfFunction());
     dlg.setDprintfChannel(gdbWidget->dprintfChannel());
@@ -334,7 +335,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     // Update the GdbWidget with the new settings.
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
-    gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+    gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
     gdbWidget->setDprintfChannel(dlg.dprintfChannel());
@@ -636,8 +637,10 @@ void SeerMainWindow::writeConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("gdb"); {
-        settings.setValue("program",   gdbWidget->gdbProgram());
-        settings.setValue("arguments", gdbWidget->gdbArguments());
+        settings.setValue("program",                    gdbWidget->gdbProgram());
+        settings.setValue("arguments",                  gdbWidget->gdbArguments());
+        settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
+        settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {
@@ -700,6 +703,8 @@ void SeerMainWindow::readConfigSettings () {
     settings.beginGroup("gdb"); {
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
+        gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
+        gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {

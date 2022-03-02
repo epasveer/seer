@@ -18,24 +18,25 @@
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
-    _executableName             = "";
-    _executableArguments        = "";
-    _executableWorkingDirectory = "";
-    _executablePid              = 0;
-    _gdbMonitor                 = 0;
-    _gdbProcess                 = 0;
-    _consoleWidget              = 0;
-    _breakpointsBrowserWidget   = 0;
-    _watchpointsBrowserWidget   = 0;
-    _catchpointsBrowserWidget   = 0;
-    _gdbOutputLog               = 0;
-    _seerOutputLog              = 0;
-    _gdbProgram                 = "/usr/bin/gdb";
-    _gdbArguments               = "--interpreter=mi";
-    _gdbASyncMode               = true;
-    _consoleMode                = "";
-    _rememberManualCommandCount = 10;
-    _currentFrame               = -1;
+    _executableName                 = "";
+    _executableArguments            = "";
+    _executableWorkingDirectory     = "";
+    _executablePid                  = 0;
+    _gdbMonitor                     = 0;
+    _gdbProcess                     = 0;
+    _consoleWidget                  = 0;
+    _breakpointsBrowserWidget       = 0;
+    _watchpointsBrowserWidget       = 0;
+    _catchpointsBrowserWidget       = 0;
+    _gdbOutputLog                   = 0;
+    _seerOutputLog                  = 0;
+    _gdbProgram                     = "/usr/bin/gdb";
+    _gdbArguments                   = "--interpreter=mi";
+    _gdbASyncMode                   = true;
+    _gdbHandleTerminatingException  = true;
+    _consoleMode                    = "";
+    _rememberManualCommandCount     = 10;
+    _currentFrame                   = -1;
 
     setNewExecutableFlag(true);
 
@@ -323,6 +324,16 @@ bool SeerGdbWidget::gdbAsyncMode () const {
     return _gdbASyncMode;
 }
 
+void SeerGdbWidget::setGdbHandleTerminatingException (bool flag) {
+
+    _gdbHandleTerminatingException = flag;
+}
+
+bool SeerGdbWidget::gdbHandleTerminatingException () const {
+
+    return _gdbHandleTerminatingException;
+}
+
 void SeerGdbWidget::setDprintfStyle (const QString& style) {
 
     _dprintfStyle = style;
@@ -413,6 +424,7 @@ void SeerGdbWidget::handleGdbCommand (const QString& command) {
 }
 
 void SeerGdbWidget::handleGdbExit () {
+
     handleGdbCommand("-gdb-exit");
 }
 
@@ -449,6 +461,12 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
 
         // Set dprint parameters.
@@ -527,6 +545,12 @@ void SeerGdbWidget::handleGdbStartExecutable () {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
 
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
         // Set dprint parameters.
         resetDprintf();
     }
@@ -593,6 +617,12 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
 
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
         // Set dprint parameters.
         resetDprintf();
     }
@@ -633,6 +663,12 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
 
         // Set dprint parameters.
@@ -682,6 +718,12 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
 
         // Set dprint parameters.

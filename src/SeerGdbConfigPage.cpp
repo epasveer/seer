@@ -32,6 +32,11 @@ bool SeerGdbConfigPage::gdbAsyncMode () const {
     return gdbAsyncModeCheckBox->isChecked();
 }
 
+bool SeerGdbConfigPage::gdbHandleTerminatingException () const {
+
+    return gdbHandleTerminateExceptionCheckBox->isChecked();
+}
+
 void SeerGdbConfigPage::setGdbProgram (const QString& program) {
 
     gdbProgramLineEdit->setText(program);
@@ -45,6 +50,11 @@ void SeerGdbConfigPage::setGdbArguments (const QString& arguments) {
 void SeerGdbConfigPage::setGdbAsyncMode (bool flag) {
 
     gdbAsyncModeCheckBox->setChecked(flag);
+}
+
+void SeerGdbConfigPage::setGdbHandleTerminatingException (bool flag) {
+
+    gdbHandleTerminateExceptionCheckBox->setChecked(flag);
 }
 
 QString SeerGdbConfigPage::dprintfStyle () const {

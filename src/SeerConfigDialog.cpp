@@ -105,6 +105,16 @@ bool SeerConfigDialog::gdbAsyncMode () const {
     return _gdbConfigPage->gdbAsyncMode();
 }
 
+void SeerConfigDialog::setGdbHandleTerminatingException (bool flag) {
+
+    _gdbConfigPage->setGdbHandleTerminatingException(flag);
+}
+
+bool SeerConfigDialog::gdbHandleTerminatingException () const {
+
+    return _gdbConfigPage->gdbHandleTerminatingException();
+}
+
 void SeerConfigDialog::setDprintfStyle (const QString& style) {
 
     _gdbConfigPage->setDprintfStyle(style);
@@ -256,6 +266,7 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             setGdbProgram("/usr/bin/gdb");
             setGdbArguments("--interpreter=mi");
             setGdbAsyncMode(true);
+            setGdbHandleTerminatingException(true);
 
             setDprintfStyle("gdb");
             setDprintfFunction("printf");

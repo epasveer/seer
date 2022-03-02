@@ -15,10 +15,12 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         QString                 gdbProgram                                      () const;
         QString                 gdbArguments                                    () const;
         bool                    gdbAsyncMode                                    () const;
+        bool                    gdbHandleTerminatingException                   () const;
 
         void                    setGdbProgram                                   (const QString& program);
         void                    setGdbArguments                                 (const QString& arguments);
         void                    setGdbAsyncMode                                 (bool flag);
+        void                    setGdbHandleTerminatingException                (bool flag);
 
         QString                 dprintfStyle                                    () const;
         QString                 dprintfFunction                                 () const;
