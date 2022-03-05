@@ -40,6 +40,7 @@ set(HEADER_FILES
     SeerEditorManagerEntry.h
     SeerEditorManagerWidget.h
     SeerEditorOptionsBarWidget.h
+    SeerBreakpointsOptionsBarWidget.h
     SeerEditorWidget.h
     SeerExecutableFilterProxyModel.h
     SeerGdbWidget.h
@@ -101,6 +102,7 @@ set(SOURCE_FILES
     SeerDebugDialog.cpp
     SeerEditorManagerWidget.cpp
     SeerEditorOptionsBarWidget.cpp
+    SeerBreakpointsOptionsBarWidget.cpp
     SeerEditorWidgetBreakPointArea.cpp
     SeerEditorWidget.cpp
     SeerEditorWidgetLineNumberArea.cpp

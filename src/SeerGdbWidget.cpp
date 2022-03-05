@@ -2,10 +2,12 @@
 #include "SeerLogWidget.h"
 #include "SeerMemoryVisualizerWidget.h"
 #include "SeerArrayVisualizerWidget.h"
+#include "SeerBreakpointsOptionsBarWidget.h"
 #include "SeerUtl.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
 #include <QtCore/QDebug>
 #include <unistd.h>
 #include <stdlib.h>
@@ -62,6 +64,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_gdbOutputLog,             "GDB  output");
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
+
+    SeerBreakpointsOptionsBarWidget* breakpointsOptionsBar = new SeerBreakpointsOptionsBarWidget(logsTabWidget);
+
+    logsTabWidget->setCornerWidget(breakpointsOptionsBar, Qt::TopRightCorner);
 
     manualCommandComboBox->setFont(font);
     manualCommandComboBox->setEditable(true);
@@ -196,6 +202,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(manualCommandComboBox,                                     QOverload<int>::of(&QComboBox::activated),                                                  this,                                                           &SeerGdbWidget::handleManualCommandChanged);
     QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
     QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
+
+    QObject::connect(breakpointsOptionsBar->breakpointsLoadToolButton(),        &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
+    QObject::connect(breakpointsOptionsBar->breakpointsSaveToolButton(),        &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
 
     // Restore window settings.
     setConsoleMode("normal");
@@ -1110,8 +1119,6 @@ void SeerGdbWidget::handleGdbPrintpointInsert (QString printpoint) {
         return;
     }
 
-    //qDebug() << printpoint;
-
     handleGdbCommand("-dprintf-insert " + printpoint);
     handleGdbGenericpointList();
 }
@@ -1380,6 +1387,68 @@ void SeerGdbWidget::handleLogOuputChanged () {
     //qDebug() << "Log Output changed";
 
     writeSettings();
+}
+
+void SeerGdbWidget::handleGdbLoadBreakpoints () {
+
+    QFileDialog dialog(this, "Seer - Load Breakpoints from a file.", "", "Breakpoints (*.brk);;All files (*.*)");
+    dialog.setOptions(QFileDialog::DontUseNativeDialog);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("brk");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    QString fname = files[0];
+
+    handleGdbCommand("source -v " + fname);
+    handleGdbGenericpointList();
+
+    QMessageBox::information(this, "Seer", "Loaded.");
+}
+
+void SeerGdbWidget::handleGdbSaveBreakpoints () {
+
+    QFileDialog dialog(this, "Seer - Save Breakpoints to a file.", "", "Breakpoints (*.brk);;All files (*.*)");
+    dialog.setOptions(QFileDialog::DontUseNativeDialog);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("brk");
+    dialog.selectFile("seer.brk");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    QString fname = files[0];
+
+    handleGdbCommand("save breakpoints " + fname);
+
+    QMessageBox::information(this, "Seer", "Saved.");
 }
 
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
