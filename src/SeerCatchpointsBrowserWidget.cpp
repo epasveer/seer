@@ -76,6 +76,11 @@ QStringList SeerCatchpointsBrowserWidget::catchpointsText () const {
     return catchpointList;
 }
 
+bool SeerCatchpointsBrowserWidget::isEmpty() const {
+
+    return (catchpointsTreeWidget->topLevelItemCount() == 0);
+}
+
 void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

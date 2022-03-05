@@ -13,6 +13,7 @@ class SeerCatchpointsBrowserWidget : public QWidget, protected Ui::SeerCatchpoin
        ~SeerCatchpointsBrowserWidget ();
 
         QStringList         catchpointsText             () const;
+        bool                isEmpty                     () const;
 
     public slots:
         void                handleText                  (const QString& text);

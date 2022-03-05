@@ -77,6 +77,11 @@ QStringList SeerPrintpointsBrowserWidget::printpointsText () const {
     return printpointList;
 }
 
+bool SeerPrintpointsBrowserWidget::isEmpty() const {
+
+    return (printpointsTreeWidget->topLevelItemCount() == 0);
+}
+
 void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

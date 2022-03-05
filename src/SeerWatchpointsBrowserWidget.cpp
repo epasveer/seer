@@ -84,6 +84,11 @@ QStringList SeerWatchpointsBrowserWidget::watchpointsText () const {
     return watchpointList;
 }
 
+bool SeerWatchpointsBrowserWidget::isEmpty() const {
+
+    return (watchpointsTreeWidget->topLevelItemCount() == 0);
+}
+
 void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

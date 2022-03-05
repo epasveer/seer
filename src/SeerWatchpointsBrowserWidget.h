@@ -13,6 +13,7 @@ class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpoin
        ~SeerWatchpointsBrowserWidget ();
 
         QStringList         watchpointsText             () const;
+        bool                isEmpty                     () const;
 
     public slots:
         void                handleText                  (const QString& text);
