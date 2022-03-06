@@ -16,6 +16,8 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
        ~SeerConsoleWidget ();
 
         const QString&      ttyDeviceName               () const;
+        void                connectConsole              ();
+        void                disconnectConsole           ();
 
     protected slots:
         void                handleClearButton           ();
@@ -28,8 +30,6 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
     protected:
         void                handleText                  (const char* buffer, int count);
         void                createConsole               ();
-        void                connectConsole              ();
-        void                disconnectConsole           ();
         void                deleteConsole               ();
         void                writeSettings               ();
         void                readSettings                ();

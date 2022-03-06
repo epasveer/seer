@@ -1,4 +1,5 @@
 #include "SeerConsoleWidget.h"
+#include "traceback.h"
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFileDialog>
@@ -132,10 +133,6 @@ void SeerConsoleWidget::handlePrintButton () {
 
 void SeerConsoleWidget::handleSaveButton () {
 
-    /*
-    QString fname = QFileDialog::getSaveFileName(this, "Seer log file", "", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
-    */
-
     QFileDialog dialog(this, "Seer log file", "", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
     dialog.setOptions(QFileDialog::DontUseNativeDialog);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -221,9 +218,10 @@ void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
                 continue;
             }
 
-            if (errno == EIO) { // Delete console if tty has an I/O error. (Maybe wait instead???)
+            if (errno == EIO) {
+                // Disconnect console if tty has an I/O error.
+                // Can be reconnected later just before gdb restarts it's target program.
                 disconnectConsole();
-                deleteConsole();
                 break;
             }
 
@@ -298,8 +296,10 @@ void SeerConsoleWidget::connectConsole () {
 void SeerConsoleWidget::disconnectConsole () {
 
     if (_ptsListener) {
-        delete _ptsListener;
-        _ptsListener = 0;
+
+        QObject::disconnect(_ptsListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleConsoleOutput);
+
+        delete _ptsListener; _ptsListener = 0;
     }
 }
 
