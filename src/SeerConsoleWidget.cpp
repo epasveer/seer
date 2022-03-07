@@ -1,5 +1,4 @@
 #include "SeerConsoleWidget.h"
-#include "traceback.h"
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFileDialog>
