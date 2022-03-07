@@ -215,7 +215,7 @@ void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
 
         if (n < 0) {
             if (errno == EAGAIN) {
-                continue;
+                break;
             }
 
             if (errno == EIO) {
