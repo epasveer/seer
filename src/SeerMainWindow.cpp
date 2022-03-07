@@ -137,8 +137,8 @@ void SeerMainWindow::setExecutableArguments (const QStringList& executableArgume
 
     //
     // Convert the list of arguments into a single argument string.
-    // Becareful of arguments that contain a space. These need to be surrounded by
-    // a ' character to retain the argument grouping.
+    // Be careful of arguments that contain a space. These need to be surrounded by
+    // a "'" character to retain the argument grouping.
     //
     //  ie: myprog  42.0 "This is a multi-worded argument"
     //

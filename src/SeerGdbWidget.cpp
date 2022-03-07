@@ -236,6 +236,8 @@ QProcess* SeerGdbWidget::gdbProcess () {
 
 void SeerGdbWidget::setExecutableName (const QString& executableName) {
 
+    qDebug() << "Executable name=" << executableName;
+
     _executableName = executableName;
 
     setNewExecutableFlag(true);
@@ -246,6 +248,9 @@ const QString& SeerGdbWidget::executableName () const {
 }
 
 void SeerGdbWidget::setNewExecutableFlag (bool flag) {
+
+    qDebug() << "Flag=" << flag;
+
     _newExecutableFlag = flag;
 }
 
@@ -441,13 +446,14 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
     // Has a executable name been provided?
     if (executableName() == "") {
+
         QMessageBox::warning(this, "Seer",
                                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
                                    QMessageBox::Ok);
         return;
     }
 
-    // Kill previous gdb, if any.
+    // Do you really want to restart?
     if (isGdbRuning() == true) {
 
         int result = QMessageBox::warning(this, "Seer",
@@ -457,15 +463,19 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         if (result == QMessageBox::Cancel) {
             return;
         }
-
-        killGdb();
     }
 
-    // Delete old console.
-    deleteConsole();
+    // XXX
+    if (newExecutableFlag() == true) {
+        qDebug() << "Deleting old gdb and console.";
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
+    }
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -480,40 +490,28 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
         // Set dprint parameters.
         resetDprintf();
-    }
 
-    // Create a new console.
-    createConsole();
+        // Create a new console.
+        createConsole();
+
+        // Set the program's tty device for stdin and stdout.
+        handleGdbTtyDeviceName();
+    }
 
     setExecutableLaunchMode("run");
     setExecutablePid(0);
+    connectConsole();
 
-    // Get list of breakpoints and catchpoints.
-    QStringList breakpointsList;
-    QStringList watchpointsList;
-    QStringList catchpointsList;
-
-    if (newExecutableFlag() == false) {
-        breakpointsList = _breakpointsBrowserWidget->breakpointsText();
-        watchpointsList = _watchpointsBrowserWidget->watchpointsText();
-        catchpointsList = _catchpointsBrowserWidget->catchpointsText();
-    }
-
-    handleGdbExecutableName();              // Load the program into the gdb process.
-    handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableArguments();         // Set the program's arguments before running.
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
-
-    // Reload old breakpoints and catchpoints.
-    if (newExecutableFlag() == false) {
-        handleGdbBreakpointReload(breakpointsList);
-      //handleGdbWatchpointReload(watchpointsList); // Doesn't work. The 'expression' is no longer in scope.
-        handleGdbCatchpointReload(catchpointsList);
+    if (newExecutableFlag() == true) {
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+        handleGdbExecutableArguments();         // Set the program's arguments before running.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     }
 
     setNewExecutableFlag(false);
 
+    // Run the executable. Do not stop in main.
     handleGdbCommand("-exec-run");
 }
 
@@ -521,15 +519,14 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Has a executable name been provided?
     if (executableName() == "") {
+
         QMessageBox::warning(this, "Seer",
                                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
                                    QMessageBox::Ok);
         return;
     }
 
-    //qDebug() << ": newExecutableFlag = " << newExecutableFlag();
-
-    // Kill previous gdb, if any.
+    // Do you really want to restart?
     if (isGdbRuning() == true) {
 
         int result = QMessageBox::warning(this, "Seer",
@@ -539,15 +536,19 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         if (result == QMessageBox::Cancel) {
             return;
         }
-
-        killGdb();
     }
 
-    // Delete old console.
-    deleteConsole();
+    // XXX
+    if (newExecutableFlag() == true) {
+        qDebug() << "Deleting old gdb and console.";
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
+    }
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -562,41 +563,28 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
         // Set dprint parameters.
         resetDprintf();
-    }
 
-    // Create a new console.
-    createConsole();
+        // Create a new console.
+        createConsole();
+
+        // Set the program's tty device for stdin and stdout.
+        handleGdbTtyDeviceName();
+    }
 
     setExecutableLaunchMode("start");
     setExecutablePid(0);
+    connectConsole();
 
-    // Get list of breakpoints.
-    QStringList breakpointsList;
-    QStringList watchpointsList;
-    QStringList catchpointsList;
-
-    if (newExecutableFlag() == false) {
-        breakpointsList = _breakpointsBrowserWidget->breakpointsText();
-        watchpointsList = _watchpointsBrowserWidget->watchpointsText();
-        catchpointsList = _catchpointsBrowserWidget->catchpointsText();
-    }
-
-    handleGdbExecutableName();              // Load the program into the gdb process.
-    handleGdbExecutableSources();           // Load the program source files.
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbExecutableArguments();         // Set the program's arguments before running.
-    handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
-
-    // Reload old breakpoints.
-    if (newExecutableFlag() == false) {
-        handleGdbBreakpointReload(breakpointsList);
-      //handleGdbWatchpointReload(watchpointsList); // Doesn't work. The 'expression' is no longer in scope.
-        handleGdbCatchpointReload(catchpointsList);
+    if (newExecutableFlag() == true) {
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+        handleGdbExecutableArguments();         // Set the program's arguments before running.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     }
 
     setNewExecutableFlag(false);
 
-    // Run the executable.
+    // Run the executable. Stop in main.
     handleGdbCommand("-exec-run --start");
 }
 
@@ -604,6 +592,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     // Has a executable name been provided?
     if (executableName() == "") {
+
         QMessageBox::warning(this, "Seer",
                                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
                                    QMessageBox::Ok);
@@ -615,11 +604,12 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
-        killGdb();
+        //XXX killGdb();
     }
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -652,6 +642,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     // Has a executable name been provided?
     if (executableName() == "") {
+
         QMessageBox::warning(this, "Seer",
                                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
                                    QMessageBox::Ok);
@@ -663,11 +654,12 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
-        killGdb();
+        //XXX killGdb();
     }
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -707,6 +699,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // Has a executable name been provided?
     if (executableName() == "") {
+
         QMessageBox::warning(this, "Seer",
                                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
                                    QMessageBox::Ok);
@@ -718,11 +711,12 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // Kill previous gdb, if any.
     if (isGdbRuning() == true) {
-        killGdb();
+        //XXX killGdb();
     }
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -885,9 +879,12 @@ void SeerGdbWidget::handleGdbTtyDeviceName () {
 
     if (_consoleWidget->ttyDeviceName() != "") {
 
-        //qDebug() << "Setting TTY name to" << _consoleWidget->ttyDeviceName();
+        qDebug() << "Setting TTY name to" << _consoleWidget->ttyDeviceName();
 
         handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->ttyDeviceName());
+
+    }else{
+        qDebug() << "Can't set TTY name";
     }
 }
 
@@ -1638,6 +1635,8 @@ void SeerGdbWidget::killGdb () {
 
 void SeerGdbWidget::createConsole () {
 
+    qDebug() << "Creating console.";
+
     deleteConsole(); // Delete old console, if any.
 
     if (_consoleWidget == 0) {
@@ -1650,9 +1649,25 @@ void SeerGdbWidget::createConsole () {
 
 void SeerGdbWidget::deleteConsole () {
 
+    qDebug() << "Deleting console.";
+
     if (_consoleWidget) {
         delete _consoleWidget;
         _consoleWidget = 0;
+    }
+}
+
+void SeerGdbWidget::connectConsole () {
+
+    if (_consoleWidget) {
+        _consoleWidget->connectConsole();
+    }
+}
+
+void SeerGdbWidget::disconnectConsole () {
+
+    if (_consoleWidget) {
+        _consoleWidget->disconnectConsole();
     }
 }
 

@@ -1,4 +1,4 @@
-#include "/peak/src/Seer/hellosegv/function1.h"
+#include "function1.h"
 #include <iostream>
 #include <unistd.h>
 #include <signal.h>

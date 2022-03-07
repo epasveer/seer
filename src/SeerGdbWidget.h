@@ -188,6 +188,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
+        void                                connectConsole                      ();
+        void                                disconnectConsole                   ();
         void                                sendGdbInterrupt                    (int signal);
 
         QString                             _gdbProgram;

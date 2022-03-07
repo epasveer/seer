@@ -1,7 +1,6 @@
+#include "function1.h"
 #include <string>
 #include <iostream>
-
-void function1 (const std::string& message);
 
 int main (int argc, char** argv) {
 
