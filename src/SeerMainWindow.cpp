@@ -137,8 +137,8 @@ void SeerMainWindow::setExecutableArguments (const QStringList& executableArgume
 
     //
     // Convert the list of arguments into a single argument string.
-    // Becareful of arguments that contain a space. These need to be surrounded by
-    // a ' character to retain the argument grouping.
+    // Be careful of arguments that contain a space. These need to be surrounded by
+    // a "'" character to retain the argument grouping.
     //
     //  ie: myprog  42.0 "This is a multi-worded argument"
     //
@@ -584,7 +584,11 @@ void SeerMainWindow::handleText (const QString& text) {
 
         }else if (reason_text == "unknown") {
 
-            QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
+            // Don't bother showing this.
+            // Attaching to a pid will generate an unknown *stopped message that is useless.
+
+            //qDebug() << "Text=" << text;
+            //QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
         }
 
         return;

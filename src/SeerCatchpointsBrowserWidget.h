@@ -12,7 +12,6 @@ class SeerCatchpointsBrowserWidget : public QWidget, protected Ui::SeerCatchpoin
         explicit SeerCatchpointsBrowserWidget (QWidget* parent = 0);
        ~SeerCatchpointsBrowserWidget ();
 
-        QStringList         catchpointsText             () const;
         bool                isEmpty                     () const;
 
     public slots:
