@@ -625,12 +625,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // Set dprint parameters.
     resetDprintf();
 
-    // Create a new console.
-    // Set the program's tty device for stdin and stdout.
-    createConsole();
-    handleGdbTtyDeviceName();
-    connectConsole();
-
+    // No console for 'attach' mode.
     setExecutableLaunchMode("attach");
 
     if (newExecutableFlag() == true) {
