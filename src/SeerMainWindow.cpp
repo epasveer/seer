@@ -584,7 +584,11 @@ void SeerMainWindow::handleText (const QString& text) {
 
         }else if (reason_text == "unknown") {
 
-            QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
+            // Don't bother showing this.
+            // Attaching to a pid will generate an unknown *stopped message that is useless.
+
+            //qDebug() << "Text=" << text;
+            //QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
         }
 
         return;

@@ -13,7 +13,6 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         explicit SeerPrintpointsBrowserWidget (QWidget* parent = 0);
        ~SeerPrintpointsBrowserWidget ();
 
-        QStringList         printpointsText             () const;
         bool                isEmpty                     () const;
 
     public slots:

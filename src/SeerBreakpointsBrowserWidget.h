@@ -13,7 +13,6 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
         explicit SeerBreakpointsBrowserWidget (QWidget* parent = 0);
        ~SeerBreakpointsBrowserWidget ();
 
-        QStringList         breakpointsText             () const;
         bool                isEmpty                     () const;
 
     public slots:

@@ -12,7 +12,6 @@ class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpoin
         explicit SeerWatchpointsBrowserWidget (QWidget* parent = 0);
        ~SeerWatchpointsBrowserWidget ();
 
-        QStringList         watchpointsText             () const;
         bool                isEmpty                     () const;
 
     public slots:

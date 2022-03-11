@@ -48,35 +48,6 @@ SeerPrintpointsBrowserWidget::SeerPrintpointsBrowserWidget (QWidget* parent) : Q
 SeerPrintpointsBrowserWidget::~SeerPrintpointsBrowserWidget () {
 }
 
-QStringList SeerPrintpointsBrowserWidget::printpointsText () const {
-
-    QStringList printpointList;
-
-    QTreeWidgetItemIterator it(printpointsTreeWidget);
-
-    while (*it) {
-
-        // Build a printpoint specification.
-        QString printpointParameters;
-
-        // Handle all printpoints as pending.
-        // Some printpoints may point to source files that have not been
-        // loaded (by programs that use runtime shared libaries).
-        printpointParameters += " -f " + (*it)->text(11);
-
-        printpointParameters.replace(" -source ", " --source ");
-        printpointParameters.replace(" -line ",   " --line ");
-
-        printpointList.append(printpointParameters);
-
-        //qDebug() << printpointParameters;
-
-        ++it;
-    }
-
-    return printpointList;
-}
-
 bool SeerPrintpointsBrowserWidget::isEmpty() const {
 
     return (printpointsTreeWidget->topLevelItemCount() == 0);
