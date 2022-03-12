@@ -709,12 +709,22 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         return;
     }
 
-    // Delete old console.
-    deleteConsole();
-
-    // Kill previous gdb, if any.
+    // Do you really want to restart?
     if (isGdbRuning() == true) {
-        //XXX killGdb();
+
+        int result = QMessageBox::warning(this, "Seer",
+                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
+                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+        if (result == QMessageBox::Cancel) {
+            return;
+        }
+    }
+
+    if (newExecutableFlag() == true) {
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
     }
 
     // If gdb isn't running, start it.
@@ -731,22 +741,27 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         }else{
             handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
-
-        // Set dprint parameters.
-        resetDprintf();
     }
 
-    // Create a new console.
-    createConsole();
+    // Set dprint parameters.
+    resetDprintf();
 
+    // No console for 'core' mode.
     setExecutableLaunchMode("corefile");
     setExecutablePid(0);
 
-    handleGdbExecutableName();              // Load the program into the gdb process.
-    handleGdbExecutableSources();           // Load the program source files.
-    handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
+    if (newExecutableFlag() == true) {
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+    }
 
+    setNewExecutableFlag(false);
+
+    // Load the executable's core file.
     handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
+
+    // This is needed for code mode to refresh the stack frame, for some reason.
+    handleGdbStackListFrames();
 }
 
 void SeerGdbWidget::handleGdbShutdown () {

@@ -223,7 +223,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode) {
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else{
-        qWarning() << "SeerMainWindow::launchMode(): bad launchMode:" << launchMode;
+        qWarning() << "Bad launchMode:" << launchMode;
     }
 }
 
