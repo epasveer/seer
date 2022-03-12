@@ -1,0 +1,22 @@
+README for dealing with coredumps.
+
+A good link:
+
+    https://stackoverflow.com/questions/17965/how-to-generate-a-core-dump-in-linux-on-a-segmentation-fault
+
+On my system, core files are put here:
+
+    erniep@gracie:~/Development/Peak/src/seer/tests/hellosegv$ ./hellosegv
+    XX: 0 ./hellosegv
+    Hello, World!42
+    Segmentation fault (core dumped)
+
+    erniep@gracie:~/Development/Peak/src/seer/tests/hellosegv$ ls -l /var/local/dumps/
+    total 232
+    -rw------- 1 erniep users 507904 Mar 10 22:20 core.hellosegv.26205
+
+As per this linux config setting:
+
+    gracie:~ # sysctl kernel.core_pattern
+    kernel.core_pattern = /var/local/dumps/core.%e.%p
+
