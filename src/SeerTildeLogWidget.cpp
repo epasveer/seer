@@ -10,11 +10,6 @@ SeerTildeLogWidget::~SeerTildeLogWidget () {
 
 void SeerTildeLogWidget::processText (const QString& text) {
 
-    // Don't do anything if we're not enabled.
-    if (isLogEnabled() == false) {
-        return;
-    }
-
     QString str = text.mid(1); // Remove leading "~"
 
     if (str.front() == '"') { // Remove leading """
@@ -32,7 +27,5 @@ void SeerTildeLogWidget::processText (const QString& text) {
     }
 
     textEdit->append(str);
-
-    moveToEnd();
 }
 

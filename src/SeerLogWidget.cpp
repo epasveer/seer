@@ -38,31 +38,8 @@ SeerLogWidget::~SeerLogWidget () {
 
 void SeerLogWidget::processText (const QString& text) {
 
-    // Don't do anything if we're not enabled.
-    if (isLogEnabled() == false) {
-        return;
-    }
-
     // Add text to the end of the document.
     textEdit->append(text);
-
-    moveToEnd();
-}
-
-void SeerLogWidget::moveToEnd () {
-
-    // Move cursor to start of the last line.
-    // Move scrollbars to the last line.
-    int nlines = textEdit->document()->lineCount();
-
-    QTextCursor cursor = textEdit->textCursor();
-
-    cursor.setPosition(nlines-1);
-
-    textEdit->setTextCursor(cursor);
-    textEdit->moveCursor(QTextCursor::StartOfLine);
-
-    textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
 }
 
 bool SeerLogWidget::isLogEnabled () const {
@@ -75,9 +52,28 @@ void SeerLogWidget::setLogEnabled (bool flag) {
     enableCheckBox->setChecked(flag);
 }
 
+void SeerLogWidget::moveToEnd () {
+
+    // Move to the end and then to the beginning of that line.
+    QTextCursor cursor = textEdit->textCursor();
+    textEdit->moveCursor(QTextCursor::End,          QTextCursor::MoveAnchor);
+    textEdit->moveCursor(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+
+    textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
+}
+
 void SeerLogWidget::handleText (const QString& text) {
 
+    // Don't do anything if we're not enabled.
+    if (isLogEnabled() == false) {
+        return;
+    }
+
+    // Process the text.
     processText(text);
+
+    // Move to the end of the document.
+    moveToEnd();
 }
 
 void SeerLogWidget::handleClearButton () {

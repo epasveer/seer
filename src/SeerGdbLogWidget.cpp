@@ -11,11 +11,6 @@ SeerGdbLogWidget::~SeerGdbLogWidget () {
 
 void SeerGdbLogWidget::processText (const QString& text) {
 
-    // Don't do anything if we're not enabled.
-    if (isLogEnabled() == false) {
-        return;
-    }
-
     QString str;
 
     // Remove leading "~"
@@ -79,7 +74,5 @@ void SeerGdbLogWidget::processText (const QString& text) {
 
     // Write the string to the log.
     textEdit->append(str);
-
-    moveToEnd();
 }
 

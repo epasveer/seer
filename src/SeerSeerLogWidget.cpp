@@ -12,11 +12,6 @@ SeerSeerLogWidget::~SeerSeerLogWidget () {
 
 void SeerSeerLogWidget::processText (const QString& text) {
 
-    // Don't do anything if we're not enabled.
-    if (isLogEnabled() == false) {
-        return;
-    }
-
     // Only log '^', '*', and '=' records.
     bool selected = false;
 
@@ -53,7 +48,5 @@ void SeerSeerLogWidget::processText (const QString& text) {
 
     // Write the string to the log.
     textEdit->append(str);
-
-    moveToEnd();
 }
 
