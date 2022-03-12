@@ -111,6 +111,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbAttachExecutable           ();
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbCoreFileExecutable         ();
+        void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
         void                                handleGdbNext                       ();
         void                                handleGdbStep                       ();

@@ -106,6 +106,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
 
+    QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
+
     // Restore window settings.
     readSettings();
 

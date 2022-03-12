@@ -749,6 +749,20 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
 }
 
+void SeerGdbWidget::handleGdbShutdown () {
+
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    // Give the gdb and 'exit' command.
+    // This should handle detaching from an attached pid.
+    handleGdbExit();
+
+    // Kill the gdb.
+    killGdb();
+}
+
 void SeerGdbWidget::handleGdbRunToLine (QString fullname, int lineno) {
 
     if (executableLaunchMode() == "") {
