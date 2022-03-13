@@ -954,6 +954,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
+    QAction* addArrayVisualizerAction;
+    QAction* addArrayAsteriskVisualizerAction;
+    QAction* addArrayAmpersandVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
     if (hasBreakpointLine(lineno) == true) {
@@ -1001,6 +1004,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
     addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
@@ -1031,6 +1037,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     memoryVisualizerMenu.addAction(addMemoryAmpersandVisualizerAction);
     menu.addMenu(&memoryVisualizerMenu);
 
+    QMenu arrayVisualizerMenu("Add variable to an Array Visualizer");
+    arrayVisualizerMenu.addAction(addArrayVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
     // Enable/disable items based on something being selected or not.
     if (textCursor().selectedText() == "") {
         addVariableLoggerExpressionAction->setEnabled(false);
@@ -1044,6 +1056,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addMemoryVisualizerAction->setEnabled(false);
         addMemoryAsteriskVisualizerAction->setEnabled(false);
         addMemoryAmpersandVisualizerAction->setEnabled(false);
+        addArrayVisualizerAction->setEnabled(false);
+        addArrayAsteriskVisualizerAction->setEnabled(false);
+        addArrayAmpersandVisualizerAction->setEnabled(false);
     }else{
         addVariableLoggerExpressionAction->setEnabled(true);
         addVariableLoggerAsteriskExpressionAction->setEnabled(true);
@@ -1056,6 +1071,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addMemoryVisualizerAction->setEnabled(true);
         addMemoryAsteriskVisualizerAction->setEnabled(true);
         addMemoryAmpersandVisualizerAction->setEnabled(true);
+        addArrayVisualizerAction->setEnabled(true);
+        addArrayAsteriskVisualizerAction->setEnabled(true);
+        addArrayAmpersandVisualizerAction->setEnabled(true);
     }
 
     // Launch the menu. Get the response.
@@ -1294,6 +1312,45 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addMemoryVisualize(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayVisualizerAction) {
+
+        //qDebug() << "addArrayVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addArrayVisualize(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAsteriskVisualizerAction) {
+
+        //qDebug() << "addArrayAsteriskVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addArrayVisualize(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAmpersandVisualizerAction) {
+
+        //qDebug() << "addArrayAmpersandVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addArrayVisualize(QString("&") + textCursor().selectedText());
         }
 
         return;

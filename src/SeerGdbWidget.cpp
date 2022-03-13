@@ -128,6 +128,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addVariableTrackerExpression,                                     this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshVariableTrackerValues,                                     this,                                                           &SeerGdbWidget::handleGdbDataListValues);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addMemoryVisualize,                                               this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addArrayVisualize,                                                this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
 
@@ -1370,19 +1371,6 @@ void SeerGdbWidget::handleGdbMemoryAddExpression (QString expression) {
     w->setVariableName(expression);
 }
 
-void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {
-
-    if (executableLaunchMode() == "") {
-        return;
-    }
-
-    handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
-}
-
-void SeerGdbWidget::handleGdbMemoryVisualizer () {
-    handleGdbMemoryAddExpression("");
-}
-
 void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
 
     Q_UNUSED(expression);
@@ -1398,10 +1386,32 @@ void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                           w,    &SeerArrayVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerArrayVisualizerWidget::handleText);
     QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
-    QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+    QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbArrayEvaluateExpression);
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);
+}
+
+void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
+}
+
+void SeerGdbWidget::handleGdbArrayEvaluateExpression (int expressionid, QString address, int count) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
+}
+
+void SeerGdbWidget::handleGdbMemoryVisualizer () {
+    handleGdbMemoryAddExpression("");
 }
 
 void SeerGdbWidget::handleGdbArrayVisualizer () {

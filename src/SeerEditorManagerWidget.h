@@ -56,6 +56,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRefreshVariableTrackerValues  ();
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
+        void                                            handleAddArrayVisualizer            (QString expression);
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -76,6 +77,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            refreshVariableTrackerValues        ();
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
         void                                            addMemoryVisualize                  (QString expression);
+        void                                            addArrayVisualize                   (QString expression);
 
     private:
         SeerEditorWidget*                               currentEditorWidgetTab              ();

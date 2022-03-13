@@ -98,6 +98,7 @@ class SeerEditorWidgetSourceArea : public QPlainTextEdit {
         void                                refreshVariableTrackerValues        ();
         void                                evaluateVariableExpression          (int expressionid, QString expression);
         void                                addMemoryVisualize                  (QString expression);
+        void                                addArrayVisualize                   (QString expression);
         void                                showSearchBar                       (bool flag);
         void                                showAlternateBar                    (bool flag);
         void                                highlighterSettingsChanged          ();
