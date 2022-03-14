@@ -16,10 +16,17 @@ int main (void) {
         int_array[i] = i;
     }
 
+    float* float_array = (float*)malloc(256);
+
+    for (int i=0; i<64; i++) {
+        float_array[i] = (float)i * 1.13;
+    }
+
     printf("Hello array!\n");
 
     free(array);
     free(int_array);
+    free(float_array);
 
     return 0;
 }

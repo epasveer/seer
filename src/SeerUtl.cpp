@@ -1,4 +1,5 @@
 #include "SeerUtl.h"
+#include <QtCore/QDebug>
 #include <mutex>
 
 namespace Seer {
@@ -239,6 +240,26 @@ namespace Seer {
         };
 
         return ucharToAsciiTable[byte];
+    }
+
+    int typeBytes (const QString& type) {
+
+        if (type == "int8" || type == "uint8") {
+            return 1;
+        }else if (type == "int16" || type == "uint16") {
+            return 2;
+        }else if (type == "int32" || type == "uint32") {
+            return 4;
+        }else if (type == "int64" || type == "uint64") {
+            return 8;
+        }else if (type == "float32") {
+            return 4;
+        }else if (type == "float64") {
+            return 8;
+        }else{
+            qWarning() << "Bad data type:" << type;
+            return 0;
+        }
     }
 }
 

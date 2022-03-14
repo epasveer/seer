@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="SeerArrayWidget" name="arrayTableWidget"/>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -45,7 +48,7 @@
      <item>
       <widget class="QLineEdit" name="arrayLengthLineEdit">
        <property name="toolTip">
-        <string>Number of bytes to display.</string>
+        <string>Number of elements to display.</string>
        </property>
        <property name="inputMask">
         <string/>
@@ -80,6 +83,21 @@
        </item>
        <item>
         <property name="text">
+         <string>unt16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uin32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uin64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>float32</string>
         </property>
        </item>
@@ -104,34 +122,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="printToolButton">
-       <property name="toolTip">
-        <string>Print the display.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/HighContrast/document-print.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="saveToolButton">
-       <property name="toolTip">
-        <string>Save the display to a file.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/HighContrast/document-save-as.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
@@ -141,30 +131,19 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SeerHexWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">SeerHexWidget.h</header>
-   <container>1</container>
+   <class>SeerArrayWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">SeerArrayWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>

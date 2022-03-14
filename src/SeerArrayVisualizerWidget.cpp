@@ -24,9 +24,10 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     setWindowTitle("Seer Array Visualizer");
 
     arrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
+    columnCountSpinBox->setValue(arrayTableWidget->elementsPerLine());
 
     arrayDisplayFormatComboBox->setCurrentIndex(0);
+    handleArrayDisplayFormatComboBox(0);
 
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleRefreshButton);
@@ -34,8 +35,6 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(arrayDisplayFormatComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox);
     QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,  &SeerArrayVisualizerWidget::handleColumnCountSpinBox);
-    QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handlePrintButton);
-    QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleSaveButton);
 
     // Restore window settings.
     readSettings();
@@ -58,7 +57,7 @@ void SeerArrayVisualizerWidget::setVariableName (const QString& name) {
     // Clear old contents.
     QByteArray array;
 
-    memoryHexEditor->setData(new SeerHexWidget::DataStorageArray(array));
+    arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
 
     // Send signal to get variable address.
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
@@ -91,7 +90,7 @@ void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
 
     //qDebug() << address << offset << ok;
 
-    memoryHexEditor->setAddressOffset(offset);
+    arrayTableWidget->setAddressOffset(offset);
 }
 
 QString SeerArrayVisualizerWidget::variableAddress () const {
@@ -125,7 +124,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _memoryId) {
 
-            //qDebug() << text;
+            qDebug() << text;
 
             QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
 
@@ -149,7 +148,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
                 }
 
                 // Give the byte array to the hex widget.
-                memoryHexEditor->setData(new SeerHexWidget::DataStorageArray(array));
+                arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
 
                 break; // Take just the first range for now.
             }
@@ -195,7 +194,11 @@ void SeerArrayVisualizerWidget::handleRefreshButton () {
         return;
     }
 
-    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), arrayLengthLineEdit->text().toInt());
+    int bytes = arrayLengthLineEdit->text().toInt() * Seer::typeBytes(arrayDisplayFormatComboBox->currentText());
+
+    qDebug() << _memoryId << variableAddressLineEdit->text() << arrayLengthLineEdit->text() << arrayDisplayFormatComboBox->currentText() << bytes;
+
+    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), bytes);
 }
 
 void SeerArrayVisualizerWidget::handleVariableNameLineEdit () {
@@ -205,82 +208,40 @@ void SeerArrayVisualizerWidget::handleVariableNameLineEdit () {
 
 void SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox (int index) {
 
-    memoryHexEditor->setMemoryMode(SeerHexWidget::HexMemoryMode);
+    qDebug() << index;
+
+    if (index == 0) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::Int16ArrayMode);
+
+    }else if (index == 1) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::Int32ArrayMode);
+
+    }else if (index == 2) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::Int64ArrayMode);
+
+    }else if (index == 3) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt16ArrayMode);
+
+    }else if (index == 4) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt32ArrayMode);
+
+    }else if (index == 5) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt64ArrayMode);
+
+    }else if (index == 6) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::Float32ArrayMode);
+
+    }else if (index == 7) {
+        arrayTableWidget->setArrayMode(SeerArrayWidget::Float64ArrayMode);
+
+    }else{
+        // Do nothing.
+    }
 }
 
 void SeerArrayVisualizerWidget::handleColumnCountSpinBox (int value) {
 
-    memoryHexEditor->setBytesPerLine(value);
-}
-
-void SeerArrayVisualizerWidget::handlePrintButton () {
-
-    QPrinter printer;
-
-    QPrintDialog* dlg = new QPrintDialog(&printer, this);
-
-    if (dlg->exec() != QDialog::Accepted) {
-        return;
-    }
-
-
-    // Make a copy so we can temporarily add a header.
-    QTextDocument* clone = memoryHexEditor->document()->clone(this);
-
-    QTextCursor cursor(clone);
-    QTextCharFormat format = cursor.charFormat();
-    format.setBackground(QBrush(Qt::transparent));
-
-    cursor.insertText("\n", format);
-    cursor.insertText("name=" + variableName() + " address=" + variableAddress() + " bytesPerLine=" + QString::number(memoryHexEditor->bytesPerLine()) + " bytes=" + QString::number(memoryHexEditor->size()) + " memory=" + memoryHexEditor->memoryModeString() + " char=" + memoryHexEditor->charModeString() + "\n", format);
-    cursor.insertText("\n", format);
-
-    clone->print(&printer);
-
-    delete clone;
-}
-
-void SeerArrayVisualizerWidget::handleSaveButton () {
-
-    QFileDialog dialog(this, "Seer visualizer file", "", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
-    dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("log");
-    dialog.selectFile("array.log");
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return;
-    }
-
-    QStringList files = dialog.selectedFiles();
-
-    if (files.size() == 0) {
-        return;
-    }
-
-    if (files.size() > 1) {
-        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
-        return;
-    }
-
-    QFile file(files[0]);
-
-    if (file.open(QIODevice::ReadWrite)) {
-        QTextStream stream(&file);
-
-        stream << "\n";
-        stream << "name=" << variableName() << " address=" << variableAddress() << " bytesPerLine=" << memoryHexEditor->bytesPerLine() << " bytes=" << memoryHexEditor->size() << " memory=" << memoryHexEditor->memoryModeString() << " char=" << memoryHexEditor->charModeString() << "\n";
-        stream << "\n";
-        stream << memoryHexEditor->toPlainText();
-        stream << "\n";
-
-        file.flush();
-        file.close();
-
-    }else{
-        QMessageBox::critical(this, tr("Error"), tr("Cannot save display to file."));
-        return;
-    }
+    arrayTableWidget->setElementsPerLine(value);
 }
 
 void SeerArrayVisualizerWidget::writeSettings() {

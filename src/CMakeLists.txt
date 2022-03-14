@@ -45,6 +45,7 @@ set(HEADER_FILES
     SeerExecutableFilterProxyModel.h
     SeerGdbWidget.h
     SeerHexWidget.h
+    SeerArrayWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
     SeerArrayVisualizerWidget.h
@@ -110,6 +111,7 @@ set(SOURCE_FILES
     SeerEditorWidgetSourceArea.cpp
     SeerGdbWidget.cpp
     SeerHexWidget.cpp
+    SeerArrayWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
     SeerArrayVisualizerWidget.cpp
