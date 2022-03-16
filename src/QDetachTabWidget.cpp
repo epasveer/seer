@@ -27,11 +27,23 @@ void QDetachTabWidget::closeEvent (QCloseEvent* e) {
 
 void QDetachTabWidget::handleShowContextMenu(int tabIndex) {
 
+    // Create the menu.
     QMenu menu("Window Action", this);
 
     QAction* detachAction   = menu.addAction(tr("Detach"));
     QAction* reattachAction = menu.addAction(tr("Reattach"));
 
+    // Enable/disable depending if it was already detached.
+    QWidget* w = widget(tabIndex);
+    if (w->objectName() == "QDetachTabWidgetPlaceholder") {
+        detachAction->setEnabled(false);
+        reattachAction->setEnabled(true);
+    }else{
+        detachAction->setEnabled(true);
+        reattachAction->setEnabled(false);
+    }
+
+    // Exec the menue
     QAction* action = menu.exec(QCursor::pos());
 
     //
