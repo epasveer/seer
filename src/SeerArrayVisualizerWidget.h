@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QtCharts/QLineSeries>
 #include <QtWidgets/QWidget>
 #include "ui_SeerArrayVisualizerWidget.h"
 
@@ -28,6 +29,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handleVariableNameLineEdit          ();
         void                handleArrayDisplayFormatComboBox    (int index);
         void                handleColumnCountSpinBox            (int value);
+        void                handleDataChanged                   ();
 
     protected:
         void                writeSettings                       ();
@@ -35,6 +37,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                resizeEvent                         (QResizeEvent* event);
 
     private:
+        QLineSeries*        _series;
         int                 _variableId;
         int                 _memoryId;
 };

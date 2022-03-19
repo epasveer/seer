@@ -13,10 +13,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Core         REQUIRED)
+find_package(Qt5Gui          REQUIRED)
+find_package(Qt5Widgets      REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5Charts       REQUIRED)
 
 set(HEADER_FILES
     GdbMonitor.h
@@ -80,6 +81,8 @@ set(HEADER_FILES
     QProgressIndicator.h
     QColorButton.h
     QDetachTabWidget.h
+    QZoomChartView.h
+    QZoomChart.h
     )
 
 set(SOURCE_FILES
@@ -146,6 +149,8 @@ set(SOURCE_FILES
     QProgressIndicator.cpp
     QColorButton.cpp
     QDetachTabWidget.cpp
+    QZoomChartView.cpp
+    QZoomChart.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)
@@ -169,5 +174,5 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
-target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport)
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 

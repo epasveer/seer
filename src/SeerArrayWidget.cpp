@@ -122,6 +122,11 @@ QString SeerArrayWidget::arrayModeString () const {
     return "???";
 }
 
+const QVector<double>& SeerArrayWidget::arrayValues () const {
+
+    return _arrayValues;
+}
+
 void SeerArrayWidget::setData(SeerArrayWidget::DataStorage* pData) {
 
     if (_pdata) {
@@ -141,12 +146,17 @@ void SeerArrayWidget::create () {
     setRowCount(0);
     setColumnCount(elementsPerLine());
 
+    // Clear the values.
+    _arrayValues.resize(0);
+
     // If there's no data, do nothing.
     if (!_pdata) {
+        emit dataChanged();
         return;
     }
 
     if (elementSize() < 1) {
+        emit dataChanged();
         return;
     }
 
@@ -166,10 +176,13 @@ void SeerArrayWidget::create () {
         QByteArray element = _pdata->getData(i, elementSize());
 
         QByteArray hex = element.toHex();
+        double     val = 0.0;
 
         if (arrayMode() == SeerArrayWidget::Int16ArrayMode) {
 
             short v = *reinterpret_cast<short*>(element.data());
+
+            val = v;
 
             item->setText(QString::number(v));
 
@@ -177,11 +190,15 @@ void SeerArrayWidget::create () {
 
             unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
 
+            val = v;
+
             item->setText(QString::number(v));
 
         }else if (arrayMode() == SeerArrayWidget::Int32ArrayMode) {
 
             int v = *reinterpret_cast<int*>(element.data());
+
+            val = v;
 
             item->setText(QString::number(v));
 
@@ -189,11 +206,15 @@ void SeerArrayWidget::create () {
 
             unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
 
+            val = v;
+
             item->setText(QString::number(v));
 
         }else if (arrayMode() == SeerArrayWidget::Int64ArrayMode) {
 
             long v = *reinterpret_cast<long*>(element.data());
+
+            val = v;
 
             item->setText(QString::number(v));
 
@@ -201,11 +222,15 @@ void SeerArrayWidget::create () {
 
             unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
 
+            val = v;
+
             item->setText(QString::number(v));
 
         }else if (arrayMode() == SeerArrayWidget::Float32ArrayMode) {
 
             float v = *reinterpret_cast<float*>(element.data());
+
+            val = v;
 
             item->setText(QString::number(v));
 
@@ -213,10 +238,19 @@ void SeerArrayWidget::create () {
 
             double v = *reinterpret_cast<double*>(element.data());
 
+            val = v;
+
             item->setText(QString::number(v));
+
+        }else{
+            qWarning() << "Unknown data type.";
+
+            val = 0.0;
         }
 
         setItem(row, col, item);
+
+        _arrayValues.push_back(val);
 
         col++;
 
@@ -225,6 +259,8 @@ void SeerArrayWidget::create () {
             row++;
         }
     }
+
+    emit dataChanged();
 }
 
 SeerArrayWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {

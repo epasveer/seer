@@ -15,6 +15,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     // Init variables.
     _variableId = Seer::createID(); // Create two id's for queries.
     _memoryId   = Seer::createID();
+    _series     = 0;
 
     // Set up UI.
     setupUi(this);
@@ -29,12 +30,24 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     arrayDisplayFormatComboBox->setCurrentIndex(0);
     handleArrayDisplayFormatComboBox(0);
 
+    // XXX Test
+    QChart* chart = new QChart;
+    chart->legend()->hide();
+    chart->createDefaultAxes();
+    chart->setTitle("Simple line chart example");
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
+
+    arrayChartView->setRenderHint(QPainter::Antialiasing);
+    arrayChartView->setChart(chart);
+
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleRefreshButton);
     QObject::connect(arrayLengthLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(arrayDisplayFormatComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox);
     QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,  &SeerArrayVisualizerWidget::handleColumnCountSpinBox);
+    QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,  &SeerArrayVisualizerWidget::handleDataChanged);
 
     // Restore window settings.
     readSettings();
@@ -124,7 +137,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _memoryId) {
 
-            qDebug() << text;
+            //qDebug() << text;
 
             QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
 
@@ -196,7 +209,7 @@ void SeerArrayVisualizerWidget::handleRefreshButton () {
 
     int bytes = arrayLengthLineEdit->text().toInt() * Seer::typeBytes(arrayDisplayFormatComboBox->currentText());
 
-    qDebug() << _memoryId << variableAddressLineEdit->text() << arrayLengthLineEdit->text() << arrayDisplayFormatComboBox->currentText() << bytes;
+    //qDebug() << _memoryId << variableAddressLineEdit->text() << arrayLengthLineEdit->text() << arrayDisplayFormatComboBox->currentText() << bytes;
 
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), bytes);
 }
@@ -208,7 +221,7 @@ void SeerArrayVisualizerWidget::handleVariableNameLineEdit () {
 
 void SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox (int index) {
 
-    qDebug() << index;
+    //qDebug() << index;
 
     if (index == 0) {
         arrayTableWidget->setArrayMode(SeerArrayWidget::Int16ArrayMode);
@@ -242,6 +255,27 @@ void SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox (int index) {
 void SeerArrayVisualizerWidget::handleColumnCountSpinBox (int value) {
 
     arrayTableWidget->setElementsPerLine(value);
+}
+
+void SeerArrayVisualizerWidget::handleDataChanged () {
+
+    if (_series) {
+        arrayChartView->chart()->removeSeries(_series);
+        delete _series;
+        _series = 0;
+    }
+
+    _series = new QLineSeries;
+    _series->setName(variableName());
+
+    const QVector<double>& values = arrayTableWidget->arrayValues();
+
+    for (int i = 0; i < values.size(); ++i) {
+        _series->append(i, values[i]);
+    }
+
+    arrayChartView->chart()->addSeries(_series);
+    arrayChartView->chart()->createDefaultAxes();
 }
 
 void SeerArrayVisualizerWidget::writeSettings() {

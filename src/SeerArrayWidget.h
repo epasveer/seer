@@ -2,8 +2,11 @@
 
 #include <QtWidgets/QTableWidget>
 #include <QtCore/QByteArray>
+#include <QtCore/QVector>
 
 class SeerArrayWidget: public QTableWidget {
+
+    Q_OBJECT
 
     public:
         class DataStorage {
@@ -47,6 +50,10 @@ class SeerArrayWidget: public QTableWidget {
         void                        setArrayMode            (SeerArrayWidget::ArrayMode arrayMode);
         SeerArrayWidget::ArrayMode  arrayMode               () const;
         QString                     arrayModeString         () const;
+        const QVector<double>&      arrayValues             () const;
+
+    signals:
+        void                        dataChanged             ();
 
     public slots:
         void                        setData                 (DataStorage* pData);
@@ -62,5 +69,6 @@ class SeerArrayWidget: public QTableWidget {
         unsigned long               _addressOffset;
 
         SeerArrayWidget::ArrayMode  _arrayMode;
+        QVector<double>             _arrayValues;
 };
 
