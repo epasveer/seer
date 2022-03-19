@@ -288,7 +288,7 @@ void SeerMemoryVisualizerWidget::handlePrintButton () {
 
 void SeerMemoryVisualizerWidget::handleSaveButton () {
 
-    QFileDialog dialog(this, "Seer visualizer file", "", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
+    QFileDialog dialog(this, "Seer visualizer file", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("log");

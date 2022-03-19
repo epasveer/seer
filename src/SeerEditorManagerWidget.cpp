@@ -584,7 +584,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
 void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {
 
-    QString filename = QFileDialog::getOpenFileName(this, tr("Open Source File"), "", tr("Source files (*.*)"), nullptr, QFileDialog::DontUseNativeDialog);
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Source File"), "./", tr("Source files (*.*)"), nullptr, QFileDialog::DontUseNativeDialog);
 
     if (filename == "") {
         return;
