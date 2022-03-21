@@ -92,7 +92,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QSplitter" name="stackThreadManagersplitter">
+     <widget class="QSplitter" name="stackThreadManagerSplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>20</horstretch>

@@ -28,8 +28,12 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handleRefreshButton                 ();
         void                handleVariableNameLineEdit          ();
         void                handleArrayDisplayFormatComboBox    (int index);
-        void                handleColumnCountSpinBox            (int value);
         void                handleDataChanged                   ();
+        void                handleSplitterMoved                 (int pos, int index);
+        void                handleSeriesHovered                 (const QPointF& point, bool state);
+        void                handleTitleLineEdit                 ();
+        void                handlePointsCheckBox                ();
+        void                handleLabelsCheckBox                ();
 
     protected:
         void                writeSettings                       ();

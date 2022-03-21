@@ -20,6 +20,17 @@ QZoomChartView::QZoomChartView (QChart* chart, QWidget* parent) : QChartView(cha
 
 bool QZoomChartView::viewportEvent (QEvent* event) {
 
+    // Disable ToolTip events in the ChartView. They interfer with the 'length' arguments
+    // of the QToolTip::showText() function.
+    // https://bugreports.qt.io/browse/QTBUG-56427
+
+    switch (event->type()) {
+        case QEvent::ToolTip:
+            return false;
+        default:
+            break;
+    }
+
     return QChartView::viewportEvent(event);
 }
 

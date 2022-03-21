@@ -25,7 +25,7 @@
         <string>variable name</string>
        </property>
        <property name="clearButtonEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -40,21 +40,59 @@
        <property name="placeholderText">
         <string>variable address</string>
        </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="arrayLengthLineEdit">
        <property name="toolTip">
-        <string>Number of elements to display.</string>
+        <string>Total number of elements in array.</string>
        </property>
        <property name="inputMask">
         <string/>
        </property>
        <property name="placeholderText">
-        <string># Elements</string>
+        <string># elements</string>
        </property>
        <property name="clearButtonEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="arrayOffsetLineEdit">
+       <property name="toolTip">
+        <string>Element offset into array.</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>array offset</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="arrayStrideLineEdit">
+       <property name="toolTip">
+        <string>Element stride between array values..</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>array stride</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -106,19 +144,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="columnCountSpinBox">
-       <property name="toolTip">
-        <string>Number of columns in display.</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
@@ -137,9 +162,9 @@
    <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
+       <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="orientation">
@@ -148,18 +173,70 @@
      <widget class="SeerArrayWidget" name="arrayTableWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>25</horstretch>
+        <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
      </widget>
-     <widget class="QZoomChartView" name="arrayChartView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>75</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="25,0">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item>
+        <widget class="QZoomChartView" name="arrayChartView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>100</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="titleLineEdit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Set chart title.</string>
+           </property>
+           <property name="placeholderText">
+            <string>chart title</string>
+           </property>
+           <property name="clearButtonEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="pointsCheckBox">
+           <property name="toolTip">
+            <string>Show chart data points.</string>
+           </property>
+           <property name="text">
+            <string>Points</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="labelsCheckBox">
+           <property name="toolTip">
+            <string>Show chart data labels.</string>
+           </property>
+           <property name="text">
+            <string>Labels</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

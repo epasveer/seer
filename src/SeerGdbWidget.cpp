@@ -199,7 +199,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
-    QObject::connect(stackThreadManagersplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(stackThreadManagerSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(manualCommandComboBox,                                     QOverload<int>::of(&QComboBox::activated),                                                  this,                                                           &SeerGdbWidget::handleManualCommandChanged);
     QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
     QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
@@ -1543,7 +1543,7 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("leftCenterRightSplitter",              leftCenterRightSplitter->saveState());
         settings.setValue("codeManagerLogTabsSplitter",           codeManagerLogTabsSplitter->saveState());
         settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
-        settings.setValue("stackThreadManagersplitter",           stackThreadManagersplitter->saveState());
+        settings.setValue("stackThreadManagerSplitter",           stackThreadManagerSplitter->saveState());
     } settings.endGroup();
 
     settings.beginGroup("consolewindow"); {
@@ -1589,7 +1589,7 @@ void SeerGdbWidget::readSettings () {
         leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
         codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
         sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
-        stackThreadManagersplitter->restoreState(settings.value("stackThreadManagersplitter").toByteArray());
+        stackThreadManagerSplitter->restoreState(settings.value("stackThreadManagerSplitter").toByteArray());
     } settings.endGroup();
 
     settings.beginGroup("consolewindow"); {

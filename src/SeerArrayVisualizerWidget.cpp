@@ -2,6 +2,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QToolTip>
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
@@ -25,16 +26,16 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     setWindowTitle("Seer Array Visualizer");
 
     arrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    columnCountSpinBox->setValue(arrayTableWidget->elementsPerLine());
+    arrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
+    arrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
 
     arrayDisplayFormatComboBox->setCurrentIndex(0);
     handleArrayDisplayFormatComboBox(0);
 
-    // XXX Test
+    // A single series chart.
     QChart* chart = new QChart;
     chart->legend()->hide();
     chart->createDefaultAxes();
-    chart->setTitle("Simple line chart example");
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
@@ -46,8 +47,11 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(arrayLengthLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(arrayDisplayFormatComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox);
-    QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,  &SeerArrayVisualizerWidget::handleColumnCountSpinBox);
     QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,  &SeerArrayVisualizerWidget::handleDataChanged);
+    QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,  &SeerArrayVisualizerWidget::handleSplitterMoved);
+    QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
+    QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handlePointsCheckBox);
+    QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handleLabelsCheckBox);
 
     // Restore window settings.
     readSettings();
@@ -252,11 +256,6 @@ void SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox (int index) {
     }
 }
 
-void SeerArrayVisualizerWidget::handleColumnCountSpinBox (int value) {
-
-    arrayTableWidget->setElementsPerLine(value);
-}
-
 void SeerArrayVisualizerWidget::handleDataChanged () {
 
     if (_series) {
@@ -267,12 +266,16 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     _series = new QLineSeries;
     _series->setName(variableName());
+    _series->setPointsVisible(false);
+    _series->setPointLabelsVisible(false);
 
     const QVector<double>& values = arrayTableWidget->arrayValues();
 
     for (int i = 0; i < values.size(); ++i) {
         _series->append(i, values[i]);
     }
+
+    QObject::connect(_series, &QLineSeries::hovered,     this, &SeerArrayVisualizerWidget::handleSeriesHovered);
 
     arrayChartView->chart()->addSeries(_series);
     arrayChartView->chart()->createDefaultAxes();
@@ -282,9 +285,10 @@ void SeerArrayVisualizerWidget::writeSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("arrayvisualizerwindow");
-    settings.setValue("size", size());
-    settings.endGroup();
+    settings.beginGroup("arrayvisualizerwindow"); {
+        settings.setValue("size", size());
+        settings.setValue("splitter", splitter->saveState());
+    } settings.endGroup();
 
     //qDebug() << size();
 }
@@ -293,9 +297,10 @@ void SeerArrayVisualizerWidget::readSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("arrayvisualizerwindow");
-    resize(settings.value("size", QSize(800, 400)).toSize());
-    settings.endGroup();
+    settings.beginGroup("arrayvisualizerwindow"); {
+        resize(settings.value("size", QSize(800, 400)).toSize());
+        splitter->restoreState(settings.value("splitter").toByteArray());
+    } settings.endGroup();
 
     //qDebug() << size();
 }
@@ -305,5 +310,42 @@ void SeerArrayVisualizerWidget::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerArrayVisualizerWidget::handleSplitterMoved (int pos, int index) {
+
+    writeSettings();
+}
+
+void SeerArrayVisualizerWidget::handleSeriesHovered (const QPointF& point, bool state) {
+
+    //qDebug() << "QPointF=" << point << "State=" << state << "MapToPosition=" << arrayChartView->chart()->mapToPosition(point) << "MapFromScene=" << arrayChartView->mapFromScene(arrayChartView->chart()->mapToPosition(point));
+
+    if (state) {
+        QToolTip::showText(arrayChartView->mapToGlobal(arrayChartView->mapFromScene(arrayChartView->chart()->mapToPosition(point))), QString("%1 / %2").arg(point.x()).arg(point.y()), this, QRect(), 10000);
+    }else{
+        QToolTip::hideText();
+    }
+}
+
+void SeerArrayVisualizerWidget::handleTitleLineEdit () {
+
+    arrayChartView->chart()->setTitle(titleLineEdit->text());
+
+    titleLineEdit->setText("");
+}
+
+void SeerArrayVisualizerWidget::handlePointsCheckBox () {
+
+    if (_series) {
+        _series->setPointsVisible(pointsCheckBox->isChecked());
+    }
+}
+
+void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
+
+    if (_series) {
+        _series->setPointLabelsVisible(labelsCheckBox->isChecked());
+    }
 }
 
