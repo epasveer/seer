@@ -64,7 +64,7 @@
      <item>
       <widget class="QLineEdit" name="arrayOffsetLineEdit">
        <property name="toolTip">
-        <string>Element offset into array.</string>
+        <string>Element offset into array. (default=0)</string>
        </property>
        <property name="inputMask">
         <string/>
@@ -83,7 +83,7 @@
      <item>
       <widget class="QLineEdit" name="arrayStrideLineEdit">
        <property name="toolTip">
-        <string>Element stride between array values..</string>
+        <string>Element stride between values. (default=1)</string>
        </property>
        <property name="inputMask">
         <string/>
@@ -99,7 +99,7 @@
      <item>
       <widget class="QComboBox" name="arrayDisplayFormatComboBox">
        <property name="toolTip">
-        <string>Array display format.</string>
+        <string>Array data type.</string>
        </property>
        <item>
         <property name="text">
