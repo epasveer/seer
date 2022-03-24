@@ -103,6 +103,12 @@ Memory Visualizer
 When looking at the contents of raw memory in the Memory Visualizer, it looks like this :
 ![](images/memoryvisualizer.png)
 
+Array Visualizer
+-----------------
+
+When looking at the contents of arrays in the Array Visualizer, it looks like this :
+![](images/arrayvisualizer.png)
+
 
 Starting Seer
 =============
