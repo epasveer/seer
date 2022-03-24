@@ -1,8 +1,11 @@
 
 Seer, a simple and easy-to-use gui frontend to the GDB debugger, having many features.
 
-Written by Ernie Pasveer. (epasveer@att.net)
-Copyright (C) 2021.
+Written by Ernie Pasveer. Copyright (C) 2021.
+
+Contact:
+    epasveer@att.net
+    https://github.com/epasveer/seer
 
 Credits to FlatIcon for use of the Seer and other icons.
 
