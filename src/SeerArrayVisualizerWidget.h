@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtCharts/QLineSeries>
+#include <QtCharts/QXYSeries>
 #include <QtWidgets/QWidget>
 #include "ui_SeerArrayVisualizerWidget.h"
 
@@ -34,6 +34,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handleTitleLineEdit                 ();
         void                handlePointsCheckBox                ();
         void                handleLabelsCheckBox                ();
+        void                handleLineTypeButtonGroup           ();
 
     protected:
         void                writeSettings                       ();
@@ -41,7 +42,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                resizeEvent                         (QResizeEvent* event);
 
     private:
-        QLineSeries*        _series;
+        QXYSeries*          _series;
         int                 _variableId;
         int                 _memoryId;
 };

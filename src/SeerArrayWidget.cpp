@@ -16,11 +16,13 @@ SeerArrayWidget::SeerArrayWidget(QWidget* parent) : QTableWidget(parent), _pdata
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     horizontalHeader()->setDefaultAlignment(Qt::AlignRight);
 
-    _arrayMode     = SeerArrayWidget::UnknownArrayMode;
-    _addressOffset = 0;
+    _arrayMode      = SeerArrayWidget::UnknownArrayMode;
+    _addressOffset  = 0;
+    _addressStride  = 1;
 
     setElementsPerLine(1);
-
+    setAddressOffset(0);
+    setAddressStride(1);
 }
 
 SeerArrayWidget::~SeerArrayWidget() {
@@ -39,6 +41,7 @@ void SeerArrayWidget::setElementsPerLine (int count) {
 }
 
 int SeerArrayWidget::elementsPerLine () const {
+
     return _elementsPerLine;
 }
 
@@ -51,7 +54,26 @@ void SeerArrayWidget::setAddressOffset (unsigned long offset) {
 }
 
 unsigned long SeerArrayWidget::addressOffset () const {
+
     return _addressOffset;
+}
+
+void SeerArrayWidget::setAddressStride (unsigned long stride) {
+
+    if (stride < 1) {
+        qWarning() << "Stride is not valid." << stride;
+        stride = 1;
+    }
+
+    _addressStride = stride;
+
+    // Repaint the widget.
+    create();
+}
+
+unsigned long SeerArrayWidget::addressStride () const {
+
+    return _addressStride;
 }
 
 unsigned long SeerArrayWidget::size () const {
@@ -163,11 +185,15 @@ void SeerArrayWidget::create () {
     int row = 0;
     int col = 0;
 
-    for (int i=0; i<_pdata->size(); i+=elementSize()) {
+    for (int i=elementSize()*addressOffset(); i<_pdata->size(); i+=elementSize()*addressStride()) {
 
-        // Add new row if we need to.
+        // Add new row if we need to. Set its label.
         if (row == rowCount()) {
             insertRow(rowCount());
+
+            QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/elementSize()));
+            rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+            setVerticalHeaderItem(row, rowHeaderitem);
         }
 
         QTableWidgetItem* item = new QTableWidgetItem;

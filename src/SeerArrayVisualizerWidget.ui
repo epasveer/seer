@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>657</height>
+    <width>967</width>
+    <height>773</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_1">
      <item>
       <widget class="QLineEdit" name="variableNameLineEdit">
        <property name="toolTip">
@@ -215,6 +215,50 @@
           </widget>
          </item>
          <item>
+          <widget class="Line" name="line_1">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="lineRadioButton">
+           <property name="text">
+            <string>Line</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">lineTypeButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="splineRadioButton">
+           <property name="text">
+            <string>Spline</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">lineTypeButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="scatterRadioButton">
+           <property name="text">
+            <string>Scatter</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">lineTypeButtonGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="pointsCheckBox">
            <property name="toolTip">
             <string>Show chart data points.</string>
@@ -258,4 +302,7 @@
   <include location="resource.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="lineTypeButtonGroup"/>
+ </buttongroups>
 </ui>

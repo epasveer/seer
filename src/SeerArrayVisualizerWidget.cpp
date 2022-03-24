@@ -1,5 +1,8 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerUtl.h"
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QSplineSeries>
+#include <QtCharts/QScatterSeries>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QToolTip>
@@ -29,6 +32,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     arrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
     arrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
 
+    lineRadioButton->setChecked(true);
+
     arrayDisplayFormatComboBox->setCurrentIndex(0);
     handleArrayDisplayFormatComboBox(0);
 
@@ -45,6 +50,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleRefreshButton);
     QObject::connect(arrayLengthLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
+    QObject::connect(arrayOffsetLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
+    QObject::connect(arrayStrideLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(arrayDisplayFormatComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox);
     QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,  &SeerArrayVisualizerWidget::handleDataChanged);
@@ -52,6 +59,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
     QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handlePointsCheckBox);
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handleLabelsCheckBox);
+    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::buttonClicked),          this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
 
     // Restore window settings.
     readSettings();
@@ -73,8 +81,27 @@ void SeerArrayVisualizerWidget::setVariableName (const QString& name) {
 
     // Clear old contents.
     QByteArray array;
+    bool ok;
 
     arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
+
+    if (arrayOffsetLineEdit->text() != "") {
+        arrayTableWidget->setAddressOffset(arrayOffsetLineEdit->text().toULong(&ok));
+        if (ok == false) {
+            qWarning() << "Invalid string for address offset." << arrayOffsetLineEdit->text();
+        }
+    }else{
+        arrayTableWidget->setAddressOffset(0);
+    }
+
+    if (arrayStrideLineEdit->text() != "") {
+        arrayTableWidget->setAddressStride(arrayStrideLineEdit->text().toULong(&ok));
+        if (ok == false) {
+            qWarning() << "Invalid string for address stride." << arrayStrideLineEdit->text();
+        }
+    }else{
+        arrayTableWidget->setAddressStride(1);
+    }
 
     // Send signal to get variable address.
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
@@ -107,7 +134,7 @@ void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
 
     //qDebug() << address << offset << ok;
 
-    arrayTableWidget->setAddressOffset(offset);
+    arrayTableWidget->setAddressOffset(0);
 }
 
 QString SeerArrayVisualizerWidget::variableAddress () const {
@@ -165,7 +192,26 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
                 }
 
                 // Give the byte array to the hex widget.
+                bool ok;
                 arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
+
+                if (arrayOffsetLineEdit->text() != "") {
+                    arrayTableWidget->setAddressOffset(arrayOffsetLineEdit->text().toULong(&ok));
+                    if (ok == false) {
+                        qWarning() << "Invalid string for address offset." << arrayOffsetLineEdit->text();
+                    }
+                }else{
+                    arrayTableWidget->setAddressOffset(0);
+                }
+
+                if (arrayStrideLineEdit->text() != "") {
+                    arrayTableWidget->setAddressStride(arrayStrideLineEdit->text().toULong(&ok));
+                    if (ok == false) {
+                        qWarning() << "Invalid string for address stride." << arrayStrideLineEdit->text();
+                    }
+                }else{
+                    arrayTableWidget->setAddressStride(1);
+                }
 
                 break; // Take just the first range for now.
             }
@@ -264,7 +310,27 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
         _series = 0;
     }
 
-    _series = new QLineSeries;
+    if (scatterRadioButton->isChecked()) {
+
+        QScatterSeries* scatter = new QScatterSeries;
+        scatter->setMarkerSize(7);
+        _series = scatter;
+
+    }else if (lineRadioButton->isChecked()) {
+
+        QLineSeries* line = new QLineSeries;
+        _series = line;
+
+    }else if (splineRadioButton->isChecked()) {
+
+        QSplineSeries* line  = new QSplineSeries;
+        _series = line;
+    }
+
+    if (_series == 0) {
+        return;
+    }
+
     _series->setName(variableName());
     _series->setPointsVisible(false);
     _series->setPointLabelsVisible(false);
@@ -348,4 +414,10 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
         _series->setPointLabelsVisible(labelsCheckBox->isChecked());
     }
 }
+
+void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
+
+    handleDataChanged();
+}
+
 

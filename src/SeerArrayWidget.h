@@ -44,6 +44,8 @@ class SeerArrayWidget: public QTableWidget {
         int                         elementsPerLine         () const;
         void                        setAddressOffset        (unsigned long offset);
         unsigned long               addressOffset           () const;
+        void                        setAddressStride        (unsigned long stride);
+        unsigned long               addressStride           () const;
         unsigned long               size                    () const;
         unsigned long               elementSize             () const;
 
@@ -67,6 +69,7 @@ class SeerArrayWidget: public QTableWidget {
 
         int                         _elementsPerLine;
         unsigned long               _addressOffset;
+        unsigned long               _addressStride;
 
         SeerArrayWidget::ArrayMode  _arrayMode;
         QVector<double>             _arrayValues;
