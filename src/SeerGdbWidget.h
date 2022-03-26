@@ -37,6 +37,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableWorkingDirectory       (const QString& executableWorkingDirectory);
         const QString&                      executableWorkingDirectory          () const;
 
+        void                                setExecutableBreakpointsFilename    (const QString& breakpointsFilename);
+        const QString&                      executableBreakpointsFilename       () const;
+
         void                                setExecutablePid                    (int pid);
         int                                 executablePid                       () const;
 
@@ -129,6 +132,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbExecutableName             ();
         void                                handleGdbExecutableArguments        ();
         void                                handleGdbExecutableWorkingDirectory ();
+        void                                handleGdbExecutableLoadBreakpoints  ();
         void                                handleGdbTtyDeviceName              ();
         void                                handleGdbStackListFrames            ();
         void                                handleGdbStackSelectFrame           (int frameno);
@@ -204,6 +208,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableName;
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;
+        QString                             _executableBreakpointsFilename;
         int                                 _executablePid;
         QString                             _executableHostPort;
         QString                             _executableCoreFilename;

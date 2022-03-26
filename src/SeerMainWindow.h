@@ -19,48 +19,50 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         SeerMainWindow (QWidget* parent = 0);
        ~SeerMainWindow ();
 
-        void                        setExecutableName               (const QString& executableName);
-        const QString&              executableName                  () const;
-        void                        setExecutableArguments          (const QString& executableArguments);
-        void                        setExecutableArguments          (const QStringList& executableArguments);
-        const QString&              executableArguments             () const;
-        void                        setExecutableWorkingDirectory   (const QString& executableWorkingDirectory);
-        const QString&              executableWorkingDirectory      () const;
-        void                        setExecutablePid                (int pid);
-        int                         executablePid                   () const;
-        void                        setExecutableHostPort           (const QString& executableHostPort);
-        const QString&              executableHostPort              () const;
-        void                        setExecutableCoreFilename       (const QString& executableCoreFilename);
-        const QString&              executableCoreFilename          () const;
+        void                        setExecutableName                   (const QString& executableName);
+        const QString&              executableName                      () const;
+        void                        setExecutableArguments              (const QString& executableArguments);
+        void                        setExecutableArguments              (const QStringList& executableArguments);
+        const QString&              executableArguments                 () const;
+        void                        setExecutableWorkingDirectory       (const QString& executableWorkingDirectory);
+        const QString&              executableWorkingDirectory          () const;
+        void                        setExecutableBreakpointsFilename    (const QString& breakpointsFilename);
+        const QString&              executableBreakpointsFilename       () const;
+        void                        setExecutablePid                    (int pid);
+        int                         executablePid                       () const;
+        void                        setExecutableHostPort               (const QString& executableHostPort);
+        const QString&              executableHostPort                  () const;
+        void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
+        const QString&              executableCoreFilename              () const;
 
-        void                        launchExecutable                (const QString& launchMode);
-        const QString&              executableLaunchMode            () const;
+        void                        launchExecutable                    (const QString& launchMode);
+        const QString&              executableLaunchMode                () const;
 
     private slots:
-        void                        handleFileDebug                 ();
-        void                        handleFileArguments             ();
-        void                        handleFileQuit                  ();
-        void                        handleViewMemoryVisualizer      ();
-        void                        handleViewArrayVisualizer       ();
-        void                        handleViewConsoleNormal         ();
-        void                        handleViewConsoleHidden         ();
-        void                        handleViewConsoleMinimized      ();
-        void                        handleSettingsConfiguration     ();
-        void                        handleSettingsSaveConfiguration ();
-        void                        handleHelpAbout                 ();
-        void                        handleText                      (const QString& text);
-        void                        handleRunStatusChanged          (SeerRunStatusIndicator::RunStatus status);
+        void                        handleFileDebug                     ();
+        void                        handleFileArguments                 ();
+        void                        handleFileQuit                      ();
+        void                        handleViewMemoryVisualizer          ();
+        void                        handleViewArrayVisualizer           ();
+        void                        handleViewConsoleNormal             ();
+        void                        handleViewConsoleHidden             ();
+        void                        handleViewConsoleMinimized          ();
+        void                        handleSettingsConfiguration         ();
+        void                        handleSettingsSaveConfiguration     ();
+        void                        handleHelpAbout                     ();
+        void                        handleText                          (const QString& text);
+        void                        handleRunStatusChanged              (SeerRunStatusIndicator::RunStatus status);
 
     protected:
-        void                        writeSettings                   ();
-        void                        readSettings                    ();
-        void                        writeConfigSettings             ();
-        void                        readConfigSettings              ();
-        void                        resizeEvent                     (QResizeEvent* event);
-        void                        closeEvent                      (QCloseEvent* event);
-        void                        setKeySettings                  (const SeerKeySettings& settings);
-        const SeerKeySettings       keySettings                     () const;
-        void                        refreshShortCuts                ();
+        void                        writeSettings                       ();
+        void                        readSettings                        ();
+        void                        writeConfigSettings                 ();
+        void                        readConfigSettings                  ();
+        void                        resizeEvent                         (QResizeEvent* event);
+        void                        closeEvent                          (QCloseEvent* event);
+        void                        setKeySettings                      (const SeerKeySettings& settings);
+        const SeerKeySettings       keySettings                         () const;
+        void                        refreshShortCuts                    ();
 
     private:
         QProgressIndicator*         _progressIndicator;

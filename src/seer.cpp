@@ -46,6 +46,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startOption(QStringList()<<"s"<<"start", QCoreApplication::translate("main", "Load the executable, break in main(), and run it."));
     parser.addOption(startOption);
 
+    QCommandLineOption breakpointsOption(QStringList()<<"b"<<"breakpoints", QCoreApplication::translate("main", "Optionally load a previously saved breakpoints file. For --run or --start"), "filename");
+    parser.addOption(breakpointsOption);
+
     QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a running process."), "pid");
     parser.addOption(attachOption);
 
@@ -78,6 +81,7 @@ int main (int argc, char* argv[]) {
     QString launchMode    = "none";
     int     executablePid = -1;
     QString executableHostPort;
+    QString executableBreakpointsFilename;
     QString executableCoreFilename;
 
     if (parser.isSet(runOption)) {
@@ -86,6 +90,10 @@ int main (int argc, char* argv[]) {
 
     if (parser.isSet(startOption)) {
         launchMode = "start";
+    }
+
+    if (parser.isSet(breakpointsOption)) {
+        executableBreakpointsFilename = parser.value(breakpointsOption);
     }
 
     if (parser.isSet(attachOption)) {
@@ -116,6 +124,7 @@ int main (int argc, char* argv[]) {
     seer.setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     seer.setExecutableName(executableName);
     seer.setExecutableArguments(positionalArguments);
+    seer.setExecutableBreakpointsFilename(executableBreakpointsFilename);
     seer.setExecutablePid(executablePid);
     seer.setExecutableHostPort(executableHostPort);
     seer.setExecutableCoreFilename(executableCoreFilename);

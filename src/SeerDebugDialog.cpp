@@ -23,6 +23,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Setup the widgets
     setExecutableName("");
     setExecutableArguments("");
+    setBreakpointsFilename("");
     setExecutableWorkingDirectory(QDir::currentPath());
     setBreakInMain(true);
     setAttachPid(0);
@@ -32,6 +33,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Connect things.
     QObject::connect(executableNameToolButton,             &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableNameToolButton);
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
+    QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
     QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::buttonClicked),   this, &SeerDebugDialog::handleRunModeChanged);
@@ -65,6 +67,14 @@ void SeerDebugDialog::setExecutableArguments (const QString& executableArguments
 
 QString SeerDebugDialog::executableArguments () const {
     return runProgramArgumentsLineEdit->text();
+}
+
+void SeerDebugDialog::setBreakpointsFilename (const QString& breakpointsFilename) {
+    loadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
+}
+
+QString SeerDebugDialog::breakpointsFilename () const {
+    return loadBreakpointsFilenameLineEdit->text();
 }
 
 void SeerDebugDialog::setBreakInMain (bool flag) {
@@ -235,6 +245,15 @@ void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
 
     if (name != "") {
         setExecutableWorkingDirectory(name);
+    }
+}
+
+void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
+
+    QString name = QFileDialog::getOpenFileName(this, "Select a breakpoints file to load.", breakpointsFilename(), "Breakpoints (*.brk);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setBreakpointsFilename(name);
     }
 }
 

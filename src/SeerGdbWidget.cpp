@@ -26,6 +26,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableName                 = "";
     _executableArguments            = "";
     _executableWorkingDirectory     = "";
+    _executableBreakpointsFilename  = "";
+    _executableCoreFilename         = "";
     _executablePid                  = 0;
     _gdbMonitor                     = 0;
     _gdbProcess                     = 0;
@@ -276,6 +278,14 @@ const QString& SeerGdbWidget::executableWorkingDirectory () const {
     return _executableWorkingDirectory;
 }
 
+void SeerGdbWidget::setExecutableBreakpointsFilename (const QString& breakpointsFilename) {
+    _executableBreakpointsFilename = breakpointsFilename;
+}
+
+const QString& SeerGdbWidget::executableBreakpointsFilename () const {
+    return _executableBreakpointsFilename;
+}
+
 void SeerGdbWidget::setExecutablePid (int pid) {
     _executablePid = pid;
 }
@@ -505,6 +515,7 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableArguments();         // Set the program's arguments before running.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
     }
 
     setNewExecutableFlag(false);
@@ -579,6 +590,7 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableArguments();         // Set the program's arguments before running.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
     }
 
     setNewExecutableFlag(false);
@@ -930,6 +942,16 @@ void SeerGdbWidget::handleGdbExecutableWorkingDirectory () {
     if (executableWorkingDirectory() != "") {
         handleGdbCommand(QString("-environment-cd ") + executableWorkingDirectory());
     }
+}
+
+void SeerGdbWidget::handleGdbExecutableLoadBreakpoints () {
+
+    if (executableBreakpointsFilename() == "") {
+        return;
+    }
+
+    handleGdbCommand("source -v " + executableBreakpointsFilename());
+    handleGdbGenericpointList();
 }
 
 void SeerGdbWidget::handleGdbTtyDeviceName () {

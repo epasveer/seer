@@ -176,6 +176,14 @@ const QString& SeerMainWindow::executableWorkingDirectory () const {
     return gdbWidget->executableWorkingDirectory();
 }
 
+void SeerMainWindow::setExecutableBreakpointsFilename (const QString& breakpointsFilename) {
+    gdbWidget->setExecutableBreakpointsFilename(breakpointsFilename);
+}
+
+const QString& SeerMainWindow::executableBreakpointsFilename () const {
+    return gdbWidget->executableBreakpointsFilename();
+}
+
 void SeerMainWindow::setExecutablePid (int pid) {
     gdbWidget->setExecutablePid(pid);
 }
@@ -238,6 +246,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setExecutableName(executableName());
     dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
     dlg.setExecutableArguments(executableArguments());
+    dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableHostPort());
     dlg.setCoreFilename(executableCoreFilename());
@@ -258,6 +267,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableName(dlg.executableName());
     setExecutableWorkingDirectory(dlg.executableWorkingDirectory());
     setExecutableArguments(dlg.executableArguments());
+    setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutablePid(dlg.attachPid());
     setExecutableHostPort(dlg.connectHostPort());
     setExecutableCoreFilename(dlg.coreFilename());

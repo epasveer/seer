@@ -22,5 +22,9 @@ Turn on logging like this:
     % export QT_LOGGING_RULES="seer.*.debug=false;seer.seergdbwidget.debug=true"
     % export QT_LOGGING_RULES="seer.*.debug=false;seer.gdbmonitor.debug=true"
 
+To turn on simple logging of qDebug(), et al, set this:
+
+    % export QT_LOGGING_RULES="default.debug=true"
+
 Then start seer. There should be lots of debug output.
 

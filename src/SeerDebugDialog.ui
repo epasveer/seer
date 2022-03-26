@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>596</width>
-    <height>612</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/HighContrast/document-open.svg</iconset>
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
         </property>
        </widget>
       </item>
@@ -97,7 +97,7 @@
         </property>
         <property name="icon">
          <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/HighContrast/document-open.svg</iconset>
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
         </property>
        </widget>
       </item>
@@ -116,158 +116,13 @@
       <string>Launch Method</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="4" column="0" colspan="4">
-       <widget class="QRadioButton" name="attachProgramRadioButton">
-        <property name="toolTip">
-         <string>Attach to an already running program.</string>
-        </property>
-        <property name="text">
-         <string>Attach program</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="8">
-       <widget class="Line" name="line_1">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="1" colspan="6">
-       <widget class="QLineEdit" name="loadCoreFilenameLineEdit">
-        <property name="toolTip">
-         <string>The path and name of a core file.</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0" colspan="8">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="0">
-       <widget class="QLabel" name="loadCoreFilenameLabel">
-        <property name="text">
-         <string>Core</string>
-        </property>
-       </widget>
-      </item>
-      <item row="10" column="0" colspan="8">
-       <widget class="Line" name="line_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0" colspan="3">
-       <widget class="QCheckBox" name="connectProgramDownloadCheckBox">
-        <property name="toolTip">
-         <string>Download the executable used by the gdbserver.</string>
-        </property>
-        <property name="text">
-         <string>Download</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="0" colspan="4">
-       <widget class="QRadioButton" name="connectProgramRadioButton">
-        <property name="toolTip">
-         <string>Connect to an already running program with gdbserver.</string>
-        </property>
-        <property name="text">
-         <string>Connect program</string>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="0" colspan="4">
-       <widget class="QRadioButton" name="loadCoreRadioButton">
-        <property name="toolTip">
-         <string>Load a core file to debug.</string>
-        </property>
-        <property name="text">
-         <string>Load a core file</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="4">
-       <widget class="QToolButton" name="attachProgramPidToolButton">
-        <property name="toolTip">
-         <string>Open a dialog to select a pid on the local system.</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" colspan="6">
-       <widget class="QLineEdit" name="runProgramArgumentsLineEdit">
-        <property name="toolTip">
-         <string>The arguments to pass to the program.</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="7">
-       <widget class="QToolButton" name="loadCoreFilenameToolButton">
-        <property name="toolTip">
-         <string>Open a dialog to select a core file.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/HighContrast/document-open.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="5" colspan="2">
-       <spacer name="attachProgramHorizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>278</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="0" colspan="4">
+      <item row="0" column="0" colspan="3">
        <widget class="QRadioButton" name="runProgramRadioButton">
         <property name="toolTip">
          <string>Run the program.</string>
         </property>
         <property name="text">
          <string>Run program</string>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="6" colspan="2">
-       <spacer name="connectProgramHorizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>230</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <widget class="QLabel" name="attachProgramPidLabel">
-        <property name="text">
-         <string>Process PID</string>
         </property>
        </widget>
       </item>
@@ -278,7 +133,38 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="4">
+      <item row="2" column="0" colspan="2">
+       <widget class="QLabel" name="loadBreakpointsFilenameLabel">
+        <property name="text">
+         <string>Breakpoints</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" colspan="3">
+       <widget class="QLineEdit" name="loadBreakpointsFilenameLineEdit">
+        <property name="toolTip">
+         <string>A file containing previously saved breakpoints.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="5">
+       <widget class="QToolButton" name="loadBreakpointsFilenameToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a breakpoints file.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3">
        <widget class="QCheckBox" name="runProgramBreakInMainCheckBox">
         <property name="toolTip">
          <string>Set a breakpoint in main() before running program.</string>
@@ -294,7 +180,31 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="2" colspan="2">
+      <item row="4" column="0" colspan="6">
+       <widget class="Line" name="line_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
+       <widget class="QRadioButton" name="attachProgramRadioButton">
+        <property name="toolTip">
+         <string>Attach to an already running program.</string>
+        </property>
+        <property name="text">
+         <string>Attach program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QLabel" name="attachProgramPidLabel">
+        <property name="text">
+         <string>Process PID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
        <widget class="QLineEdit" name="attachProgramPidLineEdit">
         <property name="toolTip">
          <string>The process pid.</string>
@@ -310,14 +220,54 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0" colspan="2">
+      <item row="6" column="3">
+       <widget class="QToolButton" name="attachProgramPidToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a pid on the local system.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="4">
+       <spacer name="attachProgramHorizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>278</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="0" colspan="6">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" colspan="3">
+       <widget class="QRadioButton" name="connectProgramRadioButton">
+        <property name="toolTip">
+         <string>Connect to an already running program with gdbserver.</string>
+        </property>
+        <property name="text">
+         <string>Connect program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0" colspan="2">
        <widget class="QLabel" name="connectProgramHostPortLabel">
         <property name="text">
          <string>Gdbserver</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="2" colspan="4">
+      <item row="9" column="2" colspan="2">
        <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
         <property name="toolTip">
          <string>The name of the remote host where gdbserver has already been started.</string>
@@ -327,6 +277,87 @@
         </property>
         <property name="placeholderText">
          <string>host:port</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="4" colspan="2">
+       <spacer name="connectProgramHorizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>230</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="10" column="0" colspan="2">
+       <widget class="QCheckBox" name="connectProgramDownloadCheckBox">
+        <property name="toolTip">
+         <string>Download the executable used by the gdbserver.</string>
+        </property>
+        <property name="text">
+         <string>Download</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0" colspan="6">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0" colspan="3">
+       <widget class="QRadioButton" name="loadCoreRadioButton">
+        <property name="toolTip">
+         <string>Load a core file to debug.</string>
+        </property>
+        <property name="text">
+         <string>Load a core file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="loadCoreFilenameLabel">
+        <property name="text">
+         <string>Core</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1" colspan="4">
+       <widget class="QLineEdit" name="loadCoreFilenameLineEdit">
+        <property name="toolTip">
+         <string>The path and name of a core file.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="5">
+       <widget class="QToolButton" name="loadCoreFilenameToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a core file.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="4">
+       <widget class="QLineEdit" name="runProgramArgumentsLineEdit">
+        <property name="toolTip">
+         <string>The arguments to pass to the program.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>

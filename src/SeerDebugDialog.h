@@ -24,6 +24,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         // Run or start executable. "run" or "start".
         void                    setExecutableArguments                          (const QString& executableArguments);
         QString                 executableArguments                             () const;
+        void                    setBreakpointsFilename                          (const QString& breakpointsFilename);
+        QString                 breakpointsFilename                             () const;
         void                    setBreakInMain                                  (bool flag);
         bool                    breakInMain                                     () const;
 
@@ -48,6 +50,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
     protected slots:
         void                    handleExecutableNameToolButton                  ();
         void                    handleExecutableWorkingDirectoryToolButton      ();
+        void                    handleLoadBreakpointsFilenameToolButton         ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
         void                    handleRunModeChanged                            (int id);
