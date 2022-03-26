@@ -1,0 +1,26 @@
+Seer uses Qt's logging in a few places. This is for the purpose of debugging issues
+for a released version.
+
+Qt's logging is described in:
+
+    https://doc.qt.io/qt-5/qloggingcategory.html
+
+Seer has these logging categories:
+
+    seer.seergdbwidget.debug        # The object that communicates with the gdb process
+    seer.gdbmonitor.debug           # The object that monitors output from the gdb process
+    ^  ^ ^        ^ ^___^___________The logging channel. Can be debug, warning, critical, info.
+    |  | |________|_________________The logging category. It should follow the Seer class name, in lowercase.
+    |__|____________________________Always the seer name.
+
+Not all Seer classes have logging programmed. The above list will be updated as needed.
+
+There are a few ways to enable logging. The easiest is by the environment variable.
+Turn on logging like this:
+
+    % export QT_LOGGING_RULES="seer.*.debug=true"
+    % export QT_LOGGING_RULES="seer.*.debug=false;seer.seergdbwidget.debug=true"
+    % export QT_LOGGING_RULES="seer.*.debug=false;seer.gdbmonitor.debug=true"
+
+Then start seer. There should be lots of debug output.
+

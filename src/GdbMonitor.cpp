@@ -2,7 +2,11 @@
 #include <QtCore/QtCore>
 #include <QtCore/QProcess>
 #include <QtCore/QRegExp>
+#include <QtCore/QLoggingCategory>
+#include <QtCore/QDebug>
 #include <iostream>
+
+static QLoggingCategory LC("seer.gdbmonitor");
 
 GdbMonitor::GdbMonitor (QObject* parent) : QObject(parent) {
     _process = 0;
@@ -49,6 +53,8 @@ void GdbMonitor::handleReadyReadStandardError () {
         // Convert to a string.
         QString text(buf);
 
+        qCDebug(LC) << text;
+
         // Start broadcasting it around.
         emit allTextOutput(text);
     }
@@ -74,6 +80,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         QString text(buf);
 
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
+        qCDebug(LC) << text;
 
         // Start broadcasting it around.
         emit allTextOutput(text);
@@ -109,6 +116,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 void GdbMonitor::handleTextOutput (QString text) {
 
     //qDebug() << "Ready to handle text output";
+    qCDebug(LC) << text;
 
     emit allTextOutput(text);
 

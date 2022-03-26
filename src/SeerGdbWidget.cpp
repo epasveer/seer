@@ -8,6 +8,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
+#include <QtCore/QLoggingCategory>
 #include <QtCore/QDebug>
 #include <unistd.h>
 #include <stdlib.h>
@@ -17,6 +18,8 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
+
+static QLoggingCategory LC("seer.seergdbwidget");
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
@@ -441,6 +444,8 @@ void SeerGdbWidget::handleGdbExit () {
 
 void SeerGdbWidget::handleGdbRunExecutable () {
 
+    qCDebug(LC) << "Starting 'gdb run'.";
+
     // Has a executable name been provided?
     if (executableName() == "") {
 
@@ -506,9 +511,13 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
     // Run the executable. Do not stop in main.
     handleGdbCommand("-exec-run");
+
+    qCDebug(LC) << "Finishing 'gdb run'.";
 }
 
 void SeerGdbWidget::handleGdbStartExecutable () {
+
+    qCDebug(LC) << "Starting 'gdb start'.";
 
     // Has a executable name been provided?
     if (executableName() == "") {
@@ -576,6 +585,8 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Run the executable. Stop in main.
     handleGdbCommand("-exec-run --start");
+
+    qCDebug(LC) << "Finishing 'gdb start'.";
 }
 
 void SeerGdbWidget::handleGdbAttachExecutable () {
