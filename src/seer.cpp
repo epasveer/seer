@@ -10,8 +10,19 @@
 
 int main (int argc, char* argv[]) {
 
+    //
+    // Set up logging and message formats.
+    //
+    QLoggingCategory::setFilterRules("*.debug=false\n"
+                                     "*.info=false\n"
+                                     "*.warning=false\n"
+                                     "*.critical=true");
+
     qSetMessagePattern("[%{time hh:mm:ss}][%{function}:%{line}][%{category}] %{message}");
 
+    //
+    // Create the app.
+    //
     QApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("Seer");
