@@ -8,6 +8,7 @@ SeerSeerConfigPage::SeerSeerConfigPage(QWidget* parent) : QWidget(parent) {
 
     // Setup the widgets
     setConsoleMode("normal");
+    setConsoleScrollLines(1000);
     setRememberWindowSizes(true);
     setRememberManualCommandCount(10);
     setClearManualCommandHistory(false);
@@ -48,6 +49,16 @@ QString SeerSeerConfigPage::consoleMode () const {
     }else{
         return "normal";
     }
+}
+
+void SeerSeerConfigPage::setConsoleScrollLines (int count) {
+
+    consoleScrollLinesSpinBox->setValue(count);
+}
+
+int SeerSeerConfigPage::consoleScrollLines () const {
+
+    return consoleScrollLinesSpinBox->value();
 }
 
 void SeerSeerConfigPage::setRememberWindowSizes (bool flag) {

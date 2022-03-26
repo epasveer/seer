@@ -42,6 +42,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbASyncMode                   = true;
     _gdbHandleTerminatingException  = true;
     _consoleMode                    = "";
+    _consoleScrollLines             = 1000;
     _rememberManualCommandCount     = 10;
     _currentFrame                   = -1;
 
@@ -1581,6 +1582,7 @@ void SeerGdbWidget::writeSettings () {
 
     settings.beginGroup("consolewindow"); {
         settings.setValue("start", consoleMode());
+        settings.setValue("scrolllines", consoleScrollLines());
     }settings.endGroup();
 
     settings.beginWriteArray("manualgdbcommandshistory"); {
@@ -1627,6 +1629,7 @@ void SeerGdbWidget::readSettings () {
 
     settings.beginGroup("consolewindow"); {
         setConsoleMode(settings.value("start", "normal").toString());
+        setConsoleScrollLines(settings.value("scrolllines", 1000).toInt());
     } settings.endGroup();
 
     int size = settings.beginReadArray("manualgdbcommandshistory"); {
@@ -1738,6 +1741,7 @@ void SeerGdbWidget::createConsole () {
         _consoleWidget->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
         setConsoleMode(consoleMode());
+        setConsoleScrollLines(consoleScrollLines());
     }
 }
 
@@ -1796,6 +1800,20 @@ QString SeerGdbWidget::consoleMode () const {
     }
 
     return _consoleMode;
+}
+
+void SeerGdbWidget::setConsoleScrollLines (int count) {
+
+    _consoleScrollLines = count;
+
+    if (_consoleWidget) {
+        _consoleWidget->setScrollLines(_consoleScrollLines);
+    }
+}
+
+int SeerGdbWidget::consoleScrollLines () const {
+
+    return _consoleScrollLines;
 }
 
 void SeerGdbWidget::setManualCommands (const QStringList& commands) {

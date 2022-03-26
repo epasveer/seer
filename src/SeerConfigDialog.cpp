@@ -195,16 +195,6 @@ SeerKeySettings SeerConfigDialog::keySettings () const {
     return _keysConfigPage->keySettings();
 }
 
-void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
-
-    _seerConfigPage->setRememberWindowSizes(flag);
-}
-
-bool SeerConfigDialog::seerRememberWindowSizes () const {
-
-    return _seerConfigPage->rememberWindowSizes();
-}
-
 void SeerConfigDialog::setSeerConsoleMode (const QString& mode) {
 
     _seerConfigPage->setConsoleMode(mode);
@@ -213,6 +203,25 @@ void SeerConfigDialog::setSeerConsoleMode (const QString& mode) {
 QString SeerConfigDialog::seerConsoleMode () const {
 
     return _seerConfigPage->consoleMode();
+}
+
+void SeerConfigDialog::setSeerConsoleScrollLines (int count) {
+
+    _seerConfigPage->setConsoleScrollLines(count);
+}
+
+int SeerConfigDialog::seerConsoleScrollLines () const {
+
+    return _seerConfigPage->consoleScrollLines();
+}
+void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
+
+    _seerConfigPage->setRememberWindowSizes(flag);
+}
+
+bool SeerConfigDialog::seerRememberWindowSizes () const {
+
+    return _seerConfigPage->rememberWindowSizes();
 }
 
 void SeerConfigDialog::setSeerRememberManualCommandCount (int count) {
@@ -293,6 +302,7 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         }else if (itemLabel == "Seer") {
 
             setSeerConsoleMode("normal");
+            setSeerConsoleScrollLines(1000);
             setSeerRememberWindowSizes(true);
             setSeerRememberManualCommandCount(10);
             setSeerClearManualCommandHistory(false);

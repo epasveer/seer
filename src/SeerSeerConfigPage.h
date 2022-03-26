@@ -15,6 +15,9 @@ class SeerSeerConfigPage : public QWidget, public Ui::SeerSeerConfigPage {
         void                    setConsoleMode                                  (const QString& mode);
         QString                 consoleMode                                     () const;
 
+        void                    setConsoleScrollLines                           (int count);
+        int                     consoleScrollLines                              () const;
+
         void                    setRememberWindowSizes                          (bool flag);
         bool                    rememberWindowSizes                             () const;
 

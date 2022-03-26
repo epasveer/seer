@@ -77,6 +77,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setConsoleMode                      (const QString& mode);
         QString                             consoleMode                         () const;
 
+        void                                setConsoleScrollLines               (int count);
+        int                                 consoleScrollLines                  () const;
+
         void                                setManualCommands                   (const QStringList& commands);
         QStringList                         manualCommands                      (int count) const;
 
@@ -218,6 +221,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         SeerConsoleWidget*                  _consoleWidget;
         QString                             _consoleMode;
+        int                                 _consoleScrollLines;
         int                                 _rememberManualCommandCount;
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;

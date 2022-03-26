@@ -335,6 +335,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
+    dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
     dlg.setKeySettings(keySettings());
 
@@ -356,6 +357,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
+    gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
     gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
 
     // Clear history, if we need to.

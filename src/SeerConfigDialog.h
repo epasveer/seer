@@ -63,14 +63,18 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         SeerKeySettings                     keySettings                                     () const;
 
         // Seer settings.
-        void                                setSeerRememberWindowSizes                      (bool flag);
-        bool                                seerRememberWindowSizes                         () const;
-
         void                                setSeerConsoleMode                              (const QString& mode);
         QString                             seerConsoleMode                                 () const;
 
+        void                                setSeerConsoleScrollLines                       (int count);
+        int                                 seerConsoleScrollLines                          () const;
+
+        void                                setSeerRememberWindowSizes                      (bool flag);
+        bool                                seerRememberWindowSizes                         () const;
+
         void                                setSeerRememberManualCommandCount               (int count);
         int                                 seerRememberManualCommandCount                  () const;
+
         void                                setSeerClearManualCommandHistory                (bool flag);
         bool                                seerClearManualCommandHistory                   () const;
 

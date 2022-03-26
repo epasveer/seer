@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>728</width>
-    <height>445</height>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,70 +20,6 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="consoleModeGroupBox">
-     <property name="title">
-      <string>Console mode on startup</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QRadioButton" name="normalRadioButton">
-        <property name="toolTip">
-         <string>The console is shown normally.</string>
-        </property>
-        <property name="text">
-         <string>Normal</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="minimizedRadioButton">
-        <property name="toolTip">
-         <string>The console is shown minimized in the task bar.</string>
-        </property>
-        <property name="text">
-         <string>Minimized</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="hiddenRadioButton">
-        <property name="toolTip">
-         <string>The console is totally hidden. Can be reshown with: View-&gt;Console-&gt;Normal</string>
-        </property>
-        <property name="text">
-         <string>Hidden</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="windowSizesGroupBox">
-     <property name="title">
-      <string>Window sizes</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="rememberSizescheckBox">
-        <property name="text">
-         <string>Remember window sizes.</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="2" column="0">
     <widget class="QGroupBox" name="manualGdbCommandsGroupBox">
      <property name="title">
@@ -130,6 +66,22 @@
      </layout>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="windowSizesGroupBox">
+     <property name="title">
+      <string>Window sizes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="rememberSizescheckBox">
+        <property name="text">
+         <string>Remember window sizes.</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="3" column="0">
     <widget class="QTextBrowser" name="textBrowser">
      <property name="html">
@@ -139,13 +91,107 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Specify general settings for the Seer program itself.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;On startup, the Seer Console can be shown normal, minimized, or hidden.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;On startup, the Seer Console can be shown normal, minimized, or hidden. Also, the console can limit the number of lines in its scroll history. 0 means all lines.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The window sizes can be remembered if they get changed. On startup, Seer will start with the remembered sizes.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Also, 'N' of the most recent manually entered gdb/mi commands will be remembered. 0 means all.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="consoleModeGroupBox">
+     <property name="title">
+      <string>Console mode on startup</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="4">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>218</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="consoleScrollLinesSpinBox">
+        <property name="toolTip">
+         <string>Maximum number of scroll lines. 0 means unlimited.</string>
+        </property>
+        <property name="maximum">
+         <number>99999</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="consoleScrollLinesLabel">
+        <property name="text">
+         <string>Number of scroll lines</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="hiddenRadioButton">
+        <property name="toolTip">
+         <string>The console is totally hidden. Can be reshown with: View-&gt;Console-&gt;Normal</string>
+        </property>
+        <property name="text">
+         <string>Hidden</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="minimizedRadioButton">
+        <property name="toolTip">
+         <string>The console is shown minimized in the task bar.</string>
+        </property>
+        <property name="text">
+         <string>Minimized</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="normalRadioButton">
+        <property name="toolTip">
+         <string>The console is shown normally.</string>
+        </property>
+        <property name="text">
+         <string>Normal</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

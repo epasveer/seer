@@ -277,6 +277,10 @@ void SeerConsoleWidget::createConsole () {
 
     // Save the device name.
     _ttyDeviceName = ptsname(_ptsFD);
+
+    // Set maximum blocks to 0 (unlimited).
+    // The createConsole can be followed with a setScrollLines() call.
+    setScrollLines(0);
 }
 
 void SeerConsoleWidget::connectConsole () {
@@ -311,6 +315,16 @@ void SeerConsoleWidget::deleteConsole () {
     _ttyDeviceName = "";
 
     ::close(_ptsFD); _ptsFD = -1;
+}
+
+void SeerConsoleWidget::setScrollLines (int count) {
+
+    textEdit->setMaximumBlockCount(count);
+}
+
+int SeerConsoleWidget::scrollLines () const {
+
+    return textEdit->maximumBlockCount();
 }
 
 void SeerConsoleWidget::writeSettings() {
