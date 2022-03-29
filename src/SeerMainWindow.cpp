@@ -132,6 +132,7 @@ const QString& SeerMainWindow::executableName () const {
 }
 
 void SeerMainWindow::setExecutableArguments (const QString& executableArguments) {
+
     gdbWidget->setExecutableArguments(executableArguments);
 }
 

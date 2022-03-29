@@ -514,12 +514,14 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableArguments();         // Set the program's arguments before running.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
     }
 
     setNewExecutableFlag(false);
+
+    // Set the program's arguments before running.
+    handleGdbExecutableArguments();
 
     // Run the executable. Do not stop in main.
     handleGdbCommand("-exec-run");
@@ -589,12 +591,14 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableArguments();         // Set the program's arguments before running.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
     }
 
     setNewExecutableFlag(false);
+
+    // Set the program's arguments before running.
+    handleGdbExecutableArguments();
 
     // Run the executable. Stop in main.
     handleGdbCommand("-exec-run --start");
@@ -656,7 +660,6 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableArguments();         // Set the program's arguments before running.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
     }
 
