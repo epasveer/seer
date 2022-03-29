@@ -285,6 +285,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 1
     runProgramArgumentsLineEdit->setEnabled(false);
     runProgramBreakInMainCheckBox->setEnabled(false);
+    loadBreakpointsFilenameLineEdit->setEnabled(false);
+    loadBreakpointsFilenameToolButton->setEnabled(false);
 
     // ID == 2
     attachProgramPidLineEdit->setEnabled(false);
@@ -306,6 +308,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     if (id == 1) {
         runProgramArgumentsLineEdit->setEnabled(true);
         runProgramBreakInMainCheckBox->setEnabled(true);
+        loadBreakpointsFilenameLineEdit->setEnabled(true);
+        loadBreakpointsFilenameToolButton->setEnabled(true);
     }
 
     // ID == 2
