@@ -292,6 +292,8 @@ void SeerMainWindow::handleFileArguments () {
 
 void SeerMainWindow::handleFileQuit () {
 
+    gdbWidget->handleGdbShutdown();
+
     QCoreApplication::exit(0);
 }
 

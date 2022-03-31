@@ -10,6 +10,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QDebug>
+#include <QtGlobal>
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -811,6 +812,9 @@ void SeerGdbWidget::handleGdbShutdown () {
         return;
     }
 
+    // We are in no mode now.
+    setExecutableLaunchMode("");
+
     // Give the gdb and 'exit' command.
     // This should handle detaching from an attached pid.
     handleGdbExit();
@@ -965,7 +969,7 @@ void SeerGdbWidget::handleGdbTtyDeviceName () {
         handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->ttyDeviceName());
 
     }else{
-        qDebug() << "Can't set TTY name because the name is blank.";
+        qWarning() << "Can't set TTY name because the name is blank.";
     }
 }
 
@@ -1550,22 +1554,28 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
 
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
-    Q_UNUSED(exitCode);
-    Q_UNUSED(exitStatus);
-
     //qDebug() << "Gdb process finished. Exit code =" << exitCode << "Exit status =" << exitStatus;
+
+    // Warn if gdb exits only if we are in some kind of run mode.
+    if (executableLaunchMode() != "") {
+
+        QMessageBox::warning(this, "Seer",
+                QString("The GDB program exited unexpectedly.\n\n") +
+                QString("Exit code=%1 Exit status=%2").arg(exitCode).arg(exitStatus) + "\n\n" +
+                QString("Please restart Seer."),
+                QMessageBox::Ok);
+    }
 }
 
 void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus) {
-
-    Q_UNUSED(errorStatus);
 
     //qDebug() << "Error launching gdb process. Error =" << errorStatus;
 
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the GDB program.\n\n") +
-                                   QString("(%1 %2)").arg(gdbProgram()).arg(gdbArguments()),
+                                   QString("(%1 %2)").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
+                                   QString("Error status=%1)").arg(errorStatus),
                                    QMessageBox::Ok);
     }
 }
@@ -1695,7 +1705,7 @@ void SeerGdbWidget::startGdb () {
 
     // Don't do anything, if already running.
     if (isGdbRuning()) {
-        qDebug() << "Already running";
+        qWarning() << "Already running";
 
         return;
     }
@@ -1728,7 +1738,7 @@ void SeerGdbWidget::killGdb () {
 
     // Sanity check.
     if (isGdbRuning()) {
-        qDebug() << "Is running but shouldn't be.";
+        qWarning() << "Is running but shouldn't be.";
     }
 
     // Clear the launch mode.
