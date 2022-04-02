@@ -15,6 +15,8 @@ SeerKeySettings::~SeerKeySettings () {
 SeerKeySettings& SeerKeySettings::operator== (const SeerKeySettings& rhs) {
 
     _keys = rhs._keys;
+
+    return *this;
 }
 
 QStringList SeerKeySettings::keys () const {

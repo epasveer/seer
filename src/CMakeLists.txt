@@ -13,6 +13,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_CXX_FLAGS_DEBUG_INIT   "-Wall")       # Remove if your compiler
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall")       # doesn't support the -Wall flag.
+
 find_package(Qt5Core         REQUIRED)
 find_package(Qt5Gui          REQUIRED)
 find_package(Qt5Widgets      REQUIRED)

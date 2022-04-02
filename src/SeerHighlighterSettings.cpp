@@ -15,6 +15,8 @@ SeerHighlighterSettings::~SeerHighlighterSettings () {
 SeerHighlighterSettings& SeerHighlighterSettings::operator== (const SeerHighlighterSettings& rhs) {
 
     _formats = rhs._formats;
+
+    return *this;
 }
 
 QStringList SeerHighlighterSettings::keys () const {

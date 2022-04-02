@@ -113,26 +113,21 @@ QString SeerArrayVisualizerWidget::variableName () const {
 
 void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
 
-    unsigned long offset = 0;
-    bool ok = false;
-
     if (address.startsWith("0x")) {
 
-        offset = address.toULong(&ok, 16);
+        bool ok = false;
+
+        address.toULong(&ok, 16);
 
         if (ok == true) {
             variableAddressLineEdit->setText(address);
         }else{
             variableAddressLineEdit->setText("not an address");
-            offset = 0;
         }
 
     }else{
         variableAddressLineEdit->setText("not an address");
-        offset = 0;
     }
-
-    //qDebug() << address << offset << ok;
 
     arrayTableWidget->setAddressOffset(0);
 }

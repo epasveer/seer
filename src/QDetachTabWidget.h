@@ -5,11 +5,11 @@
 
 struct QDetachTabInfo {
 
-    QDetachTabInfo(QString title, QWidget* widget, QWidget* placeholderWidget) : _title(title), _widget(widget), _placeholderWidget(placeholderWidget) {}
-
+    QString     _title;
     QWidget*    _widget;
     QWidget*    _placeholderWidget;
-    QString     _title;
+
+    QDetachTabInfo(QString title, QWidget* widget, QWidget* placeholderWidget) : _title(title), _widget(widget), _placeholderWidget(placeholderWidget) {}
 };
 
 
