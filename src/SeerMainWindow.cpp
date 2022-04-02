@@ -351,6 +351,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     // Update the GdbWidget with the new settings.
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
+    gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
