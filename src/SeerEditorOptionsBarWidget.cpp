@@ -14,6 +14,11 @@ QToolButton* SeerEditorOptionsBarWidget::fileOpenToolButton () {
     return fileOpenTB;
 }
 
+QToolButton* SeerEditorOptionsBarWidget::fileCloseToolButton () {
+
+    return fileCloseTB;
+}
+
 QToolButton* SeerEditorOptionsBarWidget::textSearchToolButton () {
 
     return textSearchTB;

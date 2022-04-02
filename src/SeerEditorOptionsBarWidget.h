@@ -12,6 +12,7 @@ class SeerEditorOptionsBarWidget : public QWidget, protected Ui::SeerEditorOptio
        ~SeerEditorOptionsBarWidget ();
 
         QToolButton*            fileOpenToolButton          ();
+        QToolButton*            fileCloseToolButton         ();
         QToolButton*            textSearchToolButton        ();
 };
 

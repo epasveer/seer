@@ -1,6 +1,7 @@
 #include "SeerEditorManagerWidget.h"
 #include "SeerEditorWidget.h"
 #include "SeerEditorOptionsBarWidget.h"
+#include "SeerCloseSourceDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
@@ -36,6 +37,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     // Connect things.
     QObject::connect(tabWidget,                                 &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
     QObject::connect(editorOptionsBar->fileOpenToolButton(),    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
+    QObject::connect(editorOptionsBar->fileCloseToolButton(),   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(editorOptionsBar->textSearchToolButton(),  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
 }
 
@@ -594,6 +596,17 @@ void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {
     info.makeAbsolute();
 
     handleOpenFile(info.fileName(), info.filePath(), 0);
+}
+
+void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
+
+    // XXX - todo
+
+    SeerCloseSourceDialog dlg(this);
+
+    int ret = dlg.exec();
+
+    return;
 }
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {

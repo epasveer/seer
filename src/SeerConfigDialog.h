@@ -5,7 +5,6 @@
 #include "SeerSourceConfigPage.h"
 #include "SeerKeysConfigPage.h"
 #include "SeerSeerConfigPage.h"
-
 #include <QtWidgets/QDialog>
 
 #include "ui_SeerConfigDialog.h"
