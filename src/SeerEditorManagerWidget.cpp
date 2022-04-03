@@ -105,6 +105,28 @@ void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i)
     _entries.erase(i);
 }
 
+SeerEditorManagerFiles SeerEditorManagerWidget::openedFiles () const {
+
+    SeerEditorManagerFiles files;
+
+    SeerEditorManagerEntries::const_iterator b = beginEntry();
+    SeerEditorManagerEntries::const_iterator e = endEntry();
+
+    while (b != e) {
+
+        SeerEditorManagerFile f;
+
+        f.file     = b->file;
+        f.fullname = b->fullname;
+
+        files.push_back(f);
+
+        b++;
+    }
+
+    return files;
+}
+
 void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
 
     _editorFont = font;
@@ -575,7 +597,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
             deleteEntry(b);                 // Delete the entry from the map.
             tabWidget->removeTab(index);    // Remove the tab.
-            delete editorWidget;              // Delete the actual EditorWidget
+            delete editorWidget;            // Delete the actual EditorWidget
 
             break;
         }
@@ -600,13 +622,40 @@ void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
-    // XXX - todo
-
     SeerCloseSourceDialog dlg(this);
+    dlg.setFiles(openedFiles());
 
     int ret = dlg.exec();
 
-    return;
+    if (ret == 0) {
+        return;
+    }
+
+    SeerEditorManagerFiles files = dlg.selectedFiles();
+
+    for (int i=0; i<files.size(); i++) {
+
+        SeerEditorWidget* w = editorWidgetTab(files[i].fullname);
+
+        if (w == 0) {
+            qWarning() << "Can't find opened file for:" << files[i].fullname;
+            continue;
+        }
+
+        int idx = tabWidget->indexOf(w);
+
+        if (idx < 0) {
+            qWarning() << "Can't find tab index for:" << files[i].fullname;
+            continue;
+        }
+
+        deleteEditorWidgetTab(idx);
+    }
+
+    // If there are no tabs left, create a place holder.
+    if (tabWidget->count() == 0) {
+        createEditorWidgetTab("", "");
+    }
 }
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {

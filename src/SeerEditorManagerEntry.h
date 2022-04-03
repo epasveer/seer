@@ -3,6 +3,7 @@
 #include "SeerEditorWidget.h"
 #include <QtCore/QString>
 #include <QtCore/QMap>
+#include <QtCore/QVector>
 
 struct SeerEditorManagerEntry {
     QString             fullname;
@@ -11,4 +12,11 @@ struct SeerEditorManagerEntry {
 };
 
 typedef QMap<QString,SeerEditorManagerEntry> SeerEditorManagerEntries;
+
+struct SeerEditorManagerFile {
+    QString             fullname;
+    QString             file;
+};
+
+typedef QVector<SeerEditorManagerFile> SeerEditorManagerFiles;
 

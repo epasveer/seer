@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SeerEditorManagerEntry.h"
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QWidget>
 
@@ -12,6 +13,10 @@ class SeerCloseSourceDialog : public QDialog, public Ui::SeerCloseSourceDialogFo
     public:
         explicit SeerCloseSourceDialog (QWidget* parent = 0);
        ~SeerCloseSourceDialog ();
+
+        void                        setFiles                    (const SeerEditorManagerFiles& files);
+        SeerEditorManagerFiles      files                       () const;
+        SeerEditorManagerFiles      selectedFiles               () const;
 
     protected slots:
 

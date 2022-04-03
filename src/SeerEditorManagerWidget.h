@@ -30,6 +30,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries::const_iterator        endEntry                            () const;
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
+        SeerEditorManagerFiles                          openedFiles                         () const;
+
         void                                            setEditorFont                       (const QFont& font);
         const QFont&                                    editorFont                          () const;
         void                                            setEditorHighlighterSettings        (const SeerHighlighterSettings& settings);
