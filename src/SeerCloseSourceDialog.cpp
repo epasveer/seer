@@ -1,6 +1,7 @@
 #include "SeerCloseSourceDialog.h"
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QWidget>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerCloseSourceDialog::SeerCloseSourceDialog(QWidget* parent) : QDialog(parent) {
@@ -11,6 +12,9 @@ SeerCloseSourceDialog::SeerCloseSourceDialog(QWidget* parent) : QDialog(parent) 
     // Setup the widgets
 
     // Connect things.
+
+    // Restore window settings.
+    readSettings();
 }
 
 SeerCloseSourceDialog::~SeerCloseSourceDialog() {
@@ -69,5 +73,34 @@ SeerEditorManagerFiles SeerCloseSourceDialog::selectedFiles () const {
     }
 
     return files;
+}
+
+void SeerCloseSourceDialog::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("closesourcedialog"); {
+        settings.setValue("size", size());
+    } settings.endGroup();
+
+    //qDebug() << size();
+}
+
+void SeerCloseSourceDialog::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("closesourcedialog"); {
+        resize(settings.value("size", QSize(400, 300)).toSize());
+    } settings.endGroup();
+
+    //qDebug() << size();
+}
+
+void SeerCloseSourceDialog::resizeEvent (QResizeEvent* event) {
+
+    writeSettings();
+
+    QWidget::resizeEvent(event);
 }
 

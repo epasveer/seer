@@ -20,6 +20,11 @@ class SeerCloseSourceDialog : public QDialog, public Ui::SeerCloseSourceDialogFo
 
     protected slots:
 
+    protected:
+        void                        writeSettings               ();
+        void                        readSettings                ();
+        void                        resizeEvent                 (QResizeEvent* event);
+
     private:
 };
 
