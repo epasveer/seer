@@ -6,6 +6,7 @@
 #include <QtWidgets/QApplication>
 #include <QtCore/QFileInfo>
 #include <QtCore/Qt>
+#include <QtCore/QMap>
 #include <QtCore/QDebug>
 
 SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -63,11 +64,11 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
         //     {file=\"helloworld.cpp\",fullname=\"/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp\"}
         // ]
 
-        QString files_text = Seer::parseFirst(text, "files=", '[', ']', false);
-
-        //qDebug() << files_text;
-
+        QString files_text     = Seer::parseFirst(text, "files=", '[', ']', false);
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
+
+        // Set up a map to look for duplicate entries.  QMap<fullname,file>
+        QMap<QString,QString> files;
 
         for ( const auto& entry_text : files_list  ) {
 
@@ -75,6 +76,13 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
 
             //qDebug() << file_text << fullname_text;
+
+            // Skip duplicates
+            if (files.contains(fullname_text)) {
+                continue;
+            }
+
+            files.insert(fullname_text, file_text);
 
             // Get information about the file.
             QFileInfo fileInfo(fullname_text);
