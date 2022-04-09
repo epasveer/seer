@@ -106,6 +106,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
 
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,      this,           &SeerMainWindow::handleChangeWindowTitle);
+
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     // Restore window settings.
@@ -630,6 +632,15 @@ void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus s
         _progressIndicator->stop();
     }
 
+}
+
+void SeerMainWindow::handleChangeWindowTitle (QString title) {
+
+    if (title == "") {
+        setWindowTitle("Seer Debugger");
+    }else{
+        setWindowTitle("Seer Debugger - '" + title + "'");
+    }
 }
 
 void SeerMainWindow::writeSettings() {

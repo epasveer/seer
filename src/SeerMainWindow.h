@@ -52,6 +52,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleHelpAbout                     ();
         void                        handleText                          (const QString& text);
         void                        handleRunStatusChanged              (SeerRunStatusIndicator::RunStatus status);
+        void                        handleChangeWindowTitle             (QString title);
 
     protected:
         void                        writeSettings                       ();

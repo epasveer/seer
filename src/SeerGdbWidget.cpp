@@ -479,6 +479,9 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         }
     }
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
         disconnectConsole();
@@ -487,6 +490,9 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
+
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -527,6 +533,8 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     // Run the executable. Do not stop in main.
     handleGdbCommand("-exec-run");
 
+    QApplication::restoreOverrideCursor();
+
     qCDebug(LC) << "Finishing 'gdb run'.";
 }
 
@@ -555,6 +563,9 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         }
     }
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
         disconnectConsole();
@@ -563,6 +574,8 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
 
         startGdb();
 
@@ -604,6 +617,8 @@ void SeerGdbWidget::handleGdbStartExecutable () {
     // Run the executable. Stop in main.
     handleGdbCommand("-exec-run --start");
 
+    QApplication::restoreOverrideCursor();
+
     qCDebug(LC) << "Finishing 'gdb start'.";
 }
 
@@ -630,6 +645,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
     }
 
+    // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
         disconnectConsole();
@@ -638,6 +654,8 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
 
         startGdb();
 
@@ -763,6 +781,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         }
     }
 
+    // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
         disconnectConsole();
@@ -771,6 +790,8 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
 
         startGdb();
 
