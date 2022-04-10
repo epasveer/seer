@@ -645,6 +645,8 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
     }
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
     // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
@@ -687,16 +689,14 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // Attach to the executable's pid.
     handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
 
-    // Start the busy cursor.
-    // This is needed for 'attach' mode to give the user some indication of attaching to the pid process.
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbConnectExecutable () {
 
     //
-    // This section likely needs reworking to make it look
-    // like the other start methods.
+    // XXX This section likely needs reworking to make it look
+    // XXX like the other start methods.
     //
 
     // Has a executable name been provided?
@@ -707,6 +707,8 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
                                    QMessageBox::Ok);
         return;
     }
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Delete old console.
     deleteConsole();
@@ -749,9 +751,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     handleGdbExecutableSources();           // Load the program source files.
     handleGdbCommand("-target-download");
 
-    // Start the busy cursor.
-    // This is needed for 'connect' mode, maybe. Test it when I get to testing 'connect'.
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+    QApplication::restoreOverrideCursor();
 
     // "-file-symbol-file %s"
     // "-file-exec-file %s"
@@ -780,6 +780,8 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             return;
         }
     }
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
 
     // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
@@ -825,6 +827,8 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // This is needed for code mode to refresh the stack frame, for some reason.
     handleGdbStackListFrames();
+
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbShutdown () {
