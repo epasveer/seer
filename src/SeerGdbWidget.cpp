@@ -595,9 +595,9 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Create a new console.
     // Set the program's tty device for stdin and stdout.
-    createConsole();
-    handleGdbTtyDeviceName();
-    connectConsole();
+    //XXX createConsole();
+    //XXX handleGdbTtyDeviceName();
+    //XXX connectConsole();
 
     setExecutableLaunchMode("start");
     setExecutablePid(0);
@@ -710,16 +710,19 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    // Delete old console.
-    deleteConsole();
-
-    // Kill previous gdb, if any.
-    if (isGdbRuning() == true) {
-        //XXX killGdb();
+    // Delete the old gdb and console if there is a new executable
+    if (newExecutableFlag() == true) {
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
     }
+
+    qDebug() << "Starting GdbConnect.";
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
 
         startGdb();
 
@@ -732,26 +735,29 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         }else{
             handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
-
-        // Set dprint parameters.
-        resetDprintf();
     }
 
-    // Create a new console.
-    createConsole();
+    // Set dprint parameters.
+    resetDprintf();
 
+    // No console for 'connect' mode.
     setExecutableLaunchMode("connect");
     setExecutablePid(0);
 
-    handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
+    if (newExecutableFlag() == true) {
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+    }
 
+    setNewExecutableFlag(false);
+
+    // Connect to the remote gdbserver.
     handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
-
-    handleGdbExecutableName();              // Load the program into the gdb process.
-    handleGdbExecutableSources();           // Load the program source files.
-    handleGdbCommand("-target-download");
+    //handleGdbCommand("-target-download");   // XXX Needed???
 
     QApplication::restoreOverrideCursor();
+
+    qDebug() << "Finishing GdbConnect.";
 
     // "-file-symbol-file %s"
     // "-file-exec-file %s"
