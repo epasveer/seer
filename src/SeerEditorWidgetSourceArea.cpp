@@ -829,6 +829,7 @@ int SeerEditorWidgetSourceArea::findText (const QString& text, QTextDocument::Fi
 
         QColor color(Qt::lightGray);
 
+        // Build a list of highlights for all matches.
         QTextCursor cursor(document());
         cursor = document()->find(text, cursor, flags);
 
@@ -841,6 +842,9 @@ int SeerEditorWidgetSourceArea::findText (const QString& text, QTextDocument::Fi
 
             cursor = document()->find(text, cursor, flags);
         }
+
+        // Move to the next match after out current position.
+        find(text, flags);
     }
 
     refreshExtraSelections();
