@@ -100,7 +100,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             */
 
             // Look at the filename suffix.
-            if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c") { // C/C++
+            if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "C") { // C/C++
                 _sourceFilesItems->addChild(item);
 
             }else if (fileInfo.suffix() == "f" || fileInfo.suffix() == "f90" || fileInfo.suffix() == "F90") { // Fortran
