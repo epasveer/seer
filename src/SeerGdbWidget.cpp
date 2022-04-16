@@ -28,8 +28,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableArguments            = "";
     _executableWorkingDirectory     = "";
     _executableBreakpointsFilename  = "";
+    _executableHostPort             = "";
+    _executableSerialBaud           = -1;
+    _executableSerialParity         = "none";
     _executableCoreFilename         = "";
     _executablePid                  = 0;
+
     _gdbMonitor                     = 0;
     _gdbProcess                     = 0;
     _consoleWidget                  = 0;
@@ -302,6 +306,22 @@ void SeerGdbWidget::setExecutableHostPort (const QString& hostPort) {
 
 const QString& SeerGdbWidget::executableHostPort () const {
     return _executableHostPort;
+}
+
+void SeerGdbWidget::setExecutableSerialBaud (int executableBaudRate) {
+    _executableSerialBaud = executableBaudRate;
+}
+
+int SeerGdbWidget::executableSerialBaud () const {
+    return _executableSerialBaud;
+}
+
+void SeerGdbWidget::setExecutableSerialParity (const QString& executableParity) {
+    _executableSerialParity = executableParity;
+}
+
+const QString& SeerGdbWidget::executableSerialParity () const {
+    return _executableSerialParity;
 }
 
 void SeerGdbWidget::setExecutableCoreFilename (const QString& coreFilename) {
@@ -710,16 +730,19 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    // Delete old console.
-    deleteConsole();
-
-    // Kill previous gdb, if any.
-    if (isGdbRuning() == true) {
-        //XXX killGdb();
+    // Delete the old gdb and console if there is a new executable
+    if (newExecutableFlag() == true) {
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
     }
+
+    qDebug() << "Starting GdbConnect.";
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(executableName());
 
         startGdb();
 
@@ -732,26 +755,31 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         }else{
             handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
-
-        // Set dprint parameters.
-        resetDprintf();
     }
 
-    // Create a new console.
-    createConsole();
+    // Set dprint parameters.
+    resetDprintf();
 
+    // No console for 'connect' mode.
     setExecutableLaunchMode("connect");
     setExecutablePid(0);
 
-    handleGdbTtyDeviceName();               // Set the program's tty device for stdin and stdout.
+    if (newExecutableFlag() == true) {
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+    }
 
+    setNewExecutableFlag(false);
+
+    // Connect to the remote gdbserver.
+    handleGdbCommand(QString("-gdb-set serial baud %1").arg(executableSerialBaud()));
+    handleGdbCommand(QString("-gdb-set serial parity %1").arg(executableSerialParity()));
     handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
-
-    handleGdbExecutableName();              // Load the program into the gdb process.
-    handleGdbExecutableSources();           // Load the program source files.
-    handleGdbCommand("-target-download");
+    //handleGdbCommand("-target-download");   // XXX Needed???
 
     QApplication::restoreOverrideCursor();
+
+    qDebug() << "Finishing GdbConnect.";
 
     // "-file-symbol-file %s"
     // "-file-exec-file %s"

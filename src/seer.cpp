@@ -49,10 +49,10 @@ int main (int argc, char* argv[]) {
     QCommandLineOption breakpointsOption(QStringList()<<"b"<<"breakpoints", QCoreApplication::translate("main", "Optionally load a previously saved breakpoints file. For --run or --start"), "filename");
     parser.addOption(breakpointsOption);
 
-    QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a running process."), "pid");
+    QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a locally running process."), "pid");
     parser.addOption(attachOption);
 
-    QCommandLineOption connectOption(QStringList()<<"connect", QCoreApplication::translate("main", "Connect to a running process with gdbserver. Manually start gdbserver first."), "host:port");
+    QCommandLineOption connectOption(QStringList()<<"connect", QCoreApplication::translate("main", "Connect to a running process with gdbserver (local or remote). Manually start gdbserver first.\nPossible connection mediums are:\n    host:port\n    /dev/<serialdev>"), "medium");
     parser.addOption(connectOption);
 
     QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
