@@ -203,6 +203,22 @@ const QString& SeerMainWindow::executableHostPort () const {
     return gdbWidget->executableHostPort();
 }
 
+void SeerMainWindow::setExecutableSerialBaud (int executableBaudRate) {
+    gdbWidget->setExecutableSerialBaud(executableBaudRate);
+}
+
+int SeerMainWindow::executableSerialBaud () const {
+    return gdbWidget->executableSerialBaud();
+}
+
+void SeerMainWindow::setExecutableSerialParity (const QString& executableParity) {
+    gdbWidget->setExecutableSerialParity(executableParity);
+}
+
+const QString& SeerMainWindow::executableSerialParity () const {
+    return gdbWidget->executableSerialParity();
+}
+
 void SeerMainWindow::setExecutableCoreFilename (const QString& executableCoreFilename) {
     gdbWidget->setExecutableCoreFilename(executableCoreFilename);
 }
@@ -252,6 +268,8 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableHostPort());
+    dlg.setConnectSerialBaud(executableSerialBaud());
+    dlg.setConnectSerialParity(executableSerialParity());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
 
@@ -273,6 +291,8 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutablePid(dlg.attachPid());
     setExecutableHostPort(dlg.connectHostPort());
+    setExecutableSerialBaud(dlg.connectSerialBaud());
+    setExecutableSerialParity(dlg.connectSerialParity());
     setExecutableCoreFilename(dlg.coreFilename());
 
     launchExecutable(launchMode);

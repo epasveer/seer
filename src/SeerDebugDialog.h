@@ -36,8 +36,10 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         // Connectect to a GDB server. "connect".
         void                    setConnectHostPort                              (const QString& connectHostPort);
         QString                 connectHostPort                                 () const;
-        void                    setConnectDownloadExecutable                    (bool flag);
-        bool                    connectDownloadExecutable                       () const;
+        void                    setConnectSerialBaud                            (int connectBaudRate);
+        int                     connectSerialBaud                               () const;
+        void                    setConnectSerialParity                          (const QString& connectParity);
+        QString                 connectSerialParity                             () const;
 
         // Load a core file. "corefile".
         void                    setCoreFilename                                 (const QString& coreFilename);

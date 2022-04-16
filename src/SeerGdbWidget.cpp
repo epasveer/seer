@@ -28,8 +28,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableArguments            = "";
     _executableWorkingDirectory     = "";
     _executableBreakpointsFilename  = "";
+    _executableHostPort             = "";
+    _executableSerialBaud           = -1;
+    _executableSerialParity         = "none";
     _executableCoreFilename         = "";
     _executablePid                  = 0;
+
     _gdbMonitor                     = 0;
     _gdbProcess                     = 0;
     _consoleWidget                  = 0;
@@ -302,6 +306,22 @@ void SeerGdbWidget::setExecutableHostPort (const QString& hostPort) {
 
 const QString& SeerGdbWidget::executableHostPort () const {
     return _executableHostPort;
+}
+
+void SeerGdbWidget::setExecutableSerialBaud (int executableBaudRate) {
+    _executableSerialBaud = executableBaudRate;
+}
+
+int SeerGdbWidget::executableSerialBaud () const {
+    return _executableSerialBaud;
+}
+
+void SeerGdbWidget::setExecutableSerialParity (const QString& executableParity) {
+    _executableSerialParity = executableParity;
+}
+
+const QString& SeerGdbWidget::executableSerialParity () const {
+    return _executableSerialParity;
 }
 
 void SeerGdbWidget::setExecutableCoreFilename (const QString& coreFilename) {
@@ -595,9 +615,9 @@ void SeerGdbWidget::handleGdbStartExecutable () {
 
     // Create a new console.
     // Set the program's tty device for stdin and stdout.
-    //XXX createConsole();
-    //XXX handleGdbTtyDeviceName();
-    //XXX connectConsole();
+    createConsole();
+    handleGdbTtyDeviceName();
+    connectConsole();
 
     setExecutableLaunchMode("start");
     setExecutablePid(0);
@@ -752,6 +772,8 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     setNewExecutableFlag(false);
 
     // Connect to the remote gdbserver.
+    handleGdbCommand(QString("-gdb-set serial baud %1").arg(executableSerialBaud()));
+    handleGdbCommand(QString("-gdb-set serial parity %1").arg(executableSerialParity()));
     handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
     //handleGdbCommand("-target-download");   // XXX Needed???
 

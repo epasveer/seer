@@ -11,9 +11,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Set up the UI.
     setupUi(this);
 
-    attachProgramPidLineEdit->setMaximumWidth(fontMetrics().horizontalAdvance("888888888888888"));
-    connectProgramHostPortLineEdit->setMaximumWidth(fontMetrics().horizontalAdvance("XXXXXXXXXXXXXXX"));
-
     _runModeButtonGroup = new QButtonGroup(this); // ID's 1 thru 4.
     _runModeButtonGroup->addButton(runProgramRadioButton,     1); // "run" or "start". See breakInMain().
     _runModeButtonGroup->addButton(attachProgramRadioButton,  2); // "attach"
@@ -114,12 +111,32 @@ QString SeerDebugDialog::connectHostPort () const {
     return connectProgramHostPortLineEdit->text();
 }
 
-void SeerDebugDialog::setConnectDownloadExecutable (bool flag) {
-    connectProgramDownloadCheckBox->setChecked(flag);
+void SeerDebugDialog::setConnectSerialBaud (int connectBaudRate) {
+
+    if (connectBaudRate < 1) {
+        connectProgramBaudLineEdit->setText("");
+    }else{
+        connectProgramBaudLineEdit->setText(QString::number(connectBaudRate));
+    }
 }
 
-bool SeerDebugDialog::connectDownloadExecutable () const {
-    return connectProgramDownloadCheckBox->isChecked();
+int SeerDebugDialog::connectSerialBaud () const {
+
+    if (connectProgramBaudLineEdit->text() == "") {
+        return -1;
+    }else{
+        return connectProgramBaudLineEdit->text().toInt();
+    }
+}
+
+void SeerDebugDialog::setConnectSerialParity (const QString& connectParity) {
+
+    connectProgramParityComboBox->setCurrentText(connectParity);
+}
+
+QString SeerDebugDialog::connectSerialParity () const {
+
+    return connectProgramParityComboBox->currentText();
 }
 
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
@@ -149,7 +166,7 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
         setBreakInMain(true);
 
     }else{
-        qDebug() << "Unknown launch mode of:" << mode;
+        qWarning() << "Unknown launch mode of:" << mode;
     }
 }
 
@@ -172,39 +189,12 @@ QString SeerDebugDialog::launchMode () {
         return "corefile";
     }
 
+    qWarning() << "Unknown launch mode of:" << _runModeButtonGroup->checkedId();
+
     return "";
 }
 
 void SeerDebugDialog::handleExecutableNameToolButton () {
-
-    /*
-     * To filter files to show just executables means to called the long
-     * method for creating a QFileDialog. It also means turning off
-     * the Native Dialog. It doesn't honor file filtering that way.
-     * Then it uses Qt's internal file dialog, which means to use
-     * a filter proxy.
-
-    // A proxy to select files that are executables and directories.
-    // Need to use a proxy because native dialog doesn't honor filter settings.
-    SeerExecutableFilterProxyModel* proxyModel = new SeerExecutableFilterProxyModel;
-
-    // Create the file dialog.
-    QFileDialog dlg(this, "Select an Executable to debug.", executableName());
-    dlg.setOption(QFileDialog::DontUseNativeDialog);
-    dlg.setProxyModel(proxyModel);
-    dlg.setFileMode(QFileDialog::ExistingFile);
-
-    // Execute the dialog and get the result.
-    if (dlg.exec()) {
-
-        QStringList files = dlg.selectedFiles();
-
-        if (files.size() > 0) {
-            setExecutableName(files[0]);
-        }
-    }
-
-    */
 
     QString name = QFileDialog::getOpenFileName(this, "Select an Executable to debug.", executableName(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
@@ -214,32 +204,6 @@ void SeerDebugDialog::handleExecutableNameToolButton () {
 }
 
 void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
-
-    /*
-     * If handleExecutableNamePushButton uses the internal Qt file dialog, then
-     * handleExecutableWorkingDirectoryPushButton should too.
-
-    // A proxy to select files that are executables and directories.
-    // Need to use a proxy because native dialog doesn't honor filter settings.
-    SeerDirectoryFilterProxyModel* proxyModel = new SeerDirectoryFilterProxyModel;
-
-    // Create the file dialog.
-    QFileDialog dlg(this, "Select a Working Directory to run in.", workingDirectory());
-    dlg.setOption(QFileDialog::DontUseNativeDialog);
-    dlg.setProxyModel(proxyModel);
-    dlg.setFileMode(QFileDialog::Directory);
-
-    // Execute the dialog and get the result.
-    if (dlg.exec()) {
-
-        QStringList files = dlg.selectedFiles();
-
-        if (files.size() > 0) {
-            setExecutableWorkingDirectory(files[0]);
-        }
-    }
-
-    */
 
     QString name = QFileDialog::getExistingDirectory(this, "Select a Working Directory to run in.", executableWorkingDirectory(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
 
@@ -294,7 +258,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 3
     connectProgramHostPortLineEdit->setEnabled(false);
-    connectProgramDownloadCheckBox->setEnabled(false);
+    connectProgramBaudLineEdit->setEnabled(false);
+    connectProgramParityComboBox->setEnabled(false);
 
     // ID == 4
     loadCoreFilenameLineEdit->setEnabled(false);
@@ -321,7 +286,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 3
     if (id == 3) {
         connectProgramHostPortLineEdit->setEnabled(true);
-        connectProgramDownloadCheckBox->setEnabled(true);
+        connectProgramBaudLineEdit->setEnabled(true);
+        connectProgramParityComboBox->setEnabled(true);
     }
 
     // ID == 4
@@ -329,6 +295,5 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         loadCoreFilenameLineEdit->setEnabled(true);
         loadCoreFilenameToolButton->setEnabled(true);
     }
-
 }
 
