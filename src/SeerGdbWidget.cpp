@@ -94,7 +94,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbMonitor->setProcess(_gdbProcess);
 
     // Connect things.
-    QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleExecute);
+    QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardError,                                                          _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardError);
@@ -442,13 +442,31 @@ void SeerGdbWidget::handleText (const QString& text) {
     }
 }
 
-void SeerGdbWidget::handleExecute () {
+void SeerGdbWidget::handleManualCommandExecute () {
 
     //qDebug() << "QComboBox: " << manualCommandComboBox->currentText();
 
+    // Get new command.
     QString command = manualCommandComboBox->currentText();
     manualCommandComboBox->clearEditText();
 
+    // Add entered command to the end of the list as long as it's not
+    // already there.
+    if (manualCommandComboBox->count() > 0) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
+
+        if (lastCommand != command) {
+            manualCommandComboBox->addItem(command);
+        }
+    }
+
+    // Point to last one.
+    if (manualCommandComboBox->count() > 0) {
+        manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
+    }
+
+    // Execute it.
     handleGdbCommand(command);
 }
 
@@ -1885,8 +1903,12 @@ int SeerGdbWidget::consoleScrollLines () const {
 void SeerGdbWidget::setManualCommands (const QStringList& commands) {
 
     manualCommandComboBox->clear();
-
     manualCommandComboBox->addItems(commands);
+
+    // Point to last one.
+    if (manualCommandComboBox->count() > 0) {
+        manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
+    }
 }
 
 QStringList SeerGdbWidget::manualCommands(int count) const {

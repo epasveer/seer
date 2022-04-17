@@ -115,7 +115,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
     public slots:
         void                                handleText                          (const QString& text);
-        void                                handleExecute                       ();
+        void                                handleManualCommandExecute          ();
         void                                handleGdbCommand                    (const QString& command);
         void                                handleGdbExit                       ();
         void                                handleGdbRunExecutable              ();
