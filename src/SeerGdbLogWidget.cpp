@@ -1,6 +1,7 @@
 #include "SeerGdbLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
+#include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
 SeerGdbLogWidget::SeerGdbLogWidget (QWidget* parent) : SeerLogWidget(parent) {
@@ -74,5 +75,15 @@ void SeerGdbLogWidget::processText (const QString& text) {
 
     // Write the string to the log.
     textEdit->append(str);
+
+    // If there is breakpoint message (via a manual command), ask
+    // for the breakpoint list to be refreshed.
+    //
+    // Breakpoint 2 at 0x403a40: file explorer.cpp, line 78.
+    //
+    if (str.contains(QRegExp("^Breakpoint ([0-9]+) at (0[xX][0-9a-fA-F]+): file (.*\\,) (line) ([0-9]+)"))) {
+        //qDebug() << str;
+        emit refreshBreakpointsList();
+    }
 }
 
