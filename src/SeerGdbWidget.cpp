@@ -449,7 +449,6 @@ void SeerGdbWidget::handleManualCommandExecute () {
 
     // Get new command.
     QString command = manualCommandComboBox->currentText();
-    manualCommandComboBox->clearEditText();
 
     // Add entered command to the end of the list as long as it's not
     // already there.
@@ -461,6 +460,8 @@ void SeerGdbWidget::handleManualCommandExecute () {
             manualCommandComboBox->addItem(command);
         }
     }
+
+    manualCommandComboBox->clearEditText();
 
     // Point to last one.
     if (manualCommandComboBox->count() > 0) {
