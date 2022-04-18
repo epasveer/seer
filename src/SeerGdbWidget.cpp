@@ -445,10 +445,23 @@ void SeerGdbWidget::handleText (const QString& text) {
 
 void SeerGdbWidget::handleManualCommandExecute () {
 
-    //qDebug() << "QComboBox: " << manualCommandComboBox->currentText();
-
     // Get new command.
     QString command = manualCommandComboBox->currentText();
+
+    // Do nothing if it is blank.
+    if (command == "") {
+        return;
+    }
+
+    // Remove the last line, if it is blank.
+    if (manualCommandComboBox->count() > 0) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
+
+        if (lastCommand == "") {
+            manualCommandComboBox->removeItem(manualCommandComboBox->count()-1);
+        }
+    }
 
     // Add entered command to the end of the list as long as it's not
     // already there.
@@ -461,7 +474,8 @@ void SeerGdbWidget::handleManualCommandExecute () {
         }
     }
 
-    manualCommandComboBox->clearEditText();
+    // Add a blank entry. It will be removed when the next manual command is entered.
+    manualCommandComboBox->addItem("");
 
     // Point to last one.
     if (manualCommandComboBox->count() > 0) {
