@@ -592,11 +592,7 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     while (!line.isNull()) {
 
-        if (text != "") {
-            text += "\n";
-        }
-
-        text += line;
+        text += line + "\n";
 
         line = stream.readLine();
     };
