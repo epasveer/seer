@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>537</height>
+    <width>671</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,6 +106,19 @@ p, li { white-space: pre-wrap; }
       <string>Console mode on startup</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="minimizedRadioButton">
+        <property name="toolTip">
+         <string>The console is shown minimized in the task bar.</string>
+        </property>
+        <property name="text">
+         <string>Minimized</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
       <item row="0" column="4">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
@@ -119,24 +132,17 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="3">
-       <widget class="QSpinBox" name="consoleScrollLinesSpinBox">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="normalRadioButton">
         <property name="toolTip">
-         <string>Maximum number of scroll lines. 0 means unlimited.</string>
+         <string>The console is shown normally.</string>
         </property>
-        <property name="maximum">
-         <number>99999</number>
-        </property>
-        <property name="value">
-         <number>1000</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="consoleScrollLinesLabel">
         <property name="text">
-         <string>Number of scroll lines</string>
+         <string>Normal</string>
         </property>
+        <attribute name="buttonGroup">
+         <string notr="true">modeButtonGroup</string>
+        </attribute>
        </widget>
       </item>
       <item row="2" column="0">
@@ -152,30 +158,17 @@ p, li { white-space: pre-wrap; }
         </attribute>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="minimizedRadioButton">
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="consoleScrollLinesSpinBox">
         <property name="toolTip">
-         <string>The console is shown minimized in the task bar.</string>
+         <string>Maximum number of scroll lines. 0 means unlimited.</string>
         </property>
-        <property name="text">
-         <string>Minimized</string>
+        <property name="maximum">
+         <number>99999</number>
         </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="normalRadioButton">
-        <property name="toolTip">
-         <string>The console is shown normally.</string>
+        <property name="value">
+         <number>1000</number>
         </property>
-        <property name="text">
-         <string>Normal</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">modeButtonGroup</string>
-        </attribute>
        </widget>
       </item>
       <item row="0" column="1">
@@ -190,6 +183,13 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="consoleScrollLinesLabel">
+        <property name="text">
+         <string>Number of scroll lines</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

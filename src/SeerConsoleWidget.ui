@@ -14,7 +14,7 @@
    <string>Seer Console</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="5">
+   <item row="0" column="0" rowspan="4">
     <widget class="QPlainTextEdit" name="textEdit">
      <property name="lineWrapMode">
       <enum>QPlainTextEdit::NoWrap</enum>
@@ -40,11 +40,11 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</normaloff>:/seer/resources/HighContrast/edit-clear.svg</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</iconset>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="0" column="2">
     <widget class="QPushButton" name="printButton">
      <property name="toolTip">
       <string>Print the log output.</string>
@@ -57,11 +57,11 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/HighContrast/document-print.svg</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <widget class="QPushButton" name="saveButton">
      <property name="toolTip">
       <string>Save the log output to a file.</string>
@@ -74,11 +74,11 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/HighContrast/document-save-as.svg</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</iconset>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="2" column="1" colspan="2">
     <widget class="QCheckBox" name="wrapTextCheckBox">
      <property name="toolTip">
       <string>Wrap long lines to the next line.</string>
@@ -91,7 +91,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" rowspan="2">
+   <item row="4" column="0">
+    <widget class="QLineEdit" name="stdinLineEdit">
+     <property name="placeholderText">
+      <string>[stdin input text]</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" rowspan="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -104,10 +111,17 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0">
-    <widget class="QLineEdit" name="stdinLineEdit">
-     <property name="placeholderText">
-      <string>[stdin input text]</string>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="fontButton">
+     <property name="toolTip">
+      <string>Select the log output font.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/font.png</normaloff>:/seer/resources/font.png</iconset>
      </property>
     </widget>
    </item>

@@ -26,6 +26,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleClearButton           ();
         void                handlePrintButton           ();
         void                handleSaveButton            ();
+        void                handleFontButton            ();
         void                handleWrapTextCheckBox      ();
         void                handleStdinLineEdit         ();
         void                handleConsoleOutput         (int socketfd);

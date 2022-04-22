@@ -2,6 +2,7 @@
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QFontDialog>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QScrollBar>
 #include <QtPrintSupport/QPrinter>
@@ -39,7 +40,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     textEdit->setReadOnly(true);
     textEdit->setTextInteractionFlags(textEdit->textInteractionFlags() | Qt::TextSelectableByKeyboard); // Show cursor
     textEdit->setFont(font);
-    textEdit->setLineWrapMode(QPlainTextEdit::NoWrap);   // No wrap
+    textEdit->setLineWrapMode(QPlainTextEdit::NoWrap); // No wrap
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
     _cursor = QTextCursor(textEdit->document());
@@ -52,6 +53,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
     QObject::connect(printButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handlePrintButton);
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleSaveButton);
+    QObject::connect(fontButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleFontButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleWrapTextCheckBox);
     QObject::connect(stdinLineEdit,     &QLineEdit::returnPressed,  this,  &SeerConsoleWidget::handleStdinLineEdit);
 
@@ -166,6 +168,21 @@ void SeerConsoleWidget::handleSaveButton () {
         QMessageBox::critical(this, tr("Error"), tr("Cannot save log to file."));
         return;
     }
+}
+
+void SeerConsoleWidget::handleFontButton () {
+
+    bool ok;
+
+    QFont font = QFontDialog::getFont(&ok, textEdit->font(), this, "Seer - Select Console Font", QFontDialog::DontUseNativeDialog|QFontDialog::MonospacedFonts);
+
+    if (ok == false) {
+        return;
+    }
+
+    textEdit->setFont(font);
+
+    writeSettings();
 }
 
 void SeerConsoleWidget::handleWrapTextCheckBox () {
@@ -331,9 +348,10 @@ void SeerConsoleWidget::writeSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("consolewindow");
-    settings.setValue("size", size());
-    settings.endGroup();
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("size", size());
+        settings.setValue("font", textEdit->font().toString());
+    }settings.endGroup();
 
     //qDebug() << size();
 }
@@ -342,9 +360,17 @@ void SeerConsoleWidget::readSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("consolewindow");
-    resize(settings.value("size", QSize(800, 600)).toSize());
-    settings.endGroup();
+    settings.beginGroup("consolewindow"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+
+        QFont f;
+        if (settings.contains("font")) {
+            f.fromString(settings.value("font").toString());
+        }else{
+            f = QFont("Source Code Pro", 10);
+        }
+        textEdit->setFont(f);
+    }settings.endGroup();
 
     //qDebug() << size();
 }
