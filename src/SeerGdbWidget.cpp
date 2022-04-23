@@ -453,8 +453,18 @@ void SeerGdbWidget::handleManualCommandExecute () {
         return;
     }
 
+    // Remove the second to last line, if it is blank.
+    if (manualCommandComboBox->count() >= 2) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-2);
+
+        if (lastCommand == "") {
+            manualCommandComboBox->removeItem(manualCommandComboBox->count()-2);
+        }
+    }
+
     // Remove the last line, if it is blank.
-    if (manualCommandComboBox->count() > 0) {
+    if (manualCommandComboBox->count() >= 1) {
 
         QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
 
@@ -478,9 +488,7 @@ void SeerGdbWidget::handleManualCommandExecute () {
     manualCommandComboBox->addItem("");
 
     // Point to last one.
-    if (manualCommandComboBox->count() > 0) {
-        manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
-    }
+    manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
 
     // Execute it.
     handleGdbCommand(command);
