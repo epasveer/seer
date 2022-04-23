@@ -1,0 +1,51 @@
+
+-list-thread-groups
+
+    ^done,groups=[
+                    {
+                        id=\"i1\",
+                        type=\"process\",
+                        pid=\"19521\",
+                        executable=\"/home/erniep/Development/Peak/src/Apps/Explorer/explorer\",
+                        cores=[\"6\"]
+                    }
+                ]
+
+-list-thread-groups --recurse 1
+
+    ^done,groups=[
+                    {
+                        id=\"i1\",
+                        type=\"process\",
+                        pid=\"19521\",
+                        executable=\"/home/erniep/Development/Peak/src/Apps/Explorer/explorer\",
+                        cores=[\"6\"],
+                        threads=[
+                                    {
+                                        id=\"1\",
+                                        target-id=\"Thread 0x7ffff7f97940 (LWP 19521)\",
+                                        name=\"explorer\",
+                                        frame={level=\"0\",
+                                        addr=\"0x0000000000403a40\",
+                                        func=\"main\",
+                                        args=[
+                                                {
+                                                    name=\"argc\",
+                                                    value=\"2\"
+                                                },
+                                                {
+                                                    name=\"argv\",
+                                                    value=\"0x7fffffffd528\"
+                                                }
+                                             ],
+                                        file=\"explorer.cpp\",
+                                        fullname=\"/home/erniep/Development/Peak/src/Apps/Explorer/explorer.cpp\",
+                                        line=\"78\",
+                                        arch=\"i386:x86-64\"},
+                                        state=\"stopped\",
+                                        core=\"6\"
+                                    }
+                                ]
+                    }
+                 ]
+
