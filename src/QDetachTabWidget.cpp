@@ -80,6 +80,7 @@ void QDetachTabWidget::handleShowContextMenu(int tabIndex) {
         flags = flags & (~closeFlag);
         w->setWindowFlags(flags);
         w->setWindowTitle(tabinfo._title);
+        w->setWindowIcon(windowIcon());
         w->show();
 
         // Set the tabwidget to the placeholder tab.
