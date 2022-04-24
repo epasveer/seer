@@ -84,7 +84,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                     QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
                     QString arch_text     = Seer::parseFirst(frame_text, "arch=",     '"', '"', false);
 
-                    //qDebug() << file_text << fullname_text;
+                    // qDebug() << file_text << fullname_text << line_text;
 
                     // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;

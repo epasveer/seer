@@ -11,3 +11,5 @@ To compile/link/run
     /usr/lib64/mpi/gcc/openmpi4/bin/mpicc -g -c hellompi.c 
     /usr/lib64/mpi/gcc/openmpi4/bin/mpirun --hostfile hosts -np 4 hellompi
 
+    /usr/lib64/mpi/gcc/openmpi4/bin/mpirun --hostfile hosts -np 4 seer -s hellompi
+
