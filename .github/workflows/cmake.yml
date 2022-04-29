@@ -44,3 +44,9 @@ jobs:
     - name: Build Result
       run: cd src; ls -l build/
 
+    - name: Build Release
+      uses: AButler/upload-release-assets@v2.0
+      with:
+        files: 'src/build/seer'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
