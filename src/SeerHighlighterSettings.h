@@ -12,7 +12,7 @@ class SeerHighlighterSettings {
         SeerHighlighterSettings (const SeerHighlighterSettings& other);
        ~SeerHighlighterSettings ();
 
-        SeerHighlighterSettings& operator== (const SeerHighlighterSettings& rhs);
+        SeerHighlighterSettings& operator= (const SeerHighlighterSettings& rhs);
 
         QStringList                             keys                () const;
         bool                                    has                 (const QString& name) const;

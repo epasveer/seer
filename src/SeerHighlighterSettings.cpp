@@ -12,7 +12,7 @@ SeerHighlighterSettings::SeerHighlighterSettings (const SeerHighlighterSettings&
 SeerHighlighterSettings::~SeerHighlighterSettings () {
 }
 
-SeerHighlighterSettings& SeerHighlighterSettings::operator== (const SeerHighlighterSettings& rhs) {
+SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlighterSettings& rhs) {
 
     _formats = rhs._formats;
 

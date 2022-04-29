@@ -23,7 +23,7 @@ class SeerKeySettings {
         SeerKeySettings (const SeerKeySettings& other);
        ~SeerKeySettings ();
 
-        SeerKeySettings& operator== (const SeerKeySettings& rhs);
+        SeerKeySettings& operator= (const SeerKeySettings& rhs);
 
         QStringList                             keys                () const;
         bool                                    has                 (const QString& action) const;

@@ -12,7 +12,7 @@ SeerKeySettings::SeerKeySettings (const SeerKeySettings& other) {
 SeerKeySettings::~SeerKeySettings () {
 }
 
-SeerKeySettings& SeerKeySettings::operator== (const SeerKeySettings& rhs) {
+SeerKeySettings& SeerKeySettings::operator= (const SeerKeySettings& rhs) {
 
     _keys = rhs._keys;
 
