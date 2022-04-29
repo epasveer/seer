@@ -212,7 +212,7 @@ void SeerConsoleWidget::handleStdinLineEdit () {
         return;
     }
 
-    write(_ptsFD, s.c_str(), s.length());
+    (void)write(_ptsFD, s.c_str(), s.length());
     fsync(_ptsFD);
 }
 
