@@ -209,6 +209,8 @@ void SeerStackLocalsBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item) {
 
 void SeerStackLocalsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
+    Q_UNUSED(column);
+
     //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(0) + " : " + item->text(2));

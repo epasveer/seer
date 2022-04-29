@@ -11,7 +11,7 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
 
     // Connect things.
     QObject::connect(gdbProgramToolButton, &QToolButton::clicked,                                  this, &SeerGdbConfigPage::handleGdbProgramToolButton);
-    QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::buttonClicked),       this, &SeerGdbConfigPage::handleDprintfButtonGroup);
+    QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::idClicked),           this, &SeerGdbConfigPage::handleDprintfButtonGroup);
 }
 
 SeerGdbConfigPage::~SeerGdbConfigPage() {

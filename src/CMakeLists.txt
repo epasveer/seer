@@ -13,9 +13,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_FLAGS_DEBUG_INIT   "-Wall")       # Remove if your compiler
-set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall")       # doesn't support the -Wall flag.
-
 find_package(Qt5Core         REQUIRED)
 find_package(Qt5Gui          REQUIRED)
 find_package(Qt5Widgets      REQUIRED)
@@ -171,6 +168,11 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel
         set(SYSTEM_TYPE EXCLUDE_FROM_ALL)
     endif()
     message("System type is" ${SYSTEM_TYPE})
+endif()
+
+# for Linux, BSD, Solaris, Minix
+if(UNIX AND NOT APPLE)
+    add_compile_options(-Wall -Wextra -Wunused-result -pedantic -Werror)
 endif()
 
 add_compile_definitions(QT_DEPRECATED_WARNINGS)

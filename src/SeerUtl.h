@@ -18,5 +18,5 @@ namespace Seer {
     unsigned char   ucharToAscii    (unsigned char byte);
 
     int             typeBytes       (const QString& type);
-};
+}
 

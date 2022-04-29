@@ -144,6 +144,8 @@ void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, in
 
 void SeerSourceBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
+    Q_UNUSED(column);
+
     //qDebug() << item->text(0) << column;
 
     if (item->text(1) == "") { // Look at the FullName.

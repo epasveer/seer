@@ -230,7 +230,7 @@ void SeerEditorWidget::handleSearchTextLineEdit () {
         return;
     }
 
-    int nMatches = sourceArea()->findText(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
+    int nMatches = sourceArea()->findText(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()));
 
     matchesLabel->setText(QString("(%1)").arg(nMatches));
 }
@@ -243,7 +243,7 @@ void SeerEditorWidget::handleSearchDownToolButton () {
         return;
     }
 
-    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)));
+    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()));
 }
 
 void SeerEditorWidget::handleSearchUpToolButton () {
@@ -254,7 +254,7 @@ void SeerEditorWidget::handleSearchUpToolButton () {
         return;
     }
 
-    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags(0)) | QTextDocument::FindBackward);
+    sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()) | QTextDocument::FindBackward);
 }
 
 void SeerEditorWidget::handleSearchCloseToolButton () {

@@ -59,7 +59,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
     QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handlePointsCheckBox);
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handleLabelsCheckBox);
-    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::buttonClicked),          this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
 
     // Restore window settings.
     readSettings();
@@ -149,7 +149,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
-            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
 
             setVariableAddress(words.first());
         }
@@ -374,6 +374,9 @@ void SeerArrayVisualizerWidget::resizeEvent (QResizeEvent* event) {
 }
 
 void SeerArrayVisualizerWidget::handleSplitterMoved (int pos, int index) {
+
+    Q_UNUSED(pos);
+    Q_UNUSED(index);
 
     writeSettings();
 }

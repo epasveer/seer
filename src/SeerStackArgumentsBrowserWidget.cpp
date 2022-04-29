@@ -123,6 +123,8 @@ void SeerStackArgumentsBrowserWidget::refresh () {
 
 void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
+    Q_UNUSED(column);
+
     //qDebug() << item->text(0) << column;
 
     if (item->text(0) != "") {

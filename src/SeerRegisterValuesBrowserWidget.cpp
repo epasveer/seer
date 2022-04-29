@@ -155,6 +155,8 @@ void SeerRegisterValuesBrowserWidget::refresh () {
 
 void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
+    Q_UNUSED(column);
+
     //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2));

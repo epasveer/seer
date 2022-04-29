@@ -1454,7 +1454,7 @@ void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
     }else{
 
-        QStringList ids = expressionids.split(' ', QString::SkipEmptyParts);
+        QStringList ids = expressionids.split(' ', Qt::SkipEmptyParts);
 
         bool first = true;
         for (int i=0; i<ids.size(); i++) {
@@ -1555,6 +1555,9 @@ void SeerGdbWidget::handleGdbArrayVisualizer () {
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
+
+    Q_UNUSED(pos);
+    Q_UNUSED(index);
 
     //qDebug() << "Splitter moved to " << pos << index;
 
@@ -1809,7 +1812,7 @@ void SeerGdbWidget::startGdb () {
     _gdbProcess->setProgram(gdbProgram());
 
     // Build the gdb argument list.
-    QStringList args = gdbArguments().split(' ', QString::SkipEmptyParts);
+    QStringList args = gdbArguments().split(' ', Qt::SkipEmptyParts);
 
     // Give the gdb process the argument list.
     _gdbProcess->setArguments(args);

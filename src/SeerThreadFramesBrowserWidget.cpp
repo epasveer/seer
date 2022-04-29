@@ -212,6 +212,8 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
 
 void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
+    Q_UNUSED(column);
+
     //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(3) + " : " + item->text(4) + " : " + item->text(5));
