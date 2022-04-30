@@ -212,7 +212,12 @@ void SeerConsoleWidget::handleStdinLineEdit () {
         return;
     }
 
-    (void)write(_ptsFD, s.c_str(), s.length());
+    int n = write(_ptsFD, s.c_str(), s.length());
+
+    if (n != (signed long int)s.length()) {
+        qWarning() << "Not able to process stdin of" << s.length() << "bytes.";
+    }
+
     fsync(_ptsFD);
 }
 
