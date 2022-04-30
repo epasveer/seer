@@ -27,7 +27,7 @@ jobs:
         modules: 'qtcharts'
 
     - name: Where Am I
-      run: pwd; ls -l
+      run: pwd; ls -l; lscpu
 
     - name: Versions
       run: g++ --version
