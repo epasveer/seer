@@ -1525,7 +1525,7 @@ void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
     QObject::connect(w,            &SeerArrayVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbArrayEvaluateExpression);
 
     // Tell the visualizer what variable to use.
-    w->setVariableName(expression);
+    w->setXVariableName(expression);
 }
 
 void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {

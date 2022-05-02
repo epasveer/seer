@@ -17,9 +17,13 @@
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _variableId = Seer::createID(); // Create two id's for queries.
-    _memoryId   = Seer::createID();
-    _series     = 0;
+    _xVariableId = Seer::createID(); // Create two id's for queries.
+    _xMemoryId   = Seer::createID();
+
+    _yVariableId = Seer::createID(); // Create two id's for queries.
+    _yMemoryId   = Seer::createID();
+
+    _series      = 0;
 
     // Set up UI.
     setupUi(this);
@@ -28,14 +32,21 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Array Visualizer");
 
-    arrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    arrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
-    arrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    xArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    yArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    xArrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
+    yArrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
+    xArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    yArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+
 
     lineRadioButton->setChecked(true);
 
-    arrayDisplayFormatComboBox->setCurrentIndex(0);
-    handleArrayDisplayFormatComboBox(0);
+    xArrayDisplayFormatComboBox->setCurrentIndex(0);
+    yArrayDisplayFormatComboBox->setCurrentIndex(0);
+
+    handlexArrayDisplayFormatComboBox(0);
+    handleyArrayDisplayFormatComboBox(0);
 
     // A single series chart.
     QChart* chart = new QChart;
@@ -48,12 +59,19 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     arrayChartView->setChart(chart);
 
     // Connect things.
-    QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleRefreshButton);
-    QObject::connect(arrayLengthLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
-    QObject::connect(arrayOffsetLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
-    QObject::connect(arrayStrideLineEdit,           &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(arrayDisplayFormatComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox);
+    QObject::connect(xRefreshToolButton,            &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handlexRefreshButton);
+    QObject::connect(yRefreshToolButton,            &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleyRefreshButton);
+    QObject::connect(xArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlexRefreshButton);
+    QObject::connect(yArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleyRefreshButton);
+    QObject::connect(xArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlexRefreshButton);
+    QObject::connect(yArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleyRefreshButton);
+    QObject::connect(xArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlexRefreshButton);
+    QObject::connect(yArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleyRefreshButton);
+    QObject::connect(xVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlexVariableNameLineEdit);
+    QObject::connect(yVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleyVariableNameLineEdit);
+    QObject::connect(xArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handlexArrayDisplayFormatComboBox);
+    QObject::connect(yArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleyArrayDisplayFormatComboBox);
+
     QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,  &SeerArrayVisualizerWidget::handleDataChanged);
     QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,  &SeerArrayVisualizerWidget::handleSplitterMoved);
     QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
@@ -68,14 +86,14 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
 SeerArrayVisualizerWidget::~SeerArrayVisualizerWidget () {
 }
 
-void SeerArrayVisualizerWidget::setVariableName (const QString& name) {
+void SeerArrayVisualizerWidget::setXVariableName (const QString& name) {
 
     setWindowTitle("Seer Array Visualizer - '" + name + "'");
 
-    variableNameLineEdit->setText(name);
-    setVariableAddress("");
+    xVariableNameLineEdit->setText(name);
+    setXVariableAddress("");
 
-    if (variableNameLineEdit->text() == "") {
+    if (xVariableNameLineEdit->text() == "") {
         return;
     }
 
@@ -83,35 +101,35 @@ void SeerArrayVisualizerWidget::setVariableName (const QString& name) {
     QByteArray array;
     bool ok;
 
-    arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
+    arrayTableWidget->setXData(new SeerArrayWidget::DataStorageArray(array));
 
-    if (arrayOffsetLineEdit->text() != "") {
-        arrayTableWidget->setAddressOffset(arrayOffsetLineEdit->text().toULong(&ok));
+    if (xArrayOffsetLineEdit->text() != "") {
+        arrayTableWidget->setXAddressOffset(xArrayOffsetLineEdit->text().toULong(&ok));
         if (ok == false) {
-            qWarning() << "Invalid string for address offset." << arrayOffsetLineEdit->text();
+            qWarning() << "Invalid string for address offset." << xArrayOffsetLineEdit->text();
         }
     }else{
-        arrayTableWidget->setAddressOffset(0);
+        arrayTableWidget->setXAddressOffset(0);
     }
 
-    if (arrayStrideLineEdit->text() != "") {
-        arrayTableWidget->setAddressStride(arrayStrideLineEdit->text().toULong(&ok));
+    if (xArrayStrideLineEdit->text() != "") {
+        arrayTableWidget->setXAddressStride(xArrayStrideLineEdit->text().toULong(&ok));
         if (ok == false) {
-            qWarning() << "Invalid string for address stride." << arrayStrideLineEdit->text();
+            qWarning() << "Invalid string for address stride." << xArrayStrideLineEdit->text();
         }
     }else{
-        arrayTableWidget->setAddressStride(1);
+        arrayTableWidget->setXAddressStride(1);
     }
 
     // Send signal to get variable address.
-    emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
+    emit evaluateVariableExpression(_xVariableId, xVariableNameLineEdit->text());
 }
 
-QString SeerArrayVisualizerWidget::variableName () const {
-    return variableNameLineEdit->text();
+QString SeerArrayVisualizerWidget::xVariableName () const {
+    return xVariableNameLineEdit->text();
 }
 
-void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
+void SeerArrayVisualizerWidget::setXVariableAddress (const QString& address) {
 
     if (address.startsWith("0x")) {
 
@@ -120,20 +138,88 @@ void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
         address.toULong(&ok, 16);
 
         if (ok == true) {
-            variableAddressLineEdit->setText(address);
+            xVariableAddressLineEdit->setText(address);
         }else{
-            variableAddressLineEdit->setText("not an address");
+            xVariableAddressLineEdit->setText("not an address");
         }
 
     }else{
-        variableAddressLineEdit->setText("not an address");
+        xVariableAddressLineEdit->setText("not an address");
     }
 
-    arrayTableWidget->setAddressOffset(0);
+    arrayTableWidget->setXAddressOffset(0);
 }
 
-QString SeerArrayVisualizerWidget::variableAddress () const {
-    return variableAddressLineEdit->text();
+QString SeerArrayVisualizerWidget::xVariableAddress () const {
+    return xVariableAddressLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setYVariableName (const QString& name) {
+
+    setWindowTitle("Seer Array Visualizer - '" + name + "'");
+
+    yVariableNameLineEdit->setText(name);
+    setYVariableAddress("");
+
+    if (yVariableNameLineEdit->text() == "") {
+        return;
+    }
+
+    // Clear old contents.
+    QByteArray array;
+    bool ok;
+
+    arrayTableWidget->setYData(new SeerArrayWidget::DataStorageArray(array));
+
+    if (yArrayOffsetLineEdit->text() != "") {
+        arrayTableWidget->setXAddressOffset(yArrayOffsetLineEdit->text().toULong(&ok));
+        if (ok == false) {
+            qWarning() << "Invalid string for address offset." << yArrayOffsetLineEdit->text();
+        }
+    }else{
+        arrayTableWidget->setXAddressOffset(0);
+    }
+
+    if (yArrayStrideLineEdit->text() != "") {
+        arrayTableWidget->setXAddressStride(yArrayStrideLineEdit->text().toULong(&ok));
+        if (ok == false) {
+            qWarning() << "Invalid string for address stride." << yArrayStrideLineEdit->text();
+        }
+    }else{
+        arrayTableWidget->setXAddressStride(1);
+    }
+
+    // Send signal to get variable address.
+    emit evaluateVariableExpression(_yVariableId, yVariableNameLineEdit->text());
+}
+
+QString SeerArrayVisualizerWidget::yVariableName () const {
+    return yVariableNameLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setYVariableAddress (const QString& address) {
+
+    if (address.startsWith("0x")) {
+
+        bool ok = false;
+
+        address.toULong(&ok, 16);
+
+        if (ok == true) {
+            yVariableAddressLineEdit->setText(address);
+        }else{
+            yVariableAddressLineEdit->setText("not an address");
+        }
+
+    }else{
+        yVariableAddressLineEdit->setText("not an address");
+    }
+
+    arrayTableWidget->setXAddressOffset(0);
+}
+
+QString SeerArrayVisualizerWidget::yVariableAddress () const {
+    return yVariableAddressLineEdit->text();
 }
 
 void SeerArrayVisualizerWidget::handleText (const QString& text) {
@@ -147,11 +233,18 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         QString id_text = text.section('^', 0,0);
 
-        if (id_text.toInt() == _variableId) {
+        if (id_text.toInt() == _xVariableId) {
 
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
 
-            setVariableAddress(words.first());
+            setXVariableAddress(words.first());
+        }
+
+        if (id_text.toInt() == _yVariableId) {
+
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
+
+            setYVariableAddress(words.first());
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
@@ -161,7 +254,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         QString id_text = text.section('^', 0,0);
 
-        if (id_text.toInt() == _memoryId) {
+        if (id_text.toInt() == _xMemoryId) {
 
             //qDebug() << text;
 
@@ -188,24 +281,75 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
                 // Give the byte array to the hex widget.
                 bool ok;
-                arrayTableWidget->setData(new SeerArrayWidget::DataStorageArray(array));
+                arrayTableWidget->setXData(new SeerArrayWidget::DataStorageArray(array));
 
-                if (arrayOffsetLineEdit->text() != "") {
-                    arrayTableWidget->setAddressOffset(arrayOffsetLineEdit->text().toULong(&ok));
+                if (xArrayOffsetLineEdit->text() != "") {
+                    arrayTableWidget->setXAddressOffset(xArrayOffsetLineEdit->text().toULong(&ok));
                     if (ok == false) {
-                        qWarning() << "Invalid string for address offset." << arrayOffsetLineEdit->text();
+                        qWarning() << "Invalid string for address offset." << xArrayOffsetLineEdit->text();
                     }
                 }else{
-                    arrayTableWidget->setAddressOffset(0);
+                    arrayTableWidget->setXAddressOffset(0);
                 }
 
-                if (arrayStrideLineEdit->text() != "") {
-                    arrayTableWidget->setAddressStride(arrayStrideLineEdit->text().toULong(&ok));
+                if (xArrayStrideLineEdit->text() != "") {
+                    arrayTableWidget->setXAddressStride(xArrayStrideLineEdit->text().toULong(&ok));
                     if (ok == false) {
-                        qWarning() << "Invalid string for address stride." << arrayStrideLineEdit->text();
+                        qWarning() << "Invalid string for address stride." << xArrayStrideLineEdit->text();
                     }
                 }else{
-                    arrayTableWidget->setAddressStride(1);
+                    arrayTableWidget->setXAddressStride(1);
+                }
+
+                break; // Take just the first range for now.
+            }
+        }
+
+        if (id_text.toInt() == _yMemoryId) {
+
+            //qDebug() << text;
+
+            QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
+
+            QStringList range_list = Seer::parse(memory_text, "", '{', '}', false);
+
+            // Loop through the memory ranges.
+            for ( const auto& range_text : range_list  ) {
+
+                QString contents_text = Seer::parseFirst(range_text, "contents=", '"', '"', false);
+
+                //qDebug() << contents_text;
+
+                // Convert hex string to byte array.
+                QByteArray array;
+
+                for (int i = 0; i<contents_text.size(); i += 2) {
+                    QString num = contents_text.mid(i, 2);
+                    bool ok = false;
+                    array.push_back(num.toInt(&ok, 16));
+                    Q_ASSERT(ok);
+                }
+
+                // Give the byte array to the hex widget.
+                bool ok;
+                arrayTableWidget->setYData(new SeerArrayWidget::DataStorageArray(array));
+
+                if (yArrayOffsetLineEdit->text() != "") {
+                    arrayTableWidget->setXAddressOffset(yArrayOffsetLineEdit->text().toULong(&ok));
+                    if (ok == false) {
+                        qWarning() << "Invalid string for address offset." << yArrayOffsetLineEdit->text();
+                    }
+                }else{
+                    arrayTableWidget->setXAddressOffset(0);
+                }
+
+                if (yArrayStrideLineEdit->text() != "") {
+                    arrayTableWidget->setXAddressStride(yArrayStrideLineEdit->text().toULong(&ok));
+                    if (ok == false) {
+                        qWarning() << "Invalid string for address stride." << yArrayStrideLineEdit->text();
+                    }
+                }else{
+                    arrayTableWidget->setXAddressStride(1);
                 }
 
                 break; // Take just the first range for now.
@@ -220,11 +364,24 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         QString id_text = text.section('^', 0,0);
 
-        if (id_text.toInt() == _variableId) {
-            variableAddressLineEdit->setText( Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false)) );
+        if (id_text.toInt() == _xVariableId) {
+            xVariableAddressLineEdit->setText( Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false)) );
         }
 
-        if (id_text.toInt() == _memoryId) {
+        if (id_text.toInt() == _xMemoryId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            if (msg_text != "") {
+                QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+            }
+        }
+
+        if (id_text.toInt() == _yVariableId) {
+            yVariableAddressLineEdit->setText( Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false)) );
+        }
+
+        if (id_text.toInt() == _yMemoryId) {
             // Display the error message.
             QString msg_text = Seer::parseFirst(text, "msg=", false);
 
@@ -238,59 +395,118 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
     }
 }
 
-void SeerArrayVisualizerWidget::handleRefreshButton () {
+void SeerArrayVisualizerWidget::handlexRefreshButton () {
 
-    if (variableNameLineEdit->text() == "") {
+    if (xVariableNameLineEdit->text() == "") {
         return;
     }
 
-    if (variableAddressLineEdit->text() == "") {
+    if (xVariableAddressLineEdit->text() == "") {
         return;
     }
 
-    if (variableAddressLineEdit->text() == "not an address") {
+    if (xVariableAddressLineEdit->text() == "not an address") {
         return;
     }
 
-    int bytes = arrayLengthLineEdit->text().toInt() * Seer::typeBytes(arrayDisplayFormatComboBox->currentText());
+    int bytes = xArrayLengthLineEdit->text().toInt() * Seer::typeBytes(xArrayDisplayFormatComboBox->currentText());
 
-    //qDebug() << _memoryId << variableAddressLineEdit->text() << arrayLengthLineEdit->text() << arrayDisplayFormatComboBox->currentText() << bytes;
+    //qDebug() << _xMemoryId << xVariableAddressLineEdit->text() << xArrayLengthLineEdit->text() << xArrayDisplayFormatComboBox->currentText() << bytes;
 
-    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), bytes);
+    emit evaluateMemoryExpression(_xMemoryId, xVariableAddressLineEdit->text(), bytes);
 }
 
-void SeerArrayVisualizerWidget::handleVariableNameLineEdit () {
+void SeerArrayVisualizerWidget::handleyRefreshButton () {
 
-    setVariableName (variableNameLineEdit->text());
+    if (yVariableNameLineEdit->text() == "") {
+        return;
+    }
+
+    if (yVariableAddressLineEdit->text() == "") {
+        return;
+    }
+
+    if (yVariableAddressLineEdit->text() == "not an address") {
+        return;
+    }
+
+    int bytes = yArrayLengthLineEdit->text().toInt() * Seer::typeBytes(yArrayDisplayFormatComboBox->currentText());
+
+    //qDebug() << _yMemoryId << yVariableAddressLineEdit->text() << yArrayLengthLineEdit->text() << yArrayDisplayFormatComboBox->currentText() << bytes;
+
+    emit evaluateMemoryExpression(_yMemoryId, yVariableAddressLineEdit->text(), bytes);
 }
 
-void SeerArrayVisualizerWidget::handleArrayDisplayFormatComboBox (int index) {
+void SeerArrayVisualizerWidget::handlexVariableNameLineEdit () {
+
+    setXVariableName (xVariableNameLineEdit->text());
+}
+
+void SeerArrayVisualizerWidget::handleyVariableNameLineEdit () {
+
+    setYVariableName (yVariableNameLineEdit->text());
+}
+
+void SeerArrayVisualizerWidget::handlexArrayDisplayFormatComboBox (int index) {
 
     //qDebug() << index;
 
     if (index == 0) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::Int16ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::Int16ArrayMode);
 
     }else if (index == 1) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::Int32ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::Int32ArrayMode);
 
     }else if (index == 2) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::Int64ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::Int64ArrayMode);
 
     }else if (index == 3) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt16ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::UInt16ArrayMode);
 
     }else if (index == 4) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt32ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::UInt32ArrayMode);
 
     }else if (index == 5) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::UInt64ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::UInt64ArrayMode);
 
     }else if (index == 6) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::Float32ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::Float32ArrayMode);
 
     }else if (index == 7) {
-        arrayTableWidget->setArrayMode(SeerArrayWidget::Float64ArrayMode);
+        arrayTableWidget->setXArrayMode(SeerArrayWidget::Float64ArrayMode);
+
+    }else{
+        // Do nothing.
+    }
+}
+
+void SeerArrayVisualizerWidget::handleyArrayDisplayFormatComboBox (int index) {
+
+    //qDebug() << index;
+
+    if (index == 0) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::Int16ArrayMode);
+
+    }else if (index == 1) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::Int32ArrayMode);
+
+    }else if (index == 2) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::Int64ArrayMode);
+
+    }else if (index == 3) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::UInt16ArrayMode);
+
+    }else if (index == 4) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::UInt32ArrayMode);
+
+    }else if (index == 5) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::UInt64ArrayMode);
+
+    }else if (index == 6) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::Float32ArrayMode);
+
+    }else if (index == 7) {
+        arrayTableWidget->setYArrayMode(SeerArrayWidget::Float64ArrayMode);
 
     }else{
         // Do nothing.
@@ -326,11 +542,11 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
         return;
     }
 
-    _series->setName(variableName());
+    _series->setName(xVariableName());
     _series->setPointsVisible(false);
     _series->setPointLabelsVisible(false);
 
-    const QVector<double>& values = arrayTableWidget->arrayValues();
+    const QVector<double>& values = arrayTableWidget->xArrayValues();
 
     for (int i = 0; i < values.size(); ++i) {
         _series->append(i, values[i]);
@@ -417,5 +633,4 @@ void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
 
     handleDataChanged();
 }
-
 
