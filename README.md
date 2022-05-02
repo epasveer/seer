@@ -14,8 +14,8 @@ Requirements
 
     * Linux
     * C++17
-    * QT5
-    * QT5 QtCharts
+    * QT5 (5.15.2 or newer)
+    * QT5 QtCharts (5.15.2 or newer)
     * gdb with "mi" interpreter
 
 
