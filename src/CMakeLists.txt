@@ -172,7 +172,7 @@ endif()
 
 # for Linux, BSD, Solaris, Minix
 if(UNIX AND NOT APPLE)
-    add_compile_options(-Wall -Wextra -Wunused-result -Wdeprecated-copy -pedantic)   # -Werror
+    add_compile_options(-Wall -Wextra -Wunused-result -pedantic)   # -Werror -Wdeprecated-copy
 endif()
 
 add_compile_definitions(QT_DEPRECATED_WARNINGS)

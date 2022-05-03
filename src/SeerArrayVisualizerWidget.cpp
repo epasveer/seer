@@ -13,6 +13,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <QtGlobal>
 
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -59,7 +60,12 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
     QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handlePointsCheckBox);
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handleLabelsCheckBox);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+#else
+    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::buttonClicked),          this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+#endif
 
     // Restore window settings.
     readSettings();

@@ -5,6 +5,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
+#include <QtGlobal>
 
 SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
@@ -33,7 +34,12 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
     QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::idClicked),       this, &SeerDebugDialog::handleRunModeChanged);
+#else
+    QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::buttonClicked),   this, &SeerDebugDialog::handleRunModeChanged);
+#endif
 
     // Set initial run mode.
     handleRunModeChanged(-1);
