@@ -335,21 +335,21 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
                 arrayTableWidget->setYData(new SeerArrayWidget::DataStorageArray(array));
 
                 if (yArrayOffsetLineEdit->text() != "") {
-                    arrayTableWidget->setXAddressOffset(yArrayOffsetLineEdit->text().toULong(&ok));
+                    arrayTableWidget->setYAddressOffset(yArrayOffsetLineEdit->text().toULong(&ok));
                     if (ok == false) {
                         qWarning() << "Invalid string for address offset." << yArrayOffsetLineEdit->text();
                     }
                 }else{
-                    arrayTableWidget->setXAddressOffset(0);
+                    arrayTableWidget->setYAddressOffset(0);
                 }
 
                 if (yArrayStrideLineEdit->text() != "") {
-                    arrayTableWidget->setXAddressStride(yArrayStrideLineEdit->text().toULong(&ok));
+                    arrayTableWidget->setYAddressStride(yArrayStrideLineEdit->text().toULong(&ok));
                     if (ok == false) {
                         qWarning() << "Invalid string for address stride." << yArrayStrideLineEdit->text();
                     }
                 }else{
-                    arrayTableWidget->setXAddressStride(1);
+                    arrayTableWidget->setYAddressStride(1);
                 }
 
                 break; // Take just the first range for now.
@@ -546,10 +546,22 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
     _series->setPointsVisible(false);
     _series->setPointLabelsVisible(false);
 
-    const QVector<double>& values = arrayTableWidget->xArrayValues();
+    if (arrayTableWidget->xSize() > 0 && arrayTableWidget->ySize() == 0) {
 
-    for (int i = 0; i < values.size(); ++i) {
-        _series->append(i, values[i]);
+        const QVector<double>& values = arrayTableWidget->xArrayValues();
+
+        for (int i = 0; i < values.size(); ++i) {
+            _series->append(i, values[i]);
+        }
+
+    } else if (arrayTableWidget->xSize() > 0 && arrayTableWidget->ySize() > 0) {
+
+        const QVector<double>& xvalues = arrayTableWidget->xArrayValues();
+        const QVector<double>& yvalues = arrayTableWidget->yArrayValues();
+
+        for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
+            _series->append(xvalues[i], yvalues[i]);
+        }
     }
 
     QObject::connect(_series, &QLineSeries::hovered,     this, &SeerArrayVisualizerWidget::handleSeriesHovered);

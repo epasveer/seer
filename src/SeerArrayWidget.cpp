@@ -14,6 +14,7 @@ SeerArrayWidget::SeerArrayWidget(QWidget* parent) : QTableWidget(parent) {
     setFont(font);
     setFocusPolicy(Qt::StrongFocus);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     horizontalHeader()->setDefaultAlignment(Qt::AlignRight);
 
     _xData           = 0;
@@ -284,122 +285,240 @@ void SeerArrayWidget::create () {
     // Clear the table. We're going to recreate it.
     clear();
     setRowCount(0);
-    setColumnCount(elementsPerLine());
+
+    if (_yData) {
+        setColumnCount(2);
+    }else{
+        setColumnCount(1);
+    }
 
     // Clear the values.
     _xArrayValues.resize(0);
+    _yArrayValues.resize(0);
 
     // If there's no data, do nothing.
-    if (!_xData) {
+    if (!_xData && !_yData) {
         emit dataChanged();
         return;
     }
 
-    if (xElementSize() < 1) {
+    if (xElementSize() < 1 && yElementSize() < 1) {
         emit dataChanged();
         return;
     }
 
-    int row = 0;
-    int col = 0;
+    if (_xData) {
 
-    for (int i=xElementSize()*xAddressOffset(); i<_xData->size(); i+=xElementSize()*xAddressStride()) {
+        qDebug() << "_xData" << xElementSize() << xAddressOffset() << xAddressStride() << _xData->size();
 
-        // Add new row if we need to. Set its label.
-        if (row == rowCount()) {
-            insertRow(rowCount());
+        int row = 0;
 
-            QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/xElementSize()));
-            rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
-            setVerticalHeaderItem(row, rowHeaderitem);
+        for (int i=xElementSize()*xAddressOffset(); i<_xData->size(); i+=xElementSize()*xAddressStride()) {
+
+            // Add new row if we need to. Set its label.
+            if (row == rowCount()) {
+
+                qDebug() << "Adding row" << row << "for _xData";
+
+                insertRow(rowCount());
+
+                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/xElementSize()));
+                rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+                setVerticalHeaderItem(row, rowHeaderitem);
+            }
+
+            QTableWidgetItem* item = new QTableWidgetItem;
+            item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+            QByteArray element = _xData->getData(i, xElementSize());
+
+            double val = 0.0;
+
+            if (xArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+
+                short v = *reinterpret_cast<short*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+
+                unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+
+                int v = *reinterpret_cast<int*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+
+                unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+
+                long v = *reinterpret_cast<long*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+
+                unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+
+                float v = *reinterpret_cast<float*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else if (xArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+
+                double v = *reinterpret_cast<double*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else{
+                qWarning() << "Unknown data type.";
+
+                val = 0.0;
+            }
+
+            qDebug() << "Adding item" << row << 0 << "for _xData";
+
+            setItem(row, 0, item);
+
+            _xArrayValues.push_back(val);
+
+            row++;
         }
+    }
 
-        QTableWidgetItem* item = new QTableWidgetItem;
-        item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    if (_yData) {
 
-        QByteArray element = _xData->getData(i, xElementSize());
+        qDebug() << "_yData" << yElementSize() << yAddressOffset() << yAddressStride() << _yData->size();
 
-        QByteArray hex = element.toHex();
-        double     val = 0.0;
+        int row = 0;
 
-        if (xArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+        for (int i=yElementSize()*yAddressOffset(); i<_yData->size(); i+=yElementSize()*yAddressStride()) {
 
-            short v = *reinterpret_cast<short*>(element.data());
+            // Add new row if we need to. Set its label.
+            if (row == rowCount()) {
 
-            val = v;
+                qDebug() << "Adding row" << row << "for _yData";
 
-            item->setText(QString::number(v));
+                insertRow(rowCount());
 
-        }else if (xArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/yElementSize()));
+                rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-            unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
+                setVerticalHeaderItem(row, rowHeaderitem);
+            }
 
-            val = v;
+            QTableWidgetItem* item = new QTableWidgetItem;
+            item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-            item->setText(QString::number(v));
+            QByteArray element = _yData->getData(i, yElementSize());
 
-        }else if (xArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+            double val = 0.0;
 
-            int v = *reinterpret_cast<int*>(element.data());
+            if (yArrayMode() == SeerArrayWidget::Int16ArrayMode) {
 
-            val = v;
+                short v = *reinterpret_cast<short*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else if (xArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+                item->setText(QString::number(v));
 
-            unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
+            }else if (yArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
 
-            val = v;
+                unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else if (xArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+                item->setText(QString::number(v));
 
-            long v = *reinterpret_cast<long*>(element.data());
+            }else if (yArrayMode() == SeerArrayWidget::Int32ArrayMode) {
 
-            val = v;
+                int v = *reinterpret_cast<int*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else if (xArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+                item->setText(QString::number(v));
 
-            unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
+            }else if (yArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
 
-            val = v;
+                unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else if (xArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+                item->setText(QString::number(v));
 
-            float v = *reinterpret_cast<float*>(element.data());
+            }else if (yArrayMode() == SeerArrayWidget::Int64ArrayMode) {
 
-            val = v;
+                long v = *reinterpret_cast<long*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else if (xArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+                item->setText(QString::number(v));
 
-            double v = *reinterpret_cast<double*>(element.data());
+            }else if (yArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
 
-            val = v;
+                unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
 
-            item->setText(QString::number(v));
+                val = v;
 
-        }else{
-            qWarning() << "Unknown data type.";
+                item->setText(QString::number(v));
 
-            val = 0.0;
-        }
+            }else if (yArrayMode() == SeerArrayWidget::Float32ArrayMode) {
 
-        setItem(row, col, item);
+                float v = *reinterpret_cast<float*>(element.data());
 
-        _xArrayValues.push_back(val);
+                val = v;
 
-        col++;
+                item->setText(QString::number(v));
 
-        if (col >= elementsPerLine()) {
-            col = 0;
+            }else if (yArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+
+                double v = *reinterpret_cast<double*>(element.data());
+
+                val = v;
+
+                item->setText(QString::number(v));
+
+            }else{
+                qWarning() << "Unknown data type.";
+
+                val = 0.0;
+            }
+
+            qDebug() << "Adding item" << row << 0 << "for _yData";
+
+            setItem(row, 1, item);
+
+            _yArrayValues.push_back(val);
+
             row++;
         }
     }
