@@ -28,3 +28,13 @@ To turn on simple logging of qDebug(), et al, set this:
 
 Then start seer. There should be lots of debug output.
 
+
+
+If qDebug() output is missing filename and lineno information. Like:
+
+    [16:57:16][unknown:0][default] Some text...
+
+Then build with debug turned on.
+
+    cmake -DCMAKE_BUILD_TYPE=Debug ..
+

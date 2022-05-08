@@ -1,4 +1,4 @@
-#include "SeerSharedLibraryBrowserWidget.h"
+#include "SeerLibraryBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -8,31 +8,31 @@
 #include <QtCore/Qt>
 #include <QtCore/QDebug>
 
-SeerSharedLibraryBrowserWidget::SeerSharedLibraryBrowserWidget (QWidget* parent) : QWidget(parent) {
+SeerLibraryBrowserWidget::SeerLibraryBrowserWidget (QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
 
     // Setup the widgets
-    sharedLibrarySearchLineEdit->setPlaceholderText("Search...");
-    sharedLibrarySearchLineEdit->setClearButtonEnabled(true);
-    sharedLibraryTreeWidget->resizeColumnToContents(0);
-    sharedLibraryTreeWidget->resizeColumnToContents(1);
-    sharedLibraryTreeWidget->resizeColumnToContents(2);
-    sharedLibraryTreeWidget->resizeColumnToContents(3);
-    sharedLibraryTreeWidget->resizeColumnToContents(4);
-    sharedLibraryTreeWidget->resizeColumnToContents(5);
-    sharedLibraryTreeWidget->clear();
-    sharedLibraryTreeWidget->setSortingEnabled(false);
+    librarySearchLineEdit->setPlaceholderText("Search...");
+    librarySearchLineEdit->setClearButtonEnabled(true);
+    libraryTreeWidget->resizeColumnToContents(0);
+    libraryTreeWidget->resizeColumnToContents(1);
+    libraryTreeWidget->resizeColumnToContents(2);
+    libraryTreeWidget->resizeColumnToContents(3);
+    libraryTreeWidget->resizeColumnToContents(4);
+    libraryTreeWidget->resizeColumnToContents(5);
+    libraryTreeWidget->clear();
+    libraryTreeWidget->setSortingEnabled(false);
 
     // Connect things.
-    QObject::connect(sharedLibrarySearchLineEdit,        &QLineEdit::textChanged,            this,  &SeerSharedLibraryBrowserWidget::handleSearchLineEdit);
+    QObject::connect(librarySearchLineEdit, &QLineEdit::textChanged,            this,  &SeerLibraryBrowserWidget::handleSearchLineEdit);
 }
 
-SeerSharedLibraryBrowserWidget::~SeerSharedLibraryBrowserWidget () {
+SeerLibraryBrowserWidget::~SeerLibraryBrowserWidget () {
 }
 
-void SeerSharedLibraryBrowserWidget::handleText (const QString& text) {
+void SeerLibraryBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
@@ -43,9 +43,9 @@ void SeerSharedLibraryBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,shared-libraries=[") && text.endsWith("]")) {
 
-        sharedLibraryTreeWidget->clear();
-        sharedLibraryTreeWidget->setSortingEnabled(false);
-        sharedLibraryTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
+        libraryTreeWidget->clear();
+        libraryTreeWidget->setSortingEnabled(false);
+        libraryTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
 
         // -file-list-shared-libraries
         // ^done,shared-libraries=[
@@ -77,32 +77,32 @@ void SeerSharedLibraryBrowserWidget::handleText (const QString& text) {
             item->setText(4, thread_group_text);
             item->setText(5, ranges_text);
 
-            sharedLibraryTreeWidget->addTopLevelItem(item);
+            libraryTreeWidget->addTopLevelItem(item);
         }
 
     }else{
         // Ignore others.
     }
 
-    sharedLibraryTreeWidget->resizeColumnToContents(0);
-    sharedLibraryTreeWidget->resizeColumnToContents(1);
-    sharedLibraryTreeWidget->resizeColumnToContents(2);
-    sharedLibraryTreeWidget->resizeColumnToContents(3);
-    sharedLibraryTreeWidget->resizeColumnToContents(4);
-    sharedLibraryTreeWidget->resizeColumnToContents(5);
-    sharedLibraryTreeWidget->sortByColumn(0, Qt::AscendingOrder);
-    sharedLibraryTreeWidget->setSortingEnabled(true);
+    libraryTreeWidget->resizeColumnToContents(0);
+    libraryTreeWidget->resizeColumnToContents(1);
+    libraryTreeWidget->resizeColumnToContents(2);
+    libraryTreeWidget->resizeColumnToContents(3);
+    libraryTreeWidget->resizeColumnToContents(4);
+    libraryTreeWidget->resizeColumnToContents(5);
+    libraryTreeWidget->sortByColumn(0, Qt::AscendingOrder);
+    libraryTreeWidget->setSortingEnabled(true);
 
-    sharedLibrarySearchLineEdit->clear();
+    librarySearchLineEdit->clear();
 
     QApplication::restoreOverrideCursor();
 }
 
-void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) {
+void SeerLibraryBrowserWidget::handleSearchLineEdit (const QString& text) {
 
     // Set everything to a normal font. If there is no search text, unhide everything.
     // If there is search text, hide everything so the matching ones can be unhidden later on.
-    QTreeWidgetItemIterator it(sharedLibraryTreeWidget);
+    QTreeWidgetItemIterator it(libraryTreeWidget);
 
     if (*it) {
 
@@ -118,7 +118,7 @@ void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) 
             }
         }else{
             while (*it) {
-                (*it)->setHidden(true); // Has serach text, hide everything. Matching items to be unhidden below.
+                (*it)->setHidden(true); // Has search text, hide everything. Matching items to be unhidden below.
                 (*it)->setFont(0,f0);
                 ++it;
             }
@@ -131,9 +131,9 @@ void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) 
         QList<QTreeWidgetItem*> matches;
 
         if (text.contains('*')) {
-            matches = sharedLibraryTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
+            matches = libraryTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
         }else{
-            matches = sharedLibraryTreeWidget->findItems(text, Qt::MatchStartsWith | Qt::MatchRecursive, 0);
+            matches = libraryTreeWidget->findItems(text, Qt::MatchStartsWith | Qt::MatchRecursive, 0);
         }
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
@@ -141,7 +141,7 @@ void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) 
 
         if (it != e) {
 
-            sharedLibraryTreeWidget->setCurrentItem(*it);
+            libraryTreeWidget->setCurrentItem(*it);
 
             QFont f0 = (*it)->font(0);
 
@@ -157,19 +157,19 @@ void SeerSharedLibraryBrowserWidget::handleSearchLineEdit (const QString& text) 
         //qDebug() << text << matches.size();
     }
 
-    sharedLibraryTreeWidget->resizeColumnToContents(0);
-    sharedLibraryTreeWidget->resizeColumnToContents(1);
-    sharedLibraryTreeWidget->resizeColumnToContents(2);
-    sharedLibraryTreeWidget->resizeColumnToContents(3);
-    sharedLibraryTreeWidget->resizeColumnToContents(4);
-    sharedLibraryTreeWidget->resizeColumnToContents(5);
+    libraryTreeWidget->resizeColumnToContents(0);
+    libraryTreeWidget->resizeColumnToContents(1);
+    libraryTreeWidget->resizeColumnToContents(2);
+    libraryTreeWidget->resizeColumnToContents(3);
+    libraryTreeWidget->resizeColumnToContents(4);
+    libraryTreeWidget->resizeColumnToContents(5);
 }
 
-void SeerSharedLibraryBrowserWidget::refresh () {
-    emit refreshSharedLibraryList();
+void SeerLibraryBrowserWidget::refresh () {
+    emit refreshLibraryList();
 }
 
-void SeerSharedLibraryBrowserWidget::showEvent (QShowEvent* event) {
+void SeerLibraryBrowserWidget::showEvent (QShowEvent* event) {
 
     QWidget::showEvent(event);
 

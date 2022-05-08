@@ -137,6 +137,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbInterruptSIGUSR1           ();
         void                                handleGdbInterruptSIGUSR2           ();
         void                                handleGdbExecutableSources          ();
+        void                                handleGdbExecutableFunctions        (const QString& functionRegex);
         void                                handleGdbExecutableSharedLibraries  ();
         void                                handleGdbExecutableName             ();
         void                                handleGdbExecutableArguments        ();

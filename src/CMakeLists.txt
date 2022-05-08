@@ -54,8 +54,9 @@ set(HEADER_FILES
     SeerMemoryVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRunStatusIndicator.h
-    SeerSharedLibraryBrowserWidget.h
+    SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
+    SeerFunctionBrowserWidget.h
     SeerSourceLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
@@ -123,8 +124,9 @@ set(SOURCE_FILES
     SeerMemoryVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRunStatusIndicator.cpp
-    SeerSharedLibraryBrowserWidget.cpp
+    SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
+    SeerFunctionBrowserWidget.cpp
     SeerSourceLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp

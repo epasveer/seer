@@ -517,6 +517,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,DataExpressionTable={") && text.endsWith("}")) {
         return;
 
+    }else if (text.startsWith("^done,symbols={") && text.endsWith("}")) {
+        return;
+
     }else if (text == "^exit") {
         return;
 

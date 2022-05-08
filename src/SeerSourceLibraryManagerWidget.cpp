@@ -14,11 +14,13 @@ SeerSourceLibraryManagerWidget::SeerSourceLibraryManagerWidget (QWidget* parent)
     tabWidget->setMovable(true);
     tabWidget->setTabsClosable(false);
 
-    _sourceBrowserWidget        = new SeerSourceBrowserWidget(this);
-    _sharedLibraryBrowserWidget = new SeerSharedLibraryBrowserWidget(this);
+    _sourceBrowserWidget    = new SeerSourceBrowserWidget(this);
+    _functionBrowserWidget  = new SeerFunctionBrowserWidget(this);
+    _libraryBrowserWidget   = new SeerLibraryBrowserWidget(this);
 
-    tabWidget->addTab(_sourceBrowserWidget,        "Source");
-    tabWidget->addTab(_sharedLibraryBrowserWidget, "Libraries");
+    tabWidget->addTab(_sourceBrowserWidget,    "Source");
+    tabWidget->addTab(_functionBrowserWidget,  "Functions");
+    tabWidget->addTab(_libraryBrowserWidget,   "Libraries");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -36,13 +38,18 @@ SeerSourceBrowserWidget* SeerSourceLibraryManagerWidget::sourceBrowserWidget () 
     return _sourceBrowserWidget;
 }
 
-SeerSharedLibraryBrowserWidget* SeerSourceLibraryManagerWidget::sharedLibraryBrowserWidget () {
-    return _sharedLibraryBrowserWidget;
+SeerFunctionBrowserWidget* SeerSourceLibraryManagerWidget::functionBrowserWidget () {
+    return _functionBrowserWidget;
+}
+
+SeerLibraryBrowserWidget* SeerSourceLibraryManagerWidget::libraryBrowserWidget () {
+    return _libraryBrowserWidget;
 }
 
 void SeerSourceLibraryManagerWidget::handleRefreshToolButtonClicked () {
 
     sourceBrowserWidget()->refresh();
-    sharedLibraryBrowserWidget()->refresh();
+    functionBrowserWidget()->refresh();
+    libraryBrowserWidget()->refresh();
 }
 
