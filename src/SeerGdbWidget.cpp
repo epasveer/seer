@@ -110,6 +110,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->functionBrowserWidget(),            &SeerFunctionBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->typeBrowserWidget(),                &SeerTypeBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->variableBrowserWidget(),            &SeerVariableBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->libraryBrowserWidget(),             &SeerLibraryBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleText);
@@ -148,7 +150,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->sourceBrowserWidget(),         &SeerSourceBrowserWidget::selectedFile,                                                     editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::refreshFunctionList,                                            this,                                                           &SeerGdbWidget::handleGdbExecutableFunctions);
     QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::selectedFile,                                                   editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
-    QObject::connect(sourceLibraryManagerWidget->libraryBrowserWidget(),        &SeerLibraryBrowserWidget::refreshLibraryList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableSharedLibraries);
+    QObject::connect(sourceLibraryManagerWidget->typeBrowserWidget(),           &SeerTypeBrowserWidget::refreshTypeList,                                                    this,                                                           &SeerGdbWidget::handleGdbExecutableTypes);
+    QObject::connect(sourceLibraryManagerWidget->typeBrowserWidget(),           &SeerTypeBrowserWidget::selectedFile,                                                       editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+    QObject::connect(sourceLibraryManagerWidget->variableBrowserWidget(),       &SeerVariableBrowserWidget::refreshVariableList,                                            this,                                                           &SeerGdbWidget::handleGdbExecutableVariables);
+    QObject::connect(sourceLibraryManagerWidget->variableBrowserWidget(),       &SeerVariableBrowserWidget::selectedFile,                                                   editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+    QObject::connect(sourceLibraryManagerWidget->libraryBrowserWidget(),        &SeerLibraryBrowserWidget::refreshLibraryList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableLibraries);
 
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::refreshStackFrames,                                          this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::refreshStackLocals,                                          this,                                                           &SeerGdbWidget::handleGdbStackListLocals);
@@ -1012,9 +1018,13 @@ void SeerGdbWidget::handleGdbExecutableSources () {
     handleGdbCommand("-file-list-exec-source-files");
 }
 
-void SeerGdbWidget::handleGdbExecutableFunctions (const QString& functionRegex) {
+void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functionRegex) {
 
     if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (id <= 0) {
         return;
     }
 
@@ -1022,12 +1032,58 @@ void SeerGdbWidget::handleGdbExecutableFunctions (const QString& functionRegex) 
         return;
     }
 
-    //qDebug() << functionRegex;
+    //qDebug() << id << functionRegex;
 
-    handleGdbCommand(QString("-symbol-info-functions --name %1").arg(functionRegex));
+    handleGdbCommand(QString("%1-symbol-info-functions --name %2").arg(id).arg(functionRegex));
 }
 
-void SeerGdbWidget::handleGdbExecutableSharedLibraries () {
+void SeerGdbWidget::handleGdbExecutableTypes (int id, const QString& typeRegex) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (id <= 0) {
+        return;
+    }
+
+    if (typeRegex == "") {
+        return;
+    }
+
+    //qDebug() << id << typeRegex;
+
+    handleGdbCommand(QString("%1-symbol-info-types --name %2").arg(id).arg(typeRegex));
+}
+
+void SeerGdbWidget::handleGdbExecutableVariables (int id, const QString& variableNameRegex, const QString& variableTypeRegex) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (id <= 0) {
+        return;
+    }
+
+    if (variableNameRegex == "" && variableTypeRegex == "") {
+        return;
+    }
+
+    QString command = QString("%1-symbol-info-variables").arg(id);
+
+    if (variableNameRegex != "") {
+        command += QString(" --name %1").arg(variableNameRegex);
+    }
+
+    if (variableTypeRegex != "") {
+        command += QString(" --type %1").arg(variableTypeRegex);
+    }
+
+    handleGdbCommand(command);
+}
+
+void SeerGdbWidget::handleGdbExecutableLibraries () {
 
     if (executableLaunchMode() == "") {
         return;

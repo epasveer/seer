@@ -2,15 +2,15 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
-#include "ui_SeerFunctionBrowserWidget.h"
+#include "ui_SeerVariableBrowserWidget.h"
 
-class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrowserWidgetForm {
+class SeerVariableBrowserWidget : public QWidget, protected Ui::SeerVariableBrowserWidgetForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerFunctionBrowserWidget (QWidget* parent = 0);
-       ~SeerFunctionBrowserWidget ();
+        explicit SeerVariableBrowserWidget (QWidget* parent = 0);
+       ~SeerVariableBrowserWidget ();
 
     public slots:
         void                handleText                  (const QString& text);
@@ -21,7 +21,7 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
 
     signals:
-        void                refreshFunctionList         (int id, const QString& functionRegex);
+        void                refreshVariableList         (int id, const QString& variableNameRegex, const QString& variableTypeRegex);
         void                selectedFile                (QString file, QString fullname, int lineno);
 
     protected:

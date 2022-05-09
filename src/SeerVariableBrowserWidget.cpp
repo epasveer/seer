@@ -1,4 +1,4 @@
-#include "SeerFunctionBrowserWidget.h"
+#include "SeerVariableBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -9,7 +9,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QDebug>
 
-SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget(parent) {
+SeerVariableBrowserWidget::SeerVariableBrowserWidget (QWidget* parent) : QWidget(parent) {
 
     // Set the state.
     _id = Seer::createID();
@@ -18,37 +18,40 @@ SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    functionSearchLineEdit->setPlaceholderText("Search...");
-    functionSearchLineEdit->setClearButtonEnabled(true);
-    functionTreeWidget->setMouseTracking(true);
-  //functionTreeWidget->resizeColumnToContents(0);
-    functionTreeWidget->resizeColumnToContents(1);
-    functionTreeWidget->resizeColumnToContents(2);
-    functionTreeWidget->resizeColumnToContents(3);
-    functionTreeWidget->resizeColumnToContents(4);
-    functionTreeWidget->resizeColumnToContents(5);
-    functionTreeWidget->clear();
-    functionTreeWidget->setSortingEnabled(false);
+    variableNameSearchLineEdit->setPlaceholderText("Variable Name...");
+    variableNameSearchLineEdit->setClearButtonEnabled(true);
+    variableTypeSearchLineEdit->setPlaceholderText("Variable Type...");
+    variableTypeSearchLineEdit->setClearButtonEnabled(true);
+    variableTreeWidget->setMouseTracking(true);
+  //variableTreeWidget->resizeColumnToContents(0);
+  //variableTreeWidget->resizeColumnToContents(1);
+    variableTreeWidget->resizeColumnToContents(2);
+    variableTreeWidget->resizeColumnToContents(3);
+    variableTreeWidget->resizeColumnToContents(4);
+    variableTreeWidget->resizeColumnToContents(5);
+    variableTreeWidget->clear();
+    variableTreeWidget->setSortingEnabled(false);
 
     // Connect things.
-    QObject::connect(functionTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerFunctionBrowserWidget::handleItemDoubleClicked);
-    QObject::connect(functionSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerFunctionBrowserWidget::handleSearchLineEdit);
+    QObject::connect(variableTreeWidget,          &QTreeWidget::itemDoubleClicked,    this,  &SeerVariableBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(variableNameSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerVariableBrowserWidget::handleSearchLineEdit);
+    QObject::connect(variableTypeSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerVariableBrowserWidget::handleSearchLineEdit);
 }
 
-SeerFunctionBrowserWidget::~SeerFunctionBrowserWidget () {
+SeerVariableBrowserWidget::~SeerVariableBrowserWidget () {
 }
 
-void SeerFunctionBrowserWidget::handleText (const QString& text) {
+void SeerVariableBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     if (text.startsWith(QString::number(_id) + "^done,symbols={") && text.endsWith("}")) {
 
-        functionTreeWidget->clear();
-        functionTreeWidget->setSortingEnabled(false);
-        functionTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
+        variableTreeWidget->clear();
+        variableTreeWidget->setSortingEnabled(false);
+        variableTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
 
-        // -symbol-info-functions
+        // -symbol-info-variables
         // ^done,symbols={
         //          debug=[
         //                  {
@@ -93,26 +96,27 @@ void SeerFunctionBrowserWidget::handleText (const QString& text) {
                 QString type_text        = Seer::parseFirst(symbol_entry, "type=", '"', '"', false);
                 QString description_text = Seer::parseFirst(symbol_entry, "type=", '"', '"', false);
 
-                // Skip function entries that have no line number.
+                // Skip variable entries that have no line number.
                 if (line_text == "") {
                     continue;
                 }
 
-                // Add the function to the tree.
+                // Add the variable to the tree.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
 
                 QFont f0 = item->font(0);
                 f0.setBold(true);
                 item->setFont(0,f0);
+                item->setFont(1,f0);
 
                 item->setText(0, name_text);
-                item->setText(1, filename_text);
-                item->setText(2, line_text);
-                item->setText(3, fullname_text);
-                item->setText(4, type_text);
+                item->setText(1, type_text);
+                item->setText(2, filename_text);
+                item->setText(3, line_text);
+                item->setText(4, fullname_text);
                 item->setText(5, description_text);
 
-                functionTreeWidget->addTopLevelItem(item);
+                variableTreeWidget->addTopLevelItem(item);
             }
         }
 
@@ -120,44 +124,44 @@ void SeerFunctionBrowserWidget::handleText (const QString& text) {
         // Ignore others.
     }
 
-  //functionTreeWidget->resizeColumnToContents(0);
-    functionTreeWidget->resizeColumnToContents(1);
-    functionTreeWidget->resizeColumnToContents(2);
-    functionTreeWidget->resizeColumnToContents(3);
-    functionTreeWidget->resizeColumnToContents(4);
-    functionTreeWidget->resizeColumnToContents(5);
-    functionTreeWidget->sortByColumn(0, Qt::AscendingOrder);
-    functionTreeWidget->setSortingEnabled(true);
+  //variableTreeWidget->resizeColumnToContents(0);  // Name
+  //variableTreeWidget->resizeColumnToContents(1);  // Type
+    variableTreeWidget->resizeColumnToContents(2);  // Filename
+    variableTreeWidget->resizeColumnToContents(3);  // Line
+    variableTreeWidget->resizeColumnToContents(4);  // Fullname
+    variableTreeWidget->resizeColumnToContents(5);  // Description
+    variableTreeWidget->sortByColumn(0, Qt::AscendingOrder);
+    variableTreeWidget->setSortingEnabled(true);
 
     QApplication::restoreOverrideCursor();
 }
 
-void SeerFunctionBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+void SeerVariableBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
 
-    emit selectedFile(item->text(1), item->text(3), item->text(2).toInt());
+    emit selectedFile(item->text(2), item->text(4), item->text(3).toInt());
 }
 
-void SeerFunctionBrowserWidget::handleSearchLineEdit () {
+void SeerVariableBrowserWidget::handleSearchLineEdit () {
 
-    functionTreeWidget->clear();
-    functionTreeWidget->setSortingEnabled(false);
-    functionTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
+    variableTreeWidget->clear();
+    variableTreeWidget->setSortingEnabled(false);
+    variableTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
 
-  //functionTreeWidget->resizeColumnToContents(0);
-    functionTreeWidget->resizeColumnToContents(1);
-    functionTreeWidget->resizeColumnToContents(2);
-    functionTreeWidget->resizeColumnToContents(3);
-    functionTreeWidget->resizeColumnToContents(4);
-    functionTreeWidget->resizeColumnToContents(5);
+  //variableTreeWidget->resizeColumnToContents(0);
+  //variableTreeWidget->resizeColumnToContents(1);
+    variableTreeWidget->resizeColumnToContents(2);
+    variableTreeWidget->resizeColumnToContents(3);
+    variableTreeWidget->resizeColumnToContents(4);
+    variableTreeWidget->resizeColumnToContents(5);
 
-    if (functionSearchLineEdit->text() != "") {
-        emit refreshFunctionList(_id, functionSearchLineEdit->text());
+    if (variableNameSearchLineEdit->text() != "" || variableTypeSearchLineEdit->text() != "") {
+        emit refreshVariableList(_id, variableNameSearchLineEdit->text(), variableTypeSearchLineEdit->text());
     }
 }
 
-void SeerFunctionBrowserWidget::refresh () {
+void SeerVariableBrowserWidget::refresh () {
     handleSearchLineEdit();
 }
 
