@@ -30,6 +30,7 @@ SeerTypeBrowserWidget::SeerTypeBrowserWidget (QWidget* parent) : QWidget(parent)
 
     // Connect things.
     QObject::connect(typeTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerTypeBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(typeTreeWidget,      &QTreeWidget::itemEntered,          this,  &SeerTypeBrowserWidget::handleItemEntered);
     QObject::connect(typeSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerTypeBrowserWidget::handleSearchLineEdit);
 }
 
@@ -122,6 +123,19 @@ void SeerTypeBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int 
     Q_UNUSED(column);
 
     emit selectedFile(item->text(1), item->text(3), item->text(2).toInt());
+}
+
+void SeerTypeBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    Q_UNUSED(column);
+
+    QString tip = QString("Type: %1\nFile: %2\nLine: %3\nFullname: %4").arg(item->text(0)).arg(item->text(1)).arg(item->text(2)).arg(item->text(3));
+
+    item->setToolTip(0, tip);
+
+    for (int i=1; i<typeTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerTypeBrowserWidget::handleSearchLineEdit () {

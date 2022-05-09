@@ -34,6 +34,7 @@ SeerVariableBrowserWidget::SeerVariableBrowserWidget (QWidget* parent) : QWidget
 
     // Connect things.
     QObject::connect(variableTreeWidget,          &QTreeWidget::itemDoubleClicked,    this,  &SeerVariableBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(variableTreeWidget,          &QTreeWidget::itemEntered,          this,  &SeerVariableBrowserWidget::handleItemEntered);
     QObject::connect(variableNameSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerVariableBrowserWidget::handleSearchLineEdit);
     QObject::connect(variableTypeSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerVariableBrowserWidget::handleSearchLineEdit);
 }
@@ -141,6 +142,19 @@ void SeerVariableBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, 
     Q_UNUSED(column);
 
     emit selectedFile(item->text(2), item->text(4), item->text(3).toInt());
+}
+
+void SeerVariableBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
+
+    Q_UNUSED(column);
+
+    QString tip = QString("Variable: %1\nType: %2\nFile: %3\nLine: %4\nFullname: %5\nDescription: %6").arg(item->text(0)).arg(item->text(1)).arg(item->text(2)).arg(item->text(3)).arg(item->text(4)).arg(item->text(5));
+
+    item->setToolTip(0, tip);
+
+    for (int i=1; i<variableTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
+        item->setToolTip(i, item->toolTip(0));
+    }
 }
 
 void SeerVariableBrowserWidget::handleSearchLineEdit () {

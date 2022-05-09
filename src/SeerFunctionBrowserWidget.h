@@ -19,6 +19,7 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
     protected slots:
         void                handleSearchLineEdit        ();
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshFunctionList         (int id, const QString& functionRegex);

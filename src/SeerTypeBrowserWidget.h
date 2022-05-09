@@ -19,6 +19,7 @@ class SeerTypeBrowserWidget : public QWidget, protected Ui::SeerTypeBrowserWidge
     protected slots:
         void                handleSearchLineEdit        ();
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshTypeList             (int id, const QString& typeRegex);

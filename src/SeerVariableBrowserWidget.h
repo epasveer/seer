@@ -19,6 +19,7 @@ class SeerVariableBrowserWidget : public QWidget, protected Ui::SeerVariableBrow
     protected slots:
         void                handleSearchLineEdit        ();
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:
         void                refreshVariableList         (int id, const QString& variableNameRegex, const QString& variableTypeRegex);
