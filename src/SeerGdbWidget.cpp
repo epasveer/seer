@@ -1098,7 +1098,7 @@ void SeerGdbWidget::handleGdbExecutableName () {
         return;
     }
 
-    handleGdbCommand(QString("-file-exec-and-symbols ") + executableName());
+    handleGdbCommand(QString("-file-exec-and-symbols \"") + executableName() + "\"");
 }
 
 void SeerGdbWidget::handleGdbExecutableArguments () {
@@ -1117,7 +1117,7 @@ void SeerGdbWidget::handleGdbExecutableWorkingDirectory () {
     }
 
     if (executableWorkingDirectory() != "") {
-        handleGdbCommand(QString("-environment-cd ") + executableWorkingDirectory());
+        handleGdbCommand(QString("-environment-cd \"") + executableWorkingDirectory() + "\"");
     }
 }
 
@@ -1127,7 +1127,7 @@ void SeerGdbWidget::handleGdbExecutableLoadBreakpoints () {
         return;
     }
 
-    handleGdbCommand("source -v " + executableBreakpointsFilename());
+    handleGdbCommand("source -v \"" + executableBreakpointsFilename() + "\"");
     handleGdbGenericpointList();
 }
 
