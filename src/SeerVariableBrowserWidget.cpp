@@ -18,9 +18,9 @@ SeerVariableBrowserWidget::SeerVariableBrowserWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    variableNameSearchLineEdit->setPlaceholderText("Variable Name...");
+    variableNameSearchLineEdit->setPlaceholderText("Variable name regex...");
     variableNameSearchLineEdit->setClearButtonEnabled(true);
-    variableTypeSearchLineEdit->setPlaceholderText("Variable Type...");
+    variableTypeSearchLineEdit->setPlaceholderText("Variable type regex...");
     variableTypeSearchLineEdit->setClearButtonEnabled(true);
     variableTreeWidget->setMouseTracking(true);
   //variableTreeWidget->resizeColumnToContents(0);

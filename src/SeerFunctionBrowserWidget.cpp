@@ -18,7 +18,7 @@ SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    functionSearchLineEdit->setPlaceholderText("Search...");
+    functionSearchLineEdit->setPlaceholderText("Search regex...");
     functionSearchLineEdit->setClearButtonEnabled(true);
     functionTreeWidget->setMouseTracking(true);
   //functionTreeWidget->resizeColumnToContents(0);

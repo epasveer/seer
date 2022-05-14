@@ -14,7 +14,7 @@ SeerLibraryBrowserWidget::SeerLibraryBrowserWidget (QWidget* parent) : QWidget(p
     setupUi(this);
 
     // Setup the widgets
-    librarySearchLineEdit->setPlaceholderText("Search...");
+    librarySearchLineEdit->setPlaceholderText("Search regex...");
     librarySearchLineEdit->setClearButtonEnabled(true);
     libraryTreeWidget->resizeColumnToContents(0);
     libraryTreeWidget->resizeColumnToContents(1);
@@ -130,11 +130,7 @@ void SeerLibraryBrowserWidget::handleSearchLineEdit (const QString& text) {
 
         QList<QTreeWidgetItem*> matches;
 
-        if (text.contains('*')) {
-            matches = libraryTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
-        }else{
-            matches = libraryTreeWidget->findItems(text, Qt::MatchStartsWith | Qt::MatchRecursive, 0);
-        }
+        matches = libraryTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
         QList<QTreeWidgetItem*>::const_iterator e  = matches.end();
