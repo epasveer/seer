@@ -133,6 +133,10 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
+    if (item->text(1) == "") {
+        return;
+    }
+
     QAction* addVariableLoggerExpressionAction;
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
