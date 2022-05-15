@@ -19,10 +19,10 @@
      <item>
       <widget class="QLineEdit" name="variableNameLineEdit">
        <property name="toolTip">
-        <string>Variable name or expression.</string>
+        <string>Variable expression.</string>
        </property>
        <property name="placeholderText">
-        <string>variable name</string>
+        <string>Variable expression</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
@@ -32,13 +32,13 @@
      <item>
       <widget class="QLineEdit" name="variableAddressLineEdit">
        <property name="toolTip">
-        <string>Variable address.</string>
+        <string>Memory address.</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>variable address</string>
+        <string>Memory address</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>false</bool>

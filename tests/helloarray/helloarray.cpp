@@ -4,6 +4,17 @@
 #include <math.h>
 #include <iostream>
 
+float* function1() {
+
+    float* float_array = (float*)malloc(256);
+
+    for (int i=0; i<64; i++) {
+        float_array[i] = (float)i * 1.13;
+    }
+
+    return float_array;
+}
+
 int main (void) {
 
     //
@@ -50,6 +61,10 @@ int main (void) {
         currentPhase += phaseIncrement;
     }
 
+    //
+    //
+    //
+    float* x = function1();
 
     //
     //
@@ -60,6 +75,7 @@ int main (void) {
     free(int_array);
     free(float_array);
     free(sine_array);
+    free(x);
 
     return 0;
 }

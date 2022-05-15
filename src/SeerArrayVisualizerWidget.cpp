@@ -131,8 +131,11 @@ void SeerArrayVisualizerWidget::setVariableAddress (const QString& address) {
             variableAddressLineEdit->setText("not an address");
         }
 
-    }else{
+    }else if (address != "") {
         variableAddressLineEdit->setText("not an address");
+
+    }else{
+        variableAddressLineEdit->setText("");
     }
 
     arrayTableWidget->setAddressOffset(0);

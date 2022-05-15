@@ -23,7 +23,8 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Memory Visualizer");
 
-    memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+  //memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    memoryLengthLineEdit->setValidator(new QRegExpValidator(QRegExp("\\s*([1-9]\\d*\\s*)+"), this));
     columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
 
     if (memoryHexEditor->memoryMode() == SeerHexWidget::HexMemoryMode) {
@@ -90,27 +91,37 @@ QString SeerMemoryVisualizerWidget::variableName () const {
 void SeerMemoryVisualizerWidget::setVariableAddress (const QString& address) {
 
     unsigned long offset = 0;
-    bool ok = false;
+    bool refresh         = false;
 
     if (address.startsWith("0x")) {
+
+        bool ok = false;
 
         offset = address.toULong(&ok, 16);
 
         if (ok == true) {
             variableAddressLineEdit->setText(address);
+            refresh = true;
         }else{
             variableAddressLineEdit->setText("not an address");
             offset = 0;
         }
 
-    }else{
+    }else if (address != "") {
         variableAddressLineEdit->setText("not an address");
+        offset = 0;
+
+    }else{
+        variableAddressLineEdit->setText("");
         offset = 0;
     }
 
-    //qDebug() << address << offset << ok;
-
     memoryHexEditor->setAddressOffset(offset);
+
+    // Show results immediately.
+    if (refresh) {
+        handleRefreshButton();
+    }
 }
 
 QString SeerMemoryVisualizerWidget::variableAddress () const {
@@ -214,7 +225,13 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
         return;
     }
 
-    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), memoryLengthLineEdit->text().toInt());
+    int nbytes = 256;
+
+    if (memoryLengthLineEdit->text() != "") {
+        nbytes = memoryLengthLineEdit->text().toInt();
+    }
+
+    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
 }
 
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {

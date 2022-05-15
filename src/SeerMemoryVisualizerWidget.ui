@@ -22,23 +22,23 @@
         <string>Variable name or expression.</string>
        </property>
        <property name="placeholderText">
-        <string>variable name</string>
+        <string>Variable expression</string>
        </property>
        <property name="clearButtonEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLineEdit" name="variableAddressLineEdit">
        <property name="toolTip">
-        <string>Variable address.</string>
+        <string>Memory address.</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>variable address</string>
+        <string>Memory address</string>
        </property>
       </widget>
      </item>
@@ -51,10 +51,10 @@
         <string/>
        </property>
        <property name="placeholderText">
-        <string># Bytes</string>
+        <string># Bytes (default 256)</string>
        </property>
        <property name="clearButtonEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -125,7 +125,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/HighContrast/document-print.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
        </property>
       </widget>
      </item>
@@ -139,7 +139,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/HighContrast/document-save-as.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</iconset>
        </property>
       </widget>
      </item>
@@ -153,7 +153,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
        </property>
       </widget>
      </item>
