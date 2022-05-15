@@ -13,18 +13,24 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
        ~SeerStackArgumentsBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                handleStoppingPointReached  ();
-        void                refresh                     ();
+        void                handleText                          (const QString& text);
+        void                handleStoppingPointReached          ();
+        void                refresh                             ();
 
     protected slots:
-        void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleContextMenu                   (const QPoint&    pos);
+        void                handleItemEntered                   (QTreeWidgetItem* item, int column);
 
     signals:
-        void                refreshStackArguments       ();
+        void                refreshStackArguments               ();
+        void                addVariableLoggerExpression         (QString expression);
+        void                addVariableTrackerExpression        (QString expression);
+        void                refreshVariableTrackerValues        ();
+        void                addMemoryVisualize                  (QString expression);
+        void                addArrayVisualize                   (QString expression);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                showEvent                           (QShowEvent* event);
 
     private:
 };

@@ -3,6 +3,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 #include <QtCore/QDebug>
 
 SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -11,6 +13,7 @@ SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* paren
     setupUi(this);
 
     // Setup the widgets
+    argumentsTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     argumentsTreeWidget->setMouseTracking(true);
     argumentsTreeWidget->setSortingEnabled(false);
     argumentsTreeWidget->resizeColumnToContents(0); // level
@@ -20,7 +23,8 @@ SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* paren
     argumentsTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(argumentsTreeWidget, &QTreeWidget::itemEntered,      this,  &SeerStackArgumentsBrowserWidget::handleItemEntered);
+    QObject::connect(argumentsTreeWidget, &QTreeWidget::customContextMenuRequested,    this,  &SeerStackArgumentsBrowserWidget::handleContextMenu);
+    QObject::connect(argumentsTreeWidget, &QTreeWidget::itemEntered,                   this,  &SeerStackArgumentsBrowserWidget::handleItemEntered);
 }
 
 SeerStackArgumentsBrowserWidget::~SeerStackArgumentsBrowserWidget () {
@@ -119,6 +123,268 @@ void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {
 
 void SeerStackArgumentsBrowserWidget::refresh () {
     emit refreshStackArguments();
+}
+
+void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    QTreeWidgetItem* item = argumentsTreeWidget->itemAt(pos);
+
+    if (item == 0) {
+        return;
+    }
+
+    QAction* addVariableLoggerExpressionAction;
+    QAction* addVariableLoggerAsteriskExpressionAction;
+    QAction* addVariableLoggerAmpersandExpressionAction;
+    QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerExpressionAction;
+    QAction* addVariableTrackerAsteriskExpressionAction;
+    QAction* addVariableTrackerAmpersandExpressionAction;
+    QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
+    QAction* addMemoryVisualizerAction;
+    QAction* addMemoryAsteriskVisualizerAction;
+    QAction* addMemoryAmpersandVisualizerAction;
+    QAction* addArrayVisualizerAction;
+    QAction* addArrayAsteriskVisualizerAction;
+    QAction* addArrayAmpersandVisualizerAction;
+
+    addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(item->text(1)));
+    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(item->text(1)));
+    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(item->text(1)));
+    addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(item->text(1)));
+    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(item->text(1)));
+    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(item->text(1)));
+    addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
+    addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
+    addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+    addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(item->text(1)));
+    addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(item->text(1)));
+    addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+
+    QMenu menu("Visualizers", this);
+    menu.setTitle("Visualizers");
+
+    QMenu loggerMenu("Add variable to Logger");
+    loggerMenu.addAction(addVariableLoggerExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    menu.addMenu(&loggerMenu);
+
+    QMenu trackerMenu("Add variable to Tracker");
+    trackerMenu.addAction(addVariableTrackerExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
+    menu.addMenu(&trackerMenu);
+
+    QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
+    memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAsteriskVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAmpersandVisualizerAction);
+    menu.addMenu(&memoryVisualizerMenu);
+
+    QMenu arrayVisualizerMenu("Add variable to an Array Visualizer");
+    arrayVisualizerMenu.addAction(addArrayVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
+    // Launch the menu. Get the response.
+    QAction* action = menu.exec(argumentsTreeWidget->viewport()->mapToGlobal(pos));
+
+    // Do nothing.
+    if (action == 0) {
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerExpressionAction) {
+
+        //qDebug() << "addVariableLoggerExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableLoggerExpression(item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAsteriskExpressionAction) {
+
+        //qDebug() << "addVariableLoggerAsteriskExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableLoggerExpression(QString("*") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAmpersandExpressionAction) {
+
+        //qDebug() << "addVariableLoggerAmpersandExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableLoggerExpression(QString("&") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
+
+        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableLoggerExpression(QString("*&") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerExpressionAction) {
+
+        //qDebug() << "addVariableTrackerExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableTrackerExpression(item->text(1));
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerAsteriskExpressionAction) {
+
+        //qDebug() << "addVariableTrackerAsteriskExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableTrackerExpression(QString("*") + item->text(1));
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerAmpersandExpressionAction) {
+
+        //qDebug() << "addVariableTrackerAmpersandExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableTrackerExpression(QString("&") + item->text(1));
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
+
+        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableTrackerExpression(QString("*&") + item->text(1));
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryVisualizerAction) {
+
+        //qDebug() << "addMemoryVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMemoryVisualize(item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryAsteriskVisualizerAction) {
+
+        //qDebug() << "addMemoryAsteriskVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMemoryVisualize(QString("*") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryAmpersandVisualizerAction) {
+
+        //qDebug() << "addMemoryAmpersandVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMemoryVisualize(QString("&") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayVisualizerAction) {
+
+        //qDebug() << "addArrayVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addArrayVisualize(item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAsteriskVisualizerAction) {
+
+        //qDebug() << "addArrayAsteriskVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addArrayVisualize(QString("*") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAmpersandVisualizerAction) {
+
+        //qDebug() << "addArrayAmpersandVisualizer" << item->text(1);
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addArrayVisualize(QString("&") + item->text(1));
+        }
+
+        return;
+    }
 }
 
 void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
