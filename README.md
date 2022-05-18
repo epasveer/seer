@@ -32,8 +32,10 @@ Main View
 The main view for Seer looks like:
 ![](images/mainview.png)
 
-    * Source/Libraries
+    * Source/Function/Types/Variables/Libraries
         * The list of source/header files that were used in the program.
+        * Search for Functions, Types, and Static Variables.
+          Dobule clicking will open the source file.
         * The list of shared libraries referenced by the program.
         * The list of source/header files can be searched in. This will "shrink" the list of files shown.
         * Double clicking on a file will open it in the Code Manager.
@@ -41,7 +43,7 @@ The main view for Seer looks like:
     * Variable/Register Info
         * Show variable and register values.
         * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
-            that is opened in the code manager.
+          that is opened in the code manager.
         * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
           (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
           their potentially new value.
