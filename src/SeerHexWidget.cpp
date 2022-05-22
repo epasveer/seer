@@ -4,30 +4,89 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QClipboard>
+#include <QtGui/QTextCursor>
 #include <QtCore/QSize>
 #include <QtCore/QDebug>
 #include <stdexcept>
 
-SeerHexWidget::SeerHexWidget(QWidget* parent) : QPlainTextEdit(parent), _pdata(NULL) {
+#define byteArrayToType( data, order, precision, type ) \
+        QDataStream stream( data ); \
+        stream.setByteOrder( order ); \
+        stream.setFloatingPointPrecision( precision ); \
+        type t; \
+        stream >> t; \
+        return t;
 
+qint8 toQInt8 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, qint8)
+}
+
+quint8 toQUInt8 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, quint8)
+}
+
+qint16 toQInt16 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, qint16)
+}
+
+quint16 toQUInt16 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, quint16)
+}
+
+qint32 toQInt32 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, qint32)
+}
+
+quint32 toQUInt32 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, quint32)
+}
+
+qint64 toQInt64 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, qint64)
+}
+
+quint64 toQUInt64 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, quint64)
+}
+
+float toQFloat32 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::SinglePrecision, float)
+}
+
+double toQFloat64 (const QByteArray& data, const QDataStream::ByteOrder order=QDataStream::BigEndian) {
+    byteArrayToType(data, order, QDataStream::DoublePrecision, double)
+}
+
+SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
+
+    // Construct the UI.
+    setupUi(this);
+
+    // Setup the widgets
     QFont font;
     font.setFamily("monospace [Consolas]");
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
 
-    setFont(font);
+    plainTextEdit->setFont(font);
+    plainTextEdit->setFocusPolicy(Qt::StrongFocus);
+    plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard);
 
     _memoryMode    = SeerHexWidget::HexMemoryMode;
     _charMode      = SeerHexWidget::AsciiCharMode;
     _addressOffset = 0;
-    _charWidth     = fontMetrics().horizontalAdvance(QLatin1Char('9'));
-    _charHeight    = fontMetrics().height();
+    _charWidth     = plainTextEdit->fontMetrics().horizontalAdvance(QLatin1Char('9'));
+    _charHeight    = plainTextEdit->fontMetrics().height();
     _gapAddrHex    = 10; // Gap between address and hex fields.
     _gapHexAscii   = 16; // Gap between hex and ascii fields.
 
     setBytesPerLine(16);
 
-    setFocusPolicy(Qt::StrongFocus);
+    // Connect things.
+    QObject::connect(plainTextEdit,                   &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
+    QObject::connect(showAsLittleEndianCheckBox,      &QCheckBox::clicked,                           this,  &SeerHexWidget::handleCursorPositionChanged);
+    QObject::connect(showUnsignedFloatAsHexCheckBox,  &QCheckBox::clicked,                           this,  &SeerHexWidget::handleCursorPositionChanged);
+    QObject::connect(this,                            &SeerHexWidget::byteOffsetChanged,             this,  &SeerHexWidget::handleByteOffsetChanged);
 }
 
 SeerHexWidget::~SeerHexWidget() {
@@ -58,7 +117,7 @@ void SeerHexWidget::setBytesPerLine (int count) {
     _bytesPerLine    = count;
     _hexCharsPerLine = _bytesPerLine * _hexCharsPerByte - 1;
     _posAddr         = 0; // x position of address field.
-    _posHex          = 12 * _charWidth + gapAddrHex(); // x position of hex field.
+    _posHex          = SeerHexWidget::HexFieldWidth * _charWidth + gapAddrHex(); // x position of hex field.
     _posAscii        = _posHex + hexCharsPerLine() * _charWidth + gapHexAscii(); // x position of ascii field.
 
     setMinimumWidth(_posAscii + (bytesPerLine() * _charWidth)); // x position after the ascii field.
@@ -73,6 +132,14 @@ int SeerHexWidget::bytesPerLine () const {
 
 int SeerHexWidget::hexCharsPerLine () const {
     return _hexCharsPerLine;
+}
+
+int SeerHexWidget::hexCharsPerByte () const {
+    return _hexCharsPerByte;
+}
+
+int SeerHexWidget::nLines () const {
+    return plainTextEdit->blockCount();
 }
 
 int SeerHexWidget::gapAddrHex () const {
@@ -154,6 +221,16 @@ QString SeerHexWidget::charModeString () const {
     return "???";
 }
 
+QTextDocument* SeerHexWidget::document () {
+
+    return plainTextEdit->document();
+}
+
+QString SeerHexWidget::toPlainText () {
+
+    return plainTextEdit->toPlainText();
+}
+
 void SeerHexWidget::setData(SeerHexWidget::DataStorage* pData) {
 
     if (_pdata) {
@@ -167,10 +244,168 @@ void SeerHexWidget::setData(SeerHexWidget::DataStorage* pData) {
     create();
 }
 
+void SeerHexWidget::handleCursorPositionChanged () {
+
+    // Get the current cursor position.
+    QTextCursor cursor = plainTextEdit->textCursor();
+
+    // Is it before the hex values? (address region)
+    if (cursor.positionInBlock() < SeerHexWidget::HexFieldWidth) {
+        emit byteOffsetChanged(-1);
+        return;
+    }
+
+    // Is is after the hex values? (ascii/ebcdic region)
+    if (cursor.positionInBlock() > SeerHexWidget::HexFieldWidth + hexCharsPerLine()) {
+        emit byteOffsetChanged(-1);
+        return;
+    }
+
+    //qDebug() << '(' << cursor.blockNumber() << ',' << cursor.positionInBlock() << ')';
+
+    int line = cursor.blockNumber();
+    int col  = cursor.positionInBlock() - SeerHexWidget::HexFieldWidth;
+    int byte = (col / hexCharsPerByte()) + (line * bytesPerLine());
+
+    //qDebug() << "(" << line << "," << col << ") =" << byte;
+
+    emit byteOffsetChanged(byte);
+}
+
+void SeerHexWidget::handleByteOffsetChanged (int byte) {
+
+    //qDebug() << byte;
+
+    // Clear all fields.
+    lineEdit_1->setText("");
+    lineEdit_2->setText("");
+    lineEdit_3->setText("");
+    lineEdit_4->setText("");
+    lineEdit_5->setText("");
+    lineEdit_6->setText("");
+    lineEdit_7->setText("");
+    lineEdit_8->setText("");
+    lineEdit_9->setText("");
+    lineEdit_10->setText("");
+
+    if (byte < 0) {
+        return;
+    }
+
+    // If there's no data, do nothing.
+    if (!_pdata) {
+        return;
+    }
+
+    // Set the endian default.
+    QDataStream::ByteOrder byteOrder = QDataStream::BigEndian;
+
+    if (showAsLittleEndianCheckBox->isChecked()) {
+        byteOrder = QDataStream::LittleEndian;
+    }
+
+    // Set the 'AsHex' default.
+    bool unsignedAndFloatAsHex = false;
+
+    if (showUnsignedFloatAsHexCheckBox->isChecked()) {
+        unsignedAndFloatAsHex = true;
+    }
+
+    // Go through each one and display the value.
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(char));                       // Extract a bytearray from the data for the size of the value we are after.
+        if (arr.size() == sizeof(char)) {                                           // If not the right size, skip it. Near the end of the data.
+            lineEdit_1->setText(QString::number(toQInt8(arr, byteOrder)));          // Fill in the signed value.
+            if (unsignedAndFloatAsHex) {                                            // Show unsigned value as hex?
+                if (byteOrder == QDataStream::LittleEndian) {                       // Swap bytes to handle endianess.
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_2->setText("0x"+QString(arr.toHex()));                     // Print value as hex.
+            }else{
+                lineEdit_2->setText(QString::number(toQUInt8(arr, byteOrder)));     // Print value as a value.
+            }
+        }
+    }
+
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(short));
+        if (arr.size() == sizeof(short)) {
+            lineEdit_3->setText(QString::number(toQInt16(arr, byteOrder)));
+            if (unsignedAndFloatAsHex) {
+                if (byteOrder == QDataStream::LittleEndian) {
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_4->setText("0x"+QString(arr.toHex()));
+            }else{
+                lineEdit_4->setText(QString::number(toQUInt16(arr, byteOrder)));
+            }
+        }
+    }
+
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(float));
+        if (arr.size() == sizeof(float)) {
+            if (unsignedAndFloatAsHex) {
+                if (byteOrder == QDataStream::LittleEndian) {
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_5->setText("0x"+QString(arr.toHex()));
+            }else{
+                lineEdit_5->setText(QString::number(toQFloat32(arr, byteOrder)));
+            }
+        }
+    }
+
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(int));
+        if (arr.size() == sizeof(int)) {
+            lineEdit_6->setText(QString::number(toQInt32(arr, byteOrder)));
+            if (unsignedAndFloatAsHex) {
+                if (byteOrder == QDataStream::LittleEndian) {
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_7->setText("0x"+QString(arr.toHex()));
+            }else{
+                lineEdit_7->setText(QString::number(toQUInt32(arr, byteOrder)));
+            }
+        }
+    }
+
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(long int));
+        if (arr.size() == sizeof(long int)) {
+            lineEdit_8->setText(QString::number(toQInt64(arr, byteOrder)));
+            if (unsignedAndFloatAsHex) {
+                if (byteOrder == QDataStream::LittleEndian) {
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_9->setText("0x"+QString(arr.toHex()));
+            }else{
+                lineEdit_9->setText(QString::number(toQUInt64(arr, byteOrder)));
+            }
+        }
+    }
+
+    {
+        QByteArray arr = _pdata->getData(byte, sizeof(double));
+        if (arr.size() == sizeof(double)) {
+            if (unsignedAndFloatAsHex) {
+                if (byteOrder == QDataStream::LittleEndian) {
+                    std::reverse(arr.begin(), arr.end());
+                }
+                lineEdit_10->setText("0x"+QString(arr.toHex()));
+            }else{
+                lineEdit_10->setText(QString::number(toQFloat64(arr, byteOrder)));
+            }
+        }
+    }
+
+}
+
 void SeerHexWidget::create () {
 
     // Clear the current document. We're going to recreate it.
-    clear();
+    plainTextEdit->clear();
 
     // If there's no data, do nothing.
     if (!_pdata) {
@@ -178,12 +413,12 @@ void SeerHexWidget::create () {
     }
 
     // Set text formats.
-    QTextCharFormat defaultFormat = currentCharFormat();
+    QTextCharFormat defaultFormat = plainTextEdit->currentCharFormat();
     QTextCharFormat grayFormat    = defaultFormat;
     grayFormat.setBackground(QBrush(Qt::lightGray));
 
     // Get a cursor
-    QTextCursor cursor(textCursor());
+    QTextCursor cursor(plainTextEdit->textCursor());
 
     cursor.movePosition(QTextCursor::Start);
 
@@ -195,7 +430,7 @@ void SeerHexWidget::create () {
         // Place a new hex address on the left side.
         if (i % bytesPerLine() == 0) {
 
-            QString address = QString("%1").arg(i + addressOffset(), 12, 16, QChar('0'));
+            QString address = QString("%1").arg(i + addressOffset(), SeerHexWidget::HexFieldWidth, 16, QChar('0'));
             QString spacer(" ");
 
             // Write adress to document.
