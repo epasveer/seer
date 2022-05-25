@@ -5,6 +5,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtGui/QClipboard>
 #include <QtGui/QTextCursor>
+#include <QtGui/QTextBlock>
 #include <QtCore/QSize>
 #include <QtCore/QDebug>
 #include <stdexcept>
@@ -70,7 +71,7 @@ SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
 
     plainTextEdit->setFont(font);
     plainTextEdit->setFocusPolicy(Qt::StrongFocus);
-    plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard);
+    plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     _memoryMode    = SeerHexWidget::HexMemoryMode;
     _charMode      = SeerHexWidget::AsciiCharMode;
@@ -261,20 +262,14 @@ void SeerHexWidget::handleCursorPositionChanged () {
         return;
     }
 
-    //qDebug() << '(' << cursor.blockNumber() << ',' << cursor.positionInBlock() << ')';
-
     int line = cursor.blockNumber();
     int col  = cursor.positionInBlock() - SeerHexWidget::HexFieldWidth;
     int byte = (col / hexCharsPerByte()) + (line * bytesPerLine());
-
-    //qDebug() << "(" << line << "," << col << ") =" << byte;
 
     emit byteOffsetChanged(byte);
 }
 
 void SeerHexWidget::handleByteOffsetChanged (int byte) {
-
-    //qDebug() << byte;
 
     // Clear all fields.
     lineEdit_1->setText("");
@@ -288,6 +283,12 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
     lineEdit_9->setText("");
     lineEdit_10->setText("");
 
+    // Reset cursor position.
+    _cursorPos = -1;
+
+    plainTextEdit->setExtraSelections(QList<QTextEdit::ExtraSelection>());
+
+    // Invalid byte number, do nothing.
     if (byte < 0) {
         return;
     }
@@ -296,6 +297,40 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
     if (!_pdata) {
         return;
     }
+
+    // Byte past the end, do nothing.
+    if ((unsigned int)byte >= size()) {
+        return;
+    }
+
+    // Calculate line and position in line.
+    int line = (byte / bytesPerLine());
+    int pos  = byte - (line * bytesPerLine());
+
+    int pos_s = SeerHexWidget::HexFieldWidth + (pos * hexCharsPerByte());
+    int pos_e = pos_s + hexCharsPerByte() - 1;
+
+    QList<QTextEdit::ExtraSelection> extraSelections; {
+
+        QTextBlock  block  = plainTextEdit->document()->findBlockByLineNumber(line);
+        QTextCursor cursor = QTextCursor(block);
+
+        cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, pos_s);
+        cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, pos_e - pos_s + 1);
+
+        QTextEdit::ExtraSelection extra;
+
+        extra.format.setBackground(plainTextEdit->palette().highlight().color());
+        extra.cursor = cursor;
+
+        extraSelections.append(extra);
+
+    } plainTextEdit->setExtraSelections(extraSelections);
+
+    // Highlight the byte.
+    _cursorPos = byte;
+
+    //create();
 
     // Set the endian default.
     QDataStream::ByteOrder byteOrder = QDataStream::BigEndian;
@@ -416,6 +451,8 @@ void SeerHexWidget::create () {
     QTextCharFormat defaultFormat = plainTextEdit->currentCharFormat();
     QTextCharFormat grayFormat    = defaultFormat;
     grayFormat.setBackground(QBrush(Qt::lightGray));
+    QTextCharFormat greenFormat   = defaultFormat;
+    greenFormat.setBackground(QBrush(Qt::green));
 
     // Get a cursor
     QTextCursor cursor(plainTextEdit->textCursor());
@@ -462,8 +499,6 @@ void SeerHexWidget::create () {
             }
 
             QString spacer(" ");
-
-            // Write memory value to document
             cursor.insertText (val, defaultFormat);
 
             // Write spacer to document.
