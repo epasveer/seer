@@ -92,15 +92,9 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
         void                        create                              ();
 
         DataStorage*                _pdata;
-        int                         _posAddr;
-        int                         _posHex;
-        int                         _posAscii;
         int                         _charWidth;
         int                         _charHeight;
-        int                         _selectBegin;
-        int                         _selectEnd;
-        int                         _selectInit;
-        int                         _cursorPos;
+        int                         _highlightByte;
 
         int                         _bytesPerLine;
         int                         _hexCharsPerLine;

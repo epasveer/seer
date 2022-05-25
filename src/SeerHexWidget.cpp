@@ -80,6 +80,7 @@ SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
     _charHeight    = plainTextEdit->fontMetrics().height();
     _gapAddrHex    = 10; // Gap between address and hex fields.
     _gapHexAscii   = 16; // Gap between hex and ascii fields.
+    _highlightByte = -1;
 
     setBytesPerLine(16);
 
@@ -115,13 +116,13 @@ void SeerHexWidget::setBytesPerLine (int count) {
         _hexCharsPerByte = 3;
     }
 
-    _bytesPerLine    = count;
-    _hexCharsPerLine = _bytesPerLine * _hexCharsPerByte - 1;
-    _posAddr         = 0; // x position of address field.
-    _posHex          = SeerHexWidget::HexFieldWidth * _charWidth + gapAddrHex(); // x position of hex field.
-    _posAscii        = _posHex + hexCharsPerLine() * _charWidth + gapHexAscii(); // x position of ascii field.
+    _bytesPerLine       = count;
+    _hexCharsPerLine    = _bytesPerLine * _hexCharsPerByte - 1;
 
-    setMinimumWidth(_posAscii + (bytesPerLine() * _charWidth)); // x position after the ascii field.
+    int posHex          = SeerHexWidget::HexFieldWidth * _charWidth + gapAddrHex(); // x position of hex field.
+    int posAscii        = posHex + hexCharsPerLine() * _charWidth + gapHexAscii(); // x position of ascii field.
+
+    setMinimumWidth(posAscii + (bytesPerLine() * _charWidth)); // x position after the ascii field.
 
     // Repaint the widget.
     create();
@@ -238,8 +239,7 @@ void SeerHexWidget::setData(SeerHexWidget::DataStorage* pData) {
         delete _pdata;
     }
 
-    _pdata     = pData;
-    _cursorPos = 0;
+    _pdata = pData;
 
     // Repaint the widget.
     create();
@@ -266,6 +266,8 @@ void SeerHexWidget::handleCursorPositionChanged () {
     int col  = cursor.positionInBlock() - SeerHexWidget::HexFieldWidth;
     int byte = (col / hexCharsPerByte()) + (line * bytesPerLine());
 
+    _highlightByte = byte;
+
     emit byteOffsetChanged(byte);
 }
 
@@ -283,9 +285,7 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
     lineEdit_9->setText("");
     lineEdit_10->setText("");
 
-    // Reset cursor position.
-    _cursorPos = -1;
-
+    // Remove previous highlight.
     plainTextEdit->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 
     // Invalid byte number, do nothing.
@@ -326,11 +326,6 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
         extraSelections.append(extra);
 
     } plainTextEdit->setExtraSelections(extraSelections);
-
-    // Highlight the byte.
-    _cursorPos = byte;
-
-    //create();
 
     // Set the endian default.
     QDataStream::ByteOrder byteOrder = QDataStream::BigEndian;
@@ -434,16 +429,20 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
             }
         }
     }
-
 }
 
 void SeerHexWidget::create () {
+
+    // Ignore changing of cursor positions.
+    QObject::disconnect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
 
     // Clear the current document. We're going to recreate it.
     plainTextEdit->clear();
 
     // If there's no data, do nothing.
     if (!_pdata) {
+        // Re-enable notification of changing of cursor positions.
+        QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
         return;
     }
 
@@ -569,6 +568,11 @@ void SeerHexWidget::create () {
 
         cursor.insertText (eol, defaultFormat);
     }
+
+    handleByteOffsetChanged(_highlightByte);
+
+    // Re-enable notification of changing of cursor positions.
+    QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
 }
 
 SeerHexWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {
