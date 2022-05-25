@@ -71,7 +71,7 @@ SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
 
     plainTextEdit->setFont(font);
     plainTextEdit->setFocusPolicy(Qt::StrongFocus);
-    plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
 
     _memoryMode    = SeerHexWidget::HexMemoryMode;
     _charMode      = SeerHexWidget::AsciiCharMode;
@@ -310,20 +310,38 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
     int pos_s = SeerHexWidget::HexFieldWidth + (pos * hexCharsPerByte());
     int pos_e = pos_s + hexCharsPerByte() - 1;
 
+    int pos_a = SeerHexWidget::HexFieldWidth + hexCharsPerLine() + pos + 4; // 4 == ' ' .... ' | '
+
+    // Highlight the text in the hex region and the ascii region.
     QList<QTextEdit::ExtraSelection> extraSelections; {
 
+        // Get a cursor to the current line.
         QTextBlock  block  = plainTextEdit->document()->findBlockByLineNumber(line);
         QTextCursor cursor = QTextCursor(block);
 
-        cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, pos_s);
-        cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, pos_e - pos_s + 1);
+        // Highlight the current hex value.
+        cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::Right,       QTextCursor::MoveAnchor, pos_s);
+        cursor.movePosition(QTextCursor::Right,       QTextCursor::KeepAnchor, pos_e - pos_s + 1);
 
-        QTextEdit::ExtraSelection extra;
+        // Add it to the extra selections.
+        QTextEdit::ExtraSelection extra_byte;
+        extra_byte.format.setBackground(plainTextEdit->palette().highlight().color());
+        extra_byte.cursor = cursor;
 
-        extra.format.setBackground(plainTextEdit->palette().highlight().color());
-        extra.cursor = cursor;
+        extraSelections.append(extra_byte);
 
-        extraSelections.append(extra);
+        // Highlight the current ascii value.
+        cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
+        cursor.movePosition(QTextCursor::Right,       QTextCursor::MoveAnchor, pos_a);
+        cursor.movePosition(QTextCursor::Right,       QTextCursor::KeepAnchor, 1);
+
+        // Add it to the extra selections.
+        QTextEdit::ExtraSelection extra_ascii;
+        extra_ascii.format.setBackground(plainTextEdit->palette().highlight().color());
+        extra_ascii.cursor = cursor;
+
+        extraSelections.append(extra_ascii);
 
     } plainTextEdit->setExtraSelections(extraSelections);
 
