@@ -284,6 +284,10 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
     lineEdit_8->setText("");
     lineEdit_9->setText("");
     lineEdit_10->setText("");
+    lineEdit_11->setText("");
+    lineEdit_12->setText("");
+    lineEdit_13->setText("");
+    lineEdit_14->setText("");
 
     // Remove previous highlight.
     plainTextEdit->setExtraSelections(QList<QTextEdit::ExtraSelection>());
@@ -446,6 +450,88 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
                 lineEdit_10->setText(QString::number(toQFloat64(arr, byteOrder)));
             }
         }
+    }
+
+    {
+        QString    val;
+        QByteArray arr = _pdata->getData(byte, 4);
+
+        for (int i=0; i<arr.size(); i++) {
+
+            unsigned char ch = arr[i];
+
+            if (val != "") {
+                val += " ";
+            }
+
+            val += QString("%1").arg(ushort(ch), int(2), int(16), QChar('0'));
+        }
+
+        lineEdit_11->setText(val);
+    }
+
+    {
+        QString    val;
+        QByteArray arr = _pdata->getData(byte, 4);
+
+        for (int i=0; i<arr.size(); i++) {
+
+            unsigned char ch = arr[i];
+
+            if (val != "") {
+                val += " ";
+            }
+
+            val += QString("%1").arg(ushort(ch), int(3), int(8), QChar('0'));
+        }
+
+        lineEdit_12->setText(val);
+    }
+
+    {
+        QString    val;
+        QByteArray arr = _pdata->getData(byte, 4);
+
+        for (int i=0; i<arr.size(); i++) {
+
+            unsigned char ch = arr[i];
+
+            if (val != "") {
+                val += " ";
+            }
+
+            val += QString("%1").arg(ushort(ch), int(8), int(2), QChar('0'));
+        }
+
+        lineEdit_13->setText(val);
+    }
+
+    {
+        QString    val;
+        QByteArray arr = _pdata->getData(byte, 4);
+
+        // Print N bytes in their char value.
+        if (charMode() == SeerHexWidget::AsciiCharMode) {
+            for (int i=0; i<arr.size(); i++) {
+
+                unsigned char ch = Seer::ucharToAscii( arr[i] );
+
+                val += QString(ch);
+            }
+
+        }else if (charMode() == SeerHexWidget::EbcdicCharMode) {
+            for (int i=0; i<arr.size(); i++) {
+
+                unsigned char ch = Seer::ebcdicToAscii( arr[i] );
+
+                val += QString(ch);
+            }
+
+        }else{
+            // Don't print anything.
+        }
+
+        lineEdit_14->setText(val);
     }
 }
 
