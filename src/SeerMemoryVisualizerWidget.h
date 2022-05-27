@@ -19,6 +19,7 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
         void                evaluateMemoryExpression            (int expressionid, QString address, int count);
+        void                evaluateAsmExpression               (int expressionid, QString address, int count, int mode);
 
     public slots:
         void                handleText                          (const QString& text);
@@ -40,5 +41,6 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
     private:
         int                 _variableId;
         int                 _memoryId;
+        int                 _asmId;
 };
 

@@ -15,6 +15,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     // Init variables.
     _variableId = Seer::createID(); // Create two id's for queries.
     _memoryId   = Seer::createID();
+    _asmId      = Seer::createID();
 
     // Set up UI.
     setupUi(this);
@@ -185,6 +186,15 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             }
         }
 
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,asm_insns="))) {
+
+        QString id_text = text.section('^', 0,0);
+
+        if (id_text.toInt() == _asmId) {
+
+            memoryAsmEditor->setData(text);
+        }
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
         // 12^error,msg="No symbol \"return\" in current context."
@@ -239,6 +249,7 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
     }
 
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
+    emit evaluateAsmExpression(_asmId, variableAddressLineEdit->text(), nbytes, 2);
 }
 
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {

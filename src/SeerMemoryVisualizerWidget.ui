@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>657</height>
+    <width>798</width>
+    <height>683</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -173,13 +173,44 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="11">
-    <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
-      </sizepolicy>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tab_1">
+      <attribute name="title">
+       <string>Memory</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_1">
+       <item row="0" column="0">
+        <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>100</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Disassembly</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="SeerAsmWidget" name="memoryAsmEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>100</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -189,6 +220,12 @@
    <class>SeerHexWidget</class>
    <extends>QWidget</extends>
    <header location="global">SeerHexWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SeerAsmWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">SeerAsmWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

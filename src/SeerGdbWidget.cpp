@@ -1586,6 +1586,7 @@ void SeerGdbWidget::handleGdbMemoryAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerMemoryVisualizerWidget::handleText);
     QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateVariableExpression, this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateMemoryExpression,   this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+    QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateAsmExpression,      this, &SeerGdbWidget::handleGdbAsmEvaluateExpression);
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);
@@ -1619,6 +1620,17 @@ void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString
     }
 
     handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
+}
+
+void SeerGdbWidget::handleGdbAsmEvaluateExpression (int expressionid, QString address, int count, int mode) {
+
+    // -data-disassemble -s $pc -e "$pc + 96" -- 2
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-data-disassemble -s \"%2\" -e \"%3\" -- %4").arg(expressionid).arg(address).arg(address + " + " + QString::number(count)).arg(mode));
 }
 
 void SeerGdbWidget::handleGdbArrayEvaluateExpression (int expressionid, QString address, int count) {
