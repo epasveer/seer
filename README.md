@@ -106,7 +106,10 @@ Memory Visualizer
 -----------------
 
 When looking at the contents of raw memory in the Memory Visualizer, it looks like this :
-![](images/memoryvisualizer.png)
+
+Memory | Disassembly
+--- | ---
+![](images/memoryvisualizer.png) | ![](images/memoryvisualizer_asm.png)
 
 Array Visualizer
 -----------------
