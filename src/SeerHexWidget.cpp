@@ -570,7 +570,7 @@ void SeerHexWidget::create () {
         // Place a new hex address on the left side.
         if (i % bytesPerLine() == 0) {
 
-            QString address = QString("%1").arg(i + addressOffset(), SeerHexWidget::HexFieldWidth, 16, QChar('0'));
+            QString address = QString("0x%1").arg(i + addressOffset(), SeerHexWidget::HexFieldWidth-2, 16, QChar('0')); // -2 to allow '0x'.
             QString spacer(" ");
 
             // Write adress to document.

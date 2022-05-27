@@ -48,7 +48,7 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
         };
 
         enum MagicNumbers {
-            HexFieldWidth   = 12
+            HexFieldWidth   = 18
         };
 
         SeerHexWidget(QWidget* parent = 0);
