@@ -306,7 +306,15 @@ void SeerMemoryVisualizerWidget::handlePrintButton () {
 
 
     // Make a copy so we can temporarily add a header.
-    QTextDocument* clone = memoryHexEditor->document()->clone(this);
+    QTextDocument* clone = 0;
+
+    if (tabWidget->currentWidget()->objectName() == "hex_tab") {
+        clone = memoryHexEditor->document()->clone(this);
+    }else if (tabWidget->currentWidget()->objectName() == "asm_tab") {
+        clone = memoryAsmEditor->document()->clone(this);
+    }else{
+        clone = new QTextDocument("NO TAB SELECTED!!!\n");
+    }
 
     QTextCursor cursor(clone);
     QTextCharFormat format = cursor.charFormat();
@@ -352,7 +360,13 @@ void SeerMemoryVisualizerWidget::handleSaveButton () {
         stream << "\n";
         stream << "name=" << variableName() << " address=" << variableAddress() << " bytesPerLine=" << memoryHexEditor->bytesPerLine() << " bytes=" << memoryHexEditor->size() << " memory=" << memoryHexEditor->memoryModeString() << " char=" << memoryHexEditor->charModeString() << "\n";
         stream << "\n";
-        stream << memoryHexEditor->toPlainText();
+        if (tabWidget->currentWidget()->objectName() == "hex_tab") {
+            stream << memoryHexEditor->toPlainText();
+        }else if (tabWidget->currentWidget()->objectName() == "asm_tab") {
+            stream << memoryAsmEditor->toPlainText();
+        }else{
+            stream << "NO TAB SELECTED!!!\n";
+        }
         stream << "\n";
 
         file.flush();

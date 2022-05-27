@@ -11,6 +11,9 @@ class SeerAsmWidget: public QWidget, protected Ui::SeerAsmWidgetForm {
         SeerAsmWidget(QWidget* parent = 0);
        ~SeerAsmWidget();
 
+        QTextDocument*              document                            ();
+        QString                     toPlainText                         ();
+
     signals:
 
     public slots:

@@ -177,7 +177,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab_1">
+     <widget class="QWidget" name="hex_tab">
       <attribute name="title">
        <string>Memory</string>
       </attribute>
@@ -194,7 +194,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="asm_tab">
       <attribute name="title">
        <string>Disassembly</string>
       </attribute>

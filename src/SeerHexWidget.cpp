@@ -571,13 +571,12 @@ void SeerHexWidget::create () {
         if (i % bytesPerLine() == 0) {
 
             QString address = QString("0x%1").arg(i + addressOffset(), SeerHexWidget::HexFieldWidth-2, 16, QChar('0')); // -2 to allow '0x'.
-            QString spacer(" ");
 
             // Write adress to document.
             cursor.insertText (address, grayFormat);
 
             // Write spacer to document.
-            cursor.insertText (spacer, defaultFormat);
+            cursor.insertText (QString(" "), defaultFormat);
         }
 
         // Print N bytes in their datatype value.
@@ -601,11 +600,10 @@ void SeerHexWidget::create () {
                 val = "??";
             }
 
-            QString spacer(" ");
             cursor.insertText (val, defaultFormat);
 
             // Write spacer to document.
-            cursor.insertText (spacer, defaultFormat);
+            cursor.insertText (QString(" "), defaultFormat);
         }
 
         // Print N odd remainder bytes.
@@ -625,20 +623,16 @@ void SeerHexWidget::create () {
                 val = "??";
             }
 
-            QString spacer(" ");
-
             // Write memory value to document
             cursor.insertText (val, defaultFormat);
 
             // Write spacer to document.
-            cursor.insertText (spacer, defaultFormat);
+            cursor.insertText (QString(" "), defaultFormat);
         }
 
         // Print vertical line.
-        QString spacer("| ");
-
         // Write spacer to document.
-        cursor.insertText (spacer, defaultFormat);
+        cursor.insertText (QString("| "), defaultFormat);
 
         // Print N bytes in their char value.
         if (charMode() == SeerHexWidget::AsciiCharMode) {
