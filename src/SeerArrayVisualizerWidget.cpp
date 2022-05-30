@@ -343,6 +343,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
     _series->setPointLabelsVisible(false);
     _series->setPointLabelsClipping(true);
 
+
     const QVector<double>& values = arrayTableWidget->arrayValues();
 
     for (int i = 0; i < values.size(); ++i) {
