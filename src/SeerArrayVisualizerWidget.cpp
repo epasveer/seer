@@ -47,6 +47,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
 
     arrayChartView->setRenderHint(QPainter::Antialiasing);
     arrayChartView->setChart(chart);
+    arrayChartView->setFocusPolicy(Qt::StrongFocus);
 
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleRefreshButton);
@@ -310,6 +311,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     if (_series) {
         arrayChartView->chart()->removeSeries(_series);
+        arrayChartView->chart()->update();
         delete _series;
         _series = 0;
     }
@@ -317,6 +319,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
     if (scatterRadioButton->isChecked()) {
 
         QScatterSeries* scatter = new QScatterSeries;
+        scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
         scatter->setMarkerSize(7);
         _series = scatter;
 
@@ -338,6 +341,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
     _series->setName(variableName());
     _series->setPointsVisible(false);
     _series->setPointLabelsVisible(false);
+    _series->setPointLabelsClipping(true);
 
     const QVector<double>& values = arrayTableWidget->arrayValues();
 
@@ -349,6 +353,15 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     arrayChartView->chart()->addSeries(_series);
     arrayChartView->chart()->createDefaultAxes();
+
+    // Zoom out slightly to allow for text label at edges.
+    arrayChartView->chart()->zoomReset();
+    arrayChartView->chart()->zoom(.9);
+    arrayChartView->chart()->update();
+
+    // Check for points or labels to be shown.
+    handlePointsCheckBox();
+    handleLabelsCheckBox();
 }
 
 void SeerArrayVisualizerWidget::writeSettings() {
@@ -412,6 +425,7 @@ void SeerArrayVisualizerWidget::handlePointsCheckBox () {
 
     if (_series) {
         _series->setPointsVisible(pointsCheckBox->isChecked());
+        arrayChartView->chart()->update();
     }
 }
 
@@ -419,6 +433,7 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 
     if (_series) {
         _series->setPointLabelsVisible(labelsCheckBox->isChecked());
+        arrayChartView->chart()->update();
     }
 }
 
