@@ -118,7 +118,7 @@ When looking at the contents of arrays in the Array Visualizer, it looks like th
 
 Normal | Spline | Scatter
 --- | --- | ---
-![](images/arrayvisualizer.png) | ![](images/arrayvisualizer_spline.png) | ! [](images/arrayvisualizer_scatter.png)
+![](images/arrayvisualizer.png) | ![](images/arrayvisualizer_spline.png) | ![](images/arrayvisualizer_scatter.png)
 
 
 Starting Seer
