@@ -3,6 +3,8 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 
 QZoomChartView::QZoomChartView (QWidget* parent) : QChartView(parent) {
 
@@ -16,6 +18,16 @@ QZoomChartView::QZoomChartView (QChart* chart, QWidget* parent) : QChartView(cha
     _isDragging = false;
 
     setRubberBand(QChartView::RectangleRubberBand);
+}
+
+void QZoomChartView::printView () {
+
+    QPrinter printer;
+    if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        painter.setRenderHint(QPainter::Antialiasing);
+        render(&painter);
+    }
 }
 
 bool QZoomChartView::viewportEvent (QEvent* event) {
@@ -136,7 +148,18 @@ void QZoomChartView::keyPressEvent (QKeyEvent* event) {
             chart()->update();
             break;
         case Qt::Key_R:
-            chart()->update();
+            {
+                if (event->modifiers() == Qt::ControlModifier) {
+                    chart()->update();
+                }
+            }
+            break;
+        case Qt::Key_P:
+            {
+                if (event->modifiers() == Qt::ControlModifier) {
+                    printView();
+                }
+            }
             break;
         default:
             QGraphicsView::keyPressEvent(event);

@@ -12,6 +12,9 @@ class QZoomChartView : public QChartView {
         QZoomChartView (QWidget* parent = 0);
         QZoomChartView (QtCharts::QChart* chart, QWidget* parent = 0);
 
+    public slots:
+        void                    printView                   ();
+
     protected:
         bool                    viewportEvent               (QEvent*      event);
         void                    mousePressEvent             (QMouseEvent* event);
