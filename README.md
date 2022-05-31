@@ -114,8 +114,10 @@ Memory | Disassembly
 Array Visualizer
 -----------------
 
+Normal | Spline | Scatter
+--- | --- | ---
 When looking at the contents of arrays in the Array Visualizer, it looks like this :
-![](images/arrayvisualizer.png)
+![](images/arrayvisualizer.png) | ![](images/arrayvisualizer_spline.png)  ! [](images/arrayvisualizer_scatter.png)
 
 
 Starting Seer
