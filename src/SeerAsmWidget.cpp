@@ -17,6 +17,7 @@ SeerAsmWidget::SeerAsmWidget(QWidget* parent) : QWidget(parent) {
     plainTextEdit->setFont(font);
     plainTextEdit->setFocusPolicy(Qt::StrongFocus);
     plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
+    plainTextEdit->setWordWrapMode(QTextOption::NoWrap);
 
     // Connect things.
 }

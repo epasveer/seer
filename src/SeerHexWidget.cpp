@@ -72,6 +72,7 @@ SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
     plainTextEdit->setFont(font);
     plainTextEdit->setFocusPolicy(Qt::StrongFocus);
     plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
+    plainTextEdit->setWordWrapMode(QTextOption::NoWrap);
 
     _memoryMode    = SeerHexWidget::HexMemoryMode;
     _charMode      = SeerHexWidget::AsciiCharMode;
