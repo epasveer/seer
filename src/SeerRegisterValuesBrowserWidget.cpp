@@ -149,6 +149,7 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerRegisterValuesBrowserWidget::refresh () {
+
     emit refreshRegisterNames();
     emit refreshRegisterValues();
 }
