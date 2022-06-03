@@ -112,8 +112,25 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
                 QTreeWidgetItem* item = matches.takeFirst();
 
+                bool isDifferent = false;
+
+                // Flag it as different of the new value is different than the old version _AND_
+                // the item is being reused. Not "unused", in the case of the first time.
+                if (item->text(2) != value_text && item->text(3) == "unused") {
+                    isDifferent = true;
+                }
+
                 item->setText(2, value_text);
                 item->setText(3, "reused");
+
+                QFont f1 = item->font(1);
+                QFont f2 = item->font(2);
+
+                f1.setBold(isDifferent);
+                f2.setBold(isDifferent);
+
+                item->setFont(1, f1);
+                item->setFont(2, f2);
             }
         }
 
@@ -145,7 +162,10 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
         return;
     }
 
-    refresh();
+    // refresh();
+    // If a stopping point is reached, just refresh the values.
+    // The register names should already be there.
+    emit refreshRegisterValues();
 }
 
 void SeerRegisterValuesBrowserWidget::refresh () {
