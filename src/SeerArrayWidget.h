@@ -42,53 +42,59 @@ class SeerArrayWidget: public QTableWidget {
 
         int                         elementsPerLine         () const;
 
-        void                        setXAddressOffset       (unsigned long offset);
-        unsigned long               xAddressOffset          () const;
-        void                        setXAddressStride       (unsigned long stride);
-        unsigned long               xAddressStride          () const;
-        unsigned long               xSize                   () const;
-        unsigned long               xElementSize            () const;
+        const QString&              aLabel                  () const;
+        void                        setAAddressOffset       (unsigned long offset);
+        unsigned long               aAddressOffset          () const;
+        void                        setAAddressStride       (unsigned long stride);
+        unsigned long               aAddressStride          () const;
+        unsigned long               aSize                   () const;
+        unsigned long               aElementSize            () const;
 
-        void                        setXArrayMode           (SeerArrayWidget::ArrayMode arrayMode);
-        SeerArrayWidget::ArrayMode  xArrayMode              () const;
-        QString                     xArrayModeString        () const;
-        const QVector<double>&      xArrayValues            () const;
+        void                        setAArrayMode           (SeerArrayWidget::ArrayMode arrayMode);
+        SeerArrayWidget::ArrayMode  aArrayMode              () const;
+        QString                     aArrayModeString        () const;
+        const QVector<double>&      aArrayValues            () const;
 
-        void                        setYAddressOffset       (unsigned long offset);
-        unsigned long               yAddressOffset          () const;
-        void                        setYAddressStride       (unsigned long stride);
-        unsigned long               yAddressStride          () const;
-        unsigned long               ySize                   () const;
-        unsigned long               yElementSize            () const;
+        const QString&              bLabel                  () const;
+        void                        setBAddressOffset       (unsigned long offset);
+        unsigned long               bAddressOffset          () const;
+        void                        setBAddressStride       (unsigned long stride);
+        unsigned long               bAddressStride          () const;
+        unsigned long               bSize                   () const;
+        unsigned long               bElementSize            () const;
 
-        void                        setYArrayMode           (SeerArrayWidget::ArrayMode arrayMode);
-        SeerArrayWidget::ArrayMode  yArrayMode              () const;
-        QString                     yArrayModeString        () const;
-        const QVector<double>&      yArrayValues            () const;
+        void                        setBArrayMode           (SeerArrayWidget::ArrayMode arrayMode);
+        SeerArrayWidget::ArrayMode  bArrayMode              () const;
+        QString                     bArrayModeString        () const;
+        const QVector<double>&      bArrayValues            () const;
 
 
     signals:
         void                        dataChanged             ();
 
     public slots:
-        void                        setXData                (DataStorage* pData);
-        void                        setYData                (DataStorage* pData);
+        void                        setAData                (const QString& label, DataStorage* pData);
+        void                        setBData                (const QString& label, DataStorage* pData);
 
     protected:
 
     private:
         void                        create                  ();
 
-        DataStorage*                _xData;
-        unsigned long               _xAddressOffset;
-        unsigned long               _xAddressStride;
-        SeerArrayWidget::ArrayMode  _xArrayMode;
-        QVector<double>             _xArrayValues;
+        QString                     _aLabel;
+        int                         _aColumnId;
+        DataStorage*                _aData;
+        unsigned long               _aAddressOffset;
+        unsigned long               _aAddressStride;
+        SeerArrayWidget::ArrayMode  _aArrayMode;
+        QVector<double>             _aArrayValues;
 
-        DataStorage*                _yData;
-        unsigned long               _yAddressOffset;
-        unsigned long               _yAddressStride;
-        SeerArrayWidget::ArrayMode  _yArrayMode;
-        QVector<double>             _yArrayValues;
+        QString                     _bLabel;
+        int                         _bColumnId;
+        DataStorage*                _bData;
+        unsigned long               _bAddressOffset;
+        unsigned long               _bAddressStride;
+        SeerArrayWidget::ArrayMode  _bArrayMode;
+        QVector<double>             _bArrayValues;
 };
 

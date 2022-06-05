@@ -13,78 +13,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <property name="spacing">
-    <number>6</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="xHorizontalLayout">
-     <item>
-      <widget class="QLineEdit" name="xVariableNameLineEdit">
-       <property name="toolTip">
-        <string>X Variable name or expression.</string>
-       </property>
-       <property name="placeholderText">
-        <string>X variable name</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="xVariableAddressLineEdit">
-       <property name="toolTip">
-        <string>Variable address.</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>variable address</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="xArrayLengthLineEdit">
-       <property name="toolTip">
-        <string>Total number of elements in array.</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string># elements</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="xArrayOffsetLineEdit">
-       <property name="toolTip">
-        <string>Element offset into array. (default=0)</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string>array offset</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="xArrayStrideLineEdit">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="5">
+      <widget class="QLineEdit" name="aArrayStrideLineEdit">
        <property name="toolTip">
         <string>Element stride between values. (default=1)</string>
        </property>
@@ -99,8 +32,8 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="xArrayDisplayFormatComboBox">
+     <item row="0" column="6">
+      <widget class="QComboBox" name="aArrayDisplayFormatComboBox">
        <property name="toolTip">
         <string>Array data type.</string>
        </property>
@@ -146,8 +79,53 @@
        </item>
       </widget>
      </item>
-     <item>
-      <widget class="QToolButton" name="xRefreshToolButton">
+     <item row="1" column="5">
+      <widget class="QLineEdit" name="bArrayStrideLineEdit">
+       <property name="toolTip">
+        <string>Element stride between values. (default=1)</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>array stride</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="bArrayLengthLineEdit">
+       <property name="toolTip">
+        <string>Total number of elements in array.</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string># elements</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="bVariableNameLineEdit">
+       <property name="toolTip">
+        <string>Variable name or expression.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Variable name</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7">
+      <widget class="QToolButton" name="aRefreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
        </property>
@@ -158,156 +136,211 @@
         <iconset resource="resource.qrc">
          <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
        </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLineEdit" name="aArrayOffsetLineEdit">
+       <property name="toolTip">
+        <string>Element offset into array. (default=0)</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>array offset</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="aArrayLengthLineEdit">
+       <property name="toolTip">
+        <string>Total number of elements in array.</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string># elements</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="QComboBox" name="bArrayDisplayFormatComboBox">
+       <property name="toolTip">
+        <string>Array data type.</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>int16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>unt16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uin32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uin64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>float32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>float64</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="aVariableAddressLineEdit">
+       <property name="toolTip">
+        <string>Variable address.</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>variable address</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLineEdit" name="bArrayOffsetLineEdit">
+       <property name="toolTip">
+        <string>Element offset into array. (default=0)</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>array offset</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="bVariableAddressLineEdit">
+       <property name="toolTip">
+        <string>Variable address.</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>variable address</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="QToolButton" name="bRefreshToolButton">
+       <property name="toolTip">
+        <string>Refresh the display.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="aVariableNameLineEdit">
+       <property name="toolTip">
+        <string>Variable name or expression.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Variable name</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QComboBox" name="aAxisComboBox">
+       <property name="toolTip">
+        <string>Variable axis type.</string>
+       </property>
+       <property name="currentText">
+        <string>X</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="bAxisComboBox">
+       <property name="toolTip">
+        <string>Variable axis type.</string>
+       </property>
+       <property name="currentText">
+        <string>X</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Y</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="yHorizontalLayout">
-     <item>
-      <widget class="QLineEdit" name="yVariableNameLineEdit">
-       <property name="toolTip">
-        <string>Y Variable name or expression.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Y variable name</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yVariableAddressLineEdit">
-       <property name="toolTip">
-        <string>Variable address.</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>variable address</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yArrayLengthLineEdit">
-       <property name="toolTip">
-        <string>Total number of elements in array.</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string># elements</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yArrayOffsetLineEdit">
-       <property name="toolTip">
-        <string>Element offset into array. (default=0)</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string>array offset</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yArrayStrideLineEdit">
-       <property name="toolTip">
-        <string>Element stride between values. (default=1)</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string>array stride</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="yArrayDisplayFormatComboBox">
-       <property name="toolTip">
-        <string>Array data type.</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>int16</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>int32</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>int64</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>unt16</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>uin32</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>uin64</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>float32</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>float64</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="yRefreshToolButton">
-       <property name="toolTip">
-        <string>Refresh the display.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -446,6 +479,32 @@
    <header>QZoomChartView.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>aAxisComboBox</tabstop>
+  <tabstop>aVariableNameLineEdit</tabstop>
+  <tabstop>aVariableAddressLineEdit</tabstop>
+  <tabstop>aArrayLengthLineEdit</tabstop>
+  <tabstop>aArrayOffsetLineEdit</tabstop>
+  <tabstop>aArrayStrideLineEdit</tabstop>
+  <tabstop>aArrayDisplayFormatComboBox</tabstop>
+  <tabstop>aRefreshToolButton</tabstop>
+  <tabstop>bAxisComboBox</tabstop>
+  <tabstop>bVariableNameLineEdit</tabstop>
+  <tabstop>bVariableAddressLineEdit</tabstop>
+  <tabstop>bArrayLengthLineEdit</tabstop>
+  <tabstop>bArrayOffsetLineEdit</tabstop>
+  <tabstop>bArrayStrideLineEdit</tabstop>
+  <tabstop>bArrayDisplayFormatComboBox</tabstop>
+  <tabstop>bRefreshToolButton</tabstop>
+  <tabstop>arrayTableWidget</tabstop>
+  <tabstop>arrayChartView</tabstop>
+  <tabstop>titleLineEdit</tabstop>
+  <tabstop>lineRadioButton</tabstop>
+  <tabstop>splineRadioButton</tabstop>
+  <tabstop>scatterRadioButton</tabstop>
+  <tabstop>pointsCheckBox</tabstop>
+  <tabstop>labelsCheckBox</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>

@@ -17,31 +17,31 @@ SeerArrayWidget::SeerArrayWidget(QWidget* parent) : QTableWidget(parent) {
 
     horizontalHeader()->setDefaultAlignment(Qt::AlignRight);
 
-    _xData           = 0;
-    _xArrayMode      = SeerArrayWidget::UnknownArrayMode;
-    _xAddressOffset  = 0;
-    _xAddressStride  = 1;
+    _aData           = 0;
+    _aArrayMode      = SeerArrayWidget::UnknownArrayMode;
+    _aAddressOffset  = 0;
+    _aAddressStride  = 1;
 
-    _yData           = 0;
-    _yArrayMode      = SeerArrayWidget::UnknownArrayMode;
-    _yAddressOffset  = 0;
-    _yAddressStride  = 1;
+    _bData           = 0;
+    _bArrayMode      = SeerArrayWidget::UnknownArrayMode;
+    _bAddressOffset  = 0;
+    _bAddressStride  = 1;
 
-    setXAddressOffset(0);
-    setXAddressStride(1);
+    setAAddressOffset(0);
+    setAAddressStride(1);
 
-    setYAddressOffset(0);
-    setYAddressStride(1);
+    setBAddressOffset(0);
+    setBAddressStride(1);
 }
 
 SeerArrayWidget::~SeerArrayWidget() {
 
-    if (_xData) {
-        delete _xData;
+    if (_aData) {
+        delete _aData;
     }
 
-    if (_yData) {
-        delete _yData;
+    if (_bData) {
+        delete _bData;
     }
 }
 
@@ -49,232 +49,242 @@ int SeerArrayWidget::elementsPerLine () const {
     return 1;
 }
 
-void SeerArrayWidget::setXAddressOffset (unsigned long offset) {
+const QString& SeerArrayWidget::aLabel () const {
+    return _aLabel;
+}
 
-    _xAddressOffset = offset;
+void SeerArrayWidget::setAAddressOffset (unsigned long offset) {
+
+    _aAddressOffset = offset;
 
     // Repaint the widget.
     create();
 }
 
-unsigned long SeerArrayWidget::xAddressOffset () const {
+unsigned long SeerArrayWidget::aAddressOffset () const {
 
-    return _xAddressOffset;
+    return _aAddressOffset;
 }
 
-void SeerArrayWidget::setXAddressStride (unsigned long stride) {
+void SeerArrayWidget::setAAddressStride (unsigned long stride) {
 
     if (stride < 1) {
         qWarning() << "Stride is not valid." << stride;
         stride = 1;
     }
 
-    _xAddressStride = stride;
+    _aAddressStride = stride;
 
     // Repaint the widget.
     create();
 }
 
-unsigned long SeerArrayWidget::xAddressStride () const {
+unsigned long SeerArrayWidget::aAddressStride () const {
 
-    return _xAddressStride;
+    return _aAddressStride;
 }
 
-unsigned long SeerArrayWidget::xSize () const {
+unsigned long SeerArrayWidget::aSize () const {
 
-    if (_xData) {
-        return _xData->size();
+    if (_aData) {
+        return _aData->size();
     }
 
     return 0;
 }
 
-unsigned long  SeerArrayWidget::xElementSize () const {
+unsigned long  SeerArrayWidget::aElementSize () const {
 
-    if (xArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+    if (aArrayMode() == SeerArrayWidget::Int16ArrayMode) {
         return 2;
-    }else if (xArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return 2;
-    }else if (xArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Int32ArrayMode) {
         return 4;
-    }else if (xArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
         return 4;
-    }else if (xArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Int64ArrayMode) {
         return 8;
-    }else if (xArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
         return 8;
-    }else if (xArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Float32ArrayMode) {
         return 4;
-    }else if (xArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Float64ArrayMode) {
         return 8;
     }
 
     return 0;
 }
 
-void SeerArrayWidget::setXArrayMode (SeerArrayWidget::ArrayMode arrayMode) {
+void SeerArrayWidget::setAArrayMode (SeerArrayWidget::ArrayMode arrayMode) {
 
-    _xArrayMode = arrayMode;
+    _aArrayMode = arrayMode;
 
     // This repaints the widget with the new array mode
     create();
 }
 
-SeerArrayWidget::ArrayMode SeerArrayWidget::xArrayMode () const {
-    return _xArrayMode;
+SeerArrayWidget::ArrayMode SeerArrayWidget::aArrayMode () const {
+    return _aArrayMode;
 }
 
-QString SeerArrayWidget::xArrayModeString () const {
+QString SeerArrayWidget::aArrayModeString () const {
 
-    if (xArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+    if (aArrayMode() == SeerArrayWidget::Int16ArrayMode) {
         return "int6";
-    }else if (xArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return "uint16";
-    }else if (xArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Int32ArrayMode) {
         return "int32";
-    }else if (xArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
         return "uint32";
-    }else if (xArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Int64ArrayMode) {
         return "int64";
-    }else if (xArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
         return "uint64";
-    }else if (xArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Float32ArrayMode) {
         return "float32";
-    }else if (xArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+    }else if (aArrayMode() == SeerArrayWidget::Float64ArrayMode) {
         return "float64";
     }
 
     return "???";
 }
 
-const QVector<double>& SeerArrayWidget::xArrayValues () const {
+const QVector<double>& SeerArrayWidget::aArrayValues () const {
 
-    return _xArrayValues;
+    return _aArrayValues;
 }
 
-void SeerArrayWidget::setYAddressOffset (unsigned long offset) {
+const QString& SeerArrayWidget::bLabel () const {
+    return _bLabel;
+}
 
-    _yAddressOffset = offset;
+void SeerArrayWidget::setBAddressOffset (unsigned long offset) {
+
+    _bAddressOffset = offset;
 
     // Repaint the widget.
     create();
 }
 
-unsigned long SeerArrayWidget::yAddressOffset () const {
+unsigned long SeerArrayWidget::bAddressOffset () const {
 
-    return _yAddressOffset;
+    return _bAddressOffset;
 }
 
-void SeerArrayWidget::setYAddressStride (unsigned long stride) {
+void SeerArrayWidget::setBAddressStride (unsigned long stride) {
 
     if (stride < 1) {
         qWarning() << "Stride is not valid." << stride;
         stride = 1;
     }
 
-    _yAddressStride = stride;
+    _bAddressStride = stride;
 
     // Repaint the widget.
     create();
 }
 
-unsigned long SeerArrayWidget::yAddressStride () const {
+unsigned long SeerArrayWidget::bAddressStride () const {
 
-    return _yAddressStride;
+    return _bAddressStride;
 }
 
-unsigned long SeerArrayWidget::ySize () const {
+unsigned long SeerArrayWidget::bSize () const {
 
-    if (_yData) {
-        return _yData->size();
+    if (_bData) {
+        return _bData->size();
     }
 
     return 0;
 }
 
-unsigned long  SeerArrayWidget::yElementSize () const {
+unsigned long  SeerArrayWidget::bElementSize () const {
 
-    if (yArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+    if (bArrayMode() == SeerArrayWidget::Int16ArrayMode) {
         return 2;
-    }else if (yArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return 2;
-    }else if (yArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Int32ArrayMode) {
         return 4;
-    }else if (yArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
         return 4;
-    }else if (yArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Int64ArrayMode) {
         return 8;
-    }else if (yArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
         return 8;
-    }else if (yArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Float32ArrayMode) {
         return 4;
-    }else if (yArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Float64ArrayMode) {
         return 8;
     }
 
     return 0;
 }
 
-void SeerArrayWidget::setYArrayMode (SeerArrayWidget::ArrayMode arrayMode) {
+void SeerArrayWidget::setBArrayMode (SeerArrayWidget::ArrayMode arrayMode) {
 
-    _yArrayMode = arrayMode;
+    _bArrayMode = arrayMode;
 
     // This repaints the widget with the new array mode
     create();
 }
 
-SeerArrayWidget::ArrayMode SeerArrayWidget::yArrayMode () const {
-    return _yArrayMode;
+SeerArrayWidget::ArrayMode SeerArrayWidget::bArrayMode () const {
+    return _bArrayMode;
 }
 
-QString SeerArrayWidget::yArrayModeString () const {
+QString SeerArrayWidget::bArrayModeString () const {
 
-    if (yArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+    if (bArrayMode() == SeerArrayWidget::Int16ArrayMode) {
         return "int6";
-    }else if (yArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return "uint16";
-    }else if (yArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Int32ArrayMode) {
         return "int32";
-    }else if (yArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
         return "uint32";
-    }else if (yArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Int64ArrayMode) {
         return "int64";
-    }else if (yArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
         return "uint64";
-    }else if (yArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Float32ArrayMode) {
         return "float32";
-    }else if (yArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+    }else if (bArrayMode() == SeerArrayWidget::Float64ArrayMode) {
         return "float64";
     }
 
     return "???";
 }
 
-const QVector<double>& SeerArrayWidget::yArrayValues () const {
+const QVector<double>& SeerArrayWidget::bArrayValues () const {
 
-    return _yArrayValues;
+    return _bArrayValues;
 }
 
 
-void SeerArrayWidget::setXData(SeerArrayWidget::DataStorage* pData) {
+void SeerArrayWidget::setAData(const QString& label, SeerArrayWidget::DataStorage* pData) {
 
-    if (_xData) {
-        delete _xData;
+    if (_aData) {
+        delete _aData;
     }
 
-    _xData = pData;
+    _aLabel = label;
+    _aData  = pData;
 
     // Repaint the widget.
     create();
 }
 
-void SeerArrayWidget::setYData(SeerArrayWidget::DataStorage* pData) {
+void SeerArrayWidget::setBData(const QString& label, SeerArrayWidget::DataStorage* pData) {
 
-    if (_yData) {
-        delete _yData;
+    if (_bData) {
+        delete _bData;
     }
 
-    _yData = pData;
+    _bLabel = label;
+    _bData  = pData;
 
     // Repaint the widget.
     create();
@@ -286,43 +296,67 @@ void SeerArrayWidget::create () {
     clear();
     setRowCount(0);
 
-    if (_yData) {
+    if (_aData && _bData) {
+
         setColumnCount(2);
-    }else{
+
+        _aColumnId = 0;
+        _bColumnId = 1;
+
+    }else if (_aData) {
+
         setColumnCount(1);
+
+        _aColumnId = 0;
+        _bColumnId = -1;
+
+    }else if (_bData) {
+
+        setColumnCount(1);
+
+        _aColumnId = -1;
+        _bColumnId = 0;
+
+    }else{
+        setColumnCount(0);
+
+        _aColumnId = -1;
+        _bColumnId = -1;
     }
 
     // Clear the values.
-    _xArrayValues.resize(0);
-    _yArrayValues.resize(0);
+    _aArrayValues.resize(0);
+    _bArrayValues.resize(0);
 
     // If there's no data, do nothing.
-    if (!_xData && !_yData) {
+    if (!_aData && !_bData) {
         emit dataChanged();
         return;
     }
 
-    if (xElementSize() < 1 && yElementSize() < 1) {
+    if (aElementSize() < 1 && bElementSize() < 1) {
         emit dataChanged();
         return;
     }
 
-    if (_xData) {
+    if (_aData) {
 
-        qDebug() << "_xData" << xElementSize() << xAddressOffset() << xAddressStride() << _xData->size();
+        //qDebug() << "_aData" << aElementSize() << aAddressOffset() << aAddressStride() << _aData->size();
+
+        setHorizontalHeaderItem(_aColumnId, new QTableWidgetItem(QString("%1:%2:%3").arg(aLabel()).arg(aAddressOffset()).arg(aAddressStride())));
 
         int row = 0;
 
-        for (int i=xElementSize()*xAddressOffset(); i<_xData->size(); i+=xElementSize()*xAddressStride()) {
+        for (int i=aElementSize()*aAddressOffset(); i<_aData->size(); i+=aElementSize()*aAddressStride()) {
 
             // Add new row if we need to. Set its label.
             if (row == rowCount()) {
 
-                qDebug() << "Adding row" << row << "for _xData";
+                //qDebug() << "Adding row" << row << "for _aData";
 
                 insertRow(rowCount());
 
-                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/xElementSize()));
+                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(row));
                 rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
                 setVerticalHeaderItem(row, rowHeaderitem);
@@ -331,11 +365,11 @@ void SeerArrayWidget::create () {
             QTableWidgetItem* item = new QTableWidgetItem;
             item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-            QByteArray element = _xData->getData(i, xElementSize());
+            QByteArray element = _aData->getData(i, aElementSize());
 
             double val = 0.0;
 
-            if (xArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+            if (aArrayMode() == SeerArrayWidget::Int16ArrayMode) {
 
                 short v = *reinterpret_cast<short*>(element.data());
 
@@ -343,7 +377,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
 
                 unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
 
@@ -351,7 +385,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::Int32ArrayMode) {
 
                 int v = *reinterpret_cast<int*>(element.data());
 
@@ -359,7 +393,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
 
                 unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
 
@@ -367,7 +401,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::Int64ArrayMode) {
 
                 long v = *reinterpret_cast<long*>(element.data());
 
@@ -375,7 +409,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
 
                 unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
 
@@ -383,7 +417,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::Float32ArrayMode) {
 
                 float v = *reinterpret_cast<float*>(element.data());
 
@@ -391,7 +425,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (xArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+            }else if (aArrayMode() == SeerArrayWidget::Float64ArrayMode) {
 
                 double v = *reinterpret_cast<double*>(element.data());
 
@@ -405,32 +439,34 @@ void SeerArrayWidget::create () {
                 val = 0.0;
             }
 
-            qDebug() << "Adding item" << row << 0 << "for _xData";
+            //qDebug() << "Adding item" << row << 0 << "for _aData";
 
-            setItem(row, 0, item);
+            setItem(row, _aColumnId, item);
 
-            _xArrayValues.push_back(val);
+            _aArrayValues.push_back(val);
 
             row++;
         }
     }
 
-    if (_yData) {
+    if (_bData) {
 
-        qDebug() << "_yData" << yElementSize() << yAddressOffset() << yAddressStride() << _yData->size();
+        //qDebug() << "_bData" << bElementSize() << bAddressOffset() << bAddressStride() << _bData->size();
+
+        setHorizontalHeaderItem(_bColumnId, new QTableWidgetItem(QString("%1:%2:%3").arg(bLabel()).arg(bAddressOffset()).arg(bAddressStride())));
 
         int row = 0;
 
-        for (int i=yElementSize()*yAddressOffset(); i<_yData->size(); i+=yElementSize()*yAddressStride()) {
+        for (int i=bElementSize()*bAddressOffset(); i<_bData->size(); i+=bElementSize()*bAddressStride()) {
 
             // Add new row if we need to. Set its label.
             if (row == rowCount()) {
 
-                qDebug() << "Adding row" << row << "for _yData";
+                //qDebug() << "Adding row" << row << "for _bData";
 
                 insertRow(rowCount());
 
-                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(i/yElementSize()));
+                QTableWidgetItem* rowHeaderitem = new QTableWidgetItem(QString::number(row));
                 rowHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
                 setVerticalHeaderItem(row, rowHeaderitem);
@@ -439,11 +475,11 @@ void SeerArrayWidget::create () {
             QTableWidgetItem* item = new QTableWidgetItem;
             item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-            QByteArray element = _yData->getData(i, yElementSize());
+            QByteArray element = _bData->getData(i, bElementSize());
 
             double val = 0.0;
 
-            if (yArrayMode() == SeerArrayWidget::Int16ArrayMode) {
+            if (bArrayMode() == SeerArrayWidget::Int16ArrayMode) {
 
                 short v = *reinterpret_cast<short*>(element.data());
 
@@ -451,7 +487,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
 
                 unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
 
@@ -459,7 +495,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::Int32ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::Int32ArrayMode) {
 
                 int v = *reinterpret_cast<int*>(element.data());
 
@@ -467,7 +503,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::UInt32ArrayMode) {
 
                 unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
 
@@ -475,7 +511,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::Int64ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::Int64ArrayMode) {
 
                 long v = *reinterpret_cast<long*>(element.data());
 
@@ -483,7 +519,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::UInt64ArrayMode) {
 
                 unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
 
@@ -491,7 +527,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::Float32ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::Float32ArrayMode) {
 
                 float v = *reinterpret_cast<float*>(element.data());
 
@@ -499,7 +535,7 @@ void SeerArrayWidget::create () {
 
                 item->setText(QString::number(v));
 
-            }else if (yArrayMode() == SeerArrayWidget::Float64ArrayMode) {
+            }else if (bArrayMode() == SeerArrayWidget::Float64ArrayMode) {
 
                 double v = *reinterpret_cast<double*>(element.data());
 
@@ -513,11 +549,11 @@ void SeerArrayWidget::create () {
                 val = 0.0;
             }
 
-            qDebug() << "Adding item" << row << 0 << "for _yData";
+            //qDebug() << "Adding item" << row << 0 << "for _bData";
 
-            setItem(row, 1, item);
+            setItem(row, _bColumnId, item);
 
-            _yArrayValues.push_back(val);
+            _bArrayValues.push_back(val);
 
             row++;
         }

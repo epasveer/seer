@@ -12,15 +12,15 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         explicit SeerArrayVisualizerWidget (QWidget* parent = 0);
        ~SeerArrayVisualizerWidget ();
 
-        void                setXVariableName                     (const QString& name);
-        QString             xVariableName                        () const;
-        void                setXVariableAddress                  (const QString& address);
-        QString             xVariableAddress                     () const;
+        void                setAVariableName                     (const QString& name);
+        QString             aVariableName                        () const;
+        void                setAVariableAddress                  (const QString& address);
+        QString             aVariableAddress                     () const;
 
-        void                setYVariableName                     (const QString& name);
-        QString             yVariableName                        () const;
-        void                setYVariableAddress                  (const QString& address);
-        QString             yVariableAddress                     () const;
+        void                setBVariableName                     (const QString& name);
+        QString             bVariableName                        () const;
+        void                setBVariableAddress                  (const QString& address);
+        QString             bVariableAddress                     () const;
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
@@ -30,12 +30,12 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handleText                          (const QString& text);
 
     protected slots:
-        void                handlexRefreshButton                ();
-        void                handleyRefreshButton                ();
-        void                handlexVariableNameLineEdit         ();
-        void                handleyVariableNameLineEdit         ();
-        void                handlexArrayDisplayFormatComboBox   (int index);
-        void                handleyArrayDisplayFormatComboBox   (int index);
+        void                handleaRefreshButton                ();
+        void                handlebRefreshButton                ();
+        void                handleaVariableNameLineEdit         ();
+        void                handlebVariableNameLineEdit         ();
+        void                handleaArrayDisplayFormatComboBox   (int index);
+        void                handlebArrayDisplayFormatComboBox   (int index);
         void                handleDataChanged                   ();
         void                handleSplitterMoved                 (int pos, int index);
         void                handleSeriesHovered                 (const QPointF& point, bool state);
@@ -51,9 +51,9 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
 
     private:
         QXYSeries*          _series;
-        int                 _xVariableId;
-        int                 _yVariableId;
-        int                 _xMemoryId;
-        int                 _yMemoryId;
+        int                 _aVariableId;
+        int                 _bVariableId;
+        int                 _aMemoryId;
+        int                 _bMemoryId;
 };
 
