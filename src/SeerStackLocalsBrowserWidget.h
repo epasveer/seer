@@ -13,20 +13,26 @@ class SeerStackLocalsBrowserWidget : public QWidget, protected Ui::SeerStackLoca
        ~SeerStackLocalsBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                handleStoppingPointReached  ();
-        void                refresh                     ();
+        void                handleText                          (const QString& text);
+        void                handleStoppingPointReached          ();
+        void                refresh                             ();
 
     protected slots:
-        void                handleItemExpanded          (QTreeWidgetItem* item);
-        void                handleItemCollapsed         (QTreeWidgetItem* item);
-        void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleContextMenu                   (const QPoint&    pos);
+        void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleItemCollapsed                 (QTreeWidgetItem* item);
+        void                handleItemEntered                   (QTreeWidgetItem* item, int column);
 
     signals:
-        void                refreshStackLocals          ();
+        void                refreshStackLocals                  ();
+        void                addVariableLoggerExpression         (QString expression);
+        void                addVariableTrackerExpression        (QString expression);
+        void                refreshVariableTrackerValues        ();
+        void                addMemoryVisualize                  (QString expression);
+        void                addArrayVisualize                   (QString expression);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                showEvent                           (QShowEvent* event);
 
     private:
         int                 _frameNumber;

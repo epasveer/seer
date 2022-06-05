@@ -14,9 +14,11 @@ Requirements
 
     * Linux
     * C++17
-    * QT5
-    * QT5 QtCharts
     * gdb with "mi" interpreter
+    * QT5 (5.15.2 or newer)
+    * QT5 QtCharts (5.15.2 or newer)
+    * When building Seer from source, you will need the QT5 "devel" packages
+      installed on your system for your distribution.
 
 
 GUI overview
@@ -30,8 +32,10 @@ Main View
 The main view for Seer looks like:
 ![](images/mainview.png)
 
-    * Source/Libraries
+    * Source/Function/Types/Variables/Libraries
         * The list of source/header files that were used in the program.
+        * Search for Functions, Types, and Static Variables.
+          Dobule clicking will open the source file.
         * The list of shared libraries referenced by the program.
         * The list of source/header files can be searched in. This will "shrink" the list of files shown.
         * Double clicking on a file will open it in the Code Manager.
@@ -39,7 +43,7 @@ The main view for Seer looks like:
     * Variable/Register Info
         * Show variable and register values.
         * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
-            that is opened in the code manager.
+          that is opened in the code manager.
         * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
           (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
           their potentially new value.
@@ -102,13 +106,19 @@ Memory Visualizer
 -----------------
 
 When looking at the contents of raw memory in the Memory Visualizer, it looks like this :
-![](images/memoryvisualizer.png)
+
+Memory | Disassembly
+--- | ---
+![](images/memoryvisualizer.png) | ![](images/memoryvisualizer_asm.png)
 
 Array Visualizer
 -----------------
 
 When looking at the contents of arrays in the Array Visualizer, it looks like this :
-![](images/arrayvisualizer.png)
+
+Normal | Spline | Scatter
+--- | --- | ---
+![](images/arrayvisualizer.png) | ![](images/arrayvisualizer_spline.png) | ![](images/arrayvisualizer_scatter.png)
 
 
 Starting Seer

@@ -1,0 +1,19 @@
+
+ -symbol-info-types [--name name_regexp]
+                    [--max-results limit]
+
+    ^done,symbols={
+                    debug=[
+                            {
+                                filename="/peak/rel/include/CnvLib.h",fullname="/home/erniep/Development/Peak/rel/include/CnvLib.h",
+                                symbols=[
+                                            {
+                                                line="8",
+                                                name="Cnv"
+                                            }
+                                        ]
+                            },
+
+                          ]
+                  }
+

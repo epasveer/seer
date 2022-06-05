@@ -121,7 +121,6 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 // Automatically bring up the file for the first live frame.
                 if (firstLiveFrameLevel != "") {
                     emit selectedFile(firstLiveFrameFile, firstLiveFrameFullname, firstLiveFrameLine.toInt());
-                    emit selectedFrame(firstLiveFrameLevel.toInt());
                 }
             }
 

@@ -47,6 +47,7 @@ set(HEADER_FILES
     SeerExecutableFilterProxyModel.h
     SeerGdbWidget.h
     SeerHexWidget.h
+    SeerAsmWidget.h
     SeerArrayWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
@@ -54,8 +55,11 @@ set(HEADER_FILES
     SeerMemoryVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRunStatusIndicator.h
-    SeerSharedLibraryBrowserWidget.h
+    SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
+    SeerFunctionBrowserWidget.h
+    SeerTypeBrowserWidget.h
+    SeerVariableBrowserWidget.h
     SeerSourceLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
@@ -116,6 +120,7 @@ set(SOURCE_FILES
     SeerEditorWidgetSourceArea.cpp
     SeerGdbWidget.cpp
     SeerHexWidget.cpp
+    SeerAsmWidget.cpp
     SeerArrayWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
@@ -123,8 +128,11 @@ set(SOURCE_FILES
     SeerMemoryVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRunStatusIndicator.cpp
-    SeerSharedLibraryBrowserWidget.cpp
+    SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
+    SeerFunctionBrowserWidget.cpp
+    SeerTypeBrowserWidget.cpp
+    SeerVariableBrowserWidget.cpp
     SeerSourceLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
@@ -172,7 +180,7 @@ endif()
 
 # for Linux, BSD, Solaris, Minix
 if(UNIX AND NOT APPLE)
-    add_compile_options(-Wall -Wextra -Wunused-result -Wdeprecated-copy -pedantic)   # -Werror
+    add_compile_options(-Wall -Wextra -Wunused-result -pedantic)   # -Werror -Wdeprecated-copy
 endif()
 
 add_compile_definitions(QT_DEPRECATED_WARNINGS)

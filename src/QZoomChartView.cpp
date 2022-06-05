@@ -3,6 +3,8 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 
 QZoomChartView::QZoomChartView (QWidget* parent) : QChartView(parent) {
 
@@ -16,6 +18,16 @@ QZoomChartView::QZoomChartView (QChart* chart, QWidget* parent) : QChartView(cha
     _isDragging = false;
 
     setRubberBand(QChartView::RectangleRubberBand);
+}
+
+void QZoomChartView::printView () {
+
+    QPrinter printer;
+    if (QPrintDialog(&printer).exec() == QDialog::Accepted) {
+        QPainter painter(&printer);
+        painter.setRenderHint(QPainter::Antialiasing);
+        render(&painter);
+    }
 }
 
 bool QZoomChartView::viewportEvent (QEvent* event) {
@@ -68,6 +80,7 @@ void QZoomChartView::mouseMoveEvent (QMouseEvent* event) {
             auto dPos = event->pos() - _lastMousePos;
 
             chart()->scroll(-dPos.x(), dPos.y());
+            chart()->update();
 
             _lastMousePos = event->pos();
 
@@ -95,6 +108,7 @@ void QZoomChartView::wheelEvent (QWheelEvent* event) {
     qreal factor = event->angleDelta().y() > 0 ? 0.5 : 2.0;
 
     chart()->zoom(factor);
+    chart()->update();
 
     event->accept();
 
@@ -106,24 +120,46 @@ void QZoomChartView::keyPressEvent (QKeyEvent* event) {
     switch (event->key()) {
         case Qt::Key_Plus:
             chart()->zoomIn();
+            chart()->update();
             break;
         case Qt::Key_Minus:
             chart()->zoomOut();
+            chart()->update();
             break;
         case Qt::Key_Escape:
             chart()->zoomReset();
+            chart()->zoom(.9);
+            chart()->update();
             break;
         case Qt::Key_Left:
             chart()->scroll(-10, 0);
+            chart()->update();
             break;
         case Qt::Key_Right:
             chart()->scroll(10, 0);
+            chart()->update();
             break;
         case Qt::Key_Up:
             chart()->scroll(0, 10);
+            chart()->update();
             break;
         case Qt::Key_Down:
             chart()->scroll(0, -10);
+            chart()->update();
+            break;
+        case Qt::Key_R:
+            {
+                if (event->modifiers() == Qt::ControlModifier) {
+                    chart()->update();
+                }
+            }
+            break;
+        case Qt::Key_P:
+            {
+                if (event->modifiers() == Qt::ControlModifier) {
+                    printView();
+                }
+            }
             break;
         default:
             QGraphicsView::keyPressEvent(event);

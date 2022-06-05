@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>657</height>
+    <width>798</width>
+    <height>683</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,158 +15,202 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLineEdit" name="variableNameLineEdit">
-       <property name="toolTip">
-        <string>Variable name or expression.</string>
-       </property>
-       <property name="placeholderText">
-        <string>variable name</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="variableAddressLineEdit">
-       <property name="toolTip">
-        <string>Variable address.</string>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="placeholderText">
-        <string>variable address</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="memoryLengthLineEdit">
-       <property name="toolTip">
-        <string>Number of bytes to display.</string>
-       </property>
-       <property name="inputMask">
-        <string/>
-       </property>
-       <property name="placeholderText">
-        <string># Bytes</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="memoryDisplayFormatComboBox">
-       <property name="toolTip">
-        <string>Memory display format.</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>hex</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>octal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>binary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>decimal</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="charDisplayFormatComboBox">
-       <property name="toolTip">
-        <string>Character display format.</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>ascii</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ebcdic</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="columnCountSpinBox">
-       <property name="toolTip">
-        <string>Number of columns in display.</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="printToolButton">
-       <property name="toolTip">
-        <string>Print the display.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/HighContrast/document-print.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="saveToolButton">
-       <property name="toolTip">
-        <string>Save the display to a file.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/HighContrast/document-save-as.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="refreshToolButton">
-       <property name="toolTip">
-        <string>Refresh the display.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
-      </sizepolicy>
+    <widget class="QLineEdit" name="variableNameLineEdit">
+     <property name="toolTip">
+      <string>Variable expression resulting in an address.</string>
      </property>
+     <property name="placeholderText">
+      <string>Starting address</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="variableAddressLineEdit">
+     <property name="toolTip">
+      <string>Memory address.</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Memory address</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLineEdit" name="memoryLengthLineEdit">
+     <property name="toolTip">
+      <string>Number of bytes to display.</string>
+     </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string># Bytes (default 256)</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QComboBox" name="memoryDisplayFormatComboBox">
+     <property name="toolTip">
+      <string>Memory display format.</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>hex</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>octal</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>binary</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>decimal</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="4">
+    <widget class="QComboBox" name="charDisplayFormatComboBox">
+     <property name="toolTip">
+      <string>Character display format.</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>ascii</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ebcdic</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QSpinBox" name="columnCountSpinBox">
+     <property name="toolTip">
+      <string>Number of columns in display.</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="QToolButton" name="printToolButton">
+     <property name="toolTip">
+      <string>Print the display.</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QToolButton" name="saveToolButton">
+     <property name="toolTip">
+      <string>Save the display to a file.</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="9">
+    <widget class="QToolButton" name="refreshToolButton">
+     <property name="toolTip">
+      <string>Refresh the display.</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="10">
+    <widget class="QCheckBox" name="autoRefreshCheckBox">
+     <property name="toolTip">
+      <string>Automatically refresh after each stopping point.</string>
+     </property>
+     <property name="text">
+      <string>Auto</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="11">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="hex_tab">
+      <attribute name="title">
+       <string>Memory</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_1">
+       <item row="0" column="0">
+        <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>100</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="asm_tab">
+      <attribute name="title">
+       <string>Disassembly</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="SeerAsmWidget" name="memoryAsmEditor" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>100</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -176,6 +220,12 @@
    <class>SeerHexWidget</class>
    <extends>QWidget</extends>
    <header location="global">SeerHexWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SeerAsmWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">SeerAsmWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

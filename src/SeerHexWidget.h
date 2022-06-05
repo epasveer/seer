@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QPlainTextEdit>
 #include <QtCore/QByteArray>
+#include "ui_SeerHexWidget.h"
 
 //
 // Hex Memory viewer widget.
@@ -11,7 +12,9 @@
 // MIT License.
 //
 
-class SeerHexWidget: public QPlainTextEdit {
+class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
+
+    Q_OBJECT
 
     public:
         class DataStorage {
@@ -44,44 +47,54 @@ class SeerHexWidget: public QPlainTextEdit {
             EbcdicCharMode  = 2
         };
 
+        enum MagicNumbers {
+            HexFieldWidth   = 18
+        };
+
         SeerHexWidget(QWidget* parent = 0);
        ~SeerHexWidget();
 
-        void                        setBytesPerLine         (int count);
-        int                         bytesPerLine            () const;
-        int                         hexCharsPerLine         () const;
-        int                         gapAddrHex              () const;
-        int                         gapHexAscii             () const;
-        void                        setAddressOffset        (unsigned long offset);
-        unsigned long               addressOffset           () const;
-        unsigned long               size                    () const;
+        void                        setBytesPerLine                     (int count);
+        int                         bytesPerLine                        () const;
+        int                         hexCharsPerLine                     () const;
+        int                         hexCharsPerByte                     () const;
+        int                         nLines                              () const;
+        int                         gapAddrHex                          () const;
+        int                         gapHexAscii                         () const;
+        void                        setAddressOffset                    (unsigned long offset);
+        unsigned long               addressOffset                       () const;
+        unsigned long               size                                () const;
 
-        void                        setMemoryMode           (SeerHexWidget::MemoryMode memoryMode);
-        SeerHexWidget::MemoryMode   memoryMode              () const;
-        QString                     memoryModeString        () const;
+        void                        setMemoryMode                       (SeerHexWidget::MemoryMode memoryMode);
+        SeerHexWidget::MemoryMode   memoryMode                          () const;
+        QString                     memoryModeString                    () const;
 
-        void                        setCharMode             (SeerHexWidget::CharMode charMode);
-        SeerHexWidget::CharMode     charMode                () const;
-        QString                     charModeString          () const;
+        void                        setCharMode                         (SeerHexWidget::CharMode charMode);
+        SeerHexWidget::CharMode     charMode                            () const;
+        QString                     charModeString                      () const;
+
+        QTextDocument*              document                            ();
+        QString                     toPlainText                         ();
+
+    signals:
+        void                        byteOffsetChanged                   (int byte);
 
     public slots:
-        void                        setData                 (DataStorage* pData);
+        void                        setData                             (DataStorage* pData);
 
     protected:
 
+    protected slots:
+        void                        handleCursorPositionChanged         ();
+        void                        handleByteOffsetChanged             (int byte);
+
     private:
-        void                        create                  ();
+        void                        create                              ();
 
         DataStorage*                _pdata;
-        int                         _posAddr;
-        int                         _posHex;
-        int                         _posAscii;
         int                         _charWidth;
         int                         _charHeight;
-        int                         _selectBegin;
-        int                         _selectEnd;
-        int                         _selectInit;
-        int                         _cursorPos;
+        int                         _highlightByte;
 
         int                         _bytesPerLine;
         int                         _hexCharsPerLine;

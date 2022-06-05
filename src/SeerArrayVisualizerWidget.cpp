@@ -13,6 +13,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <QtGlobal>
 
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -57,27 +58,35 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
 
     arrayChartView->setRenderHint(QPainter::Antialiasing);
     arrayChartView->setChart(chart);
+    arrayChartView->setFocusPolicy(Qt::StrongFocus);
 
     // Connect things.
-    QObject::connect(aRefreshToolButton,            &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bRefreshToolButton,            &QToolButton::clicked,                                     this,  &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
-    QObject::connect(bVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
-    QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
-    QObject::connect(bArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox);
+    QObject::connect(aRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
+    QObject::connect(bVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
+    QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
+    QObject::connect(bArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox);
 
-    QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,  &SeerArrayVisualizerWidget::handleDataChanged);
-    QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,  &SeerArrayVisualizerWidget::handleSplitterMoved);
-    QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerArrayVisualizerWidget::handleTitleLineEdit);
-    QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handlePointsCheckBox);
-    QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,  &SeerArrayVisualizerWidget::handleLabelsCheckBox);
-    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,  &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+    QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,            &SeerArrayVisualizerWidget::handleDataChanged);
+    QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,            &SeerArrayVisualizerWidget::handleSplitterMoved);
+    QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleTitleLineEdit);
+    QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handlePointsCheckBox);
+    QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handleLabelsCheckBox);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+#else
+    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::buttonClicked),          this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
+#endif
+
+    QObject::connect(printPushButton,               &QPushButton::clicked,                                     arrayChartView,  &QZoomChartView::printView);
 
     // Restore window settings.
     readSettings();
@@ -533,6 +542,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     if (_series) {
         arrayChartView->chart()->removeSeries(_series);
+        arrayChartView->chart()->update();
         delete _series;
         _series = 0;
     }
@@ -540,6 +550,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
     if (scatterRadioButton->isChecked()) {
 
         QScatterSeries* scatter = new QScatterSeries;
+        scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
         scatter->setMarkerSize(7);
         _series = scatter;
 
@@ -560,6 +571,8 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     _series->setPointsVisible(false);
     _series->setPointLabelsVisible(false);
+    _series->setPointLabelsClipping(true);
+
 
     if (arrayTableWidget->aSize() > 0 && arrayTableWidget->bSize() == 0) {
 
@@ -600,6 +613,15 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
     arrayChartView->chart()->addSeries(_series);
     arrayChartView->chart()->createDefaultAxes();
+
+    // Zoom out slightly to allow for text label at edges.
+    arrayChartView->chart()->zoomReset();
+    arrayChartView->chart()->zoom(.9);
+    arrayChartView->chart()->update();
+
+    // Check for points or labels to be shown.
+    handlePointsCheckBox();
+    handleLabelsCheckBox();
 }
 
 void SeerArrayVisualizerWidget::writeSettings() {
@@ -663,6 +685,7 @@ void SeerArrayVisualizerWidget::handlePointsCheckBox () {
 
     if (_series) {
         _series->setPointsVisible(pointsCheckBox->isChecked());
+        arrayChartView->chart()->update();
     }
 }
 
@@ -670,6 +693,7 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 
     if (_series) {
         _series->setPointLabelsVisible(labelsCheckBox->isChecked());
+        arrayChartView->chart()->update();
     }
 }
 

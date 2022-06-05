@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerVariableBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerVariableBrowserWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>730</width>
+    <height>698</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Variable Browser</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLineEdit" name="variableNameSearchLineEdit">
+     <property name="toolTip">
+      <string>Search for variable names. &quot;*&quot; is allowed.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Variable names</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="variableTypeSearchLineEdit">
+     <property name="toolTip">
+      <string>Search for variable types. &quot;*&quot; is allowed.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Variable types</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QTreeWidget" name="variableTreeWidget">
+     <property name="columnCount">
+      <number>6</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Variable</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>File</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Line</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Full Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Description</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

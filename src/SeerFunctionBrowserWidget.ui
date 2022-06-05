@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerSharedLibraryBrowserWidgetForm</class>
- <widget class="QWidget" name="SeerSharedLibraryBrowserWidgetForm">
+ <class>SeerFunctionBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerFunctionBrowserWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,50 +11,50 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Shared Library Browser</string>
+   <string>Function Browser</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0" colspan="2">
-    <widget class="QTreeWidget" name="sharedLibraryTreeWidget">
+    <widget class="QTreeWidget" name="functionTreeWidget">
      <property name="columnCount">
       <number>6</number>
      </property>
      <column>
       <property name="text">
-       <string>Id</string>
+       <string>Function</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Target-Name</string>
+       <string>File</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Host-Name</string>
+       <string>Line</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Symbols Loaded</string>
+       <string>Full Name</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Thread Group</string>
+       <string>Type</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Ranges</string>
+       <string>Description</string>
       </property>
      </column>
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QLineEdit" name="sharedLibrarySearchLineEdit">
+    <widget class="QLineEdit" name="functionSearchLineEdit">
      <property name="toolTip">
-      <string>Search in the list of libraries. &quot;*&quot; is allowed.</string>
+      <string>Search in the list of functions. &quot;*&quot; is allowed.</string>
      </property>
      <property name="statusTip">
       <string/>

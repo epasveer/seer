@@ -459,6 +459,27 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="printPushButton">
+           <property name="toolTip">
+            <string>Print the chart.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>

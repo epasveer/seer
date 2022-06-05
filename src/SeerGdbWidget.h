@@ -137,7 +137,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbInterruptSIGUSR1           ();
         void                                handleGdbInterruptSIGUSR2           ();
         void                                handleGdbExecutableSources          ();
-        void                                handleGdbExecutableSharedLibraries  ();
+        void                                handleGdbExecutableFunctions        (int id, const QString& functionRegex);
+        void                                handleGdbExecutableTypes            (int id, const QString& typeRegex);
+        void                                handleGdbExecutableVariables        (int id, const QString& variableNameRegex, const QString& variableTypeRegex);
+        void                                handleGdbExecutableLibraries        ();
         void                                handleGdbExecutableName             ();
         void                                handleGdbExecutableArguments        ();
         void                                handleGdbExecutableWorkingDirectory ();
@@ -180,6 +183,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbArrayAddExpression         (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleGdbAsmEvaluateExpression      (int expressionid, QString address, int count, int mode);
         void                                handleGdbArrayEvaluateExpression    (int expressionid, QString address, int count);
         void                                handleGdbMemoryVisualizer           ();
         void                                handleGdbArrayVisualizer            ();

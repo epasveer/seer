@@ -15,6 +15,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     // Init variables.
     _variableId = Seer::createID(); // Create two id's for queries.
     _memoryId   = Seer::createID();
+    _asmId      = Seer::createID();
 
     // Set up UI.
     setupUi(this);
@@ -23,7 +24,8 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Memory Visualizer");
 
-    memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+  //memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
+    memoryLengthLineEdit->setValidator(new QRegExpValidator(QRegExp("\\s*([1-9]\\d*\\s*)+"), this));
     columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
 
     if (memoryHexEditor->memoryMode() == SeerHexWidget::HexMemoryMode) {
@@ -90,27 +92,37 @@ QString SeerMemoryVisualizerWidget::variableName () const {
 void SeerMemoryVisualizerWidget::setVariableAddress (const QString& address) {
 
     unsigned long offset = 0;
-    bool ok = false;
+    bool refresh         = false;
 
     if (address.startsWith("0x")) {
+
+        bool ok = false;
 
         offset = address.toULong(&ok, 16);
 
         if (ok == true) {
             variableAddressLineEdit->setText(address);
+            refresh = true;
         }else{
             variableAddressLineEdit->setText("not an address");
             offset = 0;
         }
 
-    }else{
+    }else if (address != "") {
         variableAddressLineEdit->setText("not an address");
+        offset = 0;
+
+    }else{
+        variableAddressLineEdit->setText("");
         offset = 0;
     }
 
-    //qDebug() << address << offset << ok;
-
     memoryHexEditor->setAddressOffset(offset);
+
+    // Show results immediately.
+    if (refresh) {
+        handleRefreshButton();
+    }
 }
 
 QString SeerMemoryVisualizerWidget::variableAddress () const {
@@ -174,6 +186,15 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             }
         }
 
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,asm_insns="))) {
+
+        QString id_text = text.section('^', 0,0);
+
+        if (id_text.toInt() == _asmId) {
+
+            memoryAsmEditor->setData(text);
+        }
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
         // 12^error,msg="No symbol \"return\" in current context."
@@ -195,6 +216,13 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             }
         }
 
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleRefreshButton();
+        }
+
     }else{
         // Ignore anything else.
     }
@@ -214,7 +242,14 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
         return;
     }
 
-    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), memoryLengthLineEdit->text().toInt());
+    int nbytes = 256;
+
+    if (memoryLengthLineEdit->text() != "") {
+        nbytes = memoryLengthLineEdit->text().toInt();
+    }
+
+    emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
+    emit evaluateAsmExpression(_asmId, variableAddressLineEdit->text(), nbytes, 2);
 }
 
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {
@@ -271,7 +306,15 @@ void SeerMemoryVisualizerWidget::handlePrintButton () {
 
 
     // Make a copy so we can temporarily add a header.
-    QTextDocument* clone = memoryHexEditor->document()->clone(this);
+    QTextDocument* clone = 0;
+
+    if (tabWidget->currentWidget()->objectName() == "hex_tab") {
+        clone = memoryHexEditor->document()->clone(this);
+    }else if (tabWidget->currentWidget()->objectName() == "asm_tab") {
+        clone = memoryAsmEditor->document()->clone(this);
+    }else{
+        clone = new QTextDocument("NO TAB SELECTED!!!\n");
+    }
 
     QTextCursor cursor(clone);
     QTextCharFormat format = cursor.charFormat();
@@ -317,7 +360,13 @@ void SeerMemoryVisualizerWidget::handleSaveButton () {
         stream << "\n";
         stream << "name=" << variableName() << " address=" << variableAddress() << " bytesPerLine=" << memoryHexEditor->bytesPerLine() << " bytes=" << memoryHexEditor->size() << " memory=" << memoryHexEditor->memoryModeString() << " char=" << memoryHexEditor->charModeString() << "\n";
         stream << "\n";
-        stream << memoryHexEditor->toPlainText();
+        if (tabWidget->currentWidget()->objectName() == "hex_tab") {
+            stream << memoryHexEditor->toPlainText();
+        }else if (tabWidget->currentWidget()->objectName() == "asm_tab") {
+            stream << memoryAsmEditor->toPlainText();
+        }else{
+            stream << "NO TAB SELECTED!!!\n";
+        }
         stream << "\n";
 
         file.flush();

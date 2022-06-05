@@ -1,7 +1,10 @@
 #pragma once
 
 #include "SeerSourceBrowserWidget.h"
-#include "SeerSharedLibraryBrowserWidget.h"
+#include "SeerFunctionBrowserWidget.h"
+#include "SeerTypeBrowserWidget.h"
+#include "SeerVariableBrowserWidget.h"
+#include "SeerLibraryBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -16,7 +19,10 @@ class SeerSourceLibraryManagerWidget : public QWidget, protected Ui::SeerSourceL
        ~SeerSourceLibraryManagerWidget ();
 
         SeerSourceBrowserWidget*                        sourceBrowserWidget             ();
-        SeerSharedLibraryBrowserWidget*                 sharedLibraryBrowserWidget      ();
+        SeerFunctionBrowserWidget*                      functionBrowserWidget           ();
+        SeerTypeBrowserWidget*                          typeBrowserWidget               ();
+        SeerVariableBrowserWidget*                      variableBrowserWidget           ();
+        SeerLibraryBrowserWidget*                       libraryBrowserWidget            ();
 
     signals:
     public slots:
@@ -25,6 +31,9 @@ class SeerSourceLibraryManagerWidget : public QWidget, protected Ui::SeerSourceL
 
     private:
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;
-        SeerSharedLibraryBrowserWidget*                 _sharedLibraryBrowserWidget;
+        SeerFunctionBrowserWidget*                      _functionBrowserWidget;
+        SeerTypeBrowserWidget*                          _typeBrowserWidget;
+        SeerVariableBrowserWidget*                      _variableBrowserWidget;
+        SeerLibraryBrowserWidget*                       _libraryBrowserWidget;
 };
 

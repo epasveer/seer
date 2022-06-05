@@ -1,0 +1,63 @@
+
+ -symbol-info-functions [--include-nondebug]
+                        [--type type_regexp]
+                        [--name name_regexp]
+                        [--max-results limit]
+
+
+    ^done,symbols={
+                    debug=[
+                            {
+                                filename="elf-init.c", fullname="/home/abuild/rpmbuild/BUILD/glibc-2.31/csu/elf-init.c",
+                                symbols=[
+                                            {
+                                                line="95",
+                                                name="__libc_csu_fini",
+                                                type="void (void)",
+                                                description="void __libc_csu_fini(void);"
+                                            },
+                                            {
+                                                line="67",
+                                                name="__libc_csu_init",
+                                                type="void (int, char **, char **)",
+                                                description="void __libc_csu_init(int, char **, char **);"
+                                            }
+                                        ]
+                            },
+
+                            {
+                                filename="function1.cpp",fullname="/home/erniep/Development/Peak/src/seer/tests/helloworld/function1.cpp",
+                                symbols=[
+                                            {
+                                                line="5",
+                                                name="function1(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)",
+                                                type="void (const std::string &)",
+                                                description="void function1(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&);"},{name="_GLOBAL__sub_I__Z9function1RKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE()",type="void (void)",description="static void _GLOBAL__sub_I__Z9function1RKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE();"},{name="__static_initialization_and_destruction_0(int, int)",type="void (int, int)",description="static void __static_initialization_and_destruction_0(int, int);"
+                                            }
+                                        ]
+                            },
+
+                            {
+                                filename="helloworld.cpp",fullname="/home/erniep/Development/Peak/src/seer/tests/helloworld/helloworld.cpp",
+                                symbols=[
+                                            {
+                                                line="8",
+                                                name="main(int, char**)",
+                                                type="int (int, char **)",
+                                                description="int main(int, char**);"
+                                            },
+                                            {
+                                                name="_GLOBAL__sub_I_main()",
+                                                type="void (void)",
+                                                description="static void _GLOBAL__sub_I_main();"
+                                            },
+                                            {
+                                                name="__static_initialization_and_destruction_0(int, int)",
+                                                type="void (int, int)",
+                                                description="static void __static_initialization_and_destruction_0(int, int);"
+                                            }
+                                        ]
+                            }
+                          ]
+                  }
+
