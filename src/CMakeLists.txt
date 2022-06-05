@@ -88,6 +88,7 @@ set(HEADER_FILES
     QDetachTabWidget.h
     QZoomChartView.h
     QZoomChart.h
+    QClearLineEdit.h
     )
 
 set(SOURCE_FILES
@@ -161,6 +162,7 @@ set(SOURCE_FILES
     QDetachTabWidget.cpp
     QZoomChartView.cpp
     QZoomChart.cpp
+    QClearLineEdit.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)

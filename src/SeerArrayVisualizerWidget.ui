@@ -112,7 +112,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="bVariableNameLineEdit">
+      <widget class="QClearLineEdit" name="bVariableNameLineEdit">
        <property name="toolTip">
         <string>Variable name or expression.</string>
        </property>
@@ -286,7 +286,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="aVariableNameLineEdit">
+      <widget class="QClearLineEdit" name="aVariableNameLineEdit">
        <property name="toolTip">
         <string>Variable name or expression.</string>
        </property>
@@ -497,7 +497,12 @@
   <customwidget>
    <class>QZoomChartView</class>
    <extends>QGraphicsView</extends>
-   <header>QZoomChartView.h</header>
+   <header location="global">QZoomChartView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QClearLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QClearLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -49,6 +49,9 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     handleaArrayDisplayFormatComboBox(0);
     handlebArrayDisplayFormatComboBox(0);
 
+    aVariableNameLineEdit->enableReturnPressedOnClear();
+    bVariableNameLineEdit->enableReturnPressedOnClear();
+
     // A single series chart.
     QChart* chart = new QChart;
     chart->legend()->hide();
