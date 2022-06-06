@@ -120,6 +120,18 @@ Normal | Spline | Scatter
 --- | --- | ---
 ![](images/arrayvisualizer.png) | ![](images/arrayvisualizer_spline.png) | ![](images/arrayvisualizer_scatter.png)
 
+Two arrays can be used as an X-Y plot. For example, this simple arrays forms the X-Y outline of a shape.
+```
+    int main() {
+        int points[] = {50,1,20,91,97,35,2,35,79,91,50,1};
+        return 0;
+    }
+```
+
+X values | Y values | XY Values
+--- | --- | ---
+![](images/arrayvisualizer_x.png) | ![](images/arrayvisualizer_y.png) | ![](images/arrayvisualizer_xy.png)
+
 
 Starting Seer
 =============
