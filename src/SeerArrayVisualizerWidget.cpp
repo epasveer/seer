@@ -24,7 +24,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     _bVariableId = Seer::createID(); // Create two id's for queries.
     _bMemoryId   = Seer::createID();
 
-    _series      = 0;
+    _aSeries     = 0;
+    _bSeries     = 0;
 
     // Set up UI.
     setupUi(this);
@@ -76,6 +77,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(bVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
     QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
     QObject::connect(bArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox);
+    QObject::connect(aAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaAxisComboBox);
+    QObject::connect(bAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebAxisComboBox);
 
     QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,            &SeerArrayVisualizerWidget::handleDataChanged);
     QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,            &SeerArrayVisualizerWidget::handleSplitterMoved);
@@ -541,81 +544,127 @@ void SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox (int index) {
     }
 }
 
+void SeerArrayVisualizerWidget::handleaAxisComboBox (int index) {
+
+    arrayTableWidget->setAAxis(aAxisComboBox->itemText(index));
+
+    handleDataChanged();
+}
+
+void SeerArrayVisualizerWidget::handlebAxisComboBox (int index) {
+
+    arrayTableWidget->setBAxis(bAxisComboBox->itemText(index));
+
+    handleDataChanged();
+}
+
 void SeerArrayVisualizerWidget::handleDataChanged () {
 
-    if (_series) {
-        arrayChartView->chart()->removeSeries(_series);
+    // Delete old series.
+    if (_aSeries) {
+        arrayChartView->chart()->removeSeries(_aSeries);
         arrayChartView->chart()->update();
-        delete _series;
-        _series = 0;
+        delete _aSeries;
+        _aSeries = 0;
     }
 
-    if (scatterRadioButton->isChecked()) {
-
-        QScatterSeries* scatter = new QScatterSeries;
-        scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
-        scatter->setMarkerSize(7);
-        _series = scatter;
-
-    }else if (lineRadioButton->isChecked()) {
-
-        QLineSeries* line = new QLineSeries;
-        _series = line;
-
-    }else if (splineRadioButton->isChecked()) {
-
-        QSplineSeries* line  = new QSplineSeries;
-        _series = line;
+    if (_bSeries) {
+        arrayChartView->chart()->removeSeries(_bSeries);
+        arrayChartView->chart()->update();
+        delete _bSeries;
+        _bSeries = 0;
     }
 
-    if (_series == 0) {
-        return;
-    }
-
-    _series->setPointsVisible(false);
-    _series->setPointLabelsVisible(false);
-    _series->setPointLabelsClipping(true);
-
-
+    // If only the first array is defined, create a series for it.
+    // Handle the X and Y axis.
     if (arrayTableWidget->aSize() > 0 && arrayTableWidget->bSize() == 0) {
 
-        const QVector<double>& values = arrayTableWidget->aArrayValues();
+        createASeries();
 
-        for (int i = 0; i < values.size(); ++i) {
-            _series->append(i, values[i]);
-        }
-
-        _series->setName(QString("%1:%2:%3").arg(arrayTableWidget->aLabel()).arg(arrayTableWidget->aAddressOffset()).arg(arrayTableWidget->aAddressStride()));
-
+    // If only the second array is defined, create a series for it.
+    // Handle the X and Y axis.
     }else if (arrayTableWidget->aSize() == 0 && arrayTableWidget->bSize() > 0) {
 
-        const QVector<double>& values = arrayTableWidget->bArrayValues();
-
-        for (int i = 0; i < values.size(); ++i) {
-            _series->append(i, values[i]);
-        }
-
-        _series->setName(QString("%1:%2:%3").arg(arrayTableWidget->bLabel()).arg(arrayTableWidget->bAddressOffset()).arg(arrayTableWidget->bAddressStride()));
+        createBSeries();
 
     } else if (arrayTableWidget->aSize() > 0 && arrayTableWidget->bSize() > 0) {
 
-        const QVector<double>& xvalues = arrayTableWidget->aArrayValues();
-        const QVector<double>& yvalues = arrayTableWidget->bArrayValues();
+        // If the axis is the same for the two arrays, plot them as
+        // two unique series.
+        if (arrayTableWidget->aAxis() == arrayTableWidget->bAxis()) {
 
-        for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
-            _series->append(xvalues[i], yvalues[i]);
+            createASeries();
+            createBSeries();
+
+        // Otherwise, we have an X and Y axis.
+        // Plot one series using the two arrays as an X and as a Y.
+        }else{
+
+            if (scatterRadioButton->isChecked()) {
+
+                QScatterSeries* scatter = new QScatterSeries;
+                scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
+                scatter->setMarkerSize(7);
+                _aSeries = scatter;
+
+            }else if (lineRadioButton->isChecked()) {
+
+                QLineSeries* line = new QLineSeries;
+                _aSeries = line;
+
+            }else if (splineRadioButton->isChecked()) {
+
+                QSplineSeries* line  = new QSplineSeries;
+                _aSeries = line;
+
+            }else{
+                qWarning() << "Invalid line type.";
+                return;
+            }
+
+            _aSeries->setPointsVisible(false);
+            _aSeries->setPointLabelsVisible(false);
+            _aSeries->setPointLabelsClipping(true);
+
+            const QVector<double>& xvalues = arrayTableWidget->aArrayValues();
+            const QVector<double>& yvalues = arrayTableWidget->bArrayValues();
+
+            if (arrayTableWidget->aAxis() == "Y" && arrayTableWidget->bAxis() == "X") {
+
+                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
+                    _aSeries->append(xvalues[i], yvalues[i]);
+                }
+
+            }else if (arrayTableWidget->aAxis() == "X" && arrayTableWidget->bAxis() == "Y") {
+
+                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
+                    _aSeries->append(yvalues[i], xvalues[i]);
+                }
+
+            }else{
+                qWarning() << "Invalid axis type of '" << arrayTableWidget->aAxis() << "'. Not 'X' or 'Y'.";
+            }
+
+            _aSeries->setName(aVariableName() + "/" + bVariableName());
+            _aSeries->setName(QString("%1:%2:%3 | %4:%5:%6")
+                                      .arg(arrayTableWidget->aLabel()).arg(arrayTableWidget->aAddressOffset()).arg(arrayTableWidget->aAddressStride())
+                                      .arg(arrayTableWidget->bLabel()).arg(arrayTableWidget->bAddressOffset()).arg(arrayTableWidget->bAddressStride()));
         }
-
-        _series->setName(aVariableName() + "/" + bVariableName());
-        _series->setName(QString("%1:%2:%3 | %4:%5:%6")
-                                                .arg(arrayTableWidget->aLabel()).arg(arrayTableWidget->aAddressOffset()).arg(arrayTableWidget->aAddressStride())
-                                                .arg(arrayTableWidget->bLabel()).arg(arrayTableWidget->bAddressOffset()).arg(arrayTableWidget->bAddressStride()));
     }
 
-    QObject::connect(_series, &QLineSeries::hovered,    this, &SeerArrayVisualizerWidget::handleSeriesHovered);
+    if (_aSeries) {
+        QObject::connect(_aSeries, &QLineSeries::hovered,    this, &SeerArrayVisualizerWidget::handleSeriesHovered);
 
-    arrayChartView->chart()->addSeries(_series);
-    arrayChartView->chart()->createDefaultAxes();
+        arrayChartView->chart()->addSeries(_aSeries);
+        arrayChartView->chart()->createDefaultAxes();
+    }
+
+    if (_bSeries) {
+        QObject::connect(_bSeries, &QLineSeries::hovered,    this, &SeerArrayVisualizerWidget::handleSeriesHovered);
+
+        arrayChartView->chart()->addSeries(_bSeries);
+        arrayChartView->chart()->createDefaultAxes();
+    }
 
     // Zoom out slightly to allow for text label at edges.
     arrayChartView->chart()->zoomReset();
@@ -686,16 +735,26 @@ void SeerArrayVisualizerWidget::handleTitleLineEdit () {
 
 void SeerArrayVisualizerWidget::handlePointsCheckBox () {
 
-    if (_series) {
-        _series->setPointsVisible(pointsCheckBox->isChecked());
+    if (_aSeries) {
+        _aSeries->setPointsVisible(pointsCheckBox->isChecked());
+        arrayChartView->chart()->update();
+    }
+
+    if (_bSeries) {
+        _bSeries->setPointsVisible(pointsCheckBox->isChecked());
         arrayChartView->chart()->update();
     }
 }
 
 void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 
-    if (_series) {
-        _series->setPointLabelsVisible(labelsCheckBox->isChecked());
+    if (_aSeries) {
+        _aSeries->setPointLabelsVisible(labelsCheckBox->isChecked());
+        arrayChartView->chart()->update();
+    }
+
+    if (_bSeries) {
+        _bSeries->setPointLabelsVisible(labelsCheckBox->isChecked());
         arrayChartView->chart()->update();
     }
 }
@@ -703,5 +762,103 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
 
     handleDataChanged();
+}
+
+void SeerArrayVisualizerWidget::createASeries() {
+
+    if (scatterRadioButton->isChecked()) {
+
+        QScatterSeries* scatter = new QScatterSeries;
+        scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
+        scatter->setMarkerSize(7);
+        _aSeries = scatter;
+
+    }else if (lineRadioButton->isChecked()) {
+
+        QLineSeries* line = new QLineSeries;
+        _aSeries = line;
+
+    }else if (splineRadioButton->isChecked()) {
+
+        QSplineSeries* line  = new QSplineSeries;
+        _aSeries = line;
+
+    }else{
+        qWarning() << "Invalid line type.";
+        return;
+    }
+
+    _aSeries->setPointsVisible(false);
+    _aSeries->setPointLabelsVisible(false);
+    _aSeries->setPointLabelsClipping(true);
+
+    const QVector<double>& values = arrayTableWidget->aArrayValues();
+
+    if (arrayTableWidget->aAxis() == "Y") {
+
+        for (int i = 0; i < values.size(); ++i) {
+            _aSeries->append(i, values[i]);
+        }
+
+    }else if (arrayTableWidget->aAxis() == "X") {
+
+        for (int i = 0; i < values.size(); ++i) {
+            _aSeries->append(values[i], i);
+        }
+
+    }else{
+        qWarning() << "Invalid axis type of '" << arrayTableWidget->aAxis() << "'. Not 'X' or 'Y'.";
+    }
+
+    _aSeries->setName(QString("%1:%2:%3").arg(arrayTableWidget->aLabel()).arg(arrayTableWidget->aAddressOffset()).arg(arrayTableWidget->aAddressStride()));
+}
+
+void SeerArrayVisualizerWidget::createBSeries() {
+
+    if (scatterRadioButton->isChecked()) {
+
+        QScatterSeries* scatter = new QScatterSeries;
+        scatter->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
+        scatter->setMarkerSize(7);
+        _bSeries = scatter;
+
+    }else if (lineRadioButton->isChecked()) {
+
+        QLineSeries* line = new QLineSeries;
+        _bSeries = line;
+
+    }else if (splineRadioButton->isChecked()) {
+
+        QSplineSeries* line  = new QSplineSeries;
+        _bSeries = line;
+
+    }else{
+        qWarning() << "Invalid line type.";
+        return;
+    }
+
+    _bSeries->setPointsVisible(false);
+    _bSeries->setPointLabelsVisible(false);
+    _bSeries->setPointLabelsClipping(true);
+
+    const QVector<double>& values = arrayTableWidget->bArrayValues();
+
+    if (arrayTableWidget->bAxis() == "Y") {
+
+        for (int i = 0; i < values.size(); ++i) {
+            _bSeries->append(i, values[i]);
+        }
+
+    }else if (arrayTableWidget->bAxis() == "X") {
+
+        for (int i = 0; i < values.size(); ++i) {
+            _bSeries->append(values[i], i);
+        }
+
+    }else{
+        qWarning() << "Invalid axis type of '" << arrayTableWidget->bAxis() << "'. Not 'X' or 'Y'.";
+    }
+
+    _bSeries->setName(QString("%1:%2:%3").arg(arrayTableWidget->bLabel()).arg(arrayTableWidget->bAddressOffset()).arg(arrayTableWidget->bAddressStride()));
 }
 

@@ -18,11 +18,13 @@ SeerArrayWidget::SeerArrayWidget(QWidget* parent) : QTableWidget(parent) {
     horizontalHeader()->setDefaultAlignment(Qt::AlignRight);
 
     _aData           = 0;
+    _aAxis           = "Y";
     _aArrayMode      = SeerArrayWidget::UnknownArrayMode;
     _aAddressOffset  = 0;
     _aAddressStride  = 1;
 
     _bData           = 0;
+    _bAxis           = "X";
     _bArrayMode      = SeerArrayWidget::UnknownArrayMode;
     _bAddressOffset  = 0;
     _bAddressStride  = 1;
@@ -47,6 +49,14 @@ SeerArrayWidget::~SeerArrayWidget() {
 
 int SeerArrayWidget::elementsPerLine () const {
     return 1;
+}
+
+const QString& SeerArrayWidget::aAxis () const {
+    return _aAxis;
+}
+
+void SeerArrayWidget::setAAxis (const QString& axis) {
+    _aAxis = axis;
 }
 
 const QString& SeerArrayWidget::aLabel () const {
@@ -154,6 +164,14 @@ QString SeerArrayWidget::aArrayModeString () const {
 const QVector<double>& SeerArrayWidget::aArrayValues () const {
 
     return _aArrayValues;
+}
+
+const QString& SeerArrayWidget::bAxis () const {
+    return _bAxis;
+}
+
+void SeerArrayWidget::setBAxis (const QString& axis) {
+    _bAxis = axis;
 }
 
 const QString& SeerArrayWidget::bLabel () const {

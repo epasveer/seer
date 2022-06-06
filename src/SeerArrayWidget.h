@@ -42,6 +42,8 @@ class SeerArrayWidget: public QTableWidget {
 
         int                         elementsPerLine         () const;
 
+        const QString&              aAxis                   () const;
+        void                        setAAxis                (const QString& axis);
         const QString&              aLabel                  () const;
         void                        setAAddressOffset       (unsigned long offset);
         unsigned long               aAddressOffset          () const;
@@ -55,6 +57,8 @@ class SeerArrayWidget: public QTableWidget {
         QString                     aArrayModeString        () const;
         const QVector<double>&      aArrayValues            () const;
 
+        const QString&              bAxis                   () const;
+        void                        setBAxis                (const QString& axis);
         const QString&              bLabel                  () const;
         void                        setBAddressOffset       (unsigned long offset);
         unsigned long               bAddressOffset          () const;
@@ -81,6 +85,7 @@ class SeerArrayWidget: public QTableWidget {
     private:
         void                        create                  ();
 
+        QString                     _aAxis;
         QString                     _aLabel;
         int                         _aColumnId;
         DataStorage*                _aData;
@@ -89,6 +94,7 @@ class SeerArrayWidget: public QTableWidget {
         SeerArrayWidget::ArrayMode  _aArrayMode;
         QVector<double>             _aArrayValues;
 
+        QString                     _bAxis;
         QString                     _bLabel;
         int                         _bColumnId;
         DataStorage*                _bData;

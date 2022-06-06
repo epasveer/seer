@@ -36,6 +36,8 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handlebVariableNameLineEdit         ();
         void                handleaArrayDisplayFormatComboBox   (int index);
         void                handlebArrayDisplayFormatComboBox   (int index);
+        void                handleaAxisComboBox                 (int index);
+        void                handlebAxisComboBox                 (int index);
         void                handleDataChanged                   ();
         void                handleSplitterMoved                 (int pos, int index);
         void                handleSeriesHovered                 (const QPointF& point, bool state);
@@ -50,7 +52,11 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                resizeEvent                         (QResizeEvent* event);
 
     private:
-        QXYSeries*          _series;
+        void                createASeries                       ();
+        void                createBSeries                       ();
+
+        QXYSeries*          _aSeries;
+        QXYSeries*          _bSeries;
         int                 _aVariableId;
         int                 _bVariableId;
         int                 _aMemoryId;
