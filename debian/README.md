@@ -12,7 +12,8 @@ entire Seer release as the script will do that.
 
 ```
     % cd /tmp
-    % wget https://github.com/epasveer/seer/blob/main/debian/seer_deb.sh
+    % wget https://raw.githubusercontent.com/epasveer/seer/main/debian/seer_deb.sh
+    % chmod a+x seer_deb.sh
 ```
 
 Then run the script, giving it the name and path of a build directory. This build
