@@ -1,4 +1,4 @@
-Installation for Debian based Linux released
+Installation for Debian based Linux releases
 ============================================
 
 The 'seer_deb.sh' script in this directory will grab the latest stable Seer release
