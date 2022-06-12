@@ -30,6 +30,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries::const_iterator        endEntry                            () const;
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
+        SeerAssemblyWidget*                             assemblyWidgetTab                   ();
+
         SeerEditorManagerFiles                          openedFiles                         () const;
 
         void                                            setEditorFont                       (const QFont& font);
@@ -59,6 +61,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
         void                                            handleAddArrayVisualizer            (QString expression);
+        void                                            handleRequestAssembly               (QString address);
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -81,6 +84,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
         void                                            addMemoryVisualize                  (QString expression);
         void                                            addArrayVisualize                   (QString expression);
+        void                                            requestAssembly                     (QString address);
 
     private:
         SeerEditorWidget*                               currentEditorWidgetTab              ();
@@ -88,6 +92,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file, const QString& text);
         SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file);
         void                                            deleteEditorWidgetTab               (int index);
+        SeerAssemblyWidget*                             createAssemblyWidgetTab             ();
+        void                                            deleteAssemblyWidgetTab             ();
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -95,5 +101,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
         SeerKeySettings                                 _editorKeySettings;
+        SeerAssemblyWidget*                             _assemblyWidget;
+        int                                             _assemblyIndex;
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SeerConsoleWidget.h"
+#include "SeerEditorWidget.h"
 #include "SeerGdbLogWidget.h"
 #include "SeerSeerLogWidget.h"
 #include "SeerBreakpointsBrowserWidget.h"
@@ -185,6 +186,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
         void                                handleGdbAsmEvaluateExpression      (int expressionid, QString address, int count, int mode);
         void                                handleGdbArrayEvaluateExpression    (int expressionid, QString address, int count);
+        void                                handleGdbGetAssembly                (QString address);
         void                                handleGdbMemoryVisualizer           ();
         void                                handleGdbArrayVisualizer            ();
         void                                handleSplitterMoved                 (int pos, int index);

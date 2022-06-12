@@ -19,6 +19,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(); // Default syntax highlighting.
     _editorHighlighterEnabled  = true;
     _editorKeySettings         = SeerKeySettings::populate();               // Defualt key settings.
+    _assemblyWidget            = 0;
 
     // Setup UI
     setupUi(this);
@@ -33,6 +34,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Create a place holder tab with a special name of "".
     createEditorWidgetTab("", "");
+    createAssemblyWidgetTab();
 
     // Connect things.
     QObject::connect(tabWidget,                                 &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
@@ -103,6 +105,10 @@ SeerEditorManagerEntries::const_iterator SeerEditorManagerWidget::endEntry () co
 
 void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i) {
     _entries.erase(i);
+}
+
+SeerAssemblyWidget* SeerEditorManagerWidget::assemblyWidgetTab () {
+    return _assemblyWidget;
 }
 
 SeerEditorManagerFiles SeerEditorManagerWidget::openedFiles () const {
@@ -256,6 +262,11 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         // Give the EditorWidget the command text (read file, set line number, etc.).
         editorWidget->sourceArea()->handleText(text);
 
+        // Get the AssemblyWidget.
+        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+        assemblyWidget->assemblyArea()->handleText(text);
+
         // Handle certain reasons uniquely.
         QString reason_text = Seer::parseFirst(newtext, "reason=", '"', '"', false);
 
@@ -266,7 +277,6 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             if (disp_text == "del") {
                 emit refreshBreakpointsList();
             }
-
         }
 
         return;
@@ -374,6 +384,13 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 }
             }
         }
+
+    }else if (text.startsWith("^done,asm_insns=")) {
+
+        // Get the AssemblyWidget.
+        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+        assemblyWidget->assemblyArea()->handleText(text);
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
@@ -606,6 +623,53 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
     }
 }
 
+SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
+
+    //qDebug() << tabWidget->count() << tabWidget->tabText(0);
+
+    // Remove the place holder tab, if present.
+    if (tabWidget->count() == 1 && tabWidget->tabText(0) == "") {
+        deleteEditorWidgetTab(0);
+    }
+
+    // Create the Editor widget and add it to the tab.
+    SeerAssemblyWidget* assemblyWidget = new SeerAssemblyWidget(this);
+    assemblyWidget->assemblyArea()->setFont(editorFont());
+    assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
+    assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
+
+    // Set the tooltip for the tab.
+    _assemblyIndex= tabWidget->addTab(assemblyWidget, "Assembly");
+
+    tabWidget->setTabToolTip(_assemblyIndex, "Assembly");
+
+    // Connect signals.
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
+
+    // Load the file.
+    assemblyWidget->assemblyArea()->setPlainText("Hello!");
+
+    // Add an entry to our table.
+    _assemblyWidget = assemblyWidget;
+
+    // Return the editor widget.
+    return assemblyWidget;
+}
+
+void SeerEditorManagerWidget::deleteAssemblyWidgetTab () {
+
+    if (_assemblyWidget == 0) {
+        return;
+    }
+
+    //qDebug() << "Delete AssemblyWidget";
+
+    tabWidget->removeTab(_assemblyIndex);   // Remove the tab.
+    delete _assemblyWidget;                 // Delete the actual EditorWidget
+
+    _assemblyWidget = 0;
+}
+
 void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {
 
     QString filename = QFileDialog::getOpenFileName(this, tr("Open Source File"), "./", tr("Source files (*.*)"), nullptr, QFileDialog::DontUseNativeDialog);
@@ -792,5 +856,13 @@ void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
     // rethrow
     emit addArrayVisualize (expression);
+}
+
+void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
+
+    //qDebug() << address;
+
+    // rethrow
+    emit requestAssembly (address);
 }
 

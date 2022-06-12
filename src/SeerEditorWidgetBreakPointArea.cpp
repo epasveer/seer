@@ -43,3 +43,49 @@ void SeerEditorWidgetBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
     QWidget::mouseReleaseEvent(event);
 }
 
+//
+//
+//
+
+SeerEditorWidgetAssemblyBreakPointArea::SeerEditorWidgetAssemblyBreakPointArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyBreakPointArea::sizeHint () const {
+    return QSize(_editorWidget->breakPointAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->breakPointAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        // XXX _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        // XXX _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+

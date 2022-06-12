@@ -520,7 +520,7 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,symbols={") && text.endsWith("}")) {
         return;
 
-    }else if (text == "^exit") {
+    }else if (text.startsWith("^done,asm_insns=[")) {
         return;
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done"))) {
@@ -535,6 +535,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
         return;
 
+    }else if (text == "^exit") {
+        return;
+
     }else if (text.startsWith("*running,thread-id=\"")) {
 
         QString threadid_text = Seer::parseFirst(text, "thread-id=", '"', '"', false);
@@ -546,6 +549,7 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^connected,frame=")) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
+
 
     }else if (text.startsWith("*stopped")) {
 
