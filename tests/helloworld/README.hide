@@ -1,0 +1,9 @@
+To test locating source files in an alternate place, move the
+source files for 'helloworld' in the 'hide' directory.
+
+Then test Seer with locating the source for 'helloworld' in
+an alternate directory.
+
+    % mv function1.h function1.cpp helloworld.cpp hide/
+    % mv hide/*.{h,cpp} .
+
