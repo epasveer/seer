@@ -1,5 +1,6 @@
 #include "SeerSourceConfigPage.h"
 #include <QtWidgets/QInputDialog>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QWidget>
 #include <QtCore/QDebug>
 
@@ -58,7 +59,7 @@ QStringList SeerSourceConfigPage::alternateDirectories () const {
 void SeerSourceConfigPage::handleAddButtonClicked () {
 
     // Ask for the alternate directory to add to the list.
-    QString directory = QInputDialog::getText(this, "Seer", "Enter an alternate directory",  QLineEdit::Normal);
+    QString directory = QFileDialog::getExistingDirectory(this, "Seer - Enter an alternate directory", QString(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
 
     if (directory == "") {
         return;
