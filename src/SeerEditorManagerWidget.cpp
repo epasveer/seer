@@ -500,6 +500,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
+    editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
@@ -547,6 +548,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
+    editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
