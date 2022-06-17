@@ -249,6 +249,11 @@ void SeerMainWindow::launchExecutable (const QString& launchMode) {
         // If no mode, schedule the opening of the debug dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
+    }else if (launchMode == "configdialog") {
+
+        // Launch the config dialog.
+        QTimer::singleShot(200, this, &SeerMainWindow::handleSettingsConfiguration);
+
     }else{
         qWarning() << "Bad launchMode:" << launchMode;
     }
