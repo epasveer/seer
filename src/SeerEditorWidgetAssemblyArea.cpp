@@ -507,6 +507,8 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         // Loop through the asm list and print each line.
         for ( const auto& asm_text : asm_list  ) {
 
+            qDebug() << asm_text;
+
             // Get the strings, with padding.
             QString address_text = Seer::parseFirst(asm_text, "address=", '"', '"', false);
             QString opcodes_text = Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);

@@ -1652,7 +1652,7 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
 
     //qDebug() << "Getting assembly for address" << address;
 
-    handleGdbCommand("-data-disassemble -a " + address + " -- 0"); // Use '2' to add opcodes.
+    handleGdbCommand("-data-disassemble -a " + address + " -- 2"); // Use '2' to add opcodes. '0' has no opcodes.
 }
 
 void SeerGdbWidget::handleGdbMemoryVisualizer () {
