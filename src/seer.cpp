@@ -58,6 +58,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
     parser.addOption(corefileOption);
 
+    QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog."));
+    parser.addOption(configOption);
+
 
     // A positional argument for executable name.
     // All other arguments after that are treated as positional arguments for the executable.
@@ -104,17 +107,22 @@ int main (int argc, char* argv[]) {
         executablePid = pid.toInt();
     }
 
+    if (parser.isSet(connectOption)) {
+        launchMode = "connect";
+
+        executableHostPort = parser.value(connectOption);
+    }
+
     if (parser.isSet(corefileOption)) {
         launchMode = "corefile";
 
         executableCoreFilename = parser.value(corefileOption);
     }
 
-    if (parser.isSet(connectOption)) {
-        launchMode = "connect";
-
-        executableHostPort = parser.value(connectOption);
+    if (parser.isSet(configOption)) {
+        launchMode = "configdialog";
     }
+
 
     //
     // Start Seer

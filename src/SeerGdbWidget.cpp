@@ -1139,7 +1139,7 @@ void SeerGdbWidget::handleGdbExecutableLoadBreakpoints () {
         return;
     }
 
-    handleGdbCommand("source -v \"" + executableBreakpointsFilename() + "\"");
+    handleGdbCommand("source -v " + executableBreakpointsFilename());
     handleGdbGenericpointList();
 }
 
