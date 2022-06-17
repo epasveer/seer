@@ -58,7 +58,7 @@ int main (int argc, char* argv[]) {
     QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
     parser.addOption(corefileOption);
 
-    QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog."));
+    QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog.\nSave settings with:\n    'Settings->Save Configuration'"));
     parser.addOption(configOption);
 
 
