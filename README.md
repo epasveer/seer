@@ -148,6 +148,8 @@ methods for debugging a program. So Seer natually does too.
     % seer                                      # Bring up a dialog box to set the program and debug method.
     % seer myprog arg1 arg2                     # Bring up a dialog box to set the debug method.
 
+    % seer --config                             # Bring up Seer config dialog.
+
 A breakpoint file can be read for --start and --run modes. This file contains previously saved
 breakpoints (breakpoints, catchpoints, printpoints, etc.)
 
@@ -185,11 +187,11 @@ May need root access.
 
     % cd seer/src/build
     % sudo make install
-    
+
 For Debian based releases, you can optionally use the 'seer_deb.sh' script to build and install Seer.
 
 [Instructions for 'seer_deb.sh'](debian/README.md)
-   
+
 
 Support/Contact
 ===============
