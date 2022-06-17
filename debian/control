@@ -1,0 +1,19 @@
+Source: seer
+Section: devel
+Priority: optional
+Maintainer: Ernie Pasveer <epasveer@att.net>
+Build-Depends: debhelper (>= 10.0.0),
+  dh-exec,
+  cmake,
+  qtbase5-dev,
+  libqt5charts5-dev
+Standards-Version: 4.1.3
+Homepage: https://github.com/epasveer/seer
+
+Package: seer
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Recommends: gdb
+Description: A GUI frontend to gdb.

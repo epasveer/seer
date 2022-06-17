@@ -1,0 +1,9 @@
+#!/usr/bin/dh-exec
+# dh-exec is needed for renaming
+src/resources/seer_32x32.png => usr/share/icons/hicolor/32x32/apps/seer.png
+src/resources/seer_64x64.png => usr/share/icons/hicolor/64x64/apps/seer.png
+src/resources/seer_128x128.png => usr/share/icons/hicolor/128x128/apps/seer.png
+src/resources/seer_256x256.png => usr/share/icons/hicolor/256x256/apps/seer.png
+src/resources/seer_512x512.png => usr/share/icons/hicolor/512x512/apps/seer.png
+
+src/resources/seer.desktop usr/share/applications
