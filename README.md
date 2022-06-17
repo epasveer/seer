@@ -149,6 +149,7 @@ methods for debugging a program. So Seer natually does too.
     % seer myprog arg1 arg2                     # Bring up a dialog box to set the debug method.
 
     % seer --config                             # Bring up Seer config dialog.
+                                                # Save settings with 'Settings->Save Configuration'.
 
 A breakpoint file can be read for --start and --run modes. This file contains previously saved
 breakpoints (breakpoints, catchpoints, printpoints, etc.)
