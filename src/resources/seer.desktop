@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Seer
+GenericName=Debugger
+Comment=GUI frontend to gdb.
+Exec=seer
+Icon=seer
+Terminal=false
+Type=Application
+Categories=Development;

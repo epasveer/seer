@@ -189,9 +189,11 @@ May need root access.
     % cd seer/src/build
     % sudo make install
 
-For Debian based releases, you can optionally use the 'seer_deb.sh' script to build and install Seer.
+For Debian based releases, you can use the normal tooling to build a .deb
+package containing Seer. You need the `build-essential` package installed.
 
-[Instructions for 'seer_deb.sh'](debian/README.md)
+    % cd seer
+    % dpkg-buildpackage
 
 
 Support/Contact

@@ -176,8 +176,8 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel
         set(SYSTEM_TYPE WIN32)
     elseif(APPLE) # MacOS X
         set(SYSTEM_TYPE MACOSX_BUNDLE)
-    else() # UNIX
-        set(SYSTEM_TYPE EXCLUDE_FROM_ALL)
+#    else() # UNIX
+#        set(SYSTEM_TYPE EXCLUDE_FROM_ALL)
     endif()
     message("System type is" ${SYSTEM_TYPE})
 endif()
@@ -191,7 +191,7 @@ add_compile_definitions(QT_DEPRECATED_WARNINGS)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 
