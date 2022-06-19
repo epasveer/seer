@@ -14,6 +14,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
+#include <QtCore/QMap>
 
 class SeerEditorWidgetLineNumberArea;
 class SeerEditorWidgetBreakPointArea;
@@ -275,61 +276,67 @@ class SeerEditorWidgetAssemblyArea : public QPlainTextEdit {
     public:
         SeerEditorWidgetAssemblyArea (QWidget* parent = 0);
 
-        void                                enableLineNumberArea                (bool flag);
-        bool                                lineNumberAreaEnabled               () const;
+        void                                        enableLineNumberArea                (bool flag);
+        bool                                        lineNumberAreaEnabled               () const;
 
-        void                                enableBreakPointArea                (bool flag);
-        bool                                breakPointAreaEnabled               () const;
+        void                                        enableBreakPointArea                (bool flag);
+        bool                                        breakPointAreaEnabled               () const;
 
-        void                                enableMiniMapArea                   (bool flag);
-        bool                                miniMapAreaEnabled                  () const;
+        void                                        enableMiniMapArea                   (bool flag);
+        bool                                        miniMapAreaEnabled                  () const;
 
-        void                                lineNumberAreaPaintEvent            (QPaintEvent* event);
-        int                                 lineNumberAreaWidth                 ();
+        void                                        lineNumberAreaPaintEvent            (QPaintEvent* event);
+        int                                         lineNumberAreaWidth                 ();
 
-        void                                breakPointAreaPaintEvent            (QPaintEvent* event);
-        int                                 breakPointAreaWidth                 ();
+        void                                        breakPointAreaPaintEvent            (QPaintEvent* event);
+        int                                         breakPointAreaWidth                 ();
 
-        void                                miniMapAreaPaintEvent               (QPaintEvent* event);
-        int                                 miniMapAreaWidth                    ();
+        void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
+        int                                         miniMapAreaWidth                    ();
 
-        void                                setCurrentLine                      (int lineno);
-        void                                scrollToLine                        (int lineno);
+        void                                        setCurrentLine                      (const QString& address);
+        void                                        scrollToLine                        (const QString& address);
 
-        void                                setHighlighterSettings              (const SeerHighlighterSettings& settings);
-        const SeerHighlighterSettings&      highlighterSettings                 () const;
-        void                                setHighlighterEnabled               (bool flag);
-        bool                                highlighterEnabled                  () const;
+        void                                        setHighlighterSettings              (const SeerHighlighterSettings& settings);
+        const SeerHighlighterSettings&              highlighterSettings                 () const;
+        void                                        setHighlighterEnabled               (bool flag);
+        bool                                        highlighterEnabled                  () const;
 
     signals:
-        void                                requestAssembly                     (QString address);
-        void                                highlighterSettingsChanged          ();
+        void                                        requestAssembly                     (QString address);
+        void                                        highlighterSettingsChanged          ();
 
     public slots:
-        void                                handleText                          (const QString& text);
+        void                                        handleText                          (const QString& text);
 
     protected:
-        void                                resizeEvent                         (QResizeEvent* event);
+        void                                        resizeEvent                         (QResizeEvent* event);
 
     private slots:
-        void                                updateMarginAreasWidth              (int newBlockCount);
-        void                                updateLineNumberArea                (const QRect& rect, int dy);
-        void                                updateBreakPointArea                (const QRect& rect, int dy);
-        void                                updateMiniMapArea                   (const QRect& rect, int dy);
+        void                                        refreshExtraSelections              ();
+
+        void                                        updateMarginAreasWidth              (int newBlockCount);
+        void                                        updateLineNumberArea                (const QRect& rect, int dy);
+        void                                        updateBreakPointArea                (const QRect& rect, int dy);
+        void                                        updateMiniMapArea                   (const QRect& rect, int dy);
 
     private:
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
         bool                                        _enableMiniMapArea;
-
-        SeerHighlighterSettings                     _sourceHighlighterSettings;
-        bool                                        _sourceHighlighterEnabled;
+        QList<QTextEdit::ExtraSelection>            _currentLinesExtraSelections;
 
         SeerEditorWidgetAssemblyLineNumberArea*     _lineNumberArea;
         SeerEditorWidgetAssemblyBreakPointArea*     _breakPointArea;
         SeerEditorWidgetAssemblyMiniMapArea*        _miniMapArea;
 
         QPixmap*                                    _miniMapPixmap;
+        SeerHighlighterSettings                     _sourceHighlighterSettings;
+        bool                                        _sourceHighlighterEnabled;
+
+        QString                                     _currentAddress;
+        QMap<QString,int>                           _addressLineMap;
+        QMap<int,QString>                           _lineAddressMap;
 };
 
 class SeerEditorWidgetAssemblyLineNumberArea : public QWidget {

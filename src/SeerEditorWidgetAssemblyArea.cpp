@@ -31,6 +31,8 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : QP
     _enableLineNumberArea = false;
     _enableBreakPointArea = false;
     _enableMiniMapArea    = false;
+    _addressLineMap.clear();
+    _lineAddressMap.clear();
 
     QFont font("Source Code Pro");
     font.setStyleHint(QFont::Monospace);
@@ -47,14 +49,14 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : QP
 
     enableLineNumberArea(true); // XXX True
     enableBreakPointArea(true); // XXX True
-    enableMiniMapArea(false);    // Doesn't work yet. Need to work on the "mini" part.
+    enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,        this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
 
-    setCurrentLine(0);
+    setCurrentLine("");
 
     updateMarginAreasWidth(0);
 
@@ -108,15 +110,19 @@ int SeerEditorWidgetAssemblyArea::lineNumberAreaWidth () {
         return 0;
     }
 
-    int digits = 1;
-    int max    = qMax(1, blockCount());
+    int chars  = 1;
 
-    while (max >= 10) {
-        max /= 10;
-        digits++;
+    QMap<int,QString>::iterator b = _lineAddressMap.begin();
+    QMap<int,QString>::iterator e = _lineAddressMap.end();
+
+    while (b != e) {
+
+        chars = qMax(chars, b->length());
+
+        b++;
     }
 
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * chars;
 
     return space;
 }
@@ -219,8 +225,13 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
     while (block.isValid() && top <= event->rect().bottom()) {
 
         if (block.isVisible() && bottom >= event->rect().top()) {
-            QString number = QString::number(blockNumber + 1);
-            painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(), Qt::AlignRight, number);
+            QString address;
+
+            if (_lineAddressMap.contains(blockNumber+1)) {
+                address = _lineAddressMap[blockNumber+1];
+            }
+
+            painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(), Qt::AlignLeft, address);
         }
 
         block  = block.next();
@@ -397,13 +408,76 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
     }
 }
 
-void SeerEditorWidgetAssemblyArea::setCurrentLine (int lineno) {
-    // XXX
+void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
+
+    //
+    // Merge all the extra selections into one.
+    //
+    // The current line(s)
+    // The searched text.
+    //
+
+    // Create an empty list of selections.
+    QList<QTextEdit::ExtraSelection> extraSelections;
+
+    // Append the 'current lines' extra selections.
+    extraSelections.append(_currentLinesExtraSelections);
+
+    // Give the editor the list of selections.
+    // This will remove the old selections and select the new ones.
+    setExtraSelections(extraSelections);
 }
 
-void SeerEditorWidgetAssemblyArea::scrollToLine (int lineno) {
+void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
-    //qDebug() << lineno << file();
+    // Clear current line selections.
+    _currentLinesExtraSelections.clear();
+
+    // Initial lineno.
+    int lineno = -1;
+
+    // Map address into a lineno.
+    if (_addressLineMap.contains(address)) {
+        lineno = _addressLineMap[address];
+    }
+
+    qDebug() << address << lineno;;
+
+    // Highlight if a valid line number is selected.
+    if (lineno >= 1) {
+
+        QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+        QTextCursor cursor = textCursor();
+
+        cursor.setPosition(block.position());
+        setTextCursor(cursor);
+
+        _currentLinesExtraSelections.clear();
+
+        QColor lineColor = highlighterSettings().get("Current Line").background().color();
+
+        QTextEdit::ExtraSelection selection;
+        selection.format.setBackground(lineColor);
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.clearSelection();
+
+        _currentLinesExtraSelections.append(selection);
+    }
+
+    // Refresh all the extra selections.
+    refreshExtraSelections();
+}
+
+void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
+
+    // Initial lineno.
+    int lineno = -1;
+
+    // Map address into a lineno.
+    if (_addressLineMap.contains(address)) {
+        lineno = _addressLineMap[address];
+    }
 
     // Scroll to the first line if we went before it.
     if (lineno < 1) {
@@ -487,10 +561,13 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         //qDebug() << addr_text << fullname_text << file_text << line_text;
 
         // Emit the signal to load the assembly for address 'addr'
-        emit requestAssembly(addr_text);
+        if (_addressLineMap.contains(addr_text) == false) {
+            _currentAddress = addr_text;
+            emit requestAssembly(addr_text);
+        }
 
         // Set to the line number.
-        setCurrentLine(line_text.toInt());
+        setCurrentLine(addr_text);
 
         return;
 
@@ -499,29 +576,72 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         // Clear the existing document.
         document()->clear();
 
+        // Clear mappings.
+        _addressLineMap.clear();
+        _lineAddressMap.clear();
+
         // Get the list of assembly lines.
         QString asm_insns_text = Seer::parseFirst(text, "asm_insns=", '[', ']', false);
 
         QStringList asm_list = Seer::parse(asm_insns_text, "", '{', '}', false);
 
-        // Loop through the asm list and print each line.
+        // Loop through the asm list and find the width of each field.
+        int address_width = 0;
+        int offset_width  = 0;
+        int opcodes_width = 0;
+        int inst_width    = 0;
+
         for ( const auto& asm_text : asm_list  ) {
 
-            qDebug() << asm_text;
+            //qDebug() << asm_text;
 
             // Get the strings, with padding.
-            QString address_text = Seer::parseFirst(asm_text, "address=", '"', '"', false);
-            QString opcodes_text = Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
-            QString inst_text    = Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
+            QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
+            QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
+            QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
+            QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
+
+            address_width = qMax(address_width, address_text.length());
+            offset_width  = qMax(offset_width,  offset_text.length());
+            opcodes_width = qMax(opcodes_width, opcodes_text.length());
+            inst_width    = qMax(inst_width,    inst_text.length());
+        }
+
+        // Loop through the asm list and print each line.
+
+        int lineno = 1;
+
+        for ( const auto& asm_text : asm_list  ) {
+
+            // Get the strings, with padding.
+            QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
+            QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
+            QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
+            QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
 
             //qDebug() << inst_text;
 
             // Write assembly line to the document.
-            appendPlainText(inst_text);
+            appendPlainText(QString(" ") +
+                            offset_text.leftJustified(offset_width,   ' ') + " | " +
+                            opcodes_text.leftJustified(opcodes_width, ' ') + " | " +
+                            inst_text.leftJustified(inst_width,       ' '));
+
+            // Add to maps
+            _addressLineMap.insert(address_text, lineno);
+            _lineAddressMap.insert(lineno, address_text);
+
+            lineno++;
         }
 
         // Move to the start of the document.  XXX Move to the line that has our address.
         // setTextCursor(cursor);
+        moveCursor(QTextCursor::Start);
+
+        // Set to the line number.
+        setCurrentLine(_currentAddress);
+
+        _currentAddress = "";
     }
 }
 

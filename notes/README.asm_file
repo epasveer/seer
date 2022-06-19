@@ -839,3 +839,9 @@ Disassemble the entire file containing $pc
         {address=\"0x00007ffff5c235a3\",func-name=\"rfft_\",offset=\"3589\",opcodes=\"c3\",inst=\"ret    \"}
     ]
 
+
+Some gdb settings.
+
+    set print asm-demangle off|on
+    set disassembly-flavor att|intel
+
