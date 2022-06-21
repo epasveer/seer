@@ -1,0 +1,22 @@
+Pretty Printer is a GDB feature to print the contents of structures in
+a pleasant way.
+
+Printing the value of a std::string may look like:
+
+    {static npos = 18446744073709551615, _M_dataplus = {<std::allocator<char>> = {<__gnu_cxx::new_allocator<char>> = {<No data fields>}, <No data fields>}, _M_p = 0x7fffffffd330 "Hello, World!"}, _M_string_length = 13, {_M_local_buf = "Hello, World!\\000\\000", _M_allocated_capacity = 6278066737626506568}}
+
+Printing the value with Pretty Pretty:
+
+    "Hello, World!"
+
+Enable Pretty Printers via the ~/.gdbinit file.
+
+    % cat ~/.gdbinit
+    python
+    import sys
+    sys.path.insert(0, '/usr/share/gcc-9/python')
+    from libstdcxx.v6.printers import register_libstdcxx_printers
+    register_libstdcxx_printers (None)
+    end
+    %
+
