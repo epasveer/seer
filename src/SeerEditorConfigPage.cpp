@@ -132,6 +132,7 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
+    editorWidget->sourceArea()->setCurrentLine(9);
 }
 
 const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const {
