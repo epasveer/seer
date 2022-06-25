@@ -95,6 +95,10 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP () {
     cppSettings.add("Current Line", f);
     f = QTextCharFormat();
 
+    f.setFontWeight(QFont::Normal); f.setFontItalic(false); f.setForeground(Qt::black); f.setBackground(Qt::lightGray);
+    cppSettings.add("Match", f);
+    f = QTextCharFormat();
+
     return cppSettings;
 }
 

@@ -478,10 +478,11 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
         _currentLinesExtraSelections.clear();
 
-        QColor lineColor = highlighterSettings().get("Current Line").background().color();
+        QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
 
         QTextEdit::ExtraSelection selection;
-        selection.format.setBackground(lineColor);
+        selection.format.setForeground(currentLineFormat.foreground());
+        selection.format.setBackground(currentLineFormat.background());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -542,7 +543,7 @@ int SeerEditorWidgetAssemblyArea::findText (const QString& text, QTextDocument::
 
     if (document()) {
 
-        QColor color(Qt::lightGray);
+        QTextCharFormat matchFormat = highlighterSettings().get("Match");
 
         // Build a list of highlights for all matches.
         QTextCursor cursor(document());
@@ -551,8 +552,9 @@ int SeerEditorWidgetAssemblyArea::findText (const QString& text, QTextDocument::
         while (cursor.isNull() == false) {
 
             QTextEdit::ExtraSelection extra;
-            extra.format.setBackground(color);
+            extra.format = matchFormat;
             extra.cursor = cursor;
+
             _findExtraSelections.append(extra);
 
             cursor = document()->find(text, cursor, flags);

@@ -418,6 +418,8 @@ class SeerAssemblyWidget : public QWidget, protected Ui::SeerAssemblyWidgetForm 
 
         bool                                isSearchBarShown                        () const;
         bool                                searchMatchCase                         () const;
+        void                                setKeySettings                          (const SeerKeySettings& settings);
+        const SeerKeySettings&              keySettings                             () const;
 
     public slots:
         void                                showSearchBar                           (bool flag);
@@ -434,6 +436,7 @@ class SeerAssemblyWidget : public QWidget, protected Ui::SeerAssemblyWidgetForm 
 
     signals:
     private:
+        SeerKeySettings                     _keySettings;
         QShortcut*                          _textSearchShortcut;
         QShortcut*                          _textSearchNextShortcut;
         QShortcut*                          _textSearchPrevShortcut;

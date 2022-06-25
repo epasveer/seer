@@ -137,12 +137,20 @@ void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
 
     _editorFont = font;
 
+    // Set the code widgets.
     SeerEditorManagerEntries::iterator b = beginEntry();
     SeerEditorManagerEntries::iterator e = endEntry();
 
     while (b != e) {
         b->widget->sourceArea()->setFont(_editorFont);
         b++;
+    }
+
+    // Don't forget about the assembly widget.
+    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+    if (assemblyWidget) {
+        assemblyWidget->assemblyArea()->setFont(editorFont());
     }
 }
 
@@ -155,12 +163,20 @@ void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighte
 
     _editorHighlighterSettings = settings;
 
+    // Set the code widgets.
     SeerEditorManagerEntries::iterator b = beginEntry();
     SeerEditorManagerEntries::iterator e = endEntry();
 
     while (b != e) {
         b->widget->sourceArea()->setHighlighterSettings(_editorHighlighterSettings);
         b++;
+    }
+
+    // Don't forget about the assembly widget.
+    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+    if (assemblyWidget) {
+        assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     }
 }
 
@@ -173,12 +189,20 @@ void SeerEditorManagerWidget::setEditorHighlighterEnabled (bool flag) {
 
     _editorHighlighterEnabled = flag;
 
+    // Set the code widgets.
     SeerEditorManagerEntries::iterator b = beginEntry();
     SeerEditorManagerEntries::iterator e = endEntry();
 
     while (b != e) {
         b->widget->sourceArea()->setHighlighterEnabled(_editorHighlighterEnabled);
         b++;
+    }
+
+    // Don't forget about the assembly widget.
+    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+    if (assemblyWidget) {
+        assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
     }
 }
 
@@ -216,6 +240,13 @@ void SeerEditorManagerWidget::setEditorKeySettings (const SeerKeySettings& setti
         b->widget->setKeySettings(_editorKeySettings);
         b++;
     }
+
+    // Don't forget about the assembly widget.
+    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+    if (assemblyWidget) {
+        assemblyWidget->setKeySettings(editorKeySettings());
+    }
 }
 
 const SeerKeySettings& SeerEditorManagerWidget::editorKeySettings () const {
@@ -227,7 +258,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
 
-        qDebug() << ":stopped:" << text;
+        //qDebug() << ":stopped:" << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 

@@ -88,6 +88,28 @@ bool SeerAssemblyWidget::searchMatchCase () const {
     return matchCaseCheckBox->isChecked();
 }
 
+void SeerAssemblyWidget::setKeySettings (const SeerKeySettings& settings) {
+
+    _keySettings = settings;
+
+    if (_keySettings.has("SearchText") == true) {
+        _textSearchShortcut->setKey(_keySettings.get("SearchText")._sequence);
+    }
+
+    if (_keySettings.has("SearchTextNext") == true) {
+        _textSearchNextShortcut->setKey(_keySettings.get("SearchTextNext")._sequence);
+    }
+
+    if (_keySettings.has("SearchTextPrev") == true) {
+        _textSearchPrevShortcut->setKey(_keySettings.get("SearchTextPrev")._sequence);
+    }
+}
+
+const SeerKeySettings& SeerAssemblyWidget::keySettings () const {
+
+    return _keySettings;
+}
+
 void SeerAssemblyWidget::showSearchBar (bool flag) {
 
     // Go through the widgets in the search bar and hide/show them.

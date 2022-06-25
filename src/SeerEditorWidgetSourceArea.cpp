@@ -752,10 +752,11 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
         _currentLinesExtraSelections.clear();
 
-        QColor lineColor = highlighterSettings().get("Current Line").background().color();
+        QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
 
         QTextEdit::ExtraSelection selection;
-        selection.format.setBackground(lineColor);
+        selection.format.setForeground(currentLineFormat.foreground());
+        selection.format.setBackground(currentLineFormat.background());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -806,7 +807,7 @@ void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
     // Any line will be highlighted with a yellow line.
     // The 'yellow' color is for the current line of the most recent stack frame.
     // The 'grey' color is for older stack frames.
-    QColor currentLineColor = highlighterSettings().get("Current Line").background().color();
+    QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
 
     // Create a selection at the cursor.
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
@@ -815,7 +816,8 @@ void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
     cursor.setPosition(block.position());
 
     QTextEdit::ExtraSelection selection;
-    selection.format.setBackground(currentLineColor);
+    selection.format.setForeground(currentLineFormat.foreground());
+    selection.format.setBackground(currentLineFormat.background());
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = cursor;
     selection.cursor.clearSelection();
@@ -833,7 +835,7 @@ int SeerEditorWidgetSourceArea::findText (const QString& text, QTextDocument::Fi
 
     if (document()) {
 
-        QColor color(Qt::lightGray);
+        QTextCharFormat matchFormat = highlighterSettings().get("Match");
 
         // Build a list of highlights for all matches.
         QTextCursor cursor(document());
@@ -842,8 +844,9 @@ int SeerEditorWidgetSourceArea::findText (const QString& text, QTextDocument::Fi
         while (cursor.isNull() == false) {
 
             QTextEdit::ExtraSelection extra;
-            extra.format.setBackground(color);
+            extra.format = matchFormat;
             extra.cursor = cursor;
+
             _findExtraSelections.append(extra);
 
             cursor = document()->find(text, cursor, flags);
