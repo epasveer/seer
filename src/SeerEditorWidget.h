@@ -3,7 +3,6 @@
 #include "SeerCppSourceHighlighter.h"
 #include "SeerKeySettings.h"
 #include "SeerPlainTextEdit.h"
-#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QWidget>
 #include <QtGui/QPaintEvent>
@@ -21,7 +20,7 @@ class SeerEditorWidgetLineNumberArea;
 class SeerEditorWidgetBreakPointArea;
 class SeerEditorWidgetMiniMapArea;
 
-class SeerEditorWidgetSourceArea : public QPlainTextEdit {
+class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
     Q_OBJECT
 
