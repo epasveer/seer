@@ -128,7 +128,7 @@
      <item>
       <widget class="QLabel" name="matchesLabel">
        <property name="text">
-        <string></string>
+        <string/>
        </property>
       </widget>
      </item>

@@ -227,7 +227,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
 
-        //qDebug() << ":stopped:" << text;
+        qDebug() << ":stopped:" << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -256,8 +256,14 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
         }
 
-        // Push this tab to the top.
-        tabWidget->setCurrentWidget(editorWidget);
+        // Push this tab to the top only if the current one in not the "Assembly" tab.
+        if (tabWidget->currentIndex() >= 0) {
+            if (tabWidget->tabText(tabWidget->currentIndex()) != "Assembly") {
+                tabWidget->setCurrentWidget(editorWidget);
+            }
+        }else{
+            tabWidget->setCurrentWidget(editorWidget);
+        }
 
         // Give the EditorWidget the command text (read file, set line number, etc.).
         editorWidget->sourceArea()->handleText(text);
@@ -385,6 +391,11 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             }
         }
 
+        // Get the AssemblyWidget.
+        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+        assemblyWidget->assemblyArea()->handleText(text);
+
     }else if (text.startsWith("^done,asm_insns=")) {
 
         // Get the AssemblyWidget.
@@ -465,8 +476,14 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         editorWidget = createEditorWidgetTab(fullname, file);
     }
 
-    // Push this tab to the top.
-    tabWidget->setCurrentWidget(editorWidget);
+    // Push this tab to the top only if the current one in not the "Assembly" tab.
+    if (tabWidget->currentIndex() >= 0) {
+        if (tabWidget->tabText(tabWidget->currentIndex()) != "Assembly") {
+            tabWidget->setCurrentWidget(editorWidget);
+        }
+    }else{
+        tabWidget->setCurrentWidget(editorWidget);
+    }
 
     // If lineno is > 0, set the line number of the editor widget
     if (lineno > 0) {
@@ -649,7 +666,7 @@ SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
 
     // Load the file.
-    assemblyWidget->assemblyArea()->setPlainText("Hello!");
+    assemblyWidget->assemblyArea()->setPlainText("");
 
     // Add an entry to our table.
     _assemblyWidget = assemblyWidget;

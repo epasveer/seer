@@ -423,6 +423,9 @@ void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
     // Append the 'current lines' extra selections.
     extraSelections.append(_currentLinesExtraSelections);
 
+    // Append the 'searched text' extra selections.
+    extraSelections.append(_findExtraSelections);
+
     // Give the editor the list of selections.
     // This will remove the old selections and select the new ones.
     setExtraSelections(extraSelections);
@@ -433,15 +436,26 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     // Clear current line selections.
     _currentLinesExtraSelections.clear();
 
+    //
     // Initial lineno.
-    int lineno = -1;
+    //
+    // Try parsing as an integer.
+    bool ok;
+    int lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
 
-    // Map address into a lineno.
-    if (_addressLineMap.contains(address)) {
-        lineno = _addressLineMap[address];
+    // Try parsing as an address.
+    if (ok == false) {
+
+        qulonglong addr = address.toULongLong(&ok, 0); // Try it as an '0x.....'.
+
+        if (ok) {
+            if (_addressLineMap.contains(addr)) {
+                lineno = _addressLineMap[addr];
+            }
+        }
     }
 
-    qDebug() << address << lineno;;
+    //qDebug() << address << lineno;
 
     // Highlight if a valid line number is selected.
     if (lineno >= 1) {
@@ -465,18 +479,32 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
         _currentLinesExtraSelections.append(selection);
     }
 
+    // Scroll to the line.
+    scrollToLine(address);
+
     // Refresh all the extra selections.
     refreshExtraSelections();
 }
 
 void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
 
+    //
     // Initial lineno.
-    int lineno = -1;
+    //
+    // Try parsing as an integer.
+    bool ok;
+    int lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
 
-    // Map address into a lineno.
-    if (_addressLineMap.contains(address)) {
-        lineno = _addressLineMap[address];
+    // Try parsing as an address.
+    if (ok == false) {
+
+        qulonglong addr = address.toULongLong(&ok, 0); // Try it as an '0x.....'.
+
+        if (ok) {
+            if (_addressLineMap.contains(addr)) {
+                lineno = _addressLineMap[addr];
+            }
+        }
     }
 
     // Scroll to the first line if we went before it.
@@ -496,6 +524,44 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
     setTextCursor(cursor);
 
     centerCursor();
+}
+
+int SeerEditorWidgetAssemblyArea::findText (const QString& text, QTextDocument::FindFlags flags) {
+
+    _findExtraSelections.clear();
+
+    if (document()) {
+
+        QColor color(Qt::lightGray);
+
+        // Build a list of highlights for all matches.
+        QTextCursor cursor(document());
+        cursor = document()->find(text, cursor, flags);
+
+        while (cursor.isNull() == false) {
+
+            QTextEdit::ExtraSelection extra;
+            extra.format.setBackground(color);
+            extra.cursor = cursor;
+            _findExtraSelections.append(extra);
+
+            cursor = document()->find(text, cursor, flags);
+        }
+
+        // Move to the next match after out current position.
+        find(text, flags);
+    }
+
+    refreshExtraSelections();
+
+    return _findExtraSelections.size();
+}
+
+void SeerEditorWidgetAssemblyArea::clearFindText () {
+
+    _findExtraSelections.clear();
+
+    refreshExtraSelections();
 }
 
 void SeerEditorWidgetAssemblyArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -561,7 +627,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         //qDebug() << addr_text << fullname_text << file_text << line_text;
 
         // Emit the signal to load the assembly for address 'addr'
-        if (_addressLineMap.contains(addr_text) == false) {
+        if (_addressLineMap.contains(addr_text.toULongLong(0,0)) == false) {
             _currentAddress = addr_text;
             emit requestAssembly(addr_text);
         }
@@ -570,6 +636,39 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         setCurrentLine(addr_text);
 
         return;
+
+    }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
+
+        //qDebug() << ":stack:" << text;
+
+        //
+        // See SeerStackFramesBrowserWidget.cpp
+        // ^done,stack=[
+        //     ...
+        // ]
+        //
+
+        // Now parse the table and re-add the breakpoints.
+        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+
+        QString stack_text = Seer::parseFirst(newtext, "stack=", '[', ']', false);
+
+        if (stack_text != "") {
+
+            // Parse through the frame list and set the current lines that are in the frame list.
+            QStringList frame_list = Seer::parse(newtext, "frame=", '{', '}', false);
+
+            for ( const auto& frame_text : frame_list  ) {
+                QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
+                QString addr_text     = Seer::parseFirst(frame_text, "addr=",     '"', '"', false);
+                QString func_text     = Seer::parseFirst(frame_text, "func=",     '"', '"', false);
+                QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
+                QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+                QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+                QString arch_text     = Seer::parseFirst(frame_text, "arch=",     '"', '"', false);
+
+            }
+        }
 
     }else if (text.startsWith("^done,asm_insns=")) {
 
@@ -628,7 +727,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
                             inst_text.leftJustified(inst_width,       ' '));
 
             // Add to maps
-            _addressLineMap.insert(address_text, lineno);
+            _addressLineMap.insert(address_text.toULongLong(0,0), lineno);
             _lineAddressMap.insert(lineno, address_text);
 
             lineno++;

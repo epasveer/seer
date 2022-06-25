@@ -297,6 +297,9 @@ class SeerEditorWidgetAssemblyArea : public QPlainTextEdit {
         void                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 
+        int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
+        void                                        clearFindText                       ();
+
         void                                        setHighlighterSettings              (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&              highlighterSettings                 () const;
         void                                        setHighlighterEnabled               (bool flag);
@@ -304,6 +307,7 @@ class SeerEditorWidgetAssemblyArea : public QPlainTextEdit {
 
     signals:
         void                                        requestAssembly                     (QString address);
+        void                                        showSearchBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
 
     public slots:
@@ -324,6 +328,7 @@ class SeerEditorWidgetAssemblyArea : public QPlainTextEdit {
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
         bool                                        _enableMiniMapArea;
+        QList<QTextEdit::ExtraSelection>            _findExtraSelections;
         QList<QTextEdit::ExtraSelection>            _currentLinesExtraSelections;
 
         SeerEditorWidgetAssemblyLineNumberArea*     _lineNumberArea;
@@ -335,7 +340,7 @@ class SeerEditorWidgetAssemblyArea : public QPlainTextEdit {
         bool                                        _sourceHighlighterEnabled;
 
         QString                                     _currentAddress;
-        QMap<QString,int>                           _addressLineMap;
+        QMap<qulonglong,int>                        _addressLineMap;
         QMap<int,QString>                           _lineAddressMap;
 };
 
@@ -411,9 +416,26 @@ class SeerAssemblyWidget : public QWidget, protected Ui::SeerAssemblyWidgetForm 
 
         SeerEditorWidgetAssemblyArea*       assemblyArea                        ();
 
-    public  slots:
+        bool                                isSearchBarShown                        () const;
+        bool                                searchMatchCase                         () const;
+
+    public slots:
+        void                                showSearchBar                           (bool flag);
+        void                                setSearchMatchCase                      (bool flag);
+
     private slots:
+        void                                handleSearchLineNumberLineEdit          ();
+        void                                handleClearSearchTextLineEdit           ();
+        void                                handleSearchTextLineEdit                ();
+        void                                handleSearchDownToolButton              ();
+        void                                handleSearchUpToolButton                ();
+        void                                handleSearchCloseToolButton             ();
+        void                                handleTextSearchShortcut                ();
+
     signals:
     private:
+        QShortcut*                          _textSearchShortcut;
+        QShortcut*                          _textSearchNextShortcut;
+        QShortcut*                          _textSearchPrevShortcut;
 };
 
