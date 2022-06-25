@@ -25,7 +25,7 @@ SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
     // Set the widgets.
     assemblyArea()->show(); // XXX Why is this needed?  SeerEditorWidget doesn't need it.
 
-    int space = fontMetrics().horizontalAdvance("Go to line ##") + 5;
+    int space = fontMetrics().horizontalAdvance("Go to address or line ##") + 5;
 
     searchLineNumberLineEdit->setMaximumWidth(space);
 
