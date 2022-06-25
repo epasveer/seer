@@ -1,4 +1,5 @@
 #include "SeerEditorWidget.h"
+#include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -26,7 +27,7 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
-SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : QPlainTextEdit(parent) {
+SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
     _enableLineNumberArea = false;
     _enableBreakPointArea = false;
@@ -59,6 +60,15 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : QP
     setCurrentLine("");
 
     updateMarginAreasWidth(0);
+
+    // Forward the scroll events in the various areas to the text edit.
+    SeerPlainTextWheelEventForwarder* lineNumberAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
+
+    _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
+    _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
+    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
     close();

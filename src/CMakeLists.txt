@@ -81,6 +81,7 @@ set(HEADER_FILES
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
     SeerKeySettings.h
+    SeerPlainTextEdit.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -157,6 +158,7 @@ set(SOURCE_FILES
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
     SeerKeySettings.cpp
+    SeerPlainTextEdit.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
