@@ -28,6 +28,7 @@ SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
     int space = fontMetrics().horizontalAdvance("Go to address or line ##") + 5;
 
     searchLineNumberLineEdit->setMaximumWidth(space);
+    searchTextLineEdit->enableReturnPressedOnClear();
 
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
     setSearchMatchCase(true);  // Search with case sensitivity.
@@ -35,6 +36,8 @@ SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
     _textSearchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")), this);
     _textSearchNextShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")), this);
     _textSearchPrevShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+
+    setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerAssemblyWidget::handleSearchTextLineEdit);
@@ -48,15 +51,6 @@ SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleTextSearchShortcut);
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleSearchUpToolButton);
-
-    // This is a hack to get at the QLineEdit's clear button.
-    // QLineEdit doesn't have its own signal for this. Also, QLineEdit doesn't
-    // emit a signal when the text goes blank. I don't want to handle each time
-    // the text changes. Just when the user hits RETURN or when the text is cleared.
-    QAction* clearAction = searchTextLineEdit->findChild<QAction*>();
-    if (clearAction) {
-        QObject::connect(clearAction, &QAction::triggered,   this, &SeerAssemblyWidget::handleClearSearchTextLineEdit);
-    }
 }
 
 SeerAssemblyWidget::~SeerAssemblyWidget () {
@@ -149,21 +143,6 @@ void SeerAssemblyWidget::handleSearchLineNumberLineEdit () {
     searchLineNumberLineEdit->clear();
 
     assemblyArea()->scrollToLine(address);
-}
-
-void SeerAssemblyWidget::handleClearSearchTextLineEdit () {
-
-    /*
-     * We don't need to call the setText method to clear it.
-     * The QLineEdit widget will do that on its own.
-     searchTextLineEdit->setText("");
-    */
-
-    // Clear the matches label.
-    matchesLabel->setText("");
-
-    // Clear any previous highlights.
-    assemblyArea()->clearFindText();
 }
 
 void SeerAssemblyWidget::handleSearchTextLineEdit () {

@@ -238,7 +238,6 @@ class SeerEditorWidget : public QWidget, protected Ui::SeerEditorWidgetForm {
 
     private slots:
         void                                handleSearchLineNumberLineEdit          ();
-        void                                handleClearSearchTextLineEdit           ();
         void                                handleSearchTextLineEdit                ();
         void                                handleSearchDownToolButton              ();
         void                                handleSearchUpToolButton                ();
@@ -427,7 +426,6 @@ class SeerAssemblyWidget : public QWidget, protected Ui::SeerAssemblyWidgetForm 
 
     private slots:
         void                                handleSearchLineNumberLineEdit          ();
-        void                                handleClearSearchTextLineEdit           ();
         void                                handleSearchTextLineEdit                ();
         void                                handleSearchDownToolButton              ();
         void                                handleSearchUpToolButton                ();

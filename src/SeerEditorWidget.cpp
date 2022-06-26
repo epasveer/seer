@@ -26,6 +26,7 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
     int space = fontMetrics().horizontalAdvance("Go to line ##") + 5;
 
     searchLineNumberLineEdit->setMaximumWidth(space);
+    searchTextLineEdit->enableReturnPressedOnClear();
 
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
     showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
@@ -56,15 +57,6 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
-
-    // This is a hack to get at the QLineEdit's clear button.
-    // QLineEdit doesn't have its own signal for this. Also, QLineEdit doesn't
-    // emit a signal when the text goes blank. I don't want to handle each time
-    // the text changes. Just when the user hits RETURN or when the text is cleared.
-    QAction* clearAction = searchTextLineEdit->findChild<QAction*>();
-    if (clearAction) {
-        QObject::connect(clearAction, &QAction::triggered,   this, &SeerEditorWidget::handleClearSearchTextLineEdit);
-    }
 }
 
 SeerEditorWidget::~SeerEditorWidget () {
@@ -202,21 +194,6 @@ void SeerEditorWidget::handleSearchLineNumberLineEdit () {
     searchLineNumberLineEdit->clear();
 
     sourceArea()->scrollToLine(lineno);
-}
-
-void SeerEditorWidget::handleClearSearchTextLineEdit () {
-
-    /*
-     * We don't need to call the setText method to clear it.
-     * The QLineEdit widget will do that on its own.
-     searchTextLineEdit->setText("");
-    */
-
-    // Clear the matches label.
-    matchesLabel->setText("");
-
-    // Clear any previous highlights.
-    sourceArea()->clearFindText();
 }
 
 void SeerEditorWidget::handleSearchTextLineEdit () {

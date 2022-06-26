@@ -100,7 +100,7 @@
    <item>
     <layout class="QHBoxLayout" name="searchBarLayout">
      <item>
-      <widget class="QLineEdit" name="searchTextLineEdit">
+      <widget class="QClearLineEdit" name="searchTextLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>80</horstretch>
@@ -214,6 +214,11 @@
    <extends>QWidget</extends>
    <header location="global">SeerEditorWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QClearLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QClearLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
