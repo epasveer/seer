@@ -48,8 +48,8 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _miniMapArea    = new SeerEditorWidgetAssemblyMiniMapArea(this);
     _miniMapPixmap  = 0;
 
-    enableLineNumberArea(true); // XXX True
-    enableBreakPointArea(true); // XXX True
+    enableLineNumberArea(true);
+    enableBreakPointArea(true);
     enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,        this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
@@ -279,7 +279,38 @@ void SeerEditorWidgetAssemblyArea::breakPointAreaPaintEvent (QPaintEvent* event)
         if (block.isVisible() && bottom >= event->rect().top()) {
 
             // XXX
+            QString address = _lineAddressMap[blockNumber+1];
 
+            if (address != "" && hasBreakpointAddress(address) == true) {
+                if (breakpointAddressEnabled(address)) {
+                    QRect rect(_breakPointArea->width() - 20, top, fontMetrics().height(), fontMetrics().height());
+
+                    QPainterPath path;
+                    path.addEllipse(rect);
+
+                    QPointF bias = QPointF(rect.width() * .25 * 1.0, rect.height() * .25 * -1.0);
+
+                    QRadialGradient gradient(rect.center(), rect.width() / 2.0, rect.center() + bias);
+                    gradient.setColorAt(0.0, QColor(Qt::white));
+                    gradient.setColorAt(0.9, QColor(Qt::red));
+                    gradient.setColorAt(1.0, QColor(Qt::transparent));
+                    painter.fillPath(path,QBrush(gradient));
+
+                }else{
+                    QRect rect(_breakPointArea->width() - 20, top, fontMetrics().height(), fontMetrics().height());
+
+                    QPainterPath path;
+                    path.addEllipse(rect);
+
+                    QPointF bias = QPointF(rect.width() * .25 * 1.0, rect.height() * .25 * -1.0);
+
+                    QRadialGradient gradient(rect.center(), rect.width() / 2.0, rect.center() + bias);
+                    gradient.setColorAt(0.0, QColor(Qt::white));
+                    gradient.setColorAt(0.9, QColor(Qt::darkGray));
+                    gradient.setColorAt(1.0, Qt::transparent);
+                    painter.fillPath(path,QBrush(gradient));
+                }
+            }
         }
 
         block  = block.next();
@@ -416,6 +447,11 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
     if (miniMapAreaEnabled()) {
         _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
+}
+
+void SeerEditorWidgetAssemblyArea::contextMenuEvent (QContextMenuEvent* event) {
+
+    showContextMenu(event);
 }
 
 void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
@@ -574,6 +610,213 @@ void SeerEditorWidgetAssemblyArea::clearFindText () {
     _findExtraSelections.clear();
 
     refreshExtraSelections();
+}
+
+void SeerEditorWidgetAssemblyArea::clearBreakpoints () {
+
+    _breakpointsNumbers.clear();
+    _breakpointsAddresses.clear();
+    _breakpointsEnableds.clear();
+
+    repaint();
+}
+
+void SeerEditorWidgetAssemblyArea::addBreakpoint (int number, const QString& address, bool enabled) {
+
+    //qDebug() << number << address << enabled;
+
+    _breakpointsNumbers.push_back(number);
+    _breakpointsAddresses.push_back(address);
+    _breakpointsEnableds.push_back(enabled);
+}
+
+bool SeerEditorWidgetAssemblyArea::hasBreakpointNumber (int number) const {
+    return _breakpointsNumbers.contains(number);
+}
+
+bool SeerEditorWidgetAssemblyArea::hasBreakpointAddress (const QString& address) const {
+    return _breakpointsAddresses.contains(address);
+}
+
+const QVector<int>& SeerEditorWidgetAssemblyArea::breakpointNumbers () const {
+    return _breakpointsNumbers;
+}
+
+const QVector<QString>& SeerEditorWidgetAssemblyArea::breakpointAddresses () const {
+    return _breakpointsAddresses;
+}
+
+const QVector<bool>& SeerEditorWidgetAssemblyArea::breakpointEnableds () const {
+    return _breakpointsEnableds;
+}
+
+int SeerEditorWidgetAssemblyArea::breakpointAddressToNumber (const QString& address) const {
+
+    // Map address to breakpoint number.
+    int i = _breakpointsAddresses.indexOf(address);
+
+    if (i < 0) {
+        return 0;
+    }
+
+    return _breakpointsNumbers[i];
+}
+
+bool SeerEditorWidgetAssemblyArea::breakpointAddressEnabled (const QString& address) const {
+
+    // Look for the address and get its index.
+    int i = _breakpointsAddresses.indexOf(address);
+
+    // Not found, return false.
+    if (i < 0) {
+        return false;
+    }
+
+    // Otherwise, return the proper status.
+    return _breakpointsEnableds[i];
+}
+
+void SeerEditorWidgetAssemblyArea::showContextMenu (QMouseEvent* event) {
+
+    showContextMenu(event->pos(), event->globalPos());
+}
+
+void SeerEditorWidgetAssemblyArea::showContextMenu (QContextMenuEvent* event) {
+
+    showContextMenu(event->pos(), event->globalPos());
+}
+
+void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPoint& globalPos) {
+
+    // XXX
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(pos);
+
+    int lineno = cursor.blockNumber()+1;
+
+    QString address = _lineAddressMap[lineno];
+
+    // Create the menu actions.
+    QAction* createBreakpointAction;
+    QAction* deleteAction;
+    QAction* enableAction;
+    QAction* disableAction;
+    QAction* runToAddressAction;
+
+    // Enable/disable them depending if the breakpoint already exists.
+    if (hasBreakpointAddress(address) == true) {
+
+        int breakno = breakpointAddressToNumber(address);
+
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
+
+        createBreakpointAction->setEnabled(false);
+        deleteAction->setEnabled(true);
+        enableAction->setEnabled(true);
+        disableAction->setEnabled(true);
+        runToAddressAction->setEnabled(true);
+
+    }else{
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on address %1").arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on address %1").arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on address %1").arg(address), this);
+        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
+
+        createBreakpointAction->setEnabled(true);
+        deleteAction->setEnabled(false);
+        enableAction->setEnabled(false);
+        disableAction->setEnabled(false);
+        runToAddressAction->setEnabled(true);
+    }
+
+    QMenu menu("Breakpoints", this);
+    menu.setTitle("Breakpoints");
+    menu.addAction(createBreakpointAction);
+    menu.addAction(deleteAction);
+    menu.addAction(enableAction);
+    menu.addAction(disableAction);
+    menu.addAction(runToAddressAction);
+
+    // Launch the menu. Get the response.
+    QAction* action = menu.exec(globalPos);
+
+    // Do nothing.
+    if (action == 0) {
+        return;
+    }
+
+    // Handle creating a new breakpoint.
+    if (action == createBreakpointAction) {
+
+        /* XXX
+        SeerBreakpointCreateDialog dlg(this);
+        dlg.setFilename(fullname());
+        dlg.setLineNumber(QString("%1").arg(lineno));
+
+        int ret = dlg.exec();
+
+        if (ret == 0) {
+            return;
+        }
+
+        //qDebug() << dlg.breakpointText();
+
+        // Emit the create breakpoint signal.
+        emit insertBreakpoint(dlg.breakpointText());
+        */
+
+        return;
+    }
+
+    // Handle deleting a breakpoint.
+    if (action == deleteAction) {
+
+        //qDebug() << "deleteBreakpoints" << lineno;
+
+        // Emit the delete breakpoint signal.
+        emit deleteBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+
+        return;
+    }
+
+    // Handle enabling a breakpoint.
+    if (action == enableAction) {
+
+        //qDebug() << "enableBreakpoints" << lineno;
+
+        // Emit the enable breakpoint signal.
+        emit enableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+
+        return;
+    }
+
+    // Handle disabling a breakpoint.
+    if (action == disableAction) {
+
+        //qDebug() << "disableBreakpoints" << lineno;
+
+        // Emit the disable breakpoint signal.
+        emit disableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+
+        return;
+    }
+
+    // Handle running to a line number.
+    if (action == runToAddressAction) {
+
+        //qDebug() << "runToAddress" << lineno;
+
+        // Emit the runToLine signal.
+        emit runToAddress(address);
+
+        return;
+    }
 }
 
 void SeerEditorWidgetAssemblyArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {

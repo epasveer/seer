@@ -77,7 +77,7 @@ void SeerEditorWidgetAssemblyBreakPointArea::mouseMoveEvent (QMouseEvent* event)
 void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::RightButton) {
-        // XXX _editorWidget->showContextMenu(event);
+        _editorWidget->showContextMenu(event);
 
     }else{
         QWidget::mousePressEvent(event);

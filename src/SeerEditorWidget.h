@@ -299,12 +299,32 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
 
+        void                                        clearBreakpoints                    ();
+        void                                        addBreakpoint                       (int number, const QString& address, bool enabled);
+        bool                                        hasBreakpointNumber                 (int number) const;
+        bool                                        hasBreakpointAddress                (const QString& address) const;
+        const QVector<int>&                         breakpointNumbers                   () const;
+        const QVector<QString>&                     breakpointAddresses                 () const;
+        const QVector<bool>&                        breakpointEnableds                  () const;
+        int                                         breakpointAddressToNumber           (const QString& address) const;
+        bool                                        breakpointAddressEnabled            (const QString& address) const;
+
+        void                                        showContextMenu                     (QMouseEvent* event);
+        void                                        showContextMenu                     (QContextMenuEvent* event);
+        void                                        showContextMenu                     (const QPoint& pos, const QPoint& globalPos);
+
         void                                        setHighlighterSettings              (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&              highlighterSettings                 () const;
         void                                        setHighlighterEnabled               (bool flag);
         bool                                        highlighterEnabled                  () const;
 
     signals:
+        void                                        insertBreakpoint                    (QString breakpoint);
+        void                                        insertPrintpoint                    (QString printpoint);
+        void                                        deleteBreakpoints                   (QString breakpoints);
+        void                                        enableBreakpoints                   (QString breakpoints);
+        void                                        disableBreakpoints                  (QString breakpoints);
+        void                                        runToAddress                        (QString address);
         void                                        requestAssembly                     (QString address);
         void                                        showSearchBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
@@ -314,6 +334,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
+        void                                        contextMenuEvent                    (QContextMenuEvent* event);
 
     private slots:
         void                                        refreshExtraSelections              ();
@@ -327,6 +348,9 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
         bool                                        _enableMiniMapArea;
+        QVector<int>                                _breakpointsNumbers;
+        QVector<QString>                            _breakpointsAddresses;
+        QVector<bool>                               _breakpointsEnableds;
         QList<QTextEdit::ExtraSelection>            _findExtraSelections;
         QList<QTextEdit::ExtraSelection>            _currentLinesExtraSelections;
 

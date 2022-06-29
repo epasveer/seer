@@ -887,7 +887,7 @@ void SeerEditorWidgetSourceArea::addBreakpoint (int number, int lineno, bool ena
 }
 
 bool SeerEditorWidgetSourceArea::hasBreakpointNumber (int number) const {
-    return _breakpointsLineNumbers.contains(number);
+    return _breakpointsNumbers.contains(number);
 }
 
 bool SeerEditorWidgetSourceArea::hasBreakpointLine (int lineno) const {

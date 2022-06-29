@@ -302,7 +302,9 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         // Get the AssemblyWidget.
         SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
 
-        assemblyWidget->assemblyArea()->handleText(text);
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+        }
 
         // Handle certain reasons uniquely.
         QString reason_text = Seer::parseFirst(newtext, "reason=", '"', '"', false);
@@ -338,6 +340,13 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             b++;
         }
 
+        // Tell the assembly widget to clear its breakpoints.
+        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->clearBreakpoints();
+        }
+
         // Now parse the table and re-add the breakpoints.
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -363,11 +372,19 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
+                // Find the appropriate source file and update its breakpoints
                 SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
                 SeerEditorManagerEntries::iterator e = endEntry();
 
                 if (i != e) {
                     i->widget->sourceArea()->addBreakpoint(number_text.toInt(), line_text.toInt(), (enabled_text == "y" ? true : false));
+                }
+
+                // Tell the assembly widget about the breakpoint. If the address is in its range, it will add it.
+                SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+
+                if (assemblyWidget) {
+                    assemblyWidget->assemblyArea()->addBreakpoint(number_text.toInt(), addr_text, (enabled_text == "y" ? true : false));
                 }
             }
         }
@@ -425,14 +442,18 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         // Get the AssemblyWidget.
         SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
 
-        assemblyWidget->assemblyArea()->handleText(text);
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+        }
 
     }else if (text.startsWith("^done,asm_insns=")) {
 
         // Get the AssemblyWidget.
         SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
 
-        assemblyWidget->assemblyArea()->handleText(text);
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+        }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
