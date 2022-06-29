@@ -628,6 +628,8 @@ void SeerEditorWidgetAssemblyArea::addBreakpoint (int number, const QString& add
     _breakpointsNumbers.push_back(number);
     _breakpointsAddresses.push_back(address);
     _breakpointsEnableds.push_back(enabled);
+
+    repaint();
 }
 
 bool SeerEditorWidgetAssemblyArea::hasBreakpointNumber (int number) const {
