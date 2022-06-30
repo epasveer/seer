@@ -63,7 +63,7 @@ void SeerEditorWidgetAssemblyLineNumberArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetAssemblyLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        // XXX _editorWidget->setQuickBreakpoint(event);
+        _editorWidget->setQuickBreakpoint(event);
 
     }else{
         QWidget::mouseDoubleClickEvent(event);

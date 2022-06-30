@@ -821,6 +821,34 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     }
 }
 
+void SeerEditorWidgetAssemblyArea::setQuickBreakpoint (QMouseEvent* event) {
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(event->pos());
+
+    int lineno = cursor.blockNumber()+1;
+
+    QString address = _lineAddressMap[lineno];
+
+    // If there is a breakpoint on the line, toggle it.
+    if (hasBreakpointAddress(address)) {
+
+        // Toggle the breakpoint.
+        // Enable if disabled. Disable if enabled.
+        if (breakpointAddressEnabled(address) == false) {
+            // Emit the enable breakpoint signal.
+            emit enableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+        }else{
+            // Emit the disable breakpoint signal.
+            emit disableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+        }
+
+    // Otherwise, do a quick create of a new breakpoint.
+    }else{
+        emit insertBreakpoint(QString("-f *%1").arg(address));
+    }
+}
+
 void SeerEditorWidgetAssemblyArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
 
     _sourceHighlighterSettings = settings;
