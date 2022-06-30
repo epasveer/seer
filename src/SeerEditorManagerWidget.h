@@ -55,6 +55,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
         void                                            handleRunToLine                     (QString fullname, int lineno);
+        void                                            handleRunToAddress                  (QString address);
         void                                            handleAddVariableLoggerExpression   (QString expression);
         void                                            handleAddVariableTrackerExpression  (QString expression);
         void                                            handleRefreshVariableTrackerValues  ();
@@ -78,6 +79,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);
         void                                            runToLine                           (QString file, int lineno);
+        void                                            runToAddress                        (QString address);
         void                                            addVariableLoggerExpression         (QString expression);
         void                                            addVariableTrackerExpression        (QString expression);
         void                                            refreshVariableTrackerValues        ();

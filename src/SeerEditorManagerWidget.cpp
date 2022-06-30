@@ -717,6 +717,12 @@ SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     // Connect signals.
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
 
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::insertBreakpoint,        this, &SeerEditorManagerWidget::handleInsertBreakpoint);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::deleteBreakpoints,       this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::enableBreakpoints,       this, &SeerEditorManagerWidget::handleEnableBreakpoints);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::disableBreakpoints,      this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::runToAddress,            this, &SeerEditorManagerWidget::handleRunToAddress);
+
     // Load the file.
     assemblyWidget->assemblyArea()->setPlainText("");
 
@@ -879,6 +885,14 @@ void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 
     // rethrow
     emit runToLine (fullname, lineno);
+}
+
+void SeerEditorManagerWidget::handleRunToAddress (QString address) {
+
+    //qDebug() << address;
+
+    // rethrow
+    emit runToAddress (address);
 }
 
 void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {
