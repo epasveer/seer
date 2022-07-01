@@ -11,6 +11,7 @@ SeerBreakpointCreateDialog::SeerBreakpointCreateDialog (QWidget* parent) : QDial
     setFunctionName("");
     setLabelName("");
     setLineNumber("");
+    setAddress("");
 
     setTemporaryEnabled (false);
     setHardwareEnabled (false);
@@ -49,6 +50,10 @@ void SeerBreakpointCreateDialog::setLineNumber (const QString& text) {
     lineNumberLineEdit->setText(text);
 }
 
+void SeerBreakpointCreateDialog::setAddress (const QString& text) {
+    addressLineEdit->setText(text);
+}
+
 QString SeerBreakpointCreateDialog::filenameText () const {
     return filenameLineEdit->text();
 }
@@ -63,6 +68,10 @@ QString SeerBreakpointCreateDialog::labelNameText () const {
 
 QString SeerBreakpointCreateDialog::lineNumberText () const {
     return lineNumberLineEdit->text();
+}
+
+QString SeerBreakpointCreateDialog::addressText () const {
+    return addressLineEdit->text();
 }
 
 void SeerBreakpointCreateDialog::setTemporaryEnabled (bool flag) {
@@ -201,6 +210,10 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
 
     if (lineNumberText() != "") {
         breakpointParameters += " --line " + lineNumberText();
+    }
+
+    if (addressText() != "") {
+        breakpointParameters += " *" + addressText();
     }
 
     return breakpointParameters;

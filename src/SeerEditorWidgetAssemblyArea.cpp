@@ -756,10 +756,8 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     // Handle creating a new breakpoint.
     if (action == createBreakpointAction) {
 
-        /* XXX
         SeerBreakpointCreateDialog dlg(this);
-        dlg.setFilename(fullname());
-        dlg.setLineNumber(QString("%1").arg(lineno));
+        dlg.setAddress(address);
 
         int ret = dlg.exec();
 
@@ -771,7 +769,6 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the create breakpoint signal.
         emit insertBreakpoint(dlg.breakpointText());
-        */
 
         return;
     }

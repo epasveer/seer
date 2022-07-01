@@ -17,11 +17,13 @@ class SeerBreakpointCreateDialog : public QDialog, protected Ui::SeerBreakpointC
         void            setFunctionName             (const QString& text);
         void            setLabelName                (const QString& text);
         void            setLineNumber               (const QString& text);
+        void            setAddress                  (const QString& text);
 
         QString         filenameText                () const;
         QString         functionNameText            () const;
         QString         labelNameText               () const;
         QString         lineNumberText              () const;
+        QString         addressText                 () const;
 
         void            setTemporaryEnabled         (bool flag);
         void            setHardwareEnabled          (bool flag);
