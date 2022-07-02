@@ -498,6 +498,8 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
         if (ok) {
             if (_addressLineMap.contains(addr)) {
                 lineno = _addressLineMap[addr];
+            }else{
+                ok = false;
             }
         }
     }
@@ -510,12 +512,14 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
         if (ok) {
             if (_offsetLineMap.contains(offset)) {
                 lineno = _offsetLineMap[offset];
+            }else{
+                ok = false;
             }
         }
     }
 
     // Try parsing as an integer.
-    if (ok == false) {
+    if (ok == false && address.startsWith("0x") == false && address.startsWith("+") == false) {
         lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
     }
 
@@ -555,6 +559,11 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
 
     //qDebug() << address;
 
+    // Just return.
+    if (address == "") {
+        return;
+    }
+
     //
     // 'address' can be one of these forms:
     //
@@ -582,6 +591,8 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
         if (ok) {
             if (_addressLineMap.contains(addr)) {
                 lineno = _addressLineMap[addr];
+            }else{
+                ok = false;
             }
         }
     }
@@ -594,17 +605,24 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
         if (ok) {
             if (_offsetLineMap.contains(offset)) {
                 lineno = _offsetLineMap[offset];
+            }else{
+                ok = false;
             }
         }
     }
 
+    //qDebug() << address << lineno << ok;
+
     // Try parsing as an integer.
-    if (ok == false) {
+    if (ok == false && address.startsWith("0x") == false && address.startsWith("+") == false) {
         lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
     }
 
     // 'address' is meaningless. Just return.
     if (ok == false) {
+        if (_currentAddress == "") {  // Hack when the assembly hasn't been loaded yet.
+            QMessageBox::warning(this, "Warning.", "Address/offset '" + address + "' not found.");
+        }
         return;
     }
 
