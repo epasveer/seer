@@ -1468,7 +1468,10 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             open(fullname_text, QFileInfo(file_text).fileName());
         }
 
-        // Set to the line number.
+        // Move to the start of the document as a default.
+        moveCursor(QTextCursor::Start);
+
+        // Move to the line number.
         setCurrentLine(line_text.toInt());
 
         return;

@@ -279,7 +279,6 @@ void SeerEditorWidgetAssemblyArea::breakPointAreaPaintEvent (QPaintEvent* event)
 
         if (block.isVisible() && bottom >= event->rect().top()) {
 
-            // XXX
             QString address = _lineAddressMap[blockNumber+1];
 
             if (address != "" && hasBreakpointAddress(address) == true) {
@@ -583,7 +582,6 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
         if (ok) {
             if (_addressLineMap.contains(addr)) {
                 lineno = _addressLineMap[addr];
-                qDebug() << "Address=" << addr << "== Line=" << lineno;
             }
         }
     }
@@ -596,7 +594,6 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
         if (ok) {
             if (_offsetLineMap.contains(offset)) {
                 lineno = _offsetLineMap[offset];
-                qDebug() << "Offset=" << offset << "== Line=" << lineno;
             }
         }
     }
@@ -1074,11 +1071,10 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
             lineno++;
         }
 
-        // Move to the start of the document.  XXX Move to the line that has our address.
-        // setTextCursor(cursor);
+        // Move to the start of the document as a default.
         moveCursor(QTextCursor::Start);
 
-        // Set to the line number.
+        // Move to the line that has our address.
         setCurrentLine(_currentAddress);
 
         _currentAddress = "";
