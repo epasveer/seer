@@ -33,6 +33,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableBreakPointArea = false;
     _enableMiniMapArea    = false;
     _addressLineMap.clear();
+    _offsetLineMap.clear();
     _lineAddressMap.clear();
 
     QFont font("Source Code Pro");
@@ -479,18 +480,19 @@ void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
 
 void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
+    //qDebug() << address;
+
     // Clear current line selections.
     _currentLinesExtraSelections.clear();
 
+    // See scrollToLine().
     //
     // Initial lineno.
-    //
-    // Try parsing as an integer.
-    bool ok;
-    int lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
+    bool ok     = false;
+    int  lineno = 0;
 
     // Try parsing as an address.
-    if (ok == false) {
+    if (ok == false && address.startsWith("0x") == true) {
 
         qulonglong addr = address.toULongLong(&ok, 0); // Try it as an '0x.....'.
 
@@ -499,6 +501,23 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
                 lineno = _addressLineMap[addr];
             }
         }
+    }
+
+    // Try parsing as an offset.
+    if (ok == false && address.startsWith("+") == true) {
+
+        qulonglong offset = address.toULongLong(&ok, 0); // Try it as an '+.....'.
+
+        if (ok) {
+            if (_offsetLineMap.contains(offset)) {
+                lineno = _offsetLineMap[offset];
+            }
+        }
+    }
+
+    // Try parsing as an integer.
+    if (ok == false) {
+        lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
     }
 
     //qDebug() << address << lineno;
@@ -535,23 +554,61 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
 void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
 
+    //qDebug() << address;
+
     //
+    // 'address' can be one of these forms:
+    //
+    //      0xdeadbeef      An address
+    //      +1000           An offset
+    //      10              A linenumber
+    //
+    // Test for which one and convert it to a linenumber using the maps:
+    //
+    //      _addressLineMap
+    //      _offsetLineMap
+    //
+    //      Or just go to the line#
+    //
+
     // Initial lineno.
-    //
-    // Try parsing as an integer.
-    bool ok;
-    int lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
+    bool ok     = false;
+    int  lineno = 0;
 
     // Try parsing as an address.
-    if (ok == false) {
+    if (ok == false && address.startsWith("0x") == true) {
 
         qulonglong addr = address.toULongLong(&ok, 0); // Try it as an '0x.....'.
 
         if (ok) {
             if (_addressLineMap.contains(addr)) {
                 lineno = _addressLineMap[addr];
+                qDebug() << "Address=" << addr << "== Line=" << lineno;
             }
         }
+    }
+
+    // Try parsing as an offset.
+    if (ok == false && address.startsWith("+") == true) {
+
+        qulonglong offset = address.toULongLong(&ok, 0); // Try it as an '+.....'.
+
+        if (ok) {
+            if (_offsetLineMap.contains(offset)) {
+                lineno = _offsetLineMap[offset];
+                qDebug() << "Offset=" << offset << "== Line=" << lineno;
+            }
+        }
+    }
+
+    // Try parsing as an integer.
+    if (ok == false) {
+        lineno = address.toInt(&ok, 10); // Try it as an 'int'. lineno == 0 on error.
+    }
+
+    // 'address' is meaningless. Just return.
+    if (ok == false) {
+        return;
     }
 
     // Scroll to the first line if we went before it.
@@ -689,8 +746,6 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (QContextMenuEvent* event) {
 }
 
 void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPoint& globalPos) {
-
-    // XXX
 
     // Get the line number for the cursor position.
     QTextCursor cursor = cursorForPosition(pos);
@@ -959,6 +1014,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
         // Clear mappings.
         _addressLineMap.clear();
+        _offsetLineMap.clear();
         _lineAddressMap.clear();
 
         // Get the list of assembly lines.
@@ -979,6 +1035,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
             // Get the strings, with padding.
             QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
             QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
+            QString offset_num   =        Seer::parseFirst(asm_text, "offset=",  '"', '"', false);
             QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
             QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
 
@@ -997,6 +1054,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
             // Get the strings, with padding.
             QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
             QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
+            QString offset_num   =        Seer::parseFirst(asm_text, "offset=",  '"', '"', false);
             QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
             QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
 
@@ -1010,6 +1068,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
             // Add to maps
             _addressLineMap.insert(address_text.toULongLong(0,0), lineno);
+            _offsetLineMap.insert(offset_num.toULongLong(0,0), lineno);
             _lineAddressMap.insert(lineno, address_text);
 
             lineno++;

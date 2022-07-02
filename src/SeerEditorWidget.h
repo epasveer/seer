@@ -365,6 +365,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
         QString                                     _currentAddress;
         QMap<qulonglong,int>                        _addressLineMap;
+        QMap<qulonglong,int>                        _offsetLineMap;
         QMap<int,QString>                           _lineAddressMap;
 };
 

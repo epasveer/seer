@@ -30,7 +30,7 @@
       <widget class="QClearLineEdit" name="searchTextLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>80</horstretch>
+         <horstretch>50</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -98,15 +98,15 @@
       <widget class="QLineEdit" name="searchLineNumberLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>40</horstretch>
+         <horstretch>50</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>Scroll to a specific address or line#.</string>
+        <string>Scroll to a specific 0xAddress, +Offset, or line#.</string>
        </property>
        <property name="placeholderText">
-        <string>Go to address or line#</string>
+        <string>Go to a 0xAddress, +Offset, or line#.</string>
        </property>
       </widget>
      </item>
