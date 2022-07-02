@@ -86,6 +86,9 @@
     <addaction name="actionControlStep"/>
     <addaction name="actionControlFinish"/>
     <addaction name="separator"/>
+    <addaction name="actionControlNexti"/>
+    <addaction name="actionControlStepi"/>
+    <addaction name="separator"/>
     <addaction name="actionControlInterrupt"/>
    </widget>
    <addaction name="menuFile"/>
@@ -463,6 +466,30 @@
    </property>
    <property name="statusTip">
     <string>Minimize the console window.</string>
+   </property>
+  </action>
+  <action name="actionControlNexti">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
+   </property>
+   <property name="text">
+    <string>Nexti</string>
+   </property>
+   <property name="statusTip">
+    <string>Execute next instruction, step over functions.</string>
+   </property>
+  </action>
+  <action name="actionControlStepi">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stepi</string>
+   </property>
+   <property name="statusTip">
+    <string>Execute next instruction, step into functions.</string>
    </property>
   </action>
  </widget>

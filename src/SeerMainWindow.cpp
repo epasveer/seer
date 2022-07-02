@@ -57,9 +57,6 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     actionInterruptProcess->setMenu(interruptMenu);
 
     // Set the inital key settings.
-    _nextiKeyShortcut = new QShortcut(QKeySequence(tr("Ctrl+F5")), this);
-    _stepiKeyShortcut = new QShortcut(QKeySequence(tr("Ctrl+F6")), this);
-
     setKeySettings(SeerKeySettings::populate());
 
     //
@@ -80,11 +77,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlContinue,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionControlNext,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionControlStep,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlNexti,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNexti);
+    QObject::connect(actionControlStepi,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStepi);
     QObject::connect(actionControlFinish,               &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
     QObject::connect(actionControlInterrupt,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
-
-    QObject::connect(_nextiKeyShortcut,                 &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbNexti);
-    QObject::connect(_stepiKeyShortcut,                 &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStepi);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsSaveConfiguration);
@@ -914,7 +910,7 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Nexti");
 
-        _nextiKeyShortcut->setKey(setting._sequence);
+        actionControlNexti->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Step")) {
@@ -930,7 +926,7 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Stepi");
 
-        _stepiKeyShortcut->setKey(setting._sequence);
+        actionControlStepi->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Finish")) {
