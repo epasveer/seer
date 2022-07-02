@@ -128,7 +128,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
         void                                handleGdbRunToAddress               (QString address);
         void                                handleGdbNext                       ();
+        void                                handleGdbNexti                      ();
         void                                handleGdbStep                       ();
+        void                                handleGdbStepi                      ();
         void                                handleGdbFinish                     ();
         void                                handleGdbContinue                   ();
         void                                handleGdbInterrupt                  ();

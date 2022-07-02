@@ -57,6 +57,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     actionInterruptProcess->setMenu(interruptMenu);
 
     // Set the inital key settings.
+    _nextiKeyShortcut = new QShortcut(QKeySequence(tr("Ctrl+F5")), this);
+    _stepiKeyShortcut = new QShortcut(QKeySequence(tr("Ctrl+F6")), this);
+
     setKeySettings(SeerKeySettings::populate());
 
     //
@@ -79,6 +82,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlStep,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionControlFinish,               &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
     QObject::connect(actionControlInterrupt,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+
+    QObject::connect(_nextiKeyShortcut,                 &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbNexti);
+    QObject::connect(_stepiKeyShortcut,                 &QShortcut::activated,                  gdbWidget,      &SeerGdbWidget::handleGdbStepi);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsSaveConfiguration);
@@ -881,7 +887,6 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Run");
 
-        //_runKey->setKey(setting._sequence);
         actionGdbRun->setToolTip(setting._description);
         actionGdbRun->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlRun->setShortcut(setting._sequence);
@@ -891,7 +896,6 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Start");
 
-        //_startKey->setKey(setting._sequence);
         actionGdbStart->setToolTip(setting._description);
         actionGdbStart->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlStart->setShortcut(setting._sequence);
@@ -901,27 +905,38 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Next");
 
-        //_nextKey->setKey(setting._sequence);
         actionGdbNext->setToolTip(setting._description);
         actionGdbNext->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlNext->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("Nexti")) {
+
+        SeerKeySetting setting = _keySettings.get("Nexti");
+
+        _nextiKeyShortcut->setKey(setting._sequence);
     }
 
     if (_keySettings.has("Step")) {
 
         SeerKeySetting setting = _keySettings.get("Step");
 
-        //_stepKey->setKey(setting._sequence);
         actionGdbStep->setToolTip(setting._description);
         actionGdbStep->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlStep->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("Stepi")) {
+
+        SeerKeySetting setting = _keySettings.get("Stepi");
+
+        _stepiKeyShortcut->setKey(setting._sequence);
     }
 
     if (_keySettings.has("Finish")) {
 
         SeerKeySetting setting = _keySettings.get("Finish");
 
-        //_finishKey->setKey(setting._sequence);
         actionGdbFinish->setToolTip(setting._description);
         actionGdbFinish->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlFinish->setShortcut(setting._sequence);
@@ -931,7 +946,6 @@ void SeerMainWindow::refreshShortCuts () {
 
         SeerKeySetting setting = _keySettings.get("Continue");
 
-        //_continueKey->setKey(setting._sequence);
         actionGdbContinue->setToolTip(setting._description);
         actionGdbContinue->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlContinue->setShortcut(setting._sequence);

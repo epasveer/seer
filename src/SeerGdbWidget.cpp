@@ -971,6 +971,15 @@ void SeerGdbWidget::handleGdbNext () {
     handleGdbCommand("-exec-next");
 }
 
+void SeerGdbWidget::handleGdbNexti () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-next-instruction");
+}
+
 void SeerGdbWidget::handleGdbStep () {
 
     if (executableLaunchMode() == "") {
@@ -978,6 +987,15 @@ void SeerGdbWidget::handleGdbStep () {
     }
 
     handleGdbCommand("-exec-step");
+}
+
+void SeerGdbWidget::handleGdbStepi () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-step-instruction");
 }
 
 void SeerGdbWidget::handleGdbFinish () {
