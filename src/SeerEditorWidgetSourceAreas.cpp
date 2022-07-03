@@ -1550,3 +1550,148 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     //       The new highlighter settings will be used.
 }
 
+//
+// LineNumber area.
+//
+
+SeerEditorWidgetSourceLineNumberArea::SeerEditorWidgetSourceLineNumberArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetSourceLineNumberArea::sizeHint () const {
+    return QSize(_editorWidget->lineNumberAreaWidth(), 0);
+}
+
+void SeerEditorWidgetSourceLineNumberArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->lineNumberAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetSourceLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetSourceLineNumberArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetSourceLineNumberArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+
+}
+
+void SeerEditorWidgetSourceLineNumberArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// Breakpoints Area.
+//
+
+SeerEditorWidgetSourceBreakPointArea::SeerEditorWidgetSourceBreakPointArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetSourceBreakPointArea::sizeHint () const {
+    return QSize(_editorWidget->breakPointAreaWidth(), 0);
+}
+
+void SeerEditorWidgetSourceBreakPointArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->breakPointAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetSourceBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetSourceBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetSourceBreakPointArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// MiniMap Area.
+//
+
+SeerEditorWidgetSourceMiniMapArea::SeerEditorWidgetSourceMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetSourceMiniMapArea::sizeHint () const {
+    return QSize(_editorWidget->miniMapAreaWidth(), 0);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->miniMapAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseDoubleClickEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mousePressEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseReleaseEvent(event);
+}
+

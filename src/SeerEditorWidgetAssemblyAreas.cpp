@@ -1114,7 +1114,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 }
 
 //
-// LineNumber Area
+// LineNumber Area.
 //
 
 SeerEditorWidgetAssemblyLineNumberArea::SeerEditorWidgetAssemblyLineNumberArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
