@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetAssembly.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"

@@ -44,6 +44,7 @@ set(HEADER_FILES
     SeerEditorOptionsBarWidget.h
     SeerBreakpointsOptionsBarWidget.h
     SeerEditorWidget.h
+    SeerEditorWidgetAssembly.h
     SeerExecutableFilterProxyModel.h
     SeerGdbWidget.h
     SeerHexWidget.h

@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetAssembly.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QTextBlock>

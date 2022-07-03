@@ -1,5 +1,6 @@
 #pragma once
 
+#include "SeerEditorWidgetAssembly.h"
 #include "SeerEditorManagerEntry.h"
 #include "SeerHighlighterSettings.h"
 #include "SeerKeySettings.h"
