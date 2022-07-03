@@ -102,6 +102,25 @@ Seer Console
 All text output from the executable will go to the Seer console.  Text input for the executable can be entered via the console too.
 ![](images/console.png)
 
+
+Assembly View
+-------------
+
+Normally Seer will just show the source code as tabs in the Code Manager.  The program's assembly can also be show as a tab.
+
+Select "View->Assembly View" and an extra tab will be shown along side the source code tabs that shows the current assembly being executed. Here is an example.
+![](images/mainview_assemby.png )
+
+Like the source code tabs, breakpoints can be set in the assemby tab. The current instruction is highlighted.
+
+Double-clicking on entries in the "Breakpoints" tab and the "Stack frames" tab will show the assembly for those addresses.
+
+There are "Nexti" and "Stepi" hot-keys, as defined by your config settings. Normally "Ctrl+F5" and "CTRL+F6".
+Using "^F" in the assembly tab will show a powerful search bar.
+
+**The assembly feature in Seer is new. Feel free to suggest changes/features.**
+
+
 Memory Visualizer
 -----------------
 
