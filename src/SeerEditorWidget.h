@@ -16,9 +16,9 @@
 #include <QtCore/QVector>
 #include <QtCore/QMap>
 
-class SeerEditorWidgetLineNumberArea;
-class SeerEditorWidgetBreakPointArea;
-class SeerEditorWidgetMiniMapArea;
+class SeerEditorWidgetSourceLineNumberArea;
+class SeerEditorWidgetSourceBreakPointArea;
+class SeerEditorWidgetSourceMiniMapArea;
 
 class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
@@ -143,9 +143,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                             _selectedExpressionName;
         QString                             _selectedExpressionValue;
 
-        SeerEditorWidgetLineNumberArea*     _lineNumberArea;
-        SeerEditorWidgetBreakPointArea*     _breakPointArea;
-        SeerEditorWidgetMiniMapArea*        _miniMapArea;
+        SeerEditorWidgetSourceLineNumberArea*     _lineNumberArea;
+        SeerEditorWidgetSourceBreakPointArea*     _breakPointArea;
+        SeerEditorWidgetSourceMiniMapArea*        _miniMapArea;
 
         QPixmap*                            _miniMapPixmap;
         SeerCppSourceHighlighter*           _sourceHighlighter;
@@ -153,12 +153,12 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         bool                                _sourceHighlighterEnabled;
 };
 
-class SeerEditorWidgetLineNumberArea : public QWidget {
+class SeerEditorWidgetSourceLineNumberArea : public QWidget {
 
     Q_OBJECT
 
     public:
-        SeerEditorWidgetLineNumberArea (SeerEditorWidgetSourceArea* editorWidget);
+        SeerEditorWidgetSourceLineNumberArea (SeerEditorWidgetSourceArea* editorWidget);
 
         QSize                               sizeHint                            () const override;
 
@@ -173,12 +173,12 @@ class SeerEditorWidgetLineNumberArea : public QWidget {
         SeerEditorWidgetSourceArea*         _editorWidget;
 };
 
-class SeerEditorWidgetBreakPointArea : public QWidget {
+class SeerEditorWidgetSourceBreakPointArea : public QWidget {
 
     Q_OBJECT
 
     public:
-        SeerEditorWidgetBreakPointArea (SeerEditorWidgetSourceArea* editorWidget);
+        SeerEditorWidgetSourceBreakPointArea (SeerEditorWidgetSourceArea* editorWidget);
 
         QSize                               sizeHint                            () const override;
 
@@ -193,12 +193,12 @@ class SeerEditorWidgetBreakPointArea : public QWidget {
         SeerEditorWidgetSourceArea*         _editorWidget;
 };
 
-class SeerEditorWidgetMiniMapArea : public QWidget {
+class SeerEditorWidgetSourceMiniMapArea : public QWidget {
 
     Q_OBJECT
 
     public:
-        SeerEditorWidgetMiniMapArea (SeerEditorWidgetSourceArea* editorWidget);
+        SeerEditorWidgetSourceMiniMapArea (SeerEditorWidgetSourceArea* editorWidget);
 
         QSize                               sizeHint                            () const override;
 

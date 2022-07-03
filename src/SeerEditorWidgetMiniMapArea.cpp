@@ -2,19 +2,19 @@
 #include <QtGui/QTextCursor>
 #include <QtCore/QDebug>
 
-SeerEditorWidgetMiniMapArea::SeerEditorWidgetMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
+SeerEditorWidgetSourceMiniMapArea::SeerEditorWidgetSourceMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
     _editorWidget = editorWidget;
 }
 
-QSize SeerEditorWidgetMiniMapArea::sizeHint () const {
+QSize SeerEditorWidgetSourceMiniMapArea::sizeHint () const {
     return QSize(_editorWidget->miniMapAreaWidth(), 0);
 }
 
-void SeerEditorWidgetMiniMapArea::paintEvent (QPaintEvent* event) {
+void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
     _editorWidget->miniMapAreaPaintEvent(event);
 }
 
-void SeerEditorWidgetMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
 
@@ -23,7 +23,7 @@ void SeerEditorWidgetMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
     QWidget::mouseDoubleClickEvent(event);
 }
 
-void SeerEditorWidgetMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
 
     QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
 
@@ -32,7 +32,7 @@ void SeerEditorWidgetMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
     QWidget::mouseMoveEvent(event);
 }
 
-void SeerEditorWidgetMiniMapArea::mousePressEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
 
     QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
 
@@ -41,7 +41,7 @@ void SeerEditorWidgetMiniMapArea::mousePressEvent (QMouseEvent* event) {
     QWidget::mousePressEvent(event);
 }
 
-void SeerEditorWidgetMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
 

@@ -1,19 +1,19 @@
 #include "SeerEditorWidget.h"
 #include <QtCore/QDebug>
 
-SeerEditorWidgetLineNumberArea::SeerEditorWidgetLineNumberArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
+SeerEditorWidgetSourceLineNumberArea::SeerEditorWidgetSourceLineNumberArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
     _editorWidget = editorWidget;
 }
 
-QSize SeerEditorWidgetLineNumberArea::sizeHint () const {
+QSize SeerEditorWidgetSourceLineNumberArea::sizeHint () const {
     return QSize(_editorWidget->lineNumberAreaWidth(), 0);
 }
 
-void SeerEditorWidgetLineNumberArea::paintEvent (QPaintEvent* event) {
+void SeerEditorWidgetSourceLineNumberArea::paintEvent (QPaintEvent* event) {
     _editorWidget->lineNumberAreaPaintEvent(event);
 }
 
-void SeerEditorWidgetLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
         _editorWidget->setQuickBreakpoint(event);
@@ -23,12 +23,12 @@ void SeerEditorWidgetLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) 
     }
 }
 
-void SeerEditorWidgetLineNumberArea::mouseMoveEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceLineNumberArea::mouseMoveEvent (QMouseEvent* event) {
 
     QWidget::mouseMoveEvent(event);
 }
 
-void SeerEditorWidgetLineNumberArea::mousePressEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceLineNumberArea::mousePressEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::RightButton) {
         _editorWidget->showContextMenu(event);
@@ -39,7 +39,7 @@ void SeerEditorWidgetLineNumberArea::mousePressEvent (QMouseEvent* event) {
 
 }
 
-void SeerEditorWidgetLineNumberArea::mouseReleaseEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceLineNumberArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QWidget::mouseReleaseEvent(event);
 }

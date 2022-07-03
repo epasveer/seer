@@ -43,9 +43,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
     setLineWrapMode(QPlainTextEdit::NoWrap);
 
-    _lineNumberArea = new SeerEditorWidgetLineNumberArea(this);
-    _breakPointArea = new SeerEditorWidgetBreakPointArea(this);
-    _miniMapArea    = new SeerEditorWidgetMiniMapArea(this);
+    _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
+    _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
+    _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
     _miniMapPixmap  = 0;
 
     enableLineNumberArea(true);
