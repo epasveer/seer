@@ -27,6 +27,10 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QDebug>
 
+//
+// Assembly Area
+//
+
 SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
     _enableLineNumberArea = false;
@@ -1107,5 +1111,150 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
         _currentAddress = "";
     }
+}
+
+//
+// LineNumber Area
+//
+
+SeerEditorWidgetAssemblyLineNumberArea::SeerEditorWidgetAssemblyLineNumberArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyLineNumberArea::sizeHint () const {
+    return QSize(_editorWidget->lineNumberAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyLineNumberArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->lineNumberAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyLineNumberArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyLineNumberArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+
+}
+
+void SeerEditorWidgetAssemblyLineNumberArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// Breakpoint Area.
+//
+
+SeerEditorWidgetAssemblyBreakPointArea::SeerEditorWidgetAssemblyBreakPointArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyBreakPointArea::sizeHint () const {
+    return QSize(_editorWidget->breakPointAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->breakPointAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// MiniMap Area
+//
+
+SeerEditorWidgetAssemblyMiniMapArea::SeerEditorWidgetAssemblyMiniMapArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyMiniMapArea::sizeHint () const {
+    return QSize(_editorWidget->miniMapAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->miniMapAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseDoubleClickEvent(event);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mousePressEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mousePressEvent(event);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+
+    qDebug() << cursor.blockNumber()+1;
+
+    QWidget::mouseReleaseEvent(event);
 }
 

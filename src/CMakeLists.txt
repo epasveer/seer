@@ -121,7 +121,7 @@ set(SOURCE_FILES
     SeerEditorWidgetLineNumberArea.cpp
     SeerEditorWidgetMiniMapArea.cpp
     SeerEditorWidgetSourceArea.cpp
-    SeerEditorWidgetAssemblyArea.cpp
+    SeerEditorWidgetAssemblyAreas.cpp
     SeerGdbWidget.cpp
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
