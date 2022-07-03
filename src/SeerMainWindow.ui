@@ -60,6 +60,7 @@
     </widget>
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
+    <addaction name="actionViewAssembly"/>
     <addaction name="menuConsole"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -490,6 +491,14 @@
    </property>
    <property name="statusTip">
     <string>Execute next instruction, step into functions.</string>
+   </property>
+  </action>
+  <action name="actionViewAssembly">
+   <property name="text">
+    <string>Assembly View</string>
+   </property>
+   <property name="statusTip">
+    <string>View the program's assembly.</string>
    </property>
   </action>
  </widget>

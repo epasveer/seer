@@ -34,7 +34,6 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Create a place holder tab with a special name of "".
     createEditorWidgetTab("", "");
-    createAssemblyWidgetTab();
 
     // Connect things.
     QObject::connect(tabWidget,                                 &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
@@ -107,6 +106,17 @@ SeerEditorManagerEntries::const_iterator SeerEditorManagerWidget::endEntry () co
 
 void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i) {
     _entries.erase(i);
+}
+
+void SeerEditorManagerWidget::showAssembly () {
+
+    // Create and show the assembly widget if it isn't already.
+    if (assemblyWidgetTab() == 0) {
+        createAssemblyWidgetTab();
+    }
+
+    assemblyWidgetTab()->assemblyArea()->requestAssembly("$pc");
+    //assemblyWidgetTab()->assemblyArea()->setAddress("$pc"); // XXX
 }
 
 SeerAssemblyWidget* SeerEditorManagerWidget::assemblyWidgetTab () {
@@ -692,29 +702,47 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
     //qDebug() << index << tabWidget->count() << tabWidget->tabText(index);
 
-    // Get the editor widget.
-    SeerEditorWidget* editorWidget = static_cast<SeerEditorWidget*>(tabWidget->widget(index));
+    // Get the editor widget. Try as a SeerEditorWidget.
+    SeerEditorWidget* editorWidget = dynamic_cast<SeerEditorWidget*>(tabWidget->widget(index));
+    if (editorWidget != 0) {
 
-    // Look for the matching entry for the EditorWidget.
-    // If found, delete it and clean up the map.
-    SeerEditorManagerEntries::iterator b = beginEntry();
-    SeerEditorManagerEntries::iterator e = endEntry();
+        // Look for the matching entry for the EditorWidget.
+        // If found, delete it and clean up the map.
+        SeerEditorManagerEntries::iterator b = beginEntry();
+        SeerEditorManagerEntries::iterator e = endEntry();
 
-    while (b != e) {
-        if (editorWidget == b->widget) {
+        while (b != e) {
+            if (editorWidget == b->widget) {
 
-            deleteEntry(b);                 // Delete the entry from the map.
-            tabWidget->removeTab(index);    // Remove the tab.
-            delete editorWidget;            // Delete the actual EditorWidget
+                deleteEntry(b);                 // Delete the entry from the map.
+                tabWidget->removeTab(index);    // Remove the tab.
+                delete editorWidget;            // Delete the actual EditorWidget
 
-            break;
+                break;
+            }
+
+            b++;
         }
 
-        b++;
+        return;
+    }
+
+    // Get the editor widget. Try as a SeerAssemblyWidget.
+    SeerAssemblyWidget* assemblyWidget = dynamic_cast<SeerAssemblyWidget*>(tabWidget->widget(index));
+    if (assemblyWidget != 0) {
+
+        deleteAssemblyWidgetTab();
+
+        return;
     }
 }
 
 SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
+
+    // Does it already exist?
+    if (assemblyWidgetTab() != 0) {
+        return assemblyWidgetTab();
+    }
 
     //qDebug() << tabWidget->count() << tabWidget->tabText(0);
 

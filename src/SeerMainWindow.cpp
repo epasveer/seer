@@ -67,6 +67,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionFileQuit,                    &QAction::triggered,                    this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionViewAssembly,                &QAction::triggered,                    this,           &SeerMainWindow::handleViewAssembly);
     QObject::connect(actionConsoleNormal,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleNormal);
     QObject::connect(actionConsoleHidden,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleHidden);
     QObject::connect(actionConsoleMinimized,            &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleMinimized);
@@ -334,6 +335,11 @@ void SeerMainWindow::handleViewMemoryVisualizer () {
 void SeerMainWindow::handleViewArrayVisualizer () {
 
     gdbWidget->handleGdbArrayVisualizer();
+}
+
+void SeerMainWindow::handleViewAssembly () {
+
+    gdbWidget->editorManager()->showAssembly();
 }
 
 void SeerMainWindow::handleViewConsoleNormal () {

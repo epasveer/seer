@@ -30,6 +30,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries::const_iterator        endEntry                            () const;
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
+        void                                            showAssembly                        ();
         SeerAssemblyWidget*                             assemblyWidgetTab                   ();
 
         SeerEditorManagerFiles                          openedFiles                         () const;
