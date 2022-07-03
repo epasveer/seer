@@ -49,6 +49,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleText                          (const QString& text);
         void                                            handleTabCloseRequested             (int index);
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
+        void                                            handleOpenAddress                   (const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
         void                                            handleInsertPrintpoint              (QString printpoint);
         void                                            handleDeleteBreakpoints             (QString breakpoints);

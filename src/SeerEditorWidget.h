@@ -293,6 +293,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
         int                                         miniMapAreaWidth                    ();
 
+        void                                        setAddress                          (const QString& address);
         void                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 

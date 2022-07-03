@@ -178,6 +178,7 @@ void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
     emit selectedFile(item->text(2), item->text(4), lineno);
     emit selectedFrame(item->text(0).toInt());
+    emit selectedAddress(item->text(5));
 }
 
 void SeerStackFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {

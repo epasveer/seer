@@ -433,7 +433,6 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 SeerEditorManagerEntries::iterator e = endEntry();
 
                 if (i != e) {
-                    //qDebug() << fullname_text << line_text;
                     i->widget->sourceArea()->addCurrentLine(line_text.toInt());
                 }
             }
@@ -547,6 +546,25 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
 
     // Ask for the stackframe list to be resent, in case this file has currently executing lines.
     emit refreshStackFrames();
+}
+
+void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
+
+    // Must have a valid address.
+    if (address == "") {
+        return;
+    }
+
+    // Get the AssemblyWidget so the address can be loaded. Return if there is none.
+    SeerAssemblyWidget* assemblyWidget = new SeerAssemblyWidget(this);
+
+    if (assemblyWidget == 0) {
+        return;
+    }
+
+    qDebug() << address;
+
+    assemblyWidget->assemblyArea()->setAddress(address);
 }
 
 SeerEditorWidget* SeerEditorManagerWidget::currentEditorWidgetTab () {
@@ -715,7 +733,7 @@ SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     tabWidget->setTabToolTip(_assemblyIndex, "Assembly");
 
     // Connect signals.
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly,     Qt::QueuedConnection);
 
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::insertBreakpoint,        this, &SeerEditorManagerWidget::handleInsertBreakpoint);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::deleteBreakpoints,       this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
@@ -945,7 +963,7 @@ void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
 void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
 
-    //qDebug() << address;
+    qDebug() << "!!!Requesting!!!" << address;
 
     // rethrow
     emit requestAssembly (address);

@@ -477,6 +477,21 @@ void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
     setExtraSelections(extraSelections);
 }
 
+void SeerEditorWidgetAssemblyArea::setAddress (const QString& address) {
+
+    // Emit the signal to load the assembly for address 'address' if
+    // it's not already loaded.
+    if (_addressLineMap.contains(address.toULongLong(0,0)) == false) {
+
+        // Hack to keep track of address when the assembly hasn't been loaded yet.
+        _currentAddress = address;
+
+        qDebug() << "!!!Requesting!!!" << address;
+
+        emit requestAssembly(address);
+    }
+}
+
 void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
     //qDebug() << address;
@@ -978,11 +993,8 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         //qDebug() << frame_text;
         //qDebug() << addr_text << fullname_text << file_text << line_text;
 
-        // Emit the signal to load the assembly for address 'addr'
-        if (_addressLineMap.contains(addr_text.toULongLong(0,0)) == false) {
-            _currentAddress = addr_text;
-            emit requestAssembly(addr_text);
-        }
+        // Will emit the load signal, if 'addr_text' is not already loaded.
+        setAddress(addr_text);
 
         // Set to the line number.
         setCurrentLine(addr_text);
@@ -1023,6 +1035,8 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         }
 
     }else if (text.startsWith("^done,asm_insns=")) {
+
+        qDebug() << "asm_insns";
 
         // Clear the existing document.
         document()->clear();

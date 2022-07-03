@@ -127,15 +127,11 @@ void SeerAssemblyWidget::setSearchMatchCase (bool flag) {
 
 void SeerAssemblyWidget::handleSearchLineNumberLineEdit () {
 
-    QString str = searchLineNumberLineEdit->text();
+    QString address = searchLineNumberLineEdit->text();
 
-    if (str == "") {
+    if (address == "") {
         return;
     }
-
-    // Convert str to a gdb ready address. XXX
-
-    QString address = str;
 
     searchLineNumberLineEdit->clear();
 
