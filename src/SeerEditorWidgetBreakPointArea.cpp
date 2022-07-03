@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
 #include <QtCore/QDebug>
 
 SeerEditorWidgetSourceBreakPointArea::SeerEditorWidgetSourceBreakPointArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {

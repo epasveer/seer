@@ -139,7 +139,7 @@
   <customwidget>
    <class>SeerEditorWidgetAssemblyArea</class>
    <extends>QWidget</extends>
-   <header location="global">SeerEditorWidget.h</header>
+   <header location="global">SeerEditorWidgetAssembly.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

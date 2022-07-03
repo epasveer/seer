@@ -43,7 +43,7 @@ set(HEADER_FILES
     SeerEditorManagerWidget.h
     SeerEditorOptionsBarWidget.h
     SeerBreakpointsOptionsBarWidget.h
-    SeerEditorWidget.h
+    SeerEditorWidgetSource.h
     SeerEditorWidgetAssembly.h
     SeerExecutableFilterProxyModel.h
     SeerGdbWidget.h
@@ -116,12 +116,12 @@ set(SOURCE_FILES
     SeerEditorManagerWidget.cpp
     SeerEditorOptionsBarWidget.cpp
     SeerBreakpointsOptionsBarWidget.cpp
+    SeerEditorWidgetSource.cpp
+    SeerEditorWidgetSourceArea.cpp
     SeerEditorWidgetBreakPointArea.cpp
-    SeerEditorWidget.cpp
-    SeerEditorWidgetAssembly.cpp
     SeerEditorWidgetLineNumberArea.cpp
     SeerEditorWidgetMiniMapArea.cpp
-    SeerEditorWidgetSourceArea.cpp
+    SeerEditorWidgetAssembly.cpp
     SeerEditorWidgetAssemblyAreas.cpp
     SeerGdbWidget.cpp
     SeerHexWidget.cpp

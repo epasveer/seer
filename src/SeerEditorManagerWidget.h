@@ -92,10 +92,10 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestAssembly                     (QString address);
 
     private:
-        SeerEditorWidget*                               currentEditorWidgetTab              ();
-        SeerEditorWidget*                               editorWidgetTab                     (const QString& fullname);
-        SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file, const QString& text);
-        SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file);
+        SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
+        SeerEditorWidgetSource*                         editorWidgetTab                     (const QString& fullname);
+        SeerEditorWidgetSource*                         createEditorWidgetTab               (const QString& fullname, const QString& file, const QString& text);
+        SeerEditorWidgetSource*                         createEditorWidgetTab               (const QString& fullname, const QString& file);
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();

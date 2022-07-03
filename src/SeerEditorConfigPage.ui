@@ -21,7 +21,7 @@
     <number>0</number>
    </property>
    <item row="2" column="0">
-    <widget class="SeerEditorWidget" name="editorWidget" native="true">
+    <widget class="SeerEditorWidgetSource" name="editorWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -153,9 +153,9 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SeerEditorWidget</class>
+   <class>SeerEditorWidgetSource</class>
    <extends>QWidget</extends>
-   <header location="global">SeerEditorWidget.h</header>
+   <header location="global">SeerEditorWidgetSource.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

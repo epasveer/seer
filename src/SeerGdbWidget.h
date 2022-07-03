@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SeerConsoleWidget.h"
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
 #include "SeerGdbLogWidget.h"
 #include "SeerSeerLogWidget.h"
 #include "SeerBreakpointsBrowserWidget.h"

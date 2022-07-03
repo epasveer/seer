@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
@@ -52,11 +52,11 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     enableBreakPointArea(true);
     enableMiniMapArea(false);  // Doesn't work yet. Need to work on the "mini" part.
 
-    QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this,            &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateLineNumberArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateBreakPointArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this,            &SeerEditorWidgetSourceArea::updateMiniMapArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this,            &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this, &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateMiniMapArea);
+    QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
     setCurrentLine(0);
 

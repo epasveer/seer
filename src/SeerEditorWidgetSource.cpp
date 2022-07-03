@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QTextBlock>
@@ -17,7 +17,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
+SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
@@ -40,33 +40,33 @@ SeerEditorWidget::SeerEditorWidget(QWidget* parent) : QWidget(parent) {
     setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchTextLineEdit);
-    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerEditorWidget::handleSearchTextLineEdit);
-    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
-    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
-    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleSearchLineNumberLineEdit);
-    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidget::handleSearchCloseToolButton);
-    QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateCloseToolButton);
-    QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateFileOpenToolButton);
-    QObject::connect(alternateAddToGlobalToolButton,    &QToolButton::clicked,                          this,  &SeerEditorWidget::handleAlternateAddToGlobalToolButton);
-    QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                      this,  &SeerEditorWidget::handleAlternateLineEdit);
-    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,     this,  &SeerEditorWidget::showSearchBar);
-    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,  this,  &SeerEditorWidget::showAlternateBar);
+    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                               this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
+    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
+    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleSearchLineNumberLineEdit);
+    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchCloseToolButton);
+    QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateCloseToolButton);
+    QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateFileOpenToolButton);
+    QObject::connect(alternateAddToGlobalToolButton,    &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateAddToGlobalToolButton);
+    QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleAlternateLineEdit);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,             this,  &SeerEditorWidgetSource::showSearchBar);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,          this,  &SeerEditorWidgetSource::showAlternateBar);
 
-    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidget::handleTextSearchShortcut);
-    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchDownToolButton);
-    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidget::handleSearchUpToolButton);
-    QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                          this,  &SeerEditorWidget::handleAlternateDirectoryShortcut);
+    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleTextSearchShortcut);
+    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
+    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
+    QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
 }
 
-SeerEditorWidget::~SeerEditorWidget () {
+SeerEditorWidgetSource::~SeerEditorWidgetSource () {
 }
 
-SeerEditorWidgetSourceArea* SeerEditorWidget::sourceArea () {
+SeerEditorWidgetSourceArea* SeerEditorWidgetSource::sourceArea () {
     return sourceWidget;
 }
 
-bool SeerEditorWidget::isSearchBarShown () const {
+bool SeerEditorWidgetSource::isSearchBarShown () const {
 
     bool shown = false;
 
@@ -83,12 +83,12 @@ bool SeerEditorWidget::isSearchBarShown () const {
     return shown;
 }
 
-bool SeerEditorWidget::searchMatchCase () const {
+bool SeerEditorWidgetSource::searchMatchCase () const {
 
     return matchCaseCheckBox->isChecked();
 }
 
-bool SeerEditorWidget::isAlternateBarShown () const {
+bool SeerEditorWidgetSource::isAlternateBarShown () const {
 
     bool shown = false;
 
@@ -105,7 +105,7 @@ bool SeerEditorWidget::isAlternateBarShown () const {
     return shown;
 }
 
-void SeerEditorWidget::setKeySettings (const SeerKeySettings& settings) {
+void SeerEditorWidgetSource::setKeySettings (const SeerKeySettings& settings) {
 
     _keySettings = settings;
 
@@ -126,12 +126,12 @@ void SeerEditorWidget::setKeySettings (const SeerKeySettings& settings) {
     }
 }
 
-const SeerKeySettings& SeerEditorWidget::keySettings () const {
+const SeerKeySettings& SeerEditorWidgetSource::keySettings () const {
 
     return _keySettings;
 }
 
-void SeerEditorWidget::showSearchBar (bool flag) {
+void SeerEditorWidgetSource::showSearchBar (bool flag) {
 
     // Go through the widgets in the search bar and hide/show them.
     for (int i = 0; i != searchBarLayout->count(); ++i) {
@@ -150,12 +150,12 @@ void SeerEditorWidget::showSearchBar (bool flag) {
     searchBarLayout->update();
 }
 
-void SeerEditorWidget::setSearchMatchCase (bool flag) {
+void SeerEditorWidgetSource::setSearchMatchCase (bool flag) {
 
     matchCaseCheckBox->setChecked(flag);
 }
 
-void SeerEditorWidget::showAlternateBar (bool flag) {
+void SeerEditorWidgetSource::showAlternateBar (bool flag) {
 
     // Set the label's text.
     alternateLabel->setText("Enter directory path for '" + sourceArea()->file() + "'");
@@ -177,7 +177,7 @@ void SeerEditorWidget::showAlternateBar (bool flag) {
     alternateBarLayout->update();
 }
 
-void SeerEditorWidget::handleSearchLineNumberLineEdit () {
+void SeerEditorWidgetSource::handleSearchLineNumberLineEdit () {
 
     QString str = searchLineNumberLineEdit->text();
 
@@ -196,7 +196,7 @@ void SeerEditorWidget::handleSearchLineNumberLineEdit () {
     sourceArea()->scrollToLine(lineno);
 }
 
-void SeerEditorWidget::handleSearchTextLineEdit () {
+void SeerEditorWidgetSource::handleSearchTextLineEdit () {
 
     QString str = searchTextLineEdit->text();
 
@@ -212,7 +212,7 @@ void SeerEditorWidget::handleSearchTextLineEdit () {
     matchesLabel->setText(QString("(%1)").arg(nMatches));
 }
 
-void SeerEditorWidget::handleSearchDownToolButton () {
+void SeerEditorWidgetSource::handleSearchDownToolButton () {
 
     QString str = searchTextLineEdit->text();
 
@@ -223,7 +223,7 @@ void SeerEditorWidget::handleSearchDownToolButton () {
     sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()));
 }
 
-void SeerEditorWidget::handleSearchUpToolButton () {
+void SeerEditorWidgetSource::handleSearchUpToolButton () {
 
     QString str = searchTextLineEdit->text();
 
@@ -234,15 +234,15 @@ void SeerEditorWidget::handleSearchUpToolButton () {
     sourceArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()) | QTextDocument::FindBackward);
 }
 
-void SeerEditorWidget::handleSearchCloseToolButton () {
+void SeerEditorWidgetSource::handleSearchCloseToolButton () {
     showSearchBar(false);
 }
 
-void SeerEditorWidget::handleAlternateCloseToolButton () {
+void SeerEditorWidgetSource::handleAlternateCloseToolButton () {
     showAlternateBar(false);
 }
 
-void SeerEditorWidget::handleAlternateFileOpenToolButton () {
+void SeerEditorWidgetSource::handleAlternateFileOpenToolButton () {
 
     //qDebug() << "fullname =" << sourceArea()->fullname();
     //qDebug() << "file     =" << sourceArea()->file();
@@ -257,7 +257,7 @@ void SeerEditorWidget::handleAlternateFileOpenToolButton () {
     }
 }
 
-void SeerEditorWidget::handleAlternateLineEdit () {
+void SeerEditorWidgetSource::handleAlternateLineEdit () {
 
     showAlternateBar(false);
 
@@ -268,7 +268,7 @@ void SeerEditorWidget::handleAlternateLineEdit () {
     sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
 }
 
-void SeerEditorWidget::handleAlternateAddToGlobalToolButton () {
+void SeerEditorWidgetSource::handleAlternateAddToGlobalToolButton () {
 
     if (alternateLineEdit->text() == "") {
         return;
@@ -279,7 +279,7 @@ void SeerEditorWidget::handleAlternateAddToGlobalToolButton () {
     emit addAlternateDirectory(alternateLineEdit->text());
 }
 
-void SeerEditorWidget::handleTextSearchShortcut () {
+void SeerEditorWidgetSource::handleTextSearchShortcut () {
 
     if (isSearchBarShown() == true) {
         showSearchBar(false);
@@ -288,7 +288,7 @@ void SeerEditorWidget::handleTextSearchShortcut () {
     }
 }
 
-void SeerEditorWidget::handleAlternateDirectoryShortcut () {
+void SeerEditorWidgetSource::handleAlternateDirectoryShortcut () {
 
     if (isAlternateBarShown() == true) {
         showAlternateBar(false);

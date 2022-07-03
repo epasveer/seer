@@ -1,5 +1,6 @@
 #include "SeerEditorManagerWidget.h"
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
+#include "SeerEditorWidgetAssembly.h"
 #include "SeerEditorOptionsBarWidget.h"
 #include "SeerCloseSourceDialog.h"
 #include "SeerUtl.h"
@@ -293,7 +294,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
         // Get the EditorWidget for the file. Create one if needed.
-        SeerEditorWidget* editorWidget = editorWidgetTab(fullname_text);
+        SeerEditorWidgetSource* editorWidget = editorWidgetTab(fullname_text);
 
         if (editorWidget == 0) {
             editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
@@ -487,7 +488,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         QWidget* w = tabWidget->currentWidget();
 
         if (w) {
-            static_cast<SeerEditorWidget*>(w)->sourceArea()->handleText(text);
+            static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
@@ -498,7 +499,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         QWidget* w = tabWidget->currentWidget();
 
         if (w) {
-            static_cast<SeerEditorWidget*>(w)->sourceArea()->handleText(text);
+            static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
         }
 
     }else{
@@ -533,7 +534,7 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
     }
 
     // Get the EditorWidget for the file. Create one if needed.
-    SeerEditorWidget* editorWidget = editorWidgetTab(fullname);
+    SeerEditorWidgetSource* editorWidget = editorWidgetTab(fullname);
 
     if (editorWidget == 0) {
         editorWidget = createEditorWidgetTab(fullname, file);
@@ -579,7 +580,7 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
     assemblyWidget->assemblyArea()->setAddress(address);
 }
 
-SeerEditorWidget* SeerEditorManagerWidget::currentEditorWidgetTab () {
+SeerEditorWidgetSource* SeerEditorManagerWidget::currentEditorWidgetTab () {
 
     QWidget* w = tabWidget->currentWidget();
 
@@ -587,10 +588,10 @@ SeerEditorWidget* SeerEditorManagerWidget::currentEditorWidgetTab () {
         return 0;
     }
 
-    return dynamic_cast<SeerEditorWidget*>(w);
+    return dynamic_cast<SeerEditorWidgetSource*>(w);
 }
 
-SeerEditorWidget* SeerEditorManagerWidget::editorWidgetTab (const QString& fullname) {
+SeerEditorWidgetSource* SeerEditorManagerWidget::editorWidgetTab (const QString& fullname) {
 
     // Do we have an entry for 'fullname'?
     SeerEditorManagerEntries::iterator i = findEntry(fullname);
@@ -602,7 +603,7 @@ SeerEditorWidget* SeerEditorManagerWidget::editorWidgetTab (const QString& fulln
     return i->widget;
 }
 
-SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file, const QString& text) {
+SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file, const QString& text) {
 
     //qDebug() << fullname << file << text << tabWidget->count() << tabWidget->tabText(0);
 
@@ -612,7 +613,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     }
 
     // Create the Editor widget and add it to the tab.
-    SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
+    SeerEditorWidgetSource* editorWidget = new SeerEditorWidgetSource(this);
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
@@ -637,7 +638,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget,               &SeerEditorWidget::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -650,7 +651,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     return i->widget;
 }
 
-SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file) {
+SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file) {
 
     //qDebug() << fullname << file << tabWidget->count() << tabWidget->tabText(0);
 
@@ -660,7 +661,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     }
 
     // Create the Editor widget and add it to the tab.
-    SeerEditorWidget* editorWidget = new SeerEditorWidget(this);
+    SeerEditorWidgetSource* editorWidget = new SeerEditorWidgetSource(this);
     editorWidget->sourceArea()->setFont(editorFont());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
@@ -685,7 +686,7 @@ SeerEditorWidget* SeerEditorManagerWidget::createEditorWidgetTab (const QString&
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget,               &SeerEditorWidget::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -702,8 +703,8 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
     //qDebug() << index << tabWidget->count() << tabWidget->tabText(index);
 
-    // Get the editor widget. Try as a SeerEditorWidget.
-    SeerEditorWidget* editorWidget = dynamic_cast<SeerEditorWidget*>(tabWidget->widget(index));
+    // Get the editor widget. Try as a SeerEditorWidgetSource.
+    SeerEditorWidgetSource* editorWidget = dynamic_cast<SeerEditorWidgetSource*>(tabWidget->widget(index));
     if (editorWidget != 0) {
 
         // Look for the matching entry for the EditorWidget.
@@ -823,7 +824,7 @@ void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
     for (int i=0; i<files.size(); i++) {
 
-        SeerEditorWidget* w = editorWidgetTab(files[i].fullname);
+        SeerEditorWidgetSource* w = editorWidgetTab(files[i].fullname);
 
         if (w == 0) {
             qWarning() << "Can't find opened file for:" << files[i].fullname;
@@ -848,7 +849,7 @@ void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
-    SeerEditorWidget* w = currentEditorWidgetTab();
+    SeerEditorWidgetSource* w = currentEditorWidgetTab();
 
     if (w == 0) {
         return;

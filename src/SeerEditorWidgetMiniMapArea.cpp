@@ -1,4 +1,4 @@
-#include "SeerEditorWidget.h"
+#include "SeerEditorWidgetSource.h"
 #include <QtGui/QTextCursor>
 #include <QtCore/QDebug>
 
