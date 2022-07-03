@@ -32,6 +32,7 @@
     <file>resources/minimize.png</file>
     <file>resources/up_arrow.png</file>
     <file>resources/down_arrow.png</file>
+    <file>resources/assembly.png</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>
     <file>resources/RelaxLightIcons/document-open.svg</file>
     <file>resources/RelaxLightIcons/document-print.svg</file>
