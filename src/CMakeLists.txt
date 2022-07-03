@@ -117,7 +117,7 @@ set(SOURCE_FILES
     SeerBreakpointsOptionsBarWidget.cpp
     SeerEditorWidgetBreakPointArea.cpp
     SeerEditorWidget.cpp
-    SeerAssemblyWidget.cpp
+    SeerEditorWidgetAssembly.cpp
     SeerEditorWidgetLineNumberArea.cpp
     SeerEditorWidgetMiniMapArea.cpp
     SeerEditorWidgetSourceArea.cpp

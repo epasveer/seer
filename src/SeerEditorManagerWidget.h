@@ -31,7 +31,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
         void                                            showAssembly                        ();
-        SeerAssemblyWidget*                             assemblyWidgetTab                   ();
+        SeerEditorWidgetAssembly*                       assemblyWidgetTab                   ();
 
         SeerEditorManagerFiles                          openedFiles                         () const;
 
@@ -96,7 +96,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file, const QString& text);
         SeerEditorWidget*                               createEditorWidgetTab               (const QString& fullname, const QString& file);
         void                                            deleteEditorWidgetTab               (int index);
-        SeerAssemblyWidget*                             createAssemblyWidgetTab             ();
+        SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
 
         SeerEditorManagerEntries                        _entries;
@@ -105,7 +105,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
         SeerKeySettings                                 _editorKeySettings;
-        SeerAssemblyWidget*                             _assemblyWidget;
+        SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
 };
 

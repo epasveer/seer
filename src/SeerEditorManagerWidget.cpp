@@ -119,7 +119,7 @@ void SeerEditorManagerWidget::showAssembly () {
     //assemblyWidgetTab()->assemblyArea()->setAddress("$pc"); // XXX
 }
 
-SeerAssemblyWidget* SeerEditorManagerWidget::assemblyWidgetTab () {
+SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {
     return _assemblyWidget;
 }
 
@@ -159,7 +159,7 @@ void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
     }
 
     // Don't forget about the assembly widget.
-    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
         assemblyWidget->assemblyArea()->setFont(editorFont());
@@ -185,7 +185,7 @@ void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighte
     }
 
     // Don't forget about the assembly widget.
-    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
         assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
@@ -211,7 +211,7 @@ void SeerEditorManagerWidget::setEditorHighlighterEnabled (bool flag) {
     }
 
     // Don't forget about the assembly widget.
-    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
         assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
@@ -254,7 +254,7 @@ void SeerEditorManagerWidget::setEditorKeySettings (const SeerKeySettings& setti
     }
 
     // Don't forget about the assembly widget.
-    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
         assemblyWidget->setKeySettings(editorKeySettings());
@@ -312,7 +312,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         editorWidget->sourceArea()->handleText(text);
 
         // Get the AssemblyWidget.
-        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
@@ -353,7 +353,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
         // Tell the assembly widget to clear its breakpoints.
-        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->clearBreakpoints();
@@ -393,7 +393,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 }
 
                 // Tell the assembly widget about the breakpoint. If the address is in its range, it will add it.
-                SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+                SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
                 if (assemblyWidget) {
                     assemblyWidget->assemblyArea()->addBreakpoint(number_text.toInt(), addr_text, (enabled_text == "y" ? true : false));
@@ -451,7 +451,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
         // Get the AssemblyWidget.
-        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
@@ -460,7 +460,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
     }else if (text.startsWith("^done,asm_insns=")) {
 
         // Get the AssemblyWidget.
-        SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
@@ -568,7 +568,7 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
     }
 
     // Get the AssemblyWidget so the address can be loaded. Return if there is no widget.
-    SeerAssemblyWidget* assemblyWidget = assemblyWidgetTab();
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget == 0) {
         return;
@@ -727,8 +727,8 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
         return;
     }
 
-    // Get the editor widget. Try as a SeerAssemblyWidget.
-    SeerAssemblyWidget* assemblyWidget = dynamic_cast<SeerAssemblyWidget*>(tabWidget->widget(index));
+    // Get the editor widget. Try as a SeerEditorWidgetAssembly.
+    SeerEditorWidgetAssembly* assemblyWidget = dynamic_cast<SeerEditorWidgetAssembly*>(tabWidget->widget(index));
     if (assemblyWidget != 0) {
 
         deleteAssemblyWidgetTab();
@@ -737,7 +737,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
     }
 }
 
-SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
+SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
 
     // Does it already exist?
     if (assemblyWidgetTab() != 0) {
@@ -752,7 +752,7 @@ SeerAssemblyWidget* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     }
 
     // Create the Editor widget and add it to the tab.
-    SeerAssemblyWidget* assemblyWidget = new SeerAssemblyWidget(this);
+    SeerEditorWidgetAssembly* assemblyWidget = new SeerEditorWidgetAssembly(this);
     assemblyWidget->assemblyArea()->setFont(editorFont());
     assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());

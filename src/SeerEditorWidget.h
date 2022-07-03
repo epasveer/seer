@@ -430,15 +430,15 @@ class SeerEditorWidgetAssemblyMiniMapArea : public QWidget {
         SeerEditorWidgetAssemblyArea*       _editorWidget;
 };
 
-#include "ui_SeerAssemblyWidget.h"
+#include "ui_SeerEditorWidgetAssembly.h"
 
-class SeerAssemblyWidget : public QWidget, protected Ui::SeerAssemblyWidgetForm {
+class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetAssemblyForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerAssemblyWidget (QWidget* parent = 0);
-       ~SeerAssemblyWidget ();
+        explicit SeerEditorWidgetAssembly (QWidget* parent = 0);
+       ~SeerEditorWidgetAssembly ();
 
         SeerEditorWidgetAssemblyArea*       assemblyArea                        ();
 

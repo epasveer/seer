@@ -17,7 +17,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
+SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
@@ -37,27 +37,27 @@ SeerAssemblyWidget::SeerAssemblyWidget(QWidget* parent) : QWidget(parent) {
     setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerAssemblyWidget::handleSearchTextLineEdit);
-    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerAssemblyWidget::handleSearchTextLineEdit);
-    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerAssemblyWidget::handleSearchDownToolButton);
-    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerAssemblyWidget::handleSearchUpToolButton);
-    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerAssemblyWidget::handleSearchLineNumberLineEdit);
-    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerAssemblyWidget::handleSearchCloseToolButton);
-    QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerAssemblyWidget::showSearchBar);
+    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
+    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
+    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
+    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
+    QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
 
-    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleTextSearchShortcut);
-    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleSearchDownToolButton);
-    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerAssemblyWidget::handleSearchUpToolButton);
+    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);
+    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
+    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
 }
 
-SeerAssemblyWidget::~SeerAssemblyWidget () {
+SeerEditorWidgetAssembly::~SeerEditorWidgetAssembly () {
 }
 
-SeerEditorWidgetAssemblyArea* SeerAssemblyWidget::assemblyArea () {
+SeerEditorWidgetAssemblyArea* SeerEditorWidgetAssembly::assemblyArea () {
     return assemblyWidget;
 }
 
-bool SeerAssemblyWidget::isSearchBarShown () const {
+bool SeerEditorWidgetAssembly::isSearchBarShown () const {
 
     bool shown = false;
 
@@ -74,12 +74,12 @@ bool SeerAssemblyWidget::isSearchBarShown () const {
     return shown;
 }
 
-bool SeerAssemblyWidget::searchMatchCase () const {
+bool SeerEditorWidgetAssembly::searchMatchCase () const {
 
     return matchCaseCheckBox->isChecked();
 }
 
-void SeerAssemblyWidget::setKeySettings (const SeerKeySettings& settings) {
+void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) {
 
     _keySettings = settings;
 
@@ -96,12 +96,12 @@ void SeerAssemblyWidget::setKeySettings (const SeerKeySettings& settings) {
     }
 }
 
-const SeerKeySettings& SeerAssemblyWidget::keySettings () const {
+const SeerKeySettings& SeerEditorWidgetAssembly::keySettings () const {
 
     return _keySettings;
 }
 
-void SeerAssemblyWidget::showSearchBar (bool flag) {
+void SeerEditorWidgetAssembly::showSearchBar (bool flag) {
 
     // Go through the widgets in the search bar and hide/show them.
     for (int i = 0; i != searchBarLayout->count(); ++i) {
@@ -120,12 +120,12 @@ void SeerAssemblyWidget::showSearchBar (bool flag) {
     searchBarLayout->update();
 }
 
-void SeerAssemblyWidget::setSearchMatchCase (bool flag) {
+void SeerEditorWidgetAssembly::setSearchMatchCase (bool flag) {
 
     matchCaseCheckBox->setChecked(flag);
 }
 
-void SeerAssemblyWidget::handleSearchLineNumberLineEdit () {
+void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {
 
     QString address = searchLineNumberLineEdit->text();
 
@@ -138,7 +138,7 @@ void SeerAssemblyWidget::handleSearchLineNumberLineEdit () {
     assemblyArea()->scrollToLine(address);
 }
 
-void SeerAssemblyWidget::handleSearchTextLineEdit () {
+void SeerEditorWidgetAssembly::handleSearchTextLineEdit () {
 
     QString str = searchTextLineEdit->text();
 
@@ -154,7 +154,7 @@ void SeerAssemblyWidget::handleSearchTextLineEdit () {
     matchesLabel->setText(QString("(%1)").arg(nMatches));
 }
 
-void SeerAssemblyWidget::handleSearchDownToolButton () {
+void SeerEditorWidgetAssembly::handleSearchDownToolButton () {
 
     QString str = searchTextLineEdit->text();
 
@@ -165,7 +165,7 @@ void SeerAssemblyWidget::handleSearchDownToolButton () {
     assemblyArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()));
 }
 
-void SeerAssemblyWidget::handleSearchUpToolButton () {
+void SeerEditorWidgetAssembly::handleSearchUpToolButton () {
 
     QString str = searchTextLineEdit->text();
 
@@ -176,11 +176,11 @@ void SeerAssemblyWidget::handleSearchUpToolButton () {
     assemblyArea()->find(str, (searchMatchCase() ? QTextDocument::FindCaseSensitively : QTextDocument::FindFlags()) | QTextDocument::FindBackward);
 }
 
-void SeerAssemblyWidget::handleSearchCloseToolButton () {
+void SeerEditorWidgetAssembly::handleSearchCloseToolButton () {
     showSearchBar(false);
 }
 
-void SeerAssemblyWidget::handleTextSearchShortcut () {
+void SeerEditorWidgetAssembly::handleTextSearchShortcut () {
 
     if (isSearchBarShown() == true) {
         showSearchBar(false);
