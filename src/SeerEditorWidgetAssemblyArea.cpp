@@ -486,8 +486,6 @@ void SeerEditorWidgetAssemblyArea::setAddress (const QString& address) {
         // Hack to keep track of address when the assembly hasn't been loaded yet.
         _currentAddress = address;
 
-        qDebug() << "!!!Requesting!!!" << address;
-
         emit requestAssembly(address);
     }
 }
@@ -1036,7 +1034,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
     }else if (text.startsWith("^done,asm_insns=")) {
 
-        qDebug() << "asm_insns";
+        //qDebug() << "asm_insns";
 
         // Clear the existing document.
         document()->clear();

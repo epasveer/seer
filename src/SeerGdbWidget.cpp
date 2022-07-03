@@ -1681,7 +1681,7 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
         return;
     }
 
-    qDebug() << "Getting assembly for address" << address;
+   //qDebug() << "Getting assembly for address" << address;
 
     handleGdbCommand("-data-disassemble -a " + address + " -- 2"); // Use '2' to add opcodes. '0' has no opcodes.
 }
