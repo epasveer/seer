@@ -7,7 +7,7 @@ namespace Seer {
     QString version () {
 
         // Increment this with every release on GitHub.
-        return "1.7";
+        return "1.8beta";
     }
 
     QString filterEscapes (const QString& str) {
