@@ -1,0 +1,13 @@
+#!/bin/sh -f
+
+#
+# Beginning of a script to set the Seer version number.
+# Need to update 3 files.
+#
+# Run from this 'script' directory.
+#
+
+# % cat ../src/CMakeLists.txt      | sed 's/^project(seer VERSION \b\S\+\b/project(seer VERSION x.x/g'
+# % cat ../src/SeerUtl.cpp         | sed 's/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION "x.x"/g'
+# % cat ../debian/changelog        | sed 's/^seer (\b\S\+\b)/seer (x.x)/g'
+

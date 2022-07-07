@@ -2,12 +2,16 @@
 #include <QtCore/QDebug>
 #include <mutex>
 
+//
+// Increment this with every release on GitHub.
+// See scripts/change_versionnumber
+//
+#define SEER_VERSION "1.8.beta"
+
 namespace Seer {
 
     QString version () {
-
-        // Increment this with every release on GitHub.
-        return "1.8beta";
+        return SEER_VERSION;
     }
 
     QString filterEscapes (const QString& str) {
