@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(seer VERSION 1.8 LANGUAGES CXX)
+project(seer VERSION 1.8.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seer)
 
