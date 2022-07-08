@@ -11,3 +11,54 @@
 # % cat ../src/SeerUtl.cpp         | sed 's/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION "x.x"/g'
 # % cat ../debian/changelog        | sed 's/^seer (\b\S\+\b)/seer (x.x)/g'
 
+VEFSION=""
+
+usage() {
+    echo "usage: $0  -v VERSION" 1>&2
+}
+
+exit_abnormal() {
+    usage
+    exit 1
+}
+
+while getopts "hv:" options; do
+
+  case "${options}" in
+    h)
+      exit_abnormal
+      ;;
+    v)
+      VERSION=${OPTARG}
+      ;;
+    :)
+      echo "Error: -${OPTARG} requires an argument."
+      exit 1
+      ;;
+    *)
+      exit_abnormal
+      ;;
+  esac
+done
+
+if [ "$VERSION" = "" ]; then
+    exit_abnormal
+fi
+
+VERSION_CMAKE="`echo $VERSION | sed -e s/beta/0/g`"
+
+echo "Changing Seer files to version ${VERSION}."
+
+echo "../debian/changelog"
+sed -i "s/^seer (\b\S\+\b)/seer ($VERSION)/g"                                       ../debian/changelog
+
+echo "../src/SeerUtl.cpp"
+sed -i "s/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION \"$VERSION\"/g"                    ../src/SeerUtl.cpp
+
+echo "../src/CMakeLists.txt"
+sed -i "s/^project(seer VERSION \b\S\+\b/project(seer VERSION $VERSION_CMAKE/g"     ../src/CMakeLists.txt
+
+echo "Done."
+
+exit 0
+
