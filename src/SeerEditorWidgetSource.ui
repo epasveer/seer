@@ -103,7 +103,7 @@
       <widget class="QClearLineEdit" name="searchTextLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>80</horstretch>
+         <horstretch>50</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -171,7 +171,7 @@
       <widget class="QLineEdit" name="searchLineNumberLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>20</horstretch>
+         <horstretch>50</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>

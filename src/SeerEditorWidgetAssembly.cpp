@@ -23,8 +23,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     setupUi(this);
 
     // Set the widgets.
-    assemblyArea()->show(); // XXX Why is this needed?  SeerEditorWidget doesn't need it.
-
+    assemblyArea()->show();
     searchTextLineEdit->enableReturnPressedOnClear();
 
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.

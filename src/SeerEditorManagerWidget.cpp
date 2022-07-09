@@ -117,7 +117,6 @@ void SeerEditorManagerWidget::showAssembly () {
     }
 
     assemblyWidgetTab()->assemblyArea()->requestAssembly("$pc");
-    //assemblyWidgetTab()->assemblyArea()->setAddress("$pc"); // XXX
 }
 
 SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {

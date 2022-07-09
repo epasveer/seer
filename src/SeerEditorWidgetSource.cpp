@@ -23,9 +23,7 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     setupUi(this);
 
     // Set the widgets.
-    int space = fontMetrics().horizontalAdvance("Go to line ##") + 5;
-
-    searchLineNumberLineEdit->setMaximumWidth(space);
+    sourceArea()->show();
     searchTextLineEdit->enableReturnPressedOnClear();
 
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
