@@ -29,6 +29,7 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                handleFontDialog                ();
         void                                handleHighlighterChanged        ();
         void                                handleEnabledChanged            ();
+        void                                handleApplyTheme                ();
 
     private:
         QFont                               _font;

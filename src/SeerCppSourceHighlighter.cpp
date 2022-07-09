@@ -3,7 +3,7 @@
 SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {
 
     // Set to default formats.
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
 }
 
 const SeerHighlighterSettings& SeerCppSourceHighlighter::highlighterSettings() {

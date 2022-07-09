@@ -30,15 +30,19 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
                                          "sample.cpp");
 
     // Connect things.
-    QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,                 this, &SeerEditorConfigPage::handleFontSizeChanged);
-    QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,             this, &SeerEditorConfigPage::handleFontChanged);
-    QObject::connect(fontDialogButton,            &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleFontDialog);
-    QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                          this, &SeerEditorConfigPage::handleEnabledChanged);
+    QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,           this, &SeerEditorConfigPage::handleFontSizeChanged);
+    QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,       this, &SeerEditorConfigPage::handleFontChanged);
+    QObject::connect(fontDialogButton,            &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleFontDialog);
+    QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleEnabledChanged);
+    QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
     // Set the default font and highlighter.
     handleFontChanged(QFont("Source Code Pro", 10));
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
     setHighlighterEnabled(true);
+
+    // Fill in the available theme names.
+    themeComboBox->addItems(SeerHighlighterSettings::themeNames());
 }
 
 SeerEditorConfigPage::~SeerEditorConfigPage() {
@@ -260,5 +264,10 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
 void SeerEditorConfigPage::handleEnabledChanged () {
 
     setHighlighterEnabled(highlighterEnabledCheckBox->isChecked());
+}
+
+void SeerEditorConfigPage::handleApplyTheme () {
+
+    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(themeComboBox->currentText()));
 }
 

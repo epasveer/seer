@@ -284,7 +284,7 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         }else if (itemLabel == "Editor") {
 
             setEditorFont(QFont("Source Code Pro", 10));
-            setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP());
+            setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
             setEditorHighlighterEnabled(true);
 
         }else if (itemLabel == "Source") {
