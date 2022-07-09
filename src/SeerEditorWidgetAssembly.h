@@ -85,6 +85,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
     public slots:
         void                                        handleText                          (const QString& text);
+        void                                        handleHighlighterSettingsChanged    ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);

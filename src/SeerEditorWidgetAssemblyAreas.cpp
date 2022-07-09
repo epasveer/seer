@@ -57,10 +57,11 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     enableBreakPointArea(true);
     enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
 
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,        this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,            this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
     setCurrentLine("");
 
@@ -1111,6 +1112,22 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
         _currentAddress = "";
     }
+}
+
+void SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged () {
+
+    // Set base color for background and text color.
+    // Use the palette to do this. Some people say to use the stylesheet.
+    // But the palettle method works (for now).
+    QTextCharFormat format = highlighterSettings().get("Text");
+
+    QPalette p = palette();
+    p.setColor(QPalette::Base, format.background().color());
+    p.setColor(QPalette::Text, format.foreground().color());
+    setPalette(p);
+
+    // Note. The margins are automatically updated by their own paint events.
+    //       The new highlighter settings will be used.
 }
 
 //
