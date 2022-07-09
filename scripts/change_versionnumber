@@ -11,7 +11,7 @@
 # % cat ../src/SeerUtl.cpp         | sed 's/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION "x.x"/g'
 # % cat ../debian/changelog        | sed 's/^seer (\b\S\+\b)/seer (x.x)/g'
 
-VEFSION=""
+VERSION=""
 
 usage() {
     echo "usage: $0  -v VERSION" 1>&2
