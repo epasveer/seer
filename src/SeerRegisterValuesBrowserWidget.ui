@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
-    <widget class="QTreeWidget" name="registersTreeWidget">
+    <widget class="QIndexTreeWidget" name="registersTreeWidget">
      <property name="columnCount">
       <number>4</number>
      </property>
@@ -43,6 +43,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QIndexTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">QIndexTreeWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

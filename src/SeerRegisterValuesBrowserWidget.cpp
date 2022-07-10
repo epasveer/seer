@@ -23,8 +23,17 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
 
     registersTreeWidget->clear();
 
+    // Create edit delegate.
+    MyEditingDelegate* editDelegate = new MyEditingDelegate(this);
+
+    registersTreeWidget->setItemDelegateForColumn(0, new MyNoEditDelegate(this));
+    registersTreeWidget->setItemDelegateForColumn(1, new MyNoEditDelegate(this));
+    registersTreeWidget->setItemDelegateForColumn(2, editDelegate);
+    registersTreeWidget->setItemDelegateForColumn(3, new MyNoEditDelegate(this));
+
     // Connect things.
-    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,          this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,                this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(editDelegate,        &MyEditingDelegate::editingFinished,      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -45,6 +54,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         //                        \"r8\",\"r9\",\"r10\",\"r11\",\"r12\",\"r13\",\"r14\",\"r15\",
         //                        \"rip\",\"eflags\",\"cs\",\"ss\",\"ds\",\"es\",\"fs\",\"gs\",
 
+        registersTreeWidget->blockSignals(true);
+
         // This recreates the tree.
         registersTreeWidget->clear();
 
@@ -64,6 +75,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
             }
 
             QTreeWidgetItem* topItem = new QTreeWidgetItem;
+            topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
             topItem->setText(0, QString::number(i));
             topItem->setText(1, name_text);
             topItem->setText(2, "");
@@ -74,7 +86,11 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
             i++;
         }
 
+        registersTreeWidget->blockSignals(false);
+
     }else if (text.startsWith("^done,register-values=[") && text.endsWith("]")) {
+
+        registersTreeWidget->blockSignals(true);
 
         // Mark each entry initially as "unused".
         // Later, some will be marked as "reused" or "new". Then the "unused" ones will
@@ -140,6 +156,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         qDeleteAll(matches);
 
+        registersTreeWidget->blockSignals(false);
+
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         registersTreeWidget->clear();
 
@@ -185,6 +203,17 @@ void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
     for (int i=1; i<registersTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
     }
+}
+
+void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelIndex& index) {
+
+    QTreeWidgetItem* item = registersTreeWidget->getItemFromIndex(index);
+
+    if (item == 0) {
+        return;
+    }
+
+    qDebug() << "Item changed: " << item->text(2);
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

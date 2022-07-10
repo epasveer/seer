@@ -91,6 +91,7 @@ set(HEADER_FILES
     QZoomChartView.h
     QZoomChart.h
     QClearLineEdit.h
+    QIndexTreeWidget.h
     )
 
 set(SOURCE_FILES
@@ -165,6 +166,7 @@ set(SOURCE_FILES
     QZoomChartView.cpp
     QZoomChart.cpp
     QClearLineEdit.cpp
+    QIndexTreeWidget.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)
