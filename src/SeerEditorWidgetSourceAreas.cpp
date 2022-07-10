@@ -1468,9 +1468,6 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             open(fullname_text, QFileInfo(file_text).fileName());
         }
 
-        // Move to the start of the document as a default.
-        moveCursor(QTextCursor::Start);
-
         // Move to the line number.
         setCurrentLine(line_text.toInt());
 
@@ -1522,11 +1519,6 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     // Use the palette to do this. Some people say to use the stylesheet.
     // But the palettle method works (for now).
     QTextCharFormat format = highlighterSettings().get("Text");
-
-    // qDebug() << QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name());
-    // #cecece
-    // setStyleSheet( QString("QPlainTextEdit {background-color: %1;}").arg(format.background().color().name()) );
-    // setStyleSheet( QString("QPlainTextEdit {foreground-color: %1;}").arg(format.foreground().color().name()) );
 
     QPalette p = palette();
     p.setColor(QPalette::Base, format.background().color());
