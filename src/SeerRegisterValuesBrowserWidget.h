@@ -54,6 +54,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
 
     protected slots:
         void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleContextMenu           (const QPoint& pos);
         void                handleIndexEditingFinished  (const QModelIndex& index);
 
     signals:

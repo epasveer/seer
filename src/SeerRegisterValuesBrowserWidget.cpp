@@ -13,6 +13,7 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     // Setup the widgets
     registersTreeWidget->setMouseTracking(true);
     registersTreeWidget->setSortingEnabled(false);
+    registersTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     registersTreeWidget->resizeColumnToContents(0); // number
     registersTreeWidget->resizeColumnToContents(1); // name
     registersTreeWidget->resizeColumnToContents(2); // value
@@ -32,8 +33,9 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->setItemDelegateForColumn(3, new MyNoEditDelegate(this));
 
     // Connect things.
-    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,                this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
-    QObject::connect(editDelegate,        &MyEditingDelegate::editingFinished,      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,                    this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(registersTreeWidget, &QTreeWidget::customContextMenuRequested,     this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
+    QObject::connect(editDelegate,        &MyEditingDelegate::editingFinished,          this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -196,6 +198,27 @@ void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
         item->setToolTip(i, item->toolTip(0));
     }
 }
+
+void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    QTreeWidgetItem* item = registersTreeWidget->itemAt(pos);
+
+    qDebug() << pos << item->text(1) << item->text(2);
+
+    /*
+    QAction *newAct = new QAction(QIcon(":/Resource/warning32.ico"), tr("&New"), this);
+    newAct->setStatusTip(tr("new sth"));
+    connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
+
+
+    QMenu menu(this);
+    menu.addAction(newAct);
+
+    QPoint pt(pos);
+    menu.exec( tree->mapToGlobal(pos) );
+    */
+}
+
 
 void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelIndex& index) {
 
