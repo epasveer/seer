@@ -184,6 +184,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterNames,                                     this,                                                           &SeerGdbWidget::handleGdbRegisterListNames);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
+    QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
 
     QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::refreshThreadIds,                                              this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
     QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::selectedThread,                                                this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
@@ -1465,6 +1466,20 @@ void SeerGdbWidget::handleGdbRegisterListValues () {
 
     handleGdbCommand("-data-list-register-values N");
 }
+
+void SeerGdbWidget::handleGdbRegisterSetValue (QString name, QString value) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    // Set the register value.
+    handleGdbCommand("-gdb-set $" + name + "=" + value);
+
+    // Refresh whoever is listening.
+    handleGdbRegisterListValues();
+}
+
 
 void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString expression) {
 

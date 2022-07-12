@@ -54,8 +54,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         //                        \"r8\",\"r9\",\"r10\",\"r11\",\"r12\",\"r13\",\"r14\",\"r15\",
         //                        \"rip\",\"eflags\",\"cs\",\"ss\",\"ds\",\"es\",\"fs\",\"gs\",
 
-        registersTreeWidget->blockSignals(true);
-
         // This recreates the tree.
         registersTreeWidget->clear();
 
@@ -86,11 +84,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
             i++;
         }
 
-        registersTreeWidget->blockSignals(false);
-
     }else if (text.startsWith("^done,register-values=[") && text.endsWith("]")) {
-
-        registersTreeWidget->blockSignals(true);
 
         // Mark each entry initially as "unused".
         // Later, some will be marked as "reused" or "new". Then the "unused" ones will
@@ -156,8 +150,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         qDeleteAll(matches);
 
-        registersTreeWidget->blockSignals(false);
-
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         registersTreeWidget->clear();
 
@@ -213,7 +205,17 @@ void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelI
         return;
     }
 
-    qDebug() << "Item changed: " << item->text(2);
+    // Get the new value;
+    QString value  = item->text(2);
+    QString backup = item->text(3);
+
+    // Restore the value from the backup.
+    item->text(2) = backup;
+
+    //qDebug() << "Register" << item->text(1) << "value changed to:" << value << "Backup:" << backup;
+
+    // Emit the signal to change the register to the new value.
+    emit setRegisterValue(item->text(1), value);
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

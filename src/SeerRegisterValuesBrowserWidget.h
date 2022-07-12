@@ -59,6 +59,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
     signals:
         void                refreshRegisterNames        ();
         void                refreshRegisterValues       ();
+        void                setRegisterValue            (QString name, QString value);
 
     protected:
         void                showEvent                   (QShowEvent* event);
