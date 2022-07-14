@@ -1,4 +1,5 @@
 #include "SeerRegisterValuesBrowserWidget.h"
+#include "SeerRegisterEditValueDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -203,20 +204,30 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     QTreeWidgetItem* item = registersTreeWidget->itemAt(pos);
 
-    qDebug() << pos << item->text(1) << item->text(2);
+    // Bring up the register edit dialog.
+    SeerRegisterEditValueDialog dlg(this);
+    dlg.set(item->text(1), item->text(2));
 
-    /*
-    QAction *newAct = new QAction(QIcon(":/Resource/warning32.ico"), tr("&New"), this);
-    newAct->setStatusTip(tr("new sth"));
-    connect(newAct, SIGNAL(triggered()), this, SLOT(newDev()));
+    int ret = dlg.exec();
 
+    if (ret == 0) {
+        return;
+    }
 
-    QMenu menu(this);
-    menu.addAction(newAct);
+    // The register name could be changed, as well as the value.
+    QString name  = dlg.nameText();
+    QString value = dlg.valueText();
 
-    QPoint pt(pos);
-    menu.exec( tree->mapToGlobal(pos) );
-    */
+    if (name == "") {
+        return;
+    }
+
+    if (value == "") {
+        return;
+    }
+
+    // Emit the signal to change the register to the new value.
+    emit setRegisterValue(name, value);
 }
 
 
@@ -229,13 +240,7 @@ void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelI
     }
 
     // Get the new value;
-    QString value  = item->text(2);
-    QString backup = item->text(3);
-
-    // Restore the value from the backup.
-    item->text(2) = backup;
-
-    //qDebug() << "Register" << item->text(1) << "value changed to:" << value << "Backup:" << backup;
+    QString value = item->text(2);
 
     // Emit the signal to change the register to the new value.
     emit setRegisterValue(item->text(1), value);
