@@ -996,5 +996,9 @@ void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
 
     // rethrow
     emit requestAssembly (address);
+
+    // Ask for the stackframe list to be resent, this will highlight current line when the
+    // assembly tab is shown for the first time.
+    emit refreshStackFrames();
 }
 

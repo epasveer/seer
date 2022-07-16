@@ -46,7 +46,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         int                                         miniMapAreaWidth                    ();
 
         void                                        setAddress                          (const QString& address);
-        void                                        setCurrentLine                      (const QString& address);
+        bool                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);

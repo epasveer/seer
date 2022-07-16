@@ -495,7 +495,7 @@ void SeerEditorWidgetAssemblyArea::setAddress (const QString& address) {
     }
 }
 
-void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
+bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
     //qDebug() << address;
 
@@ -543,34 +543,38 @@ void SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
 
     //qDebug() << address << lineno;
 
-    // Highlight if a valid line number is selected.
-    if (lineno >= 1) {
-
-        QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
-        QTextCursor cursor = textCursor();
-
-        cursor.setPosition(block.position());
-        setTextCursor(cursor);
-
-        _currentLinesExtraSelections.clear();
-
-        QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
-
-        QTextEdit::ExtraSelection selection;
-        selection.format.setForeground(currentLineFormat.foreground());
-        selection.format.setBackground(currentLineFormat.background());
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.clearSelection();
-
-        _currentLinesExtraSelections.append(selection);
+    // Stop if no valid lineno.
+    if (lineno < 1) {
+        return false;
     }
+
+    // Highlight if a valid line number is selected.
+    QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+    QTextCursor cursor = textCursor();
+
+    cursor.setPosition(block.position());
+    setTextCursor(cursor);
+
+    _currentLinesExtraSelections.clear();
+
+    QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+
+    QTextEdit::ExtraSelection selection;
+    selection.format.setForeground(currentLineFormat.foreground());
+    selection.format.setBackground(currentLineFormat.background());
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = textCursor();
+    selection.cursor.clearSelection();
+
+    _currentLinesExtraSelections.append(selection);
 
     // Scroll to the line.
     scrollToLine(address);
 
     // Refresh all the extra selections.
     refreshExtraSelections();
+
+    return true;
 }
 
 void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
@@ -1013,7 +1017,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         // ]
         //
 
-        // Now parse the table and re-add the breakpoints.
+        // Now parse the table and re-add the current line, if possible.
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
         QString stack_text = Seer::parseFirst(newtext, "stack=", '[', ']', false);
@@ -1032,6 +1036,11 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
                 QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
                 QString arch_text     = Seer::parseFirst(frame_text, "arch=",     '"', '"', false);
 
+                // If the 'addr' works for the currently loaded assembly, then stop.
+                bool f = setCurrentLine(addr_text);
+                if (f == true) {
+                    break;
+                }
             }
         }
 
