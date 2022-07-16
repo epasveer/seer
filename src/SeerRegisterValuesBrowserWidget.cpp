@@ -140,11 +140,13 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
                 QTreeWidgetItem* item = matches.takeFirst();
 
+                qDebug() << item->text(0) << item->text(1) << item->text(2) << item->text(3) << value_text;
+
                 bool isDifferent = false;
 
                 // Flag it as different of the new value is different than the old version _AND_
-                // the item is being reused. Not "unused", in the case of the first time.
-                if (item->text(2) != value_text && item->text(3) == "unused") {
+                // the old one isn't "" (like after a refresh).
+                if (item->text(2) != "" && item->text(2) != value_text) {
                     isDifferent = true;
                 }
 
