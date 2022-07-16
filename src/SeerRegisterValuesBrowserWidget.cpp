@@ -140,8 +140,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
                 QTreeWidgetItem* item = matches.takeFirst();
 
-                qDebug() << item->text(0) << item->text(1) << item->text(2) << item->text(3) << value_text;
-
                 bool isDifferent = false;
 
                 // Flag it as different of the new value is different than the old version _AND_
