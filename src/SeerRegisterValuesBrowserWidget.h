@@ -48,22 +48,23 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
        ~SeerRegisterValuesBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                handleStoppingPointReached  ();
-        void                refresh                     ();
+        void                        handleText                  (const QString& text);
+        void                        handleStoppingPointReached  ();
+        void                        refresh                     ();
 
     protected slots:
-        void                handleItemEntered           (QTreeWidgetItem* item, int column);
-        void                handleContextMenu           (const QPoint& pos);
-        void                handleIndexEditingFinished  (const QModelIndex& index);
+        void                        handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                        handleContextMenu           (const QPoint& pos);
+        void                        handleIndexEditingFinished  (const QModelIndex& index);
+        void                        handleFormatChanged         (int index);
 
     signals:
-        void                refreshRegisterNames        ();
-        void                refreshRegisterValues       ();
-        void                setRegisterValue            (QString name, QString value);
+        void                        refreshRegisterNames        ();
+        void                        refreshRegisterValues       (QString fmt);
+        void                        setRegisterValue            (QString fmt, QString name, QString value);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                        showEvent                   (QShowEvent* event);
 
     private:
 

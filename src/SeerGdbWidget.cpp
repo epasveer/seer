@@ -1458,16 +1458,20 @@ void SeerGdbWidget::handleGdbRegisterListNames () {
     handleGdbCommand("-data-list-register-names");
 }
 
-void SeerGdbWidget::handleGdbRegisterListValues () {
+void SeerGdbWidget::handleGdbRegisterListValues (QString fmt) {
 
     if (executableLaunchMode() == "") {
         return;
     }
 
-    handleGdbCommand("-data-list-register-values N");
+    if (fmt == "") {
+        fmt = "N";
+    }
+
+    handleGdbCommand("-data-list-register-values " + fmt);
 }
 
-void SeerGdbWidget::handleGdbRegisterSetValue (QString name, QString value) {
+void SeerGdbWidget::handleGdbRegisterSetValue (QString fmt, QString name, QString value) {
 
     if (executableLaunchMode() == "") {
         return;
@@ -1477,7 +1481,7 @@ void SeerGdbWidget::handleGdbRegisterSetValue (QString name, QString value) {
     handleGdbCommand("-gdb-set $" + name + "=" + value);
 
     // Refresh whoever is listening.
-    handleGdbRegisterListValues();
+    handleGdbRegisterListValues(fmt);
 }
 
 

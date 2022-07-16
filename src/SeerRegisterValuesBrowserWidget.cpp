@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -19,11 +20,24 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->resizeColumnToContents(1); // name
     registersTreeWidget->resizeColumnToContents(2); // value
     registersTreeWidget->resizeColumnToContents(3); // used
-
     registersTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
     registersTreeWidget->setColumnHidden(3, true); // Hide the 'used' column.
-
     registersTreeWidget->clear();
+
+    registerFormatComboBox->addItem("Natural", QVariant("N"));
+    registerFormatComboBox->addItem("Hex",     QVariant("x"));
+    registerFormatComboBox->addItem("Octal",   QVariant("o"));
+    registerFormatComboBox->addItem("Binary",  QVariant("t"));
+    registerFormatComboBox->addItem("Decimal", QVariant("d"));
+    registerFormatComboBox->addItem("Raw",     QVariant("r"));
+
+    // Restore the new fmt setting.
+    QSettings settings;
+
+    settings.beginGroup("registerbrowser"); {
+        QString fmt = settings.value("defaultformat", "Natural").toString();
+        registerFormatComboBox->setCurrentText(fmt);
+    } settings.endGroup();
 
     // Create edit delegate.
     MyEditingDelegate* editDelegate = new MyEditingDelegate(this);
@@ -34,9 +48,10 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->setItemDelegateForColumn(3, new MyNoEditDelegate(this));
 
     // Connect things.
-    QObject::connect(registersTreeWidget, &QTreeWidget::itemEntered,                    this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
-    QObject::connect(registersTreeWidget, &QTreeWidget::customContextMenuRequested,     this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
-    QObject::connect(editDelegate,        &MyEditingDelegate::editingFinished,          this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(registersTreeWidget,    &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(registersTreeWidget,    &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
+    QObject::connect(editDelegate,           &MyEditingDelegate::editingFinished,                       this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(registerFormatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -175,16 +190,22 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
         return;
     }
 
+    // Get the format.
+    QString fmt = registerFormatComboBox->currentData().toString();
+
     // refresh();
     // If a stopping point is reached, just refresh the values.
     // The register names should already be there.
-    emit refreshRegisterValues();
+    emit refreshRegisterValues(fmt);
 }
 
 void SeerRegisterValuesBrowserWidget::refresh () {
 
+    // Get the format.
+    QString fmt = registerFormatComboBox->currentData().toString();
+
     emit refreshRegisterNames();
-    emit refreshRegisterValues();
+    emit refreshRegisterValues(fmt);
 }
 
 void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
@@ -226,8 +247,11 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
+    // Get the format.
+    QString fmt = registerFormatComboBox->currentData().toString();
+
     // Emit the signal to change the register to the new value.
-    emit setRegisterValue(name, value);
+    emit setRegisterValue(fmt, name, value);
 }
 
 
@@ -239,11 +263,30 @@ void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelI
         return;
     }
 
+    // Get the format.
+    QString fmt = registerFormatComboBox->currentData().toString();
+
     // Get the new value;
     QString value = item->text(2);
 
     // Emit the signal to change the register to the new value.
-    emit setRegisterValue(item->text(1), value);
+    emit setRegisterValue(fmt, item->text(1), value);
+}
+
+void SeerRegisterValuesBrowserWidget::handleFormatChanged (int index) {
+
+    // Get the format.
+    QString fmt = registerFormatComboBox->itemData(index).toString();
+
+    // Refresh the register values.
+    emit refreshRegisterValues(fmt);
+
+    // Save the new fmt setting.
+    QSettings settings;
+
+    settings.beginGroup("registerbrowser"); {
+        settings.setValue("defaultformat", registerFormatComboBox->itemText(index));
+    } settings.endGroup();
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

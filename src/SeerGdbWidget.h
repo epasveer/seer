@@ -178,8 +178,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbThreadListFrames           ();
         void                                handleGdbThreadSelectId             (int threadid);
         void                                handleGdbRegisterListNames          ();
-        void                                handleGdbRegisterListValues         ();
-        void                                handleGdbRegisterSetValue           (QString name,  QString value);
+        void                                handleGdbRegisterListValues         (QString fmt);
+        void                                handleGdbRegisterSetValue           (QString fmt, QString name, QString value);
         void                                handleGdbDataEvaluateExpression     (int expressionid, QString expression);
         void                                handleGdbDataListValues             ();
         void                                handleGdbDataListExpressions        ();
