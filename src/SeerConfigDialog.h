@@ -3,6 +3,7 @@
 #include "SeerGdbConfigPage.h"
 #include "SeerEditorConfigPage.h"
 #include "SeerSourceConfigPage.h"
+#include "SeerAssemblyConfigPage.h"
 #include "SeerKeysConfigPage.h"
 #include "SeerSeerConfigPage.h"
 #include <QtWidgets/QDialog>
@@ -85,6 +86,7 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         SeerGdbConfigPage*                  _gdbConfigPage;
         SeerEditorConfigPage*               _editorConfigPage;
         SeerSourceConfigPage*               _sourceConfigPage;
+        SeerAssemblyConfigPage*             _assemblyConfigPage;
         SeerKeysConfigPage*                 _keysConfigPage;
         SeerSeerConfigPage*                 _seerConfigPage;
 };

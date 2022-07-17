@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerAssemblyConfigPage</class>
+ <widget class="QWidget" name="SeerAssemblyConfigPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>926</width>
+    <height>694</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SeerAssemblyConfigPage</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="printPointGroupBox">
+     <property name="title">
+      <string>Assembly Settings</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="4">
+       <widget class="QCheckBox" name="assemblyTabOnStartupCheckBox">
+        <property name="toolTip">
+         <string>Turn gdb 'async' mode on or off.</string>
+        </property>
+        <property name="text">
+         <string>Show Assembly tab on Seer startup</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <spacer name="horizontalSpacer_7">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0" colspan="3">
+       <widget class="QCheckBox" name="assemblyTabOnTopCheckBox">
+        <property name="toolTip">
+         <string>Turn gdb 'async' mode on or off.</string>
+        </property>
+        <property name="text">
+         <string>Keep Assembly tab on top</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <spacer name="horizontalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="4" colspan="2">
+       <spacer name="verticalSpacer_1">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="disassemblyFlavorLabel">
+        <property name="text">
+         <string>Disassembly Flavor</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <spacer name="horizontalSpacer_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>27</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="2">
+       <widget class="QRadioButton" name="attFlavorRadioButton">
+        <property name="text">
+         <string>att</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">disassemblyFlavorButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="3" column="3" colspan="2">
+       <widget class="QRadioButton" name="intelFlavorRadioButton">
+        <property name="text">
+         <string>intel</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">disassemblyFlavorButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="3" column="5">
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="assemblyDemangleLabel">
+        <property name="text">
+         <string>Assembly Demangle</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>27</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="2">
+       <widget class="QRadioButton" name="demangleOnRadioButton">
+        <property name="text">
+         <string>on</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">assemblyDemangleButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QRadioButton" name="demangleOffRadioButton">
+        <property name="text">
+         <string>off</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">assemblyDemangleButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="4" colspan="2">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="registerFormatLabel">
+        <property name="text">
+         <string>Register Format</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>27</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="6" column="2" colspan="2">
+       <widget class="QComboBox" name="registerFormatComboBox">
+        <item>
+         <property name="text">
+          <string>Natural</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hex</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Octal</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Binary</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Decimal</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Raw</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="5">
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QTextBrowser" name="textBrowser">
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;Set various Assembly and Register settings.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;Seer can show the program's assembly as a tab in the Code Manager. The Assembly tab can be shown automatically when Seer starts, or it can always be shown with:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Courier New','monospace'; color:#000000;&quot;&gt;    View-&amp;gt;Assembly View&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When enabled, the Assembly tab will tend to stay in the background (ie:hidden by the Source tabs) as the program is stepped through. If set, the Assembly tab can be forced to always stay on top, even while stepping through the program. Clicking on the tabs will still raise them, though.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When presentingthe assembly, there are 2 flavors. 'att' and 'intel'.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:small; color:#262626; background-color:#ffffff;&quot;&gt;    att:mov 0xc(%ebp),%eax&lt;br /&gt;    intel: mov eax, DWORDPTR [ebp+0xc]&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When printing certain symbols, the mangled or demangled names can be printed.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;    mangled: callq 0x4007b8 &amp;lt;&lt;/span&gt;&lt;a href=&quot;mailto:_ZNSolsEPFRSoS_E@plt&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#000080; background-color:transparent;&quot;&gt;_ZNSolsEPFRSoS_E@plt&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;&amp;gt;&lt;br /&gt;    demanlged:callq 0x4007b8 &amp;lt;std::ostream::operator&amp;lt;&amp;lt;(std::ostream&amp;amp;(*)(std::ostream&amp;amp;))@plt&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;In the Register browser, register values can be shown in various formats:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;    * Natural&lt;br /&gt;    * Hex&lt;br /&gt;    * Octal&lt;br /&gt;    * Binary&lt;br /&gt;    * Decimal&lt;br /&gt;    * Raw&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; color:#000000;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>textBrowser</zorder>
+  <zorder>printPointGroupBox</zorder>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="disassemblyFlavorButtonGroup"/>
+  <buttongroup name="assemblyDemangleButtonGroup"/>
+ </buttongroups>
+</ui>

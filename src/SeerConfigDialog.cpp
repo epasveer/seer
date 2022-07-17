@@ -20,16 +20,18 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     contentsListWidget->setSpacing(12);
 
     // Create pages.
-    _gdbConfigPage    = new SeerGdbConfigPage;
-    _editorConfigPage = new SeerEditorConfigPage;
-    _sourceConfigPage = new SeerSourceConfigPage;
-    _keysConfigPage   = new SeerKeysConfigPage;
-    _seerConfigPage   = new SeerSeerConfigPage;
+    _gdbConfigPage      = new SeerGdbConfigPage;
+    _editorConfigPage   = new SeerEditorConfigPage;
+    _sourceConfigPage   = new SeerSourceConfigPage;
+    _assemblyConfigPage = new SeerAssemblyConfigPage;
+    _keysConfigPage     = new SeerKeysConfigPage;
+    _seerConfigPage     = new SeerSeerConfigPage;
 
     // Add the pages to the stacked widget.
     pagesStackedWidget->addWidget(_gdbConfigPage);
     pagesStackedWidget->addWidget(_editorConfigPage);
     pagesStackedWidget->addWidget(_sourceConfigPage);
+    pagesStackedWidget->addWidget(_assemblyConfigPage);
     pagesStackedWidget->addWidget(_keysConfigPage);
     pagesStackedWidget->addWidget(_seerConfigPage);
 
@@ -51,6 +53,12 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configSourceButton->setText(tr("Source"));
     configSourceButton->setTextAlignment(Qt::AlignHCenter);
     configSourceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QListWidgetItem* configAssemblyButton = new QListWidgetItem(contentsListWidget);
+    configAssemblyButton->setIcon(QIcon(":/seer/resources/assembly.png"));
+    configAssemblyButton->setText(tr("Assembly"));
+    configAssemblyButton->setTextAlignment(Qt::AlignHCenter);
+    configAssemblyButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configKeysButton = new QListWidgetItem(contentsListWidget);
     configKeysButton->setIcon(QIcon(":/seer/resources/keyboard-key.png"));
@@ -294,6 +302,10 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
             alternateDirectories << "./";
 
             setSourceAlternateDirectories(alternateDirectories);
+
+        }else if (itemLabel == "Assembly") {
+
+            // XXX Call config page's Reset method instead of hand cranking it here.
 
         }else if (itemLabel == "Keys") {
 

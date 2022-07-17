@@ -34,9 +34,10 @@ set(HEADER_FILES
     SeerGdbConfigPage.h
     SeerEditorConfigPage.h
     SeerSourceConfigPage.h
-    SeerCloseSourceDialog.h
+    SeerAssemblyConfigPage.h
     SeerSeerConfigPage.h
     SeerKeysConfigPage.h
+    SeerCloseSourceDialog.h
     SeerDebugDialog.h
     SeerDirectoryFilterProxyModel.h
     SeerEditorManagerEntry.h
@@ -111,9 +112,10 @@ set(SOURCE_FILES
     SeerGdbConfigPage.cpp
     SeerEditorConfigPage.cpp
     SeerSourceConfigPage.cpp
-    SeerCloseSourceDialog.cpp
+    SeerAssemblyConfigPage.cpp
     SeerSeerConfigPage.cpp
     SeerKeysConfigPage.cpp
+    SeerCloseSourceDialog.cpp
     SeerDebugDialog.cpp
     SeerEditorManagerWidget.cpp
     SeerEditorOptionsBarWidget.cpp
