@@ -28,9 +28,6 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="4">
        <widget class="QCheckBox" name="assemblyTabOnStartupCheckBox">
-        <property name="toolTip">
-         <string>Turn gdb 'async' mode on or off.</string>
-        </property>
         <property name="text">
          <string>Show Assembly tab on Seer startup</string>
         </property>
@@ -51,9 +48,6 @@
       </item>
       <item row="1" column="0" colspan="3">
        <widget class="QCheckBox" name="assemblyTabOnTopCheckBox">
-        <property name="toolTip">
-         <string>Turn gdb 'async' mode on or off.</string>
-        </property>
         <property name="text">
          <string>Keep Assembly tab on top</string>
         </property>
@@ -148,9 +142,9 @@
        </spacer>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="assemblyDemangleLabel">
+       <widget class="QLabel" name="symbolDemanglingLabel">
         <property name="text">
-         <string>Assembly Demangle</string>
+         <string>Symbol Demangling</string>
         </property>
        </widget>
       </item>
@@ -171,7 +165,7 @@
        </spacer>
       </item>
       <item row="4" column="2">
-       <widget class="QRadioButton" name="demangleOnRadioButton">
+       <widget class="QRadioButton" name="demanglingOnRadioButton">
         <property name="text">
          <string>on</string>
         </property>
@@ -181,7 +175,7 @@
        </widget>
       </item>
       <item row="4" column="3">
-       <widget class="QRadioButton" name="demangleOffRadioButton">
+       <widget class="QRadioButton" name="demanglingOffRadioButton">
         <property name="text">
          <string>off</string>
         </property>
@@ -311,7 +305,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When enabled, the Assembly tab will tend to stay in the background (ie:hidden by any Source tabs) as the program is stepped through. If set, the Assembly tab can be forced to always stay on top, even while stepping through the program. Manually clicking on the tabs will still raise them, though.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When presenting the assembly, there are 2 flavors. 'att' and 'intel'.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;att:   mov 0xc(%ebp),%eax&lt;br /&gt;intel: mov eax, DWORDPTR [ebp+0xc]&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When printing certain symbols, the mangled or demangled names can be printed.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;When printing certain symbols, the mangled or demangled symbol names can be printed.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:1; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;mangled:   callq 0x4007b8 &amp;lt;_ZNSolsEPFRSoS_E@plt&amp;gt;&lt;br /&gt;demanlged: callq 0x4007b8 &amp;lt;std::ostream::operator&amp;lt;&amp;lt;(std::ostream&amp;amp;(*)(std::ostream&amp;amp;))@plt&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;In the Register browser, register values can be shown in various formats:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000; background-color:transparent;&quot;&gt;Natural (A predefined format, based on the register name)&lt;/span&gt;&lt;/li&gt;
@@ -333,7 +327,7 @@ p, li { white-space: pre-wrap; }
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="assemblyDemangleButtonGroup"/>
   <buttongroup name="disassemblyFlavorButtonGroup"/>
+  <buttongroup name="assemblyDemangleButtonGroup"/>
  </buttongroups>
 </ui>
