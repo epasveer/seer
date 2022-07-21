@@ -8,10 +8,10 @@ SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
     // Set up the UI.
     setupUi(this);
 
+    // Connect things.
+
     // Setup the widgets
     setKeySettings(SeerKeySettings::populate());
-
-    // Connect things.
 }
 
 SeerKeysConfigPage::~SeerKeysConfigPage() {
@@ -73,5 +73,10 @@ SeerKeySettings SeerKeysConfigPage::keySettings() const {
     }
 
     return settings;
+}
+
+void SeerKeysConfigPage::reset () {
+
+    setKeySettings(SeerKeySettings::populate());
 }
 

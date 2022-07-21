@@ -24,32 +24,33 @@ static QLoggingCategory LC("seer.seergdbwidget");
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
-    _executableName                 = "";
-    _executableArguments            = "";
-    _executableWorkingDirectory     = "";
-    _executableBreakpointsFilename  = "";
-    _executableHostPort             = "";
-    _executableSerialBaud           = -1;
-    _executableSerialParity         = "none";
-    _executableCoreFilename         = "";
-    _executablePid                  = 0;
+    _executableName                     = "";
+    _executableArguments                = "";
+    _executableWorkingDirectory         = "";
+    _executableBreakpointsFilename      = "";
+    _executableHostPort                 = "";
+    _executableSerialBaud               = -1;
+    _executableSerialParity             = "none";
+    _executableCoreFilename             = "";
+    _executablePid                      = 0;
 
-    _gdbMonitor                     = 0;
-    _gdbProcess                     = 0;
-    _consoleWidget                  = 0;
-    _breakpointsBrowserWidget       = 0;
-    _watchpointsBrowserWidget       = 0;
-    _catchpointsBrowserWidget       = 0;
-    _gdbOutputLog                   = 0;
-    _seerOutputLog                  = 0;
-    _gdbProgram                     = "/usr/bin/gdb";
-    _gdbArguments                   = "--interpreter=mi";
-    _gdbASyncMode                   = true;
-    _gdbHandleTerminatingException  = true;
-    _consoleMode                    = "";
-    _consoleScrollLines             = 1000;
-    _rememberManualCommandCount     = 10;
-    _currentFrame                   = -1;
+    _gdbMonitor                         = 0;
+    _gdbProcess                         = 0;
+    _consoleWidget                      = 0;
+    _breakpointsBrowserWidget           = 0;
+    _watchpointsBrowserWidget           = 0;
+    _catchpointsBrowserWidget           = 0;
+    _gdbOutputLog                       = 0;
+    _seerOutputLog                      = 0;
+    _gdbProgram                         = "/usr/bin/gdb";
+    _gdbArguments                       = "--interpreter=mi";
+    _gdbASyncMode                       = true;
+    _assemblyShowAssemblyTabOnStartup   = false;
+    _gdbHandleTerminatingException      = true;
+    _consoleMode                        = "";
+    _consoleScrollLines                 = 1000;
+    _rememberManualCommandCount         = 10;
+    _currentFrame                       = -1;
 
     setNewExecutableFlag(true);
 
@@ -610,6 +611,10 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
     }
 
     setNewExecutableFlag(false);
@@ -694,6 +699,10 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
     }
 
     setNewExecutableFlag(false);
@@ -769,6 +778,10 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+                                                //
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
     }
 
     setNewExecutableFlag(false);
@@ -834,6 +847,10 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
     }
 
     setNewExecutableFlag(false);
@@ -913,6 +930,10 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
     }
 
     setNewExecutableFlag(false);
@@ -1878,6 +1899,11 @@ void SeerGdbWidget::writeSettings () {
 
     } settings.endArray();
 
+    settings.beginGroup("assembly"); {
+        settings.setValue("showassemblytabonstartup", assemblyShowAssemblyTabOnStartup());
+        settings.setValue("keepassemblytabontop",     assemblyKeepAssemblyTabOnTop());
+    } settings.endGroup();
+
     settings.beginGroup("gdboutputlog"); {
         settings.setValue("enabled", isGdbOutputLogEnabled());
     } settings.endGroup();
@@ -1929,6 +1955,11 @@ void SeerGdbWidget::readSettings () {
         setSourceAlternateDirectories(directories);
 
     } settings.endArray();
+
+    settings.beginGroup("assembly"); {
+        setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
+        setAssemblyKeepAssemblyTabOnTop(settings.value("keepassemblytabontop", true).toBool());
+    } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
         setGdbOutputLogEnabled(settings.value("enabled", true).toBool());
@@ -2152,6 +2183,44 @@ const QStringList& SeerGdbWidget::sourceAlternateDirectories() const {
 void SeerGdbWidget::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     editorManager()->setEditorAlternateDirectories(alternateDirectories);
+}
+
+void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {
+
+    _assemblyShowAssemblyTabOnStartup = flag;
+}
+
+bool SeerGdbWidget::assemblyShowAssemblyTabOnStartup () const {
+
+    return _assemblyShowAssemblyTabOnStartup;
+}
+
+void SeerGdbWidget::setAssemblyKeepAssemblyTabOnTop (bool flag) {
+
+    editorManager()->setKeepAssemblyTabOnTop(flag);
+}
+
+bool SeerGdbWidget::assemblyKeepAssemblyTabOnTop () const {
+
+    return editorManager()->keepAssemblyTabOnTop();
+}
+
+void SeerGdbWidget::setAssemblyDisassembyFlavor (const QString& flavor) {
+}
+
+QString SeerGdbWidget::assemblyDisassembyFlavor () const {
+}
+
+void SeerGdbWidget::setAssemblySymbolDemagling (const QString& yesno) {
+}
+
+QString SeerGdbWidget::assemblySymbolDemagling () const {
+}
+
+void SeerGdbWidget::setAssemblyRegisterFormat (const QString& format) {
+}
+
+QString SeerGdbWidget::assemblyRegisterFormat () const {
 }
 
 void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {

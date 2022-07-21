@@ -17,6 +17,8 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
         void                                setAlternateDirectories         (const QStringList& alternateDirectories);
         QStringList                         alternateDirectories            () const;
 
+        void                                reset                           ();
+
     protected slots:
         void                                handleAddButtonClicked          ();
         void                                handleUpButtonClicked           ();

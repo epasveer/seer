@@ -16,6 +16,8 @@ class SeerKeysConfigPage : public QWidget, protected Ui::SeerKeysConfigPage {
         void                        setKeySettings              (const SeerKeySettings& settings);
         SeerKeySettings             keySettings                 () const;
 
+        void                        reset                       ();
+
     protected slots:
 
     private:

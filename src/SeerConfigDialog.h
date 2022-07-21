@@ -58,6 +58,22 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;
 
+        // Assembly settings.
+        void                                setAssemblyShowAssemblyTabOnStartup             (bool flag);
+        bool                                assemblyShowAssemblyTabOnStartup                () const;
+
+        void                                setAssemblyKeepAssemblyTabOnTop                 (bool flag);
+        bool                                assemblyKeepAssemblyTabOnTop                    () const;
+
+        void                                setAssemblyDisassembyFlavor                     (const QString& flavor);
+        QString                             assemblyDisassembyFlavor                        () const;
+
+        void                                setAssemblySymbolDemagling                      (const QString& yesno);
+        QString                             assemblySymbolDemagling                         () const;
+
+        void                                setAssemblyRegisterFormat                       (const QString& format);
+        QString                             assemblyRegisterFormat                          () const;
+
         // Key settings.
         void                                setKeySettings                                  (const SeerKeySettings& settings);
         SeerKeySettings                     keySettings                                     () const;

@@ -6,14 +6,10 @@ SeerSeerConfigPage::SeerSeerConfigPage(QWidget* parent) : QWidget(parent) {
     // Set up the UI.
     setupUi(this);
 
-    // Setup the widgets
-    setConsoleMode("normal");
-    setConsoleScrollLines(1000);
-    setRememberWindowSizes(true);
-    setRememberManualCommandCount(10);
-    setClearManualCommandHistory(false);
-
     // Connect things.
+
+    // Setup the defaults.
+    reset();
 }
 
 SeerSeerConfigPage::~SeerSeerConfigPage() {
@@ -89,5 +85,14 @@ void SeerSeerConfigPage::setClearManualCommandHistory (bool flag) {
 bool SeerSeerConfigPage::clearManualCommandHistory () const {
 
     return clearHistoryCheckBox->isChecked();
+}
+
+void SeerSeerConfigPage::reset () {
+
+    setConsoleMode("normal");
+    setConsoleScrollLines(1000);
+    setRememberWindowSizes(true);
+    setRememberManualCommandCount(10);
+    setClearManualCommandHistory(false);
 }
 

@@ -20,6 +20,9 @@ SeerSourceConfigPage::SeerSourceConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(moveUpDirectoriesToolButton,   &QToolButton::clicked,     this, &SeerSourceConfigPage::handleUpButtonClicked);
     QObject::connect(moveDownDirectoriesToolButton, &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDownButtonClicked);
     QObject::connect(deleteDirectoriesToolButton,   &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteButtonClicked);
+
+    // Setup the defaults.
+    reset();
 }
 
 SeerSourceConfigPage::~SeerSourceConfigPage() {
@@ -54,6 +57,15 @@ QStringList SeerSourceConfigPage::alternateDirectories () const {
     }
 
     return list;
+}
+
+void SeerSourceConfigPage::reset () {
+
+    QStringList alternateDirectories;
+
+    alternateDirectories << "./";
+
+    setAlternateDirectories(alternateDirectories);
 }
 
 void SeerSourceConfigPage::handleAddButtonClicked () {

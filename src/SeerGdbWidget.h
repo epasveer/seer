@@ -97,6 +97,21 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSourceAlternateDirectories       (const QStringList& alternateDirectories);
         const QStringList&                  sourceAlternateDirectories          () const;
 
+        void                                setAssemblyShowAssemblyTabOnStartup (bool flag);
+        bool                                assemblyShowAssemblyTabOnStartup    () const;
+
+        void                                setAssemblyKeepAssemblyTabOnTop     (bool flag);
+        bool                                assemblyKeepAssemblyTabOnTop        () const;
+
+        void                                setAssemblyDisassembyFlavor         (const QString& flavor);
+        QString                             assemblyDisassembyFlavor            () const;
+
+        void                                setAssemblySymbolDemagling          (const QString& yesno);
+        QString                             assemblySymbolDemagling             () const;
+
+        void                                setAssemblyRegisterFormat           (const QString& format);
+        QString                             assemblyRegisterFormat              () const;
+
         void                                setGdbOutputLogEnabled              (bool flag);
         bool                                isGdbOutputLogEnabled               () const;
 
@@ -225,6 +240,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _dprintfStyle;
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;
+        bool                                _assemblyShowAssemblyTabOnStartup;
+
         QString                             _executableName;
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;

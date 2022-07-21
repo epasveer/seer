@@ -33,6 +33,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         void                                            showAssembly                        ();
         SeerEditorWidgetAssembly*                       assemblyWidgetTab                   ();
+        void                                            setKeepAssemblyTabOnTop             (bool flag);
+        bool                                            keepAssemblyTabOnTop                () const;
 
         SeerEditorManagerFiles                          openedFiles                         () const;
 
@@ -108,5 +110,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerKeySettings                                 _editorKeySettings;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
+        bool                                            _keepAssemblyTabOnTop;
 };
 

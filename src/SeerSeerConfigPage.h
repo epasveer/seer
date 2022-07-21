@@ -26,5 +26,7 @@ class SeerSeerConfigPage : public QWidget, public Ui::SeerSeerConfigPage {
 
         void                    setClearManualCommandHistory                    (bool flag);
         bool                    clearManualCommandHistory                       () const;
+
+        void                    reset                                           ();
 };
 

@@ -8,8 +8,6 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
     // Set up the UI.
     setupUi(this);
 
-    // Setup the widgets
-
     // Connect things.
     QObject::connect(gdbProgramToolButton, &QToolButton::clicked,                                  this, &SeerGdbConfigPage::handleGdbProgramToolButton);
 
@@ -18,6 +16,9 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
 #else
     QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::buttonClicked),       this, &SeerGdbConfigPage::handleDprintfButtonGroup);
 #endif
+
+    // Setup the defaults.
+    reset();
 }
 
 SeerGdbConfigPage::~SeerGdbConfigPage() {
@@ -108,6 +109,18 @@ void SeerGdbConfigPage::setDprintfFunction (const QString& function) {
 void SeerGdbConfigPage::setDprintfChannel (const QString& channel) {
 
     channelLineEdit->setText(channel);
+}
+
+void SeerGdbConfigPage::reset () {
+
+    setGdbProgram("/usr/bin/gdb");
+    setGdbArguments("--interpreter=mi");
+    setGdbAsyncMode(true);
+    setGdbHandleTerminatingException(true);
+
+    setDprintfStyle("gdb");
+    setDprintfFunction("printf");
+    setDprintfChannel("");
 }
 
 void SeerGdbConfigPage::handleGdbProgramToolButton () {

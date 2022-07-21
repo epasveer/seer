@@ -193,6 +193,56 @@ QStringList SeerConfigDialog::sourceAlternateDirectories () const {
     return _sourceConfigPage->alternateDirectories();
 }
 
+void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartup (bool flag) {
+
+    _assemblyConfigPage->setShowAssemblyTabOnStartup(flag);
+}
+
+bool SeerConfigDialog::assemblyShowAssemblyTabOnStartup () const {
+
+    return _assemblyConfigPage->showAssemblyTabOnStartup();
+}
+
+void SeerConfigDialog::setAssemblyKeepAssemblyTabOnTop (bool flag) {
+
+    _assemblyConfigPage->setKeepAssemblyTabOnTop(flag);
+}
+
+bool SeerConfigDialog::assemblyKeepAssemblyTabOnTop () const {
+
+    return _assemblyConfigPage->keepAssemblyTabOnTop();
+}
+
+void SeerConfigDialog::setAssemblyDisassembyFlavor (const QString& flavor) {
+
+    _assemblyConfigPage->setDisassembyFlavor(flavor);
+}
+
+QString SeerConfigDialog::assemblyDisassembyFlavor () const {
+
+    return _assemblyConfigPage->disassembyFlavor();
+}
+
+void SeerConfigDialog::setAssemblySymbolDemagling (const QString& yesno) {
+
+    _assemblyConfigPage->setSymbolDemagling(yesno);
+}
+
+QString SeerConfigDialog::assemblySymbolDemagling () const {
+
+    return _assemblyConfigPage->symbolDemagling();
+}
+
+void SeerConfigDialog::setAssemblyRegisterFormat (const QString& format) {
+
+    _assemblyConfigPage->setRegisterFormat(format);
+}
+
+QString SeerConfigDialog::assemblyRegisterFormat () const {
+
+    return _assemblyConfigPage->registerFormat();
+}
+
 void SeerConfigDialog::setKeySettings (const SeerKeySettings& settings) {
 
     _keysConfigPage->setKeySettings(settings);
@@ -271,7 +321,7 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         QString itemLabel = contentsListWidget->currentItem()->text();
 
         int result = QMessageBox::warning(this, "Seer",
-                                      QString("Reset settings for '") + itemLabel + "'?",
+                                      QString("Reset settings for the '") + itemLabel + "' tab?",
                                       QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
 
         if (result != QMessageBox::Ok) {
@@ -280,44 +330,27 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
 
         if (itemLabel == "GDB") {
 
-            setGdbProgram("/usr/bin/gdb");
-            setGdbArguments("--interpreter=mi");
-            setGdbAsyncMode(true);
-            setGdbHandleTerminatingException(true);
-
-            setDprintfStyle("gdb");
-            setDprintfFunction("printf");
-            setDprintfChannel("");
+            _gdbConfigPage->reset();
 
         }else if (itemLabel == "Editor") {
 
-            setEditorFont(QFont("Source Code Pro", 10));
-            setEditorHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
-            setEditorHighlighterEnabled(true);
+            _editorConfigPage->reset();
 
         }else if (itemLabel == "Source") {
 
-            QStringList alternateDirectories;
-
-            alternateDirectories << "./";
-
-            setSourceAlternateDirectories(alternateDirectories);
+            _sourceConfigPage->reset();
 
         }else if (itemLabel == "Assembly") {
 
-            // XXX Call config page's Reset method instead of hand cranking it here.
+            _assemblyConfigPage->reset();
 
         }else if (itemLabel == "Keys") {
 
-            setKeySettings(SeerKeySettings::populate());
+            _keysConfigPage->reset();
 
         }else if (itemLabel == "Seer") {
 
-            setSeerConsoleMode("normal");
-            setSeerConsoleScrollLines(1000);
-            setSeerRememberWindowSizes(true);
-            setSeerRememberManualCommandCount(10);
-            setSeerClearManualCommandHistory(false);
+            _seerConfigPage->reset();
         }
     }
 }

@@ -21,6 +21,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorHighlighterEnabled  = true;
     _editorKeySettings         = SeerKeySettings::populate();                 // Defualt key settings.
     _assemblyWidget            = 0;
+    _keepAssemblyTabOnTop      = true;
 
     // Setup UI
     setupUi(this);
@@ -121,6 +122,16 @@ void SeerEditorManagerWidget::showAssembly () {
 
 SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {
     return _assemblyWidget;
+}
+
+void SeerEditorManagerWidget::setKeepAssemblyTabOnTop (bool flag) {
+
+    _keepAssemblyTabOnTop = flag;
+}
+
+bool SeerEditorManagerWidget::keepAssemblyTabOnTop () const {
+
+    return _keepAssemblyTabOnTop;
 }
 
 SeerEditorManagerFiles SeerEditorManagerWidget::openedFiles () const {
@@ -300,10 +311,14 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
         // Push this tab to the top only if the current one in not the "Assembly" tab.
+        QString tabtext = "";
+
         if (tabWidget->currentIndex() >= 0) {
-            if (tabWidget->tabText(tabWidget->currentIndex()) != "Assembly") {
-                tabWidget->setCurrentWidget(editorWidget);
-            }
+            tabtext = tabWidget->tabText(tabWidget->currentIndex());
+        }
+
+        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+            // Do nothing. The "Assembly" tab is already on top.
         }else{
             tabWidget->setCurrentWidget(editorWidget);
         }
@@ -540,10 +555,14 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
     }
 
     // Push this tab to the top only if the current one in not the "Assembly" tab.
+    QString tabtext = "";
+
     if (tabWidget->currentIndex() >= 0) {
-        if (tabWidget->tabText(tabWidget->currentIndex()) != "Assembly") {
-            tabWidget->setCurrentWidget(editorWidget);
-        }
+        tabtext = tabWidget->tabText(tabWidget->currentIndex());
+    }
+
+    if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+        // Do nothing. The "Assembly" tab is already on top.
     }else{
         tabWidget->setCurrentWidget(editorWidget);
     }
@@ -752,14 +771,17 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     }
 
     // Create the Editor widget and add it to the tab.
+    // Raise it to the top.
     SeerEditorWidgetAssembly* assemblyWidget = new SeerEditorWidgetAssembly(this);
     assemblyWidget->assemblyArea()->setFont(editorFont());
     assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
 
-    // Set the tooltip for the tab.
     _assemblyIndex= tabWidget->addTab(assemblyWidget, "Assembly");
 
+    tabWidget->setCurrentWidget(assemblyWidget);
+
+    // Set the tooltip for the tab.
     tabWidget->setTabToolTip(_assemblyIndex, "Assembly");
 
     // Connect signals.

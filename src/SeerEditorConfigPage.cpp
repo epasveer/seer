@@ -36,10 +36,8 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleEnabledChanged);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
-    // Set the default font and highlighter.
-    handleFontChanged(QFont("Source Code Pro", 10));
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
-    setHighlighterEnabled(true);
+    // Set the defaults.
+    reset();
 
     // Fill in the available theme names.
     themeComboBox->addItems(SeerHighlighterSettings::themeNames());
@@ -154,6 +152,13 @@ void SeerEditorConfigPage::setHighlighterEnabled (bool flag) {
 bool SeerEditorConfigPage::highlighterEnabled () const {
 
     return editorWidget->sourceArea()->highlighterEnabled();
+}
+
+void SeerEditorConfigPage::reset () {
+
+    setEditorFont(QFont("Source Code Pro", 10));
+    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
+    setHighlighterEnabled(true);
 }
 
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
