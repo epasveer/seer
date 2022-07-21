@@ -4,7 +4,6 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
-#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -31,14 +30,6 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registerFormatComboBox->addItem("Decimal", QVariant("d"));
     registerFormatComboBox->addItem("Raw",     QVariant("r"));
 
-    // Restore the new fmt setting.
-    QSettings settings;
-
-    settings.beginGroup("registerbrowser"); {
-        QString fmt = settings.value("defaultformat", "Natural").toString();
-        registerFormatComboBox->setCurrentText(fmt);
-    } settings.endGroup();
-
     // Create edit delegate.
     MyEditingDelegate* editDelegate = new MyEditingDelegate(this);
 
@@ -55,6 +46,11 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
+}
+
+void SeerRegisterValuesBrowserWidget::setRegisterFormat (QString fmt) {
+
+    registerFormatComboBox->setCurrentText(fmt);
 }
 
 void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
@@ -280,13 +276,6 @@ void SeerRegisterValuesBrowserWidget::handleFormatChanged (int index) {
 
     // Refresh the register values.
     emit refreshRegisterValues(fmt);
-
-    // Save the new fmt setting.
-    QSettings settings;
-
-    settings.beginGroup("registerbrowser"); {
-        settings.setValue("defaultformat", registerFormatComboBox->itemText(index));
-    } settings.endGroup();
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

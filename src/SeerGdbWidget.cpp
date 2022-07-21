@@ -1902,6 +1902,7 @@ void SeerGdbWidget::writeSettings () {
     settings.beginGroup("assembly"); {
         settings.setValue("showassemblytabonstartup", assemblyShowAssemblyTabOnStartup());
         settings.setValue("keepassemblytabontop",     assemblyKeepAssemblyTabOnTop());
+        settings.setValue("assemblyregisterformat",   assemblyRegisterFormat());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -1959,6 +1960,7 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("assembly"); {
         setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
         setAssemblyKeepAssemblyTabOnTop(settings.value("keepassemblytabontop", true).toBool());
+        setAssemblyRegisterFormat(settings.value("assemblyregisterformat", "Natural").toString());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2218,9 +2220,15 @@ QString SeerGdbWidget::assemblySymbolDemagling () const {
 }
 
 void SeerGdbWidget::setAssemblyRegisterFormat (const QString& format) {
+
+    _assemblyRegisterFormat = format;
+
+    variableManagerWidget->registerValuesBrowserWidget()->setRegisterFormat(_assemblyRegisterFormat);
 }
 
 QString SeerGdbWidget::assemblyRegisterFormat () const {
+
+    return _assemblyRegisterFormat;
 }
 
 void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {

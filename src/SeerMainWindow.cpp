@@ -374,6 +374,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
+    dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
@@ -399,6 +400,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
+    gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
     gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());

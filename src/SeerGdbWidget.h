@@ -241,6 +241,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;
         bool                                _assemblyShowAssemblyTabOnStartup;
+        QString                             _assemblyRegisterFormat;
 
         QString                             _executableName;
         QString                             _executableArguments;

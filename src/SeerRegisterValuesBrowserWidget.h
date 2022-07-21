@@ -47,6 +47,9 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         explicit SeerRegisterValuesBrowserWidget (QWidget* parent = 0);
        ~SeerRegisterValuesBrowserWidget ();
 
+    public:
+        void                        setRegisterFormat           (QString fmt);
+
     public slots:
         void                        handleText                  (const QString& text);
         void                        handleStoppingPointReached  ();
