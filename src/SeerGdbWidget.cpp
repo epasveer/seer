@@ -46,6 +46,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _assemblyShowAssemblyTabOnStartup   = false;
+    _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
     _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
@@ -611,6 +612,8 @@ void SeerGdbWidget::handleGdbRunExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
@@ -699,6 +702,8 @@ void SeerGdbWidget::handleGdbStartExecutable () {
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
@@ -778,7 +783,9 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-                                                //
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
         }
@@ -847,6 +854,8 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
@@ -930,6 +939,8 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
@@ -1831,6 +1842,20 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
     QMessageBox::information(this, "Seer", "Saved.");
 }
 
+void SeerGdbWidget::handleGdbAssemblyDisassemblyFlavor () {
+
+    if (_assemblyDisassemblyFlavor != "") {
+        handleGdbCommand(QString("set disassembly-flavor ") + _assemblyDisassemblyFlavor);
+    }
+}
+
+void SeerGdbWidget::handleGdbAssemblySymbolDemangling () {
+
+    if (_assemblySymbolDemangling != "") {
+        handleGdbCommand(QString("set print asm-demangle ") + _assemblySymbolDemangling);
+    }
+}
+
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
 
     //qDebug() << "Gdb process finished. Exit code =" << exitCode << "Exit status =" << exitStatus;
@@ -1900,9 +1925,11 @@ void SeerGdbWidget::writeSettings () {
     } settings.endArray();
 
     settings.beginGroup("assembly"); {
-        settings.setValue("showassemblytabonstartup", assemblyShowAssemblyTabOnStartup());
-        settings.setValue("keepassemblytabontop",     assemblyKeepAssemblyTabOnTop());
-        settings.setValue("assemblyregisterformat",   assemblyRegisterFormat());
+        settings.setValue("showassemblytabonstartup",    assemblyShowAssemblyTabOnStartup());
+        settings.setValue("keepassemblytabontop",        assemblyKeepAssemblyTabOnTop());
+        settings.setValue("assemblydisassemblyflavor",   assemblyDisassembyFlavor());
+        settings.setValue("assemblysymboldemagling",     assemblySymbolDemagling());
+        settings.setValue("assemblyregisterformat",      assemblyRegisterFormat());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -1960,6 +1987,8 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("assembly"); {
         setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
         setAssemblyKeepAssemblyTabOnTop(settings.value("keepassemblytabontop", true).toBool());
+        setAssemblyDisassembyFlavor(settings.value("assemblydisassemblyflavor", "att").toString());
+        setAssemblySymbolDemagling(settings.value("assemblysymboldemagling", "on").toString());
         setAssemblyRegisterFormat(settings.value("assemblyregisterformat", "Natural").toString());
     } settings.endGroup();
 
@@ -2208,15 +2237,31 @@ bool SeerGdbWidget::assemblyKeepAssemblyTabOnTop () const {
 }
 
 void SeerGdbWidget::setAssemblyDisassembyFlavor (const QString& flavor) {
+
+    _assemblyDisassemblyFlavor = flavor;
+
+    if (isGdbRuning()) {
+        handleGdbAssemblyDisassemblyFlavor();
+    }
 }
 
 QString SeerGdbWidget::assemblyDisassembyFlavor () const {
+
+    return _assemblyDisassemblyFlavor;
 }
 
-void SeerGdbWidget::setAssemblySymbolDemagling (const QString& yesno) {
+void SeerGdbWidget::setAssemblySymbolDemagling (const QString& onoff) {
+
+    _assemblySymbolDemangling = onoff;
+
+    if (isGdbRuning()) {
+        handleGdbAssemblySymbolDemangling();
+    }
 }
 
 QString SeerGdbWidget::assemblySymbolDemagling () const {
+
+    return _assemblySymbolDemangling;
 }
 
 void SeerGdbWidget::setAssemblyRegisterFormat (const QString& format) {

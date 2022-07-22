@@ -223,9 +223,9 @@ QString SeerConfigDialog::assemblyDisassembyFlavor () const {
     return _assemblyConfigPage->disassembyFlavor();
 }
 
-void SeerConfigDialog::setAssemblySymbolDemagling (const QString& yesno) {
+void SeerConfigDialog::setAssemblySymbolDemagling (const QString& onoff) {
 
-    _assemblyConfigPage->setSymbolDemagling(yesno);
+    _assemblyConfigPage->setSymbolDemagling(onoff);
 }
 
 QString SeerConfigDialog::assemblySymbolDemagling () const {

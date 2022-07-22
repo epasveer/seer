@@ -374,6 +374,8 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
+    dlg.setAssemblyDisassembyFlavor(gdbWidget->assemblyDisassembyFlavor());
+    dlg.setAssemblySymbolDemagling(gdbWidget->assemblySymbolDemagling());
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
@@ -400,6 +402,8 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
+    gdbWidget->setAssemblyDisassembyFlavor(dlg.assemblyDisassembyFlavor());
+    gdbWidget->setAssemblySymbolDemagling(dlg.assemblySymbolDemagling());
     gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());

@@ -21,7 +21,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         void                    setShowAssemblyTabOnStartup                     (bool flag) const;
         void                    setKeepAssemblyTabOnTop                         (bool flag) const;
         void                    setDisassembyFlavor                             (const QString& flavor) const;
-        void                    setSymbolDemagling                              (const QString& yesno) const;
+        void                    setSymbolDemagling                              (const QString& onoff) const;
         void                    setRegisterFormat                               (const QString& format) const;
 
         void                    reset                                           ();

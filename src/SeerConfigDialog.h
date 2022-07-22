@@ -68,7 +68,7 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setAssemblyDisassembyFlavor                     (const QString& flavor);
         QString                             assemblyDisassembyFlavor                        () const;
 
-        void                                setAssemblySymbolDemagling                      (const QString& yesno);
+        void                                setAssemblySymbolDemagling                      (const QString& onoff);
         QString                             assemblySymbolDemagling                         () const;
 
         void                                setAssemblyRegisterFormat                       (const QString& format);

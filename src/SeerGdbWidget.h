@@ -106,7 +106,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setAssemblyDisassembyFlavor         (const QString& flavor);
         QString                             assemblyDisassembyFlavor            () const;
 
-        void                                setAssemblySymbolDemagling          (const QString& yesno);
+        void                                setAssemblySymbolDemagling          (const QString& onoff);
         QString                             assemblySymbolDemagling             () const;
 
         void                                setAssemblyRegisterFormat           (const QString& format);
@@ -213,6 +213,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleLogOuputChanged               ();
         void                                handleGdbLoadBreakpoints            ();
         void                                handleGdbSaveBreakpoints            ();
+        void                                handleGdbAssemblyDisassemblyFlavor  ();
+        void                                handleGdbAssemblySymbolDemangling   ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
@@ -241,6 +243,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;
         bool                                _assemblyShowAssemblyTabOnStartup;
+        QString                             _assemblyDisassemblyFlavor;
+        QString                             _assemblySymbolDemangling;
         QString                             _assemblyRegisterFormat;
 
         QString                             _executableName;

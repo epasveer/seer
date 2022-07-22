@@ -73,11 +73,11 @@ void SeerAssemblyConfigPage::setDisassembyFlavor (const QString& flavor) const {
     }
 }
 
-void SeerAssemblyConfigPage::setSymbolDemagling (const QString& yesno) const {
+void SeerAssemblyConfigPage::setSymbolDemagling (const QString& onoff) const {
 
-    if (yesno == "yes") {
+    if (onoff == "on") {
         demanglingOnRadioButton->setChecked(true);
-    }else if (yesno == "no") {
+    }else if (onoff == "off") {
         demanglingOffRadioButton->setChecked(true);
     }else{
     }
@@ -93,7 +93,7 @@ void SeerAssemblyConfigPage::reset () {
     setShowAssemblyTabOnStartup(false);
     setKeepAssemblyTabOnTop(true);
     setDisassembyFlavor("att");
-    setSymbolDemagling("yes");
+    setSymbolDemagling("on");
     setRegisterFormat("Natural");
 }
 
