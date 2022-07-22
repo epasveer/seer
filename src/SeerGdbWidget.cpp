@@ -1845,14 +1845,14 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
 void SeerGdbWidget::handleGdbAssemblyDisassemblyFlavor () {
 
     if (_assemblyDisassemblyFlavor != "") {
-        handleGdbCommand(QString("set disassembly-flavor ") + _assemblyDisassemblyFlavor);
+        handleGdbCommand(QString("-gdb-set disassembly-flavor ") + _assemblyDisassemblyFlavor);
     }
 }
 
 void SeerGdbWidget::handleGdbAssemblySymbolDemangling () {
 
     if (_assemblySymbolDemangling != "") {
-        handleGdbCommand(QString("set print asm-demangle ") + _assemblySymbolDemangling);
+        handleGdbCommand(QString("-gdb-set print asm-demangle ") + _assemblySymbolDemangling);
     }
 }
 
