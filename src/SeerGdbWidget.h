@@ -222,6 +222,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
     signals:
         void                                stoppingPointReached                ();
         void                                changeWindowTitle                   (QString title);
+        void                                assemblyConfigChanged               ();
 
     protected:
 

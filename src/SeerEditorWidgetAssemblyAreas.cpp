@@ -482,17 +482,22 @@ void SeerEditorWidgetAssemblyArea::refreshExtraSelections () {
     setExtraSelections(extraSelections);
 }
 
-void SeerEditorWidgetAssemblyArea::setAddress (const QString& address) {
+void SeerEditorWidgetAssemblyArea::setAddress (const QString& address, bool force) {
 
     // Emit the signal to load the assembly for address 'address' if
     // it's not already loaded.
-    if (_addressLineMap.contains(address.toULongLong(0,0)) == false) {
+    if (_addressLineMap.contains(address.toULongLong(0,0)) == false || force == true) {
 
         // Hack to keep track of address when the assembly hasn't been loaded yet.
         _currentAddress = address;
 
         emit requestAssembly(address);
     }
+}
+
+const QString& SeerEditorWidgetAssemblyArea::address () const {
+
+    return _currentAddress;
 }
 
 bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
@@ -1119,7 +1124,7 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         // Move to the line that has our address.
         setCurrentLine(_currentAddress);
 
-        _currentAddress = "";
+        // _currentAddress = "";  // Do we need to reset this?
     }
 }
 

@@ -117,7 +117,7 @@ void SeerEditorManagerWidget::showAssembly () {
         createAssemblyWidgetTab();
     }
 
-    assemblyWidgetTab()->assemblyArea()->requestAssembly("$pc");
+    assemblyWidgetTab()->assemblyArea()->setAddress("$pc");
 }
 
 SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {
@@ -1023,4 +1023,13 @@ void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
     // assembly tab is shown for the first time.
     emit refreshStackFrames();
 }
+
+void SeerEditorManagerWidget::handleAssemblyConfigChanged () {
+
+    // Tell the assembly tab to refresh.
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->reloadAssembly();
+    }
+}
+
 

@@ -232,6 +232,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget,                                             &SeerStackManagerWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
@@ -2242,6 +2243,8 @@ void SeerGdbWidget::setAssemblyDisassembyFlavor (const QString& flavor) {
 
     if (isGdbRuning()) {
         handleGdbAssemblyDisassemblyFlavor();
+
+        emit assemblyConfigChanged();
     }
 }
 
@@ -2256,6 +2259,8 @@ void SeerGdbWidget::setAssemblySymbolDemagling (const QString& onoff) {
 
     if (isGdbRuning()) {
         handleGdbAssemblySymbolDemangling();
+
+        emit assemblyConfigChanged();
     }
 }
 

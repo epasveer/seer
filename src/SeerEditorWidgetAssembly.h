@@ -45,7 +45,8 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
         int                                         miniMapAreaWidth                    ();
 
-        void                                        setAddress                          (const QString& address);
+        void                                        setAddress                          (const QString& address, bool force=false);
+        const QString&                              address                             () const;
         bool                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 
@@ -195,22 +196,23 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
 
         SeerEditorWidgetAssemblyArea*               assemblyArea                        ();
 
-        bool                                        isSearchBarShown                        () const;
-        bool                                        searchMatchCase                         () const;
-        void                                        setKeySettings                          (const SeerKeySettings& settings);
-        const SeerKeySettings&                      keySettings                             () const;
+        bool                                        isSearchBarShown                    () const;
+        bool                                        searchMatchCase                     () const;
+        void                                        setKeySettings                      (const SeerKeySettings& settings);
+        const SeerKeySettings&                      keySettings                         () const;
 
     public slots:
-        void                                        showSearchBar                           (bool flag);
-        void                                        setSearchMatchCase                      (bool flag);
+        void                                        reloadAssembly                      ();
+        void                                        showSearchBar                       (bool flag);
+        void                                        setSearchMatchCase                  (bool flag);
 
     private slots:
-        void                                        handleSearchLineNumberLineEdit          ();
-        void                                        handleSearchTextLineEdit                ();
-        void                                        handleSearchDownToolButton              ();
-        void                                        handleSearchUpToolButton                ();
-        void                                        handleSearchCloseToolButton             ();
-        void                                        handleTextSearchShortcut                ();
+        void                                        handleSearchLineNumberLineEdit      ();
+        void                                        handleSearchTextLineEdit            ();
+        void                                        handleSearchDownToolButton          ();
+        void                                        handleSearchUpToolButton            ();
+        void                                        handleSearchCloseToolButton         ();
+        void                                        handleTextSearchShortcut            ();
 
     signals:
     private:

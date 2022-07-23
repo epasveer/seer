@@ -42,6 +42,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
+    QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadAssembly);
     QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);
@@ -98,6 +99,13 @@ void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) 
 const SeerKeySettings& SeerEditorWidgetAssembly::keySettings () const {
 
     return _keySettings;
+}
+
+void SeerEditorWidgetAssembly::reloadAssembly () {
+
+    QString addr = assemblyArea()->address();
+
+    assemblyArea()->setAddress(addr, true);
 }
 
 void SeerEditorWidgetAssembly::showSearchBar (bool flag) {

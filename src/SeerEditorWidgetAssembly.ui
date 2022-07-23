@@ -131,6 +131,20 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QToolButton" name="refreshToolButton">
+       <property name="toolTip">
+        <string>Refresh the Assembly view.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

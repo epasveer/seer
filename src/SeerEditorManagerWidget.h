@@ -68,6 +68,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleAddMemoryVisualizer           (QString expression);
         void                                            handleAddArrayVisualizer            (QString expression);
         void                                            handleRequestAssembly               (QString address);
+        void                                            handleAssemblyConfigChanged         ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
