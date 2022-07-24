@@ -91,30 +91,39 @@ QString SeerMemoryVisualizerWidget::variableName () const {
 
 void SeerMemoryVisualizerWidget::setVariableAddress (const QString& address) {
 
-    unsigned long offset = 0;
-    bool refresh         = false;
+    unsigned long offset  = 0;
+    bool          ok      = false;
+    bool          refresh = false;
 
-    if (address.startsWith("0x")) {
+    if (address == "") {
 
-        bool ok = false;
-
-        offset = address.toULong(&ok, 16);
-
-        if (ok == true) {
-            variableAddressLineEdit->setText(address);
-            refresh = true;
-        }else{
-            variableAddressLineEdit->setText("not an address");
-            offset = 0;
-        }
-
-    }else if (address != "") {
-        variableAddressLineEdit->setText("not an address");
+        variableAddressLineEdit->setText("");
         offset = 0;
 
     }else{
-        variableAddressLineEdit->setText("");
-        offset = 0;
+
+        // Test for base10
+        if (ok == false) {
+            offset = address.toULong(&ok, 10);
+            if (ok) {
+                variableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+                refresh = true;
+            }
+        }
+
+        // Test for base16
+        if (ok == false) {
+            offset = address.toULong(&ok, 16);
+            if (ok) {
+                variableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+                refresh = true;
+            }
+        }
+
+        if (ok == false) {
+            variableAddressLineEdit->setText("not an address");
+            offset = 0;
+        }
     }
 
     memoryHexEditor->setAddressOffset(offset);

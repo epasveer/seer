@@ -154,23 +154,35 @@ QString SeerArrayVisualizerWidget::aVariableName () const {
 
 void SeerArrayVisualizerWidget::setAVariableAddress (const QString& address) {
 
-    if (address.startsWith("0x")) {
+    unsigned long offset  = 0;
+    bool          ok      = false;
 
-        bool ok = false;
+    if (address == "") {
 
-        address.toULong(&ok, 16);
-
-        if (ok == true) {
-            aVariableAddressLineEdit->setText(address);
-        }else{
-            aVariableAddressLineEdit->setText("not an address");
-        }
+        aVariableAddressLineEdit->setText("");
+        offset = 0;
 
     }else{
-        if (aVariableAddressLineEdit->text() != "") {
+
+        // Test for base10
+        if (ok == false) {
+            offset = address.toULong(&ok, 10);
+            if (ok) {
+                aVariableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+            }
+        }
+
+        // Test for base16
+        if (ok == false) {
+            offset = address.toULong(&ok, 16);
+            if (ok) {
+                aVariableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+            }
+        }
+
+        if (ok == false) {
             aVariableAddressLineEdit->setText("not an address");
-        }else{
-            aVariableAddressLineEdit->setText("");
+            offset = 0;
         }
     }
 
@@ -234,23 +246,35 @@ QString SeerArrayVisualizerWidget::bVariableName () const {
 
 void SeerArrayVisualizerWidget::setBVariableAddress (const QString& address) {
 
-    if (address.startsWith("0x")) {
+    unsigned long offset  = 0;
+    bool          ok      = false;
 
-        bool ok = false;
+    if (address == "") {
 
-        address.toULong(&ok, 16);
-
-        if (ok == true) {
-            bVariableAddressLineEdit->setText(address);
-        }else{
-            bVariableAddressLineEdit->setText("not an address");
-        }
+        bVariableAddressLineEdit->setText("");
+        offset = 0;
 
     }else{
-        if (bVariableAddressLineEdit->text() != "") {
+
+        // Test for base10
+        if (ok == false) {
+            offset = address.toULong(&ok, 10);
+            if (ok) {
+                bVariableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+            }
+        }
+
+        // Test for base16
+        if (ok == false) {
+            offset = address.toULong(&ok, 16);
+            if (ok) {
+                bVariableAddressLineEdit->setText(QString("0x%1").arg(offset, 0, 16, QLatin1Char( '0' )));
+            }
+        }
+
+        if (ok == false) {
             bVariableAddressLineEdit->setText("not an address");
-        }else{
-            bVariableAddressLineEdit->setText("");
+            offset = 0;
         }
     }
 
