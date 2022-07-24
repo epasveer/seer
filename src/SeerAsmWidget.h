@@ -24,5 +24,7 @@ class SeerAsmWidget: public QWidget, protected Ui::SeerAsmWidgetForm {
     protected slots:
 
     private:
+        QTextCharFormat             _defaultFormat;
+        QTextCharFormat             _grayFormat;
 };
 

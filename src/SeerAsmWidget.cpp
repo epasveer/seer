@@ -19,6 +19,11 @@ SeerAsmWidget::SeerAsmWidget(QWidget* parent) : QWidget(parent) {
     plainTextEdit->setTextInteractionFlags(Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
     plainTextEdit->setWordWrapMode(QTextOption::NoWrap);
 
+    // Set text formats.
+    _defaultFormat = plainTextEdit->currentCharFormat();
+    _grayFormat    = _defaultFormat;
+    _grayFormat.setBackground(QBrush(Qt::lightGray));
+
     // Connect things.
 }
 
@@ -47,11 +52,6 @@ void SeerAsmWidget::setData (const QString& data) {
     // Clear the document.
     plainTextEdit->clear();
 
-    // Set text formats.
-    QTextCharFormat defaultFormat = plainTextEdit->currentCharFormat();
-    QTextCharFormat grayFormat    = defaultFormat;
-    grayFormat.setBackground(QBrush(Qt::lightGray));
-
     // Get a cursor
     QTextCursor cursor(plainTextEdit->textCursor());
 
@@ -79,12 +79,12 @@ void SeerAsmWidget::setData (const QString& data) {
     }
 
     // Write header.
-    cursor.insertText (QString("Address").leftJustified(address_width, ' ', true), grayFormat);
-    cursor.insertText (QString(" "), defaultFormat);
-    cursor.insertText (QString("Opcodes").leftJustified(opcode_width, ' ', true), defaultFormat);
-    cursor.insertText (QString(" | "), defaultFormat);
-    cursor.insertText (QString("Assembly"), defaultFormat);
-    cursor.insertText (QString("\n"), defaultFormat);
+    cursor.insertText (QString("Address").leftJustified(address_width, ' ', true), _grayFormat);
+    cursor.insertText (QString(" "), _defaultFormat);
+    cursor.insertText (QString("Opcodes").leftJustified(opcode_width, ' ', true), _defaultFormat);
+    cursor.insertText (QString(" | "), _defaultFormat);
+    cursor.insertText (QString("Assembly"), _defaultFormat);
+    cursor.insertText (QString("\n"), _defaultFormat);
 
     // Loop through the asm list and print each line.
     for ( const auto& asm_text : asm_list  ) {
@@ -95,16 +95,16 @@ void SeerAsmWidget::setData (const QString& data) {
         QString inst_text    = Seer::parseFirst(asm_text, "inst=",    '"', '"', false).leftJustified(inst_width,    ' ', true);
 
         // Write the text, with spacers.
-        cursor.insertText (address_text, grayFormat);
-        cursor.insertText (QString(" "), defaultFormat);
+        cursor.insertText (address_text, _grayFormat);
+        cursor.insertText (QString(" "), _defaultFormat);
 
-        cursor.insertText (opcodes_text, defaultFormat);
-        cursor.insertText (QString(" | "), defaultFormat);
+        cursor.insertText (opcodes_text,   _defaultFormat);
+        cursor.insertText (QString(" | "), _defaultFormat);
 
-        cursor.insertText (inst_text, defaultFormat);
+        cursor.insertText (inst_text, _defaultFormat);
 
         // Write eol to document.
-        cursor.insertText (QString("\n"), defaultFormat);
+        cursor.insertText (QString("\n"), _defaultFormat);
     }
 
     // Move to the start of the document.
