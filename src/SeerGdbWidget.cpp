@@ -378,6 +378,10 @@ const QString& SeerGdbWidget::executableLaunchMode () const {
     return _executableLaunchMode;
 }
 
+const QString& SeerGdbWidget::executableBreakMode () const {
+    return _executableBreakMode;
+}
+
 void SeerGdbWidget::setGdbProgram (const QString& program) {
 
     _gdbProgram = program;
@@ -593,6 +597,8 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
+    _executableBreakMode = breakMode;
+
     // Delete the old gdb and console if there is a new executable
     if (newExecutableFlag() == true) {
         killGdb();
@@ -656,8 +662,20 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     // Set the program's arguments before running.
     handleGdbExecutableArguments();
 
+    // Set a temporary breakpoint for start up.
+    if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
+
+        QRegExp addrRegex("0[xX][0-9a-fA-F]+");
+
+        if (addrRegex.exactMatch(executableBreakpointFunctionName())) {
+            handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
+        }else{
+            handleGdbBreakpointInsert("-t --function " + executableBreakpointFunctionName());
+        }
+    }
+
     // Run the executable. Do not stop in main.
-    if (breakMode == "inmain") {
+    if (_executableBreakMode == "inmain") {
         handleGdbCommand("-exec-run --start");
     }else{
         handleGdbCommand("-exec-run");

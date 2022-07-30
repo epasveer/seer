@@ -61,6 +61,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         void                                setExecutableLaunchMode             (const QString& launchMode);
         const QString&                      executableLaunchMode                () const;
+        const QString&                      executableBreakMode                 () const;
 
         // Gdb settings.
         void                                setGdbProgram                       (const QString& program);
@@ -265,6 +266,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableSerialParity;
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
+        QString                             _executableBreakMode;
         bool                                _newExecutableFlag;
         int                                 _currentFrame;
 

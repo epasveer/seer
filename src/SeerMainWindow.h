@@ -47,6 +47,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
         void                        launchExecutable                    (const QString& launchMode, const QString& breakMode);
         const QString&              executableLaunchMode                () const;
+        const QString&              executableBreakMode                 () const;
 
     private slots:
         void                        handleFileDebug                     ();

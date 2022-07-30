@@ -18,9 +18,10 @@ Not all Seer classes have logging programmed. The above list will be updated as 
 There are a few ways to enable logging. The easiest is by the environment variable.
 Turn on logging like this:
 
-    % export QT_LOGGING_RULES="seer.*.debug=true"
-    % export QT_LOGGING_RULES="seer.*.debug=false;seer.seergdbwidget.debug=true"
-    % export QT_LOGGING_RULES="seer.*.debug=false;seer.gdbmonitor.debug=true"
+    % export QT_LOGGING_RULES="default.debug=true"
+    % export QT_LOGGING_RULES="default.debug=false;seer.gdbwidget.debug=true"
+    % export QT_LOGGING_RULES="default.debug=false;seer.gdbmonitor.debug=true"
+    % export QT_LOGGING_RULES="default.debug=true;seer.gdbwidget.debug=true"
 
 To turn on simple logging of qDebug(), et al, set this:
 

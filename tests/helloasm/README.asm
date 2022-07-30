@@ -17,4 +17,7 @@ Find address to set start breakpoint.
 Add a way to provide the breakpoint address/function in the
 debug dialog and start command line.
 
+Typical _start address is: 0x8048080
+
+
 

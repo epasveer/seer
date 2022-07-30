@@ -259,6 +259,9 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     if (launchMode == "run") {
         gdbWidget->handleGdbRunExecutable(breakMode);
 
+    }else if (launchMode == "start") {
+        gdbWidget->handleGdbRunExecutable(breakMode);
+
     }else if (launchMode == "attach") {
         gdbWidget->handleGdbAttachExecutable();
 
@@ -287,6 +290,10 @@ const QString& SeerMainWindow::executableLaunchMode () const {
     return gdbWidget->executableLaunchMode();
 }
 
+const QString& SeerMainWindow::executableBreakMode () const {
+    return gdbWidget->executableBreakMode();
+}
+
 void SeerMainWindow::handleFileDebug () {
 
     SeerDebugDialog dlg(this);
@@ -304,6 +311,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setConnectSerialParity(executableSerialParity());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
+    dlg.setBreakpointMode(executableBreakMode());
 
     int ret = dlg.exec();
 

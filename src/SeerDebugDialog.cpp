@@ -36,6 +36,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
+    QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,                            this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
@@ -279,6 +280,11 @@ void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
     }
 }
 
+void SeerDebugDialog::handleBreakpointInFunctionLineEdit () {
+
+    breakpointInFunctionRadioButton->setChecked(true);
+}
+
 void SeerDebugDialog::handleLoadCoreFilenameToolButton () {
 
     QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.*)", nullptr, QFileDialog::DontUseNativeDialog);
@@ -305,9 +311,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     //
 
     // ID == 1
+    runProgramArgumentsLabel->setEnabled(false);
     runProgramArgumentsLineEdit->setEnabled(false);
+    loadBreakpointsFilenameLabel->setEnabled(false);
     loadBreakpointsFilenameLineEdit->setEnabled(false);
     loadBreakpointsFilenameToolButton->setEnabled(false);
+    noBreakpointRadioButton->setEnabled(false);
     breakpointInMainRadioButton->setEnabled(false);
     breakpointInFunctionRadioButton->setEnabled(false);
     breakpointInFunctionLineEdit->setEnabled(false);
@@ -315,15 +324,20 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     randomizeStartAddressCheckBox->setEnabled(false);
 
     // ID == 2
+    attachProgramPidLabel->setEnabled(false);
     attachProgramPidLineEdit->setEnabled(false);
     attachProgramPidToolButton->setEnabled(false);
 
     // ID == 3
+    connectProgramHostPortLabel->setEnabled(false);
     connectProgramHostPortLineEdit->setEnabled(false);
+    connectProgramSerialLabel->setEnabled(false);
     connectProgramBaudLineEdit->setEnabled(false);
+    connectProgramParityLabel->setEnabled(false);
     connectProgramParityComboBox->setEnabled(false);
 
     // ID == 4
+    loadCoreFilenameLabel->setEnabled(false);
     loadCoreFilenameLineEdit->setEnabled(false);
     loadCoreFilenameToolButton->setEnabled(false);
 
@@ -333,9 +347,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 1
     if (id == 1) {
+        runProgramArgumentsLabel->setEnabled(true);
         runProgramArgumentsLineEdit->setEnabled(true);
+        loadBreakpointsFilenameLabel->setEnabled(true);
         loadBreakpointsFilenameLineEdit->setEnabled(true);
         loadBreakpointsFilenameToolButton->setEnabled(true);
+        noBreakpointRadioButton->setEnabled(true);
         breakpointInMainRadioButton->setEnabled(true);
         breakpointInFunctionRadioButton->setEnabled(true);
         breakpointInFunctionLineEdit->setEnabled(true);
@@ -345,19 +362,24 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 2
     if (id == 2) {
+        attachProgramPidLabel->setEnabled(true);
         attachProgramPidLineEdit->setEnabled(true);
         attachProgramPidToolButton->setEnabled(true);
     }
 
     // ID == 3
     if (id == 3) {
+        connectProgramHostPortLabel->setEnabled(true);
         connectProgramHostPortLineEdit->setEnabled(true);
+        connectProgramSerialLabel->setEnabled(true);
         connectProgramBaudLineEdit->setEnabled(true);
+        connectProgramParityLabel->setEnabled(true);
         connectProgramParityComboBox->setEnabled(true);
     }
 
     // ID == 4
     if (id == 4) {
+        loadCoreFilenameLabel->setEnabled(true);
         loadCoreFilenameLineEdit->setEnabled(true);
         loadCoreFilenameToolButton->setEnabled(true);
     }
