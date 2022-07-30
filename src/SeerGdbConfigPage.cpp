@@ -44,6 +44,11 @@ bool SeerGdbConfigPage::gdbHandleTerminatingException () const {
     return gdbHandleTerminateExceptionCheckBox->isChecked();
 }
 
+bool SeerGdbConfigPage::gdbRandomizeStartAddress () const {
+
+    return gdbRandomizeStartAddressCheckBox->isChecked();
+}
+
 void SeerGdbConfigPage::setGdbProgram (const QString& program) {
 
     gdbProgramLineEdit->setText(program);
@@ -62,6 +67,11 @@ void SeerGdbConfigPage::setGdbAsyncMode (bool flag) {
 void SeerGdbConfigPage::setGdbHandleTerminatingException (bool flag) {
 
     gdbHandleTerminateExceptionCheckBox->setChecked(flag);
+}
+
+void SeerGdbConfigPage::setGdbRandomizeStartAddress (bool flag) {
+
+    gdbRandomizeStartAddressCheckBox->setChecked(flag);
 }
 
 QString SeerGdbConfigPage::dprintfStyle () const {
@@ -117,6 +127,7 @@ void SeerGdbConfigPage::reset () {
     setGdbArguments("--interpreter=mi");
     setGdbAsyncMode(true);
     setGdbHandleTerminatingException(true);
+    setGdbRandomizeStartAddress(false);
 
     setDprintfStyle("gdb");
     setDprintfFunction("printf");

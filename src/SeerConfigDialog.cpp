@@ -123,6 +123,17 @@ bool SeerConfigDialog::gdbHandleTerminatingException () const {
     return _gdbConfigPage->gdbHandleTerminatingException();
 }
 
+void SeerConfigDialog::setGdbRandomizeStartAddress (bool flag) {
+
+    _gdbConfigPage->setGdbRandomizeStartAddress(flag);
+}
+
+bool SeerConfigDialog::gdbRandomizeStartAddress () const {
+
+    return _gdbConfigPage->gdbRandomizeStartAddress();
+}
+
+
 void SeerConfigDialog::setDprintfStyle (const QString& style) {
 
     _gdbConfigPage->setDprintfStyle(style);

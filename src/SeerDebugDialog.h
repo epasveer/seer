@@ -26,8 +26,14 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 executableArguments                             () const;
         void                    setBreakpointsFilename                          (const QString& breakpointsFilename);
         QString                 breakpointsFilename                             () const;
-        void                    setBreakInMain                                  (bool flag);
-        bool                    breakInMain                                     () const;
+        void                    setBreakpointMode                               (const QString& mode);
+        QString                 breakpointMode                                  () const;
+        void                    setBreakpointFunctionName                       (const QString& nameoraddress);
+        QString                 breakpointFunctionName                          () const;
+        void                    setShowAssemblyTab                              (bool flag);
+        bool                    showAssemblyTab                                 () const;
+        void                    setRandomizeStartAddress                        (bool flag);
+        bool                    randomizeStartAddress                           () const;
 
         // Attach to a running process. "attach".
         void                    setAttachPid                                    (int pid);

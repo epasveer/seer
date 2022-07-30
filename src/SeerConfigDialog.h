@@ -35,6 +35,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbHandleTerminatingException                (bool flag);
         bool                                gdbHandleTerminatingException                   () const;
 
+        void                                setGdbRandomizeStartAddress                     (bool flag);
+        bool                                gdbRandomizeStartAddress                        () const;
+
         void                                setDprintfStyle                                 (const QString& style);
         QString                             dprintfStyle                                    () const;
 

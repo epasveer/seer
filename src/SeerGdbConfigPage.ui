@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>861</width>
-    <height>694</height>
+    <width>792</width>
+    <height>870</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,6 +33,47 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
+        <property name="toolTip">
+         <string>Arguments to pass to the gdb debugger.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="gdbArgumentsLabel">
+        <property name="text">
+         <string>GDB arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="gdbProgramLabel">
+        <property name="text">
+         <string>GDB program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+        <property name="toolTip">
+         <string>Turn gdb 'async' mode on or off.</string>
+        </property>
+        <property name="text">
+         <string>GDB asycn mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
+        <property name="toolTip">
+         <string>Handle terminating exceptions when calling functions.</string>
+        </property>
+        <property name="text">
+         <string>Handle  terminating-exception</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
        <widget class="QToolButton" name="gdbProgramToolButton">
         <property name="toolTip">
@@ -47,44 +88,13 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="gdbArgumentsLabel">
-        <property name="text">
-         <string>GDB arguments</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
         <property name="toolTip">
-         <string>Turn gdb 'async' mode on or off.</string>
+         <string>Randomize the process start address.</string>
         </property>
         <property name="text">
-         <string>GDB asycn mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="gdbProgramLabel">
-        <property name="text">
-         <string>GDB program</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
-        <property name="toolTip">
-         <string>Arguments to pass to the gdb debugger.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
-        <property name="toolTip">
-         <string>Handle terminating exceptions when calling functions.</string>
-        </property>
-        <property name="text">
-         <string>Handle  terminating-exception</string>
+         <string>Randomize start address</string>
         </property>
        </widget>
       </item>
@@ -163,14 +173,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="functionLineEdit">
-        <property name="toolTip">
-         <string>The name of a function in your program to use.</string>
+      <item row="2" column="0">
+       <widget class="QLabel" name="channelLabel">
+        <property name="text">
+         <string>Channel</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="3" colspan="2">
+      <item row="1" column="4">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -183,21 +193,7 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="channelLabel">
-        <property name="text">
-         <string>Channel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="channelLineEdit">
-        <property name="toolTip">
-         <string>The channel value, if required by the function.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3" colspan="2">
+      <item row="2" column="4">
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -209,6 +205,20 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QLineEdit" name="functionLineEdit">
+        <property name="toolTip">
+         <string>The name of a function in your program to use.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="channelLineEdit">
+        <property name="toolTip">
+         <string>The channel value, if required by the function.</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -224,11 +234,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. If a different debugger is used, it must provide that.  So, usually, the &amp;quot;--interpreter=mi&amp;quot; argument is a must.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible. &lt;span style=&quot; font-weight:600;&quot;&gt;Changing this reqires saving the configuration and the restart of Seer to take effect&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A terminating-exception can happen when gdb  is asked to call a function in your program. Like printing the return value from a function. If the function throws an exception, gdb can handle it by suppressing the exception or allowing the program to terminate. See:&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace'; color:#24292f; background-color:transparent;&quot;&gt;    unwind-on-terminating-exception on|off&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The gdb debugger normally starts the process at the same address each time. The process start address can be randomized.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Printpoints use the 'dprintf' command available in gdb. The output of 'dprintf' can be sent to the Seer Console ('call') or the GDB output tab ('gdb'). A value of 'agent' is meant for use with a gdbserver.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;

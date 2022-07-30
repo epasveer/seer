@@ -7,13 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>660</height>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Select Executable to Debug</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="executableNameGroupBox">
      <property name="title">
@@ -65,383 +75,6 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="launchMethodGroupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>100</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Launch Method</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <layout class="QGridLayout" name="launchMethodGridLayout">
-        <item row="2" column="1" colspan="3">
-         <widget class="QLineEdit" name="loadBreakpointsFilenameLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>A file containing previously saved breakpoints.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="0">
-         <widget class="QLabel" name="connectProgramSerialLabel">
-          <property name="text">
-           <string>Serial</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="3" colspan="2">
-         <spacer name="horizontalSpacer_1">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>298</width>
-            <height>22</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="attachProgramPidLabel">
-          <property name="text">
-           <string>Process PID</string>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="1">
-         <widget class="QComboBox" name="connectProgramParityComboBox">
-          <property name="toolTip">
-           <string>Serial port parity setting.</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>none</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>odd</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>even</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="7" column="0" colspan="5">
-         <widget class="Line" name="line_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="0">
-         <widget class="QLabel" name="connectProgramHostPortLabel">
-          <property name="text">
-           <string>Gdbserver</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0" colspan="2">
-         <widget class="QRadioButton" name="attachProgramRadioButton">
-          <property name="toolTip">
-           <string>Attach to an already running program.</string>
-          </property>
-          <property name="text">
-           <string>Attach to a local program</string>
-          </property>
-         </widget>
-        </item>
-        <item row="13" column="0" colspan="2">
-         <widget class="QRadioButton" name="loadCoreRadioButton">
-          <property name="toolTip">
-           <string>Load a core file to debug.</string>
-          </property>
-          <property name="text">
-           <string>Load a core file</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QCheckBox" name="runProgramBreakInMainCheckBox">
-          <property name="toolTip">
-           <string>Set a breakpoint in main() before running program.</string>
-          </property>
-          <property name="text">
-           <string>Break in main()</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="tristate">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="12" column="0" colspan="5">
-         <widget class="Line" name="line_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="attachProgramPidLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>The process pid.</string>
-          </property>
-          <property name="inputMask">
-           <string>999999</string>
-          </property>
-          <property name="placeholderText">
-           <string>pid</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="runProgramArgumentsLabel">
-          <property name="text">
-           <string>Arguments</string>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="1">
-         <widget class="QLineEdit" name="connectProgramBaudLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Serial port baud rate.</string>
-          </property>
-          <property name="inputMask">
-           <string>999999</string>
-          </property>
-          <property name="placeholderText">
-           <string>baudrate</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="loadBreakpointsFilenameLabel">
-          <property name="text">
-           <string>Breakpoints</string>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="0">
-         <widget class="QLabel" name="connectProgramParityLabel">
-          <property name="text">
-           <string>Parity</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="3" colspan="2">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>298</width>
-            <height>14</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QRadioButton" name="runProgramRadioButton">
-          <property name="toolTip">
-           <string>Run the program.</string>
-          </property>
-          <property name="text">
-           <string>Run a program</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="2">
-         <widget class="QToolButton" name="attachProgramPidToolButton">
-          <property name="toolTip">
-           <string>Open a dialog to select a pid on the local system.</string>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="14" column="0">
-         <widget class="QLabel" name="loadCoreFilenameLabel">
-          <property name="text">
-           <string>Core</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0" colspan="2">
-         <widget class="QRadioButton" name="connectProgramRadioButton">
-          <property name="toolTip">
-           <string>Connect to an already running program started with gdbserver.</string>
-          </property>
-          <property name="text">
-           <string>Connect to a gdbserver running a program</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QToolButton" name="loadBreakpointsFilenameToolButton">
-          <property name="toolTip">
-           <string>Open a dialog to select a breakpoints file.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="9" column="1" colspan="4">
-         <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>How to access the remote gdbserver.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="placeholderText">
-           <string>host:port or /dev/serialport</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0" colspan="5">
-         <widget class="Line" name="line_1">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" colspan="4">
-         <widget class="QLineEdit" name="runProgramArgumentsLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>The arguments to pass to the program.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="14" column="1" colspan="3">
-         <widget class="QLineEdit" name="loadCoreFilenameLineEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>100</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>The path and name of a core file.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="14" column="4">
-         <widget class="QToolButton" name="loadCoreFilenameToolButton">
-          <property name="toolTip">
-           <string>Open a dialog to select a core file.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="11" column="3" colspan="2">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>298</width>
-            <height>19</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="executableWorkingDirectoryGroupBox">
      <property name="toolTip">
@@ -475,6 +108,438 @@
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="launchMethodGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>100</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Launch Method</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0" colspan="2">
+       <widget class="QRadioButton" name="runProgramRadioButton">
+        <property name="toolTip">
+         <string>Run the program.</string>
+        </property>
+        <property name="text">
+         <string>Run a program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="runProgramArgumentsLabel">
+        <property name="text">
+         <string>Arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="4">
+       <widget class="QLineEdit" name="runProgramArgumentsLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>The arguments to pass to the program.</string>
+        </property>
+        <property name="placeholderText">
+         <string>optional program arguments</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="loadBreakpointsFilenameLabel">
+        <property name="text">
+         <string>Breakpoints file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="3">
+       <widget class="QLineEdit" name="loadBreakpointsFilenameLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>A file containing previously saved breakpoints.</string>
+        </property>
+        <property name="placeholderText">
+         <string>seer.brk</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="4">
+       <widget class="QToolButton" name="loadBreakpointsFilenameToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a breakpoints file.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QRadioButton" name="noBreakpointRadioButton">
+          <property name="toolTip">
+           <string>No initial breakpoint.</string>
+          </property>
+          <property name="text">
+           <string>No breakpoint</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">breakpointButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="breakpointInMainRadioButton">
+          <property name="toolTip">
+           <string>Set a breakpoint in &quot;main&quot;.</string>
+          </property>
+          <property name="text">
+           <string>Break in &quot;main&quot;</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">breakpointButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="breakpointInFunctionRadioButton">
+          <property name="toolTip">
+           <string>Set a breakpoint in a function or at an address.</string>
+          </property>
+          <property name="text">
+           <string>Break in</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">breakpointButtonGroup</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="breakpointInFunctionLineEdit">
+          <property name="toolTip">
+           <string>The breakpoint function or address.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>_function or 0xaddress</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="showAsseblyTabCheckBox">
+        <property name="toolTip">
+         <string>Show Assembly tab at startup.</string>
+        </property>
+        <property name="text">
+         <string>Show Assembly tab</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QCheckBox" name="randomizeStartAddressCheckBox">
+        <property name="toolTip">
+         <string>Randomize the process start address.</string>
+        </property>
+        <property name="text">
+         <string>Randomize start address</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="5">
+       <widget class="Line" name="line_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QRadioButton" name="attachProgramRadioButton">
+        <property name="toolTip">
+         <string>Attach to an already running program.</string>
+        </property>
+        <property name="text">
+         <string>Attach to a local program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="attachProgramPidLabel">
+        <property name="text">
+         <string>Process PID</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLineEdit" name="attachProgramPidLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>The process pid.</string>
+        </property>
+        <property name="inputMask">
+         <string>999999</string>
+        </property>
+        <property name="placeholderText">
+         <string>pid</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QToolButton" name="attachProgramPidToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a pid on the local system.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="3" colspan="2">
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>298</width>
+          <height>14</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="9" column="0" colspan="5">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0" colspan="2">
+       <widget class="QRadioButton" name="connectProgramRadioButton">
+        <property name="toolTip">
+         <string>Connect to an already running program started with gdbserver.</string>
+        </property>
+        <property name="text">
+         <string>Connect to a gdbserver running a program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
+       <widget class="QLabel" name="connectProgramHostPortLabel">
+        <property name="text">
+         <string>Gdbserver</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1" colspan="4">
+       <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>How to access the remote gdbserver.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string>host:port or /dev/serialport</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QLabel" name="connectProgramSerialLabel">
+        <property name="text">
+         <string>Serial</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QLineEdit" name="connectProgramBaudLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Serial port baud rate.</string>
+        </property>
+        <property name="inputMask">
+         <string>999999</string>
+        </property>
+        <property name="placeholderText">
+         <string>baudrate</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="3" colspan="2">
+       <spacer name="horizontalSpacer_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>298</width>
+          <height>22</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="13" column="0">
+       <widget class="QLabel" name="connectProgramParityLabel">
+        <property name="text">
+         <string>Parity</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QComboBox" name="connectProgramParityComboBox">
+        <property name="toolTip">
+         <string>Serial port parity setting.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>none</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>odd</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>even</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="13" column="3" colspan="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>298</width>
+          <height>19</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="14" column="0" colspan="5">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0" colspan="2">
+       <widget class="QRadioButton" name="loadCoreRadioButton">
+        <property name="toolTip">
+         <string>Load a core file to debug.</string>
+        </property>
+        <property name="text">
+         <string>Load a core file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="0">
+       <widget class="QLabel" name="loadCoreFilenameLabel">
+        <property name="text">
+         <string>Core file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="1" colspan="3">
+       <widget class="QLineEdit" name="loadCoreFilenameLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>100</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>The path and name of a core file.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="4">
+       <widget class="QToolButton" name="loadCoreFilenameToolButton">
+        <property name="toolTip">
+         <string>Open a dialog to select a core file.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
         </property>
        </widget>
       </item>
@@ -524,4 +589,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="breakpointButtonGroup"/>
+ </buttongroups>
 </ui>

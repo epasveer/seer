@@ -28,6 +28,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableArguments                = "";
     _executableWorkingDirectory         = "";
     _executableBreakpointsFilename      = "";
+    _executableBreakpointFunctionName   = "";
     _executableHostPort                 = "";
     _executableSerialBaud               = -1;
     _executableSerialParity             = "none";
@@ -48,6 +49,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _assemblyShowAssemblyTabOnStartup   = false;
     _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
+    _gdbRandomizeStartAddress           = false;
     _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
@@ -320,6 +322,14 @@ const QString& SeerGdbWidget::executableBreakpointsFilename () const {
     return _executableBreakpointsFilename;
 }
 
+void SeerGdbWidget::setExecutableBreakpointFunctionName (const QString& nameoraddress) {
+    _executableBreakpointFunctionName = nameoraddress;
+}
+
+const QString& SeerGdbWidget::executableBreakpointFunctionName () const {
+    return _executableBreakpointFunctionName;
+}
+
 void SeerGdbWidget::setExecutablePid (int pid) {
     _executablePid = pid;
 }
@@ -406,6 +416,16 @@ void SeerGdbWidget::setGdbHandleTerminatingException (bool flag) {
 bool SeerGdbWidget::gdbHandleTerminatingException () const {
 
     return _gdbHandleTerminatingException;
+}
+
+void SeerGdbWidget::setGdbRandomizeStartAddress (bool flag) {
+
+    _gdbRandomizeStartAddress = flag;
+}
+
+bool SeerGdbWidget::gdbRandomizeStartAddress () const {
+
+    return _gdbRandomizeStartAddress;
 }
 
 void SeerGdbWidget::setDprintfStyle (const QString& style) {
@@ -544,9 +564,9 @@ void SeerGdbWidget::handleGdbExit () {
     handleGdbCommand("-gdb-exit");
 }
 
-void SeerGdbWidget::handleGdbRunExecutable () {
+void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
-    qCDebug(LC) << "Starting 'gdb run'.";
+    qCDebug(LC) << "Starting 'gdb run/start'.";
 
     // Has a executable name been provided?
     if (executableName() == "") {
@@ -587,12 +607,6 @@ void SeerGdbWidget::handleGdbRunExecutable () {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
-        }
-
-        if (gdbHandleTerminatingException()) {
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-        }else{
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
     }
 
@@ -608,120 +622,48 @@ void SeerGdbWidget::handleGdbRunExecutable () {
     setExecutableLaunchMode("run");
     setExecutablePid(0);
 
+    // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
-            editorManager()->showAssembly();
-        }
+        setNewExecutableFlag(false);
     }
 
-    setNewExecutableFlag(false);
+    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+    if (assemblyShowAssemblyTabOnStartup()) {
+        editorManager()->showAssembly();
+    }
+
+    if (gdbHandleTerminatingException()) {
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+    }else{
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+    }
+
+    if (gdbRandomizeStartAddress()) {
+        handleGdbCommand("-gdb-set disable-randomization on"); // Turn on randomization of starting address for process.
+    }else{
+        handleGdbCommand("-gdb-set disable-randomization off");
+    }
 
     // Set the program's arguments before running.
     handleGdbExecutableArguments();
 
     // Run the executable. Do not stop in main.
-    handleGdbCommand("-exec-run");
+    if (breakMode == "inmain") {
+        handleGdbCommand("-exec-run --start");
+    }else{
+        handleGdbCommand("-exec-run");
+    }
 
     QApplication::restoreOverrideCursor();
 
-    qCDebug(LC) << "Finishing 'gdb run'.";
-}
-
-void SeerGdbWidget::handleGdbStartExecutable () {
-
-    qCDebug(LC) << "Starting 'gdb start'.";
-
-    // Has a executable name been provided?
-    if (executableName() == "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name has not been provided.\n\nUse File->Debug..."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    // Do you really want to restart?
-    if (isGdbRuning() == true) {
-
-        int result = QMessageBox::warning(this, "Seer",
-                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-        if (result == QMessageBox::Cancel) {
-            return;
-        }
-    }
-
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
-
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
-
-        emit changeWindowTitle(executableName());
-
-        startGdb();
-
-        if (gdbAsyncMode()) {
-            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
-        }
-
-        if (gdbHandleTerminatingException()) {
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-        }else{
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-        }
-    }
-
-    // Set dprint parameters.
-    resetDprintf();
-
-    // Create a new console.
-    // Set the program's tty device for stdin and stdout.
-    createConsole();
-    handleGdbTtyDeviceName();
-    connectConsole();
-
-    setExecutableLaunchMode("start");
-    setExecutablePid(0);
-
-    if (newExecutableFlag() == true) {
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-        if (assemblyShowAssemblyTabOnStartup()) {
-            editorManager()->showAssembly();
-        }
-    }
-
-    setNewExecutableFlag(false);
-
-    // Set the program's arguments before running.
-    handleGdbExecutableArguments();
-
-    // Run the executable. Stop in main.
-    handleGdbCommand("-exec-run --start");
-
-    QApplication::restoreOverrideCursor();
-
-    qCDebug(LC) << "Finishing 'gdb start'.";
+    qCDebug(LC) << "Finishing 'gdb run/start'.";
 }
 
 void SeerGdbWidget::handleGdbAttachExecutable () {
@@ -766,12 +708,6 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
-
-        if (gdbHandleTerminatingException()) {
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-        }else{
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-        }
     }
 
     // Set dprint parameters.
@@ -780,19 +716,29 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // No console for 'attach' mode.
     setExecutableLaunchMode("attach");
 
+    // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
-            editorManager()->showAssembly();
-        }
+        setNewExecutableFlag(false);
     }
 
-    setNewExecutableFlag(false);
+    // Set or reset some things.
+    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+                                            //
+    if (assemblyShowAssemblyTabOnStartup()) {
+        editorManager()->showAssembly();
+    }
+
+    if (gdbHandleTerminatingException()) {
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+    }else{
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+    }
 
     // Attach to the executable's pid.
     handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
@@ -837,12 +783,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
-
-        if (gdbHandleTerminatingException()) {
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-        }else{
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-        }
     }
 
     // Set dprint parameters.
@@ -852,18 +792,29 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     setExecutableLaunchMode("connect");
     setExecutablePid(0);
 
+    // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
-        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-        if (assemblyShowAssemblyTabOnStartup()) {
-            editorManager()->showAssembly();
-        }
+        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+                                                //
+        setNewExecutableFlag(false);
     }
 
-    setNewExecutableFlag(false);
+    // Set or reset some things.
+    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+    if (assemblyShowAssemblyTabOnStartup()) {
+        editorManager()->showAssembly();
+    }
+
+    if (gdbHandleTerminatingException()) {
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+    }else{
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+    }
 
     // Connect to the remote gdbserver.
     handleGdbCommand(QString("-gdb-set serial baud %1").arg(executableSerialBaud()));

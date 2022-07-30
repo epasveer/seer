@@ -28,6 +28,12 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableWorkingDirectory          () const;
         void                        setExecutableBreakpointsFilename    (const QString& breakpointsFilename);
         const QString&              executableBreakpointsFilename       () const;
+        void                        setExecutableBreakpointFunctionName (const QString& nameoraddress);
+        const QString&              executableBreakpointFunctionName    () const;
+        void                        setExecutableShowAssemblyTab        (bool flag);
+        bool                        executableShowAssemblyTab           () const;
+        void                        setExecutableRandomizeStartAddress  (bool flag);
+        bool                        executableRandomizeStartAddress     () const;
         void                        setExecutablePid                    (int pid);
         int                         executablePid                       () const;
         void                        setExecutableHostPort               (const QString& executableHostPort);
@@ -39,7 +45,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
         const QString&              executableCoreFilename              () const;
 
-        void                        launchExecutable                    (const QString& launchMode);
+        void                        launchExecutable                    (const QString& launchMode, const QString& breakMode);
         const QString&              executableLaunchMode                () const;
 
     private slots:
@@ -58,6 +64,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleText                          (const QString& text);
         void                        handleRunStatusChanged              (SeerRunStatusIndicator::RunStatus status);
         void                        handleChangeWindowTitle             (QString title);
+        void                        handleRunExecutable                 ();
+        void                        handleStartExecutable               ();
 
     protected:
         void                        writeSettings                       ();

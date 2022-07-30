@@ -41,6 +41,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableBreakpointsFilename    (const QString& breakpointsFilename);
         const QString&                      executableBreakpointsFilename       () const;
 
+        void                                setExecutableBreakpointFunctionName (const QString& nameoraddress);
+        const QString&                      executableBreakpointFunctionName    () const;
+
         void                                setExecutablePid                    (int pid);
         int                                 executablePid                       () const;
 
@@ -71,6 +74,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         void                                setGdbHandleTerminatingException    (bool flag);
         bool                                gdbHandleTerminatingException       () const;
+
+        void                                setGdbRandomizeStartAddress         (bool flag);
+        bool                                gdbRandomizeStartAddress            () const;
 
         void                                setDprintfStyle                     (const QString& style);
         QString                             dprintfStyle                        () const;
@@ -134,8 +140,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleManualCommandExecute          ();
         void                                handleGdbCommand                    (const QString& command);
         void                                handleGdbExit                       ();
-        void                                handleGdbRunExecutable              ();
-        void                                handleGdbStartExecutable            ();
+        void                                handleGdbRunExecutable              (const QString& breakMode);
         void                                handleGdbAttachExecutable           ();
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbCoreFileExecutable         ();
@@ -240,6 +245,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbArguments;
         bool                                _gdbASyncMode;
         bool                                _gdbHandleTerminatingException;
+        bool                                _gdbRandomizeStartAddress;
         QString                             _dprintfStyle;
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;
@@ -252,6 +258,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;
         QString                             _executableBreakpointsFilename;
+        QString                             _executableBreakpointFunctionName;
         int                                 _executablePid;
         QString                             _executableHostPort;
         int                                 _executableSerialBaud;

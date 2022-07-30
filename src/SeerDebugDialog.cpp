@@ -13,7 +13,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setupUi(this);
 
     _runModeButtonGroup = new QButtonGroup(this); // ID's 1 thru 4.
-    _runModeButtonGroup->addButton(runProgramRadioButton,     1); // "run" or "start". See breakInMain().
+    _runModeButtonGroup->addButton(runProgramRadioButton,     1); // "run" or "start". See breakpointMode().
     _runModeButtonGroup->addButton(attachProgramRadioButton,  2); // "attach"
     _runModeButtonGroup->addButton(connectProgramRadioButton, 3); // "connect"
     _runModeButtonGroup->addButton(loadCoreRadioButton,       4); // "corefile"
@@ -23,7 +23,10 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setExecutableArguments("");
     setBreakpointsFilename("");
     setExecutableWorkingDirectory(QDir::currentPath());
-    setBreakInMain(true);
+    setBreakpointMode("none");
+    setBreakpointFunctionName("");
+    setShowAssemblyTab(false);
+    setRandomizeStartAddress(false);
     setAttachPid(0);
     setConnectHostPort("");
     setCoreFilename("");
@@ -80,12 +83,57 @@ QString SeerDebugDialog::breakpointsFilename () const {
     return loadBreakpointsFilenameLineEdit->text();
 }
 
-void SeerDebugDialog::setBreakInMain (bool flag) {
-    runProgramBreakInMainCheckBox->setChecked(flag);
+void SeerDebugDialog::setBreakpointMode (const QString& mode) {
+
+    if (mode == "none") {
+        noBreakpointRadioButton->setChecked(true);
+        return;
+    }else if (mode == "inmain") {
+        breakpointInMainRadioButton->setChecked(true);
+        return;
+    }else if (mode == "infunction") {
+        breakpointInFunctionRadioButton->setChecked(true);
+        return;
+    }
+
+    noBreakpointRadioButton->setChecked(true);
 }
 
-bool SeerDebugDialog::breakInMain () const {
-    return runProgramBreakInMainCheckBox->isChecked();
+QString SeerDebugDialog::breakpointMode () const {
+
+    if (noBreakpointRadioButton->isChecked()) {
+        return "none";
+    }else if (breakpointInMainRadioButton->isChecked()) {
+        return "inmain";
+    }else if (breakpointInFunctionRadioButton->isChecked()) {
+        return "infunction";
+    }
+
+    return "none";
+}
+
+void SeerDebugDialog::setBreakpointFunctionName (const QString& nameoraddress) {
+    breakpointInFunctionLineEdit->setText(nameoraddress);
+}
+
+QString SeerDebugDialog::breakpointFunctionName () const {
+    return breakpointInFunctionLineEdit->text();
+}
+
+void SeerDebugDialog::setShowAssemblyTab (bool flag) {
+    showAsseblyTabCheckBox->setChecked(flag);
+}
+
+bool SeerDebugDialog::showAssemblyTab () const {
+    return showAsseblyTabCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setRandomizeStartAddress (bool flag) {
+    randomizeStartAddressCheckBox->setChecked(flag);
+}
+
+bool SeerDebugDialog::randomizeStartAddress () const {
+    return randomizeStartAddressCheckBox->isChecked();
 }
 
 void SeerDebugDialog::setCoreFilename (const QString& coreFilename) {
@@ -150,12 +198,12 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
     if (mode == "start") {
         runProgramRadioButton->click();
 
-        setBreakInMain(true);
+        setBreakpointMode("inmain");
 
     }else if (mode == "run") {
         runProgramRadioButton->click();
 
-        setBreakInMain(false);
+        setBreakpointMode("none");
 
     }else if (mode == "attach") {
         attachProgramRadioButton->click();
@@ -169,7 +217,7 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
     }else if (mode == "") {
         runProgramRadioButton->click();
 
-        setBreakInMain(true);
+        setBreakpointMode("none");
 
     }else{
         qWarning() << "Unknown launch mode of:" << mode;
@@ -179,8 +227,12 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 QString SeerDebugDialog::launchMode () {
 
     if (_runModeButtonGroup->checkedId() == 1) {
-        if (breakInMain()) {
+        if (breakpointMode() == "inmain") {
             return "start";
+        }else if (breakpointMode() == "infunction") {
+            return "run";
+        }else if (breakpointMode() == "none") {
+            return "run";
         }else{
             return "run";
         }
@@ -254,9 +306,13 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 1
     runProgramArgumentsLineEdit->setEnabled(false);
-    runProgramBreakInMainCheckBox->setEnabled(false);
     loadBreakpointsFilenameLineEdit->setEnabled(false);
     loadBreakpointsFilenameToolButton->setEnabled(false);
+    breakpointInMainRadioButton->setEnabled(false);
+    breakpointInFunctionRadioButton->setEnabled(false);
+    breakpointInFunctionLineEdit->setEnabled(false);
+    showAsseblyTabCheckBox->setEnabled(false);
+    randomizeStartAddressCheckBox->setEnabled(false);
 
     // ID == 2
     attachProgramPidLineEdit->setEnabled(false);
@@ -278,9 +334,13 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 1
     if (id == 1) {
         runProgramArgumentsLineEdit->setEnabled(true);
-        runProgramBreakInMainCheckBox->setEnabled(true);
         loadBreakpointsFilenameLineEdit->setEnabled(true);
         loadBreakpointsFilenameToolButton->setEnabled(true);
+        breakpointInMainRadioButton->setEnabled(true);
+        breakpointInFunctionRadioButton->setEnabled(true);
+        breakpointInFunctionLineEdit->setEnabled(true);
+        showAsseblyTabCheckBox->setEnabled(true);
+        randomizeStartAddressCheckBox->setEnabled(true);
     }
 
     // ID == 2

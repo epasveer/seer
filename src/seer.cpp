@@ -82,6 +82,7 @@ int main (int argc, char* argv[]) {
 
     // Get launch mode.
     QString launchMode    = "none";
+    QString breakMode     = "none";
     int     executablePid = -1;
     QString executableHostPort;
     QString executableBreakpointsFilename;
@@ -89,10 +90,12 @@ int main (int argc, char* argv[]) {
 
     if (parser.isSet(runOption)) {
         launchMode = "run";
+        breakMode  = "none";
     }
 
     if (parser.isSet(startOption)) {
-        launchMode = "start";
+        launchMode = "run";
+        breakMode  = "inmain";
     }
 
     if (parser.isSet(breakpointsOption)) {
@@ -137,7 +140,7 @@ int main (int argc, char* argv[]) {
     seer.setExecutableHostPort(executableHostPort);
     seer.setExecutableCoreFilename(executableCoreFilename);
 
-    seer.launchExecutable(launchMode);
+    seer.launchExecutable(launchMode, breakMode);
 
     seer.move(800, 400);
     seer.show();

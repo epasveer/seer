@@ -73,8 +73,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionConsoleMinimized,            &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                    this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRun,                  &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionControlStart,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionControlRun,                  &QAction::triggered,                    this,           &SeerMainWindow::handleRunExecutable);
+    QObject::connect(actionControlStart,                &QAction::triggered,                    this,           &SeerMainWindow::handleStartExecutable);
     QObject::connect(actionControlContinue,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionControlNext,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionControlStep,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
@@ -86,8 +86,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbRun,                      &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRunExecutable);
-    QObject::connect(actionGdbStart,                    &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStartExecutable);
+    QObject::connect(actionGdbRun,                      &QAction::triggered,                    this,           &SeerMainWindow::handleRunExecutable);
+    QObject::connect(actionGdbStart,                    &QAction::triggered,                    this,           &SeerMainWindow::handleStartExecutable);
     QObject::connect(actionGdbContinue,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionGdbStep,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
@@ -190,6 +190,30 @@ const QString& SeerMainWindow::executableBreakpointsFilename () const {
     return gdbWidget->executableBreakpointsFilename();
 }
 
+void  SeerMainWindow::setExecutableBreakpointFunctionName (const QString& nameoraddress) {
+    gdbWidget->setExecutableBreakpointFunctionName(nameoraddress);
+}
+
+const QString& SeerMainWindow::executableBreakpointFunctionName () const {
+    return gdbWidget->executableBreakpointFunctionName();
+}
+
+void SeerMainWindow::setExecutableShowAssemblyTab (bool flag) {
+    gdbWidget->setAssemblyShowAssemblyTabOnStartup(flag);
+}
+
+bool SeerMainWindow::executableShowAssemblyTab () const {
+    return gdbWidget->assemblyShowAssemblyTabOnStartup();
+}
+
+void SeerMainWindow::setExecutableRandomizeStartAddress (bool flag) {
+    gdbWidget->setGdbRandomizeStartAddress(flag);
+}
+
+bool SeerMainWindow::executableRandomizeStartAddress () const {
+    return gdbWidget->gdbRandomizeStartAddress();
+}
+
 void SeerMainWindow::setExecutablePid (int pid) {
     gdbWidget->setExecutablePid(pid);
 }
@@ -230,13 +254,10 @@ const QString& SeerMainWindow::executableCoreFilename () const {
     return gdbWidget->executableCoreFilename();
 }
 
-void SeerMainWindow::launchExecutable (const QString& launchMode) {
+void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
-    if (launchMode == "start") {
-        gdbWidget->handleGdbStartExecutable();
-
-    }else if (launchMode == "run") {
-        gdbWidget->handleGdbRunExecutable();
+    if (launchMode == "run") {
+        gdbWidget->handleGdbRunExecutable(breakMode);
 
     }else if (launchMode == "attach") {
         gdbWidget->handleGdbAttachExecutable();
@@ -274,6 +295,9 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
     dlg.setExecutableArguments(executableArguments());
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
+    dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
+    dlg.setShowAssemblyTab(executableShowAssemblyTab());
+    dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableHostPort());
     dlg.setConnectSerialBaud(executableSerialBaud());
@@ -288,6 +312,7 @@ void SeerMainWindow::handleFileDebug () {
     }
 
     QString launchMode = dlg.launchMode();
+    QString breakMode  = dlg.breakpointMode();
 
     if (launchMode == "") {
         return;
@@ -297,13 +322,16 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableWorkingDirectory(dlg.executableWorkingDirectory());
     setExecutableArguments(dlg.executableArguments());
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
+    setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
+    setExecutableShowAssemblyTab(dlg.showAssemblyTab());
+    setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutablePid(dlg.attachPid());
     setExecutableHostPort(dlg.connectHostPort());
     setExecutableSerialBaud(dlg.connectSerialBaud());
     setExecutableSerialParity(dlg.connectSerialParity());
     setExecutableCoreFilename(dlg.coreFilename());
 
-    launchExecutable(launchMode);
+    launchExecutable(launchMode, breakMode);
 }
 
 void SeerMainWindow::handleFileArguments () {
@@ -365,6 +393,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
+    dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setDprintfStyle(gdbWidget->dprintfStyle());
     dlg.setDprintfFunction(gdbWidget->dprintfFunction());
     dlg.setDprintfChannel(gdbWidget->dprintfChannel());
@@ -393,6 +422,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
+    gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
     gdbWidget->setDprintfChannel(dlg.dprintfChannel());
@@ -444,6 +474,14 @@ void SeerMainWindow::handleHelpAbout () {
     SeerAboutDialog dlg(this);
 
     dlg.exec();
+}
+
+void SeerMainWindow::handleRunExecutable () {
+    gdbWidget->handleGdbRunExecutable("none");
+}
+
+void SeerMainWindow::handleStartExecutable () {
+    gdbWidget->handleGdbRunExecutable("inmain");
 }
 
 void SeerMainWindow::handleText (const QString& text) {
@@ -724,6 +762,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("arguments",                  gdbWidget->gdbArguments());
         settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
         settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
+        settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {
@@ -788,6 +827,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
         gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
+        gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {
