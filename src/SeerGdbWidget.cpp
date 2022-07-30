@@ -20,7 +20,7 @@
 #include <string.h>
 #include <errno.h>
 
-static QLoggingCategory LC("seer.seergdbwidget");
+static QLoggingCategory LC("seer.gdbwidget");
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
@@ -544,6 +544,8 @@ void SeerGdbWidget::handleManualCommandExecute () {
 
 void SeerGdbWidget::handleGdbCommand (const QString& command) {
 
+    qCDebug(LC) << "Command=" << command;
+
     if (_gdbProcess->state() == QProcess::NotRunning) {
         QMessageBox::warning(this, "Seer",
                                    QString("The executable has not been started yet or has already exited.\n\n") +
@@ -646,9 +648,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     }
 
     if (gdbRandomizeStartAddress()) {
-        handleGdbCommand("-gdb-set disable-randomization on"); // Turn on randomization of starting address for process.
-    }else{
         handleGdbCommand("-gdb-set disable-randomization off");
+    }else{
+        handleGdbCommand("-gdb-set disable-randomization on"); // Turn on randomization of starting address for process.
     }
 
     // Set the program's arguments before running.

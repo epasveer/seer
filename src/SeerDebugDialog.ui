@@ -257,6 +257,9 @@
           <property name="placeholderText">
            <string>_function or 0xaddress</string>
           </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
