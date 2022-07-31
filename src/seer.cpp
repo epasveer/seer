@@ -46,8 +46,17 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startOption(QStringList()<<"s"<<"start", QCoreApplication::translate("main", "Load the executable, break in \"main\", and run it."));
     parser.addOption(startOption);
 
-    QCommandLineOption breakpointsOption(QStringList()<<"b"<<"breakpoints", QCoreApplication::translate("main", "Optionally load a previously saved breakpoints file. For --run or --start"), "filename");
-    parser.addOption(breakpointsOption);
+    QCommandLineOption breakfileOption(QStringList()<<"bl"<<"break-load", QCoreApplication::translate("main", "Load a previously saved breakpoints file. For --run or --start"), "filename");
+    parser.addOption(breakfileOption);
+
+    QCommandLineOption breakfunctionOption(QStringList()<<"bf"<<"break-function", QCoreApplication::translate("main", "Set a breakpoint in a function/address. For --run or --start"), "function");
+    parser.addOption(breakfunctionOption);
+
+    QCommandLineOption showAssemblyTabOption(QStringList()<<"sat"<<"show-assembly-tab", QCoreApplication::translate("main", "Show the Assembly Tab on Seer startup. For --run or --start"), "yes|no");
+    parser.addOption(showAssemblyTabOption);
+
+    QCommandLineOption startAddressRandomizeOption(QStringList()<<"sar"<<"start-address-randomize", QCoreApplication::translate("main", "Randomize the program's starting address. For --run or --start"), "yes|no");
+    parser.addOption(startAddressRandomizeOption);
 
     QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a locally running process."), "pid");
     parser.addOption(attachOption);
@@ -86,6 +95,9 @@ int main (int argc, char* argv[]) {
     int     executablePid = -1;
     QString executableHostPort;
     QString executableBreakpointsFilename;
+    QString executableBreakpointFunctionName;
+    QString executableShowAssemblyTab;
+    QString executableStartAddressRandomize;
     QString executableCoreFilename;
 
     if (parser.isSet(runOption)) {
@@ -98,8 +110,21 @@ int main (int argc, char* argv[]) {
         breakMode  = "inmain";
     }
 
-    if (parser.isSet(breakpointsOption)) {
-        executableBreakpointsFilename = parser.value(breakpointsOption);
+    if (parser.isSet(breakfileOption)) {
+        executableBreakpointsFilename = parser.value(breakfileOption);
+    }
+
+    if (parser.isSet(breakfunctionOption)) {
+        executableBreakpointFunctionName = parser.value(breakfunctionOption);
+        breakMode  = "infunction";
+    }
+
+    if (parser.isSet(showAssemblyTabOption)) {
+        executableShowAssemblyTab = parser.value(showAssemblyTabOption);
+    }
+
+    if (parser.isSet(startAddressRandomizeOption)) {
+        executableStartAddressRandomize = parser.value(startAddressRandomizeOption);
     }
 
     if (parser.isSet(attachOption)) {
@@ -135,7 +160,41 @@ int main (int argc, char* argv[]) {
     seer.setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     seer.setExecutableName(executableName);
     seer.setExecutableArguments(positionalArguments);
-    seer.setExecutableBreakpointsFilename(executableBreakpointsFilename);
+
+    if (executableBreakpointsFilename != "") {
+        seer.setExecutableBreakpointsFilename(executableBreakpointsFilename);
+    }
+
+    if (executableBreakpointFunctionName != "") {
+        seer.setExecutableBreakpointFunctionName(executableBreakpointFunctionName);
+    }
+
+    if (executableShowAssemblyTab != "") {
+        if (executableShowAssemblyTab == "yes") {
+            seer.setExecutableShowAssemblyTab(true);
+
+        }else if (executableShowAssemblyTab == "no") {
+            seer.setExecutableShowAssemblyTab(false);
+
+        }else{
+            printf("%s: Unknown --show-assembly-tab option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableShowAssemblyTab));
+            return 1;
+        }
+    }
+
+    if (executableStartAddressRandomize != "") {
+        if (executableStartAddressRandomize == "yes") {
+            seer.setExecutableRandomizeStartAddress(true);
+
+        }else if (executableStartAddressRandomize == "no") {
+            seer.setExecutableRandomizeStartAddress(false);
+
+        }else{
+            printf("%s: Unknown --start-address-randomize option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableStartAddressRandomize));
+            return 1;
+        }
+    }
+
     seer.setExecutablePid(executablePid);
     seer.setExecutableHostPort(executableHostPort);
     seer.setExecutableCoreFilename(executableCoreFilename);

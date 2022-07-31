@@ -158,24 +158,50 @@ Starting Seer
 Seer is meant to easily start the program to debug from the command line. gdb has multiple
 methods for debugging a program. So Seer natually does too.
 
-    % seer --start myprog arg1 arg2             # Debug myprog with its arguments. Break in main().
-    % seer --run   myprog arg1 arg2             # Debug myprog with its arguments. Run it immediately without breaking.
-    % seer --attach <pid>  myprog               # Debug myprog by attaching to the currently running pid.
-    % seer --connect <host:port> myprog         # Debug myprog by connecting to the currently started gdbserver process.
-    % seer --core <corefile> myprog             # Debug a corefile for myprog.
+    % seer --start myprog arg1 arg2                  # Debug myprog with its arguments. Break in main().
+    % seer --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
+    % seer --attach <pid>  myprog                    # Debug myprog by attaching to the currently running pid.
+    % seer --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
+    % seer --core <corefile> myprog                  # Debug a corefile for myprog.
 
-    % seer                                      # Bring up a dialog box to set the program and debug method.
-    % seer myprog arg1 arg2                     # Bring up a dialog box to set the debug method.
+    % seer                                           # Bring up a dialog box to set the program and debug method.
+    % seer myprog arg1 arg2                          # Bring up a dialog box to set the debug method.
 
-    % seer --config                             # Bring up Seer config dialog.
-                                                # Save settings with 'Settings->Save Configuration'.
+    % seer --config                                  # Bring up Seer config dialog.
+                                                     # Save settings with 'Settings->Save Configuration'.
 
 A breakpoint file can be read for --start and --run modes. This file contains previously saved
 breakpoints (breakpoints, catchpoints, printpoints, etc.)
 
-    % seer --run -b myprog.brk  myprog arg1 arg2   # Debug myprog with its arguments.
-                                                   # Run it immediately and break at points describe in
-                                                   # myprog.brk
+    % seer --run --bl myprog.brk  myprog arg1 arg2   # Debug myprog with its arguments.
+                                                     # Run it immediately and break at points describe in
+                                                     # myprog.brk
+
+A breakpoint function can be set for --start and --run modes. The function can be a function name or
+an address (eg: _start or 0xadad23220)
+
+    % seer --run --bf _start myprog arg1 arg2        # Debug myprog with its arguments.
+                                                     # Run it immediately and break in the function '_start'.
+
+The Assembly Tab can be shown for --start and --run modes.
+
+    % seer --start --sat yes myprog arg1 arg2        # Debug myprog with its arguments.
+                                                     # Break in "main" and show the Assemby Tab.
+
+The program's starting address can be randomizes for --start and --run modes. Normally gdb runs the program
+with no start address randomization.
+
+    % seer --start --sar yes  myprog arg1 arg2       # Debug myprog with its arguments.
+                                                     # The program's start address is randomized.
+
+See "-h" for the full Seer help.
+
+    % seer -h
+
+**Some of the command line options can be permamently set in the Seer configuration.**
+
+    % seer --config                                  # Bring up Seer config dialog.
+                                                     # Save settings with 'Settings->Save Configuration'.
 
 Building Seer
 =============
