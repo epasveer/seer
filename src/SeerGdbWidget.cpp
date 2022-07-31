@@ -2022,6 +2022,9 @@ void SeerGdbWidget::killGdb () {
         return;
     }
 
+    // Clear the launch mode.
+    setExecutableLaunchMode("");
+
     // Kill the process.
     _gdbProcess->kill();
 
@@ -2032,9 +2035,6 @@ void SeerGdbWidget::killGdb () {
     if (isGdbRuning()) {
         qWarning() << "Is running but shouldn't be.";
     }
-
-    // Clear the launch mode.
-    setExecutableLaunchMode("");
 }
 
 void SeerGdbWidget::createConsole () {
