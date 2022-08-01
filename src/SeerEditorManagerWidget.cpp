@@ -298,35 +298,34 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         //qDebug() << frame_text;
         //qDebug() << fullname_text << file_text << line_text;
 
-        // If there is no file to open, just exit.
-        if (fullname_text == "" || file_text == "") {
-            return;
+        // If there is a file to open, open it.
+        if (fullname_text != "" && file_text != "") {
+
+            // Get the EditorWidget for the file. Create one if needed.
+            SeerEditorWidgetSource* editorWidget = editorWidgetTab(fullname_text);
+
+            if (editorWidget == 0) {
+                editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
+            }
+
+            // Push this tab to the top only if the current one in not the "Assembly" tab.
+            QString tabtext = "";
+
+            if (tabWidget->currentIndex() >= 0) {
+                tabtext = tabWidget->tabText(tabWidget->currentIndex());
+            }
+
+            if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+                // Do nothing. The "Assembly" tab is already on top.
+            }else{
+                tabWidget->setCurrentWidget(editorWidget);
+            }
+
+            // Give the EditorWidget the command text (read file, set line number, etc.).
+            editorWidget->sourceArea()->handleText(text);
         }
 
-        // Get the EditorWidget for the file. Create one if needed.
-        SeerEditorWidgetSource* editorWidget = editorWidgetTab(fullname_text);
-
-        if (editorWidget == 0) {
-            editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
-        }
-
-        // Push this tab to the top only if the current one in not the "Assembly" tab.
-        QString tabtext = "";
-
-        if (tabWidget->currentIndex() >= 0) {
-            tabtext = tabWidget->tabText(tabWidget->currentIndex());
-        }
-
-        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
-            // Do nothing. The "Assembly" tab is already on top.
-        }else{
-            tabWidget->setCurrentWidget(editorWidget);
-        }
-
-        // Give the EditorWidget the command text (read file, set line number, etc.).
-        editorWidget->sourceArea()->handleText(text);
-
-        // Get the AssemblyWidget.
+        // Get the AssemblyWidget, if there is one.
         SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
         if (assemblyWidget) {
