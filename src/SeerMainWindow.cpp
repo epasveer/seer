@@ -6,6 +6,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QStyleFactory>
 #include <QtGui/QKeySequence>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
@@ -42,19 +43,37 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     toolBar->addWidget(_progressIndicator);
 
     //
+    // Set up Styles menu.
+    //
+    _styleMenuActionGroup = new QActionGroup(this);
+    _styleMenuActionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+    _styleMenuActionGroup->setEnabled(true);
+    _styleMenuActionGroup->setVisible(true);
+
+    QStringList styles = QStyleFactory::keys();
+
+    for (int i = 0; i < styles.size(); i++) {
+
+        QAction* styleAction = menuStyles->addAction(styles.at(i));
+        styleAction->setCheckable(true);
+
+        _styleMenuActionGroup->addAction(styleAction);
+    }
+
+    //
     // Set up Interrupt menu.
     //
-    QMenu* interruptMenu = new QMenu(this);
-    QAction* interruptAction = interruptMenu->addAction("GDB Interrupt");
-    interruptMenu->addSeparator();
-    QAction* interruptActionSIGINT  = interruptMenu->addAction("SIGINT");
-    QAction* interruptActionSIGKILL = interruptMenu->addAction("SIGKILL");
-    QAction* interruptActionSIGFPE  = interruptMenu->addAction("SIGFPE");
-    QAction* interruptActionSIGSEGV = interruptMenu->addAction("SIGSEGV");
-    QAction* interruptActionSIGUSR1 = interruptMenu->addAction("SIGUSR1");
-    QAction* interruptActionSIGUSR2 = interruptMenu->addAction("SIGUSR2");
+    QMenu* menuInterrupt = new QMenu(this);
+    QAction* interruptAction = menuInterrupt->addAction("GDB Interrupt");
+    menuInterrupt->addSeparator();
+    QAction* interruptActionSIGINT  = menuInterrupt->addAction("SIGINT");
+    QAction* interruptActionSIGKILL = menuInterrupt->addAction("SIGKILL");
+    QAction* interruptActionSIGFPE  = menuInterrupt->addAction("SIGFPE");
+    QAction* interruptActionSIGSEGV = menuInterrupt->addAction("SIGSEGV");
+    QAction* interruptActionSIGUSR1 = menuInterrupt->addAction("SIGUSR1");
+    QAction* interruptActionSIGUSR2 = menuInterrupt->addAction("SIGUSR2");
 
-    actionInterruptProcess->setMenu(interruptMenu);
+    actionInterruptProcess->setMenu(menuInterrupt);
 
     // Set the inital key settings.
     setKeySettings(SeerKeySettings::populate());
@@ -88,6 +107,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(actionGdbRun,                      &QAction::triggered,                    this,           &SeerMainWindow::handleRunExecutable);
     QObject::connect(actionGdbStart,                    &QAction::triggered,                    this,           &SeerMainWindow::handleStartExecutable);
+    QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,               this,           &SeerMainWindow::handleStyleMenuChanged);
     QObject::connect(actionGdbContinue,                 &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionGdbStep,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
@@ -112,6 +132,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,      this,           &SeerMainWindow::handleChangeWindowTitle);
 
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
+
 
     // Restore window settings.
     readSettings();
@@ -490,6 +511,17 @@ void SeerMainWindow::handleRunExecutable () {
 
 void SeerMainWindow::handleStartExecutable () {
     gdbWidget->handleGdbRunExecutable("inmain");
+}
+
+void SeerMainWindow::handleStyleMenuChanged () {
+
+    QAction* action = _styleMenuActionGroup->checkedAction();
+
+    if (action == 0) {
+        return;
+    }
+
+    QApplication::setStyle(action->text());
 }
 
 void SeerMainWindow::handleText (const QString& text) {

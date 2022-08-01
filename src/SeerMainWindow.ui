@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -58,10 +58,16 @@
      <addaction name="actionConsoleMinimized"/>
      <addaction name="actionConsoleHidden"/>
     </widget>
+    <widget class="QMenu" name="menuStyles">
+     <property name="title">
+      <string>Styles</string>
+     </property>
+    </widget>
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
     <addaction name="actionViewAssembly"/>
     <addaction name="menuConsole"/>
+    <addaction name="menuStyles"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -503,6 +509,11 @@
    </property>
    <property name="statusTip">
     <string>View the program's assembly.</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="text">
+    <string>Default</string>
    </property>
   </action>
  </widget>

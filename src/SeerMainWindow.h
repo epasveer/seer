@@ -6,6 +6,7 @@
 #include "QProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QShortcut>
+#include <QtWidgets/QActionGroup>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QResizeEvent>
 #include <QtCore/QString>
@@ -67,6 +68,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleChangeWindowTitle             (QString title);
         void                        handleRunExecutable                 ();
         void                        handleStartExecutable               ();
+        void                        handleStyleMenuChanged              ();
 
     protected:
         void                        writeSettings                       ();
@@ -80,6 +82,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        refreshShortCuts                    ();
 
     private:
+        QActionGroup*               _styleMenuActionGroup;
         QProgressIndicator*         _progressIndicator;
         SeerKeySettings             _keySettings;
 };
