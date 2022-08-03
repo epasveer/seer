@@ -510,7 +510,17 @@ void SeerMainWindow::handleRunExecutable () {
 }
 
 void SeerMainWindow::handleStartExecutable () {
-    gdbWidget->handleGdbRunExecutable("inmain");
+
+    QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+
+    // No break function, attempt to stop in "main".
+    if (breakfunction == "") {
+        gdbWidget->handleGdbRunExecutable("inmain");
+
+    // Otherwise, attempt to stop in the function.
+    }else{
+        gdbWidget->handleGdbRunExecutable("infunction");
+    }
 }
 
 void SeerMainWindow::handleStyleMenuChanged () {
