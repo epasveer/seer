@@ -80,6 +80,8 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        enableBreakpoints                   (QString breakpoints);
         void                                        disableBreakpoints                  (QString breakpoints);
         void                                        runToAddress                        (QString address);
+        void                                        addMemoryVisualize                  (QString expression);
+        void                                        addArrayVisualize                   (QString expression);
         void                                        requestAssembly                     (QString address);
         void                                        showSearchBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();

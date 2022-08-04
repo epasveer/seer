@@ -790,6 +790,8 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::disableBreakpoints,      this, &SeerEditorManagerWidget::handleDisableBreakpoints);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::runToAddress,            this, &SeerEditorManagerWidget::handleRunToAddress);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualize,      this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualize,       this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
 
     // Load the file.
     assemblyWidget->assemblyArea()->setPlainText("");

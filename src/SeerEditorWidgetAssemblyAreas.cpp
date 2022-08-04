@@ -800,6 +800,8 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     QAction* enableAction;
     QAction* disableAction;
     QAction* runToAddressAction;
+    QAction* addMemoryAddressVisualizerAction;
+    QAction* addArrayAddressVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
     if (hasBreakpointAddress(address) == true) {
@@ -832,6 +834,9 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
         runToAddressAction->setEnabled(true);
     }
 
+    addMemoryAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addArrayAddressVisualizerAction  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
     menu.addAction(createBreakpointAction);
@@ -839,6 +844,23 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     menu.addAction(enableAction);
     menu.addAction(disableAction);
     menu.addAction(runToAddressAction);
+
+    QMenu memoryVisualizerMenu("Add address to a Memory Visualizer");
+    memoryVisualizerMenu.addAction(addMemoryAddressVisualizerAction);
+    menu.addMenu(&memoryVisualizerMenu);
+
+    QMenu arrayVisualizerMenu("Add address to an Array Visualizer");
+    arrayVisualizerMenu.addAction(addArrayAddressVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
+    // Enable/disable items based on something being selected or not.
+    if (textCursor().selectedText() == "") {
+        addMemoryAddressVisualizerAction->setEnabled(false);
+        addArrayAddressVisualizerAction->setEnabled(false);
+    }else{
+        addMemoryAddressVisualizerAction->setEnabled(true);
+        addArrayAddressVisualizerAction->setEnabled(true);
+    }
 
     // Launch the menu. Get the response.
     QAction* action = menu.exec(globalPos);
@@ -908,6 +930,32 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the runToLine signal.
         emit runToAddress(address);
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryAddressVisualizerAction) {
+
+        //qDebug() << "addMemoryVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMemoryVisualize(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAddressVisualizerAction) {
+
+        //qDebug() << "addArrayVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addArrayVisualize(textCursor().selectedText());
+        }
 
         return;
     }
