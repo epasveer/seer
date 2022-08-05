@@ -20,6 +20,11 @@ int main (void) {
     //
     //
     //
+    float local_array[] = {1.0, 2.0, 3.0};
+
+    //
+    //
+    //
     char* array = (char*)malloc(256);
 
     for (int i=0; i<256; i++) {
