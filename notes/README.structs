@@ -1,0 +1,45 @@
+
+# Structure for *this for LeakyIntModule.
+
+    5^done,value="{
+                    <ModuleBase> = {
+                                    _vptr.ModuleBase = 0x7fffe70abcc8 <vtable for LeakyIntModule+16>, _parameters = 0x62f9f0, _parameterAccess = {_nameStack = std::vector of length 0, capacity 2, _topNode = 0x62f9f0, _currNode = 0x0}, _performer = 0x0, _map = {<DaStoreBase> = {<DaSetBase> = {_vptr.DaSetBase = 0x7ffff778a280 <vtable for DaMemoryStore+16>, _name = "", _mainClass = "", _subClass = "", _keys = {_keys = std::vector of length 0, capacity 0}}, _set = 0x0, _isModified = false}, <No data fields>}, _inputDataAccessor = {_store = 0x635880, _performer = 0x0, _defaultTraceName = "TRACE", _isLast = false}, _outputDataAccessor = {_store = 0x636240, _performer = 0x0, _defaultTraceName = "TRACE", _isLast = false}, _dataFlow = 0x0, _nSetupCalls = 1, _nPrepareCalls = 1, _nGroupCalls = 1, _nGroupTracesIn = 119, _nGroupTracesOut = 0, _nCleanupCalls = 0, _nAbortCalls = 0, _lastStatus = 6, _timer = {_vptr.Timer = 0x7ffff263ca00 <vtable for Timer+16>, _name = "Timer", _totalElapsedTime = 0.00043916702270507812, _totalUserCpuTime = 0, _totalSystemCpuTime = 0, _currentElapsedTime = 1659658581.786412, _currentUserCpuTime = 0.059999999999999998, _currentSystemCpuTime = 0.029999999999999999}, _stepStatus = 0x7ffff7ff3138, _id = 3, _rank = 0, _nRank = 0, _cacheEnabled = false, _setupCache = 0x0, _groupCache = 0x0
+                    },
+
+                    _rho = 0.999, _half = "yes", _inv = "yes", _adj = "yes", _pkeyname = "SHOT", _skeyname = "SHOTTR", _padding = 0, _nsamp = 1000, _srate_milli = 2, _srate_micro = 2000, _ipad = 0, _fny = 0.000250000012, _fftlen = 1024, _nf = 513, _df = 4.88281273e-07, _trace_t = 0x637500, _trace_f = 0x638520, _cfilt = 0x639540
+    }"
+
+
+    5^done,value="{<ModuleBase> = {_vptr.ModuleBase = 0x7fffe70abcc8 <vtable for LeakyIntModule+16>, _parameters = 0x62f9f0, _parameterAccess = {_nameStack = std::vector of length 0, capacity 2, _topNode = 0x62f9f0, _currNode = 0x0}, _performer = 0x0, _map = {<DaStoreBase> = {<DaSetBase> = {_vptr.DaSetBase = 0x7ffff778a280 <vtable for DaMemoryStore+16>, _name = "", _mainClass = "", _subClass = "", _keys = {_keys = std::vector of length 0, capacity 0}}, _set = 0x0, _isModified = false}, <No data fields>}, _inputDataAccessor = {_store = 0x635880, _performer = 0x0, _defaultTraceName = "TRACE", _isLast = false}, _outputDataAccessor = {_store = 0x636240, _performer = 0x0, _defaultTraceName = "TRACE", _isLast = false}, _dataFlow = 0x0, _nSetupCalls = 1, _nPrepareCalls = 1, _nGroupCalls = 1, _nGroupTracesIn = 119, _nGroupTracesOut = 0, _nCleanupCalls = 0, _nAbortCalls = 0, _lastStatus = 6, _timer = {_vptr.Timer = 0x7ffff263ca00 <vtable for Timer+16>, _name = "Timer", _totalElapsedTime = 0.00043916702270507812, _totalUserCpuTime = 0, _totalSystemCpuTime = 0, _currentElapsedTime = 1659658581.786412, _currentUserCpuTime = 0.059999999999999998, _currentSystemCpuTime = 0.029999999999999999}, _stepStatus = 0x7ffff7ff3138, _id = 3, _rank = 0, _nRank = 0, _cacheEnabled = false, _setupCache = 0x0, _groupCache = 0x0}, _rho = 0.999, _half = "yes", _inv = "yes", _adj = "yes", _pkeyname = "SHOT", _skeyname = "SHOTTR", _padding = 0, _nsamp = 1000, _srate_milli = 2, _srate_micro = 2000, _ipad = 0, _fny = 0.000250000012, _fftlen = 1024, _nf = 513, _df = 4.88281273e-07, _trace_t = 0x637500, _trace_f = 0x638520, _cfilt = 0x639540}"
+
+
+
+# Structure for traceItem for DaItem in LeakyIntModule.
+
+    ^done,DataExpressionAdded={id="12",expression="*&traceItem"}
+
+    12^done,value="{
+                    _name = "TRACE", _dataType = DT::FloatType, _size = 119, _length = 1000, _spacing = 2, _firstTime = 1.77964905e-43, _data = 0x7ffff7f18010, _isMinMaxSet = false, _minValue = 0, _maxValue = 0
+    }"
+
+
+    12^done,value="{_name = "TRACE", _dataType = DT::FloatType, _size = 119, _length = 1000, _spacing = 2, _firstTime = 1.77964905e-43, _data = 0x7ffff7f18010, _isMinMaxSet = false, _minValue = 0, _maxValue = 0}"
+
+# Structure for a simple C/C++.  See tests/hellostruct.cpp
+# Shows extra "repeats XX times" text. Will need to deal with that.
+
+    5^done,value="{
+                   name = "Ernie Pasveer", '\\000' <repeats 11 times>, "\\377\\377\\000\\000\\001\\000\\000\\000\\260\\323\\377\\377\\377\\177\\000\\000V\\000\\000\\000\\000\\000\\002", city = "Houston", age = 60, salary = 0.25
+    }"
+
+
+    5^done,value="{
+                   name = "Ernie Pasveer", '\\000' <repeats 11 times>, "\\377\\377\\000\\000\\001\\000\\000\\000\\260\\323\\377\\377\\377\\177\\000\\000V\\\000\\000\\000\\000\\000\\002", 
+                   city = "Houston",
+                   age = 60,
+                   salary = 0.25
+    }"
+
+
+    5^done,value="{name = "Ernie Pasveer", '\\000' <repeats 11 times>, "\\377\\377\\000\\000\\001\\000\\000\\000\\260\\323\\377\\377\\377\\177\\000\\000V\\000\\000\\000\\000\\000\\002", city = "Houston", age = 60, salary = 0.25}"
+
