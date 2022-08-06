@@ -1,4 +1,4 @@
-#include "SeerUtl.h"
+#include "../../src/SeerUtl.h"
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QDebug>
