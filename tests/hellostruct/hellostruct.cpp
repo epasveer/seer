@@ -2,11 +2,18 @@
 #include <iostream>
 #include <string.h>
 
-struct Person {
-    char            name[50];
+
+struct Location {
     std::string     city;
+    std::string     state;
+    int             zip;
+};
+
+struct Person {
+    std::string     name;
     int             age;
     float           salary;
+    struct Location location;
 };
 
 
@@ -14,12 +21,14 @@ int main (int argc, char** argv) {
 
     Person me;
 
-    strcpy(me.name, "Ernie Pasveer");
-    me.city   = "Houston";
-    me.age    = 60;
-    me.salary = 0.25;
+    me.name            = "Pasveer, Ernie";
+    me.age             = 60;
+    me.salary          = 0.25;
+    me.location.city   = "Houston";
+    me.location.state  = "Texas";
+    me.location.zip    = 77063;
 
-    std::cout << "'" << me.name << "', from '" << me.city << "', is " << me.age << " years old and makes " << me.salary << " per year." << std::endl;
+    std::cout << "'" << me.name << "', from '" << me.location.city << "', is " << me.age << " years old and makes " << me.salary << " per year." << std::endl;
 
     return 0;
 }

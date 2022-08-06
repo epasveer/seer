@@ -6,7 +6,6 @@
 #include <QtCore/QRegExp>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
-#include <iostream>
 
 SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* parent) : QWidget(parent) {
 
@@ -21,9 +20,7 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     variablesTreeWidget->resizeColumnToContents(1); // timestamp
     variablesTreeWidget->resizeColumnToContents(2); // name
     variablesTreeWidget->resizeColumnToContents(3); // value
-
     variablesTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
-
     variablesTreeWidget->clear();
 
     // Connect things.

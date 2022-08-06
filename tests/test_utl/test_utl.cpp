@@ -64,7 +64,13 @@ int main (int argc, char** argv) {
     QStringList list3 = Seer::parseCommaList(text3, '{', '}');
 
     for ( const auto& name : list3  ) {
+
+        QStringPair pair = Seer::parseNameValue(name, '=');
+
         std::cout << name.toStdString() << std::endl;
+        std::cout << pair.first.toStdString() << std::endl;
+        std::cout << pair.second.toStdString() << std::endl;
+        std::cout << std::endl;
     }
 
     return 0;

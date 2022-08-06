@@ -2,6 +2,7 @@
 #include "SeerLogWidget.h"
 #include "SeerMemoryVisualizerWidget.h"
 #include "SeerArrayVisualizerWidget.h"
+#include "SeerStructVisualizerWidget.h"
 #include "SeerBreakpointsOptionsBarWidget.h"
 #include "SeerUtl.h"
 #include <QtGui/QFont>
@@ -1629,8 +1630,6 @@ void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
 void SeerGdbWidget::handleGdbMemoryAddExpression (QString expression) {
 
-    Q_UNUSED(expression);
-
     if (executableLaunchMode() == "") {
         return;
     }
@@ -1651,8 +1650,6 @@ void SeerGdbWidget::handleGdbMemoryAddExpression (QString expression) {
 
 void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
 
-    Q_UNUSED(expression);
-
     if (executableLaunchMode() == "") {
         return;
     }
@@ -1668,6 +1665,24 @@ void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
 
     // Tell the visualizer what variable to use.
     w->setAVariableName(expression);
+}
+
+void SeerGdbWidget::handleGdbStructAddExpression (QString expression) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerStructVisualizerWidget* w = new SeerStructVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerStructVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerStructVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerStructVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+
+    // Tell the visualizer what variable to use.
+    w->setVariableName(expression);
 }
 
 void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {
@@ -1716,6 +1731,10 @@ void SeerGdbWidget::handleGdbMemoryVisualizer () {
 
 void SeerGdbWidget::handleGdbArrayVisualizer () {
     handleGdbArrayAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbStructVisualizer () {
+    handleGdbStructAddExpression("");
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

@@ -55,6 +55,7 @@ set(HEADER_FILES
     SeerMainWindow.h
     SeerArrayVisualizerWidget.h
     SeerMemoryVisualizerWidget.h
+    SeerStructVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
     SeerRunStatusIndicator.h
@@ -94,6 +95,7 @@ set(HEADER_FILES
     QZoomChart.h
     QClearLineEdit.h
     QIndexTreeWidget.h
+    QStringPair.h
     )
 
 set(SOURCE_FILES
@@ -132,6 +134,7 @@ set(SOURCE_FILES
     SeerMainWindow.cpp
     SeerArrayVisualizerWidget.cpp
     SeerMemoryVisualizerWidget.cpp
+    SeerStructVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
     SeerRunStatusIndicator.cpp

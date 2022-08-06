@@ -65,6 +65,7 @@
     </widget>
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
+    <addaction name="actionViewStructVisualizer"/>
     <addaction name="actionViewAssembly"/>
     <addaction name="menuConsole"/>
     <addaction name="menuStyles"/>
@@ -130,6 +131,7 @@
    <addaction name="separator"/>
    <addaction name="actionMemoryVisualizer"/>
    <addaction name="actionArrayVisualizer"/>
+   <addaction name="actionStructVisualizer"/>
   </widget>
   <action name="actionGdbQuit">
    <property name="text">
@@ -514,6 +516,30 @@
   <action name="actionDefault">
    <property name="text">
     <string>Default</string>
+   </property>
+  </action>
+  <action name="actionViewStructVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Struct Visualizer</string>
+   </property>
+   <property name="statusTip">
+    <string>Launch a blank Struct Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionStructVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+   </property>
+   <property name="text">
+    <string>Struct</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Struct Visualizer.</string>
    </property>
   </action>
  </widget>

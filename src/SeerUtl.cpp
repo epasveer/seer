@@ -152,6 +152,195 @@ namespace Seer {
         return str;
     }
 
+    QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
+
+        // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
+        //
+        // name = "Pasveer, Ernie"
+        // age = 60
+        // salary = 0.25
+        // location = {city = "Houston", state = "Texas", zip = 77063}
+        //
+
+        QStringList list;
+        int         index        = 0;
+        int         state        = 0;
+        int         start        = 0;
+        int         end          = 0;
+        bool        inquotes     = false;
+        int         bracketlevel = 0;
+
+        while (index < str.length()) {
+
+            // Handle start of field.
+            if (state == 0) {     // Start of field.
+                start = index;
+                end   = index;
+                state = 1; // Look for end of field (a command or eol).
+
+                continue;
+            }
+
+            // Handle end of field.
+            if (state == 1) {
+
+                // Handle "{"
+                if (str[index] == startBracket) {
+                    if (inquotes == false) {
+                        bracketlevel++;
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle "}"
+                if (str[index] == endBracket) {
+                    if (inquotes == false) {
+                        bracketlevel--;
+                        if (bracketlevel < 0) {
+                            qDebug() << "BracketLevel is less than 0!";
+                        }
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle """
+                if (str[index] == '"') {
+                    if (inquotes == false) {
+                        inquotes = true;
+                    }else{
+                        inquotes = false;
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle ","
+                if (str[index] == ',') {
+                    if (inquotes) {
+                        index++; continue;
+                    }
+
+                    // Extract field, only if the bracket level is at zero.
+                    // Otherwise, continue.
+                    if (bracketlevel == 0) {
+                        end = index;
+
+                        QString field = str.mid(start, end-start);
+
+                        list.append(field.trimmed());
+
+                        state = 0; // Look for the next field.
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle any other character.
+                index++; continue;
+            }
+
+            qDebug() << "Bad state!";
+            index++; continue;
+        }
+
+        // Handle last field, if any.
+        if (state == 1) {
+            end = index;
+
+            QString field = str.mid(start, end-start);
+
+            list.append(field.trimmed());
+        }
+
+        return list;
+    }
+
+    //
+    //
+    //
+
+    QStringPair parseNameValue  (const QString& str, QChar separator) {
+
+        // name = "Pasveer, Ernie"
+        //
+        // pair.first  = name
+        // pair.second = "Pasveer, Ernie"
+        //
+
+        QStringPair pair;
+        int         index        = 0;
+        int         state        = 0;
+        int         start        = 0;
+        int         end          = 0;
+        bool        inquotes     = false;
+
+        while (index < str.length()) {
+
+            // Handle start of field.
+            if (state == 0) {     // Start of field.
+                start = index;
+                end   = index;
+                state = 1; // Look for end of field (a command or eol).
+
+                continue;
+            }
+
+            // Handle end of field.
+            if (state == 1) {
+
+                // Handle """
+                if (str[index] == '"') {
+                    if (inquotes == false) {
+                        inquotes = true;
+                    }else{
+                        inquotes = false;
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle "=" separator.
+                if (str[index] == separator) {
+
+                    if (inquotes) {
+                        index++; continue;
+                    }
+
+                    // Extract the two fields.  index is at the "=".
+                    end = index;
+
+                    QString one = str.mid(start, end-start);
+                    QString two = str.mid(end+1);
+
+                    pair = QStringPair(one.trimmed(),two.trimmed());
+
+                    state = 0; // Look for the next field.
+
+                    break;
+                }
+
+                // Handle any other character.
+                index++; continue;
+            }
+
+            qDebug() << "Bad state!";
+            index++; continue;
+        }
+
+        // Handle if no "=" separator.
+        if (state == 1) {
+            pair = QStringPair(str.trimmed(),QString());
+        }
+
+        return pair;
+    }
+
+    //
+    //
+    //
+
     static int        Next_ID = 1;
     static std::mutex ID_mutex;
 
