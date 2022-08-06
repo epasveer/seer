@@ -10,6 +10,10 @@ int main (int argc, char** argv) {
     Q_UNUSED(argc);
     Q_UNUSED(argv);
 
+    //
+    //
+    //
+
   //QString test = "\"r0\",\"\",\"\",\"r4\"";
     QString test = "\"\",\"r0\",\"\",\"r4\"";
     QString newtest = Seer::filterEscapes(test);
@@ -23,6 +27,9 @@ int main (int argc, char** argv) {
         std::cout << name.toStdString() << std::endl;
     }
 
+    //
+    //
+    //
 
     QString text = "1^done,value=\"0\"";
 
@@ -32,6 +39,10 @@ int main (int argc, char** argv) {
         qDebug() << text << "doesn't match";
     }
 
+    //
+    //
+    //
+
     QString text2 = "1^done,value=\"\\\"Hello, World!\\\"\"";
 
     qDebug() << text2;
@@ -39,6 +50,20 @@ int main (int argc, char** argv) {
     QStringList list2 = Seer::parse(text2, "value=", '"', '"', false);
 
     for ( const auto& name : list2  ) {
+        std::cout << name.toStdString() << std::endl;
+    }
+
+    //
+    //
+    //
+
+    QString text3 = "name = \"Pasveer, Ernie\", age = 60, salary = 0.25, location = {city = \"Houston\", state = \"Texas\", zip = 77063}";
+
+    qDebug() << text3;
+
+    QStringList list3 = Seer::parseCommaList(text3, '{', '}');
+
+    for ( const auto& name : list3  ) {
         std::cout << name.toStdString() << std::endl;
     }
 
