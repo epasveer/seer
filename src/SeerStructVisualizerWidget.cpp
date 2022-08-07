@@ -30,10 +30,11 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     variableTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerStructVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(variableTreeWidget,            &QTreeWidget::itemEntered,                                 this,  &SeerStructVisualizerWidget::handleItemEntered);
-    QObject::connect(variableTreeWidget,            &QTreeWidget::itemExpanded,                                this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(refreshToolButton,      &QToolButton::clicked,              this,  &SeerStructVisualizerWidget::handleRefreshButton);
+    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,          this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,          this,  &SeerStructVisualizerWidget::handleItemEntered);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,         this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,        this,  &SeerStructVisualizerWidget::handleItemExpanded);
 
     // Restore window settings.
     readSettings();
@@ -95,7 +96,8 @@ void SeerStructVisualizerWidget::handleText (const QString& text) {
             // Populate the tree.
             handleItemCreate(topItem, value_text);
 
-            //variableTreeWidget->expandAll();
+            // For now, always expand everything.
+            variableTreeWidget->expandAll();
         }
 
 
@@ -155,21 +157,38 @@ void SeerStructVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, 
         QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
 
         // Go through each pair and add the name and its value to the tree.
+        QTreeWidgetItem* prevItem = 0;
+
         for (const auto& nv : nv_pairs) {
 
             QStringPair pair = Seer::parseNameValue(nv, '=');
 
-            QTreeWidgetItem* item = new QTreeWidgetItem;
-            item->setText(0, pair.first);
-            item->setText(1, "");
+            // Handle "name = "xxxx", '\\000' <repeats 14 times>, "yyyy" ..., age = 0, salary = 0"
+            // There is a 'first' value but no 'second'. So just concatenate unto the previous item.
+            if (pair.second == "") {
 
-            parentItem->addChild(item);
+                if (prevItem) {
+                    prevItem->setText(0, prevItem->text(0) + pair.first);
+                    prevItem->setText(1, "");
+                }
 
-            // Handle recursion if value has bookends.
-            if (Seer::hasBookends(pair.second, '{', '}')) {
-                handleItemCreate(item, pair.second);
+            // Normal case of "name = value".
             }else{
-                item->setText(1, Seer::filterEscapes(pair.second));
+
+                QTreeWidgetItem* item = new QTreeWidgetItem;
+                item->setText(0, pair.first);
+                item->setText(1, "");
+
+                parentItem->addChild(item);
+
+                // Handle recursion if value has bookends.
+                if (Seer::hasBookends(pair.second, '{', '}')) {
+                    handleItemCreate(item, pair.second);
+                }else{
+                    item->setText(1, Seer::filterEscapes(pair.second));
+                }
+
+                prevItem = item;
             }
         }
 
