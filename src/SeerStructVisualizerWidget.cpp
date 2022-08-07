@@ -31,7 +31,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
 
     // Connect things.
     QObject::connect(refreshToolButton,      &QToolButton::clicked,              this,  &SeerStructVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,          this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableNameLineEdit,   &QHistoryLineEdit::lineExecuted,    this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,          this,  &SeerStructVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,         this,  &SeerStructVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,        this,  &SeerStructVisualizerWidget::handleItemExpanded);
@@ -227,9 +227,9 @@ void SeerStructVisualizerWidget::handleRefreshButton () {
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
 }
 
-void SeerStructVisualizerWidget::handleVariableNameLineEdit () {
+void SeerStructVisualizerWidget::handleVariableNameLineEdit (const QString& text) {
 
-    setVariableName (variableNameLineEdit->text());
+    setVariableName (text);
 }
 
 void SeerStructVisualizerWidget::writeSettings() {

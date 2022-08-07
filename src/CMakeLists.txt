@@ -96,6 +96,7 @@ set(HEADER_FILES
     QClearLineEdit.h
     QIndexTreeWidget.h
     QStringPair.h
+    QHistoryLineEdit.h
     )
 
 set(SOURCE_FILES
@@ -174,6 +175,7 @@ set(SOURCE_FILES
     QZoomChart.cpp
     QClearLineEdit.cpp
     QIndexTreeWidget.cpp
+    QHistoryLineEdit.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)

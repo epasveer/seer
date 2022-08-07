@@ -22,7 +22,7 @@ class SeerStructVisualizerWidget : public QWidget, protected Ui::SeerStructVisua
 
     protected slots:
         void                handleRefreshButton                 ();
-        void                handleVariableNameLineEdit          ();
+        void                handleVariableNameLineEdit          (const QString& text);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
 
