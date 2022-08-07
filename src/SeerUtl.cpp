@@ -140,7 +140,18 @@ namespace Seer {
         return match;
     }
 
-    QString filterBookEnds (const QString& str, QChar startBracket, QChar endBracket) {
+
+    bool hasBookends (const QString& str, QChar startBracket, QChar endBracket) {
+
+        if (str.startsWith(startBracket) && str.endsWith(endBracket)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    QString filterBookends (const QString& str, QChar startBracket, QChar endBracket) {
 
         // If the string starts with and ends with the bracket characters, then return
         // the text between the brackets.
@@ -336,6 +347,7 @@ namespace Seer {
 
         return pair;
     }
+
 
     //
     //

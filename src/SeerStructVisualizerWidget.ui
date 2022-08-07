@@ -65,17 +65,7 @@
     <widget class="QTreeWidget" name="variableTreeWidget">
      <column>
       <property name="text">
-       <string>ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Timestamp</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Name</string>
+       <string>Variable</string>
       </property>
      </column>
      <column>

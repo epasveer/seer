@@ -566,7 +566,7 @@ void SeerMainWindow::handleText (const QString& text) {
 
         if (msg_text != "") {
 
-            statusBar()->showMessage(Seer::filterBookEnds(msg_text, '"', '"'), 3000);
+            statusBar()->showMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
 
             QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
 

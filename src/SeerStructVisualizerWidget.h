@@ -24,8 +24,10 @@ class SeerStructVisualizerWidget : public QWidget, protected Ui::SeerStructVisua
         void                handleRefreshButton                 ();
         void                handleVariableNameLineEdit          ();
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
+        void                handleItemExpanded                  (QTreeWidgetItem* item);
 
     protected:
+        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& value_text);
         void                writeSettings                       ();
         void                readSettings                        ();
         void                resizeEvent                         (QResizeEvent* event);
