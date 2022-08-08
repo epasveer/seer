@@ -151,6 +151,14 @@ X values | Y values | XY Values
 --- | --- | ---
 ![](images/arrayvisualizer_x.png) | ![](images/arrayvisualizer_y.png) | ![](images/arrayvisualizer_xy.png)
 
+Struct Visualizer
+-----------------
+
+When looking at the contents of a C/C++ struct or a C++ class in the Struct Visualizer, it looks like this.
+This example shows the contents of "*this" for the current C++ class that Seer is in.
+
+![](images/structvisualizer.png)
+
 
 Starting Seer
 =============
