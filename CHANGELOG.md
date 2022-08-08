@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [Unreleased] - yyyy-mm-dd
+## [1.8] - 2022-08-08
 
 * Add StructVisualizer
     - New visualizer to view the contents of a C/C++ struct or a C++ class in a tree.
@@ -32,7 +32,7 @@
         - C++ symbol demangling.
         - Keep assembly tab on top.
         - Show assembly tab on Seer startup.
-    - Launch MemoryVisualizer and ArrayVisualizer from the Aseembly tab on highlighter
+    - Launch MemoryVisualizer and ArrayVisualizer from the Assembly tab on highlighter
       text.
 
 * Debug options for launching program.
@@ -42,7 +42,7 @@
     - Break at address.
     - Randomize program's start address.
 
-* ArrayVisualizer and MemoryVisualizer now take an address as the variable name.
+* ArrayVisualizer and MemoryVisualizer now allow an address as the variable name.
 
 * A menu to experiment setting Seer with different Qt gui styles.
     - See "View -> Styles"
