@@ -56,12 +56,12 @@
 ## [1.7] - 2022-07-04
 
 * Add an assembly tab, along side the source tabs in the Code Manager.
-    -Shows the program's assembly.
-    -Enable with "View -> Assembly View"
-    -Can set and show breakpoints.
-    -Highlight the current instruction.
-    -Step by instruction (Nexti and Stepi).
-    -Double-clicking on entries in the "Breakpoints" tab and the "Stack frames" tab will show the assembly for those addresses.
-    -^F to bring up search bar in Assembly tab.
+    - Shows the program's assembly.
+    - Enable with "View -> Assembly View"
+    - Can set and show breakpoints.
+    - Highlight the current instruction.
+    - Step by instruction (Nexti and Stepi).
+    - Double-clicking on entries in the "Breakpoints" tab and the "Stack frames" tab will show the assembly for those addresses.
+    - ^F to bring up search bar in Assembly tab.
 * Fix some minor bugs.
 
