@@ -1,6 +1,13 @@
 
 # Seer Change Log
 
+## [1.9beta] - 2022-MM-DD
+* Add history (up/down arrows) to all line input fields.
+    - Variable logger, tracker browsers.
+    - Source, function, types, variable, library browsers.
+    - Struct, memory, array visualizers.
+    - Console.
+
 ## [1.8] - 2022-08-08
 
 * Add StructVisualizer
