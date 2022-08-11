@@ -227,12 +227,16 @@ void SeerStructVisualizerWidget::handleRefreshButton () {
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
 }
 
-void SeerStructVisualizerWidget::handleVariableNameLineEdit (const QString& text) {
+void SeerStructVisualizerWidget::handleVariableNameLineEdit () {
 
-    setVariableName (text);
+    if (variableNameLineEdit->text() == "") {
+        return;
+    }
+
+    setVariableName (variableNameLineEdit->text());
 }
 
-void SeerStructVisualizerWidget::writeSettings() {
+void SeerStructVisualizerWidget::writeSettings () {
 
     QSettings settings;
 
@@ -241,7 +245,7 @@ void SeerStructVisualizerWidget::writeSettings() {
     settings.endGroup();
 }
 
-void SeerStructVisualizerWidget::readSettings() {
+void SeerStructVisualizerWidget::readSettings () {
 
     QSettings settings;
 

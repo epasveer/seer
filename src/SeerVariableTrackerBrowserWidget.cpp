@@ -26,7 +26,7 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     variablesTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,          this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
+    QObject::connect(variableAddLineEdit,            &QHistoryLineEdit::lineExecuted,    this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
     QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
     QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,          this, &SeerVariableTrackerBrowserWidget::handleItemEntered);

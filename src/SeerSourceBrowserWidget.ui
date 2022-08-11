@@ -32,7 +32,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QLineEdit" name="sourceSearchLineEdit">
+    <widget class="QHistoryLineEdit" name="sourceSearchLineEdit">
      <property name="toolTip">
       <string>Search in the list of files. &quot;*&quot; is allowed.</string>
      </property>
@@ -43,6 +43,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

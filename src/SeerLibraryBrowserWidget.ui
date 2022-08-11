@@ -52,7 +52,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QLineEdit" name="librarySearchLineEdit">
+    <widget class="QHistoryLineEdit" name="librarySearchLineEdit">
      <property name="toolTip">
       <string>Search in the list of libraries. &quot;*&quot; is allowed.</string>
      </property>
@@ -63,6 +63,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

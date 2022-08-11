@@ -27,7 +27,7 @@
 #include <QtGui/QWheelEvent>
 #include <QtCore/QDebug>
 
-QHistoryLineEdit::QHistoryLineEdit(QWidget *parent) : QLineEdit(parent), _currentLine(0), _completer(0), _completionMinchars(1), _completionMax(0) {
+QHistoryLineEdit::QHistoryLineEdit (QWidget* parent) : QLineEdit(parent), _currentLine(0), _completer(0), _completionMinchars(1), _completionMax(0) {
 
     QObject::connect(this,  &QLineEdit::returnPressed,      this, &QHistoryLineEdit::execute);
 }
@@ -35,7 +35,7 @@ QHistoryLineEdit::QHistoryLineEdit(QWidget *parent) : QLineEdit(parent), _curren
 /**
  * \brief Number of available lines
  */
-int QHistoryLineEdit::lineCount() const {
+int QHistoryLineEdit::lineCount () const {
 
     return _lines.size();
 }
@@ -43,16 +43,16 @@ int QHistoryLineEdit::lineCount() const {
 /**
  * \brief Overwrite the line history
  */
-void QHistoryLineEdit::setHistory(const QStringList& history) {
+void QHistoryLineEdit::setHistory (const QStringList& history) {
 
-    _lines = history;
+    _lines       = history;
     _currentLine = _lines.size();
 }
 
 /**
  * \brief Stored history
  */
-QStringList QHistoryLineEdit::history() const {
+QStringList QHistoryLineEdit::history () const {
 
     return _lines;
 }
@@ -64,7 +64,7 @@ QStringList QHistoryLineEdit::history() const {
  *
  * If \c completer is null it will remove the current completer
  */
-void QHistoryLineEdit::setWordCompleter(QCompleter* comp) {
+void QHistoryLineEdit::setWordCompleter (QCompleter* comp) {
 
     if ( _completer ) {
 
@@ -88,14 +88,14 @@ void QHistoryLineEdit::setWordCompleter(QCompleter* comp) {
 /**
  * \brief Sets a prefix that is ignored by the word completer
  */
-void QHistoryLineEdit::setWordCompleterPrefix(const QString& prefix) {
+void QHistoryLineEdit::setWordCompleterPrefix (const QString& prefix) {
     _completionPrefix = prefix;
 }
 
 /**
  * \brief Sets the minimum number of characters required to display the word completer
  */
-void QHistoryLineEdit::setWordCompleterMinChars(int minChars) {
+void QHistoryLineEdit::setWordCompleterMinChars (int minChars) {
     _completionMinchars = minChars;
 }
 
@@ -104,27 +104,36 @@ void QHistoryLineEdit::setWordCompleterMinChars(int minChars) {
  *
  * If more than this many suggestions are found the completer isn't shown
  */
-void QHistoryLineEdit::setWordCompleterMaxSuggestions(int max) {
+void QHistoryLineEdit::setWordCompleterMaxSuggestions (int max) {
     _completionMax = max;
 }
 
 /**
  * \brief Executes the current line
  */
-void QHistoryLineEdit::execute() {
+void QHistoryLineEdit::execute () {
 
+    // Ignore blank lines.
+    if (text() == "") {
+        return;
+    }
+
+    // Add the line if it doesn't equal the previous (that is store in the history).
     if ( _lines.empty() || _lines.back() != text() ) {
         _lines << text();
     }
 
+    // Set our current position in the history list.
     _currentLine = _lines.size();
 
-    clear();
+    // If it wants to, the calling widget should clear the text line.
+    // clear();
 
+    // Emit the entered text.
     emit lineExecuted(_lines.back());
 }
 
-void QHistoryLineEdit::keyPressEvent(QKeyEvent * ev) {
+void QHistoryLineEdit::keyPressEvent (QKeyEvent* ev) {
 
     if ( ev->key() == Qt::Key_Up ) {
         previousLine();
@@ -158,7 +167,7 @@ void QHistoryLineEdit::keyPressEvent(QKeyEvent * ev) {
 
         } else {
             // Get the selection status
-            int sel = selectionStart();
+            int sel       = selectionStart();
             int sellength = selectedText().size();
 
             // Get the current cursor position
@@ -193,7 +202,7 @@ void QHistoryLineEdit::keyPressEvent(QKeyEvent * ev) {
     }
 }
 
-void QHistoryLineEdit::wheelEvent(QWheelEvent *ev) {
+void QHistoryLineEdit::wheelEvent (QWheelEvent* ev) {
 
     if ( ev->angleDelta().y() > 0 ) {
         previousLine();
@@ -202,7 +211,7 @@ void QHistoryLineEdit::wheelEvent(QWheelEvent *ev) {
     }
 }
 
-void QHistoryLineEdit::previousLine() {
+void QHistoryLineEdit::previousLine () {
 
     if ( _lines.empty() ) {
         return;
@@ -219,8 +228,7 @@ void QHistoryLineEdit::previousLine() {
     setText(_lines[_currentLine]);
 }
 
-
-void QHistoryLineEdit::nextLine() {
+void QHistoryLineEdit::nextLine () {
 
     if ( _lines.empty() ) {
         return;
@@ -242,7 +250,7 @@ void QHistoryLineEdit::nextLine() {
 /**
  * \brief Current word being edited (used to fire the completer)
  */
-QString QHistoryLineEdit::current_word() const {
+QString QHistoryLineEdit::current_word () const {
 
     int completion_index = _wordStart();
 
@@ -252,7 +260,7 @@ QString QHistoryLineEdit::current_word() const {
 /**
  * \brief Autocompletes the current word
  */
-void QHistoryLineEdit::autoComplete(const QString& completion) {
+void QHistoryLineEdit::autoComplete (const QString& completion) {
 
     int completion_index = _wordStart();
 
@@ -264,7 +272,7 @@ void QHistoryLineEdit::autoComplete(const QString& completion) {
 /**
  * \brief Returns the index of the character starting the currently edited word
  */
-int QHistoryLineEdit::_wordStart() const {
+int QHistoryLineEdit::_wordStart () const {
 
     // lastIndexOf returns the index of the last space or -1 if there are no spaces
     // so that + 1 returns the index of the character starting the word or 0
