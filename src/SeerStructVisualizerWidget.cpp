@@ -31,7 +31,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
 
     // Connect things.
     QObject::connect(refreshToolButton,      &QToolButton::clicked,              this,  &SeerStructVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,   &QHistoryLineEdit::lineExecuted,    this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,          this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,          this,  &SeerStructVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,         this,  &SeerStructVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,        this,  &SeerStructVisualizerWidget::handleItemExpanded);
