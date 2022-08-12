@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Source/Functions/Libraries</string>
+      <string>Source/Functions/.../Libraries</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_1">
       <item row="0" column="0">

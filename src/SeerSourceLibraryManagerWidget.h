@@ -3,7 +3,7 @@
 #include "SeerSourceBrowserWidget.h"
 #include "SeerFunctionBrowserWidget.h"
 #include "SeerTypeBrowserWidget.h"
-#include "SeerVariableBrowserWidget.h"
+#include "SeerStaticBrowserWidget.h"
 #include "SeerLibraryBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
@@ -21,7 +21,7 @@ class SeerSourceLibraryManagerWidget : public QWidget, protected Ui::SeerSourceL
         SeerSourceBrowserWidget*                        sourceBrowserWidget             ();
         SeerFunctionBrowserWidget*                      functionBrowserWidget           ();
         SeerTypeBrowserWidget*                          typeBrowserWidget               ();
-        SeerVariableBrowserWidget*                      variableBrowserWidget           ();
+        SeerStaticBrowserWidget*                        staticBrowserWidget             ();
         SeerLibraryBrowserWidget*                       libraryBrowserWidget            ();
 
     signals:
@@ -33,7 +33,7 @@ class SeerSourceLibraryManagerWidget : public QWidget, protected Ui::SeerSourceL
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;
         SeerFunctionBrowserWidget*                      _functionBrowserWidget;
         SeerTypeBrowserWidget*                          _typeBrowserWidget;
-        SeerVariableBrowserWidget*                      _variableBrowserWidget;
+        SeerStaticBrowserWidget*                        _staticBrowserWidget;
         SeerLibraryBrowserWidget*                       _libraryBrowserWidget;
 };
 
