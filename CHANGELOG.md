@@ -4,8 +4,9 @@
 ## [1.9beta] - 2022-MM-DD
 * Add history (up/down arrows) to all line input fields.
     - Variable logger, tracker browsers.
-    - Source, function, types, variable, library browsers.
+    - Source, function, types, statics, library browsers.
     - Struct, memory, array visualizers.
+    - Code and assembly editors.
     - Console.
 
 ## [1.8] - 2022-08-08
