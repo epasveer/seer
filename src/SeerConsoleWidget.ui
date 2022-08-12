@@ -106,7 +106,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLineEdit" name="stdinLineEdit">
+    <widget class="QHistoryLineEdit" name="stdinLineEdit">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>100</horstretch>
@@ -123,6 +123,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resource.qrc"/>
  </resources>
