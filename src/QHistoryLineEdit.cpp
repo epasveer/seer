@@ -23,13 +23,45 @@
 #include <QtWidgets/QCompleter>
 #include <QtWidgets/QAbstractItemView>
 #include <QtWidgets/QScrollBar>
+#include <QtWidgets/QAction>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QWheelEvent>
 #include <QtCore/QDebug>
 
-QHistoryLineEdit::QHistoryLineEdit (QWidget* parent) : QLineEdit(parent), _currentLine(0), _completer(0), _completionMinchars(1), _completionMax(0) {
+QHistoryLineEdit::QHistoryLineEdit (const QString& contents, QWidget* parent) : QLineEdit(contents, parent), _currentLine(0), _completer(0), _completionMinchars(1), _completionMax(0) {
+
+    enableReturnPressedOnClear();
 
     QObject::connect(this,  &QLineEdit::returnPressed,      this, &QHistoryLineEdit::execute);
+}
+
+QHistoryLineEdit::QHistoryLineEdit (QWidget* parent) : QLineEdit(parent), _currentLine(0), _completer(0), _completionMinchars(1), _completionMax(0) {
+
+    enableReturnPressedOnClear();
+
+    QObject::connect(this,  &QLineEdit::returnPressed,      this, &QHistoryLineEdit::execute);
+}
+
+/**
+ * \brief Enable "return press" signal on Clear action.
+ */
+void QHistoryLineEdit::enableReturnPressedOnClear() {
+
+    for (int i=0; i <children().size(); i++) {
+
+        QAction* myClearAction(qobject_cast<QAction*>(children().at(i)));
+
+        if (myClearAction) {
+
+            //qDebug() << myClearAction->objectName();
+
+            // Look for only the QLineEdit clear action.
+            // This name could change or be different.
+            if (myClearAction->objectName() == "_q_qlineeditclearaction") {
+                connect(myClearAction, &QAction::triggered, this, &QLineEdit::returnPressed, Qt::QueuedConnection);
+            }
+        }
+    }
 }
 
 /**

@@ -59,7 +59,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLineEdit" name="alternateLineEdit">
+      <widget class="QHistoryLineEdit" name="alternateLineEdit">
        <property name="toolTip">
         <string>Enter path for alternate location.</string>
        </property>
@@ -100,7 +100,7 @@
    <item>
     <layout class="QHBoxLayout" name="searchBarLayout">
      <item>
-      <widget class="QClearLineEdit" name="searchTextLineEdit">
+      <widget class="QHistoryLineEdit" name="searchTextLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>50</horstretch>
@@ -168,7 +168,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="searchLineNumberLineEdit">
+      <widget class="QHistoryLineEdit" name="searchLineNumberLineEdit">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>50</horstretch>
@@ -216,9 +216,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QClearLineEdit</class>
+   <class>QHistoryLineEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">QClearLineEdit.h</header>
+   <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QLineEdit" name="variableNameLineEdit">
+    <widget class="QHistoryLineEdit" name="variableNameLineEdit">
      <property name="toolTip">
       <string>Variable expression resulting in an address.</string>
      </property>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLineEdit" name="memoryLengthLineEdit">
+    <widget class="QHistoryLineEdit" name="memoryLengthLineEdit">
      <property name="toolTip">
       <string>Number of bytes to display.</string>
      </property>
@@ -227,6 +227,11 @@
    <extends>QWidget</extends>
    <header location="global">SeerAsmWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

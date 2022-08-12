@@ -31,7 +31,10 @@ class QHistoryLineEdit : public QLineEdit {
     Q_OBJECT
 
     public:
-        explicit QHistoryLineEdit(QWidget *parent = 0);
+        QHistoryLineEdit(const QString& contents, QWidget* parent = 0);
+        QHistoryLineEdit(QWidget* parent = 0);
+
+        void        enableReturnPressedOnClear          ();
 
         int         lineCount                           () const;
 
