@@ -8,6 +8,7 @@
     - Struct, memory, array visualizers.
     - Code and assembly editors.
     - Console.
+* Add StructVisualizer to source/assembly editors and stack arguments/locals browsers.
 
 ## [1.8] - 2022-08-08
 
