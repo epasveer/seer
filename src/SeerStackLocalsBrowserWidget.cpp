@@ -20,9 +20,7 @@ SeerStackLocalsBrowserWidget::SeerStackLocalsBrowserWidget (QWidget* parent) : Q
     localsTreeWidget->resizeColumnToContents(1); // arg
     localsTreeWidget->resizeColumnToContents(2); // value
     localsTreeWidget->resizeColumnToContents(3); // used
-
     localsTreeWidget->setColumnHidden(3, true); // Hide the 'used' column.
-
     localsTreeWidget->clear();
 
     _frameNumber = 0;

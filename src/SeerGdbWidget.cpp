@@ -1683,6 +1683,9 @@ void SeerGdbWidget::handleGdbStructAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerStructVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerStructVisualizerWidget::handleText);
     QObject::connect(w,            &SeerStructVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addMemoryVisualize,          this, &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addArrayVisualize,           this, &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addStructVisualize,          this, &SeerGdbWidget::handleGdbStructAddExpression);
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);

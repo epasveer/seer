@@ -2,6 +2,8 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QAction>
 #include <QtGui/QIcon>
 #include <QtCore/QRegExp>
 #include <QtCore/QTime>
@@ -20,6 +22,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Struct Visualizer");
 
+    variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setMouseTracking(true);
     variableTreeWidget->setSortingEnabled(false);
     variableTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -30,11 +33,12 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     variableTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(refreshToolButton,      &QToolButton::clicked,              this,  &SeerStructVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,          this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,          this,  &SeerStructVisualizerWidget::handleItemEntered);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,         this,  &SeerStructVisualizerWidget::handleItemExpanded);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,        this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleRefreshButton);
+    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerStructVisualizerWidget::handleContextMenu);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerStructVisualizerWidget::handleItemEntered);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerStructVisualizerWidget::handleItemExpanded);
 
     // Restore window settings.
     readSettings();
@@ -194,6 +198,196 @@ void SeerStructVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, 
 
     }else{
         parentItem->setText(1, Seer::filterEscapes(value_text));
+    }
+}
+
+void SeerStructVisualizerWidget::handleContextMenu (const QPoint& pos) {
+
+    QTreeWidgetItem* item = variableTreeWidget->itemAt(pos);
+
+    if (item == 0) {
+        return;
+    }
+
+    // Create the variable name.
+    // It's a struct so include its parent names.
+    QString variable;
+
+    while (item) {
+        if (variable == "") {
+            variable = item->text(0);
+        }else{
+            variable = item->text(0) + "." + variable;
+        }
+
+        item = item->parent();
+    }
+
+    // Create the menus.
+    QAction* addMemoryVisualizerAction;
+    QAction* addMemoryAsteriskVisualizerAction;
+    QAction* addMemoryAmpersandVisualizerAction;
+    QAction* addArrayVisualizerAction;
+    QAction* addArrayAsteriskVisualizerAction;
+    QAction* addArrayAmpersandVisualizerAction;
+    QAction* addStructVisualizerAction;
+    QAction* addStructAsteriskVisualizerAction;
+    QAction* addStructAmpersandVisualizerAction;
+
+    addMemoryVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
+    addMemoryAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
+    addMemoryAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+    addArrayVisualizerAction             = new QAction(QString("\"%1\"").arg(variable));
+    addArrayAsteriskVisualizerAction     = new QAction(QString("\"*%1\"").arg(variable));
+    addArrayAmpersandVisualizerAction    = new QAction(QString("\"&&%1\"").arg(variable));
+    addStructVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
+    addStructAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
+    addStructAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+
+    QMenu menu("Visualizers", this);
+    menu.setTitle("Visualizers");
+
+    QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
+    memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAsteriskVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAmpersandVisualizerAction);
+    menu.addMenu(&memoryVisualizerMenu);
+
+    QMenu arrayVisualizerMenu("Add variable to an Array Visualizer");
+    arrayVisualizerMenu.addAction(addArrayVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
+    structVisualizerMenu.addAction(addStructVisualizerAction);
+    structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
+    structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
+    menu.addMenu(&structVisualizerMenu);
+
+    // Launch the menu. Get the response.
+    QAction* action = menu.exec(variableTreeWidget->viewport()->mapToGlobal(pos));
+
+    // Do nothing.
+    if (action == 0) {
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryVisualizerAction) {
+
+        //qDebug() << "addMemoryVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryAsteriskVisualizerAction) {
+
+        //qDebug() << "addMemoryAsteriskVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding memory to visualize.
+    if (action == addMemoryAmpersandVisualizerAction) {
+
+        //qDebug() << "addMemoryAmpersandVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayVisualizerAction) {
+
+        //qDebug() << "addArrayVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAsteriskVisualizerAction) {
+
+        //qDebug() << "addArrayAsteriskVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAmpersandVisualizerAction) {
+
+        //qDebug() << "addArrayAmpersandVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructVisualizerAction) {
+
+        //qDebug() << "addStructVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAsteriskVisualizerAction) {
+
+        //qDebug() << "addStructAsteriskVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAmpersandVisualizerAction) {
+
+        //qDebug() << "addStructAmpersandVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(QString("&") + variable);
+        }
+
+        return;
     }
 }
 
