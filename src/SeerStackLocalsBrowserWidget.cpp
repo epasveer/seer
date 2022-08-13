@@ -213,6 +213,9 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addStructVisualizerAction;
+    QAction* addStructAsteriskVisualizerAction;
+    QAction* addStructAmpersandVisualizerAction;
 
     addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(item->text(0)));
     addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(item->text(0)));
@@ -228,6 +231,9 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(item->text(0)));
     addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(item->text(0)));
+    addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(0)));
+    addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(0)));
+    addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(0)));
 
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
@@ -257,6 +263,12 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
+    structVisualizerMenu.addAction(addStructVisualizerAction);
+    structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
+    structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
+    menu.addMenu(&structVisualizerMenu);
 
     // Launch the menu. Get the response.
     QAction* action = menu.exec(localsTreeWidget->viewport()->mapToGlobal(pos));
@@ -447,6 +459,45 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
         // Emit the signals.
         if (item->text(0) != "") {
             emit addArrayVisualize(QString("&") + item->text(0));
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructVisualizerAction) {
+
+        //qDebug() << "addStructVisualizer" << item->text(0);
+
+        // Emit the signals.
+        if (item->text(0) != "") {
+            emit addStructVisualize(item->text(0));
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAsteriskVisualizerAction) {
+
+        //qDebug() << "addStructAsteriskVisualizer" << item->text(0);
+
+        // Emit the signals.
+        if (item->text(0) != "") {
+            emit addStructVisualize(QString("*") + item->text(0));
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAmpersandVisualizerAction) {
+
+        //qDebug() << "addStructAmpersandVisualizer" << item->text(0);
+
+        // Emit the signals.
+        if (item->text(0) != "") {
+            emit addStructVisualize(QString("&") + item->text(0));
         }
 
         return;

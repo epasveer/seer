@@ -802,6 +802,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     QAction* runToAddressAction;
     QAction* addMemoryAddressVisualizerAction;
     QAction* addArrayAddressVisualizerAction;
+    QAction* addStructAddressVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
     if (hasBreakpointAddress(address) == true) {
@@ -836,6 +837,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     addMemoryAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addArrayAddressVisualizerAction  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addStructAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
@@ -853,13 +855,19 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     arrayVisualizerMenu.addAction(addArrayAddressVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu structVisualizerMenu("Add address to a Struct Visualizer");
+    structVisualizerMenu.addAction(addStructAddressVisualizerAction);
+    menu.addMenu(&structVisualizerMenu);
+
     // Enable/disable items based on something being selected or not.
     if (textCursor().selectedText() == "") {
         addMemoryAddressVisualizerAction->setEnabled(false);
         addArrayAddressVisualizerAction->setEnabled(false);
+        addStructAddressVisualizerAction->setEnabled(false);
     }else{
         addMemoryAddressVisualizerAction->setEnabled(true);
         addArrayAddressVisualizerAction->setEnabled(true);
+        addStructAddressVisualizerAction->setEnabled(true);
     }
 
     // Launch the menu. Get the response.
@@ -955,6 +963,19 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addArrayVisualize(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAddressVisualizerAction) {
+
+        //qDebug() << "addStructVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addStructVisualize(textCursor().selectedText());
         }
 
         return;

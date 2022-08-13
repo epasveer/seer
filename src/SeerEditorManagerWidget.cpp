@@ -655,6 +655,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
@@ -703,7 +704,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,                   this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -792,6 +794,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,         this, &SeerEditorManagerWidget::handleRequestAssembly);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualize,      this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualize,       this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualize,      this, &SeerEditorManagerWidget::handleAddStructVisualizer);
 
     // Load the file.
     assemblyWidget->assemblyArea()->setPlainText("");
@@ -1011,6 +1014,14 @@ void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
     // rethrow
     emit addArrayVisualize (expression);
+}
+
+void SeerEditorManagerWidget::handleAddStructVisualizer (QString expression) {
+
+    //qDebug() << expression;
+
+    // rethrow
+    emit addStructVisualize (expression);
 }
 
 void SeerEditorManagerWidget::handleRequestAssembly (QString address) {

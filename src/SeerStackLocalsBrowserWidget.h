@@ -30,6 +30,7 @@ class SeerStackLocalsBrowserWidget : public QWidget, protected Ui::SeerStackLoca
         void                refreshVariableTrackerValues        ();
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
+        void                addStructVisualize                  (QString expression);
 
     protected:
         void                showEvent                           (QShowEvent* event);

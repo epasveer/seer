@@ -970,6 +970,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addStructVisualizerAction;
+    QAction* addStructAsteriskVisualizerAction;
+    QAction* addStructAmpersandVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
     if (hasBreakpointLine(lineno) == true) {
@@ -1020,6 +1023,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
     addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
@@ -1056,6 +1062,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
+    structVisualizerMenu.addAction(addStructVisualizerAction);
+    structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
+    structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
+    menu.addMenu(&structVisualizerMenu);
+
     // Enable/disable items based on something being selected or not.
     if (textCursor().selectedText() == "") {
         addVariableLoggerExpressionAction->setEnabled(false);
@@ -1072,6 +1084,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(false);
         addArrayAsteriskVisualizerAction->setEnabled(false);
         addArrayAmpersandVisualizerAction->setEnabled(false);
+        addStructVisualizerAction->setEnabled(false);
+        addStructAsteriskVisualizerAction->setEnabled(false);
+        addStructAmpersandVisualizerAction->setEnabled(false);
     }else{
         addVariableLoggerExpressionAction->setEnabled(true);
         addVariableLoggerAsteriskExpressionAction->setEnabled(true);
@@ -1087,6 +1102,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(true);
         addArrayAsteriskVisualizerAction->setEnabled(true);
         addArrayAmpersandVisualizerAction->setEnabled(true);
+        addStructVisualizerAction->setEnabled(true);
+        addStructAsteriskVisualizerAction->setEnabled(true);
+        addStructAmpersandVisualizerAction->setEnabled(true);
     }
 
     // Launch the menu. Get the response.
@@ -1364,6 +1382,45 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addArrayVisualize(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructVisualizerAction) {
+
+        //qDebug() << "addStructVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addStructVisualize(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAsteriskVisualizerAction) {
+
+        //qDebug() << "addStructAsteriskVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addStructVisualize(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructAmpersandVisualizerAction) {
+
+        //qDebug() << "addStructAmpersandVisualizer" << lineno;
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addStructVisualize(QString("&") + textCursor().selectedText());
         }
 
         return;

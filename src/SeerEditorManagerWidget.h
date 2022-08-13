@@ -67,6 +67,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
         void                                            handleAddArrayVisualizer            (QString expression);
+        void                                            handleAddStructVisualizer           (QString expression);
         void                                            handleRequestAssembly               (QString address);
         void                                            handleAssemblyConfigChanged         ();
 
@@ -92,6 +93,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
         void                                            addMemoryVisualize                  (QString expression);
         void                                            addArrayVisualize                   (QString expression);
+        void                                            addStructVisualize                  (QString expression);
         void                                            requestAssembly                     (QString address);
 
     private:
