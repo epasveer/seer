@@ -9,6 +9,7 @@
     - Code and assembly editors.
     - Console.
 * Add StructVisualizer to source/assembly editors and stack arguments/locals browsers.
+* Add a RMB to launch Memory/Array/Struct viewer from a running Struct viewer.
 
 ## [1.8] - 2022-08-08
 
