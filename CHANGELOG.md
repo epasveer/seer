@@ -10,6 +10,7 @@
     - Console.
 * Add StructVisualizer to source/assembly editors and stack arguments/locals browsers.
 * Add a RMB to launch Memory/Array/Struct viewer from a running Struct viewer.
+* Change 'detachtab' to use RMB context menu instead of a double-click.
 
 ## [1.8] - 2022-08-08
 
