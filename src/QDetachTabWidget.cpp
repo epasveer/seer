@@ -7,7 +7,9 @@
 
 QDetachTabWidget::QDetachTabWidget(QWidget* parent) : QTabWidget(parent) {
 
-    QObject::connect(tabBar(), &QTabBar::tabBarDoubleClicked,           this, &QDetachTabWidget::handleShowContextMenu);
+    tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QObject::connect(tabBar(), &QTabBar::customContextMenuRequested,    this, &QDetachTabWidget::handleShowContextMenu);
     QObject::connect(this,     &QTabWidget::tabCloseRequested,          this, &QDetachTabWidget::handleTabClosedRequested);
 }
 
@@ -25,7 +27,15 @@ void QDetachTabWidget::closeEvent (QCloseEvent* e) {
     QTabWidget::closeEvent(e);
 }
 
-void QDetachTabWidget::handleShowContextMenu(int tabIndex) {
+void QDetachTabWidget::handleShowContextMenu (const QPoint& point) {
+
+    // Don't do anything.
+    if (point.isNull()) {
+        return;
+    }
+
+    // Get the tab index at the RMB click point.
+    int tabIndex = tabBar()->tabAt(point);
 
     // Create the menu.
     QMenu menu("Window Action", this);

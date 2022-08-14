@@ -24,7 +24,7 @@ class QDetachTabWidget : public QTabWidget {
         void                                closeEvent               (QCloseEvent* e);
 
     protected slots:
-        void                                handleShowContextMenu    (int tabIndex);
+        void                                handleShowContextMenu    (const QPoint& point);
         void                                handleTabClosedRequested (int tabIndex);
 
     private:

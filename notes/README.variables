@@ -33,3 +33,133 @@
     "-data-delete-expression id1 id2 ..."
     "-data-list-expressions"
 
+#
+# var examples.
+# using 'hellostruct' as the example with a 'Person' struct that contains a 'Location' struct.
+#
+# 'me'
+#
+
+    "-var-create x2112 "*" me"
+
+        ^done,name="x2112",numchild="1",value="{...}",type="Person",thread-id="1",has_more="0"
+
+    "-var-info-type x2112"
+
+        ^done,type="Person"
+
+    "-var-info-num-children x2112"
+
+        ^done,numchild="1"
+
+    "-var-list-children --no-values x2112"
+
+        ^done,numchild="1",
+              children=[
+                        child={name="x2112.public",exp="public",numchild="4",thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --no-values x2112.public"
+
+        ^done,numchild="4",
+              children=[
+                        child={name="x2112.public.name",     exp="name",     numchild="2", type="std::string", thread-id="1"},
+                        child={name="x2112.public.age",      exp="age",      numchild="0", type="int",         thread-id="1"},
+                        child={name="x2112.public.salary",   exp="salary",   numchild="0", type="float",       thread-id="1"},
+                        child={name="x2112.public.location", exp="location", numchild="1", type="Location",    thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --all-values x2112.public"
+
+        ^done,numchild="4",
+              children=[
+                        child={name="x2112.public.name",     exp="name",     numchild="2", value="{...}", type="std::string", thread-id="1"},
+                        child={name="x2112.public.age",      exp="age",      numchild="0", value="60",    type="int",         thread-id="1"},
+                        child={name="x2112.public.salary",   exp="salary",   numchild="0", value="0.25",  type="float",       thread-id="1"},
+                        child={name="x2112.public.location", exp="location", numchild="1", value="{...}", type="Location",    thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --simple-values x2112.public"
+
+        ^done,numchild="4",
+              children=[
+                        child={name="x2112.public.name",     exp="name",     numchild="2",               type="std::string", thread-id="1"},
+                        child={name="x2112.public.age",      exp="age",      numchild="0", value="60",   type="int",         thread-id="1"},
+                        child={name="x2112.public.salary",   exp="salary",   numchild="0", value="0.25", type="float",       thread-id="1"},
+                        child={name="x2112.public.location", exp="location", numchild="1",               type="Location",    thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-evaluate-expression x2112"
+
+        ^done,value="{...}"
+
+    "-var-evaluate-expression x2112.name"
+    "-var-evaluate-expression x2112.age"
+    "-var-evaluate-expression x2112.salary"
+    "-var-evaluate-expression x2112.location"
+
+        ^done,value="{...}"
+        ^done,value="60"
+        ^done,value="0.25"
+        ^done,value="{...}"
+
+    "-var-delete x2112"
+
+        ^done,ndeleted="1"
+
+
+#
+# 'me.name'
+#
+
+    "-var-create x2112 "*" me.name"
+
+        ^done,name="x2112",numchild="2",value="{...}",type="std::string",thread-id="1",has_more="0"
+
+    "-var-info-type x2112"
+
+        ^done,type="std::string"
+
+    "-var-info-num-children x2112"
+
+        ^done,numchild="2"
+
+    "-var-evaluate-expression x2112"
+
+        ^done,value="{...}"
+
+    "-var-list-children --no-values x2112"
+
+        ^done,numchild="2",
+              children=[
+                        child={name="x2112.public",  exp="public",  numchild="1", thread-id="1"},
+                        child={name="x2112.private", exp="private", numchild="3", thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --no-values x2112.public"
+
+        ^done,numchild="1",
+              children=[
+                        child={name="x2112.public.npos",exp="npos",numchild="0",type="const std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::size_type",thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --no-values x2112.private"
+
+        ^done,numchild="3",
+              children=[
+                        child={name="x2112.private._M_dataplus",exp="_M_dataplus",numchild="2",type="std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_Alloc_hider",thread-id="1"},
+                        child={name="x2112.private._M_string_length",exp="_M_string_length",numchild="0",type="std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::size_type",thread-id="1"},
+                        child={name="x2112.private.2_anonymous",exp="<anonymous union>",numchild="1",type="union {...}",thread-id="1"}
+                       ],
+              has_more="0"
+
+    "-var-list-children --no-values x2112.public.npos"
+
+        ^done,numchild="0",has_more="0"
+
