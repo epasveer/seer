@@ -196,6 +196,8 @@ void SeerStructVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, 
             }
         }
 
+        parentItem->setExpanded(true);
+
     }else{
         parentItem->setText(1, Seer::filterEscapes(value_text));
     }
