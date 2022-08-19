@@ -3,6 +3,7 @@
 #include "SeerMemoryVisualizerWidget.h"
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerStructVisualizerWidget.h"
+#include "SeerVarVisualizerWidget.h"
 #include "SeerBreakpointsOptionsBarWidget.h"
 #include "SeerUtl.h"
 #include <QtGui/QFont>
@@ -1691,6 +1692,27 @@ void SeerGdbWidget::handleGdbStructAddExpression (QString expression) {
     w->setVariableName(expression);
 }
 
+void SeerGdbWidget::handleGdbVarAddExpression (QString expression) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerVarVisualizerWidget* w = new SeerVarVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerVarVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerVarVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerVarVisualizerWidget::evaluateVariableExpression,     this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addMemoryVisualize,             this, &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addArrayVisualize,              this, &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addStructVisualize,             this, &SeerGdbWidget::handleGdbStructAddExpression);
+
+    // Tell the visualizer what variable to use.
+    w->setVariableName(expression);
+}
+
 void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {
 
     if (executableLaunchMode() == "") {
@@ -1741,6 +1763,10 @@ void SeerGdbWidget::handleGdbArrayVisualizer () {
 
 void SeerGdbWidget::handleGdbStructVisualizer () {
     handleGdbStructAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbVarVisualizer () {
+    handleGdbVarAddExpression("");
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

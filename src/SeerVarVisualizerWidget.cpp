@@ -29,7 +29,8 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->setRootIsDecorated(true);
     variableTreeWidget->setItemsExpandable(true);
     variableTreeWidget->resizeColumnToContents(0); // name
-    variableTreeWidget->resizeColumnToContents(1); // value
+    variableTreeWidget->resizeColumnToContents(1); // type
+    variableTreeWidget->resizeColumnToContents(2); // value
     variableTreeWidget->clear();
 
     // Connect things.
@@ -60,6 +61,7 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
         QTreeWidgetItem* item = new QTreeWidgetItem;
         item->setText(0, name);
         item->setText(1, "");
+        item->setText(2, "");
 
         variableTreeWidget->addTopLevelItem(item);
     }
@@ -67,6 +69,7 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
     // Resize columns.
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
+    variableTreeWidget->resizeColumnToContents(2);
 
     // Send signal to get variable result.
     if (variableNameLineEdit->text() != "") {
@@ -121,7 +124,8 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             foreach (auto item, topItem->takeChildren()) delete item;
 
             // Set the error text.
-            topItem->setText(1, Seer::filterEscapes(msg_text));
+            topItem->setText(1, "");
+            topItem->setText(2, Seer::filterEscapes(msg_text));
         }
 
 
@@ -142,6 +146,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
     // Resize columns.
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
+    variableTreeWidget->resizeColumnToContents(2);
 
     // Set the cursor back.
     QApplication::restoreOverrideCursor();
@@ -155,7 +160,8 @@ void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, con
         QString text = Seer::filterBookends(value_text, '{', '}');
 
         // Set the flatvalue text.
-        parentItem->setText(1, Seer::filterEscapes(text));
+        parentItem->setText(1, "");
+        parentItem->setText(2, Seer::filterEscapes(text));
 
         // Convert to a list of name/value pairs.
         QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
@@ -174,6 +180,7 @@ void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, con
                 if (prevItem) {
                     prevItem->setText(0, prevItem->text(0) + pair.first);
                     prevItem->setText(1, "");
+                    prevItem->setText(2, "");
                 }
 
             // Normal case of "name = value".
@@ -182,6 +189,7 @@ void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, con
                 QTreeWidgetItem* item = new QTreeWidgetItem;
                 item->setText(0, pair.first);
                 item->setText(1, "");
+                item->setText(2, "");
 
                 parentItem->addChild(item);
 
@@ -189,7 +197,8 @@ void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, con
                 if (Seer::hasBookends(pair.second, '{', '}')) {
                     handleItemCreate(item, pair.second);
                 }else{
-                    item->setText(1, Seer::filterEscapes(pair.second));
+                    item->setText(1, "");
+                    item->setText(2, Seer::filterEscapes(pair.second));
                 }
 
                 prevItem = item;
@@ -199,7 +208,8 @@ void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, con
         parentItem->setExpanded(true);
 
     }else{
-        parentItem->setText(1, Seer::filterEscapes(value_text));
+        parentItem->setText(1, "");
+        parentItem->setText(2, Seer::filterEscapes(value_text));
     }
 }
 
@@ -212,7 +222,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Create the variable name.
-    // It's a struct so include its parent names.
+    // If it's a struct, include its parent names.
     QString variable;
 
     while (item) {
@@ -397,7 +407,7 @@ void SeerVarVisualizerWidget::handleItemEntered (QTreeWidgetItem* item, int colu
 
     Q_UNUSED(column);
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(1));
+    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2));
 
     for (int i=1; i<variableTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
@@ -411,6 +421,7 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
     // Resize columns.
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
+    variableTreeWidget->resizeColumnToContents(2);
 }
 
 void SeerVarVisualizerWidget::handleRefreshButton () {
@@ -436,7 +447,7 @@ void SeerVarVisualizerWidget::writeSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("structvisualizerwindow");
+    settings.beginGroup("varvisualizerwindow");
     settings.setValue("size", size());
     settings.endGroup();
 }
@@ -445,7 +456,7 @@ void SeerVarVisualizerWidget::readSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("structvisualizerwindow");
+    settings.beginGroup("varvisualizerwindow");
     resize(settings.value("size", QSize(800, 400)).toSize());
     settings.endGroup();
 }

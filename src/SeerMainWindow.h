@@ -57,6 +57,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleViewMemoryVisualizer          ();
         void                        handleViewArrayVisualizer           ();
         void                        handleViewStructVisualizer          ();
+        void                        handleViewVarVisualizer             ();
         void                        handleViewAssembly                  ();
         void                        handleViewConsoleNormal             ();
         void                        handleViewConsoleHidden             ();

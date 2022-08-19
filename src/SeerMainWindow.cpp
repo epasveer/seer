@@ -78,6 +78,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Set the inital key settings.
     setKeySettings(SeerKeySettings::populate());
 
+    // Setup hidden Var Visualizer.
+    QShortcut* varVisualizerShotcut = new QShortcut(QKeySequence(tr("Alt+V")), this);
+
+    QObject::connect(varVisualizerShotcut,              &QShortcut::activated,                  this,           &SeerMainWindow::handleViewVarVisualizer);
+
     //
     // Set up signals/slots.
     //
@@ -399,6 +404,11 @@ void SeerMainWindow::handleViewArrayVisualizer () {
 void SeerMainWindow::handleViewStructVisualizer () {
 
     gdbWidget->handleGdbStructVisualizer();
+}
+
+void SeerMainWindow::handleViewVarVisualizer () {
+
+    gdbWidget->handleGdbVarVisualizer();
 }
 
 void SeerMainWindow::handleViewAssembly () {

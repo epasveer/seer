@@ -45,8 +45,10 @@
         ^done,name="x2112",numchild="1",value="{...}",type="Person",thread-id="1",has_more="0"
 
     "-var-info-type x2112"
+    "-var-info-type x2112.public.location"
 
         ^done,type="Person"
+        ^done,type="Location"
 
     "-var-info-num-children x2112"
 
@@ -107,10 +109,25 @@
         ^done,value="0.25"
         ^done,value="{...}"
 
+    "-var-info-expression x2112"
+    "-var-info-expression x2112.public"
+    "-var-info-expression x2112.public.age"
+
+        ^done,lang="C++",exp="me"
+        ^done,lang="C++",exp="public"
+        ^done,lang="C++",exp="age"
+
+    "-var-info-path-expression x2112"
+    "-var-info-path-expression x2112.public"
+    "-var-info-path-expression x2112.public.age"
+
+        ^done,path_expr="me"
+        ^done,path_expr=""
+        ^done,path_expr="((me).age)"
+
     "-var-delete x2112"
 
         ^done,ndeleted="1"
-
 
 #
 # 'me.name'
