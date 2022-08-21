@@ -11,7 +11,7 @@
     The following is the complete set of GDB/MI operations defined to access this functionality:
 
         Operation                   Description
-        -enable-pretty-printing     enable Python-based pretty-printing
+        -enable-pretty-printing     enable Python-based pretty-printing  (VERY Important to print std::string and other structures!!!).
         -var-create                 create a variable object
         -var-delete                 delete the variable object and/or its children
         -var-set-format             set the display format of this variable
@@ -70,6 +70,15 @@
                         child={name="x2112.public.age",      exp="age",      numchild="0", type="int",         thread-id="1"},
                         child={name="x2112.public.salary",   exp="salary",   numchild="0", type="float",       thread-id="1"},
                         child={name="x2112.public.location", exp="location", numchild="1", type="Location",    thread-id="1"}
+                       ],
+              has_more="0"
+
+
+    "-var-list-children --all-values x2112"
+
+        ^done,numchild="1",
+              children=[
+                        child={name="x2112.public",          exp="public",   numchild="4", value="",                          thread-id="1"}
                        ],
               has_more="0"
 

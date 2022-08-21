@@ -348,6 +348,32 @@ namespace Seer {
         return pair;
     }
 
+    //
+    //
+    //
+
+    QString varObjParent (const QString& str) {
+
+        //
+        // input:  "seer4.public.location"
+        // output: "seer4.public"
+        //
+        // input:  "seer4"
+        // output: ""
+        //
+
+        // Break the string into parts, delimited by a '.'.
+        QStringList parts = str.split('.');
+
+        // Remove the last part.
+        if (parts.isEmpty() == false) {
+            parts.removeLast();
+        }
+
+        // Return a string that has the parts rejoined.
+        return parts.join('.');
+    }
+
 
     //
     //

@@ -23,6 +23,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Memory Visualizer");
+    setAttribute(Qt::WA_DeleteOnClose);
 
   //memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
     memoryLengthLineEdit->setValidator(new QRegExpValidator(QRegExp("\\s*([1-9]\\d*\\s*)+"), this));
@@ -394,8 +395,6 @@ void SeerMemoryVisualizerWidget::writeSettings() {
     settings.beginGroup("memoryvisualizerwindow");
     settings.setValue("size", size());
     settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerMemoryVisualizerWidget::readSettings() {
@@ -405,8 +404,6 @@ void SeerMemoryVisualizerWidget::readSettings() {
     settings.beginGroup("memoryvisualizerwindow");
     resize(settings.value("size", QSize(800, 400)).toSize());
     settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerMemoryVisualizerWidget::resizeEvent (QResizeEvent* event) {

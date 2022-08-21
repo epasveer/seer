@@ -33,6 +33,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Array Visualizer");
+    setAttribute(Qt::WA_DeleteOnClose);
 
     aArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
     bArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
@@ -708,8 +709,6 @@ void SeerArrayVisualizerWidget::writeSettings() {
         settings.setValue("size", size());
         settings.setValue("splitter", splitter->saveState());
     } settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerArrayVisualizerWidget::readSettings() {
@@ -720,8 +719,6 @@ void SeerArrayVisualizerWidget::readSettings() {
         resize(settings.value("size", QSize(800, 400)).toSize());
         splitter->restoreState(settings.value("splitter").toByteArray());
     } settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerArrayVisualizerWidget::resizeEvent (QResizeEvent* event) {

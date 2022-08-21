@@ -102,7 +102,8 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
 
             QStringList threads_list = Seer::parse(threads_text, "", '{', '}', false);
 
-            for ( const auto& thread_text : threads_list  ) {
+            for ( const auto& thread_text : threads_list ) {
+
                 QString id_text       = Seer::parseFirst(thread_text, "id=",        '"', '"', false);
                 QString targetid_text = Seer::parseFirst(thread_text, "target-id=", '"', '"', false);
                 QString name_text     = Seer::parseFirst(thread_text, "name=",      '"', '"', false);

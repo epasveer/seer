@@ -15,7 +15,10 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         QString             variableName                        () const;
 
     signals:
-        void                evaluateVariableExpression          (int expressionid, QString expression);
+        void                varObjCreate                        (int expressionid, QString expression);
+        void                varObjListChildren                  (int expressionid, QString objname);
+        void                varObjUpdate                        (int expressionid, QString objname);
+        void                varObjDelete                        (int expressionid, QString objname);
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
         void                addStructVisualize                  (QString expression);
@@ -38,5 +41,6 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
 
     private:
         int                 _variableId;
+        QString             _variableName;
 };
 

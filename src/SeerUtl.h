@@ -15,6 +15,7 @@ namespace Seer {
     QString         filterBookends  (const QString& str, QChar startBracket, QChar endBracket);
     QStringList     parseCommaList  (const QString& str, QChar startBracket, QChar endBracket);
     QStringPair     parseNameValue  (const QString& str, QChar separator);
+    QString         varObjParent    (const QString& str);
 
     int             createID        ();
 

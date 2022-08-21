@@ -65,7 +65,27 @@
     <widget class="QTreeWidget" name="variableTreeWidget">
      <column>
       <property name="text">
+       <string>VarObj</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Variable</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Exp</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>NumChild</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
       </property>
      </column>
      <column>
@@ -75,7 +95,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Value</string>
+       <string>ThreadID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>HasMore</string>
       </property>
      </column>
     </widget>

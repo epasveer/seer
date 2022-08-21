@@ -21,6 +21,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Var Visualizer");
+    setAttribute(Qt::WA_DeleteOnClose);
 
     variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setMouseTracking(true);
@@ -28,9 +29,14 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variableTreeWidget->setRootIsDecorated(true);
     variableTreeWidget->setItemsExpandable(true);
-    variableTreeWidget->resizeColumnToContents(0); // name
-    variableTreeWidget->resizeColumnToContents(1); // type
-    variableTreeWidget->resizeColumnToContents(2); // value
+    variableTreeWidget->resizeColumnToContents(0); // varobj name
+    variableTreeWidget->resizeColumnToContents(1); // variable
+    variableTreeWidget->resizeColumnToContents(2); // exp
+    variableTreeWidget->resizeColumnToContents(3); // numchild
+    variableTreeWidget->resizeColumnToContents(4); // value
+    variableTreeWidget->resizeColumnToContents(5); // type
+    variableTreeWidget->resizeColumnToContents(6); // thread-id
+    variableTreeWidget->resizeColumnToContents(7); // has_more
     variableTreeWidget->clear();
 
     // Connect things.
@@ -46,6 +52,11 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 }
 
 SeerVarVisualizerWidget::~SeerVarVisualizerWidget () {
+
+    // Send signal to delete variable.
+    if (_variableName != "") {
+        emit varObjDelete(_variableId, _variableName);
+    }
 }
 
 void SeerVarVisualizerWidget::setVariableName (const QString& name) {
@@ -54,14 +65,26 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
 
     variableNameLineEdit->setText(name);
 
+    // Send signal to delete old variable.
+    if (_variableName != "") {
+
+        emit varObjDelete(_variableId, _variableName);
+
+        _variableName = "";
+    }
+
     // Create the initial variable in the tree.
     variableTreeWidget->clear();
 
     if (variableNameLineEdit->text() != "") {
         QTreeWidgetItem* item = new QTreeWidgetItem;
-        item->setText(0, name);
-        item->setText(1, "");
+        item->setText(0, "");
+        item->setText(1, name);
         item->setText(2, "");
+        item->setText(3, "");
+        item->setText(4, "");
+        item->setText(5, "");
+        item->setText(6, "");
 
         variableTreeWidget->addTopLevelItem(item);
     }
@@ -70,10 +93,15 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
     variableTreeWidget->resizeColumnToContents(2);
+    variableTreeWidget->resizeColumnToContents(3);
+    variableTreeWidget->resizeColumnToContents(4);
+    variableTreeWidget->resizeColumnToContents(5);
+    variableTreeWidget->resizeColumnToContents(6);
+    variableTreeWidget->resizeColumnToContents(7);
 
     // Send signal to get variable result.
     if (variableNameLineEdit->text() != "") {
-        emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
+        emit varObjCreate(_variableId, variableNameLineEdit->text());
     }
 }
 
@@ -85,30 +113,167 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    if (text.contains(QRegExp("^([0-9]+)\\^done,name="))) {
 
-        QString id_text    = text.section('^', 0,0);
-        QString value_text = Seer::parseFirst(text,       "value=", '"', '"', false);
+        // "4^done,name=\"seer4\",numchild=\"1\",value=\"{...}\",type=\"Person\",thread-id=\"1\",has_more=\"0\""
+
+        // qDebug() << text;
+
+        QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
+
+            QString name_text     = Seer::parseFirst(text, "name=",       '"', '"', false);
+            QString exp_text      = Seer::parseFirst(text, "exp=",        '"', '"', false);
+            QString numchild_text = Seer::parseFirst(text, "numchild=",   '"', '"', false);
+            QString value_text    = Seer::parseFirst(text, "value=",      '"', '"', false);
+            QString type_text     = Seer::parseFirst(text, "type=",       '"', '"', false);
+            QString threadid_text = Seer::parseFirst(text, "thread-id=",  '"', '"', false);
+            QString hasmore_text  = Seer::parseFirst(text, "has_more=",   '"', '"', false);
 
             QTreeWidgetItem* topItem = variableTreeWidget->topLevelItem(0);
             if (topItem == 0) {
                 return;
             }
 
-            // Delete all subitems of the toplevel item.
-            foreach (auto item, topItem->takeChildren()) delete item;
-
-            // Populate the tree.
-            handleItemCreate(topItem, value_text);
+            topItem->setText(0, name_text);
+            topItem->setText(2, exp_text);
+            topItem->setText(3, numchild_text);
+            topItem->setText(4, Seer::filterEscapes(value_text));
+            topItem->setText(5, type_text);
+            topItem->setText(6, threadid_text);
+            topItem->setText(7, hasmore_text);
 
             // For now, always expand everything.
             variableTreeWidget->expandAll();
+
+            // If there are children, get them.
+            if (numchild_text != "0") {
+                emit varObjListChildren(_variableId, name_text);
+            }
+
+            // Save the VarObj name.
+            _variableName = name_text;
+        }
+
+
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,numchild="))) {
+
+        // "4^done,numchild="1", children=[
+        //                                 child={name="x2112.public",exp="public",numchild="4",thread-id="1"} 
+        //                                ],
+        //                       has_more="0"
+
+        // qDebug() << text;
+
+        QString id_text = text.section('^', 0,0);
+
+        if (id_text.toInt() == _variableId) {
+
+            QString     children_text = Seer::parseFirst(text,     "children=", '[', ']', false);
+            QStringList child_list    = Seer::parse(children_text, "child=",    '{', '}', false);
+            QString     hasmore_text  = Seer::parseFirst(text,     "has_more=", '"', '"', false);
+
+            for ( const auto& child_text : child_list ) {
+
+                QString name_text     = Seer::parseFirst(child_text, "name=",      '"', '"', false);
+                QString exp_text      = Seer::parseFirst(child_text, "exp=",       '"', '"', false);
+                QString numchild_text = Seer::parseFirst(child_text, "numchild=",  '"', '"', false);
+                QString value_text    = Seer::parseFirst(child_text, "value=",     '"', '"', false);
+                QString type_text     = Seer::parseFirst(child_text, "type=",      '"', '"', false);
+                QString threadid_text = Seer::parseFirst(child_text, "thread-id=", '"', '"', false);
+
+                // Do we have an existing item to add to?
+                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 0);
+
+
+                // No, just add to the top level.
+                if (matches.size() == 0) {
+
+                    qDebug() << name_text << "from the listchildren does not exist in the tree.";
+
+                // Yes, add to it.
+                }else{
+
+                    QTreeWidgetItem* topItem = matches.takeFirst();
+
+                    // Create the item.
+                    QTreeWidgetItem* item = new QTreeWidgetItem;
+
+                    item->setText(0, name_text);
+                    item->setText(1, "");
+                    item->setText(2, exp_text);
+                    item->setText(3, numchild_text);
+                    item->setText(4, Seer::filterEscapes(value_text));
+                    item->setText(5, type_text);
+                    item->setText(6, threadid_text);
+                    item->setText(7, hasmore_text);
+
+                    topItem->addChild(item);
+                }
+
+                // If there are children, get them.
+                if (numchild_text != "0") {
+                    emit varObjListChildren(_variableId, name_text);
+                }
+            }
+        }
+
+
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,changelist="))) {
+
+        //
+        // "4^done,changelist=[
+        //                     {name=\"seer4.public.age\",                   value=\"60\",              in_scope=\"true\", type_changed=\"false\",                                        has_more=\"0\"},
+        //                     {name=\"seer4.public.salary\",                value=\"0.25\",            in_scope=\"true\", type_changed=\"false\",                                        has_more=\"0\"},
+        //                     {name=\"seer4.public.location.public.city\",  value=\"\\\"Houston\\\"\", in_scope=\"true\", type_changed=\"false\", displayhint=\"string\", dynamic=\"1\", has_more=\"0\"},
+        //                     {name=\"seer4.public.location.public.state\", value=\"\\\"Texas\\\"\",   in_scope=\"true\", type_changed=\"false\", displayhint=\"string\", dynamic=\"1\", has_more=\"0\"},
+        //                     {name=\"seer4.public.location.public.zip\",   value=\"77063\",           in_scope=\"true\", type_changed=\"false\",                                        has_more=\"0\"}
+        //                    ]"
+
+        // qDebug() << text;
+
+        QString id_text = text.section('^', 0,0);
+
+        if (id_text.toInt() == _variableId) {
+
+            QString     changelist_text = Seer::parseFirst(text,       "changelist=", '[', ']', false);
+            QStringList child_list      = Seer::parse(changelist_text, "",            '{', '}', false);
+
+            for ( const auto& child_text : child_list ) {
+
+                QString name_text         = Seer::parseFirst(child_text, "name=",          '"', '"', false);
+                QString value_text        = Seer::parseFirst(child_text, "value=",         '"', '"', false);
+                QString inscope_text      = Seer::parseFirst(child_text, "in_scope=",      '"', '"', false);
+                QString typechanged_text  = Seer::parseFirst(child_text, "type_changed=",  '"', '"', false);
+                QString displayhint_text  = Seer::parseFirst(child_text, "displayhint=",   '"', '"', false);
+                QString dynamic_text      = Seer::parseFirst(child_text, "dynamic=",       '"', '"', false);
+                QString hasmore_text      = Seer::parseFirst(child_text, "has_more=",      '"', '"', false);
+
+                // Do we have an existing item to add to?
+                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(name_text, Qt::MatchExactly|Qt::MatchRecursive, 0);
+
+
+                // No, just add to the top level.
+                if (matches.size() == 0) {
+
+                    qDebug() << name_text << "from the changelist does not exist in the tree.";
+
+                // Yes, add to it.
+                }else{
+
+                    QTreeWidgetItem* item = matches.takeFirst();
+
+                    item->setText(4, Seer::filterEscapes(value_text));
+                    item->setText(7, hasmore_text);
+                }
+            }
         }
 
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+
+        qDebug() << text;
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
@@ -147,12 +312,19 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
     variableTreeWidget->resizeColumnToContents(2);
+    variableTreeWidget->resizeColumnToContents(3);
+    variableTreeWidget->resizeColumnToContents(4);
+    variableTreeWidget->resizeColumnToContents(5);
+    variableTreeWidget->resizeColumnToContents(6);
+    variableTreeWidget->resizeColumnToContents(7);
 
     // Set the cursor back.
     QApplication::restoreOverrideCursor();
 }
 
 void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& value_text) {
+
+    qDebug() << value_text;
 
     if (Seer::hasBookends(value_text, '{', '}')) {
 
@@ -422,16 +594,19 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
     variableTreeWidget->resizeColumnToContents(2);
+    variableTreeWidget->resizeColumnToContents(3);
+    variableTreeWidget->resizeColumnToContents(4);
+    variableTreeWidget->resizeColumnToContents(5);
+    variableTreeWidget->resizeColumnToContents(6);
+    variableTreeWidget->resizeColumnToContents(7);
 }
 
 void SeerVarVisualizerWidget::handleRefreshButton () {
 
-    if (variableNameLineEdit->text() == "") {
-        return;
-    }
-
     // Send signal to get variable result.
-    emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
+    if (_variableName != "") {
+        emit varObjUpdate(_variableId, _variableName);
+    }
 }
 
 void SeerVarVisualizerWidget::handleVariableNameLineEdit () {

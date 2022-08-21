@@ -1503,6 +1503,42 @@ void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString e
     handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression \"" + expression + "\"");
 }
 
+void SeerGdbWidget::handleGdbVarObjCreate (int expressionid, QString expression) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-var-create seer%1 \"*\" \"%2\"").arg(expressionid).arg(expression));
+}
+
+void SeerGdbWidget::handleGdbVarObjListChildren (int expressionid, QString objname) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-var-list-children --all-values \"%2\"").arg(expressionid).arg(objname));
+}
+
+void SeerGdbWidget::handleGdbVarObjUpdate (int expressionid, QString objname) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-var-update --all-values \"%2\"").arg(expressionid).arg(objname));
+}
+
+void SeerGdbWidget::handleGdbVarObjDelete (int expressionid, QString objname) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-var-delete \"%2\"").arg(expressionid).arg(objname));
+}
+
 void SeerGdbWidget::handleGdbDataListValues () {
 
     if (executableLaunchMode() == "") {
@@ -1704,7 +1740,10 @@ void SeerGdbWidget::handleGdbVarAddExpression (QString expression) {
     // Connect things.
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerVarVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerVarVisualizerWidget::handleText);
-    QObject::connect(w,            &SeerVarVisualizerWidget::evaluateVariableExpression,     this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::varObjCreate,                   this, &SeerGdbWidget::handleGdbVarObjCreate);
+    QObject::connect(w,            &SeerVarVisualizerWidget::varObjListChildren,             this, &SeerGdbWidget::handleGdbVarObjListChildren);
+    QObject::connect(w,            &SeerVarVisualizerWidget::varObjUpdate,                   this, &SeerGdbWidget::handleGdbVarObjUpdate);
+    QObject::connect(w,            &SeerVarVisualizerWidget::varObjDelete,                   this, &SeerGdbWidget::handleGdbVarObjDelete);
     QObject::connect(w,            &SeerVarVisualizerWidget::addMemoryVisualize,             this, &SeerGdbWidget::handleGdbMemoryAddExpression);
     QObject::connect(w,            &SeerVarVisualizerWidget::addArrayVisualize,              this, &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(w,            &SeerVarVisualizerWidget::addStructVisualize,             this, &SeerGdbWidget::handleGdbStructAddExpression);

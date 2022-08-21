@@ -21,6 +21,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
     setWindowTitle("Seer Struct Visualizer");
+    setAttribute(Qt::WA_DeleteOnClose);
 
     variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setMouseTracking(true);

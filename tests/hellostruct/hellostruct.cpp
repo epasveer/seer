@@ -4,16 +4,16 @@
 
 
 struct Location {
-    std::string     city;
-    std::string     state;
-    int             zip;
+    std::string      city;
+    std::string      state;
+    int              zip;
 };
 
 struct Person {
-    std::string     name;
-    int             age;
-    float           salary;
-    struct Location location;
+    std::string      name;
+    int              age;
+    float            salary;
+    struct Location  location;
 };
 
 
