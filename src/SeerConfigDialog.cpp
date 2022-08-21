@@ -2,6 +2,7 @@
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QStackedWidget>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QMessageBox>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -18,6 +19,21 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     contentsListWidget->setMovement(QListView::Static);
     contentsListWidget->setMaximumWidth(128);
     contentsListWidget->setSpacing(12);
+
+    QPushButton* resetButton = buttonBox->button(QDialogButtonBox::Reset);
+    if (resetButton) {
+        resetButton->setToolTip("Reset configuration for the current page to initial settings.");
+    }
+
+    QPushButton* okButton = buttonBox->button(QDialogButtonBox::Ok);
+    if (okButton) {
+        okButton->setToolTip("Accept configuration changes to all pages.");
+    }
+
+    QPushButton* cancelButton = buttonBox->button(QDialogButtonBox::Cancel);
+    if (cancelButton) {
+        cancelButton->setToolTip("Discard configuration changes to all pages.");
+    }
 
     // Create pages.
     _gdbConfigPage      = new SeerGdbConfigPage;
@@ -133,6 +149,15 @@ bool SeerConfigDialog::gdbRandomizeStartAddress () const {
     return _gdbConfigPage->gdbRandomizeStartAddress();
 }
 
+void SeerConfigDialog::setGdbEnablePrettyPrinting (bool flag) {
+
+    _gdbConfigPage->setGdbEnablePrettyPrinting(flag);
+}
+
+bool SeerConfigDialog::gdbEnablePrettyPrinting () const {
+
+    return _gdbConfigPage->gdbEnablePrettyPrinting();
+}
 
 void SeerConfigDialog::setDprintfStyle (const QString& style) {
 

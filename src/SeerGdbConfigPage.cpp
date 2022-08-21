@@ -49,6 +49,11 @@ bool SeerGdbConfigPage::gdbRandomizeStartAddress () const {
     return gdbRandomizeStartAddressCheckBox->isChecked();
 }
 
+bool SeerGdbConfigPage::gdbEnablePrettyPrinting () const {
+
+    return gdbEnablePrettyPrintingCheckBox->isChecked();
+}
+
 void SeerGdbConfigPage::setGdbProgram (const QString& program) {
 
     gdbProgramLineEdit->setText(program);
@@ -72,6 +77,11 @@ void SeerGdbConfigPage::setGdbHandleTerminatingException (bool flag) {
 void SeerGdbConfigPage::setGdbRandomizeStartAddress (bool flag) {
 
     gdbRandomizeStartAddressCheckBox->setChecked(flag);
+}
+
+void SeerGdbConfigPage::setGdbEnablePrettyPrinting (bool flag) {
+
+    gdbEnablePrettyPrintingCheckBox->setChecked(flag);
 }
 
 QString SeerGdbConfigPage::dprintfStyle () const {
@@ -128,6 +138,7 @@ void SeerGdbConfigPage::reset () {
     setGdbAsyncMode(true);
     setGdbHandleTerminatingException(true);
     setGdbRandomizeStartAddress(false);
+    setGdbEnablePrettyPrinting(true);
 
     setDprintfStyle("gdb");
     setDprintfFunction("printf");

@@ -52,6 +52,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
+    _gdbEnablePrettyPrinting            = true;
     _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
@@ -437,6 +438,16 @@ bool SeerGdbWidget::gdbRandomizeStartAddress () const {
     return _gdbRandomizeStartAddress;
 }
 
+void SeerGdbWidget::setGdbEnablePrettyPrinting (bool flag) {
+
+    _gdbEnablePrettyPrinting = flag;
+}
+
+bool SeerGdbWidget::gdbEnablePrettyPrinting () const {
+
+    return _gdbEnablePrettyPrinting;
+}
+
 void SeerGdbWidget::setDprintfStyle (const QString& style) {
 
     _dprintfStyle = style;
@@ -662,6 +673,10 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         handleGdbCommand("-gdb-set disable-randomization off");
     }else{
         handleGdbCommand("-gdb-set disable-randomization on"); // Turn on randomization of starting address for process.
+    }
+
+    if (gdbEnablePrettyPrinting()) {
+        handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
     }
 
     // Set the program's arguments before running.

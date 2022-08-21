@@ -26,10 +26,23 @@
       <string>Gdb Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="gdbProgramLineEdit">
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
         <property name="toolTip">
-         <string>Specify the path and name of the gdb debugger.</string>
+         <string>Randomize the process start address.</string>
+        </property>
+        <property name="text">
+         <string>Randomize start address</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
+        <property name="toolTip">
+         <string>Handle terminating exceptions when calling functions.</string>
+        </property>
+        <property name="text">
+         <string>Handle  terminating-exception</string>
         </property>
        </widget>
       </item>
@@ -44,6 +57,20 @@
        <widget class="QLabel" name="gdbArgumentsLabel">
         <property name="text">
          <string>GDB arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="gdbProgramToolButton">
+        <property name="toolTip">
+         <string>Open a file dialog to locate the gdb debugger.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
         </property>
        </widget>
       </item>
@@ -64,37 +91,20 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="gdbProgramLineEdit">
         <property name="toolTip">
-         <string>Handle terminating exceptions when calling functions.</string>
-        </property>
-        <property name="text">
-         <string>Handle  terminating-exception</string>
+         <string>Specify the path and name of the gdb debugger.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="gdbProgramToolButton">
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="gdbEnablePrettyPrintingCheckBox">
         <property name="toolTip">
-         <string>Open a file dialog to locate the gdb debugger.</string>
+         <string>Show variables with gdb's 'pretty-printing' system.</string>
         </property>
         <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
-        <property name="toolTip">
-         <string>Randomize the process start address.</string>
-        </property>
-        <property name="text">
-         <string>Randomize start address</string>
+         <string>Enable pretty-printing</string>
         </property>
        </widget>
       </item>
@@ -225,6 +235,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QTextBrowser" name="textBrowser">
+     <property name="toolTip">
+      <string>Show variables with gdb's 'pretty-print' system.</string>
+     </property>
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -241,6 +254,8 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace'; color:#24292f; background-color:transparent;&quot;&gt;    unwind-on-terminating-exception on|off&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The gdb debugger normally starts the process at the same address each time. The process start address can be randomized.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enabling pretty-printing allows gdb to present certain variables (like std::string) in a pleasing way. Otherwise, the contents of the variables are presented in their full description. (See gdb 'pretty-printing'). Once enabled, it can not be turned off for the Seer session.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Printpoints use the 'dprintf' command available in gdb. The output of 'dprintf' can be sent to the Seer Console ('call') or the GDB output tab ('gdb'). A value of 'agent' is meant for use with a gdbserver.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;

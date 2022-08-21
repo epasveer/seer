@@ -440,6 +440,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
+    dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
     dlg.setDprintfStyle(gdbWidget->dprintfStyle());
     dlg.setDprintfFunction(gdbWidget->dprintfFunction());
     dlg.setDprintfChannel(gdbWidget->dprintfChannel());
@@ -469,6 +470,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
+    gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
     gdbWidget->setDprintfChannel(dlg.dprintfChannel());
@@ -830,6 +832,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
         settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
         settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
+        settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {
@@ -895,6 +898,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
+        gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {

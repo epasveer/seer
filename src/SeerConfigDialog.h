@@ -38,6 +38,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbRandomizeStartAddress                     (bool flag);
         bool                                gdbRandomizeStartAddress                        () const;
 
+        void                                setGdbEnablePrettyPrinting                      (bool flag);
+        bool                                gdbEnablePrettyPrinting                         () const;
+
         void                                setDprintfStyle                                 (const QString& style);
         QString                             dprintfStyle                                    () const;
 

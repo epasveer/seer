@@ -17,12 +17,14 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         bool                    gdbAsyncMode                                    () const;
         bool                    gdbHandleTerminatingException                   () const;
         bool                    gdbRandomizeStartAddress                        () const;
+        bool                    gdbEnablePrettyPrinting                         () const;
 
         void                    setGdbProgram                                   (const QString& program);
         void                    setGdbArguments                                 (const QString& arguments);
         void                    setGdbAsyncMode                                 (bool flag);
         void                    setGdbHandleTerminatingException                (bool flag);
         void                    setGdbRandomizeStartAddress                     (bool flag);
+        void                    setGdbEnablePrettyPrinting                      (bool flag);
 
         QString                 dprintfStyle                                    () const;
         QString                 dprintfFunction                                 () const;

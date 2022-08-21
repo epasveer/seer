@@ -79,6 +79,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbRandomizeStartAddress         (bool flag);
         bool                                gdbRandomizeStartAddress            () const;
 
+        void                                setGdbEnablePrettyPrinting          (bool flag);
+        bool                                gdbEnablePrettyPrinting             () const;
+
+
         void                                setDprintfStyle                     (const QString& style);
         QString                             dprintfStyle                        () const;
 
@@ -255,6 +259,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbASyncMode;
         bool                                _gdbHandleTerminatingException;
         bool                                _gdbRandomizeStartAddress;
+        bool                                _gdbEnablePrettyPrinting;
         QString                             _dprintfStyle;
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;
