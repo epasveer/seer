@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(seer VERSION 1.9.0 LANGUAGES CXX)
+project(seergdb VERSION 1.9.0 LANGUAGES CXX)
 
-set(PROJECT_NAME seer)
+set(PROJECT_NAME seergdb)
 
 # Find includes in the build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -100,7 +100,7 @@ set(HEADER_FILES
     )
 
 set(SOURCE_FILES
-    seer.cpp
+    seergdb.cpp
     GdbMonitor.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
