@@ -23,6 +23,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     setWindowTitle("Seer Var Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
+    variableNameLineEdit->setFocus();
     variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setMouseTracking(true);
     variableTreeWidget->setSortingEnabled(false);
@@ -40,6 +41,8 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->clear();
 
     // Connect things.
+    QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAllButton);
+    QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAllButton);
     QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
     QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
@@ -397,39 +400,53 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // If it's a struct, include its parent names.
     QString variable;
 
-    while (item) {
+    QTreeWidgetItem* tmpItem = item;
+    while (tmpItem) {
         if (variable == "") {
-            variable = item->text(0);
+            variable = tmpItem->text(0);
         }else{
-            variable = item->text(0) + "." + variable;
+            variable = tmpItem->text(0) + "." + variable;
         }
 
-        item = item->parent();
+        tmpItem = tmpItem->parent();
     }
 
     // Create the menus.
-    QAction* addMemoryVisualizerAction;
-    QAction* addMemoryAsteriskVisualizerAction;
-    QAction* addMemoryAmpersandVisualizerAction;
-    QAction* addArrayVisualizerAction;
-    QAction* addArrayAsteriskVisualizerAction;
-    QAction* addArrayAmpersandVisualizerAction;
-    QAction* addStructVisualizerAction;
-    QAction* addStructAsteriskVisualizerAction;
-    QAction* addStructAmpersandVisualizerAction;
+    QAction* expandItemAction                     = new QAction(QString("Expand item"));
+    QAction* collapseItemAction                   = new QAction(QString("Collapse item"));
 
-    addMemoryVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
-    addMemoryAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
-    addMemoryAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
-    addArrayVisualizerAction             = new QAction(QString("\"%1\"").arg(variable));
-    addArrayAsteriskVisualizerAction     = new QAction(QString("\"*%1\"").arg(variable));
-    addArrayAmpersandVisualizerAction    = new QAction(QString("\"&&%1\"").arg(variable));
-    addStructVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
-    addStructAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
-    addStructAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+    expandItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"));
+    collapseItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
 
+    QAction* addMemoryVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
+    QAction* addMemoryAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
+    QAction* addMemoryAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+    QAction* addArrayVisualizerAction             = new QAction(QString("\"%1\"").arg(variable));
+    QAction* addArrayAsteriskVisualizerAction     = new QAction(QString("\"*%1\"").arg(variable));
+    QAction* addArrayAmpersandVisualizerAction    = new QAction(QString("\"&&%1\"").arg(variable));
+    QAction* addStructVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
+    QAction* addStructAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
+    QAction* addStructAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+
+    // Are we on an item that has children?
+    expandItemAction->setEnabled(false);
+    collapseItemAction->setEnabled(false);
+
+    if (item->childCount() > 0) {
+        if (item->isExpanded() == false) {
+            expandItemAction->setEnabled(true);
+        }else{
+            collapseItemAction->setEnabled(true);
+        }
+    }
+
+    // Populate the menu.
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
+
+    menu.addAction(expandItemAction);
+    menu.addAction(collapseItemAction);
+    menu.addSeparator();
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
     memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
@@ -455,6 +472,15 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // Do nothing.
     if (action == 0) {
         return;
+    }
+
+    // Handle expanding or collapsing tree.
+    if (action == expandItemAction) {
+        expandItem(item);
+    }
+
+    if (action == collapseItemAction) {
+        collapseItem(item);
     }
 
     // Handle adding memory to visualize.
@@ -601,6 +627,16 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
     variableTreeWidget->resizeColumnToContents(7);
 }
 
+void SeerVarVisualizerWidget::handleExpandAllButton () {
+
+    variableTreeWidget->expandAll();
+}
+
+void SeerVarVisualizerWidget::handleCollapseAllButton () {
+
+    variableTreeWidget->collapseAll();
+}
+
 void SeerVarVisualizerWidget::handleRefreshButton () {
 
     // Send signal to get variable result.
@@ -641,5 +677,43 @@ void SeerVarVisualizerWidget::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerVarVisualizerWidget::expandItem (QTreeWidgetItem* item) {
+
+    // If we're dealing with the top-level item, expand the tree the fast way.
+    if (item == variableTreeWidget->topLevelItem(0)) {
+        variableTreeWidget->expandAll();
+        return;
+    }
+
+    // If this item has children, expand it. Then loop through
+    // each child and expand them, recursively.
+    if (item->childCount() > 0) {
+        item->setExpanded(true);
+
+        for (int i=0; i < item->childCount(); i++) {
+            expandItem(item->child(i));
+        }
+    }
+}
+
+void SeerVarVisualizerWidget::collapseItem (QTreeWidgetItem* item) {
+
+    // If we're dealing with the top-level item, collapse the tree the fast way.
+    if (item == variableTreeWidget->topLevelItem(0)) {
+        variableTreeWidget->collapseAll();
+        return;
+    }
+
+    // If this item has children, collapse it. Then loop through
+    // each child and collapse them, recursively.
+    if (item->childCount() > 0) {
+        item->setExpanded(false);
+
+        for (int i=0; i < item->childCount(); i++) {
+            collapseItem(item->child(i));
+        }
+    }
 }
 
