@@ -16,11 +16,11 @@
     <file>resources/arguments.png</file>
     <file>resources/debug.png</file>
     <file>resources/step_out.png</file>
-    <file>resources/seer_32x32.png</file>
-    <file>resources/seer_64x64.png</file>
-    <file>resources/seer_128x128.png</file>
-    <file>resources/seer_256x256.png</file>
-    <file>resources/seer_512x512.png</file>
+    <file>resources/seergdb_32x32.png</file>
+    <file>resources/seergdb_64x64.png</file>
+    <file>resources/seergdb_128x128.png</file>
+    <file>resources/seergdb_256x256.png</file>
+    <file>resources/seergdb_512x512.png</file>
     <file>resources/gdb.png</file>
     <file>resources/editor.png</file>
     <file>resources/source.png</file>

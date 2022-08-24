@@ -29,7 +29,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="resource.qrc">:/seer/resources/seer_256x256.png</pixmap>
+         <pixmap resource="resource.qrc">:/seer/resources/seergdb_256x256.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>false</bool>
