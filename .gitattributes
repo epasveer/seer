@@ -5,5 +5,5 @@ icons/**/*      export-ignore
 images/**/*     export-ignore
 notes/**/*      export-ignore
 scripts/**/*    export-ignore
-tests/**/*      export-ignore
+tests/          export-ignore
 
