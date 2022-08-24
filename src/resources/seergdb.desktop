@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Seer
+Name=SeerGdb
 GenericName=Debugger
 Comment=GUI frontend to gdb.
-Exec=seer
-Icon=seer
+Exec=seergdb
+Icon=seergdb
 Terminal=false
 Type=Application
 Categories=Development;
