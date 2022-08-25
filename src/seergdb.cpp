@@ -25,8 +25,8 @@ int main (int argc, char* argv[]) {
     //
     QApplication app(argc, argv);
 
-    QCoreApplication::setApplicationName("Seer");
-    QCoreApplication::setOrganizationName("Seer");
+    QCoreApplication::setApplicationName("seergdb");
+    QCoreApplication::setOrganizationName("seergdb");
     QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021");
 
     //
