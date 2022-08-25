@@ -1,7 +1,9 @@
 
 # Seer Change Log
 
-## [1.9beta] - 2022-MM-DD
+## [1.9] - 2022-08-22
+* Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
+* Prepare for better Debian (and other distros) packaging and releasing.
 * Add history (up/down arrows) to all line input fields.
     - Variable logger, tracker browsers.
     - Source, function, types, statics, library browsers.

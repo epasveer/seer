@@ -83,7 +83,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
-    configSeerButton->setIcon(QIcon(":/seer/resources/seer_128x128.png"));
+    configSeerButton->setIcon(QIcon(":/seer/resources/seergdb_128x128.png"));
     configSeerButton->setText(tr("Seer"));
     configSeerButton->setTextAlignment(Qt::AlignHCenter);
     configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

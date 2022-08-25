@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
-    <normaloff>:/seer/resources/seer_32x32.png</normaloff>:/seer/resources/seer_32x32.png</iconset>
+    <normaloff>:/seer/resources/seergdb_32x32.png</normaloff>:/seer/resources/seergdb_32x32.png</iconset>
   </property>
   <property name="toolTip">
    <string>Select a process pid.</string>

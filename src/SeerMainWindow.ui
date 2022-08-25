@@ -255,7 +255,7 @@
   <action name="actionHelpAbout">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/seer_32x32.png</normaloff>:/seer/resources/seer_32x32.png</iconset>
+     <normaloff>:/seer/resources/seergdb_32x32.png</normaloff>:/seer/resources/seergdb_32x32.png</iconset>
    </property>
    <property name="text">
     <string>About Seer</string>

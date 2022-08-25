@@ -21,7 +21,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Memory Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 

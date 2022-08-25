@@ -1,0 +1,12 @@
+
+#
+# To manually create a tar file of Seer release (something that GitHub would create), run these commands.
+#
+
+    % cd seer/
+    % git archive --format=tar.gz --prefix=seer-1.9/ HEAD > ~/seer-1.9.tar.gz
+
+# git archive looks at this file for a list of files and directories to exclude.
+
+    seer/.gitattributes
+

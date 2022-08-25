@@ -157,7 +157,7 @@ int main (int argc, char* argv[]) {
     //
     SeerMainWindow seer;
 
-    seer.setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
+    seer.setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     seer.setExecutableName(executableName);
     seer.setExecutableArguments(positionalArguments);
 

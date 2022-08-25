@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>resources/seer_32x32.png</normaloff>resources/seer_32x32.png</iconset>
+    <normaloff>resources/seergdb_32x32.png</normaloff>resources/seergdb_32x32.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
