@@ -6,7 +6,7 @@
 #include <QtWidgets/QAction>
 #include <QtGui/QIcon>
 #include <QtCore/QRegExp>
-#include <QtCore/QTime>
+#include <QtCore/QTimer>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -19,7 +19,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seer_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Var Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -93,14 +93,7 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
     }
 
     // Resize columns.
-    variableTreeWidget->resizeColumnToContents(0);
-    variableTreeWidget->resizeColumnToContents(1);
-    variableTreeWidget->resizeColumnToContents(2);
-    variableTreeWidget->resizeColumnToContents(3);
-    variableTreeWidget->resizeColumnToContents(4);
-    variableTreeWidget->resizeColumnToContents(5);
-    variableTreeWidget->resizeColumnToContents(6);
-    variableTreeWidget->resizeColumnToContents(7);
+    handleResizeColumns();
 
     // Send signal to get variable result.
     if (variableNameLineEdit->text() != "") {
@@ -312,14 +305,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
     }
 
     // Resize columns.
-    variableTreeWidget->resizeColumnToContents(0);
-    variableTreeWidget->resizeColumnToContents(1);
-    variableTreeWidget->resizeColumnToContents(2);
-    variableTreeWidget->resizeColumnToContents(3);
-    variableTreeWidget->resizeColumnToContents(4);
-    variableTreeWidget->resizeColumnToContents(5);
-    variableTreeWidget->resizeColumnToContents(6);
-    variableTreeWidget->resizeColumnToContents(7);
+    handleResizeColumns();
 
     // Set the cursor back.
     QApplication::restoreOverrideCursor();
@@ -400,7 +386,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // If it's a struct, include its parent names.
     QString variable;
 
-    QTreeWidgetItem* tmpItem = item;
+    QTreeWidgetItem* tmpItem = item->clone();
     while (tmpItem) {
         if (variable == "") {
             variable = tmpItem->text(0);
@@ -440,6 +426,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
         }
     }
 
+    //expandItemAction->setEnabled(true);
+    //collapseItemAction->setEnabled(true);
+
     // Populate the menu.
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
@@ -477,10 +466,16 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // Handle expanding or collapsing tree.
     if (action == expandItemAction) {
         expandItem(item);
+
+        // Resize columns.
+        handleResizeColumns();
     }
 
     if (action == collapseItemAction) {
         collapseItem(item);
+
+        // Resize columns.
+        handleResizeColumns();
     }
 
     // Handle adding memory to visualize.
@@ -616,6 +611,14 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
 
     Q_UNUSED(item);
 
+    // Resize columns in a sec.
+    // Have to schedule the resize later. Doing it immediatedly messes up the
+    // tree display. Must be a Qt bug.
+    QTimer::singleShot(200, this, &SeerVarVisualizerWidget::handleResizeColumns);
+}
+
+void SeerVarVisualizerWidget::handleResizeColumns () {
+
     // Resize columns.
     variableTreeWidget->resizeColumnToContents(0);
     variableTreeWidget->resizeColumnToContents(1);
@@ -630,11 +633,17 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
 void SeerVarVisualizerWidget::handleExpandAllButton () {
 
     variableTreeWidget->expandAll();
+
+    // Resize columns.
+    handleResizeColumns();
 }
 
 void SeerVarVisualizerWidget::handleCollapseAllButton () {
 
     variableTreeWidget->collapseAll();
+
+    // Resize columns.
+    handleResizeColumns();
 }
 
 void SeerVarVisualizerWidget::handleRefreshButton () {

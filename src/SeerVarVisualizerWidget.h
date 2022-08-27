@@ -34,6 +34,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleResizeColumns                 ();
 
     protected:
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& value_text);
