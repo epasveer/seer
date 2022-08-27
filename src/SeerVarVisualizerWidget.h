@@ -30,14 +30,15 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleExpandAllButton               ();
         void                handleCollapseAllButton             ();
         void                handleRefreshButton                 ();
+        void                handleDetailedCheckBox              ();
         void                handleVariableNameLineEdit          ();
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
         void                handleResizeColumns                 ();
+        void                handleHideDetailedColumns           (bool flag);
 
     protected:
-        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& value_text);
         void                writeSettings                       ();
         void                readSettings                        ();
         void                resizeEvent                         (QResizeEvent* event);

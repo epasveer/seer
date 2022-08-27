@@ -30,25 +30,31 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variableTreeWidget->setRootIsDecorated(true);
     variableTreeWidget->setItemsExpandable(true);
-    variableTreeWidget->resizeColumnToContents(0); // varobj name
-    variableTreeWidget->resizeColumnToContents(1); // variable
-    variableTreeWidget->resizeColumnToContents(2); // exp
-    variableTreeWidget->resizeColumnToContents(3); // numchild
-    variableTreeWidget->resizeColumnToContents(4); // value
-    variableTreeWidget->resizeColumnToContents(5); // type
+    variableTreeWidget->resizeColumnToContents(0); // variable
+    variableTreeWidget->resizeColumnToContents(1); // value
+    variableTreeWidget->resizeColumnToContents(2); // type
+    variableTreeWidget->resizeColumnToContents(3); // varobj name
+    variableTreeWidget->resizeColumnToContents(4); // exp
+    variableTreeWidget->resizeColumnToContents(5); // numchild
     variableTreeWidget->resizeColumnToContents(6); // thread-id
     variableTreeWidget->resizeColumnToContents(7); // has_more
     variableTreeWidget->clear();
+
+    detailedCheckBox->setChecked(false);
 
     // Connect things.
     QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAllButton);
     QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAllButton);
     QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
+    QObject::connect(detailedCheckBox,       &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDetailedCheckBox);
     QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemExpanded);
+
+    // Show/hide columns.
+    handleDetailedCheckBox();
 
     // Restore window settings.
     readSettings();
@@ -81,8 +87,8 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
 
     if (variableNameLineEdit->text() != "") {
         QTreeWidgetItem* item = new QTreeWidgetItem;
-        item->setText(0, "");
-        item->setText(1, name);
+        item->setText(0, name);
+        item->setText(1, "");
         item->setText(2, "");
         item->setText(3, "");
         item->setText(4, "");
@@ -132,13 +138,17 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 return;
             }
 
-            topItem->setText(0, name_text);
-            topItem->setText(2, exp_text);
-            topItem->setText(3, numchild_text);
-            topItem->setText(4, Seer::filterEscapes(value_text));
-            topItem->setText(5, type_text);
+            topItem->setText(1, Seer::filterEscapes(value_text));
+            topItem->setText(2, type_text);
+            topItem->setText(3, name_text);
+            topItem->setText(4, exp_text);
+            topItem->setText(5, numchild_text);
             topItem->setText(6, threadid_text);
             topItem->setText(7, hasmore_text);
+
+            if (exp_text != "") {
+                topItem->setText(0, exp_text);
+            }
 
             // For now, always expand everything.
             variableTreeWidget->expandAll();
@@ -180,7 +190,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 QString threadid_text = Seer::parseFirst(child_text, "thread-id=", '"', '"', false);
 
                 // Do we have an existing item to add to?
-                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 0);
+                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 3);
 
 
                 // No, just add to the top level.
@@ -196,14 +206,18 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;
 
-                    item->setText(0, name_text);
-                    item->setText(1, "");
-                    item->setText(2, exp_text);
-                    item->setText(3, numchild_text);
-                    item->setText(4, Seer::filterEscapes(value_text));
-                    item->setText(5, type_text);
+                    item->setText(0, "");
+                    item->setText(1, Seer::filterEscapes(value_text));
+                    item->setText(2, type_text);
+                    item->setText(3, name_text);
+                    item->setText(4, exp_text);
+                    item->setText(5, numchild_text);
                     item->setText(6, threadid_text);
                     item->setText(7, hasmore_text);
+
+                    if (exp_text != "") {
+                        item->setText(0, exp_text);
+                    }
 
                     topItem->addChild(item);
                 }
@@ -260,7 +274,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                     QTreeWidgetItem* item = matches.takeFirst();
 
-                    item->setText(4, Seer::filterEscapes(value_text));
+                    item->setText(1, Seer::filterEscapes(value_text));
                     item->setText(7, hasmore_text);
                 }
             }
@@ -285,8 +299,8 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             foreach (auto item, topItem->takeChildren()) delete item;
 
             // Set the error text.
-            topItem->setText(1, "");
-            topItem->setText(2, Seer::filterEscapes(msg_text));
+            topItem->setText(3, "");
+            topItem->setText(4, Seer::filterEscapes(msg_text));
         }
 
 
@@ -311,69 +325,6 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
-void SeerVarVisualizerWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& value_text) {
-
-    qDebug() << value_text;
-
-    if (Seer::hasBookends(value_text, '{', '}')) {
-
-        // Remove bookends
-        QString text = Seer::filterBookends(value_text, '{', '}');
-
-        // Set the flatvalue text.
-        parentItem->setText(1, "");
-        parentItem->setText(2, Seer::filterEscapes(text));
-
-        // Convert to a list of name/value pairs.
-        QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
-
-        // Go through each pair and add the name and its value to the tree.
-        QTreeWidgetItem* prevItem = 0;
-
-        for (const auto& nv : nv_pairs) {
-
-            QStringPair pair = Seer::parseNameValue(nv, '=');
-
-            // Handle "name = "xxxx", '\\000' <repeats 14 times>, "yyyy" ..., age = 0, salary = 0"
-            // There is a 'first' value but no 'second'. So just concatenate unto the previous item.
-            if (pair.second == "") {
-
-                if (prevItem) {
-                    prevItem->setText(0, prevItem->text(0) + pair.first);
-                    prevItem->setText(1, "");
-                    prevItem->setText(2, "");
-                }
-
-            // Normal case of "name = value".
-            }else{
-
-                QTreeWidgetItem* item = new QTreeWidgetItem;
-                item->setText(0, pair.first);
-                item->setText(1, "");
-                item->setText(2, "");
-
-                parentItem->addChild(item);
-
-                // Handle recursion if value has bookends.
-                if (Seer::hasBookends(pair.second, '{', '}')) {
-                    handleItemCreate(item, pair.second);
-                }else{
-                    item->setText(1, "");
-                    item->setText(2, Seer::filterEscapes(pair.second));
-                }
-
-                prevItem = item;
-            }
-        }
-
-        parentItem->setExpanded(true);
-
-    }else{
-        parentItem->setText(1, "");
-        parentItem->setText(2, Seer::filterEscapes(value_text));
-    }
-}
-
 void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
     QTreeWidgetItem* item = variableTreeWidget->itemAt(pos);
@@ -386,12 +337,17 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // If it's a struct, include its parent names.
     QString variable;
 
-    QTreeWidgetItem* tmpItem = item->clone();
+    QTreeWidgetItem* tmpItem = item;
     while (tmpItem) {
+
         if (variable == "") {
-            variable = tmpItem->text(0);
+            if (tmpItem->text(1) != "") {
+                variable = tmpItem->text(0);
+            }
         }else{
-            variable = tmpItem->text(0) + "." + variable;
+            if (tmpItem->text(1) != "") {
+                variable = tmpItem->text(0) + "." + variable;
+            }
         }
 
         tmpItem = tmpItem->parent();
@@ -400,10 +356,6 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // Create the menus.
     QAction* expandItemAction                     = new QAction(QString("Expand item"));
     QAction* collapseItemAction                   = new QAction(QString("Collapse item"));
-
-    expandItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"));
-    collapseItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
-
     QAction* addMemoryVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
     QAction* addMemoryAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
     QAction* addMemoryAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
@@ -413,6 +365,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     QAction* addStructVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
     QAction* addStructAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
     QAction* addStructAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+
+    expandItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"));
+    collapseItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
 
     // Are we on an item that has children?
     expandItemAction->setEnabled(false);
@@ -425,9 +380,6 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
             collapseItemAction->setEnabled(true);
         }
     }
-
-    //expandItemAction->setEnabled(true);
-    //collapseItemAction->setEnabled(true);
 
     // Populate the menu.
     QMenu menu("Visualizers", this);
@@ -600,7 +552,7 @@ void SeerVarVisualizerWidget::handleItemEntered (QTreeWidgetItem* item, int colu
 
     Q_UNUSED(column);
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2));
+    item->setToolTip(0, item->text(3) + " : " + item->text(0) + " : " + item->text(4));
 
     for (int i=1; i<variableTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
@@ -614,7 +566,7 @@ void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
     // Resize columns in a sec.
     // Have to schedule the resize later. Doing it immediatedly messes up the
     // tree display. Must be a Qt bug.
-    QTimer::singleShot(200, this, &SeerVarVisualizerWidget::handleResizeColumns);
+    QTimer::singleShot(100, this, &SeerVarVisualizerWidget::handleResizeColumns);
 }
 
 void SeerVarVisualizerWidget::handleResizeColumns () {
@@ -628,6 +580,20 @@ void SeerVarVisualizerWidget::handleResizeColumns () {
     variableTreeWidget->resizeColumnToContents(5);
     variableTreeWidget->resizeColumnToContents(6);
     variableTreeWidget->resizeColumnToContents(7);
+}
+
+void SeerVarVisualizerWidget::handleHideDetailedColumns (bool flag) {
+
+    variableTreeWidget->setColumnHidden(0, false);
+    variableTreeWidget->setColumnHidden(1, false);
+    variableTreeWidget->setColumnHidden(2, false);
+    variableTreeWidget->setColumnHidden(3, flag);
+    variableTreeWidget->setColumnHidden(4, flag);
+    variableTreeWidget->setColumnHidden(5, flag);
+    variableTreeWidget->setColumnHidden(6, flag);
+    variableTreeWidget->setColumnHidden(7, flag);
+
+    handleResizeColumns();
 }
 
 void SeerVarVisualizerWidget::handleExpandAllButton () {
@@ -652,6 +618,11 @@ void SeerVarVisualizerWidget::handleRefreshButton () {
     if (_variableName != "") {
         emit varObjUpdate(_variableId, _variableName);
     }
+}
+
+void SeerVarVisualizerWidget::handleDetailedCheckBox () {
+
+    handleHideDetailedColumns(!detailedCheckBox->isChecked());
 }
 
 void SeerVarVisualizerWidget::handleVariableNameLineEdit () {
