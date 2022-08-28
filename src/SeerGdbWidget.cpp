@@ -1545,6 +1545,15 @@ void SeerGdbWidget::handleGdbVarObjUpdate (int expressionid, QString objname) {
     handleGdbCommand(QString("%1-var-update --all-values \"%2\"").arg(expressionid).arg(objname));
 }
 
+void SeerGdbWidget::handleGdbVarObjAssign (int expressionid, QString objname, QString value) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("%1-var-assign \"%2\" %3").arg(expressionid).arg(objname).arg(value));
+}
+
 void SeerGdbWidget::handleGdbVarObjDelete (int expressionid, QString objname) {
 
     if (executableLaunchMode() == "") {
@@ -1758,6 +1767,7 @@ void SeerGdbWidget::handleGdbVarAddExpression (QString expression) {
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjCreate,                   this, &SeerGdbWidget::handleGdbVarObjCreate);
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjListChildren,             this, &SeerGdbWidget::handleGdbVarObjListChildren);
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjUpdate,                   this, &SeerGdbWidget::handleGdbVarObjUpdate);
+    QObject::connect(w,            &SeerVarVisualizerWidget::varObjAssign,                   this, &SeerGdbWidget::handleGdbVarObjAssign);
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjDelete,                   this, &SeerGdbWidget::handleGdbVarObjDelete);
     QObject::connect(w,            &SeerVarVisualizerWidget::addMemoryVisualize,             this, &SeerGdbWidget::handleGdbMemoryAddExpression);
     QObject::connect(w,            &SeerVarVisualizerWidget::addArrayVisualize,              this, &SeerGdbWidget::handleGdbArrayAddExpression);

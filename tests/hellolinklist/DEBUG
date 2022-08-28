@@ -1,0 +1,81 @@
+"4^done,name="seer4",
+        numchild="1",
+        value="{...}",
+        type="Node",
+        thread-id="1",
+        has_more="0""
+
+
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.data",exp="data",numchild="0",value="1",type="int",thread-id="1"},
+                  child={name="seer4.public.next",exp="next",numchild="1",value="0x613c40",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.next.public.data",exp="data",numchild="0",value="2",type="int",thread-id="1"},
+                  child={name="seer4.public.next.public.next",exp="next",numchild="1",value="0x613c60",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.next.public.next.public.data",exp="data",numchild="0",value="3",type="int",thread-id="1"},
+                  child={name="seer4.public.next.public.next.public.next",exp="next",numchild="1",value="0x0",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.data",exp="data",numchild="0",value="",type="int",thread-id="1"},
+                  child={name="seer4.public.next.public.next.public.next.public.next",exp="next",numchild="1",value="",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.data",exp="data",numchild="0",value="",type="int",thread-id="1"},
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.next",exp="next",numchild="1",value="",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="2",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.next.public.data",exp="data",numchild="0",value="",type="int",thread-id="1"},
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.next.public.next",exp="next",numchild="1",value="",type="Node *",thread-id="1"}
+                 ],
+        has_more="0""
+"4^done,numchild="1",
+        children=[
+                  child={name="seer4.public.next.public.next.public.next.public.next.public.next.public.next.public",exp="public",numchild="2",value="",thread-id="1"}
+                 ],
+        has_more="0""
+
+

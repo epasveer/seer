@@ -19,6 +19,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                varObjListChildren                  (int expressionid, QString objname);
         void                varObjUpdate                        (int expressionid, QString objname);
         void                varObjDelete                        (int expressionid, QString objname);
+        void                varObjAssign                        (int expressionid, QString objname, QString value);
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
         void                addStructVisualize                  (QString expression);
@@ -30,13 +31,14 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleExpandAllButton               ();
         void                handleCollapseAllButton             ();
         void                handleRefreshButton                 ();
-        void                handleDetailedCheckBox              ();
+        void                handleDebugCheckBox                 ();
         void                handleVariableNameLineEdit          ();
+        void                handleIndexEditingFinished          (const QModelIndex& index);
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
         void                handleResizeColumns                 ();
-        void                handleHideDetailedColumns           (bool flag);
+        void                handleHideDebugColumns              (bool flag);
 
     protected:
         void                writeSettings                       ();

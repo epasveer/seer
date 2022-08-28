@@ -1,6 +1,7 @@
 #include "SeerRegisterValuesBrowserWidget.h"
 #include "SeerRegisterEditValueDialog.h"
 #include "SeerUtl.h"
+#include "QEditDelegate.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
@@ -31,17 +32,17 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registerFormatComboBox->addItem("Raw",     QVariant("r"));
 
     // Create edit delegate.
-    MyEditingDelegate* editDelegate = new MyEditingDelegate(this);
+    QAllowEditDelegate* editDelegate = new QAllowEditDelegate(this);
 
-    registersTreeWidget->setItemDelegateForColumn(0, new MyNoEditDelegate(this));
-    registersTreeWidget->setItemDelegateForColumn(1, new MyNoEditDelegate(this));
+    registersTreeWidget->setItemDelegateForColumn(0, new QNoEditDelegate(this));
+    registersTreeWidget->setItemDelegateForColumn(1, new QNoEditDelegate(this));
     registersTreeWidget->setItemDelegateForColumn(2, editDelegate);
-    registersTreeWidget->setItemDelegateForColumn(3, new MyNoEditDelegate(this));
+    registersTreeWidget->setItemDelegateForColumn(3, new QNoEditDelegate(this));
 
     // Connect things.
     QObject::connect(registersTreeWidget,    &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
     QObject::connect(registersTreeWidget,    &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
-    QObject::connect(editDelegate,           &MyEditingDelegate::editingFinished,                       this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
     QObject::connect(registerFormatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
 }
 
@@ -207,8 +208,6 @@ void SeerRegisterValuesBrowserWidget::refresh () {
 void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
-
-    //qDebug() << item->text(0) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2));
 

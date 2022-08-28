@@ -1,5 +1,6 @@
 #include "SeerVarVisualizerWidget.h"
 #include "SeerUtl.h"
+#include "QEditDelegate.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
@@ -24,10 +25,9 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     setAttribute(Qt::WA_DeleteOnClose);
 
     variableNameLineEdit->setFocus();
-    variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setMouseTracking(true);
     variableTreeWidget->setSortingEnabled(false);
-    variableTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variableTreeWidget->setRootIsDecorated(true);
     variableTreeWidget->setItemsExpandable(true);
     variableTreeWidget->resizeColumnToContents(0); // variable
@@ -40,21 +40,38 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->resizeColumnToContents(7); // has_more
     variableTreeWidget->clear();
 
-    detailedCheckBox->setChecked(false);
+    debugCheckBox->setChecked(false);
+
+    // Create edit delegate.
+    // The value column will allow editing of the cell. However, some cells can then
+    // individually disable it again. ie: If the cell is for a node, not a value.
+    // See 'new QTreeWidgetItem'
+    QAllowEditDelegate* editDelegate = new QAllowEditDelegate(this);
+
+    variableTreeWidget->setItemDelegateForColumn(0, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(1, editDelegate);
+    variableTreeWidget->setItemDelegateForColumn(2, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(3, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(4, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(5, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(6, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(6, new QNoEditDelegate(this));
+
 
     // Connect things.
     QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAllButton);
     QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAllButton);
     QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
-    QObject::connect(detailedCheckBox,       &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDetailedCheckBox);
+    QObject::connect(debugCheckBox,          &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDebugCheckBox);
     QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemExpanded);
+    QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
 
     // Show/hide columns.
-    handleDetailedCheckBox();
+    handleDebugCheckBox();
 
     // Restore window settings.
     readSettings();
@@ -87,6 +104,7 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
 
     if (variableNameLineEdit->text() != "") {
         QTreeWidgetItem* item = new QTreeWidgetItem;
+
         item->setText(0, name);
         item->setText(1, "");
         item->setText(2, "");
@@ -119,11 +137,11 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
         // "4^done,name=\"seer4\",numchild=\"1\",value=\"{...}\",type=\"Person\",thread-id=\"1\",has_more=\"0\""
 
-        // qDebug() << text;
-
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
+
+            //qDebug() << text;
 
             QString name_text     = Seer::parseFirst(text, "name=",       '"', '"', false);
             QString exp_text      = Seer::parseFirst(text, "exp=",        '"', '"', false);
@@ -150,12 +168,26 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 topItem->setText(0, exp_text);
             }
 
+            // Allow editing if the item has no children and has a value.
+            if (numchild_text == "0" && value_text != "") {
+                topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
+            }
+
             // For now, always expand everything.
             variableTreeWidget->expandAll();
 
             // If there are children, get them.
+            //if (numchild_text != "0") {
+            //    emit varObjListChildren(_variableId, name_text);
+            //}
+
             if (numchild_text != "0") {
-                emit varObjListChildren(_variableId, name_text);
+                if (type_text.endsWith('*') && Seer::filterEscapes(value_text) == "0x0") {
+                    // If it is a pointer that is not null, get the children.
+                    // How universal is this for other languages?
+                }else{
+                    emit varObjListChildren(_variableId, name_text);
+                }
             }
 
             // Save the VarObj name.
@@ -170,11 +202,11 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         //                                ],
         //                       has_more="0"
 
-        // qDebug() << text;
-
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
+
+            //qDebug() << text;
 
             QString     children_text = Seer::parseFirst(text,     "children=", '[', ']', false);
             QStringList child_list    = Seer::parse(children_text, "child=",    '{', '}', false);
@@ -191,7 +223,6 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                 // Do we have an existing item to add to?
                 QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 3);
-
 
                 // No, just add to the top level.
                 if (matches.size() == 0) {
@@ -219,14 +250,27 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                         item->setText(0, exp_text);
                     }
 
+                    // Allow editing if the item has no children and has a value.
+                    if (numchild_text == "0" && value_text != "") {
+                        item->setFlags(item->flags() | Qt::ItemIsEditable);
+                    }
+
                     topItem->addChild(item);
                 }
 
                 // If there are children, get them.
                 if (numchild_text != "0") {
-                    emit varObjListChildren(_variableId, name_text);
+                    if (type_text.endsWith('*') && Seer::filterEscapes(value_text) == "0x0") {
+                        // If it is a pointer that is not null, get the children.
+                        // How universal is this for other languages?
+                    }else{
+                        emit varObjListChildren(_variableId, name_text);
+                    }
                 }
             }
+
+            // For now, always expand everything.
+            variableTreeWidget->expandAll();
         }
 
 
@@ -241,11 +285,11 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         //                     {name=\"seer4.public.location.public.zip\",   value=\"77063\",           in_scope=\"true\", type_changed=\"false\",                                        has_more=\"0\"}
         //                    ]"
 
-        // qDebug() << text;
-
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
+
+            //qDebug() << text;
 
             QString     changelist_text = Seer::parseFirst(text,       "changelist=", '[', ']', false);
             QStringList child_list      = Seer::parse(changelist_text, "",            '{', '}', false);
@@ -260,9 +304,9 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 QString dynamic_text      = Seer::parseFirst(child_text, "dynamic=",       '"', '"', false);
                 QString hasmore_text      = Seer::parseFirst(child_text, "has_more=",      '"', '"', false);
 
-                // Do we have an existing item to add to?
-                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(name_text, Qt::MatchExactly|Qt::MatchRecursive, 0);
 
+                // Do we have an existing item to add to?
+                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(name_text, Qt::MatchExactly|Qt::MatchRecursive, 3);
 
                 // No, just add to the top level.
                 if (matches.size() == 0) {
@@ -276,6 +320,10 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                     item->setText(1, Seer::filterEscapes(value_text));
                     item->setText(7, hasmore_text);
+
+                    if (typechanged_text == "true") {
+                        handleRefreshButton();
+                    }
                 }
             }
         }
@@ -283,7 +331,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
-        qDebug() << text;
+        //qDebug() << text;
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
@@ -299,8 +347,8 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             foreach (auto item, topItem->takeChildren()) delete item;
 
             // Set the error text.
-            topItem->setText(3, "");
-            topItem->setText(4, Seer::filterEscapes(msg_text));
+            topItem->setText(1, "");
+            topItem->setText(2, Seer::filterEscapes(msg_text));
         }
 
 
@@ -582,7 +630,7 @@ void SeerVarVisualizerWidget::handleResizeColumns () {
     variableTreeWidget->resizeColumnToContents(7);
 }
 
-void SeerVarVisualizerWidget::handleHideDetailedColumns (bool flag) {
+void SeerVarVisualizerWidget::handleHideDebugColumns (bool flag) {
 
     variableTreeWidget->setColumnHidden(0, false);
     variableTreeWidget->setColumnHidden(1, false);
@@ -620,9 +668,9 @@ void SeerVarVisualizerWidget::handleRefreshButton () {
     }
 }
 
-void SeerVarVisualizerWidget::handleDetailedCheckBox () {
+void SeerVarVisualizerWidget::handleDebugCheckBox () {
 
-    handleHideDetailedColumns(!detailedCheckBox->isChecked());
+    handleHideDebugColumns(!debugCheckBox->isChecked());
 }
 
 void SeerVarVisualizerWidget::handleVariableNameLineEdit () {
@@ -632,6 +680,21 @@ void SeerVarVisualizerWidget::handleVariableNameLineEdit () {
     }
 
     setVariableName (variableNameLineEdit->text());
+}
+
+void SeerVarVisualizerWidget::handleIndexEditingFinished  (const QModelIndex& index) {
+
+    QTreeWidgetItem* item = variableTreeWidget->getItemFromIndex(index);
+
+    if (item == 0) {
+        return;
+    }
+
+    // Get the new value;
+    QString value = item->text(1);
+
+    // Emit the signal to change the varobj to the new value.
+    emit varObjAssign(_variableId, item->text(3), value);
 }
 
 void SeerVarVisualizerWidget::writeSettings () {

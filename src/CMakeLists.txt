@@ -98,6 +98,7 @@ set(HEADER_FILES
     QIndexTreeWidget.h
     QStringPair.h
     QHistoryLineEdit.h
+    QEditDelegate.h
     )
 
 set(SOURCE_FILES
@@ -178,6 +179,7 @@ set(SOURCE_FILES
     QClearLineEdit.cpp
     QIndexTreeWidget.cpp
     QHistoryLineEdit.cpp
+    QEditDelegate.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)

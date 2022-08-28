@@ -38,17 +38,17 @@
     </widget>
    </item>
    <item row="0" column="6">
-    <widget class="QCheckBox" name="detailedCheckBox">
+    <widget class="QCheckBox" name="debugCheckBox">
      <property name="toolTip">
       <string>Show more variable details.</string>
      </property>
      <property name="text">
-      <string>Detailed</string>
+      <string>Debug</string>
      </property>
     </widget>
    </item>
    <item row="1" column="0" colspan="8">
-    <widget class="QTreeWidget" name="variableTreeWidget">
+    <widget class="QIndexTreeWidget" name="variableTreeWidget">
      <column>
       <property name="text">
        <string>Variable</string>
@@ -151,12 +151,19 @@
    <extends>QLineEdit</extends>
    <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>QIndexTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">QIndexTreeWidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>variableNameLineEdit</tabstop>
   <tabstop>expandAllToolButton</tabstop>
   <tabstop>collapseAllToolButton</tabstop>
   <tabstop>refreshToolButton</tabstop>
+  <tabstop>autoRefreshCheckBox</tabstop>
+  <tabstop>debugCheckBox</tabstop>
   <tabstop>variableTreeWidget</tabstop>
  </tabstops>
  <resources>
