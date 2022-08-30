@@ -23,10 +23,8 @@ Requirements
 NOTE
 ====
 
----
 As of the v1.9 release, **the Seer binary is now named 'seergdb'**. Previously it was named 'seer'. This is to remove a possibly
 confusion with an existing project with the same name. And, hopefully, will allow easier packaging of Seer into distributions.
----
 
 
 GUI overview
