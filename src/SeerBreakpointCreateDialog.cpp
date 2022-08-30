@@ -197,7 +197,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
     }
 
     if (filenameText() != "") {
-        breakpointParameters += " --source " + filenameText();
+        breakpointParameters += " --source \"" + filenameText() + "\"";
     }
 
     if (functionNameText() != "") {

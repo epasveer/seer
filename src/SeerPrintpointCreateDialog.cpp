@@ -200,7 +200,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
     }
 
     if (filenameText() != "") {
-        printpointParameters += " --source " + filenameText();
+        printpointParameters += " --source \"" + filenameText() +"\"";
     }
 
     if (functionNameText() != "") {
