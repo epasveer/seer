@@ -1449,7 +1449,7 @@ void SeerEditorWidgetSourceArea::setQuickBreakpoint (QMouseEvent* event) {
 
     // Otherwise, do a quick create of a new breakpoint.
     }else{
-        emit insertBreakpoint(QString("-f --source %1 --line %2").arg(fullname()).arg(lineno));
+        emit insertBreakpoint(QString("-f --source \"%1\" --line %2").arg(fullname()).arg(lineno));
     }
 }
 
