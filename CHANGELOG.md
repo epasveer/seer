@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.9] - 2022-08-22
+## [1.9] - 2022-08-30
 * Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
 * Prepare for better Debian (and other distros) packaging and releasing.
 * Add history (up/down arrows) to all line input fields.
@@ -13,6 +13,7 @@
 * Add StructVisualizer to source/assembly editors and stack arguments/locals browsers.
 * Add a RMB to launch Memory/Array/Struct viewer from a running Struct viewer.
 * Change 'detachtab' to use RMB context menu instead of a double-click.
+* Allow filenames with spaces when setting breakpoints.
 
 ## [1.8] - 2022-08-08
 

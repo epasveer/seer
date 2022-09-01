@@ -20,6 +20,12 @@ Requirements
     * When building Seer from source, you will need the QT5 "devel" packages
       installed on your system for your distribution.
 
+NOTE
+====
+
+As of the v1.9 release, **the Seer binary is now named 'seergdb'**. Previously it was named 'seer'. This is to remove a possibly
+confusion with an existing project with the same name. And, hopefully, will allow easier packaging of Seer into distributions.
+
 
 GUI overview
 ============
@@ -166,50 +172,50 @@ Starting Seer
 Seer is meant to easily start the program to debug from the command line. gdb has multiple
 methods for debugging a program. So Seer natually does too.
 
-    % seer --start myprog arg1 arg2                  # Debug myprog with its arguments. Break in main().
-    % seer --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
-    % seer --attach <pid>  myprog                    # Debug myprog by attaching to the currently running pid.
-    % seer --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
-    % seer --core <corefile> myprog                  # Debug a corefile for myprog.
+    % seergdb --start myprog arg1 arg2                  # Debug myprog with its arguments. Break in main().
+    % seergdb --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
+    % seergdb --attach <pid>  myprog                    # Debug myprog by attaching to the currently running pid.
+    % seergdb --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
+    % seergdb --core <corefile> myprog                  # Debug a corefile for myprog.
 
-    % seer                                           # Bring up a dialog box to set the program and debug method.
-    % seer myprog arg1 arg2                          # Bring up a dialog box to set the debug method.
+    % seergdb                                           # Bring up a dialog box to set the program and debug method.
+    % seergdb myprog arg1 arg2                          # Bring up a dialog box to set the debug method.
 
-    % seer --config                                  # Bring up Seer config dialog.
-                                                     # Save settings with 'Settings->Save Configuration'.
+    % seergdb --config                                  # Bring up Seer config dialog.
+                                                        # Save settings with 'Settings->Save Configuration'.
 
 A breakpoint file can be read for --start and --run modes. This file contains previously saved
 breakpoints (breakpoints, catchpoints, printpoints, etc.)
 
-    % seer --run --bl myprog.brk  myprog arg1 arg2   # Debug myprog with its arguments.
-                                                     # Run it immediately and break at points describe in
-                                                     # myprog.brk
+    % seergdb --run --bl myprog.brk  myprog arg1 arg2   # Debug myprog with its arguments.
+                                                        # Run it immediately and break at points describe in
+                                                        # myprog.brk
 
 A breakpoint function can be set for --start and --run modes. The function can be a function name or
 an address (eg: _start or 0xadad23220)
 
-    % seer --run --bf _start myprog arg1 arg2        # Debug myprog with its arguments.
-                                                     # Run it immediately and break in the function '_start'.
+    % seergdb --run --bf _start myprog arg1 arg2        # Debug myprog with its arguments.
+                                                        # Run it immediately and break in the function '_start'.
 
 The Assembly Tab can be shown for --start and --run modes.
 
-    % seer --start --sat yes myprog arg1 arg2        # Debug myprog with its arguments.
-                                                     # Break in "main" and show the Assemby Tab.
+    % seergdb --start --sat yes myprog arg1 arg2        # Debug myprog with its arguments.
+                                                        # Break in "main" and show the Assemby Tab.
 
 The program's starting address can be randomizes for --start and --run modes. Normally gdb runs the program
 with no start address randomization.
 
-    % seer --start --sar yes  myprog arg1 arg2       # Debug myprog with its arguments.
-                                                     # The program's start address is randomized.
+    % seergdb --start --sar yes  myprog arg1 arg2       # Debug myprog with its arguments.
+                                                        # The program's start address is randomized.
 
 See "-h" for the full Seer help.
 
-    % seer -h
+    % seergdb -h
 
 **Some of the command line options can be permamently set in the Seer configuration.**
 
-    % seer --config                                  # Bring up Seer config dialog.
-                                                     # Save settings with 'Settings->Save Configuration'.
+    % seergdb --config                                  # Bring up Seer config dialog.
+                                                        # Save settings with 'Settings->Save Configuration'.
 
 Building Seer
 =============
@@ -225,15 +231,15 @@ Setup cmake and build
     % cd build
     % cmake ..
 
-    % make seer
+    % make seergdb
 
-Copy the seer binary to your bin directory of choice. One of the below. May need
+Copy the Seer binary to your bin directory of choice. One of the below. May need
 root access.
 
     % cd seer/src/build
-    % cp seer ~/bin/seer
-    % cp seer /usr/local/bin/seer
-    % cp seer /usr/bin/seer
+    % cp seergdb ~/bin/seergdb
+    % cp seergdb /usr/local/bin/seergdb
+    % cp seergdb /usr/bin/seergdb
     % rehash
 
 Or use the 'install' make target. Which will usually copy it to /usr/local/bin.
