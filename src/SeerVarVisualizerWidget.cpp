@@ -177,9 +177,9 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             variableTreeWidget->expandAll();
 
             // If there are children, get them.
-            //if (numchild_text != "0") {
+            // if (numchild_text != "0") {
             //    emit varObjListChildren(_variableId, name_text);
-            //}
+            // }
 
             if (numchild_text != "0") {
                 if (type_text.endsWith('*') && Seer::filterEscapes(value_text) == "0x0") {
