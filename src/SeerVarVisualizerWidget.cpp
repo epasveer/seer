@@ -173,22 +173,26 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
             }
 
-            // For now, always expand everything.
-            variableTreeWidget->expandAll();
-
             // If there are children, get them.
             // if (numchild_text != "0") {
             //    emit varObjListChildren(_variableId, name_text);
             // }
 
             if (numchild_text != "0") {
-                if (type_text.endsWith('*') && Seer::filterEscapes(value_text) == "0x0") {
-                    // If it is a pointer that is not null, get the children.
-                    // How universal is this for other languages?
+                if (type_text.endsWith('*')) {
+                    if (Seer::filterEscapes(value_text) != "0x0") {
+                        // If it is a pointer that is not null, get the children.
+                        // How universal is this for other languages?
+                        emit varObjListChildren(_variableId, name_text);
+                    }else{
+                    }
                 }else{
                     emit varObjListChildren(_variableId, name_text);
                 }
             }
+
+            // For now, always expand everything.
+            variableTreeWidget->expandAll();
 
             // Save the VarObj name.
             _variableName = name_text;
@@ -260,9 +264,13 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                 // If there are children, get them.
                 if (numchild_text != "0") {
-                    if (type_text.endsWith('*') && Seer::filterEscapes(value_text) == "0x0") {
-                        // If it is a pointer that is not null, get the children.
-                        // How universal is this for other languages?
+                    if (type_text.endsWith('*')) {
+                        if (Seer::filterEscapes(value_text) != "0x0") {
+                            // If it is a pointer that is not null, get the children.
+                            // How universal is this for other languages?
+                            emit varObjListChildren(_variableId, name_text);
+                        }else{
+                        }
                     }else{
                         emit varObjListChildren(_variableId, name_text);
                     }
