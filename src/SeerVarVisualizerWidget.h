@@ -28,8 +28,6 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleText                          (const QString& text);
 
     protected slots:
-        void                handleExpandAllButton               ();
-        void                handleCollapseAllButton             ();
         void                handleRefreshButton                 ();
         void                handleDebugCheckBox                 ();
         void                handleVariableNameLineEdit          ();
@@ -37,6 +35,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleItemCollapsed                 (QTreeWidgetItem* item);
         void                handleResizeColumns                 ();
         void                handleHideDebugColumns              (bool flag);
 
@@ -48,6 +47,8 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
     private:
         void                expandItem                          (QTreeWidgetItem* item);
         void                collapseItem                        (QTreeWidgetItem* item);
+        void                debug                               (QString message,  QTreeWidgetItem* item);
+        void                deleteItems                         (QList<QTreeWidgetItem*> items);
 
         int                 _variableId;
         QString             _variableName;

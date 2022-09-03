@@ -1526,8 +1526,6 @@ void SeerGdbWidget::handleGdbVarObjCreate (int expressionid, QString expression)
 
     QString str = QString("%1-var-create seer%1 \"*\" \"%2\"").arg(expressionid).arg(expression);
 
-    qDebug() << str;
-
     handleGdbCommand(str);
 }
 
@@ -1538,8 +1536,6 @@ void SeerGdbWidget::handleGdbVarObjListChildren (int expressionid, QString objna
     }
 
     QString str = QString("%1-var-list-children --all-values \"%2\"").arg(expressionid).arg(objname);
-
-    qDebug() << str;
 
     handleGdbCommand(str);
 }
@@ -1552,8 +1548,6 @@ void SeerGdbWidget::handleGdbVarObjUpdate (int expressionid, QString objname) {
 
     QString str = QString("%1-var-update --all-values \"%2\"").arg(expressionid).arg(objname);
 
-    qDebug() << str;
-
     handleGdbCommand(str);
 }
 
@@ -1565,8 +1559,6 @@ void SeerGdbWidget::handleGdbVarObjAssign (int expressionid, QString objname, QS
 
     QString str = QString("%1-var-assign \"%2\" %3").arg(expressionid).arg(objname).arg(value);
 
-    qDebug() << str;
-
     handleGdbCommand(str);
 }
 
@@ -1577,8 +1569,6 @@ void SeerGdbWidget::handleGdbVarObjDelete (int expressionid, QString objname) {
     }
 
     QString str = QString("%1-var-delete \"%2\"").arg(expressionid).arg(objname);
-
-    qDebug() << str;
 
     handleGdbCommand(str);
 }

@@ -59,15 +59,13 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 
 
     // Connect things.
-    QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAllButton);
-    QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAllButton);
     QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
     QObject::connect(debugCheckBox,          &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDebugCheckBox);
     QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemExpanded);
+    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemCollapsed);
     QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
 
     // Show/hide columns.
@@ -131,17 +129,20 @@ QString SeerVarVisualizerWidget::variableName () const {
 
 void SeerVarVisualizerWidget::handleText (const QString& text) {
 
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
     if (text.contains(QRegExp("^([0-9]+)\\^done,name="))) {
 
+        //
+        // "-var-create x2112 "*" me"
+        //
         // "4^done,name=\"seer4\",numchild=\"1\",value=\"{...}\",type=\"Person\",thread-id=\"1\",has_more=\"0\""
+        //         --------------
+        //
 
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
 
-            //qDebug() << text;
+            //qDebug() << "var-create" << text;
 
             QString name_text     = Seer::parseFirst(text, "name=",       '"', '"', false);
             QString exp_text      = Seer::parseFirst(text, "exp=",        '"', '"', false);
@@ -173,26 +174,30 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
             }
 
-            // If there are children, get them.
-            // if (numchild_text != "0") {
-            //    emit varObjListChildren(_variableId, name_text);
-            // }
-
+            // If there are children, add a placeholder.
             if (numchild_text != "0") {
                 if (type_text.endsWith('*')) {
                     if (Seer::filterEscapes(value_text) != "0x0") {
-                        // If it is a pointer that is not null, get the children.
-                        // How universal is this for other languages?
-                        emit varObjListChildren(_variableId, name_text);
-                    }else{
+                        // If it is a pointer that is not null, add a placeholder.  How universal is this for other languages?
+                        QTreeWidgetItem* child = new QTreeWidgetItem;
+                        child->setText(0, "{...}");
+                        child->setText(3, name_text);
+
+                        topItem->addChild(child);
                     }
+
                 }else{
-                    emit varObjListChildren(_variableId, name_text);
+                    // A non-pointer child, add a placeholder.
+                    QTreeWidgetItem* child = new QTreeWidgetItem;
+                    child->setText(0, "{...}");
+                    child->setText(3, name_text);
+
+                    topItem->addChild(child);
                 }
             }
 
             // For now, always expand everything.
-            variableTreeWidget->expandAll();
+            // XXX variableTreeWidget->expandAll();
 
             // Save the VarObj name.
             _variableName = name_text;
@@ -201,16 +206,21 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,numchild="))) {
 
+        //
+        // "-var-list-children --all-values x2112.public"
+        //
         // "4^done,numchild="1", children=[
+        //         ------------
         //                                 child={name="x2112.public",exp="public",numchild="4",thread-id="1"} 
         //                                ],
         //                       has_more="0"
+        //
 
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _variableId) {
 
-            //qDebug() << text;
+            //qDebug() << "var-list-children" << text;
 
             QString     children_text = Seer::parseFirst(text,     "children=", '[', ']', false);
             QStringList child_list    = Seer::parse(children_text, "child=",    '{', '}', false);
@@ -225,18 +235,29 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 QString type_text     = Seer::parseFirst(child_text, "type=",      '"', '"', false);
                 QString threadid_text = Seer::parseFirst(child_text, "thread-id=", '"', '"', false);
 
+                //qDebug() << child_text;
+
                 // Do we have an existing item to add to?
                 QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 3);
 
                 // No, just add to the top level.
                 if (matches.size() == 0) {
 
+                    // This shouldn't really happen.
                     qDebug() << name_text << "from the listchildren does not exist in the tree.";
 
                 // Yes, add to it.
                 }else{
 
-                    QTreeWidgetItem* topItem = matches.takeFirst();
+                    QTreeWidgetItem* matchItem = matches.takeFirst();
+
+                    // See if item has a "..." child. If so, remove it and any other siblings.
+                    if (matchItem->childCount() > 0) {
+                        QTreeWidgetItem* childItem = matchItem->child(0);
+                        if (childItem->text(0) == "{...}") {
+                            deleteItems(matchItem->takeChildren());
+                        }
+                    }
 
                     // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -254,35 +275,57 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                         item->setText(0, exp_text);
                     }
 
+                    //debug("Item to add", item);
+
                     // Allow editing if the item has no children and has a value.
                     if (numchild_text == "0" && value_text != "") {
                         item->setFlags(item->flags() | Qt::ItemIsEditable);
                     }
 
-                    topItem->addChild(item);
-                }
+                    /*
+                    // Show a potential child?
+                    if (numchild_text != "0" && Seer::filterEscapes(value_text) != "0x0") {
+                        QTreeWidgetItem* child = new QTreeWidgetItem;
+                        child->setText(0, "{...}");
 
-                // If there are children, get them.
-                if (numchild_text != "0") {
-                    if (type_text.endsWith('*')) {
-                        if (Seer::filterEscapes(value_text) != "0x0") {
-                            // If it is a pointer that is not null, get the children.
-                            // How universal is this for other languages?
-                            emit varObjListChildren(_variableId, name_text);
-                        }else{
-                        }
-                    }else{
-                        emit varObjListChildren(_variableId, name_text);
+                        item->addChild(child);
                     }
+                    */
+
+                    // If there are children, add a placeholder.
+                    if (numchild_text != "0") {
+                        if (type_text.endsWith('*')) {
+                            if (Seer::filterEscapes(value_text) != "0x0") {
+                                // If it is a pointer that is not null, add a placeholder.  How universal is this for other languages?
+                                QTreeWidgetItem* child = new QTreeWidgetItem;
+                                child->setText(0, "{...}");
+                                child->setText(3, name_text);
+
+                                item->addChild(child);
+                            }
+
+                        }else{
+                            // A non-pointer child, add a placeholder.
+                            QTreeWidgetItem* child = new QTreeWidgetItem;
+                            child->setText(0, "{...}");
+                            child->setText(3, name_text);
+
+                            item->addChild(child);
+                        }
+                    }
+
+                    matchItem->addChild(item);
                 }
             }
 
             // For now, always expand everything.
-            variableTreeWidget->expandAll();
+            // XXX variableTreeWidget->expandAll();
         }
 
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,changelist="))) {
+
+        //qDebug() << "var-update-children" << text;
 
         //
         // "4^done,changelist=[
@@ -352,7 +395,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             }
 
             // Delete all subitems of the toplevel item.
-            foreach (auto item, topItem->takeChildren()) delete item;
+            deleteItems(topItem->takeChildren());
 
             // Set the error text.
             topItem->setText(1, "");
@@ -376,9 +419,6 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
     // Resize columns.
     handleResizeColumns();
-
-    // Set the cursor back.
-    QApplication::restoreOverrideCursor();
 }
 
 void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
@@ -441,10 +481,6 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
 
-    menu.addAction(expandItemAction);
-    menu.addAction(collapseItemAction);
-    menu.addSeparator();
-
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
     memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
     memoryVisualizerMenu.addAction(addMemoryAsteriskVisualizerAction);
@@ -469,21 +505,6 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // Do nothing.
     if (action == 0) {
         return;
-    }
-
-    // Handle expanding or collapsing tree.
-    if (action == expandItemAction) {
-        expandItem(item);
-
-        // Resize columns.
-        handleResizeColumns();
-    }
-
-    if (action == collapseItemAction) {
-        collapseItem(item);
-
-        // Resize columns.
-        handleResizeColumns();
     }
 
     // Handle adding memory to visualize.
@@ -617,7 +638,44 @@ void SeerVarVisualizerWidget::handleItemEntered (QTreeWidgetItem* item, int colu
 
 void SeerVarVisualizerWidget::handleItemExpanded (QTreeWidgetItem* item) {
 
-    Q_UNUSED(item);
+    debug("handleItemExpanded", item);
+
+    emit varObjListChildren(_variableId, item->text(3));
+
+    // Resize columns in a sec.
+    // Have to schedule the resize later. Doing it immediatedly messes up the
+    // tree display. Must be a Qt bug.
+    QTimer::singleShot(100, this, &SeerVarVisualizerWidget::handleResizeColumns);
+}
+
+void SeerVarVisualizerWidget::handleItemCollapsed (QTreeWidgetItem* item) {
+
+    //debug("handleItemCollapsed", item);
+
+    // Delete all children items.
+    deleteItems(item->takeChildren());
+
+    // If there are children, add a placeholder.
+    if (item->text(5) != "0") {
+        if (item->text(2).endsWith('*')) {
+            if (Seer::filterEscapes(item->text(1)) != "0x0") {
+                // If it is a pointer that is not null, add a placeholder.  How universal is this for other languages?
+                QTreeWidgetItem* child = new QTreeWidgetItem;
+                child->setText(0, "{...}");
+                child->setText(3, item->text(3));
+
+                item->addChild(child);
+            }
+
+        }else{
+            // A non-pointer child, add a placeholder.
+            QTreeWidgetItem* child = new QTreeWidgetItem;
+            child->setText(0, "{...}");
+            child->setText(3, item->text(3));
+
+            item->addChild(child);
+        }
+    }
 
     // Resize columns in a sec.
     // Have to schedule the resize later. Doing it immediatedly messes up the
@@ -649,22 +707,6 @@ void SeerVarVisualizerWidget::handleHideDebugColumns (bool flag) {
     variableTreeWidget->setColumnHidden(6, flag);
     variableTreeWidget->setColumnHidden(7, flag);
 
-    handleResizeColumns();
-}
-
-void SeerVarVisualizerWidget::handleExpandAllButton () {
-
-    variableTreeWidget->expandAll();
-
-    // Resize columns.
-    handleResizeColumns();
-}
-
-void SeerVarVisualizerWidget::handleCollapseAllButton () {
-
-    variableTreeWidget->collapseAll();
-
-    // Resize columns.
     handleResizeColumns();
 }
 
@@ -730,41 +772,28 @@ void SeerVarVisualizerWidget::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
-void SeerVarVisualizerWidget::expandItem (QTreeWidgetItem* item) {
+void SeerVarVisualizerWidget::debug (QString message,  QTreeWidgetItem* item) {
 
-    // If we're dealing with the top-level item, expand the tree the fast way.
-    if (item == variableTreeWidget->topLevelItem(0)) {
-        variableTreeWidget->expandAll();
-        return;
-    }
+    // 0 variable
+    // 1 value
+    // 2 type
+    // 3 varobj name
+    // 4 exp
+    // 5 numchild
+    // 6 thread-id
+    // 7 has_more
 
-    // If this item has children, expand it. Then loop through
-    // each child and expand them, recursively.
-    if (item->childCount() > 0) {
-        item->setExpanded(true);
-
-        for (int i=0; i < item->childCount(); i++) {
-            expandItem(item->child(i));
-        }
+    if (item == 0) {
+        qDebug() << message << "NULL";
+    }else{
+        qDebug() << message << item->text(0) << item->text(1) << item->text(2) << item->text(3) << item->text(4) << item->text(5) << item->text(6) << item->text(7);
     }
 }
 
-void SeerVarVisualizerWidget::collapseItem (QTreeWidgetItem* item) {
+void SeerVarVisualizerWidget::deleteItems (QList<QTreeWidgetItem*> items) {
 
-    // If we're dealing with the top-level item, collapse the tree the fast way.
-    if (item == variableTreeWidget->topLevelItem(0)) {
-        variableTreeWidget->collapseAll();
-        return;
-    }
-
-    // If this item has children, collapse it. Then loop through
-    // each child and collapse them, recursively.
-    if (item->childCount() > 0) {
-        item->setExpanded(false);
-
-        for (int i=0; i < item->childCount(); i++) {
-            collapseItem(item->child(i));
-        }
-    }
+    // Loop through the list and delete the items.
+    // Note, the list will still contain pointers, but they will be invalid.
+    foreach (auto item, items) delete item;
 }
 
