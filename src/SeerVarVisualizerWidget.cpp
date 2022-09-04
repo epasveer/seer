@@ -184,6 +184,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                         child->setText(3, name_text);
 
                         topItem->addChild(child);
+
                     }else{
                         deleteItems(topItem->takeChildren());
                     }
@@ -197,9 +198,6 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     topItem->addChild(child);
                 }
             }
-
-            // For now, always expand everything.
-            // XXX variableTreeWidget->expandAll();
 
             // Save the VarObj name.
             _variableName = name_text;
@@ -308,9 +306,6 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     matchItem->addChild(item);
                 }
             }
-
-            // For now, always expand everything.
-            // XXX variableTreeWidget->expandAll();
         }
 
 
