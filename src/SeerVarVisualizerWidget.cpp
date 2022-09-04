@@ -803,7 +803,11 @@ QString SeerVarVisualizerWidget::toolTipText (QTreeWidgetItem* item) {
 
         // Add the variable part to the variable name.
         if (tmp->childCount() > 0) {
-            text.prepend(tmp->text(0) + ".");
+            if (tmp->text(2).endsWith('*')) {
+                text.prepend(tmp->text(0) + "->");
+            }else{
+                text.prepend(tmp->text(0) + ".");
+            }
         }else{
             text.prepend(tmp->text(0));
         }

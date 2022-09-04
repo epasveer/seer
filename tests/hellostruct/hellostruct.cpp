@@ -37,6 +37,10 @@ int main (int argc, char** argv) {
 
     std::cout << "'" << me.name << "', from '" << me.location.city << "', is " << me.age << " years old and makes " << me.salary << " per year." << std::endl;
 
+    free(me.location.cell);
+
+    me.location.cell = 0;
+
     return 0;
 }
 
