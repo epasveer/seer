@@ -36,6 +36,8 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
         void                handleItemCollapsed                 (QTreeWidgetItem* item);
+        void                handleExpandAll                     ();
+        void                handleCollapseAll                   ();
         void                handleResizeColumns                 ();
         void                handleHideDebugColumns              (bool flag);
 

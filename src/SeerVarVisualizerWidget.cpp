@@ -66,6 +66,8 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemCollapsed);
+    QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAll);
+    QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAll);
     QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
 
     // Show/hide columns.
@@ -471,6 +473,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     expandItemAction->setEnabled(false);
     collapseItemAction->setEnabled(false);
 
+    expandItemAction->setText(QString("Expand item '%1'").arg(item->text(0)));
+    collapseItemAction->setText(QString("Collapse item '%1'").arg(item->text(0)));
+
     if (item->childCount() > 0) {
         if (item->isExpanded() == false) {
             expandItemAction->setEnabled(true);
@@ -482,6 +487,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     // Populate the menu.
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
+
+    menu.addAction(expandItemAction);
+    menu.addAction(collapseItemAction);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
     memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
@@ -506,6 +514,22 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
     // Do nothing.
     if (action == 0) {
+        return;
+    }
+
+    // Handle expanding the current item.
+    if (action == expandItemAction) {
+
+        expandItem(item);
+
+        return;
+    }
+
+    // Handle collapsing the current item.
+    if (action == collapseItemAction) {
+
+        collapseItem(item);
+
         return;
     }
 
@@ -684,6 +708,34 @@ void SeerVarVisualizerWidget::handleItemCollapsed (QTreeWidgetItem* item) {
     QTimer::singleShot(100, this, &SeerVarVisualizerWidget::handleResizeColumns);
 }
 
+void SeerVarVisualizerWidget::handleExpandAll () {
+
+    // Expand the current item, if selected.
+    if (variableTreeWidget->currentItem()) {
+        expandItem(variableTreeWidget->currentItem());
+        return;
+    }
+
+    // Or the entire tree.
+    if (variableTreeWidget->topLevelItemCount() > 0) {
+        expandItem(variableTreeWidget->topLevelItem(0));
+    }
+}
+
+void SeerVarVisualizerWidget::handleCollapseAll () {
+
+    // Collapse the current item, if selected.
+    if (variableTreeWidget->currentItem()) {
+        collapseItem(variableTreeWidget->currentItem());
+        return;
+    }
+
+    // Or the entire tree.
+    if (variableTreeWidget->topLevelItemCount() > 0) {
+        collapseItem(variableTreeWidget->topLevelItem(0));
+    }
+}
+
 void SeerVarVisualizerWidget::handleResizeColumns () {
 
     // Resize columns.
@@ -771,6 +823,28 @@ void SeerVarVisualizerWidget::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerVarVisualizerWidget::expandItem (QTreeWidgetItem* item) {
+
+    if (item->childCount() == 0) {
+        return;
+    }
+
+    if (item->isExpanded() == false) {
+        item->setExpanded(true);
+    }
+}
+
+void SeerVarVisualizerWidget::collapseItem (QTreeWidgetItem* item) {
+
+    if (item->childCount() == 0) {
+        return;
+    }
+
+    if (item->isExpanded() == true) {
+        item->setExpanded(false);
+    }
 }
 
 QString SeerVarVisualizerWidget::fullVariableName (QTreeWidgetItem* item) {
