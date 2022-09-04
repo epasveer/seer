@@ -639,10 +639,12 @@ void SeerVarVisualizerWidget::handleItemEntered (QTreeWidgetItem* item, int colu
 
     Q_UNUSED(column);
 
-    item->setToolTip(0, item->text(3) + " : " + item->text(0) + " : " + item->text(4));
+    QString text = toolTipText(item);
 
-    for (int i=1; i<variableTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
-        item->setToolTip(i, item->toolTip(0));
+    if (text != "") {
+        for (int i=0; i<variableTreeWidget->columnCount(); i++) { // Set tooltip to all columns.
+            item->setToolTip(i, text);
+        }
     }
 }
 
@@ -777,6 +779,47 @@ void SeerVarVisualizerWidget::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+QString SeerVarVisualizerWidget::toolTipText (QTreeWidgetItem* item) {
+
+    // If the item has no value or type, then return no tooltip.
+    if (item->text(1) == "" || item->text(2) == "") {
+        return "";
+    }
+
+    // Otherwise traverse up the tree to build up a variable name string, which includes '.' or '->'
+    // depending if the type ends with a '*'.
+    QString          text;
+    QTreeWidgetItem* tmp = item;
+
+    while (tmp) {
+
+        // Skip items that have no value or type. 'public', 'private', 'protected'.
+        if (tmp->text(1) == "" || tmp->text(2) == "") {
+            tmp = tmp->parent();
+            continue;
+        }
+
+        // Add the variable part to the variable name.
+        if (tmp->childCount() > 0) {
+            text.prepend(tmp->text(0) + ".");
+        }else{
+            text.prepend(tmp->text(0));
+        }
+
+        // Move to the parent to get the type, if we can.
+        tmp = tmp->parent();
+
+        if (tmp == 0) {
+            continue;
+        }
+    }
+
+    // Tack on the variable value and type.
+    text = text + " : " + item->text(1) + " : " + item->text(2);
+
+    return text;
 }
 
 void SeerVarVisualizerWidget::debug (QString message,  QTreeWidgetItem* item) {
