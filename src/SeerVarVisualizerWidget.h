@@ -47,6 +47,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
     private:
         void                expandItem                          (QTreeWidgetItem* item);
         void                collapseItem                        (QTreeWidgetItem* item);
+        QString             fullVariableName                    (QTreeWidgetItem* item);
         QString             toolTipText                         (QTreeWidgetItem* item);
         void                debug                               (QString message,  QTreeWidgetItem* item);
         void                deleteItems                         (QList<QTreeWidgetItem*> items);

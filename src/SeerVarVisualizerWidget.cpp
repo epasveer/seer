@@ -279,6 +279,8 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     }
 
                     // If there are children, add a placeholder.
+                    bool expandItem = false;
+
                     if (numchild_text != "0") {
                         if (type_text.endsWith('*')) {
                             if (Seer::filterEscapes(value_text) != "0x0") {
@@ -300,10 +302,16 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                             child->setText(3, name_text);
 
                             item->addChild(child);
+
+                            expandItem = true;
                         }
                     }
 
                     matchItem->addChild(item);
+
+                    if (expandItem) {
+                        item->setExpanded(true);
+                    }
                 }
             }
         }
@@ -441,23 +449,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
     // Create the variable name.
     // If it's a struct, include its parent names.
-    QString variable;
-
-    QTreeWidgetItem* tmpItem = item;
-    while (tmpItem) {
-
-        if (variable == "") {
-            if (tmpItem->text(1) != "") {
-                variable = tmpItem->text(0);
-            }
-        }else{
-            if (tmpItem->text(1) != "") {
-                variable = tmpItem->text(0) + "." + variable;
-            }
-        }
-
-        tmpItem = tmpItem->parent();
-    }
+    QString variable = fullVariableName(item);
 
     // Create the menus.
     QAction* expandItemAction                     = new QAction(QString("Expand item"));
@@ -781,22 +773,22 @@ void SeerVarVisualizerWidget::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
-QString SeerVarVisualizerWidget::toolTipText (QTreeWidgetItem* item) {
+QString SeerVarVisualizerWidget::fullVariableName (QTreeWidgetItem* item) {
 
-    // If the item has no value or type, then return no tooltip.
+    // If the item has no value or type, then return no variable.
     if (item->text(1) == "" || item->text(2) == "") {
         return "";
     }
 
     // Otherwise traverse up the tree to build up a variable name string, which includes '.' or '->'
     // depending if the type ends with a '*'.
-    QString          text;
+    QString          name;
     QTreeWidgetItem* tmp = item;
 
     while (tmp) {
 
         // Skip items that have no value or type. 'public', 'private', 'protected'.
-        if (tmp->text(1) == "" || tmp->text(2) == "") {
+        if (tmp->text(1) == "" || tmp->text(2) == "" || (tmp->text(0) == tmp->text(2))) {
             tmp = tmp->parent();
             continue;
         }
@@ -804,24 +796,45 @@ QString SeerVarVisualizerWidget::toolTipText (QTreeWidgetItem* item) {
         // Add the variable part to the variable name.
         if (tmp->childCount() > 0) {
             if (tmp->text(2).endsWith('*')) {
-                text.prepend(tmp->text(0) + "->");
+                if (name == "") {
+                    name.prepend(tmp->text(0));
+                }else{
+                    name.prepend(tmp->text(0) + "->");
+                }
             }else{
-                text.prepend(tmp->text(0) + ".");
+                if (name == "") {
+                    name.prepend(tmp->text(0));
+                }else{
+                    name.prepend(tmp->text(0) + ".");
+                }
             }
         }else{
-            text.prepend(tmp->text(0));
+            name.prepend(tmp->text(0));
         }
 
         // Move to the parent to get the type, if we can.
         tmp = tmp->parent();
+    }
 
-        if (tmp == 0) {
-            continue;
-        }
+    return name;
+}
+
+QString SeerVarVisualizerWidget::toolTipText (QTreeWidgetItem* item) {
+
+    // If the item has no value or type, then return no tooltip.
+    if (item->text(1) == "" || item->text(2) == "") {
+        return "";
+    }
+
+    // Get the full variable name.
+    QString name = fullVariableName(item);
+
+    if (name == "") {
+        return name;
     }
 
     // Tack on the variable value and type.
-    text = text + " : " + item->text(1) + " : " + item->text(2);
+    QString text = name + " : " + item->text(1) + " : " + item->text(2);
 
     return text;
 }
