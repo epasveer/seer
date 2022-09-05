@@ -24,7 +24,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                varObjAttributes                    (int objid,        QString objname);
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
-        void                addStructVisualize                  (QString expression);
+        void                addVarVisualize                     (QString expression);
 
     public slots:
         void                handleText                          (const QString& text);

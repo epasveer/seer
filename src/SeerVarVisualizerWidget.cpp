@@ -22,7 +22,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
-    setWindowTitle("Seer Var Visualizer");
+    setWindowTitle("Seer Struct Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
     variableNameLineEdit->setFocus();
@@ -43,7 +43,9 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->resizeColumnToContents(9); // editable
     variableTreeWidget->clear();
 
+    // Show debug columns.
     debugCheckBox->setChecked(false);
+    debugCheckBox->hide();
 
     // Create edit delegate.
     // The value column will allow editing of the cell. However, some cells can then
@@ -92,7 +94,7 @@ SeerVarVisualizerWidget::~SeerVarVisualizerWidget () {
 
 void SeerVarVisualizerWidget::setVariableName (const QString& name) {
 
-    setWindowTitle("Seer Var Visualizer - '" + name + "'");
+    setWindowTitle("Seer Struct Visualizer - '" + name + "'");
 
     variableNameLineEdit->setText(name);
 
@@ -494,9 +496,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction             = new QAction(QString("\"%1\"").arg(variable));
     QAction* addArrayAsteriskVisualizerAction     = new QAction(QString("\"*%1\"").arg(variable));
     QAction* addArrayAmpersandVisualizerAction    = new QAction(QString("\"&&%1\"").arg(variable));
-    QAction* addStructVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
-    QAction* addStructAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
-    QAction* addStructAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
+    QAction* addVarVisualizerAction               = new QAction(QString("\"%1\"").arg(variable));
+    QAction* addVarAsteriskVisualizerAction       = new QAction(QString("\"*%1\"").arg(variable));
+    QAction* addVarAmpersandVisualizerAction      = new QAction(QString("\"&&%1\"").arg(variable));
 
     expandItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"));
     collapseItemAction->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
@@ -536,9 +538,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     menu.addMenu(&arrayVisualizerMenu);
 
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
-    structVisualizerMenu.addAction(addStructVisualizerAction);
-    structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
-    structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
+    structVisualizerMenu.addAction(addVarVisualizerAction);
+    structVisualizerMenu.addAction(addVarAsteriskVisualizerAction);
+    structVisualizerMenu.addAction(addVarAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
     // Launch the menu. Get the response.
@@ -644,39 +646,39 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Handle adding struct to visualize.
-    if (action == addStructVisualizerAction) {
+    if (action == addVarVisualizerAction) {
 
-        //qDebug() << "addStructVisualizer" << variable;
+        //qDebug() << "addVarVisualizer" << variable;
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(variable);
+            emit addVarVisualize(variable);
         }
 
         return;
     }
 
     // Handle adding struct to visualize.
-    if (action == addStructAsteriskVisualizerAction) {
+    if (action == addVarAsteriskVisualizerAction) {
 
-        //qDebug() << "addStructAsteriskVisualizer" << variable;
+        //qDebug() << "addVarAsteriskVisualizer" << variable;
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("*") + variable);
+            emit addVarVisualize(QString("*") + variable);
         }
 
         return;
     }
 
     // Handle adding struct to visualize.
-    if (action == addStructAmpersandVisualizerAction) {
+    if (action == addVarAmpersandVisualizerAction) {
 
-        //qDebug() << "addStructAmpersandVisualizer" << variable;
+        //qDebug() << "addVarAmpersandVisualizer" << variable;
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("&") + variable);
+            emit addVarVisualize(QString("&") + variable);
         }
 
         return;
