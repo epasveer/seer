@@ -80,6 +80,11 @@
      </column>
      <column>
       <property name="text">
+       <string>VarObjID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Exp</string>
       </property>
      </column>
@@ -96,6 +101,11 @@
      <column>
       <property name="text">
        <string>HasMore</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Editable</string>
       </property>
      </column>
     </widget>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <QtGui/QKeyEvent>
 #include "ui_SeerVarVisualizerWidget.h"
 
 class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerWidgetForm {
@@ -20,6 +21,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                varObjUpdate                        (int expressionid, QString objname);
         void                varObjDelete                        (int expressionid, QString objname);
         void                varObjAssign                        (int expressionid, QString objname, QString value);
+        void                varObjAttributes                    (int objid,        QString objname);
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
         void                addStructVisualize                  (QString expression);

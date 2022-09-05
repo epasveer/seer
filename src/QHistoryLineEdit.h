@@ -53,8 +53,8 @@ class QHistoryLineEdit : public QLineEdit {
         void        lineExecuted                        (QString);
 
     protected:
-        void        keyPressEvent                       (QKeyEvent *)   Q_DECL_OVERRIDE;
-        void        wheelEvent                          (QWheelEvent *) Q_DECL_OVERRIDE;
+        void        keyPressEvent                       (QKeyEvent*   event) Q_DECL_OVERRIDE;
+        void        wheelEvent                          (QWheelEvent* event) Q_DECL_OVERRIDE;
 
         void        previousLine                        ();
         void        nextLine                            ();

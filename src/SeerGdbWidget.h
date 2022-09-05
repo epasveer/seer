@@ -211,6 +211,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbVarObjUpdate               (int expressionid, QString objname);
         void                                handleGdbVarObjAssign               (int expressionid, QString objname, QString value);
         void                                handleGdbVarObjDelete               (int expressionid, QString objname);
+        void                                handleGdbVarObjAttributes           (int objid,        QString objname);
         void                                handleGdbDataListValues             ();
         void                                handleGdbDataListExpressions        ();
         void                                handleGdbDataAddExpression          (QString expression);

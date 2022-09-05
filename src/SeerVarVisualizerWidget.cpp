@@ -5,6 +5,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QIcon>
 #include <QtCore/QRegExp>
 #include <QtCore/QTimer>
@@ -34,10 +35,12 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->resizeColumnToContents(1); // value
     variableTreeWidget->resizeColumnToContents(2); // type
     variableTreeWidget->resizeColumnToContents(3); // varobj name
-    variableTreeWidget->resizeColumnToContents(4); // exp
-    variableTreeWidget->resizeColumnToContents(5); // numchild
-    variableTreeWidget->resizeColumnToContents(6); // thread-id
-    variableTreeWidget->resizeColumnToContents(7); // has_more
+    variableTreeWidget->resizeColumnToContents(4); // varobj id
+    variableTreeWidget->resizeColumnToContents(5); // exp
+    variableTreeWidget->resizeColumnToContents(6); // numchild
+    variableTreeWidget->resizeColumnToContents(7); // thread-id
+    variableTreeWidget->resizeColumnToContents(8); // has_more
+    variableTreeWidget->resizeColumnToContents(9); // editable
     variableTreeWidget->clear();
 
     debugCheckBox->setChecked(false);
@@ -55,7 +58,9 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->setItemDelegateForColumn(4, new QNoEditDelegate(this));
     variableTreeWidget->setItemDelegateForColumn(5, new QNoEditDelegate(this));
     variableTreeWidget->setItemDelegateForColumn(6, new QNoEditDelegate(this));
-    variableTreeWidget->setItemDelegateForColumn(6, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(7, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(8, new QNoEditDelegate(this));
+    variableTreeWidget->setItemDelegateForColumn(9, new QNoEditDelegate(this));
 
 
     // Connect things.
@@ -103,6 +108,7 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
     variableTreeWidget->clear();
 
     if (variableNameLineEdit->text() != "") {
+
         QTreeWidgetItem* item = new QTreeWidgetItem;
 
         item->setText(0, name);
@@ -112,6 +118,9 @@ void SeerVarVisualizerWidget::setVariableName (const QString& name) {
         item->setText(4, "");
         item->setText(5, "");
         item->setText(6, "");
+        item->setText(7, "");
+        item->setText(8, "");
+        item->setText(9, "");
 
         variableTreeWidget->addTopLevelItem(item);
     }
@@ -159,22 +168,24 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 return;
             }
 
+            int varObjID = Seer::createID(); // Create id for queries.
+
             topItem->setText(1, Seer::filterEscapes(value_text));
             topItem->setText(2, type_text);
             topItem->setText(3, name_text);
-            topItem->setText(4, exp_text);
-            topItem->setText(5, numchild_text);
-            topItem->setText(6, threadid_text);
-            topItem->setText(7, hasmore_text);
+            topItem->setText(4, QString::number(varObjID));
+            topItem->setText(5, exp_text);
+            topItem->setText(6, numchild_text);
+            topItem->setText(7, threadid_text);
+            topItem->setText(8, hasmore_text);
+            topItem->setText(9, "");
 
             if (exp_text != "") {
                 topItem->setText(0, exp_text);
             }
 
-            // Allow editing if the item has no children and has a value.
-            if (numchild_text == "0" && value_text != "") {
-                topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
-            }
+            // Ask for its editable attributes.
+            emit varObjAttributes (varObjID, name_text);
 
             // If there are children, add a placeholder.
             if (numchild_text != "0") {
@@ -262,23 +273,25 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     // Create the item.
                     QTreeWidgetItem* item = new QTreeWidgetItem;
 
+                    int varObjID = Seer::createID(); // Create id for queries.
+
                     item->setText(0, "");
                     item->setText(1, Seer::filterEscapes(value_text));
                     item->setText(2, type_text);
                     item->setText(3, name_text);
-                    item->setText(4, exp_text);
-                    item->setText(5, numchild_text);
-                    item->setText(6, threadid_text);
-                    item->setText(7, hasmore_text);
+                    item->setText(4, QString::number(varObjID));
+                    item->setText(5, exp_text);
+                    item->setText(6, numchild_text);
+                    item->setText(7, threadid_text);
+                    item->setText(8, hasmore_text);
+                    item->setText(9, "");
 
                     if (exp_text != "") {
                         item->setText(0, exp_text);
                     }
 
-                    // Allow editing if the item has no children and has a value.
-                    if (numchild_text == "0" && value_text != "") {
-                        item->setFlags(item->flags() | Qt::ItemIsEditable);
-                    }
+                    // Ask for its editable attributes.
+                    emit varObjAttributes (varObjID, name_text);
 
                     // If there are children, add a placeholder.
                     bool expandItem = false;
@@ -400,6 +413,33 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
 
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,attr="))) {
+
+        //qDebug() << "var-show-attributes" << text;
+
+        // 4^done,attr="noneditable"
+        // 4^done,attr="editable"
+
+        QString id_text       = text.section('^', 0,0);
+        QString editable_text = Seer::parseFirst(text, "attr=",  '"', '"', false);
+
+        // Do we have any items that match the varobjid?
+        QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(id_text, Qt::MatchExactly|Qt::MatchRecursive, 4);
+
+        if (matches.size() > 0) {
+
+            QTreeWidgetItem* item = matches.takeFirst();
+
+            item->setText(9, editable_text);
+
+            if (editable_text == "editable") {
+                item->setFlags(item->flags() | Qt::ItemIsEditable);
+            }else{
+                item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            }
+        }
+
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
         //qDebug() << text;
@@ -409,17 +449,9 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
-            QTreeWidgetItem* topItem = variableTreeWidget->topLevelItem(0);
-            if (topItem == 0) {
-                return;
-            }
-
-            // Delete all subitems of the toplevel item.
-            deleteItems(topItem->takeChildren());
-
-            // Set the error text.
-            topItem->setText(1, "");
-            topItem->setText(2, Seer::filterEscapes(msg_text));
+            QMessageBox::warning(this, "Seer",
+                                 QString("Visualizer Error: '%1'\n").arg(Seer::filterEscapes(msg_text)),
+                                 QMessageBox::Ok);
         }
 
 
@@ -747,6 +779,8 @@ void SeerVarVisualizerWidget::handleResizeColumns () {
     variableTreeWidget->resizeColumnToContents(5);
     variableTreeWidget->resizeColumnToContents(6);
     variableTreeWidget->resizeColumnToContents(7);
+    variableTreeWidget->resizeColumnToContents(8);
+    variableTreeWidget->resizeColumnToContents(9);
 }
 
 void SeerVarVisualizerWidget::handleHideDebugColumns (bool flag) {
@@ -759,6 +793,8 @@ void SeerVarVisualizerWidget::handleHideDebugColumns (bool flag) {
     variableTreeWidget->setColumnHidden(5, flag);
     variableTreeWidget->setColumnHidden(6, flag);
     variableTreeWidget->setColumnHidden(7, flag);
+    variableTreeWidget->setColumnHidden(8, flag);
+    variableTreeWidget->setColumnHidden(9, flag);
 
     handleResizeColumns();
 }
@@ -919,15 +955,17 @@ void SeerVarVisualizerWidget::debug (QString message,  QTreeWidgetItem* item) {
     // 1 value
     // 2 type
     // 3 varobj name
-    // 4 exp
-    // 5 numchild
-    // 6 thread-id
-    // 7 has_more
+    // 4 varobj id
+    // 5 exp
+    // 6 numchild
+    // 7 thread-id
+    // 8 has_more
+    // 8 editable
 
     if (item == 0) {
         qDebug() << message << "NULL";
     }else{
-        qDebug() << message << item->text(0) << item->text(1) << item->text(2) << item->text(3) << item->text(4) << item->text(5) << item->text(6) << item->text(7);
+        qDebug() << message << item->text(0) << item->text(1) << item->text(2) << item->text(3) << item->text(4) << item->text(5) << item->text(6) << item->text(7) << item->text(8) << item->text(9);
     }
 }
 

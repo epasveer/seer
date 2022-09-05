@@ -189,3 +189,10 @@
 
         ^done,numchild="0",has_more="0"
 
+
+    "-var-show-attributes seer4.public.name"
+    "-var-show-attributes seer4.public.age"
+
+        ^done,attr="noneditable"
+        ^done,attr="editable"
+
