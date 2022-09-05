@@ -1,6 +1,13 @@
 
 # Seer Change Log
 
+## [1.10beta] - 2022-XX-XX
+* New Struct Visualizer.
+    - Built apon gdb's -var-obj framework.
+    - Can recursively show the contents of a struct/class.
+    - Show datatype of each member. (Value or pointer)
+    - Can modify values of simple datatypes.
+
 ## [1.9] - 2022-08-30
 * Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
 * Prepare for better Debian (and other distros) packaging and releasing.
