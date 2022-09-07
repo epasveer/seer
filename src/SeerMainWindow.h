@@ -71,6 +71,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleRunExecutable                 ();
         void                        handleStartExecutable               ();
         void                        handleStyleMenuChanged              ();
+        void                        handleShowMessage                   (QString message, int time);
 
     protected:
         void                        writeSettings                       ();

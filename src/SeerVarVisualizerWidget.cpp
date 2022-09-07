@@ -241,7 +241,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             QStringList child_list    = Seer::parse(children_text, "child=",    '{', '}', false);
             QString     hasmore_text  = Seer::parseFirst(text,     "has_more=", '"', '"', false);
 
-            for ( const auto& child_text : child_list ) {
+            for (const auto& child_text : child_list) {
 
                 QString name_text     = Seer::parseFirst(child_text, "name=",      '"', '"', false);
                 QString exp_text      = Seer::parseFirst(child_text, "exp=",       '"', '"', false);
@@ -354,7 +354,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             QString     changelist_text = Seer::parseFirst(text,       "changelist=", '[', ']', false);
             QStringList child_list      = Seer::parse(changelist_text, "",            '{', '}', false);
 
-            for ( const auto& child_text : child_list ) {
+            for (const auto& child_text : child_list) {
 
                 QString name_text         = Seer::parseFirst(child_text, "name=",          '"', '"', false);
                 QString value_text        = Seer::parseFirst(child_text, "value=",         '"', '"', false);

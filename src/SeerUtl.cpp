@@ -1,5 +1,6 @@
 #include "SeerUtl.h"
 #include <QtCore/QDebug>
+#include <QtCore/QRegExp>
 #include <mutex>
 
 //
@@ -374,6 +375,20 @@ namespace Seer {
         return parts.join('.');
     }
 
+    //
+    //
+    //
+
+    bool matches (const QStringList& regexpatterns, const QString& string) {
+
+        foreach (const auto& regex, regexpatterns) {
+            if (string.contains(QRegExp(regex))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     //
     //

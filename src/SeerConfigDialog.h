@@ -64,6 +64,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;
 
+        void                                setSourceIgnoreDirectories                      (const QStringList& ignoreDirectories);
+        QStringList                         sourceIgnoreDirectories                         () const;
+
         // Assembly settings.
         void                                setAssemblyShowAssemblyTabOnStartup             (bool flag);
         bool                                assemblyShowAssemblyTabOnStartup                () const;

@@ -252,6 +252,16 @@ const QStringList& SeerEditorManagerWidget::editorAlternateDirectories () const 
     return _editorAlternateDirectories;
 }
 
+void SeerEditorManagerWidget::setEditorIgnoreDirectories (const QStringList ignoreDirectories) {
+
+    _editorIgnoreDirectories = ignoreDirectories;
+}
+
+const QStringList& SeerEditorManagerWidget::editorIgnoreDirectories () const {
+
+    return _editorIgnoreDirectories;
+}
+
 void SeerEditorManagerWidget::setEditorKeySettings (const SeerKeySettings& settings) {
 
     _editorKeySettings = settings;
@@ -306,6 +316,11 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
             if (editorWidget == 0) {
                 editorWidget = createEditorWidgetTab(fullname_text, file_text, text);
+            }
+
+            // Can still be null, if the file is ignored.
+            if (editorWidget == 0) {
+                return;
             }
 
             // Push this tab to the top only if the current one in not the "Assembly" tab.
@@ -553,6 +568,11 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         editorWidget = createEditorWidgetTab(fullname, file);
     }
 
+    // Can still be null, if the file is ignored.
+    if (editorWidget == 0) {
+        return;
+    }
+
     // Push this tab to the top only if the current one in not the "Assembly" tab.
     QString tabtext = "";
 
@@ -624,6 +644,12 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
 
     //qDebug() << fullname << file << text << tabWidget->count() << tabWidget->tabText(0);
 
+    // Are we asked to ignore this file?
+    if (Seer::matches(editorIgnoreDirectories(), fullname) == true) {
+        emit showMessage(QString("Ignore opening of: '%1'").arg(fullname), 3000);
+        return 0;
+    }
+
     // Remove the place holder tab, if present.
     if (tabWidget->count() == 1 && tabWidget->tabText(0) == "") {
         deleteEditorWidgetTab(0);
@@ -672,6 +698,12 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
 SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file) {
 
     //qDebug() << fullname << file << tabWidget->count() << tabWidget->tabText(0);
+
+    // Are we asked to ignore this file?
+    if (Seer::matches(editorIgnoreDirectories(), fullname) == true) {
+        emit showMessage(QString("Ignore opening of: '%1'").arg(fullname), 3000);
+        return 0;
+    }
 
     // Remove the place holder tab, if present.
     if (tabWidget->count() == 1 && tabWidget->tabText(0) == "") {

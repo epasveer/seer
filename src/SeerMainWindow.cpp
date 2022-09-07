@@ -78,7 +78,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Set the inital key settings.
     setKeySettings(SeerKeySettings::populate());
 
-    // Setup hidden Var Visualizer.
+    // Setup hidden Struct Visualizer.
     QShortcut* varVisualizerShotcut = new QShortcut(QKeySequence(tr("Alt+V")), this);
 
     QObject::connect(varVisualizerShotcut,              &QShortcut::activated,                  this,           &SeerMainWindow::handleViewStructVisualizer);
@@ -133,11 +133,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,          this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
+    QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::showMessage,  this,           &SeerMainWindow::handleShowMessage);
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
-
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,      this,           &SeerMainWindow::handleChangeWindowTitle);
-
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
 
@@ -150,7 +149,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
     // Initialize contents.
     //
-    statusBar()->showMessage(tr("Welcome to Seer. The All Knowing..."), 3000);
+    handleShowMessage("Welcome to Seer. The All Knowing...", 3000);
 }
 
 SeerMainWindow::~SeerMainWindow() {
@@ -448,6 +447,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
+    dlg.setSourceIgnoreDirectories(gdbWidget->sourceIgnoreDirectories());
     dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
     dlg.setAssemblyDisassembyFlavor(gdbWidget->assemblyDisassembyFlavor());
@@ -478,6 +478,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
+    gdbWidget->setSourceIgnoreDirectories(dlg.sourceIgnoreDirectories());
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
     gdbWidget->setAssemblyDisassembyFlavor(dlg.assemblyDisassembyFlavor());
@@ -553,6 +554,11 @@ void SeerMainWindow::handleStyleMenuChanged () {
     QApplication::setStyle(action->text());
 }
 
+void SeerMainWindow::handleShowMessage (QString message, int time) {
+
+    statusBar()->showMessage(message, time);
+}
+
 void SeerMainWindow::handleText (const QString& text) {
 
     if (text.startsWith("^error,msg=")) {
@@ -578,7 +584,7 @@ void SeerMainWindow::handleText (const QString& text) {
 
         if (msg_text != "") {
 
-            statusBar()->showMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
+            handleShowMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
 
             QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
 
@@ -587,7 +593,6 @@ void SeerMainWindow::handleText (const QString& text) {
 
     }else if (text == "^running") {
         // Swallow this message.
-        // statusBar()->showMessage(text.mid(1), 3000);
         return;
 
     }else if (text == "^done") {
@@ -672,7 +677,7 @@ void SeerMainWindow::handleText (const QString& text) {
 
         QString threadid_text = Seer::parseFirst(text, "thread-id=", '"', '"', false);
 
-        statusBar()->showMessage("Program started. Thread id: " + threadid_text, 3000);
+        handleShowMessage("Program started. Thread id: " + threadid_text, 3000);
 
         return;
 
@@ -689,7 +694,7 @@ void SeerMainWindow::handleText (const QString& text) {
             reason_text = "unknown";
         }
 
-        statusBar()->showMessage("Program stopped. Reason: " + reason_text, 3000);
+        handleShowMessage("Program stopped. Reason: " + reason_text, 3000);
 
         if (reason_text == "signal-received") {
             //*stopped,reason="signal-received",signal-name="SIGSEGV",signal-meaning="Segmentation fault", ...
@@ -788,7 +793,6 @@ void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus s
     }else{
         _progressIndicator->stop();
     }
-
 }
 
 void SeerMainWindow::handleChangeWindowTitle (QString title) {
@@ -885,7 +889,6 @@ void SeerMainWindow::writeConfigSettings () {
         }
 
     } settings.endArray();
-
 }
 
 void SeerMainWindow::readConfigSettings () {

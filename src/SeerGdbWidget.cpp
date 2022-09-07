@@ -2019,7 +2019,6 @@ void SeerGdbWidget::writeSettings () {
             settings.setArrayIndex(i);
             settings.setValue("command", commands[i]);
         }
-
     } settings.endArray();
 
     settings.beginWriteArray("sourcealternatedirectories"); {
@@ -2030,7 +2029,16 @@ void SeerGdbWidget::writeSettings () {
             settings.setArrayIndex(i);
             settings.setValue("directory", directories[i]);
         }
+    } settings.endArray();
 
+    settings.beginWriteArray("sourceignoredirectories"); {
+
+        QStringList directories = sourceIgnoreDirectories();
+
+        for (int i = 0; i < directories.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("directory", directories[i]);
+        }
     } settings.endArray();
 
     settings.beginGroup("assembly"); {
@@ -2090,7 +2098,19 @@ void SeerGdbWidget::readSettings () {
         }
 
         setSourceAlternateDirectories(directories);
+    } settings.endArray();
 
+    size = settings.beginReadArray("sourceignoredirectories"); {
+
+        QStringList directories;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            directories << settings.value("directory").toString();
+        }
+
+        setSourceIgnoreDirectories(directories);
     } settings.endArray();
 
     settings.beginGroup("assembly"); {
@@ -2323,6 +2343,16 @@ const QStringList& SeerGdbWidget::sourceAlternateDirectories() const {
 void SeerGdbWidget::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     editorManager()->setEditorAlternateDirectories(alternateDirectories);
+}
+
+const QStringList& SeerGdbWidget::sourceIgnoreDirectories() const {
+
+    return editorManager()->editorIgnoreDirectories();
+}
+
+void SeerGdbWidget::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
+
+    editorManager()->setEditorIgnoreDirectories(ignoreDirectories);
 }
 
 void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {

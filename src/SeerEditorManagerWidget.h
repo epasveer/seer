@@ -46,6 +46,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            editorHighlighterEnabled            () const;
         void                                            setEditorAlternateDirectories       (const QStringList alternateDirectories);
         const QStringList&                              editorAlternateDirectories          () const;
+        void                                            setEditorIgnoreDirectories          (const QStringList ignoreDirectories);
+        const QStringList&                              editorIgnoreDirectories             () const;
         void                                            setEditorKeySettings                (const SeerKeySettings& settings);
         const SeerKeySettings&                          editorKeySettings                   () const;
 
@@ -95,6 +97,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            addArrayVisualize                   (QString expression);
         void                                            addStructVisualize                  (QString expression);
         void                                            requestAssembly                     (QString address);
+        void                                            showMessage                         (QString message, int time);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -110,6 +113,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
+        QStringList                                     _editorIgnoreDirectories;
         SeerKeySettings                                 _editorKeySettings;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;

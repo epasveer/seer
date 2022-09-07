@@ -229,6 +229,16 @@ QStringList SeerConfigDialog::sourceAlternateDirectories () const {
     return _sourceConfigPage->alternateDirectories();
 }
 
+void SeerConfigDialog::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
+
+    _sourceConfigPage->setIgnoreDirectories(ignoreDirectories);
+}
+
+QStringList SeerConfigDialog::sourceIgnoreDirectories () const {
+
+    return _sourceConfigPage->ignoreDirectories();
+}
+
 void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartup (bool flag) {
 
     _assemblyConfigPage->setShowAssemblyTabOnStartup(flag);

@@ -14,16 +14,22 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
         explicit SeerSourceConfigPage (QWidget* parent = 0);
        ~SeerSourceConfigPage ();
 
-        void                                setAlternateDirectories         (const QStringList& alternateDirectories);
-        QStringList                         alternateDirectories            () const;
+        void                                setAlternateDirectories                 (const QStringList& alternateDirectories);
+        QStringList                         alternateDirectories                    () const;
 
-        void                                reset                           ();
+        void                                setIgnoreDirectories                    (const QStringList& ignoreDirectories);
+        QStringList                         ignoreDirectories                       () const;
+
+        void                                reset                                   ();
 
     protected slots:
-        void                                handleAddButtonClicked          ();
-        void                                handleUpButtonClicked           ();
-        void                                handleDownButtonClicked         ();
-        void                                handleDeleteButtonClicked       ();
+        void                                handleAddAlternateButtonClicked         ();
+        void                                handleUpAlternateButtonClicked          ();
+        void                                handleDownAlternateButtonClicked        ();
+        void                                handleDeleteAlternateButtonClicked      ();
+
+        void                                handleAddIgnoreButtonClicked            ();
+        void                                handleDeleteIgnoreButtonClicked         ();
 
     private:
 };
