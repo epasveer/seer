@@ -448,6 +448,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSourceIgnoreDirectories(gdbWidget->sourceIgnoreDirectories());
+    dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
+    dlg.setSourceSourceFilePatterns(gdbWidget->sourceSourceFilePatterns());
+    dlg.setSourceHeaderFilePatterns(gdbWidget->sourceHeaderFilePatterns());
     dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
     dlg.setAssemblyDisassembyFlavor(gdbWidget->assemblyDisassembyFlavor());
@@ -479,6 +482,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setSourceIgnoreDirectories(dlg.sourceIgnoreDirectories());
+    gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
+    gdbWidget->setSourceSourceFilePatterns(dlg.sourceSourceFilePatterns());
+    gdbWidget->setSourceHeaderFilePatterns(dlg.sourceHeaderFilePatterns());
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
     gdbWidget->setAssemblyDisassembyFlavor(dlg.assemblyDisassembyFlavor());
@@ -811,8 +817,6 @@ void SeerMainWindow::writeSettings() {
     settings.beginGroup("mainwindow"); {
         settings.setValue("size", size());
     } settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerMainWindow::readSettings() {
@@ -822,8 +826,6 @@ void SeerMainWindow::readSettings() {
     settings.beginGroup("mainwindow"); {
         resize(settings.value("size", QSize(1250, 1000)).toSize());
     } settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerMainWindow::writeConfigSettings () {

@@ -27,6 +27,10 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     _headerFilesItems = 0;
     _miscFilesItems   = 0;
 
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", ".C", ".f", "*.f90", "*.F90", "*.rs", "*.go"} ); // Default settings.
+    _headerFilePatterns = QStringList( {"*.hpp", ".h"} );
+    _miscFilePatterns   = QStringList( {"^/usr/include/*"} );
+
     // Connect things.
     QObject::connect(sourceTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerSourceBrowserWidget::handleItemDoubleClicked);
     QObject::connect(sourceTreeWidget,      &QTreeWidget::itemEntered,          this,  &SeerSourceBrowserWidget::handleItemEntered);
@@ -34,6 +38,36 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
 }
 
 SeerSourceBrowserWidget::~SeerSourceBrowserWidget () {
+}
+
+void SeerSourceBrowserWidget::setMiscFilePatterns (const QStringList& patterns) {
+
+    _miscFilePatterns = patterns;
+}
+
+const QStringList& SeerSourceBrowserWidget::miscFilePatterns () const {
+
+    return _miscFilePatterns;
+}
+
+void SeerSourceBrowserWidget::setSourceFilePatterns (const QStringList& patterns) {
+
+    _sourceFilePatterns = patterns;
+}
+
+const QStringList& SeerSourceBrowserWidget::sourceFilePatterns () const {
+
+    return _sourceFilePatterns;
+}
+
+void SeerSourceBrowserWidget::setHeaderFilePatterns (const QStringList& patterns) {
+
+    _headerFilePatterns = patterns;
+}
+
+const QStringList& SeerSourceBrowserWidget::headerFilePatterns () const {
+
+    return _headerFilePatterns;
 }
 
 void SeerSourceBrowserWidget::handleText (const QString& text) {
@@ -70,7 +104,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
         // Set up a map to look for duplicate entries.  QMap<fullname,file>
         QMap<QString,QString> files;
 
-        for ( const auto& entry_text : files_list  ) {
+        for (const auto& entry_text : files_list) {
 
             QString file_text     = Seer::parseFirst(entry_text, "file=",     '"', '"', false);
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
@@ -91,13 +125,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, QFileInfo(file_text).fileName());
             item->setText(1, fullname_text);
-
-            /* Why have this?
-            // Skip fully specified paths. Include files???
-            if (file_text[0] == '/') {
-                continue;
-            }
-            */
 
             // Look at the filename suffix.
             if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "C") { // C/C++

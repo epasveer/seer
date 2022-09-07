@@ -111,6 +111,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSourceIgnoreDirectories          (const QStringList& ignoreDirectories);
         const QStringList&                  sourceIgnoreDirectories             () const;
 
+        void                                setSourceMiscFilePatterns           (const QStringList& filePatterns);
+        const QStringList&                  sourceMiscFilePatterns              () const;
+
+        void                                setSourceSourceFilePatterns         (const QStringList& filePatterns);
+        const QStringList&                  sourceSourceFilePatterns            () const;
+
+        void                                setSourceHeaderFilePatterns         (const QStringList& filePatterns);
+        const QStringList&                  sourceHeaderFilePatterns            () const;
+
         void                                setAssemblyShowAssemblyTabOnStartup (bool flag);
         bool                                assemblyShowAssemblyTabOnStartup    () const;
 

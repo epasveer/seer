@@ -194,7 +194,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QTreeWidget" name="miscDirectoriesTreeWidget">
+         <widget class="QTreeWidget" name="miscFilePatternsTreeWidget">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -214,9 +214,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QToolButton" name="addMiscDirectoryToolButton">
+           <widget class="QToolButton" name="addMiscFilePatternToolButton">
             <property name="toolTip">
-             <string>Add a new directory.</string>
+             <string>Add a new file pattern.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -228,9 +228,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="deleteMiscDirectoriesToolButton">
+           <widget class="QToolButton" name="deleteMiscFilePatternsToolButton">
             <property name="toolTip">
-             <string>Delete selected directories.</string>
+             <string>Delete selected file patterns.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -261,7 +261,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QTreeWidget" name="sourceDirectoriesTreeWidget">
+         <widget class="QTreeWidget" name="sourceFilePatternsTreeWidget">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -281,9 +281,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QToolButton" name="addSourceDirectoryToolButton">
+           <widget class="QToolButton" name="addSourceFilePatternToolButton">
             <property name="toolTip">
-             <string>Add a new directory.</string>
+             <string>Add a new file pattern.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -295,9 +295,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="deleteSourceDirectoriesToolButton">
+           <widget class="QToolButton" name="deleteSourceFilePatternsToolButton">
             <property name="toolTip">
-             <string>Delete selected directories.</string>
+             <string>Delete selected file patterns.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -328,7 +328,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QTreeWidget" name="headerDirectoriesTreeWidget">
+         <widget class="QTreeWidget" name="headerFilePatternsTreeWidget">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -348,9 +348,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QToolButton" name="addHeaderDirectoryToolButton">
+           <widget class="QToolButton" name="addHeaderFilePatternToolButton">
             <property name="toolTip">
-             <string>Add a new directory.</string>
+             <string>Add a new file pattern.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -362,9 +362,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="deleteHeaderDirectoriesToolButton">
+           <widget class="QToolButton" name="deleteHeaderFilePatternsToolButton">
             <property name="toolTip">
-             <string>Delete selected directories.</string>
+             <string>Delete selected file patterns.</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -410,7 +410,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Source Lookup.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If Seer can't find the source file in the directory that gdb knows of, then Seer will look in these &lt;span style=&quot; text-decoration: underline;&quot;&gt;Alternate&lt;/span&gt; directories in the order they appear.  If Seer still can't find the source file, it will prompt you to enter the location.  If you don't want to be prompted, add the directory path to the list of &lt;span style=&quot; text-decoration: underline;&quot;&gt;Ignore&lt;/span&gt; directories. Regex wildcarding is allowed.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If Seer can't find the source file in the directory that gdb knows of, then Seer will look in these &lt;span style=&quot; text-decoration: underline;&quot;&gt;Alternate&lt;/span&gt; directories in the order they appear.  If Seer still can't find the source file, it will prompt you to enter the location.  If you don't want to be prompted, add the directory path to the list of &lt;span style=&quot; text-decoration: underline;&quot;&gt;Ignore&lt;/span&gt; directories. Regex wildcarding is allowed when adding an ignore entry.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Source Browser Filtering.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -422,7 +422,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The ones that are not, should be sorted into &lt;span style=&quot; text-decoration: underline;&quot;&gt;Misc&lt;/span&gt;. These can be system header files or system source files. The ones that are, are sorted into &lt;span style=&quot; text-decoration: underline;&quot;&gt;Source&lt;/span&gt; or &lt;span style=&quot; text-decoration: underline;&quot;&gt;Header&lt;/span&gt;, depending on the sorting settings.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For each file, it is compared to the sort patterns in the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Misc&lt;/span&gt; category, then the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Source&lt;/span&gt;, then the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Header&lt;/span&gt; category. It it put into the first one that matches. If it doesn't match any, it is put into the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Misc&lt;/span&gt; category.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For each file, it is compared to the sort patterns in the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Misc&lt;/span&gt; category, then the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Source&lt;/span&gt;, then the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Header&lt;/span&gt; category. It is put into the first one that matches. If it doesn't match any, it is put into the &lt;span style=&quot; text-decoration: underline;&quot;&gt;Misc&lt;/span&gt; category.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For example, &lt;span style=&quot; text-decoration: underline;&quot;&gt;Source&lt;/span&gt; should have entries like:&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;

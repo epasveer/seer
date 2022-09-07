@@ -20,6 +20,15 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
         void                                setIgnoreDirectories                    (const QStringList& ignoreDirectories);
         QStringList                         ignoreDirectories                       () const;
 
+        void                                setMiscFilePatterns                     (const QStringList& filePatterns);
+        QStringList                         miscFilePatterns                        () const;
+
+        void                                setSourceFilePatterns                   (const QStringList& filePatterns);
+        QStringList                         sourceFilePatterns                      () const;
+
+        void                                setHeaderFilePatterns                   (const QStringList& filePatterns);
+        QStringList                         headerFilePatterns                      () const;
+
         void                                reset                                   ();
 
     protected slots:
@@ -30,6 +39,13 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
 
         void                                handleAddIgnoreButtonClicked            ();
         void                                handleDeleteIgnoreButtonClicked         ();
+
+        void                                handleAddMiscPatternButtonClicked       ();
+        void                                handleDeleteMiscPatternButtonClicked    ();
+        void                                handleAddSourcePatternButtonClicked     ();
+        void                                handleDeleteSourcePatternButtonClicked  ();
+        void                                handleAddHeaderPatternButtonClicked     ();
+        void                                handleDeleteHeaderPatternButtonClicked  ();
 
     private:
 };

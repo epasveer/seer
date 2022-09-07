@@ -2012,7 +2012,6 @@ void SeerGdbWidget::writeSettings () {
     }settings.endGroup();
 
     settings.beginWriteArray("manualgdbcommandshistory"); {
-
         QStringList commands = manualCommands(rememberManualCommandCount());
 
         for (int i = 0; i < commands.size(); ++i) {
@@ -2022,7 +2021,6 @@ void SeerGdbWidget::writeSettings () {
     } settings.endArray();
 
     settings.beginWriteArray("sourcealternatedirectories"); {
-
         QStringList directories = sourceAlternateDirectories();
 
         for (int i = 0; i < directories.size(); ++i) {
@@ -2032,12 +2030,38 @@ void SeerGdbWidget::writeSettings () {
     } settings.endArray();
 
     settings.beginWriteArray("sourceignoredirectories"); {
-
         QStringList directories = sourceIgnoreDirectories();
 
         for (int i = 0; i < directories.size(); ++i) {
             settings.setArrayIndex(i);
             settings.setValue("directory", directories[i]);
+        }
+    } settings.endArray();
+
+    settings.beginWriteArray("sourcemiscfilepatterns"); {
+        QStringList patterns = sourceMiscFilePatterns();
+
+        for (int i = 0; i < patterns.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("pattern", patterns[i]);
+        }
+    } settings.endArray();
+
+    settings.beginWriteArray("sourcesourcefilepatterns"); {
+        QStringList patterns = sourceSourceFilePatterns();
+
+        for (int i = 0; i < patterns.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("pattern", patterns[i]);
+        }
+    } settings.endArray();
+
+    settings.beginWriteArray("sourceheaderfilepatterns"); {
+        QStringList patterns = sourceHeaderFilePatterns();
+
+        for (int i = 0; i < patterns.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("pattern", patterns[i]);
         }
     } settings.endArray();
 
@@ -2075,7 +2099,6 @@ void SeerGdbWidget::readSettings () {
     } settings.endGroup();
 
     int size = settings.beginReadArray("manualgdbcommandshistory"); {
-
         QStringList commands;
 
         for (int i = 0; i < size; ++i) {
@@ -2088,7 +2111,6 @@ void SeerGdbWidget::readSettings () {
     } settings.endArray();
 
     size = settings.beginReadArray("sourcealternatedirectories"); {
-
         QStringList directories;
 
         for (int i = 0; i < size; ++i) {
@@ -2101,7 +2123,6 @@ void SeerGdbWidget::readSettings () {
     } settings.endArray();
 
     size = settings.beginReadArray("sourceignoredirectories"); {
-
         QStringList directories;
 
         for (int i = 0; i < size; ++i) {
@@ -2111,6 +2132,42 @@ void SeerGdbWidget::readSettings () {
         }
 
         setSourceIgnoreDirectories(directories);
+    } settings.endArray();
+
+    size = settings.beginReadArray("sourcemiscfilepatterns"); {
+        QStringList patterns;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            patterns << settings.value("pattern").toString();
+        }
+
+        setSourceMiscFilePatterns(patterns);
+    } settings.endArray();
+
+    size = settings.beginReadArray("sourcesourcefilepatterns"); {
+        QStringList patterns;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            patterns << settings.value("pattern").toString();
+        }
+
+        setSourceSourceFilePatterns(patterns);
+    } settings.endArray();
+
+    size = settings.beginReadArray("sourceheaderfilepatterns"); {
+        QStringList patterns;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            patterns << settings.value("pattern").toString();
+        }
+
+        setSourceHeaderFilePatterns(patterns);
     } settings.endArray();
 
     settings.beginGroup("assembly"); {
@@ -2155,7 +2212,6 @@ void SeerGdbWidget::startGdb () {
     // Don't do anything, if already running.
     if (isGdbRuning()) {
         qWarning() << "Already running";
-
         return;
     }
 
@@ -2353,6 +2409,36 @@ const QStringList& SeerGdbWidget::sourceIgnoreDirectories() const {
 void SeerGdbWidget::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
 
     editorManager()->setEditorIgnoreDirectories(ignoreDirectories);
+}
+
+void SeerGdbWidget::setSourceMiscFilePatterns (const QStringList& filePatterns) {
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setMiscFilePatterns(filePatterns);
+}
+
+const QStringList& SeerGdbWidget::sourceMiscFilePatterns () const {
+
+    return sourceLibraryManagerWidget->sourceBrowserWidget()->miscFilePatterns();
+}
+
+void SeerGdbWidget::setSourceSourceFilePatterns (const QStringList& filePatterns) {
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setSourceFilePatterns(filePatterns);
+}
+
+const QStringList& SeerGdbWidget::sourceSourceFilePatterns () const {
+
+    return sourceLibraryManagerWidget->sourceBrowserWidget()->sourceFilePatterns();
+}
+
+void SeerGdbWidget::setSourceHeaderFilePatterns (const QStringList& filePatterns) {
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setHeaderFilePatterns(filePatterns);
+}
+
+const QStringList& SeerGdbWidget::sourceHeaderFilePatterns () const {
+
+    return sourceLibraryManagerWidget->sourceBrowserWidget()->headerFilePatterns();
 }
 
 void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {

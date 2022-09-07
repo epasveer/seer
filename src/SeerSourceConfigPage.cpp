@@ -15,10 +15,26 @@ SeerSourceConfigPage::SeerSourceConfigPage(QWidget* parent) : QWidget(parent) {
     alternateDirectoriesTreeWidget->setSortingEnabled(false);
     alternateDirectoriesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     alternateDirectoriesTreeWidget->resizeColumnToContents(0); // directory
+
     ignoreDirectoriesTreeWidget->clear();
     ignoreDirectoriesTreeWidget->setSortingEnabled(false);
     ignoreDirectoriesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ignoreDirectoriesTreeWidget->resizeColumnToContents(0); // directory
+
+    miscFilePatternsTreeWidget->clear();
+    miscFilePatternsTreeWidget->setSortingEnabled(false);
+    miscFilePatternsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    miscFilePatternsTreeWidget->resizeColumnToContents(0); // file pattern
+
+    sourceFilePatternsTreeWidget->clear();
+    sourceFilePatternsTreeWidget->setSortingEnabled(false);
+    sourceFilePatternsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    sourceFilePatternsTreeWidget->resizeColumnToContents(0); // file pattern
+
+    headerFilePatternsTreeWidget->clear();
+    headerFilePatternsTreeWidget->setSortingEnabled(false);
+    headerFilePatternsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    headerFilePatternsTreeWidget->resizeColumnToContents(0); // file pattern
 
 
     // Connect things.
@@ -28,6 +44,12 @@ SeerSourceConfigPage::SeerSourceConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(deleteAlternateDirectoriesToolButton,   &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteAlternateButtonClicked);
     QObject::connect(addIgnoreDirectoryToolButton,           &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddIgnoreButtonClicked);
     QObject::connect(deleteIgnoreDirectoriesToolButton,      &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteIgnoreButtonClicked);
+    QObject::connect(addMiscFilePatternToolButton,           &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddMiscPatternButtonClicked);
+    QObject::connect(deleteMiscFilePatternsToolButton,       &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteMiscPatternButtonClicked);
+    QObject::connect(addSourceFilePatternToolButton,         &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddSourcePatternButtonClicked);
+    QObject::connect(deleteSourceFilePatternsToolButton,     &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteSourcePatternButtonClicked);
+    QObject::connect(addHeaderFilePatternToolButton,         &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddHeaderPatternButtonClicked);
+    QObject::connect(deleteHeaderFilePatternsToolButton,     &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteHeaderPatternButtonClicked);
 
     // Setup the defaults.
     reset();
@@ -98,6 +120,99 @@ QStringList SeerSourceConfigPage::ignoreDirectories () const {
     return list;
 }
 
+void SeerSourceConfigPage::setMiscFilePatterns (const QStringList& filePatterns) {
+
+    miscFilePatternsTreeWidget->clear();
+
+    QStringListIterator iter(filePatterns);
+
+    while (iter.hasNext()) {
+
+        QTreeWidgetItem* topItem = new QTreeWidgetItem;
+        topItem->setText(0, iter.next());
+
+        miscFilePatternsTreeWidget->addTopLevelItem(topItem);
+    }
+
+    miscFilePatternsTreeWidget->resizeColumnToContents(0);
+}
+
+QStringList SeerSourceConfigPage::miscFilePatterns () const {
+
+    QStringList list;
+
+    QTreeWidgetItemIterator iter(miscFilePatternsTreeWidget);
+
+    while (*iter) {
+        list << (*iter)->text(0);
+        ++iter;
+    }
+
+    return list;
+}
+
+void SeerSourceConfigPage::setSourceFilePatterns (const QStringList& filePatterns) {
+
+    sourceFilePatternsTreeWidget->clear();
+
+    QStringListIterator iter(filePatterns);
+
+    while (iter.hasNext()) {
+
+        QTreeWidgetItem* topItem = new QTreeWidgetItem;
+        topItem->setText(0, iter.next());
+
+        sourceFilePatternsTreeWidget->addTopLevelItem(topItem);
+    }
+
+    sourceFilePatternsTreeWidget->resizeColumnToContents(0);
+}
+
+QStringList SeerSourceConfigPage::sourceFilePatterns () const {
+
+    QStringList list;
+
+    QTreeWidgetItemIterator iter(sourceFilePatternsTreeWidget);
+
+    while (*iter) {
+        list << (*iter)->text(0);
+        ++iter;
+    }
+
+    return list;
+}
+
+void SeerSourceConfigPage::setHeaderFilePatterns (const QStringList& filePatterns) {
+
+    headerFilePatternsTreeWidget->clear();
+
+    QStringListIterator iter(filePatterns);
+
+    while (iter.hasNext()) {
+
+        QTreeWidgetItem* topItem = new QTreeWidgetItem;
+        topItem->setText(0, iter.next());
+
+        headerFilePatternsTreeWidget->addTopLevelItem(topItem);
+    }
+
+    headerFilePatternsTreeWidget->resizeColumnToContents(0);
+}
+
+QStringList SeerSourceConfigPage::headerFilePatterns () const {
+
+    QStringList list;
+
+    QTreeWidgetItemIterator iter(headerFilePatternsTreeWidget);
+
+    while (*iter) {
+        list << (*iter)->text(0);
+        ++iter;
+    }
+
+    return list;
+}
+
 void SeerSourceConfigPage::reset () {
 
     QStringList alternateDirectories;
@@ -107,6 +222,9 @@ void SeerSourceConfigPage::reset () {
     setAlternateDirectories(alternateDirectories);
     setIgnoreDirectories(QStringList());
 
+    setMiscFilePatterns(   {"^/usr/include/*"} );
+    setSourceFilePatterns( {"*.cpp", "*.c", ".C", ".f", "*.f90", "*.F90", "*.rs", "*.go"} );
+    setHeaderFilePatterns( {"*.hpp", ".h"} );
 }
 
 void SeerSourceConfigPage::handleAddAlternateButtonClicked () {
@@ -139,7 +257,6 @@ void SeerSourceConfigPage::handleAddAlternateButtonClicked () {
 
     // Resize the columns and select the item we just added.
     alternateDirectoriesTreeWidget->resizeColumnToContents(0);
-
     alternateDirectoriesTreeWidget->setCurrentItem(topItem, 0);
 }
 
@@ -232,13 +349,96 @@ void SeerSourceConfigPage::handleAddIgnoreButtonClicked () {
 
     // Resize the columns and select the item we just added.
     ignoreDirectoriesTreeWidget->resizeColumnToContents(0);
-
     ignoreDirectoriesTreeWidget->setCurrentItem(topItem, 0);
 }
 
 void SeerSourceConfigPage::handleDeleteIgnoreButtonClicked () {
 
     QList<QTreeWidgetItem*> matches = ignoreDirectoriesTreeWidget->selectedItems();
+
+    qDeleteAll(matches);
+}
+
+void SeerSourceConfigPage::handleAddMiscPatternButtonClicked () {
+
+    // Ask for the pattern to add to the list.
+    QString pattern = QInputDialog::getText(this, "Seer - Enter a file pattern", "Misc file pattern:");
+
+    if (pattern == "") {
+        return;
+    }
+
+    // Create the new item
+    QTreeWidgetItem* topItem = new QTreeWidgetItem;
+    topItem->setText(0, pattern);
+
+    // Just add it to the end of the list.
+    miscFilePatternsTreeWidget->addTopLevelItem(topItem);
+
+    // Resize the columns and select the item we just added.
+    miscFilePatternsTreeWidget->resizeColumnToContents(0);
+    miscFilePatternsTreeWidget->setCurrentItem(topItem, 0);
+}
+
+void SeerSourceConfigPage::handleDeleteMiscPatternButtonClicked () {
+
+    QList<QTreeWidgetItem*> matches = miscFilePatternsTreeWidget->selectedItems();
+
+    qDeleteAll(matches);
+}
+
+void SeerSourceConfigPage::handleAddSourcePatternButtonClicked () {
+
+    // Ask for the pattern to add to the list.
+    QString pattern = QInputDialog::getText(this, "Seer - Enter a file pattern", "Source file pattern:");
+
+    if (pattern == "") {
+        return;
+    }
+
+    // Create the new item
+    QTreeWidgetItem* topItem = new QTreeWidgetItem;
+    topItem->setText(0, pattern);
+
+    // Just add it to the end of the list.
+    sourceFilePatternsTreeWidget->addTopLevelItem(topItem);
+
+    // Resize the columns and select the item we just added.
+    sourceFilePatternsTreeWidget->resizeColumnToContents(0);
+    sourceFilePatternsTreeWidget->setCurrentItem(topItem, 0);
+}
+
+void SeerSourceConfigPage::handleDeleteSourcePatternButtonClicked () {
+
+    QList<QTreeWidgetItem*> matches = sourceFilePatternsTreeWidget->selectedItems();
+
+    qDeleteAll(matches);
+}
+
+void SeerSourceConfigPage::handleAddHeaderPatternButtonClicked () {
+
+    // Ask for the pattern to add to the list.
+    QString pattern = QInputDialog::getText(this, "Seer - Enter a file pattern", "Header file pattern:");
+
+    if (pattern == "") {
+        return;
+    }
+
+    // Create the new item
+    QTreeWidgetItem* topItem = new QTreeWidgetItem;
+    topItem->setText(0, pattern);
+
+    // Just add it to the end of the list.
+    headerFilePatternsTreeWidget->addTopLevelItem(topItem);
+
+    // Resize the columns and select the item we just added.
+    headerFilePatternsTreeWidget->resizeColumnToContents(0);
+    headerFilePatternsTreeWidget->setCurrentItem(topItem, 0);
+}
+
+void SeerSourceConfigPage::handleDeleteHeaderPatternButtonClicked () {
+
+    QList<QTreeWidgetItem*> matches = headerFilePatternsTreeWidget->selectedItems();
 
     qDeleteAll(matches);
 }

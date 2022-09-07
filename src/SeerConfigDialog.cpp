@@ -239,6 +239,36 @@ QStringList SeerConfigDialog::sourceIgnoreDirectories () const {
     return _sourceConfigPage->ignoreDirectories();
 }
 
+void SeerConfigDialog::setSourceMiscFilePatterns (const QStringList& filePatterns) {
+
+    _sourceConfigPage->setMiscFilePatterns(filePatterns);
+}
+
+QStringList SeerConfigDialog::sourceMiscFilePatterns () const {
+
+    return _sourceConfigPage->miscFilePatterns();
+}
+
+void SeerConfigDialog::setSourceSourceFilePatterns (const QStringList& filePatterns) {
+
+    _sourceConfigPage->setSourceFilePatterns(filePatterns);
+}
+
+QStringList SeerConfigDialog::sourceSourceFilePatterns () const {
+
+    return _sourceConfigPage->sourceFilePatterns();
+}
+
+void SeerConfigDialog::setSourceHeaderFilePatterns (const QStringList& filePatterns) {
+
+    _sourceConfigPage->setHeaderFilePatterns(filePatterns);
+}
+
+QStringList SeerConfigDialog::sourceHeaderFilePatterns () const {
+
+    return _sourceConfigPage->headerFilePatterns();
+}
+
 void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartup (bool flag) {
 
     _assemblyConfigPage->setShowAssemblyTabOnStartup(flag);
