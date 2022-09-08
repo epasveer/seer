@@ -27,9 +27,9 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     _headerFilesItems = 0;
     _miscFilesItems   = 0;
 
-    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", ".C", ".f", "*.f90", "*.F90", "*.rs", "*.go"} ); // Default settings.
-    _headerFilePatterns = QStringList( {"*.hpp", ".h"} );
-    _miscFilePatterns   = QStringList( {"^/usr/include/*"} );
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go"} ); // Default settings.
+    _headerFilePatterns = QStringList( {"*.hpp", "*.h"} );
+    _miscFilePatterns   = QStringList( {"/usr/include/"} );
 
     // Connect things.
     QObject::connect(sourceTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerSourceBrowserWidget::handleItemDoubleClicked);
@@ -118,14 +118,17 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             files.insert(fullname_text, file_text);
 
+            /*
             // Get information about the file.
             QFileInfo fileInfo(fullname_text);
+            */
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, QFileInfo(file_text).fileName());
             item->setText(1, fullname_text);
 
+            /*
             // Look at the filename suffix.
             if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "C") { // C/C++
                 _sourceFilesItems->addChild(item);
@@ -139,6 +142,19 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             }else if (fileInfo.suffix() == "hpp" || fileInfo.suffix() == "h") {
                 _headerFilesItems->addChild(item);
 
+            }else{
+                _miscFilesItems->addChild(item);
+            }
+            */
+
+            // See which pattern the file matches. Put the file under that folder.
+            // If no match, put it in 'misc'.
+            if (Seer::matches(miscFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+                _miscFilesItems->addChild(item);
+            }else if (Seer::matches(sourceFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+                _sourceFilesItems->addChild(item);
+            }else if (Seer::matches(headerFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+                _headerFilesItems->addChild(item);
             }else{
                 _miscFilesItems->addChild(item);
             }
@@ -230,6 +246,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
         QList<QTreeWidgetItem*> matches;
 
         matches = sourceTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
+      //matches = sourceTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0); // Unix style wildcarding. Needs preceeding '*' all the time.
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
         QList<QTreeWidgetItem*>::const_iterator e  = matches.end();

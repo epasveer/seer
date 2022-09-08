@@ -1,6 +1,5 @@
 #include "SeerUtl.h"
 #include <QtCore/QDebug>
-#include <QtCore/QRegExp>
 #include <mutex>
 
 //
@@ -379,10 +378,10 @@ namespace Seer {
     //
     //
 
-    bool matches (const QStringList& regexpatterns, const QString& string) {
+    bool matches (const QStringList& regexpatterns, const QString& string, QRegExp::PatternSyntax syntax) {
 
         foreach (const auto& regex, regexpatterns) {
-            if (string.contains(QRegExp(regex))) {
+            if (string.contains(QRegExp(regex, Qt::CaseSensitive, syntax))) {
                 return true;
             }
         }

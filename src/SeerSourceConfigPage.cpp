@@ -222,9 +222,9 @@ void SeerSourceConfigPage::reset () {
     setAlternateDirectories(alternateDirectories);
     setIgnoreDirectories(QStringList());
 
-    setMiscFilePatterns(   {"^/usr/include/*"} );
-    setSourceFilePatterns( {"*.cpp", "*.c", ".C", ".f", "*.f90", "*.F90", "*.rs", "*.go"} );
-    setHeaderFilePatterns( {"*.hpp", ".h"} );
+    setMiscFilePatterns(   {"/usr/include/"} );
+    setSourceFilePatterns( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", "*.F90", "*.rs", "*.go"} );
+    setHeaderFilePatterns( {"*.hpp", "*.h"} );
 }
 
 void SeerSourceConfigPage::handleAddAlternateButtonClicked () {
@@ -329,6 +329,9 @@ void SeerSourceConfigPage::handleDeleteAlternateButtonClicked () {
     QList<QTreeWidgetItem*> matches = alternateDirectoriesTreeWidget->selectedItems();
 
     qDeleteAll(matches);
+
+    // Resize the columns and select the items we just deleted.
+    alternateDirectoriesTreeWidget->resizeColumnToContents(0);
 }
 
 void SeerSourceConfigPage::handleAddIgnoreButtonClicked () {
@@ -357,6 +360,9 @@ void SeerSourceConfigPage::handleDeleteIgnoreButtonClicked () {
     QList<QTreeWidgetItem*> matches = ignoreDirectoriesTreeWidget->selectedItems();
 
     qDeleteAll(matches);
+
+    // Resize the columns and select the items we just deleted.
+    ignoreDirectoriesTreeWidget->resizeColumnToContents(0);
 }
 
 void SeerSourceConfigPage::handleAddMiscPatternButtonClicked () {
@@ -385,6 +391,9 @@ void SeerSourceConfigPage::handleDeleteMiscPatternButtonClicked () {
     QList<QTreeWidgetItem*> matches = miscFilePatternsTreeWidget->selectedItems();
 
     qDeleteAll(matches);
+
+    // Resize the columns and select the items we just deleted.
+    miscFilePatternsTreeWidget->resizeColumnToContents(0);
 }
 
 void SeerSourceConfigPage::handleAddSourcePatternButtonClicked () {
@@ -413,6 +422,9 @@ void SeerSourceConfigPage::handleDeleteSourcePatternButtonClicked () {
     QList<QTreeWidgetItem*> matches = sourceFilePatternsTreeWidget->selectedItems();
 
     qDeleteAll(matches);
+
+    // Resize the columns and select the items we just deleted.
+    sourceFilePatternsTreeWidget->resizeColumnToContents(0);
 }
 
 void SeerSourceConfigPage::handleAddHeaderPatternButtonClicked () {
@@ -441,5 +453,8 @@ void SeerSourceConfigPage::handleDeleteHeaderPatternButtonClicked () {
     QList<QTreeWidgetItem*> matches = headerFilePatternsTreeWidget->selectedItems();
 
     qDeleteAll(matches);
+
+    // Resize the columns and select the items we just deleted.
+    headerFilePatternsTreeWidget->resizeColumnToContents(0);
 }
 

@@ -2134,41 +2134,47 @@ void SeerGdbWidget::readSettings () {
         setSourceIgnoreDirectories(directories);
     } settings.endArray();
 
-    size = settings.beginReadArray("sourcemiscfilepatterns"); {
-        QStringList patterns;
+    if (settings.childGroups().contains("sourcemiscfilepatterns")) {
+        size = settings.beginReadArray("sourcemiscfilepatterns"); {
+            QStringList patterns;
 
-        for (int i = 0; i < size; ++i) {
-            settings.setArrayIndex(i);
+            for (int i = 0; i < size; ++i) {
+                settings.setArrayIndex(i);
 
-            patterns << settings.value("pattern").toString();
-        }
+                patterns << settings.value("pattern").toString();
+            }
 
-        setSourceMiscFilePatterns(patterns);
-    } settings.endArray();
+            setSourceMiscFilePatterns(patterns);
+        } settings.endArray();
+    }
 
-    size = settings.beginReadArray("sourcesourcefilepatterns"); {
-        QStringList patterns;
+    if (settings.childGroups().contains("sourcesourcefilepatterns")) {
+        size = settings.beginReadArray("sourcesourcefilepatterns"); {
+            QStringList patterns;
 
-        for (int i = 0; i < size; ++i) {
-            settings.setArrayIndex(i);
+            for (int i = 0; i < size; ++i) {
+                settings.setArrayIndex(i);
 
-            patterns << settings.value("pattern").toString();
-        }
+                patterns << settings.value("pattern").toString();
+            }
 
-        setSourceSourceFilePatterns(patterns);
-    } settings.endArray();
+            setSourceSourceFilePatterns(patterns);
+        } settings.endArray();
+    }
 
-    size = settings.beginReadArray("sourceheaderfilepatterns"); {
-        QStringList patterns;
+    if (settings.childGroups().contains("sourceheaderfilepatterns")) {
+        size = settings.beginReadArray("sourceheaderfilepatterns"); {
+            QStringList patterns;
 
-        for (int i = 0; i < size; ++i) {
-            settings.setArrayIndex(i);
+            for (int i = 0; i < size; ++i) {
+                settings.setArrayIndex(i);
 
-            patterns << settings.value("pattern").toString();
-        }
+                patterns << settings.value("pattern").toString();
+            }
 
-        setSourceHeaderFilePatterns(patterns);
-    } settings.endArray();
+            setSourceHeaderFilePatterns(patterns);
+        } settings.endArray();
+    }
 
     settings.beginGroup("assembly"); {
         setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
