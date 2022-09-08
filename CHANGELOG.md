@@ -7,6 +7,11 @@
     - Can recursively show the contents of a struct/class.
     - Show datatype of each member. (Value or pointer)
     - Can modify values of simple datatypes.
+* Improve Source Browsing.
+    - See new options in 'Source' config page.
+    - Ignore opening files from a list of directories. Like system directories that don't exist.
+    - Better sorting of program's files into "Source", "Header", and "Misc" folders in the
+      SourceBrowser by having a list of filename patterns for each folder.
 
 ## [1.9] - 2022-08-30
 * Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
