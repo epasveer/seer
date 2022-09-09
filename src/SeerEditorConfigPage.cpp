@@ -34,6 +34,7 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,       this, &SeerEditorConfigPage::handleFontChanged);
     QObject::connect(fontDialogButton,            &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleFontDialog);
     QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleEnabledChanged);
+    QObject::connect(highlighterSuffixesLineEdit, &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
     // Set the defaults.
@@ -121,7 +122,6 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
         QObject::connect(fontItalicBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
         QObject::connect(foregroundColorButton,         &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
         QObject::connect(backgroundColorButton,         &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(highlighterSuffixesLineEdit,   &QLineEdit::returnPressed,                                   this, &SeerEditorConfigPage::handleHighlighterChanged);
     }
 
     highlighterTableWidget->setVerticalHeaderLabels(keys);

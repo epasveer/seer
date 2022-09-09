@@ -243,6 +243,13 @@ void QHistoryLineEdit::wheelEvent (QWheelEvent* ev) {
     }
 }
 
+void QHistoryLineEdit::focusOutEvent (QFocusEvent* ev) {
+
+    QLineEdit::focusOutEvent(ev);
+
+    emit lostFocus();
+}
+
 void QHistoryLineEdit::previousLine () {
 
     if ( _lines.empty() ) {

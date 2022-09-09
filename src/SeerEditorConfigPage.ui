@@ -64,7 +64,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="highlighterSuffixesLineEdit">
+      <widget class="QHistoryLineEdit" name="highlighterSuffixesLineEdit">
        <property name="toolTip">
         <string>C/C++ source suffixes. Separated by '|'.</string>
        </property>
@@ -207,6 +207,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header location="global">SeerEditorWidgetSource.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
