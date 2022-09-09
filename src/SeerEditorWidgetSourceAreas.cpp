@@ -626,7 +626,7 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegExp cpp_re("(?:.c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX)$");
+    QRegExp cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
         _sourceHighlighter = new SeerCppSourceHighlighter(0);
 

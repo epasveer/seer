@@ -109,20 +109,19 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
         // Insert the font color.
         QColorButton* foregroundColorButton = new QColorButton;
         foregroundColorButton->setColor(format.foreground().color());
-      //foregroundColorButton->setFixedWidth(50);
 
         QColorButton* backgroundColorButton = new QColorButton;
         backgroundColorButton->setColor(format.background().color());
-      //backgroundColorButton->setFixedWidth(50);
 
         highlighterTableWidget->setCellWidget(r, 2, foregroundColorButton);
         highlighterTableWidget->setCellWidget(r, 3, backgroundColorButton);
 
         // Connect things to watch for changes.
-        QObject::connect(fontWeightBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(fontItalicBox,             QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(foregroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
-        QObject::connect(backgroundColorButton,     &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontWeightBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(fontItalicBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),         this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(foregroundColorButton,         &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(backgroundColorButton,         &QColorButton::colorChanged,                                 this, &SeerEditorConfigPage::handleHighlighterChanged);
+        QObject::connect(highlighterSuffixesLineEdit,   &QLineEdit::returnPressed,                                   this, &SeerEditorConfigPage::handleHighlighterChanged);
     }
 
     highlighterTableWidget->setVerticalHeaderLabels(keys);
@@ -131,6 +130,9 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     highlighterTableWidget->resizeColumnToContents(1); // Italic
     highlighterTableWidget->resizeColumnToContents(2); // Foreground color
     highlighterTableWidget->resizeColumnToContents(3); // Background color
+
+    highlighterSuffixesLineEdit->setText(_highlighterSettings.sourceSuffixes());
+    highlighterSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
@@ -261,6 +263,9 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         // Add the format to our settings.
         cppSettings.add(key, format);
     }
+
+    // Get list of source suffixes.
+    cppSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
 
     // Update our view.
     setHighlighterSettings(cppSettings);

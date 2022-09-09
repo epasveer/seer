@@ -868,6 +868,8 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
+            settings.setValue("suffixes", highlighter.sourceSuffixes());
+
         } settings.endGroup();
     } settings.endGroup();
 
@@ -951,6 +953,10 @@ void SeerMainWindow::readConfigSettings () {
 
                     highlighter.add(keys[i], f);
                 } settings.endGroup();
+            }
+
+            if (settings.contains("suffixes")) {
+                highlighter.setSourceSuffixes(settings.value("suffixes").toString());
             }
 
             gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);

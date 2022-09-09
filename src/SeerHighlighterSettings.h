@@ -19,6 +19,8 @@ class SeerHighlighterSettings {
         QTextCharFormat                         get                     (const QString& name) const;
         void                                    add                     (const QString& name, QTextCharFormat& format);
         int                                     count                   () const;
+        void                                    setSourceSuffixes       (const QString& suffixes);
+        const QString&                          sourceSuffixes          ();
 
         static QStringList                      themeNames              ();
         static SeerHighlighterSettings          populateForCPP          (const QString& themeName);
@@ -27,5 +29,6 @@ class SeerHighlighterSettings {
 
     private:
         QMap<QString, QTextCharFormat>          _formats;
+        QString                                 _sourceSuffixes;
 };
 

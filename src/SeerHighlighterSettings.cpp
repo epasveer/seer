@@ -14,7 +14,8 @@ SeerHighlighterSettings::~SeerHighlighterSettings () {
 
 SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlighterSettings& rhs) {
 
-    _formats = rhs._formats;
+    _formats        = rhs._formats;
+    _sourceSuffixes = rhs._sourceSuffixes;
 
     return *this;
 }
@@ -50,6 +51,16 @@ void SeerHighlighterSettings::add (const QString& name, QTextCharFormat& format)
 int SeerHighlighterSettings::count () const {
 
     return _formats.size();
+}
+
+void SeerHighlighterSettings::setSourceSuffixes (const QString& suffixes) {
+
+    _sourceSuffixes = suffixes;
+}
+
+const QString& SeerHighlighterSettings::sourceSuffixes () {
+
+    return _sourceSuffixes;
 }
 
 QStringList SeerHighlighterSettings::themeNames() {
@@ -148,6 +159,8 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     f.setBackground(QColor("#c0c0c0"));
     cppSettings.add("Match", f);
 
+    cppSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+
     return cppSettings;
 }
 
@@ -226,6 +239,8 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
     f.setForeground(QColor("#000000"));
     f.setBackground(QColor("#737373"));
     cppSettings.add("Match", f);
+
+    cppSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
 
     return cppSettings;
 }
