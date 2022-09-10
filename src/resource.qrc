@@ -8,7 +8,6 @@
     <file>resources/about.txt</file>
     <file>resources/next.png</file>
     <file>resources/stop.png</file>
-    <file>resources/quit.png</file>
     <file>resources/restart.png</file>
     <file>resources/step_over.png</file>
     <file>resources/step_into.png</file>
