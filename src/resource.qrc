@@ -18,6 +18,7 @@
     <file>resources/thenounproject/array.svg</file>
     <file>resources/thenounproject/source.svg</file>
     <file>resources/thenounproject/assembly.svg</file>
+    <file>resources/thenounproject/keyboard.svg</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
     <file>resources/icons-icons/keyboard.png</file>
@@ -26,11 +27,11 @@
     <file>resources/icons-icons/arguments.png</file>
     <file>resources/icons-icons/debug.png</file>
     <file>resources/icons-icons/exit.png</file>
-    <file>resources/flaticon/configure.png</file>
-    <file>resources/flaticon/console.png</file>
-    <file>resources/flaticon/hide.png</file>
-    <file>resources/flaticon/maximize.png</file>
-    <file>resources/flaticon/minimize.png</file>
+    <file>resources/icons-icons/console.png</file>
+    <file>resources/icons-icons/hide.png</file>
+    <file>resources/icons-icons/maximize.png</file>
+    <file>resources/icons-icons/minimize.png</file>
+    <file>resources/icons-icons/style.png</file>
     <file>resources/flaticon/up_arrow.png</file>
     <file>resources/flaticon/down_arrow.png</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>

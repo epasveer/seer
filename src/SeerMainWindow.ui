@@ -52,7 +52,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/console.png</normaloff>:/seer/resources/console.png</iconset>
+       <normaloff>:/seer/resources/icons-icons/console.png</normaloff>:/seer/resources/icons-icons/console.png</iconset>
      </property>
      <addaction name="actionConsoleNormal"/>
      <addaction name="actionConsoleMinimized"/>
@@ -61,6 +61,10 @@
     <widget class="QMenu" name="menuStyles">
      <property name="title">
       <string>Styles</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/icons-icons/style.png</normaloff>:/seer/resources/icons-icons/style.png</iconset>
      </property>
     </widget>
     <addaction name="actionViewMemoryVisualizer"/>
@@ -444,7 +448,7 @@
   <action name="actionConsoleNormal">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/maximize.png</normaloff>:/seer/resources/maximize.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/maximize.png</normaloff>:/seer/resources/icons-icons/maximize.png</iconset>
    </property>
    <property name="text">
     <string>Normal</string>
@@ -456,7 +460,7 @@
   <action name="actionConsoleHidden">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/hide.png</normaloff>:/seer/resources/hide.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/hide.png</normaloff>:/seer/resources/icons-icons/hide.png</iconset>
    </property>
    <property name="text">
     <string>Hidden</string>
@@ -468,7 +472,7 @@
   <action name="actionConsoleMinimized">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/minimize.png</normaloff>:/seer/resources/minimize.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/minimize.png</normaloff>:/seer/resources/icons-icons/minimize.png</iconset>
    </property>
    <property name="text">
     <string>Minimized</string>
@@ -505,6 +509,10 @@
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/assembly.png</normaloff>:/seer/resources/assembly.png</iconset>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/assembly.svg</normaloff>:/seer/resources/thenounproject/assembly.svg</iconset>
    </property>
    <property name="text">
     <string>Assembly View</string>

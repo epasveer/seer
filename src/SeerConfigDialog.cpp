@@ -77,7 +77,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configAssemblyButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configKeysButton = new QListWidgetItem(contentsListWidget);
-    configKeysButton->setIcon(QIcon(":/seer/resources/icons-icons/keyboard.png"));
+    configKeysButton->setIcon(QIcon(":/seer/resources/thenounproject/keyboard.svg"));
     configKeysButton->setText(tr("Keys"));
     configKeysButton->setTextAlignment(Qt::AlignHCenter);
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
