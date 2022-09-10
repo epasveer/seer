@@ -424,7 +424,7 @@
   <action name="actionSettingsConfiguration">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/icons-icons/configure.png</normaloff>:/seer/resources/icons-icons/configure.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/configure.svg</normaloff>:/seer/resources/thenounproject/configure.svg</iconset>
    </property>
    <property name="text">
     <string>Configuration...</string>
