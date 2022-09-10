@@ -53,31 +53,31 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
 
     // Create icons.
     QListWidgetItem* configGdbButton = new QListWidgetItem(contentsListWidget);
-    configGdbButton->setIcon(QIcon(":/seer/resources/gdb.png"));
+    configGdbButton->setIcon(QIcon(":/seer/resources/icons-icons/gdb.png"));
     configGdbButton->setText(tr("GDB"));
     configGdbButton->setTextAlignment(Qt::AlignHCenter);
     configGdbButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configEditorButton = new QListWidgetItem(contentsListWidget);
-    configEditorButton->setIcon(QIcon(":/seer/resources/editor.png"));
+    configEditorButton->setIcon(QIcon(":/seer/resources/icons-icons/editor.png"));
     configEditorButton->setText(tr("Editor"));
     configEditorButton->setTextAlignment(Qt::AlignHCenter);
     configEditorButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configSourceButton = new QListWidgetItem(contentsListWidget);
-    configSourceButton->setIcon(QIcon(":/seer/resources/source.png"));
+    configSourceButton->setIcon(QIcon(":/seer/resources/thenounproject/source.svg"));
     configSourceButton->setText(tr("Source"));
     configSourceButton->setTextAlignment(Qt::AlignHCenter);
     configSourceButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configAssemblyButton = new QListWidgetItem(contentsListWidget);
-    configAssemblyButton->setIcon(QIcon(":/seer/resources/assembly.png"));
+    configAssemblyButton->setIcon(QIcon(":/seer/resources/thenounproject/assembly.svg"));
     configAssemblyButton->setText(tr("Assembly"));
     configAssemblyButton->setTextAlignment(Qt::AlignHCenter);
     configAssemblyButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configKeysButton = new QListWidgetItem(contentsListWidget);
-    configKeysButton->setIcon(QIcon(":/seer/resources/keyboard.png"));
+    configKeysButton->setIcon(QIcon(":/seer/resources/icons-icons/keyboard.png"));
     configKeysButton->setText(tr("Keys"));
     configKeysButton->setTextAlignment(Qt::AlignHCenter);
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

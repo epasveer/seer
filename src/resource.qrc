@@ -8,31 +8,29 @@
     <file>resources/step_over.png</file>
     <file>resources/step_into.png</file>
     <file>resources/continue.png</file>
-    <file>resources/file.png</file>
-    <file>resources/folder.png</file>
-    <file>resources/memory.png</file>
-    <file>resources/array.png</file>
-    <file>resources/exit.png</file>
-    <file>resources/arguments.png</file>
-    <file>resources/debug.png</file>
+    <file>resources/thenounproject/memory.svg</file>
+    <file>resources/thenounproject/array.svg</file>
+    <file>resources/flaticon/exit.png</file>
+    <file>resources/flaticon/arguments.png</file>
+    <file>resources/flaticon/debug.png</file>
     <file>resources/step_out.png</file>
     <file>resources/seergdb_32x32.png</file>
     <file>resources/seergdb_64x64.png</file>
     <file>resources/seergdb_128x128.png</file>
     <file>resources/seergdb_256x256.png</file>
     <file>resources/seergdb_512x512.png</file>
-    <file>resources/gdb.png</file>
-    <file>resources/editor.png</file>
-    <file>resources/source.png</file>
-    <file>resources/keyboard.png</file>
-    <file>resources/font.png</file>
-    <file>resources/console.png</file>
-    <file>resources/hide.png</file>
-    <file>resources/maximize.png</file>
-    <file>resources/minimize.png</file>
-    <file>resources/up_arrow.png</file>
-    <file>resources/down_arrow.png</file>
-    <file>resources/assembly.png</file>
+    <file>resources/icons-icons/gdb.png</file>
+    <file>resources/icons-icons/editor.png</file>
+    <file>resources/thenounproject/source.svg</file>
+    <file>resources/icons-icons/keyboard.png</file>
+    <file>resources/icons-icons/font.png</file>
+    <file>resources/flaticon/console.png</file>
+    <file>resources/flaticon/hide.png</file>
+    <file>resources/flaticon/maximize.png</file>
+    <file>resources/flaticon/minimize.png</file>
+    <file>resources/flaticon/up_arrow.png</file>
+    <file>resources/flaticon/down_arrow.png</file>
+    <file>resources/thenounproject/assembly.svg</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>
     <file>resources/RelaxLightIcons/document-open.svg</file>
     <file>resources/RelaxLightIcons/document-print.svg</file>
