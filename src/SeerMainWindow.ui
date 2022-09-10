@@ -144,7 +144,7 @@
   <action name="actionFileQuit">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/exit.png</normaloff>:/seer/resources/exit.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/exit.png</normaloff>:/seer/resources/icons-icons/exit.png</iconset>
    </property>
    <property name="text">
     <string>Quit</string>
@@ -213,7 +213,7 @@
   <action name="actionFileDebug">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/debug.png</normaloff>:/seer/resources/debug.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/debug.png</normaloff>:/seer/resources/icons-icons/debug.png</iconset>
    </property>
    <property name="text">
     <string>Debug...</string>
@@ -228,7 +228,7 @@
   <action name="actionFileArguments">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/arguments.png</normaloff>:/seer/resources/arguments.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/arguments.png</normaloff>:/seer/resources/icons-icons/arguments.png</iconset>
    </property>
    <property name="text">
     <string>Arguments...</string>
@@ -267,7 +267,7 @@
   <action name="actionMemoryVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
     <string>Memory</string>
@@ -279,7 +279,7 @@
   <action name="actionArrayVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/array.svg</normaloff>:/seer/resources/thenounproject/array.svg</iconset>
    </property>
    <property name="text">
     <string>Array</string>
@@ -291,7 +291,7 @@
   <action name="actionViewMemoryVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
     <string>Memory Visualizer</string>
@@ -303,7 +303,7 @@
   <action name="actionViewArrayVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/array.png</normaloff>:/seer/resources/array.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/array.svg</normaloff>:/seer/resources/thenounproject/array.svg</iconset>
    </property>
    <property name="text">
     <string>Array Visualizer</string>
@@ -420,7 +420,7 @@
   <action name="actionSettingsConfiguration">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/arguments.png</normaloff>:/seer/resources/arguments.png</iconset>
+     <normaloff>:/seer/resources/icons-icons/configure.png</normaloff>:/seer/resources/icons-icons/configure.png</iconset>
    </property>
    <property name="text">
     <string>Configuration...</string>
@@ -521,7 +521,7 @@
   <action name="actionViewStructVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
     <string>Struct Visualizer</string>
@@ -533,7 +533,7 @@
   <action name="actionStructVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/memory.png</normaloff>:/seer/resources/memory.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
     <string>Struct</string>
