@@ -6,13 +6,6 @@
     <file>resources/seergdb_256x256.png</file>
     <file>resources/seergdb_512x512.png</file>
     <file>resources/about.txt</file>
-    <file>resources/next.png</file>
-    <file>resources/stop.png</file>
-    <file>resources/restart.png</file>
-    <file>resources/step_over.png</file>
-    <file>resources/step_into.png</file>
-    <file>resources/step_out.png</file>
-    <file>resources/continue.png</file>
     <file>resources/thenounproject/memory.svg</file>
     <file>resources/thenounproject/array.svg</file>
     <file>resources/thenounproject/source.svg</file>
@@ -33,8 +26,6 @@
     <file>resources/icons-icons/maximize.png</file>
     <file>resources/icons-icons/minimize.png</file>
     <file>resources/icons-icons/style.png</file>
-    <file>resources/flaticon/up_arrow.png</file>
-    <file>resources/flaticon/down_arrow.png</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>
     <file>resources/RelaxLightIcons/document-open.svg</file>
     <file>resources/RelaxLightIcons/document-print.svg</file>
