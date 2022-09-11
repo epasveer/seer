@@ -19,6 +19,7 @@
     <file>resources/thenounproject/assembly.svg</file>
     <file>resources/thenounproject/keyboard.svg</file>
     <file>resources/thenounproject/configure.svg</file>
+    <file>resources/thenounproject/stop.svg</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
     <file>resources/icons-icons/keyboard.png</file>
@@ -47,6 +48,15 @@
     <file>resources/RelaxLightIcons/list-add.svg</file>
     <file>resources/RelaxLightIcons/list-remove.svg</file>
     <file>resources/RelaxLightIcons/view-refresh.svg</file>
+    <file>resources/RelaxLightIcons/debug-execute-from-cursor.svg</file>
+    <file>resources/RelaxLightIcons/debug-execute-to-cursor.svg</file>
+    <file>resources/RelaxLightIcons/debug-run-cursor.svg</file>
+    <file>resources/RelaxLightIcons/debug-run.svg</file>
+    <file>resources/RelaxLightIcons/debug-step-instruction.svg</file>
+    <file>resources/RelaxLightIcons/debug-step-into-instruction.svg</file>
+    <file>resources/RelaxLightIcons/debug-step-into.svg</file>
+    <file>resources/RelaxLightIcons/debug-step-out.svg</file>
+    <file>resources/RelaxLightIcons/debug-step-over.svg</file>
   </qresource>
 </RCC>
 

@@ -163,7 +163,7 @@
   <action name="actionGdbStart">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -172,7 +172,7 @@
   <action name="actionGdbRun">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
     <string>Run</string>
@@ -181,7 +181,7 @@
   <action name="actionGdbNext">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</iconset>
    </property>
    <property name="text">
     <string>Next</string>
@@ -190,7 +190,7 @@
   <action name="actionGdbStep">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</iconset>
    </property>
    <property name="text">
     <string>Step</string>
@@ -199,7 +199,7 @@
   <action name="actionGdbFinish">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_out.png</normaloff>:/seer/resources/step_out.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</iconset>
    </property>
    <property name="text">
     <string>Finish</string>
@@ -208,7 +208,7 @@
   <action name="actionGdbContinue">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/continue.png</normaloff>:/seer/resources/continue.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
    </property>
    <property name="text">
     <string>Continue</string>
@@ -247,7 +247,7 @@
   <action name="actionInterruptProcess">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/stop.png</normaloff>:/seer/resources/stop.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/stop.svg</normaloff>:/seer/resources/thenounproject/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Interrupt</string>
@@ -319,7 +319,7 @@
   <action name="actionControlRun">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
     <string>Run</string>
@@ -334,7 +334,7 @@
   <action name="actionControlStart">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/restart.png</normaloff>:/seer/resources/restart.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -349,7 +349,7 @@
   <action name="actionControlContinue">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/continue.png</normaloff>:/seer/resources/continue.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
    </property>
    <property name="text">
     <string>Continue</string>
@@ -364,7 +364,7 @@
   <action name="actionControlNext">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</iconset>
    </property>
    <property name="text">
     <string>Next</string>
@@ -379,7 +379,7 @@
   <action name="actionControlStep">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</iconset>
    </property>
    <property name="text">
     <string>Step</string>
@@ -394,7 +394,7 @@
   <action name="actionControlFinish">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_out.png</normaloff>:/seer/resources/step_out.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</iconset>
    </property>
    <property name="text">
     <string>Finish</string>
@@ -409,7 +409,7 @@
   <action name="actionControlInterrupt">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/stop.png</normaloff>:/seer/resources/stop.png</iconset>
+     <normaloff>:/seer/resources/thenounproject/stop.svg</normaloff>:/seer/resources/thenounproject/stop.svg</iconset>
    </property>
    <property name="text">
     <string>Interrupt</string>
@@ -484,7 +484,7 @@
   <action name="actionControlNexti">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_over.png</normaloff>:/seer/resources/step_over.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</iconset>
    </property>
    <property name="text">
     <string>Nexti</string>
@@ -496,7 +496,7 @@
   <action name="actionControlStepi">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/step_into.png</normaloff>:/seer/resources/step_into.png</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</iconset>
    </property>
    <property name="text">
     <string>Stepi</string>
