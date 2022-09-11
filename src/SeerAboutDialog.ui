@@ -40,7 +40,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QTextEdit" name="textEdit">
+       <widget class="QTextBrowser" name="textBrowser">
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
         </property>
@@ -62,6 +62,9 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
