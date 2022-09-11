@@ -12,6 +12,12 @@
     - Ignore opening files from a list of directories. Like system directories that don't exist.
     - Better sorting of program's files into "Source", "Header", and "Misc" folders in the
       SourceBrowser by having a list of filename patterns for each folder.
+* Changed to CreativeCommons and GPLv3 icons.
+    - Friendlier license to use icons.
+    - Breeze Icon set for most things. (GPLv3)
+    - Icons from these sites that require CreativeCommon license. (Simple attribution).
+        icon-icons.com
+        thenounproject.com
 
 ## [1.9] - 2022-08-30
 * Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
