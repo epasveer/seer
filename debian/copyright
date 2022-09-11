@@ -15,6 +15,141 @@ Copyright:
   2022 Norbert Lange <nolange79@gmail.com>
 License: BSD-3-clause
 
+Files:
+ src/resources/RelaxLightIcons/*
+Copyright:
+  L4ki https://github.com/L4ki
+License: GPL-3.0+
+
+Files:
+ src/resources/seergdb_*.png
+Copyright:
+  FlatIcon https://www.flaticon.com/free-icon/seer_2689789
+License: Attribution - (https://support.flaticon.com/s/article/Attribution-How-when-and-where?language=en_US)
+
+Files:
+ src/resources/icons-icons/gdb.png
+Copyright:
+  John Gardner <https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/>
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/keyboard.png
+Copyright:
+ <https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets> Dirtyworks
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/editor.png
+Copyright:
+ <https://icon-icons.com/users/14h9fJJJmBr3Dm13gYSpS/icon-sets> Piksart
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/font.png
+Copyright:
+ <https://icon-icons.com/users/2LUKwJe4QDNsjuhkS98IX/icon-sets> DaveGandy
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/configure.png
+Copyright:
+ <https://icon-icons.com/users/Nixd2U1fkolfZAGKcPLGu/icon-sets> Chameleon
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/arguments.png
+Copyright:
+ <https://icon-icons.com/users/67020lqBmzmzx0F3OH2GE/icon-sets> IconBox
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/debug.png
+Copyright:
+ <https://icon-icons.com/users/7dBLqleqakUowFGJkWLXY/icon-sets> CarbonDes
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/exit.png
+Copyright:
+ <https://icon-icons.com/users/ah334sOoBVVE7GXS94Who/icon-sets> NickyLim
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/console.png
+Copyright:
+ <https://icon-icons.com/users/Vn6TUStZ7Ng5JKLU3rRHX/icon-sets> Icons8
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/maximize.png
+Copyright:
+ <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/minimize.png
+Copyright:
+ <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/hide.png
+Copyright:
+ <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/style.png
+Copyright:
+ <https://icon-icons.com/users/7VZI9qW3el29z8Ka5fjmo/icon-sets> FreeIcons
+License: CC4.0
+
+Files:
+ src/resources/thenounproject/assembly.svg
+Copyright:
+ <https://thenounproject.com/iyikon/> iyikon
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/source.svg
+Copyright:
+ <https://thenounproject.com/kozinn/> kozinn
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/memory.svg
+Copyright:
+ <https://thenounproject.com/mudassar.hussain323/> mudassar.hussain323
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/configuratio
+Copyright:
+ <https://thenounproject.com/tomas.knopp/> tomas.knopp
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/debug.sgv
+Copyright:
+ <https://thenounproject.com/prosymbols/> prosymbols
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/keyboard.sgv
+Copyright:
+ <https://thenounproject.com/Flowicon/> Flowicon
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/stop.sgv
+Copyright:
+ <https://thenounproject.com/andre.buand10/> andre.buand10
+License: CC3.0
+
+
+
+
 License: GPL-3.0+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -57,3 +192,53 @@ License: BSD-3-clause
  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+
+ https://creativecommons.org/licenses/by/3.0/legalcode
+
+ This is a human-readable summary of (and not a substitute for) the license.
+
+ You are free to:
+    Share — copy and redistribute the material in any medium or format
+    Adapt — remix, transform, and build upon the material for any purpose,
+            even commercially.
+
+ The licensor cannot revoke these freedoms as long as you follow the
+ license terms.
+
+ Under the following terms:
+    Attribution — You must give appropriate credit, provide a link to the
+    license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor
+    endorses you or your use.
+
+    No additional restrictions — You may not apply legal terms or
+    technological measures that legally restrict others from doing
+    anything the license permits.
+
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+ https://creativecommons.org/licenses/by/4.0/legalcode
+
+ This is a human-readable summary of (and not a substitute for) the license.
+
+ You are free to:
+    Share — copy and redistribute the material in any medium or format
+    Adapt — remix, transform, and build upon the material for any purpose,
+    even commercially.
+
+ The licensor cannot revoke these freedoms as long as you follow the
+ license terms.
+
+ Under the following terms:
+    Attribution — You must give appropriate credit, provide a link to the
+    license, and indicate if changes were made. You may do so in any
+    reasonable manner, but not in any way that suggests the licensor
+    endorses you or your use.
+
+    No additional restrictions — You may not apply legal terms or
+    technological measures that legally restrict others from doing
+    anything the license permits.
+
