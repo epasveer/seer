@@ -12,6 +12,7 @@
     - Ignore opening files from a list of directories. Like system directories that don't exist.
     - Better sorting of program's files into "Source", "Header", and "Misc" folders in the
       SourceBrowser by having a list of filename patterns for each folder.
+* The list of C/C++ file suffixes for syntax highlighting is configurable.
 * Changed to CreativeCommons and GPLv3 icons.
     - Friendlier license to use icons.
     - Breeze Icon set for most things. (GPLv3)
