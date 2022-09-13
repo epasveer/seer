@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.10beta] - 2022-09-22
+## [1.10] - 2022-09-22
 * New Struct Visualizer.
     - Built apon gdb's -var-obj framework.
     - Can recursively show the contents of a struct/class.
