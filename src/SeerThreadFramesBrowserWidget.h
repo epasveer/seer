@@ -25,6 +25,7 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
         void                refreshThreadFrames         ();
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedFrame               (int frameno);
+        void                selectedThread              (int threadid);
 
     protected:
         void                showEvent                   (QShowEvent* event);

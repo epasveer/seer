@@ -140,11 +140,13 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 item->setText(12, core_text);
 
                 // Enable/disable interaction with this row depending if there is a valid file and line number.
+                /* XXX
                 if (file_text != "" && fullname_text != "" && line_text != "") {
                     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
                 }else{
                     item->setFlags(Qt::NoItemFlags);
                 }
+                */
 
                 // Add the frame to the tree.
                 threadTreeWidget->addTopLevelItem(item);
@@ -206,6 +208,7 @@ void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* it
     //qDebug() << "Emit selectedFile and selectedFrame";
 
     emit selectedFile(item->text(4), item->text(6), lineno);
+    emit selectedThread(item->text(0).toInt());
 
     // Comment out this signal. The frame number is always 0 from gdb. Why?
     //emit selectedFrame(item->text(3).toInt());
