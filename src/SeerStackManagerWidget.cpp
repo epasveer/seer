@@ -29,7 +29,7 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 
     // Connect things.
-    QObject::connect(refreshToolButton,         &QToolButton::clicked,                          this,                      &SeerStackManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(refreshToolButton,  &QToolButton::clicked,                          this,  &SeerStackManagerWidget::handleRefreshToolButtonClicked);
 }
 
 SeerStackManagerWidget::~SeerStackManagerWidget () {

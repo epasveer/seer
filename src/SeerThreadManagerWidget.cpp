@@ -14,11 +14,11 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->setMovable(true);
     tabWidget->setTabsClosable(false);
 
-    _threadIdsBrowserWidget    = new SeerThreadIdsBrowserWidget(this);
     _threadFramesBrowserWidget = new SeerThreadFramesBrowserWidget(this);
+    _threadIdsBrowserWidget    = new SeerThreadIdsBrowserWidget(this);
 
-    tabWidget->addTab(_threadIdsBrowserWidget, "Ids");
     tabWidget->addTab(_threadFramesBrowserWidget, "Frames");
+    tabWidget->addTab(_threadIdsBrowserWidget,    "Ids");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -42,7 +42,7 @@ SeerThreadFramesBrowserWidget* SeerThreadManagerWidget::threadFramesBrowserWidge
 
 void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
-    threadIdsBrowserWidget()->refresh();
     threadFramesBrowserWidget()->refresh();
+    threadIdsBrowserWidget()->refresh();
 }
 

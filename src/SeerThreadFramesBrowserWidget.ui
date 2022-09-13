@@ -31,7 +31,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Level</string>
+       <string>Target Id</string>
       </property>
      </column>
      <column>
@@ -66,7 +66,7 @@
      </column>
      <column>
       <property name="text">
-       <string>Target Id</string>
+       <string>Level</string>
       </property>
      </column>
      <column>

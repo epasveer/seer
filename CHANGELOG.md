@@ -1,6 +1,10 @@
 
 # Seer Change Log
 
+## [1.11beta] - 2022-XX-22
+* .
+    - .
+
 ## [1.10] - 2022-09-22
 * New Struct Visualizer.
     - Built apon gdb's -var-obj framework.

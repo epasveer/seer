@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Thread Info</string>
+      <string>Thread/Process Info</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">

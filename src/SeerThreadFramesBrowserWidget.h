@@ -23,6 +23,7 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
 
     signals:
         void                refreshThreadFrames         ();
+        void                refreshThreadIds            ();
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedFrame               (int frameno);
         void                selectedThread              (int threadid);

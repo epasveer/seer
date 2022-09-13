@@ -16,14 +16,14 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     threadTreeWidget->setSortingEnabled(false);
     threadTreeWidget->resizeColumnToContents(0); // id
     threadTreeWidget->resizeColumnToContents(1); // state
-    threadTreeWidget->resizeColumnToContents(2); // level
+    threadTreeWidget->resizeColumnToContents(2); // target-id
     threadTreeWidget->resizeColumnToContents(3); // func
     threadTreeWidget->resizeColumnToContents(4); // file
     threadTreeWidget->resizeColumnToContents(5); // line
     threadTreeWidget->resizeColumnToContents(6); // fullname
     threadTreeWidget->resizeColumnToContents(7); // args
     threadTreeWidget->resizeColumnToContents(8); // name
-    threadTreeWidget->resizeColumnToContents(9); // target-id
+    threadTreeWidget->resizeColumnToContents(9); // level
     threadTreeWidget->resizeColumnToContents(10); // addr
     threadTreeWidget->resizeColumnToContents(11); // arch
     threadTreeWidget->resizeColumnToContents(12); // core
@@ -127,26 +127,17 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 QTreeWidgetItem* item = new QTreeWidgetItem;
                 item->setText(0, id_text);
                 item->setText(1, state_text);
-                item->setText(2, level_text);
+                item->setText(2, targetid_text);
                 item->setText(3, func_text);
                 item->setText(4, QFileInfo(file_text).fileName());
                 item->setText(5, line_text);
                 item->setText(6, fullname_text);
                 item->setText(7, args_text);
                 item->setText(8, name_text);
-                item->setText(9, targetid_text);
+                item->setText(9, level_text);
                 item->setText(10, addr_text);
                 item->setText(11, arch_text);
                 item->setText(12, core_text);
-
-                // Enable/disable interaction with this row depending if there is a valid file and line number.
-                /* XXX
-                if (file_text != "" && fullname_text != "" && line_text != "") {
-                    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
-                }else{
-                    item->setFlags(Qt::NoItemFlags);
-                }
-                */
 
                 // Add the frame to the tree.
                 threadTreeWidget->addTopLevelItem(item);
@@ -196,6 +187,7 @@ void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerThreadFramesBrowserWidget::refresh () {
+    emit refreshThreadIds();
     emit refreshThreadFrames();
 }
 
