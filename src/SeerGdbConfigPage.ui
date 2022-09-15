@@ -87,7 +87,7 @@
          <string>Turn gdb 'async' mode on or off.</string>
         </property>
         <property name="text">
-         <string>GDB asycn mode</string>
+         <string>GDB async mode</string>
         </property>
        </widget>
       </item>
