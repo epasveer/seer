@@ -152,6 +152,20 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
             }
         }
 
+    }else if (text.startsWith("*running,thread-id=")) {
+
+        refresh();
+
+    }else if (text.startsWith("=thread-created,id=")) {
+
+        // =thread-created,id="2",group-id="i2"
+        refresh();
+
+    }else if (text.startsWith("=thread-exited,id=")) {
+
+        // =thread-exited,id="2",group-id="i2"
+        refresh();
+
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         threadTreeWidget->clear();
 

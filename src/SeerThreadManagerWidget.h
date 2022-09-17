@@ -19,9 +19,17 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         SeerThreadFramesBrowserWidget*                  threadFramesBrowserWidget           ();
 
     signals:
+        void                                            forkFollowsModeChanged              (const QString& mode);
+
+
     public slots:
+        void                                            setForkFollowsMode                  (const QString& mode);
+        QString                                         forkFollowsMode                     () const;
+
+
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
+        void                                            handleForkFollowComboBox            (int index);
 
     private:
         SeerThreadIdsBrowserWidget*                     _threadIdsBrowserWidget;

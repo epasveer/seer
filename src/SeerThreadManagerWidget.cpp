@@ -26,7 +26,8 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 
     // Connect things.
-    QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(refreshToolButton,   &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(forkFollowsComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleForkFollowComboBox);
 }
 
 SeerThreadManagerWidget::~SeerThreadManagerWidget () {
@@ -40,9 +41,26 @@ SeerThreadFramesBrowserWidget* SeerThreadManagerWidget::threadFramesBrowserWidge
     return _threadFramesBrowserWidget;
 }
 
+void SeerThreadManagerWidget::setForkFollowsMode (const QString& mode) {
+
+    forkFollowsComboBox->setCurrentText(mode);
+}
+
+QString SeerThreadManagerWidget::forkFollowsMode () const {
+
+    return forkFollowsComboBox->currentText();
+}
+
 void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
     threadFramesBrowserWidget()->refresh();
     threadIdsBrowserWidget()->refresh();
+}
+
+void SeerThreadManagerWidget::handleForkFollowComboBox (int index) {
+
+    Q_UNUSED(index);
+
+    emit forkFollowsModeChanged(forkFollowsComboBox->currentText());
 }
 

@@ -6,11 +6,11 @@
 
 int main () {
 
-    pid_t pid = fork();
+    pid_t pid = vfork();
 
     if (pid == 0) {
         printf("Hello from child! (%d)\n", getpid());
-        sleep(10);
+        sleep(2);
         exit(EXIT_SUCCESS);
     }
 
