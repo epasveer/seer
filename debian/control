@@ -1,4 +1,4 @@
-Source: seer
+Source: seergdb
 Section: devel
 Priority: optional
 Maintainer: Ernie Pasveer <epasveer@att.net>
@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 10.0.0),
 Standards-Version: 4.1.3
 Homepage: https://github.com/epasveer/seer
 
-Package: seer
+Package: seergdb
 Architecture: any
 Depends:
  ${shlibs:Depends},
