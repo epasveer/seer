@@ -8,6 +8,8 @@ QAllowEditDelegate::QAllowEditDelegate(QObject* parent) : QStyledItemDelegate(pa
 
 void QAllowEditDelegate::setModelData (QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
 
+    emit editingStarted(index);
+
     QStyledItemDelegate::setModelData(editor, model, index);
 
     emit editingFinished(index);

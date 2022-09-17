@@ -75,6 +75,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemCollapsed);
     QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAll);
     QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAll);
+    QObject::connect(editDelegate,           &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
     QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
 
     // Show/hide columns.
@@ -187,7 +188,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             }
 
             // Ask for its editable attributes.
-            emit varObjAttributes (varObjID, name_text);
+            //XXX emit varObjAttributes (varObjID, name_text);
 
             // If there are children, add a placeholder.
             if (numchild_text != "0") {
@@ -287,13 +288,14 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     item->setText(7, threadid_text);
                     item->setText(8, hasmore_text);
                     item->setText(9, "");
+                    item->setFlags(item->flags() | Qt::ItemIsEditable); //XXX
 
                     if (exp_text != "") {
                         item->setText(0, exp_text);
                     }
 
                     // Ask for its editable attributes.
-                    emit varObjAttributes (varObjID, name_text);
+                    //XXX emit varObjAttributes (varObjID, name_text);
 
                     // If there are children, add a placeholder.
                     bool expandItem = false;
@@ -444,7 +446,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
 
-        //qDebug() << text;
+        qDebug() << text;
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
@@ -454,6 +456,13 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
             QMessageBox::warning(this, "Seer",
                                  QString("Visualizer Error: '%1'\n").arg(Seer::filterEscapes(msg_text)),
                                  QMessageBox::Ok);
+
+        }
+
+        if (msg_text.contains("Variable object is not editable")) {
+            if (_previousEditName != "") {
+                emit varObjListChildren(_variableId, Seer::varObjParent(_previousEditName));
+            }
         }
 
 
@@ -695,6 +704,11 @@ void SeerVarVisualizerWidget::handleItemEntered (QTreeWidgetItem* item, int colu
         for (int i=0; i<variableTreeWidget->columnCount(); i++) { // Set tooltip to all columns.
             item->setToolTip(i, text);
         }
+
+        // Ask for its editable attributes.
+        if (item->text(4) != "") {
+            //XXX emit varObjAttributes (item->text(4).toInt(), item->text(3));
+        }
     }
 }
 
@@ -823,7 +837,23 @@ void SeerVarVisualizerWidget::handleVariableNameLineEdit () {
     setVariableName (variableNameLineEdit->text());
 }
 
-void SeerVarVisualizerWidget::handleIndexEditingFinished  (const QModelIndex& index) {
+void SeerVarVisualizerWidget::handleIndexEditingStarted (const QModelIndex& index) {
+
+    _previousEditName  = "";
+    _previousEditValue = "";
+
+    QTreeWidgetItem* item = variableTreeWidget->getItemFromIndex(index);
+
+    if (item == 0) {
+        return;
+    }
+
+    // Get the old value;
+    _previousEditName  = item->text(3);
+    _previousEditValue = item->text(1);
+}
+
+void SeerVarVisualizerWidget::handleIndexEditingFinished (const QModelIndex& index) {
 
     QTreeWidgetItem* item = variableTreeWidget->getItemFromIndex(index);
 
@@ -833,6 +863,15 @@ void SeerVarVisualizerWidget::handleIndexEditingFinished  (const QModelIndex& in
 
     // Get the new value;
     QString value = item->text(1);
+
+    // If it hasn't changed, we do need to bother.
+    if (value == _previousEditValue) {
+
+        _previousEditName  = "";
+        _previousEditValue = "";
+
+        return;
+    }
 
     // Emit the signal to change the varobj to the new value.
     emit varObjAssign(_variableId, item->text(3), value);

@@ -33,6 +33,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleRefreshButton                 ();
         void                handleDebugCheckBox                 ();
         void                handleVariableNameLineEdit          ();
+        void                handleIndexEditingStarted           (const QModelIndex& index);
         void                handleIndexEditingFinished          (const QModelIndex& index);
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
@@ -58,5 +59,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
 
         int                 _variableId;
         QString             _variableName;
+        QString             _previousEditName;
+        QString             _previousEditValue;
 };
 

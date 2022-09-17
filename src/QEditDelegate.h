@@ -14,7 +14,8 @@ class QAllowEditDelegate : public QStyledItemDelegate {
         virtual void        setModelData            (QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
 
     signals:
-        void                editingFinished         (const QModelIndex& ) const;
+        void                editingStarted          (const QModelIndex& index) const;
+        void                editingFinished         (const QModelIndex& index) const;
 };
 
 class QNoEditDelegate : public QStyledItemDelegate {
