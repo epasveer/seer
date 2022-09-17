@@ -252,18 +252,16 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 QString threadid_text = Seer::parseFirst(child_text, "thread-id=", '"', '"', false);
 
                 // Do we have an existing item to add to?
-                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 3);
+                QTreeWidgetItem* matchItem = findItem(Seer::varObjParent(name_text), Qt::MatchExactly|Qt::MatchRecursive, 3);
 
                 // No, just add to the top level.
-                if (matches.size() == 0) {
+                if (matchItem == 0) {
 
                     // This shouldn't really happen.
                     qDebug() << name_text << "from the listchildren does not exist in the tree.";
 
                 // Yes, add to it.
                 }else{
-
-                    QTreeWidgetItem* matchItem = matches.takeFirst();
 
                     // See if item has a "..." child. If so, remove it and any other siblings.
                     if (matchItem->childCount() > 0) {
@@ -366,45 +364,42 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 QString dynamic_text      = Seer::parseFirst(child_text, "dynamic=",       '"', '"', false);
                 QString hasmore_text      = Seer::parseFirst(child_text, "has_more=",      '"', '"', false);
 
-
                 // Do we have an existing item to add to?
-                QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(name_text, Qt::MatchExactly|Qt::MatchRecursive, 3);
+                QTreeWidgetItem* matchItem = findItem(name_text, Qt::MatchExactly|Qt::MatchRecursive, 3);
 
                 // No, just add to the top level.
-                if (matches.size() == 0) {
+                if (matchItem == 0) {
 
                     qDebug() << name_text << "from the changelist does not exist in the tree.";
 
                 // Yes, add to it.
                 }else{
 
-                    QTreeWidgetItem* item = matches.takeFirst();
-
-                    item->setText(1, Seer::filterEscapes(value_text));
-                    item->setText(7, hasmore_text);
+                    matchItem->setText(1, Seer::filterEscapes(value_text));
+                    matchItem->setText(7, hasmore_text);
 
                     // If there are children, add a placeholder.
-                    if (item->text(5) != "0") {
-                        if (item->text(2).endsWith('*')) {
-                            if (Seer::filterEscapes(item->text(1)) != "0x0") {
+                    if (matchItem->text(5) != "0") {
+                        if (matchItem->text(2).endsWith('*')) {
+                            if (Seer::filterEscapes(matchItem->text(1)) != "0x0") {
                                 // If it is a pointer that is not null, add a placeholder.  How universal is this for other languages?
                                 QTreeWidgetItem* child = new QTreeWidgetItem;
                                 child->setText(0, "{...}");
-                                child->setText(3, item->text(3));
+                                child->setText(3, matchItem->text(3));
 
-                                item->addChild(child);
+                                matchItem->addChild(child);
 
                             }else{
-                                deleteItems(item->takeChildren());
+                                deleteItems(matchItem->takeChildren());
                             }
 
                         }else{
                             // A non-pointer child, add a placeholder.
                             QTreeWidgetItem* child = new QTreeWidgetItem;
                             child->setText(0, "{...}");
-                            child->setText(3, item->text(3));
+                            child->setText(3, matchItem->text(3));
 
-                            item->addChild(child);
+                            matchItem->addChild(child);
                         }
                     }
 
@@ -428,25 +423,20 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         QString editable_text = Seer::parseFirst(text, "attr=",  '"', '"', false);
 
         // Do we have any items that match the varobjid?
-        QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(id_text, Qt::MatchExactly|Qt::MatchRecursive, 4);
+        QTreeWidgetItem* matchItem = findItem(id_text, Qt::MatchExactly|Qt::MatchRecursive, 4);
 
-        if (matches.size() > 0) {
-
-            QTreeWidgetItem* item = matches.takeFirst();
-
-            item->setText(9, editable_text);
+        if (matchItem) {
+            matchItem->setText(9, editable_text);
 
             if (editable_text == "editable") {
-                item->setFlags(item->flags() | Qt::ItemIsEditable);
+                matchItem->setFlags(matchItem->flags() | Qt::ItemIsEditable);
             }else{
-                item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+                matchItem->setFlags(matchItem->flags() & ~Qt::ItemIsEditable);
             }
         }
 
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
-
-        qDebug() << text;
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
@@ -460,8 +450,13 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
         if (msg_text.contains("Variable object is not editable")) {
+
             if (_previousEditName != "") {
-                emit varObjListChildren(_variableId, Seer::varObjParent(_previousEditName));
+
+                QTreeWidgetItem* matchItem = findItem(_previousEditName, Qt::MatchExactly|Qt::MatchRecursive, 3);
+                if (matchItem) {
+                    matchItem->setText(1, _previousEditValue);
+                }
             }
         }
 
@@ -875,6 +870,17 @@ void SeerVarVisualizerWidget::handleIndexEditingFinished (const QModelIndex& ind
 
     // Emit the signal to change the varobj to the new value.
     emit varObjAssign(_variableId, item->text(3), value);
+}
+
+QTreeWidgetItem* SeerVarVisualizerWidget::findItem (const QString& text, Qt::MatchFlags flags, int column) {
+
+    QList<QTreeWidgetItem*> matches = variableTreeWidget->findItems(text, flags, column);
+
+    if (matches.size() == 0) {
+        return nullptr;
+    }
+
+    return matches[0];
 }
 
 void SeerVarVisualizerWidget::writeSettings () {

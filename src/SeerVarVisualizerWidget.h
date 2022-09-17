@@ -45,6 +45,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                handleHideDebugColumns              (bool flag);
 
     protected:
+        QTreeWidgetItem*    findItem                            (const QString& text, Qt::MatchFlags flags, int column);
         void                writeSettings                       ();
         void                readSettings                        ();
         void                resizeEvent                         (QResizeEvent* event);
