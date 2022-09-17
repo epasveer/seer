@@ -18,7 +18,7 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
         void                refresh                     ();
 
     protected slots:
-        void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemClicked           (QTreeWidgetItem* item, int column);
         void                handleItemEntered           (QTreeWidgetItem* item, int column);
 
     signals:

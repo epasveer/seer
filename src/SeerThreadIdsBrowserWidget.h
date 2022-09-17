@@ -14,7 +14,7 @@ class SeerThreadIdsBrowserWidget : public QWidget, protected Ui::SeerThreadIdsBr
 
     public slots:
         void                handleText                  (const QString& text);
-        void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
+        void                handleItemClicked           (QTreeWidgetItem* item, int column);
         void                handleStoppingPointReached  ();
         void                refresh                     ();
 

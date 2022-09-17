@@ -31,7 +31,7 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     threadTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(threadTreeWidget, &QTreeWidget::itemDoubleClicked,    this, &SeerThreadFramesBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(threadTreeWidget, &QTreeWidget::itemClicked,          this, &SeerThreadFramesBrowserWidget::handleItemClicked);
     QObject::connect(threadTreeWidget, &QTreeWidget::itemEntered,          this, &SeerThreadFramesBrowserWidget::handleItemEntered);
 }
 
@@ -205,7 +205,7 @@ void SeerThreadFramesBrowserWidget::refresh () {
     emit refreshThreadFrames();
 }
 
-void SeerThreadFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+void SeerThreadFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
 
