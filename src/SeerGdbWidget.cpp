@@ -205,6 +205,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedFile,                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedThread,                                             this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
+    QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::schedulerLockingModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbSchedulerLockingMode);
+    QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::scheduleMultipleModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbScheduleMultipleMode);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::forkFollowsModeChanged,                                           this,                                                           &SeerGdbWidget::handleGdbForkFollowMode);
 
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::refreshBreakpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
@@ -2500,19 +2502,37 @@ void SeerGdbWidget::setAssemblySymbolDemagling (const QString& onoff) {
     }
 }
 
+void SeerGdbWidget::handleGdbSchedulerLockingMode (QString mode) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-gdb-set scheduler-locking %1").arg(mode));
+}
+
+void SeerGdbWidget::handleGdbScheduleMultipleMode (QString mode) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-gdb-set schedule-multiple %1").arg(mode));
+}
+
 void SeerGdbWidget::handleGdbForkFollowMode (QString mode) {
 
     if (executableLaunchMode() == "") {
         return;
     }
 
-    if (mode == "Parent") {
+    if (mode == "parent") {
         handleGdbCommand("-gdb-set follow-fork-mode parent");
         handleGdbCommand("-gdb-set detach-on-fork   on");
-    }else if (mode == "Child") {
+    }else if (mode == "child") {
         handleGdbCommand("-gdb-set follow-fork-mode child");
         handleGdbCommand("-gdb-set detach-on-fork   on");
-    }else if (mode == "Both") {
+    }else if (mode == "both") {
         handleGdbCommand("-gdb-set follow-fork-mode parent");
         handleGdbCommand("-gdb-set detach-on-fork   off");
     }else{

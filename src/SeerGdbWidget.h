@@ -247,6 +247,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbSaveBreakpoints            ();
         void                                handleGdbAssemblyDisassemblyFlavor  ();
         void                                handleGdbAssemblySymbolDemangling   ();
+        void                                handleGdbSchedulerLockingMode       (QString mode);
+        void                                handleGdbScheduleMultipleMode       (QString mode);
         void                                handleGdbForkFollowMode             (QString mode);
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);

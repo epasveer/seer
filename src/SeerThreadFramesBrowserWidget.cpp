@@ -176,11 +176,11 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
     threadTreeWidget->resizeColumnToContents(0);
     threadTreeWidget->resizeColumnToContents(1);
     threadTreeWidget->resizeColumnToContents(2);
-    threadTreeWidget->resizeColumnToContents(3);
-    threadTreeWidget->resizeColumnToContents(4);
+  //threadTreeWidget->resizeColumnToContents(3); // Don't resize.
+  //threadTreeWidget->resizeColumnToContents(4); // Don't resize.
     threadTreeWidget->resizeColumnToContents(5);
-    threadTreeWidget->resizeColumnToContents(6);
-  //threadTreeWidget->resizeColumnToContents(7); // Don't resize args.
+  //threadTreeWidget->resizeColumnToContents(6); // Don't resize.
+  //threadTreeWidget->resizeColumnToContents(7); // Don't resize.
     threadTreeWidget->resizeColumnToContents(8);
     threadTreeWidget->resizeColumnToContents(9);
     threadTreeWidget->resizeColumnToContents(10);

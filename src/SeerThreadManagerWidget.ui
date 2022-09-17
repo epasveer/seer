@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>854</width>
+    <width>748</width>
     <height>571</height>
    </rect>
   </property>
@@ -25,50 +25,127 @@
      <property name="title">
       <string>Thread/Process Info</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
        <widget class="QDetachTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>-1</number>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="schedulerLockingLabel">
+          <property name="text">
+           <string>Scheduler locking:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="schedulerLockingComboBox">
+          <property name="toolTip">
+           <string>Set the scheduler locking mode.</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>replay</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>off</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>on</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>step</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="scheduleMultipleLabel">
+          <property name="toolTip">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Schedule multiple:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="scheduleMultipleComboBox">
+          <property name="toolTip">
+           <string>Set the mode for allowing threads of multiple processes to be resumed when an execution command is issued.</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>off</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>on</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <spacer name="horizontalSpacer_1">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>288</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
          <widget class="QLabel" name="forkFollowsLabel">
           <property name="text">
            <string>Fork follows:</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <widget class="QComboBox" name="forkFollowsComboBox">
+          <property name="toolTip">
+           <string>Set the debugger response to a program call of fork or vfork.</string>
+          </property>
           <item>
            <property name="text">
-            <string>Parent</string>
+            <string>parent</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Child</string>
+            <string>child</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Both</string>
+            <string>both</string>
            </property>
           </item>
          </widget>
         </item>
-        <item>
-         <spacer name="horizontalSpacer">
+        <item row="1" column="2" colspan="3">
+         <spacer name="horizontalSpacer_2">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>508</width>
             <height>20</height>
            </size>
           </property>

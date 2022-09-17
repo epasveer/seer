@@ -26,8 +26,10 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 
     // Connect things.
-    QObject::connect(refreshToolButton,   &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(forkFollowsComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleForkFollowComboBox);
+    QObject::connect(refreshToolButton,        &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(schedulerLockingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleSchedulerLockingComboBox);
+    QObject::connect(scheduleMultipleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleScheduleMultipleComboBox);
+    QObject::connect(forkFollowsComboBox,      QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleForkFollowComboBox);
 }
 
 SeerThreadManagerWidget::~SeerThreadManagerWidget () {
@@ -39,6 +41,26 @@ SeerThreadIdsBrowserWidget* SeerThreadManagerWidget::threadIdsBrowserWidget () {
 
 SeerThreadFramesBrowserWidget* SeerThreadManagerWidget::threadFramesBrowserWidget () {
     return _threadFramesBrowserWidget;
+}
+
+void SeerThreadManagerWidget::setSchedulerLockingMode (const QString& mode) {
+
+    schedulerLockingComboBox->setCurrentText(mode);
+}
+
+QString SeerThreadManagerWidget::schedulerLockingMode () const {
+
+    return schedulerLockingComboBox->currentText();
+}
+
+void SeerThreadManagerWidget::setScheduleMultipleMode (const QString& mode) {
+
+    scheduleMultipleComboBox->setCurrentText(mode);
+}
+
+QString SeerThreadManagerWidget::scheduleMultipleMode () const {
+
+    return scheduleMultipleComboBox->currentText();
 }
 
 void SeerThreadManagerWidget::setForkFollowsMode (const QString& mode) {
@@ -55,6 +77,20 @@ void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
     threadFramesBrowserWidget()->refresh();
     threadIdsBrowserWidget()->refresh();
+}
+
+void SeerThreadManagerWidget::handleSchedulerLockingComboBox (int index) {
+
+    Q_UNUSED(index);
+
+    emit schedulerLockingModeChanged(schedulerLockingComboBox->currentText());
+}
+
+void SeerThreadManagerWidget::handleScheduleMultipleComboBox (int index) {
+
+    Q_UNUSED(index);
+
+    emit scheduleMultipleModeChanged(scheduleMultipleComboBox->currentText());
 }
 
 void SeerThreadManagerWidget::handleForkFollowComboBox (int index) {

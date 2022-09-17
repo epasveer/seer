@@ -2,8 +2,20 @@
 # Seer Change Log
 
 ## [1.11beta] - 2022-XX-22
-* .
-    - .
+* Thread/Process manager.
+    - Add a fork/vfork mode. Follow:
+        - Parent process.
+        - Child process.
+        - Both (switchable via thread manager)
+        - (see gdb's follow-fork-mode and detach-on-fork modes)
+    - Add thread execution mode. Execute:
+        - Selected thread only.
+        - All threads
+        - (see gdb's scheduler-locking mode)
+    - Add multi-process execution mode.
+        - Execute selected process.
+        - Execute all processes.
+        - (see gdb's schedule-multiple mode)
 
 ## [1.10] - 2022-09-22
 * New Struct Visualizer.
