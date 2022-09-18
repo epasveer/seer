@@ -70,6 +70,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog.\nSave settings with:\n    'Settings->Save Configuration'"));
     parser.addOption(configOption);
 
+    QCommandLineOption xxdebugOption(QStringList()<<"xxdebug", QCoreApplication::translate("main", "Turn on internal Seer debugging messages."));
+    parser.addOption(xxdebugOption);
+
 
     // A positional argument for executable name.
     // All other arguments after that are treated as positional arguments for the executable.
@@ -78,6 +81,14 @@ int main (int argc, char* argv[]) {
 
     // Process the arguments.
     parser.process(app);
+
+    if (parser.isSet(xxdebugOption)) {
+        QLoggingCategory::setFilterRules("*.debug=false\n"
+                                         "*.info=false\n"
+                                         "*.warning=false\n"
+                                         "*.critical=true\n"
+                                         "default.debug=true");
+    }
 
     // Get the positional arguments. (The ones at the end of the line - executable name and its arguments.
     QStringList positionalArguments = parser.positionalArguments();
