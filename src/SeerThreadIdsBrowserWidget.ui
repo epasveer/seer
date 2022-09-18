@@ -21,7 +21,7 @@
      </property>
      <column>
       <property name="text">
-       <string>Id</string>
+       <string>Thread Id</string>
       </property>
      </column>
     </widget>

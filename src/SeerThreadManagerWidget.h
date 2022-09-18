@@ -1,7 +1,8 @@
 #pragma once
 
-#include "SeerThreadIdsBrowserWidget.h"
 #include "SeerThreadFramesBrowserWidget.h"
+#include "SeerThreadIdsBrowserWidget.h"
+#include "SeerThreadGroupsBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -15,14 +16,14 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         explicit SeerThreadManagerWidget (QWidget* parent = 0);
        ~SeerThreadManagerWidget ();
 
-        SeerThreadIdsBrowserWidget*                     threadIdsBrowserWidget              ();
         SeerThreadFramesBrowserWidget*                  threadFramesBrowserWidget           ();
+        SeerThreadIdsBrowserWidget*                     threadIdsBrowserWidget              ();
+        SeerThreadGroupsBrowserWidget*                  threadGroupsBrowserWidget           ();
 
     signals:
         void                                            schedulerLockingModeChanged         (const QString& mode);
         void                                            scheduleMultipleModeChanged         (const QString& mode);
         void                                            forkFollowsModeChanged              (const QString& mode);
-
 
     public slots:
         void                                            setSchedulerLockingMode             (const QString& mode);
@@ -41,7 +42,8 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         void                                            handleForkFollowComboBox            (int index);
 
     private:
-        SeerThreadIdsBrowserWidget*                     _threadIdsBrowserWidget;
         SeerThreadFramesBrowserWidget*                  _threadFramesBrowserWidget;
+        SeerThreadIdsBrowserWidget*                     _threadIdsBrowserWidget;
+        SeerThreadGroupsBrowserWidget*                  _threadGroupsBrowserWidget;
 };
 

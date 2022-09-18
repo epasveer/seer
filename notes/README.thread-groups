@@ -3,6 +3,22 @@
 
     ^done,groups=[
                     {
+                        id="i1",
+                        type="process",
+                        pid="5424",
+                        executable="/home/erniep/Development/Peak/src/seer/tests/helloinferior/helloinferior",
+                        cores=["0"]
+                    },
+                    {   id="i2",
+                        type="process",
+                        pid="5432",
+                        executable="/home/erniep/Development/Peak/src/seer/tests/helloinferior/helloinferior",
+                        cores=["5"]
+                    }
+                 ]
+
+    ^done,groups=[
+                    {
                         id=\"i1\",
                         type=\"process\",
                         pid=\"19521\",
@@ -11,7 +27,72 @@
                     }
                 ]
 
+    ^done,groups=[
+                    {
+                        id="i1",
+                        type="process",
+                        pid="3665",
+                        executable="/home/erniep/Development/Peak/src/Apps/Explorer/explorer",
+                        cores=["0","2","4","5","6","7"]
+                    }
+                 ]
+
+
 -list-thread-groups --recurse 1
+
+    ^done,groups=[
+                    {
+                        id="i1",
+                        type="process",
+                        pid="5424",
+                        executable="/home/erniep/Development/Peak/src/seer/tests/helloinferior/helloinferior",
+                        cores=["0"],
+                        threads=[
+                                    {
+                                        id="1",
+                                        target-id="process 5424",
+                                        name="helloinferior",
+                                        frame={
+                                                level="0",
+                                                addr="0x0000000000400702",
+                                                func="main",
+                                                args=[],
+                                                file="helloinferior.c",
+                                                fullname="/home/erniep/Development/Peak/src/seer/tests/helloinferior/helloinferior.c",
+                                                line="11",
+                                                arch="i386:x86-64"
+                                              },
+                                        state="stopped",
+                                        core="0"
+                                    }
+                                ]
+                    },
+
+                    {
+                        id="i2",
+                        type="process",
+                        pid="5432",
+                        executable="/home/erniep/Development/Peak/src/seer/tests/helloinferior/helloinferior",
+                        cores=["5"],
+                        threads=[
+                                    {
+                                        id="2",
+                                        target-id="process 5432",
+                                        name="helloinferior",
+                                        frame={
+                                                level="0",
+                                                addr="0x00007ffff7147a68",
+                                                func="fork",
+                                                args=[],
+                                                from="/lib64/libc.so.6",
+                                                arch="i386:x86-64"},
+                                                state="stopped",
+                                                core="5"
+                                    }
+                                ]
+                    }
+                 ]
+
 
     ^done,groups=[
                     {

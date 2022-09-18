@@ -16,9 +16,11 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
 
     _threadFramesBrowserWidget = new SeerThreadFramesBrowserWidget(this);
     _threadIdsBrowserWidget    = new SeerThreadIdsBrowserWidget(this);
+    _threadGroupsBrowserWidget = new SeerThreadGroupsBrowserWidget(this);
 
     tabWidget->addTab(_threadFramesBrowserWidget, "Frames");
     tabWidget->addTab(_threadIdsBrowserWidget,    "Ids");
+    tabWidget->addTab(_threadGroupsBrowserWidget, "Groups");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -35,12 +37,16 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
 SeerThreadManagerWidget::~SeerThreadManagerWidget () {
 }
 
+SeerThreadFramesBrowserWidget* SeerThreadManagerWidget::threadFramesBrowserWidget () {
+    return _threadFramesBrowserWidget;
+}
+
 SeerThreadIdsBrowserWidget* SeerThreadManagerWidget::threadIdsBrowserWidget () {
     return _threadIdsBrowserWidget;
 }
 
-SeerThreadFramesBrowserWidget* SeerThreadManagerWidget::threadFramesBrowserWidget () {
-    return _threadFramesBrowserWidget;
+SeerThreadGroupsBrowserWidget* SeerThreadManagerWidget::threadGroupsBrowserWidget () {
+    return _threadGroupsBrowserWidget;
 }
 
 void SeerThreadManagerWidget::setSchedulerLockingMode (const QString& mode) {
@@ -77,6 +83,7 @@ void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
     threadFramesBrowserWidget()->refresh();
     threadIdsBrowserWidget()->refresh();
+    threadGroupsBrowserWidget()->refresh();
 }
 
 void SeerThreadManagerWidget::handleSchedulerLockingComboBox (int index) {

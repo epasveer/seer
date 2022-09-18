@@ -72,6 +72,7 @@ set(HEADER_FILES
     SeerStackManagerWidget.h
     SeerThreadFramesBrowserWidget.h
     SeerThreadIdsBrowserWidget.h
+    SeerThreadGroupsBrowserWidget.h
     SeerThreadManagerWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
@@ -154,6 +155,7 @@ set(SOURCE_FILES
     SeerStackManagerWidget.cpp
     SeerThreadFramesBrowserWidget.cpp
     SeerThreadIdsBrowserWidget.cpp
+    SeerThreadGroupsBrowserWidget.cpp
     SeerThreadManagerWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp

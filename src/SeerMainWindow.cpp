@@ -643,6 +643,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,threads=[")) {
         return;
 
+    }else if (text.startsWith("^done,groups=[")) {
+        return;
+
     }else if (text.startsWith("^done,register-names=[") && text.endsWith("]")) {
         return;
 
