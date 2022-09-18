@@ -99,9 +99,6 @@ void SeerThreadGroupsBrowserWidget::handleText (const QString& text) {
         // =thread-exited,id="2",group-id="i2"
         refresh();
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        groupTreeWidget->clear();
-
     }else{
         // Ignore others.
     }
