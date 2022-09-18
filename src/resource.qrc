@@ -48,6 +48,7 @@
     <file>resources/RelaxLightIcons/debug-step-into.svg</file>
     <file>resources/RelaxLightIcons/debug-step-out.svg</file>
     <file>resources/RelaxLightIcons/debug-step-over.svg</file>
+    <file>resources/help/ThreadProcessInfoBrowser.md</file>
   </qresource>
 </RCC>
 
