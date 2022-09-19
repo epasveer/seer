@@ -11,6 +11,7 @@ class QHContainerWidget : public QWidget, protected Ui::QHContainerWidgetForm {
         explicit QHContainerWidget (QWidget* parent = 0);
        ~QHContainerWidget ();
 
+        void                setSpacing                  (int spacing);
         void                addWidget                   (QWidget* widget);
         void                removeWidget                (QWidget* widget);
 

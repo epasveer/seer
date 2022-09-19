@@ -35,6 +35,7 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     helpToolButton->setToolTip("Help on thread information.");
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 

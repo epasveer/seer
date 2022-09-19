@@ -21,7 +21,7 @@
      </property>
      <column>
       <property name="text">
-       <string>Thread Id</string>
+       <string>Group Thread Id</string>
       </property>
      </column>
      <column>

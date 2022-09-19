@@ -12,6 +12,11 @@ QHContainerWidget::QHContainerWidget (QWidget* parent) : QWidget(parent) {
 QHContainerWidget::~QHContainerWidget () {
 }
 
+void QHContainerWidget::setSpacing (int spacing) {
+
+    horizontalLayout->setSpacing(spacing);
+}
+
 void QHContainerWidget::addWidget (QWidget* widget) {
 
     horizontalLayout->addWidget(widget);
