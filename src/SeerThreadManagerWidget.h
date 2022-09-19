@@ -37,6 +37,7 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
 
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
+        void                                            handleHelpToolButtonClicked         ();
         void                                            handleSchedulerLockingComboBox      (int index);
         void                                            handleScheduleMultipleComboBox      (int index);
         void                                            handleForkFollowComboBox            (int index);
