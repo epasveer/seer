@@ -187,7 +187,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 topItem->setText(0, exp_text);
             }
 
-            // Ask for its editable attributes.
+            //XXX Ask for its editable attributes.
             //XXX emit varObjAttributes (varObjID, name_text);
 
             // If there are children, add a placeholder.
@@ -287,13 +287,13 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                     item->setText(7, threadid_text);
                     item->setText(8, hasmore_text);
                     item->setText(9, "");
-                    item->setFlags(item->flags() | Qt::ItemIsEditable); //XXX
+                    item->setFlags(item->flags() | Qt::ItemIsEditable); //XXX Set item editable if it can.
 
                     if (exp_text != "") {
                         item->setText(0, exp_text);
                     }
 
-                    // Ask for its editable attributes.
+                    //XXX Ask for its editable attributes.
                     //XXX emit varObjAttributes (varObjID, name_text);
 
                     // If there are children, add a placeholder.
