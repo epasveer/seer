@@ -14,49 +14,14 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2">
-    <widget class="QToolButton" name="expandAllToolButton">
-     <property name="toolTip">
-      <string>Expand all items below current selection.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
+   <item row="0" column="1">
+    <widget class="Line" name="line_1">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
     </widget>
    </item>
-   <item row="0" column="5">
-    <widget class="QToolButton" name="refreshToolButton">
-     <property name="toolTip">
-      <string>Refresh the list.</string>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3">
-    <widget class="QToolButton" name="collapseAllToolButton">
-     <property name="toolTip">
-      <string>Collapse all items below current selection.</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="9">
+   <item row="1" column="0" colspan="10">
     <widget class="QIndexTreeWidget" name="variableTreeWidget">
      <column>
       <property name="text">
@@ -110,10 +75,72 @@
      </column>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="Line" name="line_1">
+   <item row="0" column="3">
+    <widget class="QToolButton" name="collapseSelectedToolButton">
+     <property name="toolTip">
+      <string>Collapse items below current selection.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="6">
+    <widget class="QToolButton" name="refreshToolButton">
+     <property name="toolTip">
+      <string>Refresh the list.</string>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QToolButton" name="expandSelectedToolButton">
+     <property name="toolTip">
+      <string>Expand items below current selection.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="Line" name="line_2">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="8">
+    <widget class="QCheckBox" name="debugCheckBox">
+     <property name="toolTip">
+      <string>Show more variable details.</string>
+     </property>
+     <property name="text">
+      <string>Debug</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7">
+    <widget class="QCheckBox" name="autoRefreshCheckBox">
+     <property name="toolTip">
+      <string>Automatically refresh after each stopping point.</string>
+     </property>
+     <property name="text">
+      <string>Auto</string>
      </property>
     </widget>
    </item>
@@ -133,30 +160,13 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="7">
-    <widget class="QCheckBox" name="debugCheckBox">
-     <property name="toolTip">
-      <string>Show more variable details.</string>
-     </property>
-     <property name="text">
-      <string>Debug</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="6">
-    <widget class="QCheckBox" name="autoRefreshCheckBox">
-     <property name="toolTip">
-      <string>Automatically refresh after each stopping point.</string>
-     </property>
-     <property name="text">
-      <string>Auto</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="4">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+    <widget class="QCheckBox" name="expandRecursiveCheckBox">
+     <property name="toolTip">
+      <string>Expand recursively.</string>
+     </property>
+     <property name="text">
+      <string>Recursive</string>
      </property>
     </widget>
    </item>
@@ -176,8 +186,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>variableNameLineEdit</tabstop>
-  <tabstop>expandAllToolButton</tabstop>
-  <tabstop>collapseAllToolButton</tabstop>
+  <tabstop>expandSelectedToolButton</tabstop>
+  <tabstop>collapseSelectedToolButton</tabstop>
+  <tabstop>expandRecursiveCheckBox</tabstop>
   <tabstop>refreshToolButton</tabstop>
   <tabstop>autoRefreshCheckBox</tabstop>
   <tabstop>debugCheckBox</tabstop>

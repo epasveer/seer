@@ -66,17 +66,17 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 
 
     // Connect things.
-    QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
-    QObject::connect(debugCheckBox,          &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDebugCheckBox);
-    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemCollapsed);
-    QObject::connect(expandAllToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandAll);
-    QObject::connect(collapseAllToolButton,  &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseAll);
-    QObject::connect(editDelegate,           &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
-    QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
+    QObject::connect(refreshToolButton,             &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
+    QObject::connect(debugCheckBox,                 &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDebugCheckBox);
+    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemEntered,                   this,  &SeerVarVisualizerWidget::handleItemEntered);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemExpanded,                  this,  &SeerVarVisualizerWidget::handleItemExpanded);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemCollapsed,                 this,  &SeerVarVisualizerWidget::handleItemCollapsed);
+    QObject::connect(expandSelectedToolButton,      &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleExpandSelected);
+    QObject::connect(collapseSelectedToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseSelected);
+    QObject::connect(editDelegate,                  &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
+    QObject::connect(editDelegate,                  &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
 
     // Show/hide columns.
     handleDebugCheckBox();
@@ -213,6 +213,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                     topItem->addChild(child);
                 }
+
             }
 
             // Save the VarObj name.
@@ -263,7 +264,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
                 // Yes, add to it.
                 }else{
 
-                    // See if item has a "..." child. If so, remove it and any other siblings.
+                    // See if item has a "{...}" child. If so, remove it and any other siblings.
                     if (matchItem->childCount() > 0) {
                         QTreeWidgetItem* childItem = matchItem->child(0);
                         if (childItem->text(0) == "{...}") {
@@ -326,7 +327,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
 
                     matchItem->addChild(item);
 
-                    if (expandItem) {
+                    if (expandItem == true && expandRecursiveCheckBox->isChecked()) {
                         item->setExpanded(true);
                     }
                 }
@@ -751,7 +752,7 @@ void SeerVarVisualizerWidget::handleItemCollapsed (QTreeWidgetItem* item) {
     QTimer::singleShot(100, this, &SeerVarVisualizerWidget::handleResizeColumns);
 }
 
-void SeerVarVisualizerWidget::handleExpandAll () {
+void SeerVarVisualizerWidget::handleExpandSelected () {
 
     // Expand the current item, if selected.
     if (variableTreeWidget->currentItem()) {
@@ -765,7 +766,7 @@ void SeerVarVisualizerWidget::handleExpandAll () {
     }
 }
 
-void SeerVarVisualizerWidget::handleCollapseAll () {
+void SeerVarVisualizerWidget::handleCollapseSelected () {
 
     // Collapse the current item, if selected.
     if (variableTreeWidget->currentItem()) {
