@@ -1,10 +1,10 @@
 #include "SeerThreadManagerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QTextBrowser>
 #include <QtGui/QIcon>
-#include <QtCore/QUrl>
-#include <QtCore/QDirIterator>
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 
 SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(parent) {
@@ -103,20 +103,9 @@ void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
 void SeerThreadManagerWidget::handleHelpToolButtonClicked () {
 
-    // Get the Help text from the resource.
-    QFile file(":/seer/resources/help/ThreadProcessInfoBrowser.md");
-    file.open(QFile::ReadOnly | QFile::Text);
-
-    QTextStream stream(&file);
-
-    QString text = stream.readAll();
-
-    // Put the Help text in as markdown. Move back to the begining.
-    QTextBrowser* browser = new QTextBrowser(0);
-    browser->setOpenExternalLinks(true);
-    browser->setMarkdown(text);
-    browser->moveCursor(QTextCursor::Start);
-    browser->show();
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/ThreadProcessInfoBrowser.md");
+    help->show();
 }
 
 void SeerThreadManagerWidget::handleSchedulerLockingComboBox (int index) {
