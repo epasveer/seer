@@ -4,8 +4,8 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
-#include "SeerBreakpointsOptionsBarWidget.h"
 #include "SeerUtl.h"
+#include "QHContainerWidget.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
@@ -83,10 +83,23 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
-    SeerBreakpointsOptionsBarWidget* breakpointsOptionsBar = new SeerBreakpointsOptionsBarWidget(logsTabWidget);
+    // Create editor options bar.
+    QToolButton* breakpointsLoadToolButton = new QToolButton(logsTabWidget);
+    breakpointsLoadToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
+    breakpointsLoadToolButton->setToolTip("Load previously saved breakpoints.");
 
-    logsTabWidget->setCornerWidget(breakpointsOptionsBar, Qt::TopRightCorner);
+    QToolButton* breakpointsSaveToolButton = new QToolButton(logsTabWidget);
+    breakpointsSaveToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-save-as.svg"));
+    breakpointsSaveToolButton->setToolTip("Save breakpoints to a file.");
 
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(breakpointsLoadToolButton);
+    hcontainer->addWidget(breakpointsSaveToolButton);
+
+    logsTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
+
+    // Set manual command settings.
     manualCommandComboBox->setFont(font);
     manualCommandComboBox->setEditable(true);
     manualCommandComboBox->lineEdit()->setPlaceholderText("Manually enter a gdb/mi command...");
@@ -262,8 +275,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbOutputLog,                                             &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
     QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
 
-    QObject::connect(breakpointsOptionsBar->breakpointsLoadToolButton(),        &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
-    QObject::connect(breakpointsOptionsBar->breakpointsSaveToolButton(),        &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
+    QObject::connect(breakpointsLoadToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
+    QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
 
     // Restore window settings.
     setConsoleMode("normal");

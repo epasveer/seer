@@ -42,8 +42,6 @@ set(HEADER_FILES
     SeerDirectoryFilterProxyModel.h
     SeerEditorManagerEntry.h
     SeerEditorManagerWidget.h
-    SeerEditorOptionsBarWidget.h
-    SeerBreakpointsOptionsBarWidget.h
     SeerEditorWidgetSource.h
     SeerEditorWidgetAssembly.h
     SeerExecutableFilterProxyModel.h
@@ -126,8 +124,6 @@ set(SOURCE_FILES
     SeerCloseSourceDialog.cpp
     SeerDebugDialog.cpp
     SeerEditorManagerWidget.cpp
-    SeerEditorOptionsBarWidget.cpp
-    SeerBreakpointsOptionsBarWidget.cpp
     SeerEditorWidgetSource.cpp
     SeerEditorWidgetSourceAreas.cpp
     SeerEditorWidgetAssembly.cpp

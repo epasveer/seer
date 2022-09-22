@@ -1,9 +1,9 @@
 #include "SeerEditorManagerWidget.h"
 #include "SeerEditorWidgetSource.h"
 #include "SeerEditorWidgetAssembly.h"
-#include "SeerEditorOptionsBarWidget.h"
 #include "SeerCloseSourceDialog.h"
 #include "SeerUtl.h"
+#include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -30,18 +30,35 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->setMovable(true);
     tabWidget->setTabsClosable(true);
 
-    SeerEditorOptionsBarWidget* editorOptionsBar = new SeerEditorOptionsBarWidget(tabWidget);
+    // Create editor options bar.
+    QToolButton* fileOpenToolButton = new QToolButton(tabWidget);
+    fileOpenToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
+    fileOpenToolButton->setToolTip("Open a source file.");
 
-    tabWidget->setCornerWidget(editorOptionsBar, Qt::TopRightCorner);
+    QToolButton* fileCloseToolButton = new QToolButton(tabWidget);
+    fileCloseToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
+    fileCloseToolButton->setToolTip("Close opened source files.");
+
+    QToolButton* textSearchToolButton = new QToolButton(tabWidget);
+    textSearchToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/edit-find.svg"));
+    textSearchToolButton->setToolTip("Show search bar for text.");
+
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(fileOpenToolButton);
+    hcontainer->addWidget(fileCloseToolButton);
+    hcontainer->addWidget(textSearchToolButton);
+
+    tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
     // Create a place holder tab with a special name of "".
     createEditorWidgetTab("", "");
 
     // Connect things.
-    QObject::connect(tabWidget,                                 &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
-    QObject::connect(editorOptionsBar->fileOpenToolButton(),    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
-    QObject::connect(editorOptionsBar->fileCloseToolButton(),   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
-    QObject::connect(editorOptionsBar->textSearchToolButton(),  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
+    QObject::connect(tabWidget,             &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
+    QObject::connect(fileOpenToolButton,    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
+    QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
+    QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
