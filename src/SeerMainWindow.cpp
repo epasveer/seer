@@ -8,6 +8,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QStyleFactory>
 #include <QtGui/QKeySequence>
+#include <QtGui/QPalette>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
 #include <QtCore/QRegExp>
@@ -39,6 +40,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     _progressIndicator->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     _progressIndicator->setFixedWidth(96);
     _progressIndicator->setType(QProgressIndicator::ball_rotate);
+    _progressIndicator->setColor(palette().color(QPalette::WindowText));
 
     toolBar->addWidget(_progressIndicator);
 

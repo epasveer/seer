@@ -22,6 +22,7 @@ class QProgressIndicator : public QWidget {
             line_rotate,
             line_scale,
             ball_rotate,
+            circle_rotate
         };
 
         void                paintEvent          (QPaintEvent* e);
@@ -33,7 +34,7 @@ class QProgressIndicator : public QWidget {
         void                setType             (int type);
 
         const QColor&       color               ();
-        void                setColor            (QColor &color);
+        void                setColor            (const QColor &color);
 
         int                 interval            ();
         void                setInterval         (int interval);
@@ -45,6 +46,7 @@ class QProgressIndicator : public QWidget {
         void                drawRotateLine      (QPainter* painter);
         void                drawScaleLine       (QPainter* painter);
         void                drawRotateBall      (QPainter* painter);
+        void                drawRotateCircle    (QPainter* painter);
 
     private:
         int                 _type;
