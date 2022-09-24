@@ -1,5 +1,7 @@
 #include "SeerStackManagerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
+#include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
@@ -26,10 +28,21 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the stack information.");
-    tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
+
+    QToolButton* helpToolButton = new QToolButton(tabWidget);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on stack information.");
+
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(refreshToolButton);
+    hcontainer->addWidget(helpToolButton);
+
+    tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
     // Connect things.
     QObject::connect(refreshToolButton,  &QToolButton::clicked,                          this,  &SeerStackManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,     &QToolButton::clicked,                          this,  &SeerStackManagerWidget::handleHelpToolButtonClicked);
 }
 
 SeerStackManagerWidget::~SeerStackManagerWidget () {
@@ -54,6 +67,13 @@ void SeerStackManagerWidget::handleRefreshToolButtonClicked () {
     stackLocalsBrowserWidget()->refresh();
 
     refresh();
+}
+
+void SeerStackManagerWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/StackInfoBrowser.md");
+    help->show();
 }
 
 void SeerStackManagerWidget::handleText (const QString& text) {

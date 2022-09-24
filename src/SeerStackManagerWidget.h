@@ -30,6 +30,7 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
 
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
+        void                                            handleHelpToolButtonClicked         ();
 
     private:
         SeerStackFramesBrowserWidget*                   _stackFramesBrowserWidget;

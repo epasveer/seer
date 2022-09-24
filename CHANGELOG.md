@@ -16,7 +16,8 @@
         - Execute selected process.
         - Execute all processes.
         - (see gdb's schedule-multiple mode)
-* Add Help to Thread/Process manager.
+* Add Help to Thread/Process browser.
+* Add Help to Stack Frame browser.
 * Add Help to Struct Visualizer.
 * Add RMB menu to progress indicator to select indicator type.
 

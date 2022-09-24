@@ -52,6 +52,7 @@
     <file>resources/RelaxLightIcons/help-whatsthis.svg</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/StructVisualizer.md</file>
+    <file>resources/help/StackInfoBrowser.md</file>
   </qresource>
 </RCC>
 
