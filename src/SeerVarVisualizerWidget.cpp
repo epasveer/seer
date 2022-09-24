@@ -1,4 +1,5 @@
 #include "SeerVarVisualizerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include "QEditDelegate.h"
 #include <QtWidgets/QTreeWidget>
@@ -67,6 +68,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleHelpButton);
     QObject::connect(debugCheckBox,                 &QCheckBox::clicked,                         this,  &SeerVarVisualizerWidget::handleDebugCheckBox);
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                   this,  &SeerVarVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,            &QTreeWidget::customContextMenuRequested,    this,  &SeerVarVisualizerWidget::handleContextMenu);
@@ -818,6 +820,14 @@ void SeerVarVisualizerWidget::handleRefreshButton () {
         emit varObjUpdate(_variableId, _variableName);
     }
 }
+
+void SeerVarVisualizerWidget::handleHelpButton () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/StructVisualizer.md");
+    help->show();
+}
+
 
 void SeerVarVisualizerWidget::handleDebugCheckBox () {
 

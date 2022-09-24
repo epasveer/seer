@@ -31,6 +31,7 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
 
     protected slots:
         void                handleRefreshButton                 ();
+        void                handleHelpButton                    ();
         void                handleDebugCheckBox                 ();
         void                handleVariableNameLineEdit          ();
         void                handleIndexEditingStarted           (const QModelIndex& index);
