@@ -67,17 +67,54 @@ void QProgressIndicator::stop() {
 
     _timer->stop();
 
-    update(); // Force an update to erate the indicator from the view.
+    update(); // Force an update to erase the indicator from the view.
 }
 
-int QProgressIndicator::type () {
+int QProgressIndicator::type () const {
 
     return _type;
+}
+
+QString QProgressIndicator::typeName () const {
+
+    if (_type == line_rotate) {
+        return "LineRotate";
+    }else if (_type == line_scale) {
+        return "LineScale";
+    }else if (_type == ball_rotate) {
+        return "BallRotate";
+    }else if (_type == circle_rotate) {
+        return "CircleRotate";
+    }
+
+    return "BallRotate";
 }
 
 void QProgressIndicator::setType (int type) {
 
     _type = type;
+}
+
+void QProgressIndicator::setType (const QString& type) {
+
+    if (type == "LineRotate") {
+        setType(line_rotate);
+    }else if (type == "LineScale") {
+        setType(line_scale);
+    }else if (type == "BallRotate") {
+        setType(ball_rotate);
+    }else if (type == "CircleRotate") {
+        setType(circle_rotate);
+    }else{
+        setType(line_rotate);
+    }
+}
+
+QStringList QProgressIndicator::types () const {
+
+    QStringList list = {"LineRotate", "LineScale", "BallRotate", "CircleRotate"};
+
+    return list;
 }
 
 const QColor& QProgressIndicator::color () {
@@ -219,9 +256,10 @@ void QProgressIndicator::drawRotateCircle(QPainter* painter) {
     // My version is based on ProgressInfiniteBar from : https://github.com/przemek83/wble
 
     int width    = qMin(this->width(), this->height());
-    int penwidth = 5;
+    int offset   = qAbs(this->width() - this->height()) / 2;
+    int penwidth = 3;
 
-    QRectF r = QRect(0+penwidth,0+penwidth, width-(2*penwidth),width-(2*penwidth));
+    QRectF r = QRect(offset+penwidth,0+penwidth, width-(2*penwidth),width-(2*penwidth));
 
     QPen pen(_color);
     pen.setWidth(penwidth);

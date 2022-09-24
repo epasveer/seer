@@ -36,10 +36,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     toolBar->addWidget(spacerWidget);
 
-    _progressIndicator = new QProgressIndicator(this);
+    _progressIndicator = new SeerProgressIndicator(this);
     _progressIndicator->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     _progressIndicator->setFixedWidth(96);
-    _progressIndicator->setType(QProgressIndicator::ball_rotate);
     _progressIndicator->setColor(palette().color(QPalette::WindowText));
 
     toolBar->addWidget(_progressIndicator);

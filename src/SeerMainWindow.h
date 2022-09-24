@@ -3,7 +3,7 @@
 #include "ui_SeerMainWindow.h"
 #include "SeerRunStatusIndicator.h"
 #include "SeerKeySettings.h"
-#include "QProgressIndicator.h"
+#include "SeerProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QActionGroup>
@@ -86,7 +86,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
     private:
         QActionGroup*               _styleMenuActionGroup;
-        QProgressIndicator*         _progressIndicator;
+        SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
 };
 

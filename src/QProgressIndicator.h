@@ -30,8 +30,11 @@ class QProgressIndicator : public QWidget {
         void                start               ();
         void                stop                ();
 
-        int                 type                ();
+        int                 type                () const;
+        QString             typeName            () const;
         void                setType             (int type);
+        void                setType             (const QString& type);
+        QStringList         types               () const;
 
         const QColor&       color               ();
         void                setColor            (const QColor &color);
