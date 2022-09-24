@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.11beta] - 2022-XX-22
+## [1.11beta] - 2022-MM-DD
 * Thread/Process manager.
     - Add a fork/vfork mode. Follow:
         - Parent process.
@@ -16,6 +16,8 @@
         - Execute selected process.
         - Execute all processes.
         - (see gdb's schedule-multiple mode)
+* Add Help to Thread/Process manager.
+* Add RMB menu to progress indicator to select indicator type.
 
 ## [1.10] - 2022-09-22
 * New Struct Visualizer.
