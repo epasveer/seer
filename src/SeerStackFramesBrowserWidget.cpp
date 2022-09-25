@@ -27,7 +27,7 @@ SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : Q
     stackTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(stackTreeWidget, &QTreeWidget::itemDoubleClicked,    this,  &SeerStackFramesBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(stackTreeWidget, &QTreeWidget::itemClicked,          this,  &SeerStackFramesBrowserWidget::handleItemClicked);
     QObject::connect(stackTreeWidget, &QTreeWidget::itemEntered,          this,  &SeerStackFramesBrowserWidget::handleItemEntered);
 }
 
@@ -168,7 +168,7 @@ void SeerStackFramesBrowserWidget::refresh () {
     emit refreshStackFrames();
 }
 
-void SeerStackFramesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+void SeerStackFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
 

@@ -53,6 +53,7 @@
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/StructVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
+    <file>resources/help/VariableRegisterInfoBrowser.md</file>
   </qresource>
 </RCC>
 

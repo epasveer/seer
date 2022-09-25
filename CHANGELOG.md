@@ -18,6 +18,7 @@
         - (see gdb's schedule-multiple mode)
 * Add Help to Thread/Process browser.
 * Add Help to Stack Frame browser.
+* Add Help to Variable/Register browser.
 * Add Help to Struct Visualizer.
 * Add RMB menu to progress indicator to select indicator type.
 

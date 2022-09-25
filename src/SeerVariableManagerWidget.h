@@ -24,6 +24,7 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
     public slots:
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
+        void                                            handleHelpToolButtonClicked         ();
 
     private:
         SeerVariableTrackerBrowserWidget*               _variableTrackerBrowserWidget;

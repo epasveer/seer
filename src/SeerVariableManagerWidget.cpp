@@ -1,4 +1,6 @@
 #include "SeerVariableManagerWidget.h"
+#include "SeerHelpPageWidget.h"
+#include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
@@ -25,10 +27,21 @@ SeerVariableManagerWidget::SeerVariableManagerWidget (QWidget* parent) : QWidget
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the variable/register information.");
-    tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
+
+    QToolButton* helpToolButton = new QToolButton(tabWidget);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on variable/register information.");
+
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(refreshToolButton);
+    hcontainer->addWidget(helpToolButton);
+
+    tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
     // Connect things.
     QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerVariableManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,    &QToolButton::clicked,     this,  &SeerVariableManagerWidget::handleHelpToolButtonClicked);
 }
 
 SeerVariableManagerWidget::~SeerVariableManagerWidget () {
@@ -50,5 +63,12 @@ void SeerVariableManagerWidget::handleRefreshToolButtonClicked () {
 
     variableTrackerBrowserWidget()->refresh();
     registerValuesBrowserWidget()->refresh();
+}
+
+void SeerVariableManagerWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/VariableRegisterInfoBrowser.md");
+    help->show();
 }
 
