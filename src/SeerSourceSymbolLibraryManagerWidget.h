@@ -8,15 +8,15 @@
 
 #include <QtWidgets/QWidget>
 
-#include "ui_SeerSourceLibraryManagerWidget.h"
+#include "ui_SeerSourceSymbolLibraryManagerWidget.h"
 
-class SeerSourceLibraryManagerWidget : public QWidget, protected Ui::SeerSourceLibraryManagerWidgetForm {
+class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerSourceSymbolLibraryManagerWidgetForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerSourceLibraryManagerWidget (QWidget* parent = 0);
-       ~SeerSourceLibraryManagerWidget ();
+        explicit SeerSourceSymbolLibraryManagerWidget (QWidget* parent = 0);
+       ~SeerSourceSymbolLibraryManagerWidget ();
 
         SeerSourceBrowserWidget*                        sourceBrowserWidget             ();
         SeerFunctionBrowserWidget*                      functionBrowserWidget           ();

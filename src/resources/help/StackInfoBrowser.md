@@ -24,7 +24,7 @@ This information is shown for each Frame:
       Fullname     The fullname of the source file.
       Address      The frame's address in memory.
 ```
-Double-clicking on a Frame Level will cause Seer to make that frame the active frame. This will in turn cause the Editor Manager to bring up the source file for the frame (if possible).
+Clicking on a Frame Level will cause Seer to make that frame the active frame. This will in turn cause the Editor Manager to bring up the source file for the frame (if possible).
 
 Because the frame is set as the active frame, other Seer and gdb actions will default to that frame. For instance, entering a variable name in a Visualizer will use the variable in the active frame.
 

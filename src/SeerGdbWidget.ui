@@ -29,7 +29,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="SeerSourceLibraryManagerWidget" name="sourceLibraryManagerWidget" native="true">
+      <widget class="SeerSourceSymbolLibraryManagerWidget" name="sourceLibraryManagerWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>50</horstretch>
@@ -125,9 +125,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SeerSourceLibraryManagerWidget</class>
+   <class>SeerSourceSymbolLibraryManagerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">SeerSourceLibraryManagerWidget.h</header>
+   <header location="global">SeerSourceSymbolLibraryManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

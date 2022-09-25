@@ -1,9 +1,9 @@
-#include "SeerSourceLibraryManagerWidget.h"
+#include "SeerSourceSymbolLibraryManagerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
 
-SeerSourceLibraryManagerWidget::SeerSourceLibraryManagerWidget (QWidget* parent) : QWidget(parent) {
+SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
 
@@ -28,37 +28,37 @@ SeerSourceLibraryManagerWidget::SeerSourceLibraryManagerWidget (QWidget* parent)
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
-    refreshToolButton->setToolTip("Refresh the source/function/types/libraries information.");
+    refreshToolButton->setToolTip("Refresh the source/symbol/library information.");
     tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
 
     // Connect things.
-    QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerSourceLibraryManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
 }
 
-SeerSourceLibraryManagerWidget::~SeerSourceLibraryManagerWidget () {
+SeerSourceSymbolLibraryManagerWidget::~SeerSourceSymbolLibraryManagerWidget () {
 }
 
-SeerSourceBrowserWidget* SeerSourceLibraryManagerWidget::sourceBrowserWidget () {
+SeerSourceBrowserWidget* SeerSourceSymbolLibraryManagerWidget::sourceBrowserWidget () {
     return _sourceBrowserWidget;
 }
 
-SeerFunctionBrowserWidget* SeerSourceLibraryManagerWidget::functionBrowserWidget () {
+SeerFunctionBrowserWidget* SeerSourceSymbolLibraryManagerWidget::functionBrowserWidget () {
     return _functionBrowserWidget;
 }
 
-SeerTypeBrowserWidget* SeerSourceLibraryManagerWidget::typeBrowserWidget () {
+SeerTypeBrowserWidget* SeerSourceSymbolLibraryManagerWidget::typeBrowserWidget () {
     return _typeBrowserWidget;
 }
 
-SeerStaticBrowserWidget* SeerSourceLibraryManagerWidget::staticBrowserWidget () {
+SeerStaticBrowserWidget* SeerSourceSymbolLibraryManagerWidget::staticBrowserWidget () {
     return _staticBrowserWidget;
 }
 
-SeerLibraryBrowserWidget* SeerSourceLibraryManagerWidget::libraryBrowserWidget () {
+SeerLibraryBrowserWidget* SeerSourceSymbolLibraryManagerWidget::libraryBrowserWidget () {
     return _libraryBrowserWidget;
 }
 
-void SeerSourceLibraryManagerWidget::handleRefreshToolButtonClicked () {
+void SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked () {
 
     sourceBrowserWidget()->refresh();
     functionBrowserWidget()->refresh();

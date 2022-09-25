@@ -63,7 +63,7 @@ set(HEADER_FILES
     SeerFunctionBrowserWidget.h
     SeerTypeBrowserWidget.h
     SeerStaticBrowserWidget.h
-    SeerSourceLibraryManagerWidget.h
+    SeerSourceSymbolLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
     SeerStackLocalsBrowserWidget.h
@@ -147,7 +147,7 @@ set(SOURCE_FILES
     SeerFunctionBrowserWidget.cpp
     SeerTypeBrowserWidget.cpp
     SeerStaticBrowserWidget.cpp
-    SeerSourceLibraryManagerWidget.cpp
+    SeerSourceSymbolLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
     SeerStackLocalsBrowserWidget.cpp

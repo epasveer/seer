@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerSourceLibraryManagerWidgetForm</class>
- <widget class="QWidget" name="SeerSourceLibraryManagerWidgetForm">
+ <class>SeerSourceSymbolLibraryManagerWidgetForm</class>
+ <widget class="QWidget" name="SeerSourceSymbolLibraryManagerWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Source/Functions/.../Libraries</string>
+      <string>Source/Symbol/Library Info</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_1">
       <item row="0" column="0">
