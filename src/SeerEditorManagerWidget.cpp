@@ -946,7 +946,7 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 void SeerEditorManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageWidget* help = new SeerHelpPageWidget;
-    help->loadFile(":/seer/resources/help/EditorManager.md");
+    help->loadFile(":/seer/resources/help/CodeManager.md");
     help->show();
 }
 

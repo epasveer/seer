@@ -58,7 +58,7 @@
     <file>resources/help/StackInfoBrowser.md</file>
     <file>resources/help/VariableRegisterInfoBrowser.md</file>
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>
-    <file>resources/help/EditorManager.md</file>
+    <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
   </qresource>
 </RCC>
