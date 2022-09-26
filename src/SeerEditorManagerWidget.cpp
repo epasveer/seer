@@ -2,6 +2,7 @@
 #include "SeerEditorWidgetSource.h"
 #include "SeerEditorWidgetAssembly.h"
 #include "SeerCloseSourceDialog.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
@@ -19,7 +20,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorFont                = QFont("Source Code Pro", 10);                // Default font.
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
     _editorHighlighterEnabled  = true;
-    _editorKeySettings         = SeerKeySettings::populate();                 // Defualt key settings.
+    _editorKeySettings         = SeerKeySettings::populate();                 // Default key settings.
     _assemblyWidget            = 0;
     _keepAssemblyTabOnTop      = true;
 
@@ -33,21 +34,26 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     // Create editor options bar.
     QToolButton* fileOpenToolButton = new QToolButton(tabWidget);
     fileOpenToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
-    fileOpenToolButton->setToolTip("Open a source file.");
+    fileOpenToolButton->setToolTip("Open a file.");
 
     QToolButton* fileCloseToolButton = new QToolButton(tabWidget);
     fileCloseToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"));
-    fileCloseToolButton->setToolTip("Close opened source files.");
+    fileCloseToolButton->setToolTip("Close opened files.");
 
     QToolButton* textSearchToolButton = new QToolButton(tabWidget);
     textSearchToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/edit-find.svg"));
-    textSearchToolButton->setToolTip("Show search bar for text.");
+    textSearchToolButton->setToolTip("Show search bar.");
+
+    QToolButton* helpToolButton = new QToolButton(tabWidget);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on the code manager.");
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
     hcontainer->addWidget(fileOpenToolButton);
     hcontainer->addWidget(fileCloseToolButton);
     hcontainer->addWidget(textSearchToolButton);
+    hcontainer->addWidget(helpToolButton);
 
     tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
@@ -59,6 +65,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(fileOpenToolButton,    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
     QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
+    QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -934,6 +941,13 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
     }else{
         w->showSearchBar(true);
     }
+}
+
+void SeerEditorManagerWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/EditorManager.md");
+    help->show();
 }
 
 void SeerEditorManagerWidget::handleAddAlternateDirectory (QString path) {

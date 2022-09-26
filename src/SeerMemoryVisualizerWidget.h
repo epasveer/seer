@@ -26,6 +26,7 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
 
     protected slots:
         void                handleRefreshButton                 ();
+        void                handleHelpButton                    ();
         void                handleVariableNameLineEdit          ();
         void                handleMemoryDisplayFormatComboBox   (int index);
         void                handleCharDisplayFormatComboBox     (int index);

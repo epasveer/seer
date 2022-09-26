@@ -95,16 +95,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="autoRefreshCheckBox">
-       <property name="toolTip">
-        <string>Automatically refresh after each stopping point.</string>
-       </property>
-       <property name="text">
-        <string>Auto</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the list.</string>
@@ -119,6 +109,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="autoRefreshCheckBox">
+       <property name="toolTip">
+        <string>Automatically refresh after each stopping point.</string>
+       </property>
+       <property name="text">
+        <string>Auto</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -128,7 +128,7 @@
      <item>
       <widget class="QToolButton" name="helpToolButton">
        <property name="toolTip">
-        <string>Help on StructVisualizer</string>
+        <string>Help on Struct Visualizer</string>
        </property>
        <property name="text">
         <string/>
@@ -215,8 +215,8 @@
   <tabstop>collapseSelectedToolButton</tabstop>
   <tabstop>debugCheckBox</tabstop>
   <tabstop>expandRecursiveCheckBox</tabstop>
-  <tabstop>autoRefreshCheckBox</tabstop>
   <tabstop>refreshToolButton</tabstop>
+  <tabstop>autoRefreshCheckBox</tabstop>
   <tabstop>helpToolButton</tabstop>
   <tabstop>variableTreeWidget</tabstop>
  </tabstops>

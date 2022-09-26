@@ -32,6 +32,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
     protected slots:
         void                handleaRefreshButton                ();
         void                handlebRefreshButton                ();
+        void                handleHelpButton                    ();
         void                handleaVariableNameLineEdit         ();
         void                handlebVariableNameLineEdit         ();
         void                handleaArrayDisplayFormatComboBox   (int index);

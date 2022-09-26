@@ -1,4 +1,5 @@
 #include "SeerMemoryVisualizerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
@@ -51,6 +52,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
 
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleHelpButton);
     QObject::connect(memoryLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerMemoryVisualizerWidget::handleRefreshButton);
     QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerMemoryVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(memoryDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerMemoryVisualizerWidget::handleMemoryDisplayFormatComboBox);
@@ -260,6 +262,13 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
 
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
     emit evaluateAsmExpression(_asmId, variableAddressLineEdit->text(), nbytes, 2);
+}
+
+void SeerMemoryVisualizerWidget::handleHelpButton () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/MemoryVisualizer.md");
+    help->show();
 }
 
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {

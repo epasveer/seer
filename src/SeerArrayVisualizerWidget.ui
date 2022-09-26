@@ -304,7 +304,7 @@
         <string>Variable axis type.</string>
        </property>
        <property name="currentText">
-        <string>Y</string>
+        <string>X</string>
        </property>
        <item>
         <property name="text">
@@ -480,6 +480,20 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QToolButton" name="helpToolButton">
+           <property name="toolTip">
+            <string>Help on Array Visualizer</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resource.qrc">
+             <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -530,6 +544,8 @@
   <tabstop>scatterRadioButton</tabstop>
   <tabstop>pointsCheckBox</tabstop>
   <tabstop>labelsCheckBox</tabstop>
+  <tabstop>printPushButton</tabstop>
+  <tabstop>helpToolButton</tabstop>
  </tabstops>
  <resources>
   <include location="resource.qrc"/>

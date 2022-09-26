@@ -77,6 +77,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleFileOpenToolButtonClicked     ();
         void                                            handleFileCloseToolButtonClicked    ();
         void                                            handleTextSearchToolButtonClicked   ();
+        void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
 
     signals:

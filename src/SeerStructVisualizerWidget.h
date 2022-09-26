@@ -25,6 +25,7 @@ class SeerStructVisualizerWidget : public QWidget, protected Ui::SeerStructVisua
 
     protected slots:
         void                handleRefreshButton                 ();
+        void                handleHelpButton                    ();
         void                handleVariableNameLineEdit          ();
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);

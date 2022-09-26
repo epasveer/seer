@@ -1,4 +1,5 @@
 #include "SeerArrayVisualizerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QSplineSeries>
@@ -68,6 +69,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     // Connect things.
     QObject::connect(aRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
     QObject::connect(bRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleHelpButton);
     QObject::connect(aArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
     QObject::connect(bArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
     QObject::connect(aArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
@@ -491,6 +493,13 @@ void SeerArrayVisualizerWidget::handlebRefreshButton () {
     //qDebug() << _bMemoryId << bVariableAddressLineEdit->text() << bArrayLengthLineEdit->text() << bArrayDisplayFormatComboBox->currentText() << bytes;
 
     emit evaluateMemoryExpression(_bMemoryId, bVariableAddressLineEdit->text(), bytes);
+}
+
+void SeerArrayVisualizerWidget::handleHelpButton () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/ArrayVisualizer.md");
+    help->show();
 }
 
 void SeerArrayVisualizerWidget::handleaVariableNameLineEdit () {

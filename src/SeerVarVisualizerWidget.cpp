@@ -828,7 +828,6 @@ void SeerVarVisualizerWidget::handleHelpButton () {
     help->show();
 }
 
-
 void SeerVarVisualizerWidget::handleDebugCheckBox () {
 
     handleHideDebugColumns(!debugCheckBox->isChecked());

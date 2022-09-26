@@ -28,6 +28,7 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
     public slots:
     private slots:
         void                                            handleRefreshToolButtonClicked  ();
+        void                                            handleHelpToolButtonClicked     ();
 
     private:
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;

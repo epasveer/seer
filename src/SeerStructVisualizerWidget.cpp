@@ -1,4 +1,5 @@
 #include "SeerStructVisualizerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -35,6 +36,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
 
     // Connect things.
     QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,         &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleHelpButton);
     QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerStructVisualizerWidget::handleContextMenu);
     QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerStructVisualizerWidget::handleItemEntered);
@@ -422,6 +424,13 @@ void SeerStructVisualizerWidget::handleRefreshButton () {
 
     // Send signal to get variable result.
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
+}
+
+void SeerStructVisualizerWidget::handleHelpButton () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/OldStructVisualizer.md");
+    help->show();
 }
 
 void SeerStructVisualizerWidget::handleVariableNameLineEdit () {

@@ -4,6 +4,7 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtGui/QFont>
@@ -92,10 +93,15 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     breakpointsSaveToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-save-as.svg"));
     breakpointsSaveToolButton->setToolTip("Save breakpoints to a file.");
 
+    QToolButton* helpToolButton = new QToolButton(logsTabWidget);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on Breakpoint/Gdb/Seer information.");
+
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
     hcontainer->addWidget(breakpointsLoadToolButton);
     hcontainer->addWidget(breakpointsSaveToolButton);
+    hcontainer->addWidget(helpToolButton);
 
     logsTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
@@ -277,6 +283,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     QObject::connect(breakpointsLoadToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
+    QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
     // Restore window settings.
     setConsoleMode("normal");
@@ -1983,6 +1990,14 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
 
     QMessageBox::information(this, "Seer", "Saved.");
 }
+
+void SeerGdbWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/BreakpointGdbSeerManager.md");
+    help->show();
+}
+
 
 void SeerGdbWidget::handleGdbAssemblyDisassemblyFlavor () {
 

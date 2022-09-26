@@ -1,4 +1,6 @@
 #include "SeerSourceSymbolLibraryManagerWidget.h"
+#include "SeerHelpPageWidget.h"
+#include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
 #include <QtCore/QDebug>
@@ -29,10 +31,21 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the source/symbol/library information.");
-    tabWidget->setCornerWidget(refreshToolButton, Qt::TopRightCorner);
+
+    QToolButton* helpToolButton = new QToolButton(tabWidget);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on source/symbol/library information.");
+
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(refreshToolButton);
+    hcontainer->addWidget(helpToolButton);
+
+    tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
     // Connect things.
     QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,    &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
 }
 
 SeerSourceSymbolLibraryManagerWidget::~SeerSourceSymbolLibraryManagerWidget () {
@@ -65,5 +78,12 @@ void SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked () {
     typeBrowserWidget()->refresh();
     staticBrowserWidget()->refresh();
     libraryBrowserWidget()->refresh();
+}
+
+void SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/SourceSymbolLibraryInfoBrowser.md");
+    help->show();
 }
 
