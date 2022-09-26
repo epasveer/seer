@@ -1,84 +1,76 @@
-## Struct Visualizer
+## Array Visualizer
 
 ### Introduction
 
-The Struct Visualizer shows the contents of C/C++ structs and classes in a tree view.
+The Array Visualizer shows the contents of one or two variables, that are arrays, in a graph/chart view. When providing two arrays, they can be treated as two independant arrays (assigning both to the Y axis) or one array can be the X points and the other array can be the Y points.
 
-For each variable of the struct, Seer shows these three columns:
+There are different views of the plot (line, spline, scatter) and the array values can be shown as points and/or labels.
 
-* Variable name
-* Value
-* Datatype
+The Array Visualizer is made up of 3 main parts:
 
-*Variable name* is the name of the variable, at that point in the stuct hiearchy.  
-*Value* is the value of the variable, presented in the best way possible by gdb.  
-*Datatype* is the variables datatype (basic type, class, or struct). If the variable is a pointer, a '*' is shown at the end of the datatype.
+* Input parameters
+* Values table
+* Plot area
 
-A variable of the struct that has a value of '{...}' means it has subvalues (ie: is nested) and can be expanded. There will be a visual icon (like a '+') to show the tree can be expanded at that level.
+The plot area is a typical graph that has its 'Y' axis on the left side and the 'X' axis across the bottom.
+```
+      ^
+      |
+      |
+    Y |
+      |
+      |
+      |
+      +--------------------------------->
+                     X
 
-gdb has the notion of virtual levels for structs and classes.
+```
 
-* public
-* protected
-* private
 
-These indicate where the variables reside in scope withing the struct or class. All struct variables will have a scope of 'public'. Classes will have the appropriate scope as they are defined in the class header file. These virtual levels are easy to see in the tree as they have no value or type.
+### Input parameters
+
+This part of the Visualizer specifies the one or two arrays to view. If one array is to be viewed, leave the second entry blank. Otherwise, enter the array details for both arrays. Here are the details for an array.
+
+* Axis. Specify what axis the array is for. Can be 'Y' or 'X'. 'Y' is the default.
+* Variable name. The name name should resolve to an address.
+* Number of elements. The total length of the array.
+* Array offset. How many elements to initially skip. Default 0 (start at the begining of the array).
+* Array stride. How the elements are accessed in the array. Default 1 (use every element). 2 would access every second element.
+* Array data type.
+* Refresh.
+
+By having array offset and array stride, it's possible to handle the case of a single array containing X/Y points as alternating X and Y values.
+
+### Values table
+
+This part of the Visualizer shows the arrays values as one or two columns. The number of rows in the column is the number of elements in the array.
+
+Note, the array offset and array stride is taken into account.
+
+Each column in the table will have a title, which reflects the variable name and the array offset and stride:
+```
+    &array:0:1
+```
+### Plot area
+
+This area shows the plot for the one or two arrays. The plot can be modified with:
+
+* Chart title. Add a title to the top of the plot.
+* Plot mode
+    * Line. Simple line plot.
+    * Spline. Points are plotted using splines.
+    * Scatter. Points are plotted using scatter points.
+
+* Annotation
+    * Points. Visually show the points.
+    * Labels. Annotate the value at each point.
 
 ### Operation
 
-The Struct Visualizer has these main components
+The plot area can be interactive in these way:
 
-* Variable entry field
-* Expand tree
-* Collapse tree
-* Recursive mode
-* Refresh
-* Auto mode
-* Variable Tree
-
-### Variable entry field
-
-This entry field allows you to enter the name of a variable. This variable can be for a struct or a class. It could also be a simple datatype like an *int* or a *string* but that would be pointless as simple datatypes have no nesting structure.
-
-Enter the variable name and hit return. The first level of the struct will be shown. If it has any subvalues, a '+' icon will appear and you can expand it to look at the subvalues.
-
-Note, if the variable name is not valid, an error box is display.
-
-### Expand tree
-
-The big '+' icon that appears in the top bar will expand the currently selected level in the tree. If no level is selected, it will expand the top level of the tree.
-
-### Collapse tree
-
-The big '-' icon that appears in the top bar will collapse the currently selected level in the tree. If no level is selected, it will collapse the top level of the tree.
-
-### Recursive mode
-
-When expanding, the recursive mode determins how many levels to expand. For example, a struct with multiple levels, if the recursive mode is 'off', it will only expand one level each time.
-
-If the recursive mode is 'on', it will expand the sublevels indefinetly.
-
-**NOTE** The recursive mode can be fooled by some structs and cause an infinite loop. To this end, the recursive mode will always stop if the variable is a pointer ('*'). Also, while the expanding is happening, turning off the recursive mode will stop the recursion imediately.
-
-### Refresh
-
-This will refresh the tree with any variables that have changed values since the last time.
-
-### Auto mode
-
-This mode will refresh the tree each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
-
-### Variable tree
-
-As mentioned, the variable tree shows the variable names, values, and types of the struct.
-
-A '+' icon is shown beside each level. This will expand or collapse the level in the same way as the big '+' or '-' in the top bar. When expanding, it follows the same recursive mode.
-
-### Modifying values.
-
-The Struct Visualizer allows variables in the tree to have their value changed. This is for simple datatypes only (int, floats, etc.).
-
-For a variable in the tree, double click the 'Value' column for the variable. It will then allow you to enter a new value (after you change it and hit return).
-
-An error box is shown if the variable can't be changed.
+* '+', '-', mouse scroll button. Zoom in or out of the plot.
+* LMB drag and hightlight. Zoom in on the selected region.
+* Shift+LMB. Drag plot around.
+* 'esc'. Reset plot area.
 

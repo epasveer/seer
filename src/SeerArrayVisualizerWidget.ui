@@ -304,16 +304,16 @@
         <string>Variable axis type.</string>
        </property>
        <property name="currentText">
-        <string>X</string>
+        <string>Y</string>
        </property>
        <item>
         <property name="text">
-         <string>X</string>
+         <string>Y</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Y</string>
+         <string>X</string>
         </property>
        </item>
       </widget>
@@ -324,16 +324,16 @@
         <string>Variable axis type.</string>
        </property>
        <property name="currentText">
-        <string>X</string>
+        <string>Y</string>
        </property>
        <item>
         <property name="text">
-         <string>X</string>
+         <string>Y</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Y</string>
+         <string>X</string>
         </property>
        </item>
       </widget>
