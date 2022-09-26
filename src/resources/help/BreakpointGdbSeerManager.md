@@ -1,58 +1,70 @@
-## Source/Symbol/Library Info Browser
+## Breakpoint/GDB log Manager
 
 ### Introduction
-The Stack Info browser presents the program's stack information for the current thread/process. The current thread/process is set by the Thread/Process Info browser.
+This part of Seer shows Breakpoints, GDB log, and Seer log information. In detailed, the information is:
 
-Seer presents this information in three tabs:
+* Breakpoints
+* Watchpoints
+* Catchpoints
+* Printpoints
+* GDB output
+* Seer output
+* Save and load breakpoints
+* Manual GDB commands.
 
-* Source
-* Functions
-* Types
-* Statics
-* Libraries
+### Breakpoints
 
-### Frames
-Frames is the most useful. It presents a stack frame (a traceback) for the selected thread.  
+Breakpoints sets up a stopping point of the program being debugged when a function and line number is reached.
 
-This information is shown for each Frame:
+### Watchpoints
+
+Watchpoints catch the access and/or modification of a variable and will stop the program being debugged at that point.
+
+### Catchpoints
+
+Catchpoints catch the execution of one of these program actions just before they are called and will stop the program being debugged at that point.
+
+* C++
+    * throw
+    * rethrow
+    * catch
+
+* Shared Library
+    * Load
+    * Unload
+
+There are other types of catchpoints but GDB/mi only supports the above list at the moment.
+
+### Printpoints
+
+A printpoint is a type of breakpoint that will print the value of a variable at a certain line of a function. It relies on gdb's ```dprintf``` feature.
+
+### GDB output
+
+Any output from the GDB program is output to this logger. This is any regualar GDB output, including the result of any GDB command manually entered.
+
+### Seer output
+
+Any output from the Seer program is ouput to this logger. Mostly, this is the result of any GDB/mi command, whether the GDB/mi command is manually entered or entered by Seer. Normally this logger is disabled.
+
+### Save and load breakpoints
+
+There are two buttons to save or load the various types of breakpoints to/from a file. The breakpoint file can be specified in the Debug dialog or on the command line:
 ```
-      Column       Description
-      ----------   -----------------------------------------------------------------------
-      Level        The frame level. 0 is the lowest level frame (ie: the executing frame).
-                   1 is the caller of frame 0. 2 is the caller of 1. etc...
-      Function     The function name for the level.
-      File         The short name of the source file where Function is in.
-      Line         The line number in the source file that is being executed.
-      Fullname     The fullname of the source file.
-      Address      The frame's address in memory.
+    --bl, --break-load <filename>
 ```
-Clicking on a Frame Level will cause Seer to make that frame the active frame. This will in turn cause the Editor Manager to bring up the source file for the frame (if possible).
+### Manual gdb commands
 
-Because the frame is set as the active frame, other Seer and gdb actions will default to that frame. For instance, entering a variable name in a Visualizer will use the variable in the active frame.
+This input field allows GDB and GDB/mi commands to be manually entered. The results of the GDB commands will be logged to the GDB output. GDB/mi will be logged to the Seer output.
 
-### Arguments
-This tab shows the function argument names and their value for each level. For example, if level 0 is for main(), the arguments for level 0 will be the values for argc and argv.
-```
-      Column       Description
-      ----------   ---------------------------------------------------------------------------
-      Level        The frame level. 0 is the executing frame. 1 is the caller of frame 0. etc.
-      Name         List of variables names at the frame level.
-      Value        Value of the variables at the frame level.
-```
-Using the RMB will bring up a choice of Seer Visualizers and Loggers to further view the values. Note, you may need to set the level as active first in the Frames tab.
+Seer maintains a history of N commands, as set in the Seer Config dialogs. This history is remembered for the next time Seer is used.
 
-### Locals
-This tab shows the local values in the selected frame. Local values means the variables of the execution line in that frame, plus any established variables before the current line.
+### References
 
-Selecting a diffent frame in the Frames tab will show the locals for that frame.
+Consult these gdb references
 
-```
-      Column       Description
-      ----------   -----------------------------------------------------------------------
-      Name         The variable name.
-      Arg          The function argument number, if any. May appear in the Arguements tab.
-      Value        Value of the variable.
-```
-### Refresh
-The refresh button refreshes the currently exposed tab.
+1. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Breaks.html#Set-Breaks) Using Breakpoints.  
+2. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Watchpoints.html#Set-Watchpoints) Using Watchpoints.  
+3. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Catchpoints.html#Set-Catchpoints) Using Catchpoints.  
+4. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Dynamic-Printf.html#Dynamic-Printf) Using DPrintf.  
 
