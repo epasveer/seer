@@ -82,3 +82,7 @@ For a variable in the tree, double click the 'Value' column for the variable. It
 
 An error box is shown if the variable can't be changed.
 
+### Invoking other Visualizers.
+
+Using the RMB on a variable will bring up a menu to launch another Visualizer for that variable.
+
