@@ -1,7 +1,8 @@
 
 # Seer Change Log
 
-## [1.11beta] - 2022-MM-DD
+## [1.11] - 2022-09-26
+
 * Thread/Process manager.
     - Add a fork/vfork mode. Follow:
         - Parent process.
@@ -19,10 +20,16 @@
 * Add Help to Thread/Process browser.
 * Add Help to Stack Frame browser.
 * Add Help to Variable/Register browser.
+* Add Help to Source/Symbol/Library browser.
 * Add Help to Struct Visualizer.
+* Add Help to Memory Visualizer.
+* Add Help to Array Visualizer.
+* Add Help to Code Manager.
+* Add Help to Breakpoint/Gdb log Manager.
 * Add RMB menu to progress indicator to select indicator type.
 
 ## [1.10] - 2022-09-22
+
 * New Struct Visualizer.
     - Built apon gdb's -var-obj framework.
     - Can recursively show the contents of a struct/class.
@@ -42,6 +49,7 @@
         thenounproject.com
 
 ## [1.9] - 2022-08-30
+
 * Rename 'seer' binary to 'seergdb'. The name conflicts with another opensource project.
 * Prepare for better Debian (and other distros) packaging and releasing.
 * Add history (up/down arrows) to all line input fields.
