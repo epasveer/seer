@@ -1,84 +1,82 @@
-## Struct Visualizer
+## Memory Visualizer
 
 ### Introduction
 
-The Struct Visualizer shows the contents of C/C++ structs and classes in a tree view.
+The Memory Visualizer shows the contents of a region of memory in different formats, including strings and assembly.
 
-For each variable of the struct, Seer shows these three columns:
+* Hex
+* Octal
+* Binary
+* Decimal
+* Ascii
+* Ebcdic
+* Assembly
 
-* Variable name
-* Value
-* Datatype
+The memory displayed in 3 views.
 
-*Variable name* is the name of the variable, at that point in the stuct hiearchy.  
-*Value* is the value of the variable, presented in the best way possible by gdb.  
-*Datatype* is the variables datatype (basic type, class, or struct). If the variable is a pointer, a '*' is shown at the end of the datatype.
-
-A variable of the struct that has a value of '{...}' means it has subvalues (ie: is nested) and can be expanded. There will be a visual icon (like a '+') to show the tree can be expanded at that level.
-
-gdb has the notion of virtual levels for structs and classes.
-
-* public
-* protected
-* private
-
-These indicate where the variables reside in scope withing the struct or class. All struct variables will have a scope of 'public'. Classes will have the appropriate scope as they are defined in the class header file. These virtual levels are easy to see in the tree as they have no value or type.
+* A memory dump in the chosen Display format. Included in this view is the memory displayed in the Character format. A byte can be selected in this view to highlight it.
+* A table showing the highlighted byte in different numeric formats (int, float, double, etc...).
+* A separate tab showing the memory as disassembly.
 
 ### Operation
 
-The Struct Visualizer has these main components
+There are various things to control how the memory is display.
 
-* Variable entry field
-* Expand tree
-* Collapse tree
-* Recursive mode
+* Starting address entry field
+* Number of bytes entry field
+* Display format
+* Character format
+* Column width
 * Refresh
-* Auto mode
-* Variable Tree
+* Auto Refresh
 
-### Variable entry field
+### Starting address entry field
 
-This entry field allows you to enter the name of a variable. This variable can be for a struct or a class. It could also be a simple datatype like an *int* or a *string* but that would be pointless as simple datatypes have no nesting structure.
+The 'Starting Address' input field takes the name of a variable that is in the current Stack Frame (selected by the Stack Frame browser). This variable should result in an address. For example, take this code:
+```
+    int var = 10;
+```
+To visualize the memory for 'var', the variable should be '&var', not 'var'. As 'var' doesn't resolve to an address.
 
-Enter the variable name and hit return. The first level of the struct will be shown. If it has any subvalues, a '+' icon will appear and you can expand it to look at the subvalues.
+Note, the variable name can be an address. Enter the address like:
+```
+    0xdeadbeaf
+```
+It can also be one of gdb' special variables. Like the program counter. Enter it like:
+```
+    $pc
+```
 
-Note, if the variable name is not valid, an error box is display.
 
-### Expand tree
+### Number of bytes entry field
 
-The big '+' icon that appears in the top bar will expand the currently selected level in the tree. If no level is selected, it will expand the top level of the tree.
+The default number of bytes to display is 256. Fewer or more than this number can be entered.
 
-### Collapse tree
+### Display format.
 
-The big '-' icon that appears in the top bar will collapse the currently selected level in the tree. If no level is selected, it will collapse the top level of the tree.
+The memory dump can be displayed in these formats:
 
-### Recursive mode
+* Hex
+* Octal
+* Binary
+* Decimal
 
-When expanding, the recursive mode determins how many levels to expand. For example, a struct with multiple levels, if the recursive mode is 'off', it will only expand one level each time.
+### Character format
 
-If the recursive mode is 'on', it will expand the sublevels indefinetly.
+The memory dump can be displayed in these character formats:
 
-**NOTE** The recursive mode can be fooled by some structs and cause an infinite loop. To this end, the recursive mode will always stop if the variable is a pointer ('*'). Also, while the expanding is happening, turning off the recursive mode will stop the recursion imediately.
+* Ascii
+* Ebcdic
+
+### Column width
+
+This specifies the column width of the memory dump.
 
 ### Refresh
 
-This will refresh the tree with any variables that have changed values since the last time.
+This will refresh the memory dump since the last time.
 
 ### Auto mode
 
-This mode will refresh the tree each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
-
-### Variable tree
-
-As mentioned, the variable tree shows the variable names, values, and types of the struct.
-
-A '+' icon is shown beside each level. This will expand or collapse the level in the same way as the big '+' or '-' in the top bar. When expanding, it follows the same recursive mode.
-
-### Modifying values.
-
-The Struct Visualizer allows variables in the tree to have their value changed. This is for simple datatypes only (int, floats, etc.).
-
-For a variable in the tree, double click the 'Value' column for the variable. It will then allow you to enter a new value (after you change it and hit return).
-
-An error box is shown if the variable can't be changed.
+This mode will refresh the memory dump each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
 
