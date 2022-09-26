@@ -1,7 +1,8 @@
 ## Source/Symbol/Library Info Browser
 
 ### Introduction
-The Stack Info browser presents the program's stack information for the current thread/process. The current thread/process is set by the Thread/Process Info browser.
+
+This browser allows the program's symbol table to be seached and browsed.
 
 Seer presents this information in three tabs:
 
@@ -11,48 +12,90 @@ Seer presents this information in three tabs:
 * Statics
 * Libraries
 
-### Frames
-Frames is the most useful. It presents a stack frame (a traceback) for the selected thread.  
+### Source
 
-This information is shown for each Frame:
+This browser lists the source files used by the program being debugged. They are categorized into three folders bases on setting in ```Config->Source```.
+
+```
+      Folder           Description
+      ----------       ---------------------------------------
+      Source files     Source files your program has.
+      Header files     Header files your program has.
+      Misc files       System related header and source files.
+```
+
+Double-clicking on a filename will load the source file in the Code Manager.
+
+Source files can be searched for using an Unix style wildcard. This will limit the number of source files listed to those that match.
+
+### Functions
+
+This browser list all the functions that match a Regex wildcard the program being debugged uses.
+
+This information is shown for each Function:
 ```
       Column       Description
       ----------   -----------------------------------------------------------------------
-      Level        The frame level. 0 is the lowest level frame (ie: the executing frame).
-                   1 is the caller of frame 0. 2 is the caller of 1. etc...
-      Function     The function name for the level.
-      File         The short name of the source file where Function is in.
-      Line         The line number in the source file that is being executed.
+      Function     The function name.
+      File         The short name of the source file where Function is declared.
+      Line         The line number in the source file where the Function is declared on.
       Fullname     The fullname of the source file.
-      Address      The frame's address in memory.
+      Type         The function prototype.
+      Description
 ```
-Clicking on a Frame Level will cause Seer to make that frame the active frame. This will in turn cause the Editor Manager to bring up the source file for the frame (if possible).
+Double-clicking on an entry will load the source file in the Code Manager.
 
-Because the frame is set as the active frame, other Seer and gdb actions will default to that frame. For instance, entering a variable name in a Visualizer will use the variable in the active frame.
+### Types
 
-### Arguments
-This tab shows the function argument names and their value for each level. For example, if level 0 is for main(), the arguments for level 0 will be the values for argc and argv.
-```
-      Column       Description
-      ----------   ---------------------------------------------------------------------------
-      Level        The frame level. 0 is the executing frame. 1 is the caller of frame 0. etc.
-      Name         List of variables names at the frame level.
-      Value        Value of the variables at the frame level.
-```
-Using the RMB will bring up a choice of Seer Visualizers and Loggers to further view the values. Note, you may need to set the level as active first in the Frames tab.
+This browser list all the class/struct types that match a Regex wildcard the program being debugged uses.
 
-### Locals
-This tab shows the local values in the selected frame. Local values means the variables of the execution line in that frame, plus any established variables before the current line.
-
-Selecting a diffent frame in the Frames tab will show the locals for that frame.
-
+This information is shown for each Type:
 ```
       Column       Description
       ----------   -----------------------------------------------------------------------
-      Name         The variable name.
-      Arg          The function argument number, if any. May appear in the Arguements tab.
-      Value        Value of the variable.
+      Type         The class/struct name.
+      File         The short name of the source file where Type is declared.
+      Line         The line number in the source file where the Type is declared on.
+      Fullname     The fullname of the source file.
 ```
-### Refresh
-The refresh button refreshes the currently exposed tab.
+Double-clicking on an entry will load the source file in the Code Manager.
+
+### Statics
+
+This browser list all the static variables that match a Regex wildcard the program being debugged uses.
+
+This information is shown for each Static:
+```
+      Column       Description
+      ----------   --------------------------------------------------------------------
+      Variable     The static name.
+      File         The short name of the source file where Static is declared.
+      Line         The line number in the source file where the Static is declared on.
+      Fullname     The fullname of the source file.
+      Type         The static prototype.
+      Description
+```
+Double-clicking on an entry will load the source file in the Code Manager.
+
+### Libraries
+
+This browser list all the shared libraries that match a Regex wildcard the program being debugged uses.
+
+This information is shown for each Library:
+```
+      Column            Description
+      ----------        -------------------------------------------------
+      Id                Library name.
+      Target-Name       Library name.
+      Host-Name
+      Symbols Loaded    Are symbols loaded for this library? 1 == yes.
+      Thread Group      Which thread group is this entry for.
+      Ranges            Memory range where the shared library is loaded.
+```
+### References
+
+Consult these references
+
+1. [Link](https://en.wikipedia.org/wiki/Regular_expression) Regular expressions.
+2. [Link](https://en.wikipedia.org/wiki/Glob_(programming)) Unix wildcards.
 
