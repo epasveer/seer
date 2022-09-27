@@ -99,7 +99,7 @@ The main view for Seer looks like:
 Open Dialog
 -----------
 
-When the open exectable dialog is invoked, it looks like this :
+When the open executable dialog is invoked, it looks like this :
 ![](images/opendialog.png)
 
 Seer Console
