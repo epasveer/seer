@@ -1,6 +1,10 @@
 
 # Seer Change Log
 
+## [1.12beta] - 2022-MM-DD
+
+* Stay tuned...
+
 ## [1.11] - 2022-09-26
 
 * Thread/Process manager.
