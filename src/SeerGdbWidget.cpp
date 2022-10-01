@@ -49,6 +49,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbProgram                         = "/usr/bin/gdb";
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
+    _gdbNonStopMode                     = false;
     _assemblyShowAssemblyTabOnStartup   = false;
     _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
@@ -449,6 +450,16 @@ bool SeerGdbWidget::gdbAsyncMode () const {
     return _gdbASyncMode;
 }
 
+void SeerGdbWidget::setGdbNonStopMode (bool flag) {
+
+    _gdbNonStopMode = flag;
+}
+
+bool SeerGdbWidget::gdbNonStopMode () const {
+
+    return _gdbNonStopMode;
+}
+
 void SeerGdbWidget::setGdbHandleTerminatingException (bool flag) {
 
     _gdbHandleTerminatingException = flag;
@@ -662,6 +673,13 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+        }
+
+        if (gdbNonStopMode()) {
+            handleGdbCommand("-gdb-set pagination off");
+            handleGdbCommand("-gdb-set non-stop on");
+        }else{
+            handleGdbCommand("-gdb-set non-stop off");
         }
     }
 
@@ -943,12 +961,6 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
-        }
-
-        if (gdbHandleTerminatingException()) {
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-        }else{
-            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
     }
 

@@ -34,6 +34,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         bool                    showAssemblyTab                                 () const;
         void                    setRandomizeStartAddress                        (bool flag);
         bool                    randomizeStartAddress                           () const;
+        void                    setNonStopMode                                  (bool flag);
+        bool                    nonStopMode                                     () const;
 
         // Attach to a running process. "attach".
         void                    setAttachPid                                    (int pid);

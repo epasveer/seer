@@ -242,6 +242,14 @@ bool SeerMainWindow::executableRandomizeStartAddress () const {
     return gdbWidget->gdbRandomizeStartAddress();
 }
 
+void SeerMainWindow::setExecutableNonStopMode (bool flag) {
+    gdbWidget->setGdbNonStopMode(flag);
+}
+
+bool SeerMainWindow::executableNonStopMode () const {
+    return gdbWidget->gdbNonStopMode();
+}
+
 void SeerMainWindow::setExecutablePid (int pid) {
     gdbWidget->setExecutablePid(pid);
 }
@@ -333,6 +341,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
     dlg.setShowAssemblyTab(executableShowAssemblyTab());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
+    dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableHostPort());
     dlg.setConnectSerialBaud(executableSerialBaud());
@@ -361,6 +370,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
     setExecutableShowAssemblyTab(dlg.showAssemblyTab());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
+    setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
     setExecutableHostPort(dlg.connectHostPort());
     setExecutableSerialBaud(dlg.connectSerialBaud());
@@ -373,6 +383,7 @@ void SeerMainWindow::handleFileDebug () {
 void SeerMainWindow::handleFileArguments () {
 
     SeerArgumentsDialog dlg(this);
+
     dlg.setExecutableArguments(executableArguments());
 
     int ret = dlg.exec();
@@ -438,6 +449,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
+    dlg.setGdbNonStopMode(gdbWidget->gdbNonStopMode());
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
@@ -472,6 +484,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
+    gdbWidget->setGdbNonStopMode(dlg.gdbNonStopMode());
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
@@ -840,6 +853,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("program",                    gdbWidget->gdbProgram());
         settings.setValue("arguments",                  gdbWidget->gdbArguments());
         settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
+        settings.setValue("nonstopmode",                gdbWidget->gdbNonStopMode());
         settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
         settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
         settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
@@ -907,6 +921,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
         gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
+        gdbWidget->setGdbNonStopMode(settings.value("nonstopmode", false).toBool());
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
         gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());

@@ -27,6 +27,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setBreakpointFunctionName("");
     setShowAssemblyTab(false);
     setRandomizeStartAddress(false);
+    setNonStopMode(false);
     setAttachPid(0);
     setConnectHostPort("");
     setCoreFilename("");
@@ -135,6 +136,14 @@ void SeerDebugDialog::setRandomizeStartAddress (bool flag) {
 
 bool SeerDebugDialog::randomizeStartAddress () const {
     return randomizeStartAddressCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setNonStopMode (bool flag) {
+    nonStopModeCheckBox->setChecked(flag);
+}
+
+bool SeerDebugDialog::nonStopMode () const {
+    return nonStopModeCheckBox->isChecked();
 }
 
 void SeerDebugDialog::setCoreFilename (const QString& coreFilename) {
@@ -322,6 +331,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     breakpointInFunctionLineEdit->setEnabled(false);
     showAsseblyTabCheckBox->setEnabled(false);
     randomizeStartAddressCheckBox->setEnabled(false);
+    nonStopModeCheckBox->setEnabled(false);
 
     // ID == 2
     attachProgramPidLabel->setEnabled(false);
@@ -358,6 +368,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         breakpointInFunctionLineEdit->setEnabled(true);
         showAsseblyTabCheckBox->setEnabled(true);
         randomizeStartAddressCheckBox->setEnabled(true);
+        nonStopModeCheckBox->setEnabled(true);
     }
 
     // ID == 2

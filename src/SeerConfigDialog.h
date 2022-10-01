@@ -32,6 +32,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbAsyncMode                                 (bool flag);
         bool                                gdbAsyncMode                                    () const;
 
+        void                                setGdbNonStopMode                               (bool flag);
+        bool                                gdbNonStopMode                                  () const;
+
         void                                setGdbHandleTerminatingException                (bool flag);
         bool                                gdbHandleTerminatingException                   () const;
 

@@ -15,6 +15,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         QString                 gdbProgram                                      () const;
         QString                 gdbArguments                                    () const;
         bool                    gdbAsyncMode                                    () const;
+        bool                    gdbNonStopMode                                  () const;
         bool                    gdbHandleTerminatingException                   () const;
         bool                    gdbRandomizeStartAddress                        () const;
         bool                    gdbEnablePrettyPrinting                         () const;
@@ -22,6 +23,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         void                    setGdbProgram                                   (const QString& program);
         void                    setGdbArguments                                 (const QString& arguments);
         void                    setGdbAsyncMode                                 (bool flag);
+        void                    setGdbNonStopMode                               (bool flag);
         void                    setGdbHandleTerminatingException                (bool flag);
         void                    setGdbRandomizeStartAddress                     (bool flag);
         void                    setGdbEnablePrettyPrinting                      (bool flag);

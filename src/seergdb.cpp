@@ -58,6 +58,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startAddressRandomizeOption(QStringList()<<"sar"<<"start-address-randomize", QCoreApplication::translate("main", "Randomize the program's starting address. For --run or --start"), "yes|no");
     parser.addOption(startAddressRandomizeOption);
 
+    QCommandLineOption nonStopModeOption(QStringList()<<"nsm"<<"non-stop-mode", QCoreApplication::translate("main", "Continue to run other threads at breakpoints. For --run or --start"), "yes|no");
+    parser.addOption(nonStopModeOption);
+
     QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a locally running process."), "pid");
     parser.addOption(attachOption);
 
@@ -109,6 +112,7 @@ int main (int argc, char* argv[]) {
     QString executableBreakpointFunctionName;
     QString executableShowAssemblyTab;
     QString executableStartAddressRandomize;
+    QString executableNonStopMode;
     QString executableCoreFilename;
 
     if (parser.isSet(runOption)) {
@@ -136,6 +140,10 @@ int main (int argc, char* argv[]) {
 
     if (parser.isSet(startAddressRandomizeOption)) {
         executableStartAddressRandomize = parser.value(startAddressRandomizeOption);
+    }
+
+    if (parser.isSet(nonStopModeOption)) {
+        executableNonStopMode = parser.value(nonStopModeOption);
     }
 
     if (parser.isSet(attachOption)) {
@@ -202,6 +210,19 @@ int main (int argc, char* argv[]) {
 
         }else{
             printf("%s: Unknown --start-address-randomize option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableStartAddressRandomize));
+            return 1;
+        }
+    }
+
+    if (executableNonStopMode != "") {
+        if (executableNonStopMode == "yes") {
+            seer.setExecutableNonStopMode(true);
+
+        }else if (executableNonStopMode == "no") {
+            seer.setExecutableNonStopMode(false);
+
+        }else{
+            printf("%s: Unknown --non-stop-mode option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableNonStopMode));
             return 1;
         }
     }

@@ -39,6 +39,11 @@ bool SeerGdbConfigPage::gdbAsyncMode () const {
     return gdbAsyncModeCheckBox->isChecked();
 }
 
+bool SeerGdbConfigPage::gdbNonStopMode () const {
+
+    return gdbNonStopModeCheckBox->isChecked();
+}
+
 bool SeerGdbConfigPage::gdbHandleTerminatingException () const {
 
     return gdbHandleTerminateExceptionCheckBox->isChecked();
@@ -67,6 +72,11 @@ void SeerGdbConfigPage::setGdbArguments (const QString& arguments) {
 void SeerGdbConfigPage::setGdbAsyncMode (bool flag) {
 
     gdbAsyncModeCheckBox->setChecked(flag);
+}
+
+void SeerGdbConfigPage::setGdbNonStopMode (bool flag) {
+
+    gdbNonStopModeCheckBox->setChecked(flag);
 }
 
 void SeerGdbConfigPage::setGdbHandleTerminatingException (bool flag) {
@@ -136,6 +146,7 @@ void SeerGdbConfigPage::reset () {
     setGdbProgram("/usr/bin/gdb");
     setGdbArguments("--interpreter=mi");
     setGdbAsyncMode(true);
+    setGdbNonStopMode(false);
     setGdbHandleTerminatingException(true);
     setGdbRandomizeStartAddress(false);
     setGdbEnablePrettyPrinting(true);

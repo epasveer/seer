@@ -35,6 +35,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         bool                        executableShowAssemblyTab           () const;
         void                        setExecutableRandomizeStartAddress  (bool flag);
         bool                        executableRandomizeStartAddress     () const;
+        void                        setExecutableNonStopMode            (bool flag);
+        bool                        executableNonStopMode               () const;
         void                        setExecutablePid                    (int pid);
         int                         executablePid                       () const;
         void                        setExecutableHostPort               (const QString& executableHostPort);

@@ -20,97 +20,6 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="gdbGroupBox">
-     <property name="title">
-      <string>Gdb Settings</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="4" column="0">
-       <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
-        <property name="toolTip">
-         <string>Randomize the process start address.</string>
-        </property>
-        <property name="text">
-         <string>Randomize start address</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
-        <property name="toolTip">
-         <string>Handle terminating exceptions when calling functions.</string>
-        </property>
-        <property name="text">
-         <string>Handle  terminating-exception</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
-        <property name="toolTip">
-         <string>Arguments to pass to the gdb debugger.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="gdbArgumentsLabel">
-        <property name="text">
-         <string>GDB arguments</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QToolButton" name="gdbProgramToolButton">
-        <property name="toolTip">
-         <string>Open a file dialog to locate the gdb debugger.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resource.qrc">
-          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="gdbProgramLabel">
-        <property name="text">
-         <string>GDB program</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
-        <property name="toolTip">
-         <string>Turn gdb 'async' mode on or off.</string>
-        </property>
-        <property name="text">
-         <string>GDB asycn mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="gdbProgramLineEdit">
-        <property name="toolTip">
-         <string>Specify the path and name of the gdb debugger.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QCheckBox" name="gdbEnablePrettyPrintingCheckBox">
-        <property name="toolTip">
-         <string>Show variables with gdb's 'pretty-printing' system.</string>
-        </property>
-        <property name="text">
-         <string>Enable pretty-printing</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="printPointGroupBox">
      <property name="title">
@@ -190,40 +99,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="4">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>626</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="4">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>626</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="1" colspan="3">
+      <item row="1" column="1" colspan="4">
        <widget class="QLineEdit" name="functionLineEdit">
         <property name="toolTip">
          <string>The name of a function in your program to use.</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="3">
+      <item row="2" column="1" colspan="4">
        <widget class="QLineEdit" name="channelLineEdit">
         <property name="toolTip">
          <string>The channel value, if required by the function.</string>
@@ -243,17 +126,21 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Specify an alternate gdb program and alternate gdb flags.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Specify an alternate gdb program and alternate gdb flags. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changing many of these require saving the new configuration and restarting Seer to take effect&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. If a different debugger is used, it must provide that.  So, usually, the &amp;quot;--interpreter=mi&amp;quot; argument is a must.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible. &lt;span style=&quot; font-weight:600;&quot;&gt;Changing this reqires saving the configuration and the restart of Seer to take effect&lt;/span&gt;.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible. &lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Non-stop mode, when turned on, will allow other threads to continue to run while another thread reaches a breakpoint.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The gdb debugger normally starts the process at the same address each time. The program's start address can be randomized.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A terminating-exception can happen when gdb  is asked to call a function in your program. Like printing the return value from a function. If the function throws an exception, gdb can handle it by suppressing the exception or allowing the program to terminate. See:&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace'; color:#24292f; background-color:transparent;&quot;&gt;    unwind-on-terminating-exception on|off&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The gdb debugger normally starts the process at the same address each time. The process start address can be randomized.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Enabling pretty-printing allows gdb to present certain variables (like std::string) in a pleasing way. Otherwise, the contents of the variables are presented in their full description. (See gdb 'pretty-printing'). Once enabled, it can not be turned off for the Seer session.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -264,6 +151,108 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;'Channel' specifies the alternate channel to use when the style is 'call'. For example, if 'Function' is &amp;quot;fprintf&amp;quot;, the 'Channel' would be the value to pass to the first argument of the 'fprintf' call. eg: &amp;quot;fp&amp;quot;. Again, your program needs to provied the channel variable.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="gdbGroupBox">
+     <property name="title">
+      <string>Gdb Settings</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="gdbProgramLabel">
+        <property name="text">
+         <string>GDB program</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="gdbProgramLineEdit">
+        <property name="toolTip">
+         <string>Specify the path and name of the gdb debugger.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QToolButton" name="gdbProgramToolButton">
+        <property name="toolTip">
+         <string>Open a file dialog to locate the gdb debugger.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="gdbArgumentsLabel">
+        <property name="text">
+         <string>GDB arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
+        <property name="toolTip">
+         <string>Arguments to pass to the gdb debugger.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+          <property name="toolTip">
+           <string>Turn gdb 'async' mode on or off.</string>
+          </property>
+          <property name="text">
+           <string>Asycn mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="gdbNonStopModeCheckBox">
+          <property name="text">
+           <string>Non-stop mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
+          <property name="toolTip">
+           <string>Randomize the process start address.</string>
+          </property>
+          <property name="text">
+           <string>Randomize start address</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
+          <property name="toolTip">
+           <string>Handle terminating exceptions when calling functions.</string>
+          </property>
+          <property name="text">
+           <string>Handle  terminating-exception</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="gdbEnablePrettyPrintingCheckBox">
+          <property name="toolTip">
+           <string>Show variables with gdb's 'pretty-printing' system.</string>
+          </property>
+          <property name="text">
+           <string>Enable pretty-printing</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

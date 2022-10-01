@@ -3,7 +3,11 @@
 
 ## [1.12beta] - 2022-MM-DD
 
-* Stay tuned...
+* Added Gdb's Non-Stop mode.
+    - https://sourceware.org/gdb/onlinedocs/gdb/Non_002dStop-Mode.html
+    - A new --non-stop-mode <yes|no>  command line flag
+    - A new entry in the Debug dialog.
+    - A new entry in Seer's config dialog under the gdb section.
 
 ## [1.11] - 2022-09-26
 

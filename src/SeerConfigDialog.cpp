@@ -129,6 +129,16 @@ bool SeerConfigDialog::gdbAsyncMode () const {
     return _gdbConfigPage->gdbAsyncMode();
 }
 
+void SeerConfigDialog::setGdbNonStopMode (bool flag) {
+
+    _gdbConfigPage->setGdbNonStopMode(flag);
+}
+
+bool SeerConfigDialog::gdbNonStopMode () const {
+
+    return _gdbConfigPage->gdbNonStopMode();
+}
+
 void SeerConfigDialog::setGdbHandleTerminatingException (bool flag) {
 
     _gdbConfigPage->setGdbHandleTerminatingException(flag);
