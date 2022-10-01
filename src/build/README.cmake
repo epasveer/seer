@@ -7,7 +7,7 @@ Notes for building Seer with cmake.
 
 
 % make clean                            # Clean files.
-% make seer                             # Build Seer.
+% make seergdb                          # Build Seer.
 % sudo make install                     # Install it.
 
 % cmake --build . --config Release
