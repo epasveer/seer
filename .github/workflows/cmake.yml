@@ -2,9 +2,8 @@ name: CMake
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - "main"
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -44,9 +43,21 @@ jobs:
     - name: Build Result
       run: cd src; ls -l build/
 
+#   - name: Build Release
+#     uses: AButler/upload-release-assets@v2.0
+#     with:
+#       files: 'src/build/seergdb'
+#       repo-token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Build Release
-      uses: AButler/upload-release-assets@v2.0
-      with:
-        files: 'src/build/seergdb'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            LICENSE
+            CHANGELOG.md
+            src/build/seergdb
 
