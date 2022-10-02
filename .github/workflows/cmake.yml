@@ -59,7 +59,5 @@ jobs:
         prerelease: true
         title: "Ubuntu Development Release"
         files: |
-          LICENSE
-          CHANGELOG.md
-          src/build/seergdb
+          src/build/seergdb.tar.gz
 
