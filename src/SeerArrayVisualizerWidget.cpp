@@ -301,14 +301,22 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _aVariableId) {
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
+#else
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
+#endif
 
             setAVariableAddress(words.first());
         }
 
         if (id_text.toInt() == _bVariableId) {
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
+#else
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
+#endif
 
             setBVariableAddress(words.first());
         }

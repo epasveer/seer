@@ -154,7 +154,11 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
+#else
+            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
+#endif
 
             setVariableAddress(words.first());
         }

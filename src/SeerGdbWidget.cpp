@@ -1733,7 +1733,11 @@ void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
     }else{
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         QStringList ids = expressionids.split(' ', Qt::SkipEmptyParts);
+#else
+        QStringList ids = expressionids.split(' ', QString::SkipEmptyParts);
+#endif
 
         bool first = true;
         for (int i=0; i<ids.size(); i++) {
@@ -2285,7 +2289,11 @@ void SeerGdbWidget::startGdb () {
     _gdbProcess->setProgram(gdbProgram());
 
     // Build the gdb argument list.
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QStringList args = gdbArguments().split(' ', Qt::SkipEmptyParts);
+#else
+    QStringList args = gdbArguments().split(' ', QString::SkipEmptyParts);
+#endif
 
     // Give the gdb process the argument list.
     _gdbProcess->setArguments(args);
