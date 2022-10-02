@@ -27,7 +27,10 @@ jobs:
         modules: 'qtcharts'
 
     - name: Where Am I
-      run: pwd; ls -l; lscpu
+      run: |
+        pwd
+        ls -l
+        lscpu
 
     - name: Versions
       run: g++ --version
@@ -35,11 +38,15 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cd src; cmake -B ${{github.workspace}}/src/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: |
+        cd src
+        cmake -B ${{github.workspace}}/src/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cd src; cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel `grep -c processor /proc/cpuinfo`
+      run: |
+        cd src
+        cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel `grep -c processor /proc/cpuinfo`
 
     - name: Tar
       run: |
@@ -48,8 +55,10 @@ jobs:
         cp ../../CHANGELOG.md .
         tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
 
-    - name: List Result
-      run: cd src; ls -l build/
+    - name: List Results
+      run: |
+        cd src
+        ls -l build/
 
     - name: Build Ubuntu Release
       uses: marvinpinto/action-automatic-releases@latest
