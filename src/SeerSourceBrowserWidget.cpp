@@ -245,8 +245,11 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
 
         QList<QTreeWidgetItem*> matches;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         matches = sourceTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
-      //matches = sourceTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0); // Unix style wildcarding. Needs preceeding '*' all the time.
+#else
+        matches = sourceTreeWidget->findItems(text, Qt::MatchRegExp | Qt::MatchRecursive, 0);
+#endif
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
         QList<QTreeWidgetItem*>::const_iterator e  = matches.end();

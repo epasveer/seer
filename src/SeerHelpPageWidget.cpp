@@ -45,7 +45,11 @@ void SeerHelpPageWidget::loadFile (const QString& filename) {
 void SeerHelpPageWidget::loadText (const QString& text) {
 
     // Put the Help text in as markdown. Move back to the begining.
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     textBrowser->setMarkdown(text);
+#else
+    textBrowser->setText(text);
+#endif
     textBrowser->moveCursor(QTextCursor::Start);
 }
 
