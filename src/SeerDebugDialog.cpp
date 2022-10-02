@@ -40,7 +40,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,                            this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::idClicked),       this, &SeerDebugDialog::handleRunModeChanged);
 #else
     QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::buttonClicked),   this, &SeerDebugDialog::handleRunModeChanged);
