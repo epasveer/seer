@@ -47,7 +47,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Set up Styles menu.
     //
     _styleMenuActionGroup = new QActionGroup(this);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     _styleMenuActionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
+#else
+    _styleMenuActionGroup->setExclusive(true);
+#endif
     _styleMenuActionGroup->setEnabled(true);
     _styleMenuActionGroup->setVisible(true);
 
