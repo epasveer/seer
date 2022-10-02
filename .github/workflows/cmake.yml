@@ -45,8 +45,8 @@ jobs:
       run: |
         cd src/build
         cp ../../LICENSE .
-        cp ../../CHANGELOG .
-        tar zcvf seergdb.tar.gz LICENSE CHANGELOG seergdb
+        cp ../../CHANGELOG.md .
+        tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
 
     - name: List Result
       run: cd src; ls -l build/
