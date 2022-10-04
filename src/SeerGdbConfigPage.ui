@@ -215,6 +215,9 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="0" column="1">
          <widget class="QCheckBox" name="gdbNonStopModeCheckBox">
+          <property name="toolTip">
+           <string>Allow other threads to continue if any thread reaches a breakpoint.</string>
+          </property>
           <property name="text">
            <string>Non-stop mode</string>
           </property>

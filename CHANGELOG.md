@@ -8,6 +8,9 @@
     - A new --non-stop-mode <yes|no>  command line flag
     - A new entry in the Debug dialog.
     - A new entry in Seer's config dialog under the gdb section.
+* Added support for the older QT5.12 library.
+    - Expect rendering problems with the builtin help system.
+    - Urge to move to QT5.15 library.
 
 ## [1.11] - 2022-09-26
 

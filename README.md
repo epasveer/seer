@@ -17,6 +17,7 @@ Requirements
     * gdb with "mi" interpreter
     * QT5 (5.15.2 or newer)
     * QT5 QtCharts (5.15.2 or newer)
+    * QT5.12 is supported but has certain limitations.
     * When building Seer from source, you will need the QT5 "devel" packages
       installed on your system for your distribution.
 
