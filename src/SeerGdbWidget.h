@@ -180,6 +180,17 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbInterruptSIGSEGV           ();
         void                                handleGdbInterruptSIGUSR1           ();
         void                                handleGdbInterruptSIGUSR2           ();
+
+        void                                handleGdbRunThreadGroup             (QString threadGroup);
+        void                                handleGdbStartThreadGroup           (QString threadGroup);
+        void                                handleGdbContinueThreadGroup        (QString threadGroup);
+        void                                handleGdbInterruptThreadGroup       (QString threadGroup);
+        void                                handleGdbNextThreadId               (int threadid);
+        void                                handleGdbStepThreadId               (int threadid);
+        void                                handleGdbFinishThreadId             (int threadid);
+        void                                handleGdbContinueThreadId           (int threadid);
+        void                                handleGdbInterruptThreadId          (int threadid);
+
         void                                handleGdbExecutableSources          ();
         void                                handleGdbExecutableFunctions        (int id, const QString& functionRegex);
         void                                handleGdbExecutableTypes            (int id, const QString& typeRegex);

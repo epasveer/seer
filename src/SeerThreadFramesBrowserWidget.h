@@ -13,23 +13,33 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
        ~SeerThreadFramesBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                handleStoppingPointReached  ();
-        void                refresh                     ();
+        void                handleText                      (const QString& text);
+        void                handleStoppingPointReached      ();
+        void                refresh                         ();
 
     protected slots:
-        void                handleItemClicked           (QTreeWidgetItem* item, int column);
-        void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleItemClicked               (QTreeWidgetItem* item, int column);
+        void                handleItemEntered               (QTreeWidgetItem* item, int column);
+        void                handleGdbNextToolButton         ();
+        void                handleGdbStepToolButton         ();
+        void                handleGdbFinishToolButton       ();
+        void                handleGdbContinueToolButton     ();
+        void                handleGdbInterruptToolButton    ();
 
     signals:
-        void                refreshThreadFrames         ();
-        void                refreshThreadIds            ();
-        void                selectedFile                (QString file, QString fullname, int lineno);
-        void                selectedFrame               (int frameno);
-        void                selectedThread              (int threadid);
+        void                refreshThreadFrames             ();
+        void                refreshThreadIds                ();
+        void                selectedFile                    (QString file, QString fullname, int lineno);
+        void                selectedFrame                   (int frameno);
+        void                selectedThread                  (int threadid);
+        void                nextThreadId                    (int threadid);
+        void                stepThreadId                    (int threadid);
+        void                finishThreadId                  (int threadid);
+        void                continueThreadId                (int threadid);
+        void                interruptThreadId               (int threadid);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                showEvent                       (QShowEvent* event);
 
     private:
 };

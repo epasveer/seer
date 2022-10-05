@@ -13,18 +13,26 @@ class SeerThreadGroupsBrowserWidget : public QWidget, protected Ui::SeerThreadGr
        ~SeerThreadGroupsBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                refresh                     ();
+        void                handleText                      (const QString& text);
+        void                refresh                         ();
 
     protected slots:
-        void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleItemEntered               (QTreeWidgetItem* item, int column);
+        void                handleGdbRunToolButton          ();
+        void                handleGdbStartToolButton        ();
+        void                handleGdbContinueToolButton     ();
+        void                handleGdbInterruptToolButton    ();
 
     signals:
-        void                refreshThreadGroups         ();
-        void                refreshThreadIds            ();
+        void                refreshThreadGroups             ();
+        void                refreshThreadIds                ();
+        void                runThreadGroup                  (QString threadGroup);
+        void                startThreadGroup                (QString threadGroup);
+        void                continueThreadGroup             (QString threadGroup);
+        void                interruptThreadGroup            (QString threadGroup);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                showEvent                       (QShowEvent* event);
 
     private:
 };

@@ -31,8 +31,13 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     threadTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(threadTreeWidget, &QTreeWidget::itemClicked,          this, &SeerThreadFramesBrowserWidget::handleItemClicked);
-    QObject::connect(threadTreeWidget, &QTreeWidget::itemEntered,          this, &SeerThreadFramesBrowserWidget::handleItemEntered);
+    QObject::connect(threadTreeWidget,          &QTreeWidget::itemClicked,          this, &SeerThreadFramesBrowserWidget::handleItemClicked);
+    QObject::connect(threadTreeWidget,          &QTreeWidget::itemEntered,          this, &SeerThreadFramesBrowserWidget::handleItemEntered);
+    QObject::connect(gdbNextToolButton,         &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbNextToolButton);
+    QObject::connect(gdbStepToolButton,         &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbStepToolButton);
+    QObject::connect(gdbFinishToolButton,       &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbFinishToolButton);
+    QObject::connect(gdbContinueToolButton,     &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbContinueToolButton);
+    QObject::connect(gdbInterruptToolButton,    &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbInterruptToolButton);
 }
 
 SeerThreadFramesBrowserWidget::~SeerThreadFramesBrowserWidget () {
@@ -209,15 +214,17 @@ void SeerThreadFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, in
 
     Q_UNUSED(column);
 
-    int lineno = item->text(5).toInt();
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
 
-    //qDebug() << "Emit selectedFile and selectedFrame";
+    if (items.count() == 1) {
 
-    emit selectedFile(item->text(4), item->text(6), lineno);
-    emit selectedThread(item->text(0).toInt());
+        int lineno = item->text(5).toInt();
 
-    // Comment out this signal. The frame number is always 0 from gdb. Why?
-    //emit selectedFrame(item->text(3).toInt());
+        //qDebug() << "Emit selectedFile and selectedFrame";
+
+        emit selectedFile(item->text(4), item->text(6), lineno);
+        emit selectedThread(item->text(0).toInt());
+    }
 }
 
 void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
@@ -230,6 +237,76 @@ void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, in
 
     for (int i=1; i<threadTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
+    }
+}
+
+void SeerThreadFramesBrowserWidget::handleGdbNextToolButton () {
+
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        int threadid = (*i)->text(0).toInt();
+
+        emit nextThreadId(threadid);
+    }
+}
+
+void SeerThreadFramesBrowserWidget::handleGdbStepToolButton () {
+
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        int threadid = (*i)->text(0).toInt();
+
+        emit stepThreadId(threadid);
+    }
+}
+
+void SeerThreadFramesBrowserWidget::handleGdbFinishToolButton () {
+
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        int threadid = (*i)->text(0).toInt();
+
+        emit finishThreadId(threadid);
+    }
+}
+
+void SeerThreadFramesBrowserWidget::handleGdbContinueToolButton () {
+
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        int threadid = (*i)->text(0).toInt();
+
+        emit continueThreadId(threadid);
+    }
+}
+
+void SeerThreadFramesBrowserWidget::handleGdbInterruptToolButton () {
+
+    QList<QTreeWidgetItem*> items = threadTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        int threadid = (*i)->text(0).toInt();
+
+        emit interruptThreadId(threadid);
     }
 }
 

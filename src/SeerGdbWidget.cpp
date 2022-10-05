@@ -221,13 +221,29 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
 
-    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::refreshThreadIds,                                              this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
-    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::selectedThread,                                                this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadIds,                                           this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedFile,                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedThread,                                             this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::nextThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbNextThreadId);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::stepThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbStepThreadId);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::finishThreadId,                                             this,                                                           &SeerGdbWidget::handleGdbFinishThreadId);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::continueThreadId,                                           this,                                                           &SeerGdbWidget::handleGdbContinueThreadId);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::interruptThreadId,                                          this,                                                           &SeerGdbWidget::handleGdbInterruptThreadId);
+
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::refreshThreadIds,                                              this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::selectedThread,                                                this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::nextThreadId,                                                  this,                                                           &SeerGdbWidget::handleGdbNextThreadId);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::stepThreadId,                                                  this,                                                           &SeerGdbWidget::handleGdbStepThreadId);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::finishThreadId,                                                this,                                                           &SeerGdbWidget::handleGdbFinishThreadId);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::continueThreadId,                                              this,                                                           &SeerGdbWidget::handleGdbContinueThreadId);
+    QObject::connect(threadManagerWidget->threadIdsBrowserWidget(),             &SeerThreadIdsBrowserWidget::interruptThreadId,                                             this,                                                           &SeerGdbWidget::handleGdbInterruptThreadId);
+
     QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::refreshThreadGroups,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListGroups);
+    QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::runThreadGroup,                                             this,                                                           &SeerGdbWidget::handleGdbRunThreadGroup);
+    QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::startThreadGroup,                                           this,                                                           &SeerGdbWidget::handleGdbStartThreadGroup);
+    QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::continueThreadGroup,                                        this,                                                           &SeerGdbWidget::handleGdbContinueThreadGroup);
+    QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::interruptThreadGroup,                                       this,                                                           &SeerGdbWidget::handleGdbInterruptThreadGroup);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::schedulerLockingModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbSchedulerLockingMode);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::scheduleMultipleModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbScheduleMultipleMode);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::forkFollowsModeChanged,                                           this,                                                           &SeerGdbWidget::handleGdbForkFollowMode);
@@ -1119,6 +1135,103 @@ void SeerGdbWidget::handleGdbInterruptSIGUSR1 () {
 void SeerGdbWidget::handleGdbInterruptSIGUSR2 () {
 
     sendGdbInterrupt(SIGUSR2);
+}
+
+void SeerGdbWidget::handleGdbRunThreadGroup (QString threadGroup) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (threadGroup == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-run --thread-group " + threadGroup);
+}
+
+void SeerGdbWidget::handleGdbStartThreadGroup (QString threadGroup) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (threadGroup == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-run --thread-group " + threadGroup + " --start");
+}
+
+void SeerGdbWidget::handleGdbContinueThreadGroup (QString threadGroup) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (threadGroup == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-continue --thread-group " + threadGroup);
+}
+
+void SeerGdbWidget::handleGdbInterruptThreadGroup (QString threadGroup) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (threadGroup == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-interrupt --thread-group " + threadGroup);
+}
+
+void SeerGdbWidget::handleGdbNextThreadId (int threadid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-exec-next --thread %1").arg(threadid));
+}
+
+void SeerGdbWidget::handleGdbStepThreadId (int threadid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-exec-step --thread %1").arg(threadid));
+}
+
+void SeerGdbWidget::handleGdbFinishThreadId (int threadid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-exec-finish --thread %1").arg(threadid));
+}
+
+void SeerGdbWidget::handleGdbContinueThreadId (int threadid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-exec-continue --thread %1").arg(threadid));
+}
+
+void SeerGdbWidget::handleGdbInterruptThreadId (int threadid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-exec-interrupt --thread %1").arg(threadid));
 }
 
 void SeerGdbWidget::handleGdbExecutableSources () {

@@ -23,7 +23,11 @@ SeerThreadGroupsBrowserWidget::SeerThreadGroupsBrowserWidget (QWidget* parent) :
     groupTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(groupTreeWidget, &QTreeWidget::itemEntered,          this, &SeerThreadGroupsBrowserWidget::handleItemEntered);
+    QObject::connect(groupTreeWidget,           &QTreeWidget::itemEntered,          this, &SeerThreadGroupsBrowserWidget::handleItemEntered);
+    QObject::connect(gdbRunToolButton,          &QToolButton::clicked,              this, &SeerThreadGroupsBrowserWidget::handleGdbRunToolButton);
+    QObject::connect(gdbStartToolButton,        &QToolButton::clicked,              this, &SeerThreadGroupsBrowserWidget::handleGdbStartToolButton);
+    QObject::connect(gdbContinueToolButton,     &QToolButton::clicked,              this, &SeerThreadGroupsBrowserWidget::handleGdbContinueToolButton);
+    QObject::connect(gdbInterruptToolButton,    &QToolButton::clicked,              this, &SeerThreadGroupsBrowserWidget::handleGdbInterruptToolButton);
 }
 
 SeerThreadGroupsBrowserWidget::~SeerThreadGroupsBrowserWidget () {
@@ -113,6 +117,7 @@ void SeerThreadGroupsBrowserWidget::handleText (const QString& text) {
 }
 
 void SeerThreadGroupsBrowserWidget::refresh () {
+
     emit refreshThreadIds();
     emit refreshThreadGroups();
 }
@@ -127,6 +132,62 @@ void SeerThreadGroupsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, in
 
     for (int i=1; i<groupTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
+    }
+}
+
+void SeerThreadGroupsBrowserWidget::handleGdbRunToolButton () {
+
+    QList<QTreeWidgetItem*> items = groupTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        QString groupid = (*i)->text(0);
+
+        emit runThreadGroup(groupid);
+    }
+}
+
+void SeerThreadGroupsBrowserWidget::handleGdbStartToolButton () {
+
+    QList<QTreeWidgetItem*> items = groupTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        QString groupid = (*i)->text(0);
+
+        emit startThreadGroup(groupid);
+    }
+}
+
+void SeerThreadGroupsBrowserWidget::handleGdbContinueToolButton () {
+
+    QList<QTreeWidgetItem*> items = groupTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        QString groupid = (*i)->text(0);
+
+        emit continueThreadGroup(groupid);
+    }
+}
+
+void SeerThreadGroupsBrowserWidget::handleGdbInterruptToolButton () {
+
+    QList<QTreeWidgetItem*> items = groupTreeWidget->selectedItems();
+
+    QList<QTreeWidgetItem*>::iterator i;
+
+    for (i = items.begin(); i != items.end(); ++i) {
+
+        QString groupid = (*i)->text(0);
+
+        emit interruptThreadGroup(groupid);
     }
 }
 

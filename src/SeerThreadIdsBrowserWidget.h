@@ -13,19 +13,29 @@ class SeerThreadIdsBrowserWidget : public QWidget, protected Ui::SeerThreadIdsBr
        ~SeerThreadIdsBrowserWidget ();
 
     public slots:
-        void                handleText                  (const QString& text);
-        void                handleItemClicked           (QTreeWidgetItem* item, int column);
-        void                handleStoppingPointReached  ();
-        void                refresh                     ();
+        void                handleText                      (const QString& text);
+        void                handleStoppingPointReached      ();
+        void                refresh                         ();
 
     protected slots:
+        void                handleItemClicked               (QTreeWidgetItem* item, int column);
+        void                handleGdbNextToolButton         ();
+        void                handleGdbStepToolButton         ();
+        void                handleGdbFinishToolButton       ();
+        void                handleGdbContinueToolButton     ();
+        void                handleGdbInterruptToolButton    ();
 
     signals:
-        void                refreshThreadIds            ();
-        void                selectedThread              (int threadid);
+        void                refreshThreadIds                ();
+        void                selectedThread                  (int threadid);
+        void                nextThreadId                    (int threadid);
+        void                stepThreadId                    (int threadid);
+        void                finishThreadId                  (int threadid);
+        void                continueThreadId                (int threadid);
+        void                interruptThreadId               (int threadid);
 
     protected:
-        void                showEvent                   (QShowEvent* event);
+        void                showEvent                       (QShowEvent* event);
 
     private:
 };
