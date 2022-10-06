@@ -11,6 +11,21 @@
 * Added support for the older QT5.12 library.
     - Expect rendering problems with the builtin help system.
     - Urge to move to QT5.15 library.
+* Main execute buttons.
+    - Add '--all threads' for main execute buttons.
+        - run/start/next/step/finish/continue/interrupt.
+    - Individual threads can be managed by the Thread Manager.
+* Thread Manager changes.
+    - Thread Frame browser.
+        - Allow multiple threads to be select. Selecting 1 thread will select stack frame.
+        - Add next/step/finish/continue/interrupt for selected thread(s).
+    - Thread Id browser.
+        - Allow multiple threads to be select. Selecting 1 thread will select stack frame.
+        - Add next/step/finish/continue/interrupt for selected thread(s).
+    - Thread Group browser.
+        - Allow multiple thread groups to be select.
+        - Add continue/interrupt for selected thread group(s).
+        - Add run/start for selected thread group(s). Disabled for now.
 
 ## [1.11] - 2022-09-26
 
