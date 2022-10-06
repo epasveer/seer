@@ -761,9 +761,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
     // Run the executable. Do not stop in main.
     if (_executableBreakMode == "inmain") {
-        handleGdbCommand("-exec-run --start");
+        handleGdbCommand("-exec-run --all --start");
     }else{
-        handleGdbCommand("-exec-run");
+        handleGdbCommand("-exec-run --all");
     }
 
     QApplication::restoreOverrideCursor();
@@ -1099,7 +1099,7 @@ void SeerGdbWidget::handleGdbContinue () {
         return;
     }
 
-    handleGdbCommand("-exec-continue");
+    handleGdbCommand("-exec-continue --all");
 }
 
 void SeerGdbWidget::handleGdbInterrupt () {
@@ -2772,7 +2772,7 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
     // We do have the ability to use a different signal, though. :^)
 
     if (signal < 0) {
-        handleGdbCommand("-exec-interrupt");
+        handleGdbCommand("-exec-interrupt --all");
 
     }else{
         int stat = kill(executablePid(), signal);
