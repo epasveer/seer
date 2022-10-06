@@ -209,7 +209,7 @@ p, li { white-space: pre-wrap; }
            <string>Turn gdb 'async' mode on or off.</string>
           </property>
           <property name="text">
-           <string>Asycn mode</string>
+           <string>Async mode</string>
           </property>
          </widget>
         </item>
