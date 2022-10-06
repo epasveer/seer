@@ -193,12 +193,10 @@ qt5_add_resources(SOURCE_FILES resource.qrc)
 if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel
     if(WIN32) # Check if we are on Windows
         set(SYSTEM_TYPE WIN32)
-    elseif(APPLE) # MacOS X
-        set(SYSTEM_TYPE MACOSX_BUNDLE)
-#    else() # UNIX
-#        set(SYSTEM_TYPE EXCLUDE_FROM_ALL)
+    else() # UNIX
+        set(SYSTEM_TYPE EXCLUDE_FROM_ALL)
     endif()
-    message("System type is" ${SYSTEM_TYPE})
+    message("System type is " ${SYSTEM_TYPE})
 endif()
 
 # for Linux, BSD, Solaris, Minix
