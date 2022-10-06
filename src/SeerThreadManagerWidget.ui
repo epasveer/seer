@@ -26,7 +26,7 @@
       <string>Thread/Process Info</string>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="5">
