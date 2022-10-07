@@ -15,15 +15,27 @@ void SeerSeerLogWidget::processText (const QString& text) {
     // Only log '^', '*', and '=' records.
     bool selected = false;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (selected == false && text.front() == '^') {
+#else
+    if (selected == false && text.at(0) == '^') {
+#endif
         selected = true;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (selected == false && text.front() == '*') {
+#else
+    if (selected == false && text.at(0) == '*') {
+#endif
         selected = true;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (selected == false && text.front() == '=') {
+#else
+    if (selected == false && text.at(0) == '=') {
+#endif
         selected = true;
     }
 
