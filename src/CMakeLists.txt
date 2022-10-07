@@ -204,7 +204,7 @@ if(UNIX AND NOT APPLE)
     add_compile_options(-Wall -Wextra -Wunused-result -pedantic)   # -Werror -Wdeprecated-copy
 endif()
 
-add_compile_definitions(QT_DEPRECATED_WARNINGS)
+add_definitions(-DQT_DEPRECATED_WARNINGS)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 

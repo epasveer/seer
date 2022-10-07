@@ -6,20 +6,21 @@ Seer - a gui frontend to gdb for Linux.   (Ernie Pasveer  epasveer@att.net)
 This project is actively worked on. The aim is a simple, yet pleasing gui to gdb.
 
 Please report any bugs or desired features to my email or create a task in my
-github project page.
+GitHub project page.
 
 
 Requirements
 ============
 
-    * Linux
-    * C++17
-    * gdb with "mi" interpreter
-    * QT5 (5.15.2 or newer)
-    * QT5 QtCharts (5.15.2 or newer)
-    * QT5.12 is supported but has certain limitations.
-    * When building Seer from source, you will need the QT5 "devel" packages
-      installed on your system for your distribution.
+* Linux
+* C++17
+* gdb with "mi" interpreter
+* CMake (3.10 or newer)
+* QT5 (5.15.2 or newer)
+* QT5 QtCharts (5.15.2 or newer)
+* QT as old as 5.9.5 (e.g., Ubuntu 18.04 LTS) is supported but has certain limitations.
+* When building Seer from source, you will need the QT5 "devel" packages
+  installed on your system for your distribution.
 
 NOTE
 ====
@@ -39,63 +40,63 @@ Main View
 The main view for Seer looks like:
 ![](images/mainview.png)
 
-    * Source/Function/Types/Variables/Libraries
-        * The list of source/header files that were used in the program.
-        * Search for Functions, Types, and Static Variables.
-          Dobule clicking will open the source file.
-        * The list of shared libraries referenced by the program.
-        * The list of source/header files can be searched in. This will "shrink" the list of files shown.
-        * Double clicking on a file will open it in the Code Manager.
+* Source/Function/Types/Variables/Libraries
+    * The list of source/header files that were used in the program.
+    * Search for Functions, Types, and Static Variables.
+      Dobule clicking will open the source file.
+    * The list of shared libraries referenced by the program.
+    * The list of source/header files can be searched in. This will "shrink" the list of files shown.
+    * Double clicking on a file will open it in the Code Manager.
 
-    * Variable/Register Info
-        * Show variable and register values.
-        * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
-          that is opened in the code manager.
-        * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
-          (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
-          their potentially new value.
-        * "Registers" - show the values of all cpu registgers.
+* Variable/Register Info
+    * Show variable and register values.
+    * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
+      that is opened in the code manager.
+    * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
+      (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
+      their potentially new value.
+    * "Registers" - show the values of all cpu registgers.
 
-    * Code Manager.
-        * The large area of the middle part of the Seer gui.
-        * Source files are opened in this view.
-        * Text in a file can be seached for with ^F.
-        * Variables can be added to the "Logger" by double clicking the variable name.
-          Double click with CTLR key pressed will prepend variable with "*".
-          Double click with SHIFT key pressed will prepend variable with "&".
-          Double click with CTRL+SHIFT key pressed will prepend variable with "*&".
-        * Variables can be added to the "Tracker" by selecting the varible name and RMB and select
-          "Add variable to Tracker".
-        * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
-          "Add variable to Memory Visualizer".
-        * A breakpoint/printpoint can be created by RMB on a specific line.
-        * Can execute to a specific line by RMB on a specific line.
-        * Tabs in this view can be detached by double-clicking a tab.
+* Code Manager.
+    * The large area of the middle part of the Seer gui.
+    * Source files are opened in this view.
+    * Text in a file can be seached for with ^F.
+    * Variables can be added to the "Logger" by double clicking the variable name.
+      Double click with CTLR key pressed will prepend variable with "*".
+      Double click with SHIFT key pressed will prepend variable with "&".
+      Double click with CTRL+SHIFT key pressed will prepend variable with "*&".
+    * Variables can be added to the "Tracker" by selecting the varible name and RMB and select
+      "Add variable to Tracker".
+    * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
+      "Add variable to Memory Visualizer".
+    * A breakpoint/printpoint can be created by RMB on a specific line.
+    * Can execute to a specific line by RMB on a specific line.
+    * Tabs in this view can be detached by double-clicking a tab.
 
-    * Breakpoints, Watchpoints, Catchpoints, Printpoints, manual gdb commands, and logs.
-        * The area below the Code Manager.
-        * Manual commands.  Manually enter a gdb or gdbmi command.
-          The commands are remembered for the next Seer use.
-        * Breakpoint manager. Create and manage breakpoints.
-        * Watchpoint manager. Create and manage watchpoints.
-          A watchpoint monitors when a variable is accessed (read, write, read/write).
-        * Catchpoint manager. Create and manage catchpoints.
-          A catchpoint stops execution on a C++ throw/rethrow/catch call.
-        * Printpoint manager. Create and manage printpoints.
-          A printpoint is like a breakpoint but it allows you to print variables at
-          that printpoint. See gdb's 'dprintf' call.
-        * GDB output. A log of any output from the gdb program itself.
-        * Seer output. A log of any output from the Seer program itself. As diagnostics.
-        * Tabs in this view can be detached by double-clicking a tab.
+* Breakpoints, Watchpoints, Catchpoints, Printpoints, manual gdb commands, and logs.
+    * The area below the Code Manager.
+    * Manual commands.  Manually enter a gdb or gdbmi command.
+      The commands are remembered for the next Seer use.
+    * Breakpoint manager. Create and manage breakpoints.
+    * Watchpoint manager. Create and manage watchpoints.
+      A watchpoint monitors when a variable is accessed (read, write, read/write).
+    * Catchpoint manager. Create and manage catchpoints.
+      A catchpoint stops execution on a C++ throw/rethrow/catch call.
+    * Printpoint manager. Create and manage printpoints.
+      A printpoint is like a breakpoint but it allows you to print variables at
+      that printpoint. See gdb's 'dprintf' call.
+    * GDB output. A log of any output from the gdb program itself.
+    * Seer output. A log of any output from the Seer program itself. As diagnostics.
+    * Tabs in this view can be detached by double-clicking a tab.
 
-    * Stack frame information.
-        * Stack frame list. A frame can be double clicked to change the scope (the current function).
-        * Stack frame arguments. For each frame, print the arguments passed to each function.
-        * Stack locals. For the current function, print the values of the local variables.
+* Stack frame information.
+    * Stack frame list. A frame can be double clicked to change the scope (the current function).
+    * Stack frame arguments. For each frame, print the arguments passed to each function.
+    * Stack locals. For the current function, print the values of the local variables.
 
-    * Thread information.
-        * Thread ids. A list of all threads. Double click on a thread id to change the scope (the current thread).
-        * Thread frames. For each thread, list its stack frames.
+* Thread information.
+    * Thread ids. A list of all threads. Double click on a thread id to change the scope (the current thread).
+    * Thread frames. For each thread, list its stack frames.
 
 Open Dialog
 -----------
@@ -259,6 +260,6 @@ package containing Seer. You need the `build-essential` package installed.
 Support/Contact
 ===============
 
-    Send an email to epasveer@att.net for any bugs or features. Or create a task
-    in my github project page.
+Send an email to epasveer@att.net for any bugs or features. Or create a task
+in my GitHub project page.
 

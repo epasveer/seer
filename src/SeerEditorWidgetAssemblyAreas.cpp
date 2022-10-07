@@ -138,7 +138,11 @@ int SeerEditorWidgetAssemblyArea::lineNumberAreaWidth () {
         b++;
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * chars;
+#else
+    int space = 3 + fontMetrics().width(QLatin1Char('9')) * chars;
+#endif
 
     return space;
 }
@@ -356,8 +360,16 @@ void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
             while (block.isValid()) {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
                 if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
+#else
+                if (fm.width(block.text()) > pixmapWidth) {
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
                     pixmapWidth = fm.horizontalAdvance(block.text());
+#else
+                    pixmapWidth = fm.width(block.text());
+#endif
                 }
 
                 pixmapHeight += fm.height();
