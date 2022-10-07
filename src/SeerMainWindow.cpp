@@ -853,6 +853,11 @@ void SeerMainWindow::writeConfigSettings () {
 
     QSettings settings;
 
+    settings.beginGroup("mainwindow"); {
+        QStyle* currentStyle = QApplication::style();
+        settings.setValue("qtstyle", currentStyle->objectName());
+    } settings.endGroup();
+
     settings.beginGroup("gdb"); {
         settings.setValue("program",                    gdbWidget->gdbProgram());
         settings.setValue("arguments",                  gdbWidget->gdbArguments());
@@ -920,6 +925,12 @@ void SeerMainWindow::writeConfigSettings () {
 void SeerMainWindow::readConfigSettings () {
 
     QSettings settings;
+
+    settings.beginGroup("mainwindow"); {
+        if (settings.contains("qtstyle")) {
+            QApplication::setStyle(settings.value("qtstyle").toString());
+        }
+    } settings.endGroup();
 
     settings.beginGroup("gdb"); {
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
