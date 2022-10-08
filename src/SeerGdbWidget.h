@@ -85,6 +85,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbEnablePrettyPrinting          (bool flag);
         bool                                gdbEnablePrettyPrinting             () const;
 
+        void                                setGdbRecordMode                    (const QString& mode);
+        QString                             gdbRecordMode                       () const;
+
+        void                                setGdbRecordDirection               (const QString& direction);
+        QString                             gdbRecordDirection                  () const;
 
         void                                setDprintfStyle                     (const QString& style);
         QString                             dprintfStyle                        () const;
@@ -173,6 +178,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbStepi                      ();
         void                                handleGdbFinish                     ();
         void                                handleGdbContinue                   ();
+        void                                handleGdbRecordStart                ();
+        void                                handleGdbRecordForward              ();
+        void                                handleGdbRecordReverse              ();
+        void                                handleGdbRecordStop                 ();
         void                                handleGdbInterrupt                  ();
         void                                handleGdbInterruptSIGINT            ();
         void                                handleGdbInterruptSIGKILL           ();
@@ -274,6 +283,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                stoppingPointReached                ();
         void                                changeWindowTitle                   (QString title);
         void                                assemblyConfigChanged               ();
+        void                                recordSettingsChanged               ();
 
     protected:
 
@@ -294,6 +304,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbHandleTerminatingException;
         bool                                _gdbRandomizeStartAddress;
         bool                                _gdbEnablePrettyPrinting;
+        QString                             _gdbRecordMode;
+        QString                             _gdbRecordDirection;
         QString                             _dprintfStyle;
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;

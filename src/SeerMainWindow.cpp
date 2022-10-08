@@ -43,9 +43,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     toolBar->addWidget(_progressIndicator);
 
-    //
     // Set up Styles menu.
-    //
     _styleMenuActionGroup = new QActionGroup(this);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     _styleMenuActionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
@@ -65,9 +63,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
         _styleMenuActionGroup->addAction(styleAction);
     }
 
-    //
     // Set up Interrupt menu.
-    //
     QMenu* menuInterrupt = new QMenu(this);
     QAction* interruptAction = menuInterrupt->addAction("GDB Interrupt");
     menuInterrupt->addSeparator();
@@ -111,6 +107,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlNexti,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNexti);
     QObject::connect(actionControlStepi,                &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStepi);
     QObject::connect(actionControlFinish,               &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlRecordStart,          &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordStart);
+    QObject::connect(actionControlRecordForward,        &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordForward);
+    QObject::connect(actionControlRecordReverse,        &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordReverse);
+    QObject::connect(actionControlRecordStop,           &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordStop);
     QObject::connect(actionControlInterrupt,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                    this,           &SeerMainWindow::handleSettingsConfiguration);
@@ -140,9 +140,13 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,           this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::showMessage,  this,           &SeerMainWindow::handleShowMessage);
 
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::recordSettingsChanged,  this,           &SeerMainWindow::handleRecordSettingsChanged);
+
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,      this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
+
+    handleRecordSettingsChanged();
 
 
     // Restore window settings.
@@ -803,6 +807,7 @@ void SeerMainWindow::handleText (const QString& text) {
         return;
     }
 
+    // Leave in for stray error messages.
     qDebug() << text;
 }
 
@@ -819,6 +824,39 @@ void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus s
 
     }else{
         _progressIndicator->stop();
+    }
+}
+
+void SeerMainWindow::handleRecordSettingsChanged () {
+
+    if (gdbWidget->gdbRecordMode() == "stop") {
+
+        actionControlRecordStart->setEnabled(true);
+        actionControlRecordStop->setEnabled(false);
+        actionControlRecordForward->setEnabled(false);
+        actionControlRecordReverse->setEnabled(false);
+        actionControlRecordForward->setChecked(false);
+        actionControlRecordReverse->setChecked(false);
+
+    }else if (gdbWidget->gdbRecordMode() == "full") {
+
+        actionControlRecordStart->setEnabled(false);
+        actionControlRecordStop->setEnabled(true);
+        actionControlRecordForward->setEnabled(true);
+        actionControlRecordReverse->setEnabled(true);
+
+        if (gdbWidget->gdbRecordDirection() == "") {
+            actionControlRecordForward->setChecked(true);
+            actionControlRecordReverse->setChecked(false);
+        }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(true);
+        }else{
+            qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
+        }
+
+    }else{
+        qDebug() << "Bad record mode of '" << gdbWidget->gdbRecordMode() << "'";
     }
 }
 

@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>30</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -91,6 +91,20 @@
     <property name="title">
      <string>Control</string>
     </property>
+    <widget class="QMenu" name="menuRecord">
+     <property name="title">
+      <string>Record</string>
+     </property>
+     <addaction name="actionControlRecordStart"/>
+     <addaction name="actionControlRecordStop"/>
+    </widget>
+    <widget class="QMenu" name="menuDirection">
+     <property name="title">
+      <string>Direction</string>
+     </property>
+     <addaction name="actionControlRecordForward"/>
+     <addaction name="actionControlRecordReverse"/>
+    </widget>
     <addaction name="actionControlRun"/>
     <addaction name="actionControlStart"/>
     <addaction name="actionControlContinue"/>
@@ -100,6 +114,9 @@
     <addaction name="separator"/>
     <addaction name="actionControlNexti"/>
     <addaction name="actionControlStepi"/>
+    <addaction name="separator"/>
+    <addaction name="menuRecord"/>
+    <addaction name="menuDirection"/>
     <addaction name="separator"/>
     <addaction name="actionControlInterrupt"/>
    </widget>
@@ -131,20 +148,15 @@
    <addaction name="actionGdbStep"/>
    <addaction name="actionGdbFinish"/>
    <addaction name="separator"/>
+   <addaction name="actionRecordProcess"/>
+   <addaction name="actionRecordDirection"/>
+   <addaction name="separator"/>
    <addaction name="actionInterruptProcess"/>
    <addaction name="separator"/>
    <addaction name="actionMemoryVisualizer"/>
    <addaction name="actionArrayVisualizer"/>
    <addaction name="actionStructVisualizer"/>
   </widget>
-  <action name="actionGdbQuit">
-   <property name="text">
-    <string>Quit</string>
-   </property>
-   <property name="toolTip">
-    <string>Exit GDB.</string>
-   </property>
-  </action>
   <action name="actionFileQuit">
    <property name="icon">
     <iconset resource="resource.qrc">
@@ -508,10 +520,6 @@
   <action name="actionViewAssembly">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/assembly.png</normaloff>:/seer/resources/assembly.png</iconset>
-   </property>
-   <property name="icon">
-    <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/thenounproject/assembly.svg</normaloff>:/seer/resources/thenounproject/assembly.svg</iconset>
    </property>
    <property name="text">
@@ -519,11 +527,6 @@
    </property>
    <property name="statusTip">
     <string>View the program's assembly.</string>
-   </property>
-  </action>
-  <action name="actionDefault">
-   <property name="text">
-    <string>Default</string>
    </property>
   </action>
   <action name="actionViewStructVisualizer">
@@ -548,6 +551,42 @@
    </property>
    <property name="toolTip">
     <string>Launch a blank Struct Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionControlRecordStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionControlRecordReverse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Reverse</string>
+   </property>
+  </action>
+  <action name="actionRecordProcess">
+   <property name="text">
+    <string>Record</string>
+   </property>
+  </action>
+  <action name="actionControlRecordStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionControlRecordForward">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Forward</string>
+   </property>
+  </action>
+  <action name="actionRecordDirection">
+   <property name="text">
+    <string>Direction</string>
    </property>
   </action>
  </widget>

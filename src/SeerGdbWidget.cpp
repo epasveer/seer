@@ -55,6 +55,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
     _gdbEnablePrettyPrinting            = true;
+    _gdbRecordMode                      = "stop";
+    _gdbRecordDirection                 = "";
     _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
@@ -504,6 +506,30 @@ void SeerGdbWidget::setGdbEnablePrettyPrinting (bool flag) {
 bool SeerGdbWidget::gdbEnablePrettyPrinting () const {
 
     return _gdbEnablePrettyPrinting;
+}
+
+void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
+
+    _gdbRecordMode = mode;
+
+    emit recordSettingsChanged();
+}
+
+QString SeerGdbWidget::gdbRecordMode () const {
+
+    return _gdbRecordMode;
+}
+
+void SeerGdbWidget::setGdbRecordDirection (const QString& direction) {
+
+    _gdbRecordDirection = direction;
+
+    emit recordSettingsChanged();
+}
+
+QString SeerGdbWidget::gdbRecordDirection () const {
+
+    return _gdbRecordDirection;
 }
 
 void SeerGdbWidget::setDprintfStyle (const QString& style) {
@@ -1054,7 +1080,7 @@ void SeerGdbWidget::handleGdbNext () {
         return;
     }
 
-    handleGdbCommand("-exec-next");
+    handleGdbCommand(QString("-exec-next %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbNexti () {
@@ -1063,7 +1089,7 @@ void SeerGdbWidget::handleGdbNexti () {
         return;
     }
 
-    handleGdbCommand("-exec-next-instruction");
+    handleGdbCommand(QString("-exec-next-instruction %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbStep () {
@@ -1072,7 +1098,7 @@ void SeerGdbWidget::handleGdbStep () {
         return;
     }
 
-    handleGdbCommand("-exec-step");
+    handleGdbCommand(QString("-exec-step %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbStepi () {
@@ -1081,7 +1107,7 @@ void SeerGdbWidget::handleGdbStepi () {
         return;
     }
 
-    handleGdbCommand("-exec-step-instruction");
+    handleGdbCommand(QString("-exec-step-instruction %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbFinish () {
@@ -1090,7 +1116,7 @@ void SeerGdbWidget::handleGdbFinish () {
         return;
     }
 
-    handleGdbCommand("-exec-finish");
+    handleGdbCommand(QString("-exec-finish %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbContinue () {
@@ -1099,7 +1125,41 @@ void SeerGdbWidget::handleGdbContinue () {
         return;
     }
 
-    handleGdbCommand("-exec-continue --all");
+    handleGdbCommand(QString("-exec-continue %1 --all").arg(gdbRecordDirection()));
+}
+
+void SeerGdbWidget::handleGdbRecordStart () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    setGdbRecordMode("full");
+    setGdbRecordDirection("");
+
+    handleGdbCommand("record " + gdbRecordMode());
+}
+
+void SeerGdbWidget::handleGdbRecordStop () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    setGdbRecordMode("stop");
+    setGdbRecordDirection("");
+
+    handleGdbCommand("record " + gdbRecordMode());
+}
+
+void SeerGdbWidget::handleGdbRecordForward () {
+
+    setGdbRecordDirection("");
+}
+
+void SeerGdbWidget::handleGdbRecordReverse () {
+
+    setGdbRecordDirection("--reverse");
 }
 
 void SeerGdbWidget::handleGdbInterrupt () {
@@ -1147,7 +1207,7 @@ void SeerGdbWidget::handleGdbRunThreadGroup (QString threadGroup) {
         return;
     }
 
-    handleGdbCommand("-exec-run --thread-group " + threadGroup);
+    handleGdbCommand(QString("-exec-run --thread-group %1").arg(threadGroup));
 }
 
 void SeerGdbWidget::handleGdbStartThreadGroup (QString threadGroup) {
@@ -1160,7 +1220,7 @@ void SeerGdbWidget::handleGdbStartThreadGroup (QString threadGroup) {
         return;
     }
 
-    handleGdbCommand("-exec-run --thread-group " + threadGroup + " --start");
+    handleGdbCommand(QString("-exec-run --thread-group %1 --start").arg(threadGroup));
 }
 
 void SeerGdbWidget::handleGdbContinueThreadGroup (QString threadGroup) {
@@ -1173,7 +1233,7 @@ void SeerGdbWidget::handleGdbContinueThreadGroup (QString threadGroup) {
         return;
     }
 
-    handleGdbCommand("-exec-continue --thread-group " + threadGroup);
+    handleGdbCommand(QString("-exec-continue %1 --thread-group %2").arg(gdbRecordDirection()).arg(threadGroup));
 }
 
 void SeerGdbWidget::handleGdbInterruptThreadGroup (QString threadGroup) {
@@ -1186,7 +1246,7 @@ void SeerGdbWidget::handleGdbInterruptThreadGroup (QString threadGroup) {
         return;
     }
 
-    handleGdbCommand("-exec-interrupt --thread-group " + threadGroup);
+    handleGdbCommand(QString("-exec-interrupt --thread-group %1").arg(threadGroup));
 }
 
 void SeerGdbWidget::handleGdbNextThreadId (int threadid) {
@@ -1195,7 +1255,7 @@ void SeerGdbWidget::handleGdbNextThreadId (int threadid) {
         return;
     }
 
-    handleGdbCommand(QString("-exec-next --thread %1").arg(threadid));
+    handleGdbCommand(QString("-exec-next --thread %1 %2").arg(threadid).arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbStepThreadId (int threadid) {
@@ -1204,7 +1264,7 @@ void SeerGdbWidget::handleGdbStepThreadId (int threadid) {
         return;
     }
 
-    handleGdbCommand(QString("-exec-step --thread %1").arg(threadid));
+    handleGdbCommand(QString("-exec-step %1 --thread %2").arg(gdbRecordDirection()).arg(threadid));
 }
 
 void SeerGdbWidget::handleGdbFinishThreadId (int threadid) {
@@ -1213,7 +1273,7 @@ void SeerGdbWidget::handleGdbFinishThreadId (int threadid) {
         return;
     }
 
-    handleGdbCommand(QString("-exec-finish --thread %1").arg(threadid));
+    handleGdbCommand(QString("-exec-finish %1 --thread %2").arg(gdbRecordDirection()).arg(threadid));
 }
 
 void SeerGdbWidget::handleGdbContinueThreadId (int threadid) {
@@ -1222,7 +1282,7 @@ void SeerGdbWidget::handleGdbContinueThreadId (int threadid) {
         return;
     }
 
-    handleGdbCommand(QString("-exec-continue --thread %1").arg(threadid));
+    handleGdbCommand(QString("-exec-continue %1 --thread %2").arg(gdbRecordDirection()).arg(threadid));
 }
 
 void SeerGdbWidget::handleGdbInterruptThreadId (int threadid) {
