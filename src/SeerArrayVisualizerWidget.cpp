@@ -43,6 +43,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     aArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
     bArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
 
+    arrayTableWidget->setAAxis(aAxisComboBox->currentText());
+    arrayTableWidget->setBAxis(bAxisComboBox->currentText());
 
     lineRadioButton->setChecked(true);
 
