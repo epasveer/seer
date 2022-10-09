@@ -98,6 +98,10 @@ The main view for Seer looks like:
     * Thread ids. A list of all threads. Double click on a thread id to change the scope (the current thread).
     * Thread frames. For each thread, list its stack frames.
 
+* Supports Gdb's Reverse Debugging mode.
+    * Turn instruction recording on or off.
+    * Set playback direction to forward or reverse.
+
 Open Dialog
 -----------
 
