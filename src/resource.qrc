@@ -36,6 +36,8 @@
     <file>resources/RelaxLightIcons/edit-find.svg</file>
     <file>resources/RelaxLightIcons/go-down.svg</file>
     <file>resources/RelaxLightIcons/go-up.svg</file>
+    <file>resources/RelaxLightIcons/go-next.svg</file>
+    <file>resources/RelaxLightIcons/go-previous.svg</file>
     <file>resources/RelaxLightIcons/list-add.svg</file>
     <file>resources/RelaxLightIcons/list-remove.svg</file>
     <file>resources/RelaxLightIcons/view-refresh.svg</file>
@@ -50,6 +52,7 @@
     <file>resources/RelaxLightIcons/debug-step-over.svg</file>
     <file>resources/RelaxLightIcons/help-about.svg</file>
     <file>resources/RelaxLightIcons/help-whatsthis.svg</file>
+    <file>resources/RelaxLightIcons/tools-media-optical-burn-image.svg</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/StructVisualizer.md</file>
     <file>resources/help/OldStructVisualizer.md</file>
