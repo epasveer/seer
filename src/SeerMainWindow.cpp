@@ -848,6 +848,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         // Toolbar
         actionRecordProcess->setText("Record");
         actionRecordDirection->setEnabled(false);
+        actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
 
     }else if (gdbWidget->gdbRecordMode() == "full") {
 
@@ -860,15 +861,18 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         if (gdbWidget->gdbRecordDirection() == "") {
 
             actionControlRecordForward->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
 
         }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
 
             actionControlRecordReverse->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-previous.svg"));
 
         }else{
 
             actionControlRecordForward->setChecked(false);
             actionControlRecordReverse->setChecked(false);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
 
             qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
         }

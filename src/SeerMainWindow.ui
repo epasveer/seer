@@ -92,15 +92,29 @@
      <string>Control</string>
     </property>
     <widget class="QMenu" name="menuRecord">
+     <property name="toolTip">
+      <string>Set Gdb Record mode.</string>
+     </property>
      <property name="title">
       <string>Record</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/tools-media-optical-burn-image.svg</normaloff>:/seer/resources/RelaxLightIcons/tools-media-optical-burn-image.svg</iconset>
      </property>
      <addaction name="actionControlRecordStart"/>
      <addaction name="actionControlRecordStop"/>
     </widget>
     <widget class="QMenu" name="menuDirection">
+     <property name="toolTip">
+      <string>Set Gdb Playback direction.</string>
+     </property>
      <property name="title">
       <string>Direction</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</iconset>
      </property>
      <addaction name="actionControlRecordForward"/>
      <addaction name="actionControlRecordReverse"/>
@@ -554,39 +568,81 @@
    </property>
   </action>
   <action name="actionControlRecordStop">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/stop.svg</normaloff>:/seer/resources/thenounproject/stop.svg</iconset>
+   </property>
    <property name="text">
     <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop Gdb Record mode.</string>
    </property>
   </action>
   <action name="actionControlRecordReverse">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/go-previous.svg</normaloff>:/seer/resources/RelaxLightIcons/go-previous.svg</iconset>
+   </property>
    <property name="text">
     <string>Reverse</string>
    </property>
+   <property name="toolTip">
+    <string>Set Gdb Playback to reverse.</string>
+   </property>
   </action>
   <action name="actionRecordProcess">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/tools-media-optical-burn-image.svg</normaloff>:/seer/resources/RelaxLightIcons/tools-media-optical-burn-image.svg</iconset>
+   </property>
    <property name="text">
     <string>Record</string>
    </property>
+   <property name="toolTip">
+    <string>Toggle Gdb Record mode.</string>
+   </property>
   </action>
   <action name="actionControlRecordStart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
+   </property>
    <property name="text">
     <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start Gdb Record mode.</string>
    </property>
   </action>
   <action name="actionControlRecordForward">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</iconset>
+   </property>
    <property name="text">
     <string>Forward</string>
    </property>
+   <property name="toolTip">
+    <string>Set Gdb Playback to forward.</string>
+   </property>
   </action>
   <action name="actionRecordDirection">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</iconset>
+   </property>
    <property name="text">
     <string>Direction</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Gdb Playback direction.</string>
    </property>
   </action>
  </widget>
