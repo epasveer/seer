@@ -3,6 +3,9 @@
 
 ## [1.12beta] - 2022-MM-DD
 
+* Added Gdb's Reverse Debugging mode.
+    - Turn on/off gdb instruction recording.
+    - Set play-back direction.
 * Added Gdb's Non-Stop mode.
     - https://sourceware.org/gdb/onlinedocs/gdb/Non_002dStop-Mode.html
     - A new --non-stop-mode <yes|no>  command line flag
