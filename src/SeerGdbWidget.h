@@ -179,9 +179,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbFinish                     ();
         void                                handleGdbContinue                   ();
         void                                handleGdbRecordStart                ();
+        void                                handleGdbRecordStop                 ();
         void                                handleGdbRecordForward              ();
         void                                handleGdbRecordReverse              ();
-        void                                handleGdbRecordStop                 ();
+        void                                handleGdbRecordStartStopToggle      ();
+        void                                handleGdbRecordDirectionToggle      ();
         void                                handleGdbInterrupt                  ();
         void                                handleGdbInterruptSIGINT            ();
         void                                handleGdbInterruptSIGKILL           ();

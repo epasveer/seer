@@ -76,6 +76,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     actionInterruptProcess->setMenu(menuInterrupt);
 
+    // Set up control menu for recording.
+    QActionGroup* recordDirectionActionGroup = new QActionGroup(this);
+    recordDirectionActionGroup->addAction(actionControlRecordForward);
+    recordDirectionActionGroup->addAction(actionControlRecordReverse);
+
     // Set the inital key settings.
     setKeySettings(SeerKeySettings::populate());
 
@@ -123,6 +128,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionGdbNext,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionGdbStep,                     &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbStep);
     QObject::connect(actionGdbFinish,                   &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionRecordProcess,               &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordStartStopToggle);
+    QObject::connect(actionRecordDirection,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbRecordDirectionToggle);
     QObject::connect(actionInterruptProcess,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
     QObject::connect(actionMemoryVisualizer,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(actionArrayVisualizer,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
@@ -147,7 +154,6 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     handleRecordSettingsChanged();
-
 
     // Restore window settings.
     readSettings();
@@ -831,6 +837,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
     if (gdbWidget->gdbRecordMode() == "stop") {
 
+        // Menu Control
         actionControlRecordStart->setEnabled(true);
         actionControlRecordStop->setEnabled(false);
         actionControlRecordForward->setEnabled(false);
@@ -838,22 +845,37 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordForward->setChecked(false);
         actionControlRecordReverse->setChecked(false);
 
+        // Toolbar
+        actionRecordProcess->setText("Record");
+        actionRecordDirection->setEnabled(false);
+
     }else if (gdbWidget->gdbRecordMode() == "full") {
 
+        // Menu Control
         actionControlRecordStart->setEnabled(false);
         actionControlRecordStop->setEnabled(true);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
+
             actionControlRecordForward->setChecked(true);
-            actionControlRecordReverse->setChecked(false);
+
         }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
-            actionControlRecordForward->setChecked(false);
+
             actionControlRecordReverse->setChecked(true);
+
         }else{
+
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(false);
+
             qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
         }
+
+        // Toolbar
+        actionRecordProcess->setText("Recording");
+        actionRecordDirection->setEnabled(true);
 
     }else{
         qDebug() << "Bad record mode of '" << gdbWidget->gdbRecordMode() << "'";

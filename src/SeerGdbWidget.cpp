@@ -512,6 +512,8 @@ void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
 
     _gdbRecordMode = mode;
 
+    handleGdbCommand("record " + gdbRecordMode());
+
     emit recordSettingsChanged();
 }
 
@@ -1136,8 +1138,6 @@ void SeerGdbWidget::handleGdbRecordStart () {
 
     setGdbRecordMode("full");
     setGdbRecordDirection("");
-
-    handleGdbCommand("record " + gdbRecordMode());
 }
 
 void SeerGdbWidget::handleGdbRecordStop () {
@@ -1148,8 +1148,6 @@ void SeerGdbWidget::handleGdbRecordStop () {
 
     setGdbRecordMode("stop");
     setGdbRecordDirection("");
-
-    handleGdbCommand("record " + gdbRecordMode());
 }
 
 void SeerGdbWidget::handleGdbRecordForward () {
@@ -1160,6 +1158,36 @@ void SeerGdbWidget::handleGdbRecordForward () {
 void SeerGdbWidget::handleGdbRecordReverse () {
 
     setGdbRecordDirection("--reverse");
+}
+
+void SeerGdbWidget::handleGdbRecordStartStopToggle () {
+
+    if (gdbRecordMode() == "stop") {
+
+        setGdbRecordMode("full");
+        setGdbRecordDirection("");
+
+    }else if (gdbRecordMode() == "full") {
+
+        setGdbRecordMode("stop");
+        setGdbRecordDirection("");
+
+    }else{
+
+        setGdbRecordMode("stop");
+        setGdbRecordDirection("");
+    }
+}
+
+void SeerGdbWidget::handleGdbRecordDirectionToggle () {
+
+    if (gdbRecordDirection() == "") {
+        setGdbRecordDirection("--reverse");
+    }else if (gdbRecordDirection() == "--reverse") {
+        setGdbRecordDirection("");
+    }else{
+        setGdbRecordDirection("");
+    }
 }
 
 void SeerGdbWidget::handleGdbInterrupt () {
