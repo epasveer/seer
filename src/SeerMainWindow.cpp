@@ -1018,7 +1018,7 @@ void SeerMainWindow::readConfigSettings () {
         if (settings.contains("font")) {
             f.fromString(settings.value("font").toString());
         }else{
-            f = QFont("Source Code Pro", 10);
+            f = QFont("monospace", 10);
         }
         gdbWidget->editorManager()->setEditorFont(f);
 

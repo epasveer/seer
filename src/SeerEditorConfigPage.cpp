@@ -158,7 +158,7 @@ bool SeerEditorConfigPage::highlighterEnabled () const {
 
 void SeerEditorConfigPage::reset () {
 
-    setEditorFont(QFont("Source Code Pro", 10));
+    setEditorFont(QFont("monospace", 10));
     setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
     setHighlighterEnabled(true);
 }

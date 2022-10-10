@@ -33,7 +33,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     setWindowTitle("Seer Console");
 
     QFont font;
-    font.setFamily("monospace [Consolas]");
+    font.setFamily("monospace");
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
 
@@ -372,7 +372,7 @@ void SeerConsoleWidget::readSettings() {
         if (settings.contains("font")) {
             f.fromString(settings.value("font").toString());
         }else{
-            f = QFont("Source Code Pro", 10);
+            f = QFont("monospace", 10);
         }
         textEdit->setFont(f);
     }settings.endGroup();

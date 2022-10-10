@@ -40,7 +40,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _offsetLineMap.clear();
     _lineAddressMap.clear();
 
-    QFont font("Source Code Pro");
+    QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
     setFont(font);
 
@@ -349,7 +349,7 @@ void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         int pixmapWidth  = 0;
         int pixmapHeight = 0;
 
-        QFont font("Source Code Pro");
+        QFont font("monospace");
         font.setStyleHint(QFont::Monospace);
       //font.setPointSize(2);
 
@@ -419,7 +419,7 @@ void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
     painter.drawPixmap(0, 0, *_miniMapPixmap);
     */
 
-    QFont font("Source Code Pro");
+    QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
   //font.setPointSize(2);
 

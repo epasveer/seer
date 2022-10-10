@@ -35,7 +35,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
 
-    QFont font("Source Code Pro");
+    QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
     setFont(font);
 
@@ -333,7 +333,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         int pixmapWidth  = 0;
         int pixmapHeight = 0;
 
-        QFont font("Source Code Pro");
+        QFont font("monospace");
         font.setStyleHint(QFont::Monospace);
       //font.setPointSize(2);
 
@@ -403,7 +403,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
     painter.drawPixmap(0, 0, *_miniMapPixmap);
     */
 
-    QFont font("Source Code Pro");
+    QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
   //font.setPointSize(2);
 

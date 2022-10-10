@@ -17,7 +17,7 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
-    _editorFont                = QFont("Source Code Pro", 10);                // Default font.
+    _editorFont                = QFont("monospace", 10);                      // Default font.
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
     _editorHighlighterEnabled  = true;
     _editorKeySettings         = SeerKeySettings::populate();                 // Default key settings.
