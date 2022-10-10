@@ -118,34 +118,10 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             files.insert(fullname_text, file_text);
 
-            /*
-            // Get information about the file.
-            QFileInfo fileInfo(fullname_text);
-            */
-
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, QFileInfo(file_text).fileName());
             item->setText(1, fullname_text);
-
-            /*
-            // Look at the filename suffix.
-            if (fileInfo.suffix() == "cpp" || fileInfo.suffix() == "c" || fileInfo.suffix() == "C") { // C/C++
-                _sourceFilesItems->addChild(item);
-
-            }else if (fileInfo.suffix() == "f" || fileInfo.suffix() == "f90" || fileInfo.suffix() == "F90") { // Fortran
-                _sourceFilesItems->addChild(item);
-
-            }else if (fileInfo.suffix() == "rs") { // Rust
-                _sourceFilesItems->addChild(item);
-
-            }else if (fileInfo.suffix() == "hpp" || fileInfo.suffix() == "h") {
-                _headerFilesItems->addChild(item);
-
-            }else{
-                _miscFilesItems->addChild(item);
-            }
-            */
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
@@ -248,7 +224,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         matches = sourceTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
 #else
-        matches = sourceTreeWidget->findItems(text, Qt::MatchRegExp | Qt::MatchRecursive, 0);
+        matches = sourceTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
 #endif
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
