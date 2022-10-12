@@ -34,11 +34,15 @@
 SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
     _enableLineNumberArea = false;
+    _enableOffsetArea     = false;
     _enableBreakPointArea = false;
+    _enableOpcodeArea     = false;
     _enableMiniMapArea    = false;
     _addressLineMap.clear();
     _offsetLineMap.clear();
     _lineAddressMap.clear();
+    _lineOffsetMap.clear();
+    _lineOpcodeMap.clear();
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
@@ -49,17 +53,23 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     setLineWrapMode(QPlainTextEdit::NoWrap);
 
     _lineNumberArea = new SeerEditorWidgetAssemblyLineNumberArea(this);
+    _offsetArea     = new SeerEditorWidgetAssemblyOffsetArea(this);
     _breakPointArea = new SeerEditorWidgetAssemblyBreakPointArea(this);
+    _opcodeArea     = new SeerEditorWidgetAssemblyOpcodeArea(this);
     _miniMapArea    = new SeerEditorWidgetAssemblyMiniMapArea(this);
     _miniMapPixmap  = 0;
 
     enableLineNumberArea(true);
+    enableOffsetArea(true);
     enableBreakPointArea(true);
+    enableOpcodeArea(true);
     enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOffsetArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOpcodeArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
@@ -69,11 +79,15 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
 
     // Forward the scroll events in the various areas to the text edit.
     SeerPlainTextWheelEventForwarder* lineNumberAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* offsetAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* opcodeAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
+    _offsetArea->installEventFilter(offsetAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
+    _opcodeArea->installEventFilter(opcodeAreaWheelForwarder);
     _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
@@ -81,32 +95,62 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
 }
 
 void SeerEditorWidgetAssemblyArea::enableLineNumberArea (bool flag) {
+
     _enableLineNumberArea = flag;
 
     updateMarginAreasWidth(0);
 }
 
 bool SeerEditorWidgetAssemblyArea::lineNumberAreaEnabled () const {
+
     return _enableLineNumberArea;
 }
 
+void SeerEditorWidgetAssemblyArea::enableOffsetArea (bool flag) {
+
+    _enableOffsetArea = flag;
+
+    updateMarginAreasWidth(0);
+}
+
+bool SeerEditorWidgetAssemblyArea::offsetAreaEnabled () const {
+
+    return _enableOffsetArea;
+}
+
 void SeerEditorWidgetAssemblyArea::enableBreakPointArea (bool flag) {
+
     _enableBreakPointArea = flag;
 
     updateMarginAreasWidth(0);
 }
 
 bool SeerEditorWidgetAssemblyArea::breakPointAreaEnabled () const {
+
     return _enableBreakPointArea;
 }
 
+void SeerEditorWidgetAssemblyArea::enableOpcodeArea (bool flag) {
+
+    _enableOpcodeArea = flag;
+
+    updateMarginAreasWidth(0);
+}
+
+bool SeerEditorWidgetAssemblyArea::opcodeAreaEnabled () const {
+
+    return _enableOpcodeArea;
+}
+
 void SeerEditorWidgetAssemblyArea::enableMiniMapArea (bool flag) {
+
     _enableMiniMapArea = flag;
 
     updateMarginAreasWidth(0);
 }
 
 bool SeerEditorWidgetAssemblyArea::miniMapAreaEnabled () const {
+
     return _enableMiniMapArea;
 }
 
@@ -114,7 +158,7 @@ void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
 
     Q_UNUSED(newBlockCount);
 
-    int leftMarginWidth  = lineNumberAreaWidth() + breakPointAreaWidth();
+    int leftMarginWidth  = lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth() + opcodeAreaWidth();
     int rightMarginWidth = miniMapAreaWidth();
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
@@ -147,6 +191,36 @@ int SeerEditorWidgetAssemblyArea::lineNumberAreaWidth () {
     return space;
 }
 
+int SeerEditorWidgetAssemblyArea::offsetAreaWidth () {
+
+    if (offsetAreaEnabled() == false) {
+        return 0;
+    }
+
+    qulonglong offset  = 0;
+
+    QMap<int,qulonglong>::iterator b = _lineOffsetMap.begin();
+    QMap<int,qulonglong>::iterator e = _lineOffsetMap.end();
+
+    while (b != e) {
+
+        offset = qMax(offset, b.value());
+
+        b++;
+    }
+
+    QString tmp = QString("<+%1>").arg(offset);
+
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * tmp.length();
+#else
+    int space = 3 + fontMetrics().width(QLatin1Char('9')) * tmp.length();
+#endif
+
+    return space;
+}
+
 int SeerEditorWidgetAssemblyArea::breakPointAreaWidth () {
 
     if (breakPointAreaEnabled() == false) {
@@ -154,6 +228,33 @@ int SeerEditorWidgetAssemblyArea::breakPointAreaWidth () {
     }
 
     int space = 3 + 20;
+
+    return space;
+}
+
+int SeerEditorWidgetAssemblyArea::opcodeAreaWidth () {
+
+    if (opcodeAreaEnabled() == false) {
+        return 0;
+    }
+
+    int chars  = 1;
+
+    QMap<int,QString>::iterator b = _lineOpcodeMap.begin();
+    QMap<int,QString>::iterator e = _lineOpcodeMap.end();
+
+    while (b != e) {
+
+        chars = qMax(chars, b->length());
+
+        b++;
+    }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * chars;
+#else
+    int space = 3 + fontMetrics().width(QLatin1Char('9')) * chars;
+#endif
 
     return space;
 }
@@ -186,6 +287,23 @@ void SeerEditorWidgetAssemblyArea::updateLineNumberArea (const QRect& rect, int 
     }
 }
 
+void SeerEditorWidgetAssemblyArea::updateOffsetArea (const QRect& rect, int dy) {
+
+    if (offsetAreaEnabled() == false) {
+        return;
+    }
+
+    if (dy) {
+        _offsetArea->scroll(0, dy);
+    }else{
+        _offsetArea->update(0, rect.y(), _offsetArea->width(), rect.height());
+    }
+
+    if (rect.contains(viewport()->rect())) {
+        updateMarginAreasWidth(0);
+    }
+}
+
 void SeerEditorWidgetAssemblyArea::updateBreakPointArea (const QRect& rect, int dy) {
 
     if (breakPointAreaEnabled() == false) {
@@ -196,6 +314,23 @@ void SeerEditorWidgetAssemblyArea::updateBreakPointArea (const QRect& rect, int 
         _breakPointArea->scroll(0, dy);
     }else{
         _breakPointArea->update(0, rect.y(), _breakPointArea->width(), rect.height());
+    }
+
+    if (rect.contains(viewport()->rect())) {
+        updateMarginAreasWidth(0);
+    }
+}
+
+void SeerEditorWidgetAssemblyArea::updateOpcodeArea (const QRect& rect, int dy) {
+
+    if (opcodeAreaEnabled() == false) {
+        return;
+    }
+
+    if (dy) {
+        _opcodeArea->scroll(0, dy);
+    }else{
+        _opcodeArea->update(0, rect.y(), _opcodeArea->width(), rect.height());
     }
 
     if (rect.contains(viewport()->rect())) {
@@ -245,6 +380,7 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
     while (block.isValid() && top <= event->rect().bottom()) {
 
         if (block.isVisible() && bottom >= event->rect().top()) {
+
             QString address;
 
             if (_lineAddressMap.contains(blockNumber+1)) {
@@ -252,6 +388,49 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
             }
 
             painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(), Qt::AlignLeft, address);
+        }
+
+        block  = block.next();
+        top    = bottom;
+        bottom = top + qRound(blockBoundingRect(block).height());
+
+        blockNumber++;
+    }
+}
+
+void SeerEditorWidgetAssemblyArea::offsetAreaPaintEvent (QPaintEvent* event) {
+
+    if (lineNumberAreaEnabled() == false) {
+        return;
+    }
+
+    QTextCharFormat format = highlighterSettings().get("Margin");
+
+    QPainter painter(_offsetArea);
+    painter.fillRect(event->rect(), format.background().color());
+    painter.setPen(format.foreground().color());
+
+    QFont font = painter.font();
+    font.setItalic(format.fontItalic());
+    font.setWeight(format.fontWeight());
+    painter.setFont(font);
+
+    QTextBlock block       = firstVisibleBlock();
+    int        blockNumber = block.blockNumber();
+    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
+    int        bottom      = top + qRound(blockBoundingRect(block).height());
+
+    while (block.isValid() && top <= event->rect().bottom()) {
+
+        if (block.isVisible() && bottom >= event->rect().top()) {
+
+            QString offset;
+
+            if (_lineOffsetMap.contains(blockNumber+1)) {
+                offset = QString("<+%1>").arg(_lineOffsetMap[blockNumber+1]);
+            }
+
+            painter.drawText(0, top, _offsetArea->width(), fontMetrics().height(), Qt::AlignRight, offset);
         }
 
         block  = block.next();
@@ -320,6 +499,51 @@ void SeerEditorWidgetAssemblyArea::breakPointAreaPaintEvent (QPaintEvent* event)
                     painter.fillPath(path,QBrush(gradient));
                 }
             }
+        }
+
+        block  = block.next();
+        top    = bottom;
+        bottom = top + qRound(blockBoundingRect(block).height());
+
+        blockNumber++;
+    }
+}
+
+void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
+
+    if (opcodeAreaEnabled() == false) {
+        return;
+    }
+
+    QTextCharFormat format = highlighterSettings().get("Text");
+
+    QPainter painter(_opcodeArea);
+    painter.fillRect(event->rect(), format.background().color());
+    painter.setPen(format.foreground().color());
+
+    QFont font = painter.font();
+    font.setItalic(format.fontItalic());
+    font.setWeight(format.fontWeight());
+    painter.setFont(font);
+
+    QTextBlock block       = firstVisibleBlock();
+    int        blockNumber = block.blockNumber();
+    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
+    int        bottom      = top + qRound(blockBoundingRect(block).height());
+
+    while (block.isValid() && top <= event->rect().bottom()) {
+
+        if (block.isVisible() && bottom >= event->rect().top()) {
+
+            QString opcode;
+
+            if (_lineOpcodeMap.contains(blockNumber+1)) {
+                opcode = _lineOpcodeMap[blockNumber+1];
+            }
+
+            //qDebug() << opcode;
+
+            painter.drawText(0, top, _opcodeArea->width(), fontMetrics().height(), Qt::AlignLeft, opcode);
         }
 
         block  = block.next();
@@ -454,15 +678,28 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
     QRect cr = contentsRect();
 
     if (lineNumberAreaEnabled()) {
-        _lineNumberArea->setGeometry (QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
+        _lineNumberArea->setGeometry (QRect(cr.left(), cr.top(),
+                                      lineNumberAreaWidth(), cr.height()));
+    }
+
+    if (offsetAreaEnabled()) {
+        _offsetArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(),
+                                  offsetAreaWidth(), cr.height()));
     }
 
     if (breakPointAreaEnabled()) {
-        _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(), breakPointAreaWidth(), cr.height()));
+        _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth() + offsetAreaWidth(), cr.top(),
+                                      breakPointAreaWidth(), cr.height()));
+    }
+
+    if (opcodeAreaEnabled()) {
+        _opcodeArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth(), cr.top(),
+                                  opcodeAreaWidth(), cr.height()));
     }
 
     if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
+        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(),
+                                   miniMapAreaWidth(), cr.height()));
     }
 }
 
@@ -1141,44 +1378,21 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         _addressLineMap.clear();
         _offsetLineMap.clear();
         _lineAddressMap.clear();
+        _lineOffsetMap.clear();
+        _lineOpcodeMap.clear();
 
         // Get the list of assembly lines.
         QString asm_insns_text = Seer::parseFirst(text, "asm_insns=", '[', ']', false);
 
         QStringList asm_list = Seer::parse(asm_insns_text, "", '{', '}', false);
 
-        // Loop through the asm list and find the width of each field.
-        int address_width = 0;
-        int offset_width  = 0;
-        int opcodes_width = 0;
-        int inst_width    = 0;
-
-        for ( const auto& asm_text : asm_list  ) {
-
-            //qDebug() << asm_text;
-
-            // Get the strings, with padding.
-            QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
-            QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
-            QString offset_num   =        Seer::parseFirst(asm_text, "offset=",  '"', '"', false);
-            QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
-            QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
-
-            address_width = qMax(address_width, address_text.length());
-            offset_width  = qMax(offset_width,  offset_text.length());
-            opcodes_width = qMax(opcodes_width, opcodes_text.length());
-            inst_width    = qMax(inst_width,    inst_text.length());
-        }
-
         // Loop through the asm list and print each line.
-
         int lineno = 1;
 
         for ( const auto& asm_text : asm_list  ) {
 
             // Get the strings, with padding.
             QString address_text =        Seer::parseFirst(asm_text, "address=", '"', '"', false);
-            QString offset_text  = "<+" + Seer::parseFirst(asm_text, "offset=",  '"', '"', false) + ">";
             QString offset_num   =        Seer::parseFirst(asm_text, "offset=",  '"', '"', false);
             QString opcodes_text =        Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
             QString inst_text    =        Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
@@ -1186,15 +1400,14 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
             //qDebug() << inst_text;
 
             // Write assembly line to the document.
-            appendPlainText(QString(" ") +
-                            offset_text.leftJustified(offset_width,   ' ') + " | " +
-                            opcodes_text.leftJustified(opcodes_width, ' ') + " | " +
-                            inst_text.leftJustified(inst_width,       ' '));
+            appendPlainText(QString(" ") + inst_text);
 
             // Add to maps
             _addressLineMap.insert(address_text.toULongLong(0,0), lineno);
             _offsetLineMap.insert(offset_num.toULongLong(0,0), lineno);
             _lineAddressMap.insert(lineno, address_text);
+            _lineOffsetMap.insert(lineno,  offset_num.toULongLong(0,0));
+            _lineOpcodeMap.insert(lineno,  opcodes_text);
 
             lineno++;
         }
@@ -1264,10 +1477,55 @@ void SeerEditorWidgetAssemblyLineNumberArea::mousePressEvent (QMouseEvent* event
     }else{
         QWidget::mousePressEvent(event);
     }
-
 }
 
 void SeerEditorWidgetAssemblyLineNumberArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// Offset Area.
+//
+
+SeerEditorWidgetAssemblyOffsetArea::SeerEditorWidgetAssemblyOffsetArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyOffsetArea::sizeHint () const {
+    return QSize(_editorWidget->offsetAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyOffsetArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->offsetAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyOffsetArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyOffsetArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyOffsetArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyOffsetArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QWidget::mouseReleaseEvent(event);
 }
@@ -1314,6 +1572,52 @@ void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event
 }
 
 void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// Opcode Area.
+//
+
+SeerEditorWidgetAssemblyOpcodeArea::SeerEditorWidgetAssemblyOpcodeArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyOpcodeArea::sizeHint () const {
+    return QSize(_editorWidget->opcodeAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyOpcodeArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->opcodeAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyOpcodeArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _editorWidget->setQuickBreakpoint(event);
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyOpcodeArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyOpcodeArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyOpcodeArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QWidget::mouseReleaseEvent(event);
 }
