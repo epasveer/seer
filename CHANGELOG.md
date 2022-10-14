@@ -29,6 +29,9 @@
         - Allow multiple thread groups to be select.
         - Add continue/interrupt for selected thread group(s).
         - Add run/start for selected thread group(s). Disabled for now.
+* Assembly view changes.
+    - Showing Address, Offset, and Opcodes columns are configuable from the Config Dialog.
+    - ^F in the Assembly editor can do quick changes.
 * Changing the Qt Style can be saved using Settings->Save Configuration.
 
 ## [1.11] - 2022-09-26

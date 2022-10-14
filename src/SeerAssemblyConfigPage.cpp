@@ -48,22 +48,37 @@ QString SeerAssemblyConfigPage::symbolDemagling () const {
     }
 }
 
+bool SeerAssemblyConfigPage::showAddressColumn () const {
+
+    return showAddressCheckBox->isChecked();
+}
+
+bool SeerAssemblyConfigPage::showOffsetColumn () const {
+
+    return showOffsetCheckBox->isChecked();
+}
+
+bool SeerAssemblyConfigPage::showOpcodeColumn () const {
+
+    return showOpcodeCheckBox->isChecked();
+}
+
 QString SeerAssemblyConfigPage::registerFormat () const {
 
     return registerFormatComboBox->currentText();
 }
 
-void SeerAssemblyConfigPage::setShowAssemblyTabOnStartup (bool flag) const {
+void SeerAssemblyConfigPage::setShowAssemblyTabOnStartup (bool flag) {
 
     assemblyTabOnStartupCheckBox->setChecked(flag);
 }
 
-void SeerAssemblyConfigPage::setKeepAssemblyTabOnTop (bool flag) const {
+void SeerAssemblyConfigPage::setKeepAssemblyTabOnTop (bool flag) {
 
     assemblyTabOnTopCheckBox->setChecked(flag);
 }
 
-void SeerAssemblyConfigPage::setDisassembyFlavor (const QString& flavor) const {
+void SeerAssemblyConfigPage::setDisassembyFlavor (const QString& flavor) {
 
     if (flavor == "att") {
         attFlavorRadioButton->setChecked(true);
@@ -73,7 +88,7 @@ void SeerAssemblyConfigPage::setDisassembyFlavor (const QString& flavor) const {
     }
 }
 
-void SeerAssemblyConfigPage::setSymbolDemagling (const QString& onoff) const {
+void SeerAssemblyConfigPage::setSymbolDemagling (const QString& onoff) {
 
     if (onoff == "on") {
         demanglingOnRadioButton->setChecked(true);
@@ -83,7 +98,22 @@ void SeerAssemblyConfigPage::setSymbolDemagling (const QString& onoff) const {
     }
 }
 
-void SeerAssemblyConfigPage::setRegisterFormat (const QString& format) const {
+void SeerAssemblyConfigPage::setShowAddressColumn (bool flag) {
+
+    showAddressCheckBox->setChecked(flag);
+}
+
+void SeerAssemblyConfigPage::setShowOffsetColumn (bool flag) {
+
+    showOffsetCheckBox->setChecked(flag);
+}
+
+void SeerAssemblyConfigPage::setShowOpcodeColumn (bool flag) {
+
+    showOpcodeCheckBox->setChecked(flag);
+}
+
+void SeerAssemblyConfigPage::setRegisterFormat (const QString& format) {
 
     registerFormatComboBox->setCurrentText(format);
 }
@@ -94,6 +124,9 @@ void SeerAssemblyConfigPage::reset () {
     setKeepAssemblyTabOnTop(true);
     setDisassembyFlavor("att");
     setSymbolDemagling("on");
+    setShowAddressColumn(true);
+    setShowOffsetColumn(false);
+    setShowOpcodeColumn(false);
     setRegisterFormat("Natural");
 }
 

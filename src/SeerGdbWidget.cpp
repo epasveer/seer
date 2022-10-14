@@ -2336,6 +2336,9 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("assemblydisassemblyflavor",   assemblyDisassembyFlavor());
         settings.setValue("assemblysymboldemagling",     assemblySymbolDemagling());
         settings.setValue("assemblyregisterformat",      assemblyRegisterFormat());
+        settings.setValue("assemblyshowaddresscolumn",   assemblyShowAddressColumn());
+        settings.setValue("assemblyshowoffsetcolumn",    assemblyShowOffsetColumn());
+        settings.setValue("assemblyshowopcodecolumn",    assemblyShowOpcodeColumn());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2447,6 +2450,9 @@ void SeerGdbWidget::readSettings () {
         setAssemblyDisassembyFlavor(settings.value("assemblydisassemblyflavor", "att").toString());
         setAssemblySymbolDemagling(settings.value("assemblysymboldemagling", "on").toString());
         setAssemblyRegisterFormat(settings.value("assemblyregisterformat", "Natural").toString());
+        setAssemblyShowAddressColumn(settings.value("assemblyshowaddresscolumn", true).toBool());
+        setAssemblyShowOffsetColumn(settings.value("assemblyshowoffsetcolumn", false).toBool());
+        setAssemblyShowOpcodeColumn(settings.value("assemblyshowopcodecolumn", false).toBool());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2804,6 +2810,36 @@ void SeerGdbWidget::handleGdbForkFollowMode (QString mode) {
 QString SeerGdbWidget::assemblySymbolDemagling () const {
 
     return _assemblySymbolDemangling;
+}
+
+void SeerGdbWidget::setAssemblyShowAddressColumn (bool flag) {
+
+    editorManager()->setAssemblyShowAddressColumn(flag);
+}
+
+bool SeerGdbWidget::assemblyShowAddressColumn () const {
+
+    return editorManager()->assemblyShowAddressColumn();
+}
+
+void SeerGdbWidget::setAssemblyShowOffsetColumn (bool flag) {
+
+    editorManager()->setAssemblyShowOffsetColumn(flag);
+}
+
+bool SeerGdbWidget::assemblyShowOffsetColumn () const {
+
+    return editorManager()->assemblyShowOffsetColumn();
+}
+
+void SeerGdbWidget::setAssemblyShowOpcodeColumn (bool flag) {
+
+    editorManager()->setAssemblyShowOpcodeColumn(flag);
+}
+
+bool SeerGdbWidget::assemblyShowOpcodeColumn () const {
+
+    return editorManager()->assemblyShowOpcodeColumn();
 }
 
 void SeerGdbWidget::setAssemblyRegisterFormat (const QString& format) {

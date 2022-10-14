@@ -482,6 +482,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
     dlg.setAssemblyDisassembyFlavor(gdbWidget->assemblyDisassembyFlavor());
     dlg.setAssemblySymbolDemagling(gdbWidget->assemblySymbolDemagling());
+    dlg.setAssemblyShowAddressColumn(gdbWidget->assemblyShowAddressColumn());
+    dlg.setAssemblyShowOffsetColumn(gdbWidget->assemblyShowOffsetColumn());
+    dlg.setAssemblyShowOpcodeColumn(gdbWidget->assemblyShowOpcodeColumn());
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
@@ -517,6 +520,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
     gdbWidget->setAssemblyDisassembyFlavor(dlg.assemblyDisassembyFlavor());
     gdbWidget->setAssemblySymbolDemagling(dlg.assemblySymbolDemagling());
+    gdbWidget->setAssemblyShowAddressColumn(dlg.assemblyShowAddressColumn());
+    gdbWidget->setAssemblyShowOffsetColumn(dlg.assemblyShowOffsetColumn());
+    gdbWidget->setAssemblyShowOpcodeColumn(dlg.assemblyShowOpcodeColumn());
     gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());

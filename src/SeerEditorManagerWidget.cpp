@@ -23,6 +23,9 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorKeySettings         = SeerKeySettings::populate();                 // Default key settings.
     _assemblyWidget            = 0;
     _keepAssemblyTabOnTop      = true;
+    _showAddressColumn         = true;
+    _showOffsetColumn          = false;
+    _showOpcodeColumn          = false;
 
     // Setup UI
     setupUi(this);
@@ -156,6 +159,48 @@ void SeerEditorManagerWidget::setKeepAssemblyTabOnTop (bool flag) {
 bool SeerEditorManagerWidget::keepAssemblyTabOnTop () const {
 
     return _keepAssemblyTabOnTop;
+}
+
+void SeerEditorManagerWidget::setAssemblyShowAddressColumn (bool flag) {
+
+    _showAddressColumn = flag;
+
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->setShowAddressColumn(_showAddressColumn);
+    }
+}
+
+bool SeerEditorManagerWidget::assemblyShowAddressColumn () const {
+
+    return _showAddressColumn;
+}
+
+void SeerEditorManagerWidget::setAssemblyShowOffsetColumn (bool flag) {
+
+    _showOffsetColumn = flag;
+
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->setShowOffsetColumn(_showOffsetColumn);
+    }
+}
+
+bool SeerEditorManagerWidget::assemblyShowOffsetColumn () const {
+
+    return _showOffsetColumn;
+}
+
+void SeerEditorManagerWidget::setAssemblyShowOpcodeColumn (bool flag) {
+
+    _showOpcodeColumn = flag;
+
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->setShowOpcodeColumn(_showOpcodeColumn);
+    }
+}
+
+bool SeerEditorManagerWidget::assemblyShowOpcodeColumn () const {
+
+    return _showOpcodeColumn;
 }
 
 SeerEditorManagerFiles SeerEditorManagerWidget::openedFiles () const {
@@ -833,6 +878,10 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     assemblyWidget->assemblyArea()->setFont(editorFont());
     assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
+
+    assemblyWidget->setShowAddressColumn(assemblyShowAddressColumn());
+    assemblyWidget->setShowOffsetColumn(assemblyShowOffsetColumn());
+    assemblyWidget->setShowOpcodeColumn(assemblyShowOpcodeColumn());
 
     _assemblyIndex= tabWidget->addTab(assemblyWidget, "Assembly");
 

@@ -200,22 +200,6 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="4" colspan="2">
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="6" column="0">
        <widget class="QLabel" name="registerFormatLabel">
         <property name="text">
@@ -289,6 +273,47 @@
         </property>
        </spacer>
       </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="showColumnsLabel">
+        <property name="text">
+         <string>Show Columns in Editor</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QCheckBox" name="showAddressCheckBox">
+        <property name="text">
+         <string>Address</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QCheckBox" name="showOffsetCheckBox">
+        <property name="text">
+         <string>Offset</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="QCheckBox" name="showOpcodeCheckBox">
+        <property name="text">
+         <string>Opcode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
@@ -315,6 +340,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;    mangled:   callq 0x4007b8 &amp;lt;_ZNSolsEPFRSoS_E@plt&amp;gt;&lt;br /&gt;    demanlged: callq 0x4007b8 &amp;lt;std::ostream::operator&amp;lt;&amp;lt;(std::ostream&amp;amp;(*)(std::ostream&amp;amp;))@plt&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Monospace';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Monospace';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;The Assembly Editor can show different columns along side the assembly. These can be quickly changed in the Assembly Editor using ^F.&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Address&lt;/li&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Offset&lt;/li&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opcode&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;In the Register browser, register values can be shown in various formats:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Natural (A predefined format, based on the register name)&lt;/span&gt;&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hex&lt;/li&gt;
@@ -329,12 +360,25 @@ p, li { white-space: pre-wrap; }
   <zorder>textBrowser</zorder>
   <zorder>printPointGroupBox</zorder>
  </widget>
+ <tabstops>
+  <tabstop>assemblyTabOnStartupCheckBox</tabstop>
+  <tabstop>assemblyTabOnTopCheckBox</tabstop>
+  <tabstop>attFlavorRadioButton</tabstop>
+  <tabstop>intelFlavorRadioButton</tabstop>
+  <tabstop>demanglingOnRadioButton</tabstop>
+  <tabstop>demanglingOffRadioButton</tabstop>
+  <tabstop>showAddressCheckBox</tabstop>
+  <tabstop>showOffsetCheckBox</tabstop>
+  <tabstop>showOpcodeCheckBox</tabstop>
+  <tabstop>registerFormatComboBox</tabstop>
+  <tabstop>textBrowser</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="assemblyDemangleButtonGroup"/>
   <buttongroup name="disassemblyFlavorButtonGroup"/>
+  <buttongroup name="assemblyDemangleButtonGroup"/>
  </buttongroups>
 </ui>

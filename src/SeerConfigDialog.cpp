@@ -319,6 +319,36 @@ QString SeerConfigDialog::assemblySymbolDemagling () const {
     return _assemblyConfigPage->symbolDemagling();
 }
 
+void SeerConfigDialog::setAssemblyShowAddressColumn (bool flag) {
+
+    _assemblyConfigPage->setShowAddressColumn(flag);
+}
+
+bool SeerConfigDialog::assemblyShowAddressColumn () const {
+
+    return _assemblyConfigPage->showAddressColumn();
+}
+
+void SeerConfigDialog::setAssemblyShowOffsetColumn (bool flag) {
+
+    _assemblyConfigPage->setShowOffsetColumn(flag);
+}
+
+bool SeerConfigDialog::assemblyShowOffsetColumn () const {
+
+    return _assemblyConfigPage->showOffsetColumn();
+}
+
+void SeerConfigDialog::setAssemblyShowOpcodeColumn (bool flag) {
+
+    _assemblyConfigPage->setShowOpcodeColumn(flag);
+}
+
+bool SeerConfigDialog::assemblyShowOpcodeColumn () const {
+
+    return _assemblyConfigPage->showOpcodeColumn();
+}
+
 void SeerConfigDialog::setAssemblyRegisterFormat (const QString& format) {
 
     _assemblyConfigPage->setRegisterFormat(format);

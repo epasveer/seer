@@ -140,6 +140,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setAssemblySymbolDemagling          (const QString& onoff);
         QString                             assemblySymbolDemagling             () const;
 
+        void                                setAssemblyShowAddressColumn        (bool flag);
+        bool                                assemblyShowAddressColumn           () const;
+
+        void                                setAssemblyShowOffsetColumn         (bool flag);
+        bool                                assemblyShowOffsetColumn            () const;
+
+        void                                setAssemblyShowOpcodeColumn         (bool flag);
+        bool                                assemblyShowOpcodeColumn            () const;
+
         void                                setAssemblyRegisterFormat           (const QString& format);
         QString                             assemblyRegisterFormat              () const;
 

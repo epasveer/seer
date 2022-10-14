@@ -16,13 +16,19 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         bool                    keepAssemblyTabOnTop                            () const;
         QString                 disassembyFlavor                                () const;
         QString                 symbolDemagling                                 () const;
+        bool                    showAddressColumn                               () const;
+        bool                    showOffsetColumn                                () const;
+        bool                    showOpcodeColumn                                () const;
         QString                 registerFormat                                  () const;
 
-        void                    setShowAssemblyTabOnStartup                     (bool flag) const;
-        void                    setKeepAssemblyTabOnTop                         (bool flag) const;
-        void                    setDisassembyFlavor                             (const QString& flavor) const;
-        void                    setSymbolDemagling                              (const QString& onoff) const;
-        void                    setRegisterFormat                               (const QString& format) const;
+        void                    setShowAssemblyTabOnStartup                     (bool flag);
+        void                    setKeepAssemblyTabOnTop                         (bool flag);
+        void                    setDisassembyFlavor                             (const QString& flavor);
+        void                    setSymbolDemagling                              (const QString& onoff);
+        void                    setShowAddressColumn                            (bool flag);
+        void                    setShowOffsetColumn                             (bool flag);
+        void                    setShowOpcodeColumn                             (bool flag);
+        void                    setRegisterFormat                               (const QString& format);
 
         void                    reset                                           ();
 
