@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>833</width>
-    <height>454</height>
+    <height>555</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerEditorWidgetAssemblyForm</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="SeerEditorWidgetAssemblyArea" name="assemblyWidget" native="true">
      <property name="sizePolicy">
@@ -25,127 +25,171 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="searchBarLayout">
-     <item>
-      <widget class="QHistoryLineEdit" name="searchTextLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>50</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Enter text to search for.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Enter search text</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="matchCaseCheckBox">
-       <property name="text">
-        <string>Match Case</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="matchesLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchDownToolButton">
-       <property name="toolTip">
-        <string>Search for the next occurance.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchUpToolButton">
-       <property name="toolTip">
-        <string>Search for the previous occurance.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_1">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QHistoryLineEdit" name="searchLineNumberLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>50</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Scroll to a specific 0xAddress, +Offset, or line#.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Go to a 0xAddress, +Offset, or line#.</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchCloseToolButton">
-       <property name="toolTip">
-        <string>Close the search bar.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="refreshToolButton">
-       <property name="toolTip">
-        <string>Refresh the Assembly view.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="searchBarWidget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_1">
+        <item>
+         <widget class="QHistoryLineEdit" name="searchTextLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>50</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Enter text to search for.</string>
+          </property>
+          <property name="placeholderText">
+           <string>Enter search text</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="matchCaseCheckBox">
+          <property name="text">
+           <string>Match Case</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="matchesLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchDownToolButton">
+          <property name="toolTip">
+           <string>Search for the next occurance.</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchUpToolButton">
+          <property name="toolTip">
+           <string>Search for the previous occurance.</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_1">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QHistoryLineEdit" name="searchLineNumberLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>50</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Scroll to a specific 0xAddress, +Offset, or line#.</string>
+          </property>
+          <property name="placeholderText">
+           <string>Go to a 0xAddress, +Offset, or line#.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchCloseToolButton">
+          <property name="toolTip">
+           <string>Close the search bar.</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="refreshToolButton">
+          <property name="toolTip">
+           <string>Refresh the Assembly view.</string>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="showAddressCheckBox">
+          <property name="text">
+           <string>Address</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showOffsetCheckBox">
+          <property name="text">
+           <string>Offset</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showOpcodeCheckBox">
+          <property name="text">
+           <string>Opcode</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

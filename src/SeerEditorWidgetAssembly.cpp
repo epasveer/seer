@@ -43,40 +43,52 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadAssembly);
+    QObject::connect(showAddressCheckBox,               &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowAddressColumn);
+    QObject::connect(showOffsetCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOffsetColumn);
+    QObject::connect(showOpcodeCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
     QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
+
+    // Set defaults/
+    setShowAddressColumn(true);
+    setShowOffsetColumn(false);
+    setShowOpcodeColumn(false);
 }
 
 SeerEditorWidgetAssembly::~SeerEditorWidgetAssembly () {
 }
 
 SeerEditorWidgetAssemblyArea* SeerEditorWidgetAssembly::assemblyArea () {
+
     return assemblyWidget;
 }
 
 bool SeerEditorWidgetAssembly::isSearchBarShown () const {
 
-    bool shown = false;
-
-    // Go through the widgets in the search bar to see if any are visable.
-    for (int i = 0; i != searchBarLayout->count(); ++i) {
-        QWidget* w = searchBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            if (w->isVisible()) {
-                shown = true;
-            }
-        }
-    }
-
-    return shown;
+    return searchBarWidget->isVisible();
 }
 
 bool SeerEditorWidgetAssembly::searchMatchCase () const {
 
     return matchCaseCheckBox->isChecked();
+}
+
+bool SeerEditorWidgetAssembly::showAddressColumn () const {
+
+    return showAddressCheckBox->isChecked();
+}
+
+bool SeerEditorWidgetAssembly::showOffsetColumn () const {
+
+    return showOffsetCheckBox->isChecked();
+}
+
+bool SeerEditorWidgetAssembly::showOpcodeColumn () const {
+
+    return showOpcodeCheckBox->isChecked();
 }
 
 void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) {
@@ -110,26 +122,38 @@ void SeerEditorWidgetAssembly::reloadAssembly () {
 
 void SeerEditorWidgetAssembly::showSearchBar (bool flag) {
 
-    // Go through the widgets in the search bar and hide/show them.
-    for (int i = 0; i != searchBarLayout->count(); ++i) {
-        QWidget* w = searchBarLayout->itemAt(i)->widget();
-        if (w != 0) {
-            w->setVisible(flag);
-        }
-    }
+    searchBarWidget->setVisible(flag);
 
     // If 'show', give the searchTextLineEdit the focus.
     if (flag) {
         searchTextLineEdit->setFocus(Qt::MouseFocusReason);
     }
-
-    // Update the layout.
-    searchBarLayout->update();
 }
 
 void SeerEditorWidgetAssembly::setSearchMatchCase (bool flag) {
 
     matchCaseCheckBox->setChecked(flag);
+}
+
+void SeerEditorWidgetAssembly::setShowAddressColumn (bool flag) {
+
+    showAddressCheckBox->setChecked(flag);
+
+    handleShowAddressColumn();
+}
+
+void SeerEditorWidgetAssembly::setShowOffsetColumn (bool flag) {
+
+    showOffsetCheckBox->setChecked(flag);
+
+    handleShowOffsetColumn();
+}
+
+void SeerEditorWidgetAssembly::setShowOpcodeColumn (bool flag) {
+
+    showOpcodeCheckBox->setChecked(flag);
+
+    handleShowOpcodeColumn();
 }
 
 void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {
@@ -184,6 +208,7 @@ void SeerEditorWidgetAssembly::handleSearchUpToolButton () {
 }
 
 void SeerEditorWidgetAssembly::handleSearchCloseToolButton () {
+
     showSearchBar(false);
 }
 
@@ -194,5 +219,20 @@ void SeerEditorWidgetAssembly::handleTextSearchShortcut () {
     }else{
         showSearchBar(true);
     }
+}
+
+void SeerEditorWidgetAssembly::handleShowAddressColumn () {
+
+    assemblyArea()->enableLineNumberArea(showAddressColumn());
+}
+
+void SeerEditorWidgetAssembly::handleShowOffsetColumn () {
+
+    assemblyArea()->enableOffsetArea(showOffsetColumn());
+}
+
+void SeerEditorWidgetAssembly::handleShowOpcodeColumn () {
+
+    assemblyArea()->enableOpcodeArea(showOpcodeColumn());
 }
 

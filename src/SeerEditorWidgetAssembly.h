@@ -263,6 +263,10 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
 
         bool                                        isSearchBarShown                    () const;
         bool                                        searchMatchCase                     () const;
+        bool                                        showAddressColumn                   () const;
+        bool                                        showOffsetColumn                    () const;
+        bool                                        showOpcodeColumn                    () const;
+
         void                                        setKeySettings                      (const SeerKeySettings& settings);
         const SeerKeySettings&                      keySettings                         () const;
 
@@ -270,6 +274,9 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        reloadAssembly                      ();
         void                                        showSearchBar                       (bool flag);
         void                                        setSearchMatchCase                  (bool flag);
+        void                                        setShowAddressColumn                (bool flag);
+        void                                        setShowOffsetColumn                 (bool flag);
+        void                                        setShowOpcodeColumn                 (bool flag);
 
     private slots:
         void                                        handleSearchLineNumberLineEdit      ();
@@ -278,6 +285,9 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleSearchUpToolButton            ();
         void                                        handleSearchCloseToolButton         ();
         void                                        handleTextSearchShortcut            ();
+        void                                        handleShowAddressColumn             ();
+        void                                        handleShowOffsetColumn              ();
+        void                                        handleShowOpcodeColumn              ();
 
     signals:
     private:
