@@ -400,7 +400,7 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
 
 void SeerEditorWidgetAssemblyArea::offsetAreaPaintEvent (QPaintEvent* event) {
 
-    if (lineNumberAreaEnabled() == false) {
+    if (offsetAreaEnabled() == false) {
         return;
     }
 
@@ -675,31 +675,35 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
 
     QPlainTextEdit::resizeEvent(e);
 
-    QRect cr = contentsRect();
+    QRect cr       = contentsRect();
+    int   leftbias = 0;
 
     if (lineNumberAreaEnabled()) {
-        _lineNumberArea->setGeometry (QRect(cr.left(), cr.top(),
-                                      lineNumberAreaWidth(), cr.height()));
+        _lineNumberArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), lineNumberAreaWidth(), cr.height()));
+
+        leftbias += lineNumberAreaWidth();
     }
 
     if (offsetAreaEnabled()) {
-        _offsetArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(),
-                                  offsetAreaWidth(), cr.height()));
+        _offsetArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), offsetAreaWidth(), cr.height()));
+
+        leftbias += offsetAreaWidth();
     }
 
     if (breakPointAreaEnabled()) {
-        _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth() + offsetAreaWidth(), cr.top(),
-                                      breakPointAreaWidth(), cr.height()));
+        _breakPointArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), breakPointAreaWidth(), cr.height()));
+
+        leftbias += breakPointAreaWidth();
     }
 
     if (opcodeAreaEnabled()) {
-        _opcodeArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth(), cr.top(),
-                                  opcodeAreaWidth(), cr.height()));
+        _opcodeArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), opcodeAreaWidth(), cr.height()));
+
+        leftbias += opcodeAreaWidth();
     }
 
     if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(),
-                                   miniMapAreaWidth(), cr.height()));
+        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
 }
 
