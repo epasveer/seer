@@ -15,77 +15,91 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="alternateBarLayout">
-     <item row="1" column="3">
-      <widget class="QToolButton" name="alternateAddToGlobalToolButton">
-       <property name="toolTip">
-        <string>Add path to global list of alternate directories.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="5">
-      <widget class="QLabel" name="alternateLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="4">
-      <widget class="QToolButton" name="alternateCloseToolButton">
-       <property name="toolTip">
-        <string>Close the alternate bar.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QHistoryLineEdit" name="alternateLineEdit">
-       <property name="toolTip">
-        <string>Enter path for alternate location.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Enter /path/to/alternate/location</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QToolButton" name="alternateFileOpenToolButton">
-       <property name="toolTip">
-        <string>Open file dialog for alternate location.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="alternateBarWidget" native="true">
+     <layout class="QGridLayout" name="alternateBarLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item row="1" column="3">
+       <widget class="QToolButton" name="alternateAddToGlobalToolButton">
+        <property name="toolTip">
+         <string>Add path to global list of alternate directories.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="5">
+       <widget class="QLabel" name="alternateLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QToolButton" name="alternateCloseToolButton">
+        <property name="toolTip">
+         <string>Close the alternate bar.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QHistoryLineEdit" name="alternateLineEdit">
+        <property name="toolTip">
+         <string>Enter path for alternate location.</string>
+        </property>
+        <property name="placeholderText">
+         <string>Enter /path/to/alternate/location</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QToolButton" name="alternateFileOpenToolButton">
+        <property name="toolTip">
+         <string>Open file dialog for alternate location.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="SeerEditorWidgetSourceArea" name="sourceWidget" native="true">
@@ -98,113 +112,127 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="searchBarLayout">
-     <item>
-      <widget class="QHistoryLineEdit" name="searchTextLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>50</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Enter text to search for.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Enter search text</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="matchCaseCheckBox">
-       <property name="text">
-        <string>Match Case</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="matchesLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchDownToolButton">
-       <property name="toolTip">
-        <string>Search for the next occurance.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchUpToolButton">
-       <property name="toolTip">
-        <string>Search for the previous occurance.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_1">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QHistoryLineEdit" name="searchLineNumberLineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>50</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Scroll to a specific line.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Go to line #</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="searchCloseToolButton">
-       <property name="toolTip">
-        <string>Close the search bar.</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="searchBarWidget" native="true">
+     <layout class="QHBoxLayout" name="searchBarLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QHistoryLineEdit" name="searchTextLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>50</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Enter text to search for.</string>
+        </property>
+        <property name="placeholderText">
+         <string>Enter search text</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="matchCaseCheckBox">
+        <property name="text">
+         <string>Match Case</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="matchesLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="searchDownToolButton">
+        <property name="toolTip">
+         <string>Search for the next occurance.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</normaloff>:/seer/resources/RelaxLightIcons/go-down.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="searchUpToolButton">
+        <property name="toolTip">
+         <string>Search for the previous occurance.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</normaloff>:/seer/resources/RelaxLightIcons/go-up.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_1">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QHistoryLineEdit" name="searchLineNumberLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>50</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Scroll to a specific line.</string>
+        </property>
+        <property name="placeholderText">
+         <string>Go to line #</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="searchCloseToolButton">
+        <property name="toolTip">
+         <string>Close the search bar.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -221,6 +249,18 @@
    <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>alternateLineEdit</tabstop>
+  <tabstop>alternateFileOpenToolButton</tabstop>
+  <tabstop>alternateAddToGlobalToolButton</tabstop>
+  <tabstop>alternateCloseToolButton</tabstop>
+  <tabstop>searchTextLineEdit</tabstop>
+  <tabstop>matchCaseCheckBox</tabstop>
+  <tabstop>searchDownToolButton</tabstop>
+  <tabstop>searchUpToolButton</tabstop>
+  <tabstop>searchLineNumberLineEdit</tabstop>
+  <tabstop>searchCloseToolButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>
