@@ -91,6 +91,45 @@ void SeerGdbLogWidget::processText (const QString& text) {
         }
 
 
+    // Remove leading "@"
+    // @"memcheck monitor commands:
+    // "
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+    } else if (text.front() == '@') {
+#else
+    } else if (text.at(0) == '@') {
+#endif
+
+        str = text.mid(1);
+
+        // Remove leading """
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+        if (str.front() == '"') {
+#else
+        if (str.at(0) == '"') {
+#endif
+            str = str.mid(1);
+        }
+
+        // Remove trailing """
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+        if (str.back() == '"') {
+#else
+        if (str.at(str.size() - 1) == '"') {
+#endif
+            str.chop(1);
+        }
+
+        // Remove trailing "\n"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+        if (str.back() == '\n') {
+#else
+        if (str.at(str.size() - 1) == '\n') {
+#endif
+            str.chop(1);
+        }
+
+
     // Use string as it is.
     }else{
         str = text;
@@ -118,7 +157,6 @@ void SeerGdbLogWidget::processText (const QString& text) {
     // Breakpoint 2 at 0x403a40: file explorer.cpp, line 78.
     //
     if (str.contains(QRegExp("^Breakpoint ([0-9]+) at (0[xX][0-9a-fA-F]+): file (.*\\,) (line) ([0-9]+)"))) {
-        //qDebug() << str;
         emit refreshBreakpointsList();
     }
 }

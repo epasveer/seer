@@ -19,7 +19,7 @@ void GdbMonitor::handleErrorOccurred (QProcess::ProcessError error) {
 
     Q_UNUSED(error);
 
-    //qDebug() << error;
+    qCDebug(LC) << error;
 
     qApp->exit();
 }
@@ -29,14 +29,14 @@ void GdbMonitor::handleFinished (int exitCode, QProcess::ExitStatus exitStatus) 
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);
 
-    //qDebug() << exitCode << exitStatus;
+    qCDebug(LC) << exitCode << exitStatus;
 
     qApp->exit();
 }
 
 void GdbMonitor::handleReadyReadStandardError () {
 
-    //qDebug() << "Ready to read stderr";
+    qCDebug(LC) << "Ready to read stderr";
 
     QProcess* p = (QProcess*)sender();
 
@@ -62,7 +62,7 @@ void GdbMonitor::handleReadyReadStandardError () {
 
 void GdbMonitor::handleReadyReadStandardOutput () {
 
-    //qDebug() << "Ready to read stdout";
+    qCDebug(LC) << "Ready to read stdout";
 
     QProcess* p = (QProcess*)sender();
 
@@ -95,6 +95,8 @@ void GdbMonitor::handleReadyReadStandardOutput () {
             emit caretTextOutput(text);
         }else if (text[0] == '&') {
             emit ampersandTextOutput(text);
+        }else if (text[0] == '@') {
+            emit atsignTextOutput(text);
         }else if (text.contains(QRegExp("^([0-9]+)\\~"))) {
             emit tildeTextOutput(text);
         }else if (text.contains(QRegExp("^([0-9]+)\\="))) {
@@ -110,12 +112,12 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         }
     }
 
-    //qDebug() << "Finished reading stdout";
+    qCDebug(LC) << "Finished reading stdout";
 }
 
 void GdbMonitor::handleTextOutput (QString text) {
 
-    //qDebug() << "Ready to handle text output";
+    qCDebug(LC) << "Ready to handle text output";
     qCDebug(LC) << text;
 
     emit allTextOutput(text);
@@ -144,19 +146,19 @@ void GdbMonitor::handleTextOutput (QString text) {
         emit textOutput(text);
     }
 
-    //qDebug() << "Finished handling text output";
+    qCDebug(LC) << "Finished handling text output";
 }
 
 void GdbMonitor::handleStarted() {
 
-    //qDebug();
+    qCDebug(LC);
 }
 
 void GdbMonitor::handleStateChanged(QProcess::ProcessState newState) {
 
     Q_UNUSED(newState);
 
-    //qDebug() << newState;
+    qCDebug(LC) << newState;
 }
 
 void GdbMonitor::setProcess (QProcess* process) {

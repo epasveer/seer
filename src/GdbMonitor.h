@@ -22,6 +22,7 @@ class GdbMonitor : public QObject {
         void            astrixTextOutput                (const QString& text);
         void            caretTextOutput                 (const QString& text);
         void            ampersandTextOutput             (const QString& text);
+        void            atsignTextOutput                (const QString& text);
         void            textOutput                      (const QString& text);
 
     public slots:
