@@ -914,9 +914,11 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         startGdb();
 
+        /* Do not use for 'connect' mode. Possible too quick for a gdbserver/vdbg.
         if (gdbAsyncMode()) {
             handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
         }
+        */
     }
 
     // Set dprint parameters.
