@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.12beta] - 2022-MM-DD
+## [1.12] - 2022-10-22
 
 * Added Gdb's Reverse Debugging mode.
     - Turn on/off gdb instruction recording.
@@ -33,6 +33,8 @@
     - Showing Address, Offset, and Opcodes columns are configuable from the Config Dialog.
     - ^F in the Assembly editor can do quick changes.
 * Changing the Qt Style can be saved using Settings->Save Configuration.
+* Added valgrind support.
+    - https://github.com/epasveer/seer/wiki/Valgrind-and-Seer.
 
 ## [1.11] - 2022-09-26
 
