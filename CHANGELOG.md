@@ -1,6 +1,10 @@
 
 # Seer Change Log
 
+## [1.13beta] - 2022-MM-DD
+
+* Improve specifying an alternate directory if the source has moved. Fewer mouse clicks.
+
 ## [1.12] - 2022-10-22
 
 * Added Gdb's Reverse Debugging mode.

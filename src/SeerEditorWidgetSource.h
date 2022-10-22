@@ -246,7 +246,6 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        handleAlternateCloseToolButton          ();
         void                                        handleAlternateFileOpenToolButton       ();
         void                                        handleAlternateLineEdit                 ();
-        void                                        handleAlternateAddToGlobalToolButton    ();
         void                                        handleTextSearchShortcut                ();
         void                                        handleAlternateDirectoryShortcut        ();
 

@@ -83,10 +83,12 @@ void SeerEditorManagerWidget::dumpEntries () const {
     SeerEditorManagerEntries::const_iterator b = beginEntry();
     SeerEditorManagerEntries::const_iterator e = endEntry();
 
+    qDebug() << "Start";
     while (b != e) {
         qDebug() << "\tFullname:" << b->fullname << "File:" << b->file;
         b++;
     }
+    qDebug() << "End";
 }
 
 bool SeerEditorManagerWidget::hasEntry (const QString& fullname) const {
@@ -99,6 +101,8 @@ bool SeerEditorManagerWidget::hasEntry (const QString& fullname) const {
 }
 
 SeerEditorManagerEntries::iterator SeerEditorManagerWidget::addEntry (const QString& fullname, const QString& file) {
+
+    //qDebug() << "Add entry:" << fullname << file;
 
     SeerEditorManagerEntry entry;
 
@@ -711,7 +715,9 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::editorWidgetTab (const QString&
 
 SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file, const QString& text) {
 
-    //qDebug() << fullname << file << text << tabWidget->count() << tabWidget->tabText(0);
+    //qDebug() << "1:" << fullname << file << tabWidget->count() << tabWidget->tabText(0);
+
+    //dumpEntries();
 
     // Are we asked to ignore this file?
     if (Seer::matches(editorIgnoreDirectories(), fullname, QRegExp::WildcardUnix) == true) {
@@ -766,7 +772,9 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
 
 SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QString& fullname, const QString& file) {
 
-    //qDebug() << fullname << file << tabWidget->count() << tabWidget->tabText(0);
+    //qDebug() << "2:" << fullname << file << tabWidget->count() << tabWidget->tabText(0);
+
+    //dumpEntries();
 
     // Are we asked to ignore this file?
     if (Seer::matches(editorIgnoreDirectories(), fullname, QRegExp::WildcardUnix) == true) {

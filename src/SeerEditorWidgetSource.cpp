@@ -46,7 +46,6 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchCloseToolButton);
     QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateCloseToolButton);
     QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateFileOpenToolButton);
-    QObject::connect(alternateAddToGlobalToolButton,    &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateAddToGlobalToolButton);
     QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleAlternateLineEdit);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,             this,  &SeerEditorWidgetSource::showSearchBar);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,          this,  &SeerEditorWidgetSource::showAlternateBar);
@@ -123,14 +122,12 @@ void SeerEditorWidgetSource::setSearchMatchCase (bool flag) {
 
 void SeerEditorWidgetSource::showAlternateBar (bool flag) {
 
-    // Set the label's text.
-    alternateLabel->setText("Enter directory path for '" + sourceArea()->file() + "'");
-
     alternateBarWidget->setVisible(flag);
 
-    // If 'show', give the alternateLineEdit the focus.
     if (flag) {
-        alternateLineEdit->setFocus(Qt::MouseFocusReason);
+        originalLineEdit->setText(sourceArea()->fullname());    // Set the original text.
+        rememberAlternateCheckBox->setChecked(true);            // Set the default remember setting.
+        alternateLineEdit->setFocus(Qt::MouseFocusReason);      // If 'show', give the alternateLineEdit the focus.
     }
 }
 
@@ -212,28 +209,30 @@ void SeerEditorWidgetSource::handleAlternateFileOpenToolButton () {
     if (filename != "") {
         alternateLineEdit->setText(QFileInfo(filename).absolutePath());
     }
+
+    handleAlternateLineEdit();
 }
 
 void SeerEditorWidgetSource::handleAlternateLineEdit () {
 
     showAlternateBar(false);
 
+    // Get the base path.
     QString dirname = alternateLineEdit->text();
 
-    //qDebug() << "alternate dirname=" << dirname;
-
-    sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
-}
-
-void SeerEditorWidgetSource::handleAlternateAddToGlobalToolButton () {
-
-    if (alternateLineEdit->text() == "") {
+    if (dirname == "") {
         return;
     }
 
-    //qDebug() << "alternate dirname=" << alternateLineEdit->text();
+    //qDebug() << "alternate dirname=" << dirname;
 
-    emit addAlternateDirectory(alternateLineEdit->text());
+    // Attempt to open the file.
+    sourceArea()->open(sourceArea()->fullname(), sourceArea()->file(), dirname);
+
+    // Add to global alternate list.
+    if (rememberAlternateCheckBox->isChecked()) {
+        emit addAlternateDirectory(dirname);
+    }
 }
 
 void SeerEditorWidgetSource::handleTextSearchShortcut () {
