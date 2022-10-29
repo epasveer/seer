@@ -2,46 +2,35 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <QtGui/QImageReader>
+#include <QtCore/QDebug>
 
 int main (int argc, char** argv) {
 
     std::cout << "Hello, Image!" << std::endl;
 
-    // Allocate and read BMP
-    std::uintmax_t filesize_bmp = std::filesystem::file_size("lena.bmp");
+    QImageReader reader("lena.bmp");
+    reader.setAutoTransform(true);
 
-    char* buffer_bmp = (char*)malloc(filesize_bmp);
-
-    std::ifstream fin_bmp("lena.bmp", std::ios::in | std::ios::binary );
-
-    if (!fin_bmp) {
-        std::cout << "Can't open BMP file." << std::endl;
-        return 1;
+    QImage image = reader.read();
+    if (image.isNull()) {
+        return false;
     }
 
-    fin_bmp.read(buffer_bmp, filesize_bmp);
+    QImage image_rgb  = image.convertToFormat(QImage::Format_RGB888);
+    QImage image_rgba = image.convertToFormat(QImage::Format_RGBA8888);
 
-    int n_bmp = fin_bmp.gcount();
+    qDebug() << image;
+    qDebug() << image_rgb;
+    qDebug() << image_rgba;
 
-    // Allocate and read PNG
-    std::uintmax_t filesize_png = std::filesystem::file_size("lena.png");
+    // QImage(QSize(512, 512),format=QImage::Format_Indexed8,depth=8,colorCount=256,devicePixelRatio=1,bytesPerLine=512,sizeInBytes=262144)
+    // QImage(QSize(512, 512),format=QImage::Format_RGB888,depth=24,devicePixelRatio=1,bytesPerLine=1536,sizeInBytes=786432)
+    // QImage(QSize(512, 512),format=QImage::Format_RGBA8888,depth=32,devicePixelRatio=1,bytesPerLine=2048,sizeInBytes=1048576)
 
-    char* buffer_png = (char*)malloc(filesize_png);
-
-    std::ifstream fin_png("lena.png", std::ios::in | std::ios::binary );
-
-    if (!fin_png) {
-        std::cout << "Can't open PNG file." << std::endl;
-        return 1;
-    }
-
-    fin_png.read(buffer_png, filesize_png);
-
-    int n_png = fin_png.gcount();
-
-    // Free things
-    free(buffer_bmp);
-    free(buffer_png);
+    const uchar* bits      = image.bits();
+    const uchar* bits_rgb  = image_rgb.bits();
+    const uchar* bits_rgba = image_rgba.bits();
 
     return 0;
 }
