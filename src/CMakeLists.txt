@@ -48,6 +48,7 @@ set(HEADER_FILES
     SeerGdbWidget.h
     SeerHexWidget.h
     SeerAsmWidget.h
+    SeerImageWidget.h
     SeerArrayWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
@@ -101,6 +102,7 @@ set(HEADER_FILES
     QHistoryLineEdit.h
     QEditDelegate.h
     QHContainerWidget.h
+    QImageViewer.h
     )
 
 set(SOURCE_FILES
@@ -132,6 +134,7 @@ set(SOURCE_FILES
     SeerGdbWidget.cpp
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
+    SeerImageWidget.cpp
     SeerArrayWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
@@ -184,6 +187,7 @@ set(SOURCE_FILES
     QHistoryLineEdit.cpp
     QEditDelegate.cpp
     QHContainerWidget.cpp
+    QImageViewer.cpp
     )
 
 qt5_add_resources(SOURCE_FILES resource.qrc)

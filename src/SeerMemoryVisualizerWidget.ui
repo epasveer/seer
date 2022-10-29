@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QHistoryLineEdit" name="variableNameLineEdit">
@@ -197,7 +197,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -236,6 +236,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="image_tab">
+      <attribute name="title">
+       <string>Image</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="SeerImageWidget" name="memoryImageEditor" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -257,6 +267,12 @@
    <class>QHistoryLineEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SeerImageWidget</class>
+   <extends>QWidget</extends>
+   <header>SeerImageWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

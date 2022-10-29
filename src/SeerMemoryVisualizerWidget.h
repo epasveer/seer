@@ -43,5 +43,6 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         int                 _variableId;
         int                 _memoryId;
         int                 _asmId;
+        int                 _imageId;
 };
 
