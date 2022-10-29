@@ -17,6 +17,7 @@ The memory displayed in 3 views.
 * A memory dump in the chosen Display format. Included in this view is the memory displayed in the Character format. A byte can be selected in this view to highlight it.
 * A table showing the highlighted byte in different numeric formats (int, float, double, etc...).
 * A separate tab showing the memory as disassembly.
+* A separate tab showing the memory as an image.
 
 ### Operation
 
@@ -79,4 +80,24 @@ This will refresh the memory dump since the last time.
 ### Auto mode
 
 This mode will refresh the memory dump each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
+
+### Image viewer
+
+The Image tab can show the memory as an image. Two supported formats are available:
+
+* RGBA8888
+* RGB888
+
+You must enter the width and height of the image, in pixels. A check is done to ensure the amount of memory given to the Memory
+Visualizer will cover the image size.
+
+Avaible Quick keys while in the Image viewer:
+```
+    '+' zoom in
+    '-' zoom out
+    <ESC> reset to default zoom level.
+    ^P  print image.
+```
+
+__NOTE__, this viewer is slow!!!  Will be fixed.
 
