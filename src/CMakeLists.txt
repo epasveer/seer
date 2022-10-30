@@ -48,7 +48,6 @@ set(HEADER_FILES
     SeerGdbWidget.h
     SeerHexWidget.h
     SeerAsmWidget.h
-    SeerImageWidget.h
     SeerArrayWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
@@ -135,7 +134,6 @@ set(SOURCE_FILES
     SeerGdbWidget.cpp
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
-    SeerImageWidget.cpp
     SeerArrayWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
