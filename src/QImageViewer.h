@@ -16,6 +16,8 @@ class QImageViewer : public QWidget {
        ~QImageViewer ();
 
         bool                    loadFile                (const QString& file);
+        bool                    saveFile                (const QString& file);
+        bool                    saveFileDialog          (const QString& file);
         void                    setImage                (const QImage& image);
         const QImage&           image                   () const;
         void                    setText                 (const QString& text);

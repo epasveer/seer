@@ -319,7 +319,7 @@ void SeerImageVisualizerWidget::handlePrintButton () {
 
 void SeerImageVisualizerWidget::handleSaveButton () {
 
-    QMessageBox::warning(this, "Note.", "Not implmented yet.");
+    imageViewer->saveFileDialog(variableNameLineEdit->text() + ".png");
 }
 
 void SeerImageVisualizerWidget::handleCreateImage (const QByteArray& array) {

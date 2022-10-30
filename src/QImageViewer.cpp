@@ -1,7 +1,9 @@
 #include "QImageViewer.h"
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QFileDialog>
 #include <QtGui/QImageReader>
+#include <QtGui/QImageWriter>
 #include <QtGui/QPainter>
 #include <QtCore/QDebug>
 #include <QtPrintSupport/QPrintDialog>
@@ -53,6 +55,33 @@ bool QImageViewer::loadFile (const QString& file) {
     return true;
 }
 
+bool QImageViewer::saveFile (const QString& file) {
+
+    if (file.isEmpty() == true) {
+        return false;
+    }
+
+    qDebug() << file;
+    qDebug() << _image;
+
+    QImageWriter writer(file);
+
+    bool f = writer.write(_image);
+
+    if (f == false) {
+        qDebug() << writer.errorString();
+    }
+
+    return f;
+}
+
+bool QImageViewer::saveFileDialog (const QString& file) {
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), file, tr("Image Files (*.png *.jpg *.bmp)"), nullptr, QFileDialog::DontUseNativeDialog);
+
+    return saveFile(fileName);
+}
+
 void QImageViewer::setImage (const QImage& image) {
 
     //qDebug() << image;
@@ -84,7 +113,11 @@ void QImageViewer::zoom (double factor) {
 
     _zoomFactor = factor;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     _imageLabel->resize(_zoomFactor * _imageLabel->pixmap(Qt::ReturnByValue).size());
+#else
+    _imageLabel->resize(_zoomFactor * _imageLabel->pixmap()->size());
+#endif
 }
 
 void QImageViewer::zoomIn () {
@@ -104,10 +137,9 @@ void QImageViewer::zoomReset () {
 
 void QImageViewer::print () {
 
-    Q_ASSERT(_imageLabel->pixmap(Qt::ReturnByValue).isNull() == false);
-
     QPrintDialog dialog(&_printer, this);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     if (dialog.exec()) {
         QPainter painter(&_printer);
         QRect rect = painter.viewport();
@@ -117,6 +149,17 @@ void QImageViewer::print () {
         painter.setWindow(_imageLabel->pixmap(Qt::ReturnByValue).rect());
         painter.drawPixmap(0, 0, _imageLabel->pixmap(Qt::ReturnByValue));
     }
+#else
+    if (dialog.exec()) {
+        QPainter painter(&_printer);
+        QRect rect = painter.viewport();
+        QSize size = _imageLabel->pixmap()->size();
+        size.scale(rect.size(), Qt::KeepAspectRatio);
+        painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
+        painter.setWindow(_imageLabel->pixmap()->rect());
+        painter.drawPixmap(0, 0, *_imageLabel->pixmap());
+    }
+#endif
 }
 
 void QImageViewer::keyPressEvent (QKeyEvent* event) {
@@ -136,6 +179,11 @@ void QImageViewer::keyPressEvent (QKeyEvent* event) {
         case Qt::Key_P:
             if (event->modifiers() == Qt::ControlModifier) {
                 print();
+            }
+            break;
+        case Qt::Key_S:
+            if (event->modifiers() == Qt::ControlModifier) {
+                saveFileDialog("");
             }
             break;
         default:
