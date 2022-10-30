@@ -1,15 +1,15 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
-#include "ui_SeerMemoryVisualizerWidget.h"
+#include "ui_SeerImageVisualizerWidget.h"
 
-class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisualizerWidgetForm {
+class SeerImageVisualizerWidget : public QWidget, protected Ui::SeerImageVisualizerWidgetForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerMemoryVisualizerWidget (QWidget* parent = 0);
-       ~SeerMemoryVisualizerWidget ();
+        explicit SeerImageVisualizerWidget (QWidget* parent = 0);
+       ~SeerImageVisualizerWidget ();
 
         void                setVariableName                     (const QString& name);
         QString             variableName                        () const;
@@ -19,7 +19,6 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
         void                evaluateMemoryExpression            (int expressionid, QString address, int count);
-        void                evaluateAsmExpression               (int expressionid, QString address, int count, int mode);
 
     public slots:
         void                handleText                          (const QString& text);
@@ -28,11 +27,10 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         void                handleRefreshButton                 ();
         void                handleHelpButton                    ();
         void                handleVariableNameLineEdit          ();
-        void                handleMemoryDisplayFormatComboBox   (int index);
-        void                handleCharDisplayFormatComboBox     (int index);
-        void                handleColumnCountSpinBox            (int value);
+        void                handleFormatComboBox                (int index);
         void                handlePrintButton                   ();
         void                handleSaveButton                    ();
+        void                handleCreateImage                   (const QByteArray& array);
 
     protected:
         void                writeSettings                       ();
@@ -42,6 +40,11 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
     private:
         int                 _variableId;
         int                 _memoryId;
-        int                 _asmId;
+
+        QString             _formatName;
+        QImage::Format      _format;
+        int                 _width;
+        int                 _height;
+        int                 _bytes;
 };
 

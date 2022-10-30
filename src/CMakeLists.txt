@@ -56,6 +56,7 @@ set(HEADER_FILES
     SeerMemoryVisualizerWidget.h
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
+    SeerImageVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
     SeerRunStatusIndicator.h
@@ -142,6 +143,7 @@ set(SOURCE_FILES
     SeerMemoryVisualizerWidget.cpp
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
+    SeerImageVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
     SeerRunStatusIndicator.cpp

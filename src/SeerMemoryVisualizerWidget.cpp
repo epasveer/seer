@@ -17,7 +17,6 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     _variableId = Seer::createID(); // Create two id's for queries.
     _memoryId   = Seer::createID();
     _asmId      = Seer::createID();
-    _imageId    = Seer::createID();
 
     // Set up UI.
     setupUi(this);
@@ -85,7 +84,6 @@ void SeerMemoryVisualizerWidget::setVariableName (const QString& name) {
 
     memoryHexEditor->setData(new SeerHexWidget::DataStorageArray(array));
     memoryAsmEditor->setData("");
-    memoryImageEditor->setData(array);
 
     // Send signal to get variable address.
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
@@ -204,35 +202,6 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
                 break; // Take just the first range for now.
             }
-
-        }else if (id_text.toInt() == _imageId) {
-
-            //qDebug() << text;
-
-            QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
-
-            QStringList range_list = Seer::parse(memory_text, "", '{', '}', false);
-
-            // Loop through the memory ranges.
-            for ( const auto& range_text : range_list  ) {
-
-                QString contents_text = Seer::parseFirst(range_text, "contents=", '"', '"', false);
-
-                // Convert hex string to byte array.
-                QByteArray array;
-
-                for (int i = 0; i<contents_text.size(); i += 2) {
-                    QString num = contents_text.mid(i, 2);
-                    bool ok = false;
-                    array.push_back(num.toInt(&ok, 16));
-                    Q_ASSERT(ok);
-                }
-
-                // Give the byte array to the image widget.
-                memoryImageEditor->setData(array);
-
-                break; // Take just the first range for now.
-            }
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,asm_insns="))) {
@@ -301,7 +270,6 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
 
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
     emit evaluateAsmExpression(_asmId,       variableAddressLineEdit->text(), nbytes, 2);
-    emit evaluateMemoryExpression(_imageId,  variableAddressLineEdit->text(), nbytes);
 }
 
 void SeerMemoryVisualizerWidget::handleHelpButton () {

@@ -98,6 +98,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                    this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewArrayVisualizer);
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                    this,           &SeerMainWindow::handleViewVarVisualizer);
+    QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                    this,           &SeerMainWindow::handleViewImageVisualizer);
     QObject::connect(actionViewAssembly,                &QAction::triggered,                    this,           &SeerMainWindow::handleViewAssembly);
     QObject::connect(actionConsoleNormal,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleNormal);
     QObject::connect(actionConsoleHidden,               &QAction::triggered,                    this,           &SeerMainWindow::handleViewConsoleHidden);
@@ -134,6 +135,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionMemoryVisualizer,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(actionArrayVisualizer,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
     QObject::connect(actionStructVisualizer,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
+    QObject::connect(actionImageVisualizer,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
     QObject::connect(interruptAction,                   &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
     QObject::connect(interruptActionSIGINT,             &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGINT);
     QObject::connect(interruptActionSIGKILL,            &QAction::triggered,                    gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGKILL);
@@ -434,6 +436,11 @@ void SeerMainWindow::handleViewStructVisualizer () {
 void SeerMainWindow::handleViewVarVisualizer () {
 
     gdbWidget->handleGdbVarVisualizer();
+}
+
+void SeerMainWindow::handleViewImageVisualizer () {
+
+    gdbWidget->handleGdbImageVisualizer();
 }
 
 void SeerMainWindow::handleViewAssembly () {

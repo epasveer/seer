@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerMemoryVisualizerWidgetForm</class>
- <widget class="QWidget" name="SeerMemoryVisualizerWidgetForm">
+ <class>SeerImageVisualizerWidgetForm</class>
+ <widget class="QWidget" name="SeerImageVisualizerWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Seer Image Visualizer</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QHistoryLineEdit" name="variableNameLineEdit">
@@ -43,15 +43,33 @@
       </widget>
      </item>
      <item>
-      <widget class="QHistoryLineEdit" name="memoryLengthLineEdit">
-       <property name="toolTip">
-        <string>Number of bytes to display.</string>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="inputMask">
-        <string/>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="formatComboBox">
+       <item>
+        <property name="text">
+         <string>RGBA8888</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>RGB888</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="widthLineEdit">
+       <property name="toolTip">
+        <string>The image width (pixels)</string>
        </property>
        <property name="placeholderText">
-        <string># Bytes (default 256)</string>
+        <string>width</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
@@ -59,59 +77,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="memoryDisplayFormatComboBox">
+      <widget class="QLineEdit" name="heightLineEdit">
        <property name="toolTip">
-        <string>Memory display format.</string>
+        <string>The image height (pixels)</string>
        </property>
-       <item>
-        <property name="text">
-         <string>hex</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>octal</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>binary</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>decimal</string>
-        </property>
-       </item>
+       <property name="placeholderText">
+        <string>height</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="charDisplayFormatComboBox">
-       <property name="toolTip">
-        <string>Character display format.</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>ascii</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>ebcdic</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="columnCountSpinBox">
-       <property name="toolTip">
-        <string>Number of columns in display.</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>10</number>
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
@@ -184,7 +165,7 @@
      <item>
       <widget class="QToolButton" name="helpToolButton">
        <property name="toolTip">
-        <string>Help on Memory Visualizer</string>
+        <string>Help on Image Visualizer</string>
        </property>
        <property name="text">
         <string/>
@@ -197,66 +178,39 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+   <item>
+    <widget class="QImageViewer" name="imageViewer" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>100</verstretch>
+      </sizepolicy>
      </property>
-     <widget class="QWidget" name="hex_tab">
-      <attribute name="title">
-       <string>Memory</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_1">
-       <item row="0" column="0">
-        <widget class="SeerHexWidget" name="memoryHexEditor" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>100</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="asm_tab">
-      <attribute name="title">
-       <string>Disassembly</string>
-      </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="SeerAsmWidget" name="memoryAsmEditor" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>100</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="messageLineEdit">
+     <property name="frame">
+      <bool>true</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SeerHexWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">SeerHexWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SeerAsmWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">SeerAsmWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>QHistoryLineEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QImageViewer</class>
+   <extends>QWidget</extends>
+   <header>QImageViewer.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

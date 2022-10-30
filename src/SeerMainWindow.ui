@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>628</height>
+    <width>1206</width>
+    <height>726</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>984</width>
+     <width>1206</width>
      <height>28</height>
     </rect>
    </property>
@@ -70,6 +70,7 @@
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
     <addaction name="actionViewStructVisualizer"/>
+    <addaction name="actionViewImageVisualizer"/>
     <addaction name="actionViewAssembly"/>
     <addaction name="menuConsole"/>
     <addaction name="menuStyles"/>
@@ -170,6 +171,7 @@
    <addaction name="actionMemoryVisualizer"/>
    <addaction name="actionArrayVisualizer"/>
    <addaction name="actionStructVisualizer"/>
+   <addaction name="actionImageVisualizer"/>
   </widget>
   <action name="actionFileQuit">
    <property name="icon">
@@ -643,6 +645,30 @@
    </property>
    <property name="toolTip">
     <string>Toggle Gdb Playback direction.</string>
+   </property>
+  </action>
+  <action name="actionViewImageVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Image Visualizer</string>
+   </property>
+   <property name="statusTip">
+    <string>Launch a blank Image Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionImageVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a blank Image Visualizer.</string>
    </property>
   </action>
  </widget>

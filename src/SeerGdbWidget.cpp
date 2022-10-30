@@ -4,6 +4,7 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
+#include "SeerImageVisualizerWidget.h"
 #include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
@@ -2059,6 +2060,25 @@ void SeerGdbWidget::handleGdbVarAddExpression (QString expression) {
     w->setVariableName(expression);
 }
 
+void SeerGdbWidget::handleGdbImageAddExpression (QString expression) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerImageVisualizerWidget* w = new SeerImageVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                           w,    &SeerImageVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerImageVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerImageVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerImageVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+
+    // Tell the visualizer what variable to use.
+    w->setVariableName(expression);
+}
+
 void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int count) {
 
     if (executableLaunchMode() == "") {
@@ -2100,19 +2120,28 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
 }
 
 void SeerGdbWidget::handleGdbMemoryVisualizer () {
+
     handleGdbMemoryAddExpression("");
 }
 
 void SeerGdbWidget::handleGdbArrayVisualizer () {
+
     handleGdbArrayAddExpression("");
 }
 
 void SeerGdbWidget::handleGdbStructVisualizer () {
+
     handleGdbStructAddExpression("");
 }
 
 void SeerGdbWidget::handleGdbVarVisualizer () {
+
     handleGdbVarAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbImageVisualizer () {
+
+    handleGdbImageAddExpression("");
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

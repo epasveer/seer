@@ -1,22 +1,8 @@
-## Memory Visualizer
+## Image Visualizer
 
 ### Introduction
 
-The Memory Visualizer shows the contents of a region of memory in different formats, including strings and assembly.
-
-* Hex
-* Octal
-* Binary
-* Decimal
-* Ascii
-* Ebcdic
-* Assembly
-
-The memory displayed in 3 views.
-
-* A memory dump in the chosen Display format. Included in this view is the memory displayed in the Character format. A byte can be selected in this view to highlight it.
-* A table showing the highlighted byte in different numeric formats (int, float, double, etc...).
-* A separate tab showing the memory as disassembly.
+The Image Visualizer shows the contents of a region of memory as a image.
 
 ### Operation
 
@@ -24,11 +10,13 @@ There are various things to control how the memory is display.
 
 * Starting address entry field
 * Number of bytes entry field
-* Display format
-* Character format
-* Column width
+* Image width (in pixels)
+* Image height (in pixels)
+* Image format
 * Refresh
 * Auto Refresh
+
+A check is done to ensure the amount of memory given to the Memory Visualizer will cover the image size.
 
 ### Starting address entry field
 
@@ -47,30 +35,16 @@ It can also be one of gdb' special variables. Like the program counter. Enter it
     $pc
 ```
 
-
 ### Number of bytes entry field
 
 The default number of bytes to display is 256. Fewer or more than this number can be entered.
 
-### Display format.
+### Image format.
 
-The memory dump can be displayed in these formats:
+Two supported formats are available:
 
-* Hex
-* Octal
-* Binary
-* Decimal
-
-### Character format
-
-The memory dump can be displayed in these character formats:
-
-* Ascii
-* Ebcdic
-
-### Column width
-
-This specifies the column width of the memory dump.
+* RGBA8888
+* RGB888
 
 ### Refresh
 
@@ -79,4 +53,14 @@ This will refresh the memory dump since the last time.
 ### Auto mode
 
 This mode will refresh the memory dump each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
+
+### Image interaction
+
+Avaible Quick keys while in the Image Visualizer:
+```
+    '+' zoom in
+    '-' zoom out
+    <ESC> reset to default zoom level.
+    ^P  print image.
+```
 

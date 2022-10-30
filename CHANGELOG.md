@@ -4,6 +4,8 @@
 ## [1.13beta] - 2022-MM-DD
 
 * Improve specifying an alternate directory if the source has moved. Fewer mouse clicks.
+* Add new Image Visualizer.
+    - View RGB888 and RGBA8888 images.
 
 ## [1.12] - 2022-10-22
 
