@@ -2,21 +2,21 @@
 
 ### Introduction
 
-The Image Visualizer shows the contents of a region of memory as a image.
+The Image Visualizer shows the contents of a region of memory as an image.
 
 ### Operation
 
-There are various things to control how the memory is display.
+There are various things to control how the image is display.
 
 * Starting address entry field
-* Number of bytes entry field
-* Image width (in pixels)
-* Image height (in pixels)
 * Image format
+* Image width
+* Image height
 * Refresh
 * Auto Refresh
 
-A check is done to ensure the amount of memory given to the Memory Visualizer will cover the image size.
+A check is done to ensure the amount of memory given to the Memory Visualizer will cover the image size. If there is a problem, it's
+likely the wrong format is selected.
 
 ### Starting address entry field
 
@@ -35,32 +35,31 @@ It can also be one of gdb' special variables. Like the program counter. Enter it
     $pc
 ```
 
-### Number of bytes entry field
-
-The default number of bytes to display is 256. Fewer or more than this number can be entered.
-
 ### Image format.
 
-Two supported formats are available:
+Two supported formats are available. Others can be added easily.
 
 * RGBA8888
 * RGB888
 
+### Image format.
+
+The image width and height, in pixels.
+
 ### Refresh
 
-This will refresh the memory dump since the last time.
+This will refresh the image since the last time.
 
 ### Auto mode
 
-This mode will refresh the memory dump each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
+This mode will refresh the image each time Seer reaches a stopping point (when you 'step' or 'next' or reach a 'breakpoint').
 
 ### Image interaction
 
-Avaible Quick keys while in the Image Visualizer:
+Available Quick keys while in the Image Visualizer:
 ```
-    '+' zoom in
-    '-' zoom out
-    <ESC> reset to default zoom level.
-    ^P  print image.
+    '+'   zoom in
+    '-'   zoom out
+    ESC   reset to default zoom level.
 ```
 

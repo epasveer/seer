@@ -61,9 +61,6 @@ bool QImageViewer::saveFile (const QString& file) {
         return false;
     }
 
-    qDebug() << file;
-    qDebug() << _image;
-
     QImageWriter writer(file);
 
     bool f = writer.write(_image);
@@ -86,7 +83,7 @@ void QImageViewer::setImage (const QImage& image) {
 
     //qDebug() << image;
 
-    _image      = image;
+    _image      = image.copy();
     _zoomFactor = 1.0;
 
     _imageLabel->setPixmap(QPixmap::fromImage(_image));
@@ -175,16 +172,6 @@ void QImageViewer::keyPressEvent (QKeyEvent* event) {
             break;
         case Qt::Key_Minus:
             zoomOut();
-            break;
-        case Qt::Key_P:
-            if (event->modifiers() == Qt::ControlModifier) {
-                print();
-            }
-            break;
-        case Qt::Key_S:
-            if (event->modifiers() == Qt::ControlModifier) {
-                saveFileDialog("");
-            }
             break;
         default:
             QWidget::keyPressEvent(event);
