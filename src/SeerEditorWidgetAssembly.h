@@ -98,6 +98,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        addArrayVisualize                   (QString expression);
         void                                        addStructVisualize                  (QString expression);
         void                                        requestAssembly                     (QString address);
+        void                                        requestSourceAndAssembly            (QString address);
         void                                        showSearchBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
 

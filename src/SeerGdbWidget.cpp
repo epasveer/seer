@@ -184,6 +184,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::requestAssembly,                                                  this,                                                           &SeerGdbWidget::handleGdbGetAssembly);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::requestSourceAndAssembly,                                         this,                                                           &SeerGdbWidget::handleGdbGetSourceAndAssembly);
 
     QObject::connect(sourceLibraryManagerWidget->sourceBrowserWidget(),         &SeerSourceBrowserWidget::refreshSourceList,                                                this,                                                           &SeerGdbWidget::handleGdbExecutableSources);
     QObject::connect(sourceLibraryManagerWidget->sourceBrowserWidget(),         &SeerSourceBrowserWidget::selectedFile,                                                     editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
@@ -2117,6 +2118,17 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
    //qDebug() << "Getting assembly for address" << address;
 
     handleGdbCommand("-data-disassemble -a " + address + " -- 2"); // Use '2' to add opcodes. '0' has no opcodes.
+}
+
+void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+   //qDebug() << "Getting source and assembly for address" << address;
+
+    handleGdbCommand("-data-disassemble -a " + address + " -- 5");
 }
 
 void SeerGdbWidget::handleGdbMemoryVisualizer () {

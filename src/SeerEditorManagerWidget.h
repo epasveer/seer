@@ -78,6 +78,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleAddArrayVisualizer            (QString expression);
         void                                            handleAddStructVisualizer           (QString expression);
         void                                            handleRequestAssembly               (QString address);
+        void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
 
     private slots:
@@ -105,6 +106,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            addArrayVisualize                   (QString expression);
         void                                            addStructVisualize                  (QString expression);
         void                                            requestAssembly                     (QString address);
+        void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
 
     private:
