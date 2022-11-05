@@ -1,4 +1,5 @@
 #include "SeerUtl.h"
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 #include <mutex>
 
@@ -505,6 +506,30 @@ namespace Seer {
             qWarning() << "Bad data type:" << type;
             return 0;
         }
+    }
+
+    bool readFile (const QString& filename, QStringList& lines) {
+
+        // Empty the list
+        lines = QStringList();
+
+        // Open the file.
+        QFile file(filename);
+
+        if (file.open(QIODevice::ReadOnly) == false) {
+            qDebug() << "Can't open:" << filename;
+            return false;
+        }
+
+        // Read the file line-by-line and build up the string list.
+        while (file.atEnd() == false) {
+            lines.append(file.readLine());
+        }
+
+        file.close();
+
+        // All good.
+        return true;
     }
 }
 
