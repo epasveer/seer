@@ -1480,6 +1480,16 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
         for ( const auto& src_and_asm_text : src_and_asm_list ) {
 
+            // Get the strings, with padding.
+            QString line_text     = Seer::parseFirst(src_and_asm_text, "line=",     '"', '"', false);
+            QString file_text     = Seer::parseFirst(src_and_asm_text, "file=",     '"', '"', false);
+            QString fullname_text = Seer::parseFirst(src_and_asm_text, "fullname=", '"', '"', false);
+
+            // Write source line to the document.
+            appendPlainText(QString(" ") + fullname_text + ":" + line_text);
+
+            lineno++;
+
             // Get the list of assembly lines.
             QString asm_insns_text = Seer::parseFirst(src_and_asm_text, "line_asm_insn=", '[', ']', false);
 
