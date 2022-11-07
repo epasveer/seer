@@ -41,6 +41,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            assemblyShowOffsetColumn            () const;
         void                                            setAssemblyShowOpcodeColumn         (bool flag);
         bool                                            assemblyShowOpcodeColumn            () const;
+        void                                            setAssemblyShowSourceLines          (bool flag);
+        bool                                            assemblyShowSourceLines             () const;
 
 
         SeerEditorManagerFiles                          openedFiles                         () const;
@@ -131,5 +133,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showAddressColumn;
         bool                                            _showOffsetColumn;
         bool                                            _showOpcodeColumn;
+        bool                                            _showSourceLines;
 };
 

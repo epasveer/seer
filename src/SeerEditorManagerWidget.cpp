@@ -26,6 +26,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showAddressColumn         = true;
     _showOffsetColumn          = false;
     _showOpcodeColumn          = false;
+    _showSourceLines           = false;
 
     // Setup UI
     setupUi(this);
@@ -205,6 +206,20 @@ void SeerEditorManagerWidget::setAssemblyShowOpcodeColumn (bool flag) {
 bool SeerEditorManagerWidget::assemblyShowOpcodeColumn () const {
 
     return _showOpcodeColumn;
+}
+
+void SeerEditorManagerWidget::setAssemblyShowSourceLines (bool flag) {
+
+    _showSourceLines = flag;
+
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->setShowSourceLines(_showSourceLines);
+    }
+}
+
+bool SeerEditorManagerWidget::assemblyShowSourceLines () const {
+
+    return _showSourceLines;
 }
 
 SeerEditorManagerFiles SeerEditorManagerWidget::openedFiles () const {
@@ -890,6 +905,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     assemblyWidget->setShowAddressColumn(assemblyShowAddressColumn());
     assemblyWidget->setShowOffsetColumn(assemblyShowOffsetColumn());
     assemblyWidget->setShowOpcodeColumn(assemblyShowOpcodeColumn());
+    assemblyWidget->setShowSourceLines(assemblyShowSourceLines());
 
     _assemblyIndex= tabWidget->addTab(assemblyWidget, "Assembly");
 

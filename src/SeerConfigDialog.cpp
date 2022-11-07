@@ -349,6 +349,16 @@ bool SeerConfigDialog::assemblyShowOpcodeColumn () const {
     return _assemblyConfigPage->showOpcodeColumn();
 }
 
+void SeerConfigDialog::setAssemblyShowSourceLines (bool flag) {
+
+    _assemblyConfigPage->setShowSourceLines(flag);
+}
+
+bool SeerConfigDialog::assemblyShowSourceLines () const {
+
+    return _assemblyConfigPage->showSourceLines();
+}
+
 void SeerConfigDialog::setAssemblyRegisterFormat (const QString& format) {
 
     _assemblyConfigPage->setRegisterFormat(format);

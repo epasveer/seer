@@ -19,6 +19,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         bool                    showAddressColumn                               () const;
         bool                    showOffsetColumn                                () const;
         bool                    showOpcodeColumn                                () const;
+        bool                    showSourceLines                                 () const;
         QString                 registerFormat                                  () const;
 
         void                    setShowAssemblyTabOnStartup                     (bool flag);
@@ -28,6 +29,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         void                    setShowAddressColumn                            (bool flag);
         void                    setShowOffsetColumn                             (bool flag);
         void                    setShowOpcodeColumn                             (bool flag);
+        void                    setShowSourceLines                              (bool flag);
         void                    setRegisterFormat                               (const QString& format);
 
         void                    reset                                           ();

@@ -198,3 +198,6 @@
                 ]
 
 
+^done,asm_insns=[{address="0x08048080",func-name="_start",offset="0",opcodes="ba 0e 00 00 00",inst="mov    $0xe,%edx"},{address="0x08048085",func-name="_start",offset="5",opcodes="b9 a4 90 04 08",inst="mov    $0x80490a4,%ecx"},{address="0x0804808a",func-name="_start",offset="10",opcodes="bb 01 00 00 00",inst="mov    $0x1,%ebx"},{address="0x0804808f",func-name="_start",offset="15",opcodes="b8 04 00 00 00",inst="mov    $0x4,%eax"},{address="0x08048094",func-name="_start",offset="20",opcodes="cd 80",inst="int    $0x80"},{address="0x08048096",func-name="_start",offset="22",opcodes="bb 00 00 00 00",inst="mov    $0x0,%ebx"},{address="0x0804809b",func-name="_start",offset="27",opcodes="b8 01 00 00 00",inst="mov    $0x1,%eax"},{address="0x080480a0",func-name="_start",offset="32",opcodes="cd 80",inst="int    $0x80"}]
+
+

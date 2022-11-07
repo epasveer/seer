@@ -492,6 +492,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setAssemblyShowAddressColumn(gdbWidget->assemblyShowAddressColumn());
     dlg.setAssemblyShowOffsetColumn(gdbWidget->assemblyShowOffsetColumn());
     dlg.setAssemblyShowOpcodeColumn(gdbWidget->assemblyShowOpcodeColumn());
+    dlg.setAssemblyShowSourceLines(gdbWidget->assemblyShowSourceLines());
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
@@ -530,6 +531,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setAssemblyShowAddressColumn(dlg.assemblyShowAddressColumn());
     gdbWidget->setAssemblyShowOffsetColumn(dlg.assemblyShowOffsetColumn());
     gdbWidget->setAssemblyShowOpcodeColumn(dlg.assemblyShowOpcodeColumn());
+    gdbWidget->setAssemblyShowSourceLines(dlg.assemblyShowSourceLines());
     gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());

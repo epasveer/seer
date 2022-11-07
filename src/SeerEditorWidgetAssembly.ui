@@ -166,6 +166,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QCheckBox" name="showAddressCheckBox">
+          <property name="toolTip">
+           <string>Show assembly address.</string>
+          </property>
           <property name="text">
            <string>Address</string>
           </property>
@@ -173,6 +176,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="showOffsetCheckBox">
+          <property name="toolTip">
+           <string>Show assembly offset.</string>
+          </property>
           <property name="text">
            <string>Offset</string>
           </property>
@@ -180,8 +186,21 @@
         </item>
         <item>
          <widget class="QCheckBox" name="showOpcodeCheckBox">
+          <property name="toolTip">
+           <string>Show assembly opcodes.</string>
+          </property>
           <property name="text">
            <string>Opcode</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="showSourceCheckBox">
+          <property name="toolTip">
+           <string>Show original source code.</string>
+          </property>
+          <property name="text">
+           <string>Source</string>
           </property>
          </widget>
         </item>
@@ -218,6 +237,19 @@
    <header location="global">QHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>searchTextLineEdit</tabstop>
+  <tabstop>matchCaseCheckBox</tabstop>
+  <tabstop>searchDownToolButton</tabstop>
+  <tabstop>searchUpToolButton</tabstop>
+  <tabstop>searchLineNumberLineEdit</tabstop>
+  <tabstop>searchCloseToolButton</tabstop>
+  <tabstop>refreshToolButton</tabstop>
+  <tabstop>showAddressCheckBox</tabstop>
+  <tabstop>showOffsetCheckBox</tabstop>
+  <tabstop>showOpcodeCheckBox</tabstop>
+  <tabstop>showSourceCheckBox</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>

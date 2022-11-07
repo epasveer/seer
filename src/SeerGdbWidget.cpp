@@ -2115,7 +2115,7 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
         return;
     }
 
-   //qDebug() << "Getting assembly for address" << address;
+    //qDebug() << "Getting assembly for address" << address;
 
     handleGdbCommand("-data-disassemble -a " + address + " -- 2"); // Use '2' to add opcodes. '0' has no opcodes.
 }
@@ -2126,7 +2126,7 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
         return;
     }
 
-   //qDebug() << "Getting source and assembly for address" << address;
+    //qDebug() << "Getting source and assembly for address" << address;
 
     handleGdbCommand("-data-disassemble -a " + address + " -- 5");
 }
@@ -2383,6 +2383,7 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("assemblyshowaddresscolumn",   assemblyShowAddressColumn());
         settings.setValue("assemblyshowoffsetcolumn",    assemblyShowOffsetColumn());
         settings.setValue("assemblyshowopcodecolumn",    assemblyShowOpcodeColumn());
+        settings.setValue("assemblyshowsourcelines",     assemblyShowSourceLines());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2497,6 +2498,7 @@ void SeerGdbWidget::readSettings () {
         setAssemblyShowAddressColumn(settings.value("assemblyshowaddresscolumn", true).toBool());
         setAssemblyShowOffsetColumn(settings.value("assemblyshowoffsetcolumn", false).toBool());
         setAssemblyShowOpcodeColumn(settings.value("assemblyshowopcodecolumn", false).toBool());
+        setAssemblyShowSourceLines(settings.value("assemblyshowsourcelines", false).toBool());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2884,6 +2886,16 @@ void SeerGdbWidget::setAssemblyShowOpcodeColumn (bool flag) {
 bool SeerGdbWidget::assemblyShowOpcodeColumn () const {
 
     return editorManager()->assemblyShowOpcodeColumn();
+}
+
+void SeerGdbWidget::setAssemblyShowSourceLines (bool flag) {
+
+    editorManager()->setAssemblyShowSourceLines(flag);
+}
+
+bool SeerGdbWidget::assemblyShowSourceLines () const {
+
+    return editorManager()->assemblyShowSourceLines();
 }
 
 void SeerGdbWidget::setAssemblyRegisterFormat (const QString& format) {

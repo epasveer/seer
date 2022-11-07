@@ -523,7 +523,10 @@ namespace Seer {
 
         // Read the file line-by-line and build up the string list.
         while (file.atEnd() == false) {
-            lines.append(file.readLine());
+
+            QString line = file.readLine();
+            line.chop(1);
+            lines.append(line);
         }
 
         file.close();

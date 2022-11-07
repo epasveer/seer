@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
     QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog.\nSave settings with:\n    'Settings->Save Configuration'"));
     parser.addOption(configOption);
 
-    QCommandLineOption xxdebugOption(QStringList()<<"xxdebug", QCoreApplication::translate("main", "Turn on internal Seer debugging messages."));
+    QCommandLineOption xxdebugOption(QStringList()<<"xxx", QCoreApplication::translate("main", "Turn on internal Seer debugging messages."));
     parser.addOption(xxdebugOption);
 
 

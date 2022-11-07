@@ -149,6 +149,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setAssemblyShowOpcodeColumn         (bool flag);
         bool                                assemblyShowOpcodeColumn            () const;
 
+        void                                setAssemblyShowSourceLines          (bool flag);
+        bool                                assemblyShowSourceLines             () const;
+
         void                                setAssemblyRegisterFormat           (const QString& format);
         QString                             assemblyRegisterFormat              () const;
 

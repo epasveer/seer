@@ -46,6 +46,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(showAddressCheckBox,               &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowAddressColumn);
     QObject::connect(showOffsetCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOffsetColumn);
     QObject::connect(showOpcodeCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
+    QObject::connect(showSourceCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowSourceLines);
     QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);
@@ -56,6 +57,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     setShowAddressColumn(true);
     setShowOffsetColumn(false);
     setShowOpcodeColumn(false);
+    setShowSourceLines(false);
 }
 
 SeerEditorWidgetAssembly::~SeerEditorWidgetAssembly () {
@@ -89,6 +91,11 @@ bool SeerEditorWidgetAssembly::showOffsetColumn () const {
 bool SeerEditorWidgetAssembly::showOpcodeColumn () const {
 
     return showOpcodeCheckBox->isChecked();
+}
+
+bool SeerEditorWidgetAssembly::showSourceLines () const {
+
+    return showSourceCheckBox->isChecked();
 }
 
 void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) {
@@ -154,6 +161,13 @@ void SeerEditorWidgetAssembly::setShowOpcodeColumn (bool flag) {
     showOpcodeCheckBox->setChecked(flag);
 
     handleShowOpcodeColumn();
+}
+
+void SeerEditorWidgetAssembly::setShowSourceLines (bool flag) {
+
+    showSourceCheckBox->setChecked(flag);
+
+    handleShowSourceLines();
 }
 
 void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {
@@ -234,5 +248,10 @@ void SeerEditorWidgetAssembly::handleShowOffsetColumn () {
 void SeerEditorWidgetAssembly::handleShowOpcodeColumn () {
 
     assemblyArea()->enableOpcodeArea(showOpcodeColumn());
+}
+
+void SeerEditorWidgetAssembly::handleShowSourceLines () {
+
+    assemblyArea()->enableSourceLines(showSourceLines());
 }
 

@@ -41,6 +41,9 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        enableOpcodeArea                    (bool flag);
         bool                                        opcodeAreaEnabled                   () const;
 
+        void                                        enableSourceLines                   (bool flag);
+        bool                                        sourceLinesEnabled                  () const;
+
         void                                        enableMiniMapArea                   (bool flag);
         bool                                        miniMapAreaEnabled                  () const;
 
@@ -87,6 +90,8 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        setHighlighterEnabled               (bool flag);
         bool                                        highlighterEnabled                  () const;
 
+        QString                                     sourceForLine                       (const QString& fullname, const QString& file, int line);
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString printpoint);
@@ -113,6 +118,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
     private slots:
         void                                        refreshExtraSelections              ();
 
+        void                                        updateTextArea                      ();
         void                                        updateMarginAreasWidth              (int newBlockCount);
         void                                        updateLineNumberArea                (const QRect& rect, int dy);
         void                                        updateOffsetArea                    (const QRect& rect, int dy);
@@ -125,12 +131,14 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        _enableOffsetArea;
         bool                                        _enableBreakPointArea;
         bool                                        _enableOpcodeArea;
+        bool                                        _enableSourceLines;
         bool                                        _enableMiniMapArea;
         QVector<int>                                _breakpointsNumbers;
         QVector<QString>                            _breakpointsAddresses;
         QVector<bool>                               _breakpointsEnableds;
         QList<QTextEdit::ExtraSelection>            _findExtraSelections;
         QList<QTextEdit::ExtraSelection>            _currentLinesExtraSelections;
+        QList<QTextEdit::ExtraSelection>            _sourceLinesExtraSelections;
 
         SeerEditorWidgetAssemblyLineNumberArea*     _lineNumberArea;
         SeerEditorWidgetAssemblyOffsetArea*         _offsetArea;
@@ -148,6 +156,14 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         QMap<int,QString>                           _lineAddressMap;
         QMap<int,qulonglong>                        _lineOffsetMap;
         QMap<int,QString>                           _lineOpcodeMap;
+
+        // Text from asm_insns command.
+        QString                                     _asm_insns_text;
+
+        // Source lines for assembly file.
+        QStringList                                 _fileLines;
+        QString                                     _fileFullname;
+        QString                                     _fileName;
 };
 
 class SeerEditorWidgetAssemblyLineNumberArea : public QWidget {
@@ -267,6 +283,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         bool                                        showAddressColumn                   () const;
         bool                                        showOffsetColumn                    () const;
         bool                                        showOpcodeColumn                    () const;
+        bool                                        showSourceLines                     () const;
 
         void                                        setKeySettings                      (const SeerKeySettings& settings);
         const SeerKeySettings&                      keySettings                         () const;
@@ -278,6 +295,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        setShowAddressColumn                (bool flag);
         void                                        setShowOffsetColumn                 (bool flag);
         void                                        setShowOpcodeColumn                 (bool flag);
+        void                                        setShowSourceLines                  (bool flag);
 
     private slots:
         void                                        handleSearchLineNumberLineEdit      ();
@@ -289,6 +307,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleShowAddressColumn             ();
         void                                        handleShowOffsetColumn              ();
         void                                        handleShowOpcodeColumn              ();
+        void                                        handleShowSourceLines               ();
 
     signals:
     private:

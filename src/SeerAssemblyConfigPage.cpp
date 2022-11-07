@@ -63,6 +63,11 @@ bool SeerAssemblyConfigPage::showOpcodeColumn () const {
     return showOpcodeCheckBox->isChecked();
 }
 
+bool SeerAssemblyConfigPage::showSourceLines () const {
+
+    return showSourceCheckBox->isChecked();
+}
+
 QString SeerAssemblyConfigPage::registerFormat () const {
 
     return registerFormatComboBox->currentText();
@@ -113,6 +118,11 @@ void SeerAssemblyConfigPage::setShowOpcodeColumn (bool flag) {
     showOpcodeCheckBox->setChecked(flag);
 }
 
+void SeerAssemblyConfigPage::setShowSourceLines (bool flag) {
+
+    showSourceCheckBox->setChecked(flag);
+}
+
 void SeerAssemblyConfigPage::setRegisterFormat (const QString& format) {
 
     registerFormatComboBox->setCurrentText(format);
@@ -127,6 +137,7 @@ void SeerAssemblyConfigPage::reset () {
     setShowAddressColumn(true);
     setShowOffsetColumn(false);
     setShowOpcodeColumn(false);
+    setShowSourceLines(false);
     setRegisterFormat("Natural");
 }
 
