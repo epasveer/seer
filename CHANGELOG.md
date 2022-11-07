@@ -6,6 +6,7 @@
 * Improve specifying an alternate directory if the source has moved. Fewer mouse clicks.
 * Add new Image Visualizer.
     - View RGB888 and RGBA8888 images.
+* Assembly Tab can show source lines along with assembly.
 
 ## [1.12] - 2022-10-22
 
