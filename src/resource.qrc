@@ -64,6 +64,7 @@
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>
     <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
+    <file>resources/help/MainWindow.md</file>
   </qresource>
 </RCC>
 

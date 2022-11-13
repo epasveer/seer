@@ -3,10 +3,12 @@
 #include "SeerConfigDialog.h"
 #include "SeerArgumentsDialog.h"
 #include "SeerAboutDialog.h"
+#include "SeerHelpPageWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QStyleFactory>
+#include <QtWidgets/QToolButton>
 #include <QtGui/QKeySequence>
 #include <QtGui/QPalette>
 #include <QtCore/QCoreApplication>
@@ -42,6 +44,13 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     _progressIndicator->setColor(palette().color(QPalette::WindowText));
 
     toolBar->addWidget(_progressIndicator);
+
+    // Add help button.
+    QToolButton* helpToolButton = new QToolButton(this);
+    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
+    helpToolButton->setToolTip("Help on source/symbol/library information.");
+
+    toolBar->addWidget(helpToolButton);
 
     // Set up Styles menu.
     _styleMenuActionGroup = new QActionGroup(this);
@@ -154,6 +163,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged, this,           &SeerMainWindow::handleRunStatusChanged);
     QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,      this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,             gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
+
+    QObject::connect(helpToolButton,                    &QToolButton::clicked,                  this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
     handleRecordSettingsChanged();
 
@@ -909,6 +920,14 @@ void SeerMainWindow::handleChangeWindowTitle (QString title) {
         setWindowTitle("Seer Debugger - '" + title + "'");
     }
 }
+
+void SeerMainWindow::handleHelpToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/MainWindow.md");
+    help->show();
+}
+
 
 void SeerMainWindow::writeSettings() {
 
