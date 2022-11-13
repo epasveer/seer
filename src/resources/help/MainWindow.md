@@ -1,8 +1,9 @@
 ## Seer Main Window
 
+
 ### Main Tool Bar
 
-The main toolbar has buttons for access to Seers's common functions. Most of these buttons also have hotkeys
+The main tool bar has buttons for Seers's common functions. Most of these buttons also have hotkeys
 assigned to them. These can be configured with "Settings->Configure->Keys".
 
 The buttons are arranged in groups.
@@ -29,7 +30,7 @@ The buttons are arranged in groups.
 * Visualizers
 
     * Memory - Visualize a region of memory in a 'hex viewer'.
-    * Array - Visualizer a region of memory as arrays. A table and 2D plot.
+    * Array - Visualize a region of memory as arrays. A table and 2D plot.
     * Struct - Visualize a region of memory as a nested C/C++ structure.
-    * Image - Visializer a region of memory as a RGB or RGBA image.
+    * Image - Visualize a region of memory as a RGB or RGBA image.
 
