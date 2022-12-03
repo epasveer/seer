@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.13beta] - 2022-MM-DD
+## [1.13] - 2022-12-02
 
 * Improve specifying an alternate directory if the source has moved. Fewer mouse clicks.
 * Add new Image Visualizer.
