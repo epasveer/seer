@@ -272,6 +272,19 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="4">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>CRC16 Sum</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="5">
+        <widget class="QLineEdit" name="lineEdit_15"/>
+       </item>
       </layout>
      </item>
      <item row="2" column="0">

@@ -18,6 +18,8 @@ The memory displayed in 3 views.
 * A table showing the highlighted byte in different numeric formats (int, float, double, etc...).
 * A separate tab showing the memory as disassembly.
 
+A CRC16 checksum of the memory region is also displayed. Useful for quickly determining if different memory regions have the same contents.
+
 ### Operation
 
 There are various things to control how the memory is display.

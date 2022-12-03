@@ -21,6 +21,7 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
             public:
                 virtual ~DataStorage() {};
                 virtual QByteArray getData(int position, int length) = 0;
+                virtual QByteArray getData() = 0;
                 virtual int size() = 0;
         };
 
@@ -28,6 +29,7 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
             public:
                 DataStorageArray(const QByteArray& arr);
                 virtual QByteArray getData(int position, int length);
+                virtual QByteArray getData();
                 virtual int size();
             private:
                 QByteArray _data;

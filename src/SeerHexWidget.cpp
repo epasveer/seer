@@ -543,15 +543,18 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
 void SeerHexWidget::create () {
 
     // Ignore changing of cursor positions.
-    QObject::disconnect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
+    QObject::disconnect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,    this,  &SeerHexWidget::handleCursorPositionChanged);
 
     // Clear the current document. We're going to recreate it.
     plainTextEdit->clear();
 
+    // Clear the checksum.
+    lineEdit_15->setText("");
+
     // If there's no data, do nothing.
     if (!_pdata) {
         // Re-enable notification of changing of cursor positions.
-        QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
+        QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,   this,  &SeerHexWidget::handleCursorPositionChanged);
         return;
     }
 
@@ -672,10 +675,19 @@ void SeerHexWidget::create () {
         cursor.insertText (eol, defaultFormat);
     }
 
+
+    // Print checksum.
+    {
+        quint16 crc16    = qChecksum(_pdata->getData().data(), _pdata->getData().size(), Qt::ChecksumIso3309);
+        QString crc16str = QString::number(crc16);
+
+        lineEdit_15->setText(crc16str);
+    }
+
     handleByteOffsetChanged(_highlightByte);
 
     // Re-enable notification of changing of cursor positions.
-    QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,        this,  &SeerHexWidget::handleCursorPositionChanged);
+    QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged, this,  &SeerHexWidget::handleCursorPositionChanged);
 }
 
 SeerHexWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {
@@ -684,6 +696,10 @@ SeerHexWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {
 
 QByteArray SeerHexWidget::DataStorageArray::getData(int position, int length) {
     return _data.mid(position, length);
+}
+
+QByteArray SeerHexWidget::DataStorageArray::getData() {
+    return _data;
 }
 
 int SeerHexWidget::DataStorageArray::size() {
