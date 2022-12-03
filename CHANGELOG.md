@@ -7,6 +7,7 @@
 * Add new Image Visualizer.
     - View RGB888 and RGBA8888 images.
 * Assembly Tab can show source lines along with assembly.
+* Add CRC16 checksum to Memory Visualizer.
 * Add help for the main window's tab bar.
 
 ## [1.12] - 2022-10-22
