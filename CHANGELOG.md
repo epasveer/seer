@@ -1,6 +1,8 @@
 
 # Seer Change Log
 
+## [1.14beta] - 2022-??-??
+
 ## [1.13] - 2022-12-02
 
 * Improve specifying an alternate directory if the source has moved. Fewer mouse clicks.

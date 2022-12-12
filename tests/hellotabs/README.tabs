@@ -1,0 +1,5 @@
+
+To test tabs in source code, set the vim editor to use tabs and set the tab width to 4.
+
+    : set autoindent noexpandtab tabstop=4 shiftwidth=4
+
