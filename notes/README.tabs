@@ -1,0 +1,7 @@
+
+
+Use this regex to replace a string '\t' with a real tab ^I character, as long as it doesn't appear in "" quotes.
+
+    "\\\\t(?=([^\"]*\"[^\"]*\")*[^\"]*$)"
+
+
