@@ -57,6 +57,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setEditorFont                                   (const QFont& font);
         const QFont&                        editorFont                                      () const;
 
+        void                                setEditorTabSize                                (int spaces);
+        int                                 editorTabSize                                   () const;
+
         void                                setEditorHighlighterSettings                    (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&      editorHighlighterSettings                       () const;
 

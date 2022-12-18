@@ -1,5 +1,6 @@
 #include "SeerUtl.h"
 #include <QtCore/QFile>
+#include <QtCore/QString>
 #include <QtCore/QDebug>
 #include <mutex>
 
@@ -25,6 +26,41 @@ namespace Seer {
         tmp.replace("\\\"", "\"");
 
         return tmp;
+    }
+
+    QString expandTabs (const QString& str, int tabsize, bool morph) {
+
+        QString work = str;
+
+        if (morph) {
+            work.replace("\\t", "\t");
+        }
+
+        QString result;
+
+        int pos = 0;
+
+        for (int i=0; i<work.size(); i++) {
+
+            QChar c = work.at(i);
+
+            if (c == '\t') {
+                // append the spaces here.
+                int nspaces = tabsize - pos % tabsize;
+
+                for (int i=0; i<nspaces; i++) {
+                    result.append(' ');
+                }
+
+                pos = 0;
+
+            }else{
+                result.append(c);
+                pos = (c == '\n') ? 0 : pos + 1;
+            }
+        }
+
+        return result;
     }
 
     QStringList parse (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {

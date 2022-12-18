@@ -17,6 +17,9 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setEditorFont                   (const QFont& font);
         const QFont&                        editorFont                      () const;
 
+        void                                setEditorTabSize                (int spaces);
+        int                                 editorTabSize                   () const;
+
         void                                setHighlighterSettings          (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&      highlighterSettings             () const;
 

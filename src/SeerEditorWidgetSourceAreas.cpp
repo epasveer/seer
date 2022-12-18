@@ -34,10 +34,13 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _enableMiniMapArea          = false;
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
+    _sourceTabSize              = 4;
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
-    setFont(font);
+
+    setEditorFont(font);
+    setEditorTabSize(4);
 
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
@@ -614,8 +617,13 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     while (!line.isNull()) {
 
+        // Expand tabs
+        line = Seer::expandTabs(line, editorTabSize(), false);
+
+        // Build up text for file.
         text += line + "\n";
 
+        // Read next line, if available.
         line = stream.readLine();
     };
 
@@ -1495,6 +1503,66 @@ void SeerEditorWidgetSourceArea::setHighlighterEnabled (bool flag) {
 bool SeerEditorWidgetSourceArea::highlighterEnabled () const {
 
     return _sourceHighlighterEnabled;
+}
+
+void SeerEditorWidgetSourceArea::setEditorFont (const QFont& font) {
+
+    setFont(font);
+
+    /*
+
+     * None of the tabstops work. Setting tabstops never look the same
+     * as replacing tabs with spaces. Not sure why.
+     * Tried setTabStopDistance() and setTabArray(). Same problem.
+     * Zooming in and out in QPlainTextEdit will also result in bad
+     * tabstops.
+
+    QFont f = font;
+
+    f.setLetterSpacing(QFont::PercentageSpacing, 100);
+    f.setWordSpacing(0.0);
+    f.setFixedPitch(true);
+    f.setKerning(false);
+
+    setFont(f);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    qreal tabspace = fontMetrics().horizontalAdvance(QLatin1Char(' ')) * 4;
+#else
+    qreal tabspace = fontMetrics().width(QLatin1Char(' ')) * 4;
+#endif
+
+  //setTabStopDistance(tabspace);
+
+    QList<qreal> tabstops;
+    qreal        tabpos = 0.0;
+
+    for (int i=0; i<100; i++) {
+        tabstops.append(tabpos);
+        tabpos += tabspace;
+    }
+
+    QTextOption opt = document()->defaultTextOption();
+    opt.setFlags(QTextOption::ShowTabsAndSpaces);
+    opt.setTabArray(tabstops);
+    document()->setDefaultTextOption(opt);
+
+    */
+}
+
+const QFont& SeerEditorWidgetSourceArea::editorFont () const {
+
+    return font();
+}
+
+void SeerEditorWidgetSourceArea::setEditorTabSize (int spaces) {
+
+    _sourceTabSize = spaces;
+}
+
+int SeerEditorWidgetSourceArea::editorTabSize () const {
+
+    return _sourceTabSize;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {

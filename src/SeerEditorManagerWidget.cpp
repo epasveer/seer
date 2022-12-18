@@ -21,6 +21,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorHighlighterSettings = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
     _editorHighlighterEnabled  = true;
     _editorKeySettings         = SeerKeySettings::populate();                 // Default key settings.
+    _editorTabSize             = 4;
     _assemblyWidget            = 0;
     _keepAssemblyTabOnTop      = true;
     _showAddressColumn         = true;
@@ -153,6 +154,7 @@ void SeerEditorManagerWidget::showAssembly () {
 }
 
 SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {
+
     return _assemblyWidget;
 }
 
@@ -253,7 +255,7 @@ void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
     SeerEditorManagerEntries::iterator e = endEntry();
 
     while (b != e) {
-        b->widget->sourceArea()->setFont(_editorFont);
+        b->widget->sourceArea()->setEditorFont(editorFont());
         b++;
     }
 
@@ -261,7 +263,7 @@ void SeerEditorManagerWidget::setEditorFont (const QFont& font) {
     SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
-        assemblyWidget->assemblyArea()->setFont(editorFont());
+        assemblyWidget->assemblyArea()->setEditorFont(editorFont());
     }
 }
 
@@ -373,6 +375,16 @@ void SeerEditorManagerWidget::setEditorKeySettings (const SeerKeySettings& setti
 const SeerKeySettings& SeerEditorManagerWidget::editorKeySettings () const {
 
     return _editorKeySettings;
+}
+
+void SeerEditorManagerWidget::setEditorTabSize (int spaces) {
+
+    _editorTabSize = spaces;
+}
+
+int SeerEditorManagerWidget::editorTabSize () const {
+
+    return _editorTabSize;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -747,7 +759,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
 
     // Create the Editor widget and add it to the tab.
     SeerEditorWidgetSource* editorWidget = new SeerEditorWidgetSource(this);
-    editorWidget->sourceArea()->setFont(editorFont());
+    editorWidget->sourceArea()->setEditorFont(editorFont());
+    editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
@@ -804,7 +817,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
 
     // Create the Editor widget and add it to the tab.
     SeerEditorWidgetSource* editorWidget = new SeerEditorWidgetSource(this);
-    editorWidget->sourceArea()->setFont(editorFont());
+    editorWidget->sourceArea()->setEditorFont(editorFont());
+    editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
@@ -898,7 +912,8 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     // Create the Editor widget and add it to the tab.
     // Raise it to the top.
     SeerEditorWidgetAssembly* assemblyWidget = new SeerEditorWidgetAssembly(this);
-    assemblyWidget->assemblyArea()->setFont(editorFont());
+    assemblyWidget->assemblyArea()->setEditorFont(editorFont());
+    assemblyWidget->assemblyArea()->setEditorTabSize(editorTabSize());
     assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
 

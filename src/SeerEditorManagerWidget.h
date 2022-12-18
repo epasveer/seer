@@ -59,6 +59,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const QStringList&                              editorIgnoreDirectories             () const;
         void                                            setEditorKeySettings                (const SeerKeySettings& settings);
         const SeerKeySettings&                          editorKeySettings                   () const;
+        void                                            setEditorTabSize                    (int spaces);
+        int                                             editorTabSize                       () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -127,6 +129,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         QStringList                                     _editorAlternateDirectories;
         QStringList                                     _editorIgnoreDirectories;
         SeerKeySettings                                 _editorKeySettings;
+        int                                             _editorTabSize;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
         bool                                            _keepAssemblyTabOnTop;

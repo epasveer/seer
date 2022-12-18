@@ -2,6 +2,10 @@
 # Seer Change Log
 
 ## [1.14beta] - 2022-??-??
+* Add 'tabsize' property to Source Editors to properly display source files
+  containing tab characters. Default is 4. Can be changed by the Editor config
+  page.
+* Fixed '\t' character returned by some flavors of gdb that display the disassembly.
 
 ## [1.13] - 2022-12-02
 

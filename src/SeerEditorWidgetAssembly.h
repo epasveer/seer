@@ -92,6 +92,11 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
         QString                                     sourceForLine                       (const QString& fullname, const QString& file, int line);
 
+        void                                        setEditorFont                       (const QFont& font);
+        const QFont&                                editorFont                          () const;
+        void                                        setEditorTabSize                    (int spaces);
+        int                                         editorTabSize                       () const;
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString printpoint);
@@ -164,6 +169,8 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         QStringList                                 _fileLines;
         QString                                     _fileFullname;
         QString                                     _fileName;
+
+        int                                         _sourceTabSize;
 };
 
 class SeerEditorWidgetAssemblyLineNumberArea : public QWidget {

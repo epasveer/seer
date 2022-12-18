@@ -209,6 +209,16 @@ const QFont& SeerConfigDialog::editorFont () const {
     return _editorConfigPage->editorFont();
 }
 
+void SeerConfigDialog::setEditorTabSize (int spaces) {
+
+    _editorConfigPage->setEditorTabSize(spaces);
+}
+
+int SeerConfigDialog::editorTabSize () const {
+
+    return _editorConfigPage->editorTabSize();
+}
+
 void SeerConfigDialog::setEditorHighlighterSettings (const SeerHighlighterSettings& settings) {
 
     _editorConfigPage->setHighlighterSettings(settings);

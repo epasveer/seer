@@ -489,6 +489,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setDprintfFunction(gdbWidget->dprintfFunction());
     dlg.setDprintfChannel(gdbWidget->dprintfChannel());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
+    dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
@@ -527,7 +528,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
     gdbWidget->setDprintfChannel(dlg.dprintfChannel());
-    gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
+    gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
@@ -974,7 +975,8 @@ void SeerMainWindow::writeConfigSettings () {
 
     settings.beginGroup("editor"); {
 
-        settings.setValue("font", gdbWidget->editorManager()->editorFont().toString());
+        settings.setValue("font",    gdbWidget->editorManager()->editorFont().toString());
+        settings.setValue("tabsize", gdbWidget->editorManager()->editorTabSize());
 
         settings.beginGroup("highlighter"); {
 
@@ -1056,6 +1058,8 @@ void SeerMainWindow::readConfigSettings () {
         }
         gdbWidget->editorManager()->setEditorFont(f);
 
+        gdbWidget->editorManager()->setEditorTabSize(settings.value("tabsize", 4).toInt());
+
         settings.beginGroup("highlighter"); {
 
             gdbWidget->editorManager()->setEditorHighlighterEnabled(settings.value("enabled",true).toBool());
@@ -1084,6 +1088,7 @@ void SeerMainWindow::readConfigSettings () {
                     }
 
                     highlighter.add(keys[i], f);
+
                 } settings.endGroup();
             }
 

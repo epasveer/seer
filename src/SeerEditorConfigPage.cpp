@@ -57,6 +57,16 @@ const QFont& SeerEditorConfigPage::editorFont () const {
     return _font;
 }
 
+void SeerEditorConfigPage::setEditorTabSize (int spaces) {
+
+    tabSpinBox->setValue(spaces);
+}
+
+int SeerEditorConfigPage::editorTabSize () const {
+
+    return tabSpinBox->value();
+}
+
 void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings& settings) {
 
     _highlighterSettings = settings;
@@ -159,6 +169,7 @@ bool SeerEditorConfigPage::highlighterEnabled () const {
 void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
+    setEditorTabSize(4);
     setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
     setHighlighterEnabled(true);
 }

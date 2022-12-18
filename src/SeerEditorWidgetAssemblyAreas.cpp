@@ -39,6 +39,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableOpcodeArea     = false;
     _enableMiniMapArea    = false;
     _enableSourceLines    = false;
+    _sourceTabSize        = 4;
 
     _addressLineMap.clear();
     _offsetLineMap.clear();
@@ -229,6 +230,8 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 // Get source for 'line'
                 QString sourceLine = sourceForLine(fullname_text, file_text, line_text.toInt());
 
+                sourceLine = Seer::expandTabs(sourceLine, editorTabSize(), false);
+
                 // Write source line to the document.
                 appendPlainText(sourceLine);
 
@@ -267,7 +270,7 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 QString opcodes_text  = Seer::parseFirst(asm_text, "opcodes=",   '"', '"', false);
                 QString inst_text     = Seer::parseFirst(asm_text, "inst=",      '"', '"', false);
 
-                //qDebug() << inst_text;
+                inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
                 // Write assembly line to the document.
                 appendPlainText(inst_text);
@@ -296,7 +299,7 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
             QString opcodes_text = Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
             QString inst_text    = Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
 
-            //qDebug() << inst_text;
+            inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
             // Write assembly line to the document.
             appendPlainText(QString(" ") + inst_text);
@@ -1465,6 +1468,28 @@ QString SeerEditorWidgetAssemblyArea::sourceForLine (const QString& fullname, co
     }
 
     return _fileLines[line];
+}
+
+void SeerEditorWidgetAssemblyArea::setEditorFont (const QFont& font) {
+
+    setFont(font);
+
+    // See: SeerEditorSourceArea::setEditorFont()
+}
+
+const QFont& SeerEditorWidgetAssemblyArea::editorFont () const {
+
+    return font();
+}
+
+void SeerEditorWidgetAssemblyArea::setEditorTabSize (int spaces) {
+
+    _sourceTabSize = spaces;
+}
+
+int SeerEditorWidgetAssemblyArea::editorTabSize () const {
+
+    return _sourceTabSize;
 }
 
 void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
