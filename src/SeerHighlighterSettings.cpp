@@ -99,6 +99,13 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     f = QTextCharFormat();
     f.setFontWeight(QFont::Normal);
     f.setFontItalic(false);
+    f.setForeground(QColor("#c0c0c0"));
+    f.setBackground(QColor("#ffffff"));
+    cppSettings.add("Assembly Text", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
     f.setForeground(QColor("#000000"));
     f.setBackground(QColor("#c0c0c0"));
     cppSettings.add("Margin", f);
@@ -176,6 +183,13 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
     f.setForeground(QColor("#b2b2b2"));
     f.setBackground(QColor("#232629"));
     cppSettings.add("Text", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#32ae48"));
+    f.setBackground(QColor("#232629"));
+    cppSettings.add("Assembly Text", f);
 
     f = QTextCharFormat();
     f.setFontWeight(QFont::Normal);

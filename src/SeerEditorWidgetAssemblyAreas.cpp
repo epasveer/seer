@@ -214,6 +214,9 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
     QStringList asm_list         = Seer::parse(asm_insns_text, "", '{', '}', false);
 
     if (src_and_asm_list.size() > 0) {
+
+        qDebug() << "src_and_asm_text mode.";
+
         // Loop through the asm list and print each line.
         int lineno = 1;
 
@@ -230,13 +233,14 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 // Get source for 'line'
                 QString sourceLine = sourceForLine(fullname_text, file_text, line_text.toInt());
 
-                sourceLine = Seer::expandTabs(sourceLine, editorTabSize(), false);
+                sourceLine = Seer::expandTabs(sourceLine, editorTabSize(), false); // Expand tabs.
+                sourceLine = sourceLine.simplified(); // Remove blank spaces at front and end of line.
 
                 // Write source line to the document.
                 appendPlainText(sourceLine);
 
                 // Highlight it.
-                QTextCharFormat sourceLinesFormat = highlighterSettings().get("Margin");
+                QTextCharFormat sourceLinesFormat = highlighterSettings().get("Text");
 
                 QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
                 QTextCursor cursor = textCursor();
@@ -275,6 +279,24 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 // Write assembly line to the document.
                 appendPlainText(inst_text);
 
+                // Highlight it.
+                QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
+
+                QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+                QTextCursor cursor = textCursor();
+
+                cursor.setPosition(block.position());
+                setTextCursor(cursor);
+
+                QTextEdit::ExtraSelection selection;
+                selection.format.setForeground(sourceLinesFormat.foreground());
+                selection.format.setBackground(sourceLinesFormat.background());
+                selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+                selection.cursor = textCursor();
+                selection.cursor.clearSelection();
+
+                _sourceLinesExtraSelections.append(selection);
+
                 // Add to maps
                 _addressLineMap.insert(address_text.toULongLong(0,0), lineno);
                 _offsetLineMap.insert(offset_num.toULongLong(0,0), lineno);
@@ -287,6 +309,8 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
         }
 
     }else if (asm_list.size() > 0) {
+
+        qDebug() << "asm_text mode.";
 
         // Loop through the asm list and print each line.
         int lineno = 1;
@@ -303,6 +327,24 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
 
             // Write assembly line to the document.
             appendPlainText(QString(" ") + inst_text);
+
+            // Highlight it.
+            QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
+
+            QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+            QTextCursor cursor = textCursor();
+
+            cursor.setPosition(block.position());
+            setTextCursor(cursor);
+
+            QTextEdit::ExtraSelection selection;
+            selection.format.setForeground(sourceLinesFormat.foreground());
+            selection.format.setBackground(sourceLinesFormat.background());
+            selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+            selection.cursor = textCursor();
+            selection.cursor.clearSelection();
+
+            _sourceLinesExtraSelections.append(selection);
 
             // Add to maps
             _addressLineMap.insert(address_text.toULongLong(0,0), lineno);
@@ -689,7 +731,7 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
-    QTextCharFormat format = highlighterSettings().get("Margin");
+    QTextCharFormat format = highlighterSettings().get("Assembly Text");
 
     QPainter painter(_opcodeArea);
     painter.fillRect(event->rect(), format.background().color());
