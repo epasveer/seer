@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtGui/QTextCharFormat>
-#include <QtCore/QMap>
+#include <QtCore/QList>
 #include <QtCore/QStringList>
 #include <QtCore/QString>
 
@@ -28,7 +28,8 @@ class SeerHighlighterSettings {
         static SeerHighlighterSettings          populateForCPP_dark     ();
 
     private:
-        QMap<QString, QTextCharFormat>          _formats;
+        QList<QString>                          _keys;
+        QList<QTextCharFormat>                  _formats;
         QString                                 _sourceSuffixes;
 };
 

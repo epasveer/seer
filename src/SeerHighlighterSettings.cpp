@@ -1,5 +1,4 @@
 #include "SeerHighlighterSettings.h"
-#include <QtCore/QList>
 
 SeerHighlighterSettings::SeerHighlighterSettings () {
 }
@@ -14,6 +13,7 @@ SeerHighlighterSettings::~SeerHighlighterSettings () {
 
 SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlighterSettings& rhs) {
 
+    _keys           = rhs._keys;
     _formats        = rhs._formats;
     _sourceSuffixes = rhs._sourceSuffixes;
 
@@ -22,35 +22,48 @@ SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlight
 
 QStringList SeerHighlighterSettings::keys () const {
 
-    QList<QString> keylist = _formats.keys();
-
-    QStringList keys;
-
-    for (int i=0; i<keylist.count(); i++) {
-        keys.push_back(keylist[i]);
-    }
-
-    return keys;
+    return _keys;
 }
 
 bool SeerHighlighterSettings::has (const QString& name) const {
 
-    return _formats.contains(name);
+    int i = _keys.indexOf(name);
+
+    if (i < 0) {
+        return false;
+    }
+
+    return true;
 }
 
 QTextCharFormat SeerHighlighterSettings::get (const QString& name) const {
 
-    return _formats[name];
+    int i = _keys.indexOf(name);
+
+    if (i < 0) {
+        return QTextCharFormat();
+    }
+
+    return _formats[i];
 }
 
 void SeerHighlighterSettings::add (const QString& name, QTextCharFormat& format) {
 
-    _formats[name] = format;
+    int i = _keys.indexOf(name);
+
+    if (i < 0) {
+        _keys.append(name);
+        _formats.append(format);
+
+        return;
+    }
+
+    _formats[i] = format;
 }
 
 int SeerHighlighterSettings::count () const {
 
-    return _formats.size();
+    return _keys.size();
 }
 
 void SeerHighlighterSettings::setSourceSuffixes (const QString& suffixes) {
@@ -111,6 +124,20 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     cppSettings.add("Margin", f);
 
     f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#000000"));
+    f.setBackground(QColor("#ffff99"));
+    cppSettings.add("Current Line", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#000000"));
+    f.setBackground(QColor("#c0c0c0"));
+    cppSettings.add("Match", f);
+
+    f = QTextCharFormat();
     f.setFontWeight(QFont::Bold);
     f.setFontItalic(false);
     f.setForeground(QColor("#800080"));
@@ -152,20 +179,6 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     f.setBackground(QColor("#ffffff"));
     cppSettings.add("Keyword", f);
 
-    f = QTextCharFormat();
-    f.setFontWeight(QFont::Normal);
-    f.setFontItalic(false);
-    f.setForeground(QColor("#000000"));
-    f.setBackground(QColor("#ffff99"));
-    cppSettings.add("Current Line", f);
-
-    f = QTextCharFormat();
-    f.setFontWeight(QFont::Normal);
-    f.setFontItalic(false);
-    f.setForeground(QColor("#000000"));
-    f.setBackground(QColor("#c0c0c0"));
-    cppSettings.add("Match", f);
-
     cppSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
 
     return cppSettings;
@@ -197,6 +210,20 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
     f.setForeground(QColor("#7c7f81"));
     f.setBackground(QColor("#31363b"));
     cppSettings.add("Margin", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#c7fa54"));
+    f.setBackground(QColor("#8ea82f"));
+    cppSettings.add("Current Line", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#000000"));
+    f.setBackground(QColor("#737373"));
+    cppSettings.add("Match", f);
 
     f = QTextCharFormat();
     f.setFontWeight(QFont::Bold);
@@ -239,20 +266,6 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
     f.setForeground(QColor("#d9f743"));
     f.setBackground(QColor("#232629"));
     cppSettings.add("Keyword", f);
-
-    f = QTextCharFormat();
-    f.setFontWeight(QFont::Normal);
-    f.setFontItalic(false);
-    f.setForeground(QColor("#c7fa54"));
-    f.setBackground(QColor("#8ea82f"));
-    cppSettings.add("Current Line", f);
-
-    f = QTextCharFormat();
-    f.setFontWeight(QFont::Normal);
-    f.setFontItalic(false);
-    f.setForeground(QColor("#000000"));
-    f.setBackground(QColor("#737373"));
-    cppSettings.add("Match", f);
 
     cppSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
 
