@@ -6,6 +6,8 @@
   containing tab characters. Default is 4. Can be changed by the Editor config
   page.
 * Fixed '\t' character returned by some flavors of gdb that display the disassembly.
+* Remove whitespace from C/C++ lines in the Assembly tab.
+* Allow assembly code to have its own font format. See Config->Editor->AssemblyText.
 
 ## [1.13] - 2022-12-02
 
