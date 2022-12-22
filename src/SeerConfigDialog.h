@@ -89,8 +89,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setAssemblyKeepAssemblyTabOnTop                 (bool flag);
         bool                                assemblyKeepAssemblyTabOnTop                    () const;
 
-        void                                setAssemblyDisassembyFlavor                     (const QString& flavor);
-        QString                             assemblyDisassembyFlavor                        () const;
+        void                                setAssemblyDisassemblyFlavor                    (const QString& flavor);
+        QString                             assemblyDisassemblyFlavor                       () const;
 
         void                                setAssemblySymbolDemagling                      (const QString& onoff);
         QString                             assemblySymbolDemagling                         () const;

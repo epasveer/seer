@@ -26,7 +26,7 @@ bool SeerAssemblyConfigPage::keepAssemblyTabOnTop () const {
     return assemblyTabOnTopCheckBox->isChecked();
 }
 
-QString SeerAssemblyConfigPage::disassembyFlavor () const {
+QString SeerAssemblyConfigPage::disassemblyFlavor () const {
 
     if (attFlavorRadioButton->isChecked()) {
         return "att";
@@ -83,7 +83,7 @@ void SeerAssemblyConfigPage::setKeepAssemblyTabOnTop (bool flag) {
     assemblyTabOnTopCheckBox->setChecked(flag);
 }
 
-void SeerAssemblyConfigPage::setDisassembyFlavor (const QString& flavor) {
+void SeerAssemblyConfigPage::setDisassemblyFlavor (const QString& flavor) {
 
     if (flavor == "att") {
         attFlavorRadioButton->setChecked(true);
@@ -132,7 +132,7 @@ void SeerAssemblyConfigPage::reset () {
 
     setShowAssemblyTabOnStartup(false);
     setKeepAssemblyTabOnTop(true);
-    setDisassembyFlavor("att");
+    setDisassemblyFlavor("att");
     setSymbolDemagling("on");
     setShowAddressColumn(true);
     setShowOffsetColumn(false);

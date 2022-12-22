@@ -309,14 +309,14 @@ bool SeerConfigDialog::assemblyKeepAssemblyTabOnTop () const {
     return _assemblyConfigPage->keepAssemblyTabOnTop();
 }
 
-void SeerConfigDialog::setAssemblyDisassembyFlavor (const QString& flavor) {
+void SeerConfigDialog::setAssemblyDisassemblyFlavor (const QString& flavor) {
 
-    _assemblyConfigPage->setDisassembyFlavor(flavor);
+    _assemblyConfigPage->setDisassemblyFlavor(flavor);
 }
 
-QString SeerConfigDialog::assemblyDisassembyFlavor () const {
+QString SeerConfigDialog::assemblyDisassemblyFlavor () const {
 
-    return _assemblyConfigPage->disassembyFlavor();
+    return _assemblyConfigPage->disassemblyFlavor();
 }
 
 void SeerConfigDialog::setAssemblySymbolDemagling (const QString& onoff) {

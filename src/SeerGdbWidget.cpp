@@ -2377,7 +2377,7 @@ void SeerGdbWidget::writeSettings () {
     settings.beginGroup("assembly"); {
         settings.setValue("showassemblytabonstartup",    assemblyShowAssemblyTabOnStartup());
         settings.setValue("keepassemblytabontop",        assemblyKeepAssemblyTabOnTop());
-        settings.setValue("assemblydisassemblyflavor",   assemblyDisassembyFlavor());
+        settings.setValue("assemblydisassemblyflavor",   assemblyDisassemblyFlavor());
         settings.setValue("assemblysymboldemagling",     assemblySymbolDemagling());
         settings.setValue("assemblyregisterformat",      assemblyRegisterFormat());
         settings.setValue("assemblyshowaddresscolumn",   assemblyShowAddressColumn());
@@ -2492,7 +2492,7 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("assembly"); {
         setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
         setAssemblyKeepAssemblyTabOnTop(settings.value("keepassemblytabontop", true).toBool());
-        setAssemblyDisassembyFlavor(settings.value("assemblydisassemblyflavor", "att").toString());
+        setAssemblyDisassemblyFlavor(settings.value("assemblydisassemblyflavor", "att").toString());
         setAssemblySymbolDemagling(settings.value("assemblysymboldemagling", "on").toString());
         setAssemblyRegisterFormat(settings.value("assemblyregisterformat", "Natural").toString());
         setAssemblyShowAddressColumn(settings.value("assemblyshowaddresscolumn", true).toBool());
@@ -2788,7 +2788,7 @@ bool SeerGdbWidget::assemblyKeepAssemblyTabOnTop () const {
     return editorManager()->keepAssemblyTabOnTop();
 }
 
-void SeerGdbWidget::setAssemblyDisassembyFlavor (const QString& flavor) {
+void SeerGdbWidget::setAssemblyDisassemblyFlavor (const QString& flavor) {
 
     _assemblyDisassemblyFlavor = flavor;
 
@@ -2799,7 +2799,7 @@ void SeerGdbWidget::setAssemblyDisassembyFlavor (const QString& flavor) {
     }
 }
 
-QString SeerGdbWidget::assemblyDisassembyFlavor () const {
+QString SeerGdbWidget::assemblyDisassemblyFlavor () const {
 
     return _assemblyDisassemblyFlavor;
 }

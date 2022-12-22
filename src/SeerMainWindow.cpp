@@ -499,7 +499,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSourceHeaderFilePatterns(gdbWidget->sourceHeaderFilePatterns());
     dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
-    dlg.setAssemblyDisassembyFlavor(gdbWidget->assemblyDisassembyFlavor());
+    dlg.setAssemblyDisassemblyFlavor(gdbWidget->assemblyDisassemblyFlavor());
     dlg.setAssemblySymbolDemagling(gdbWidget->assemblySymbolDemagling());
     dlg.setAssemblyShowAddressColumn(gdbWidget->assemblyShowAddressColumn());
     dlg.setAssemblyShowOffsetColumn(gdbWidget->assemblyShowOffsetColumn());
@@ -538,7 +538,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setSourceHeaderFilePatterns(dlg.sourceHeaderFilePatterns());
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
-    gdbWidget->setAssemblyDisassembyFlavor(dlg.assemblyDisassembyFlavor());
+    gdbWidget->setAssemblyDisassemblyFlavor(dlg.assemblyDisassemblyFlavor());
     gdbWidget->setAssemblySymbolDemagling(dlg.assemblySymbolDemagling());
     gdbWidget->setAssemblyShowAddressColumn(dlg.assemblyShowAddressColumn());
     gdbWidget->setAssemblyShowOffsetColumn(dlg.assemblyShowOffsetColumn());
@@ -643,14 +643,19 @@ void SeerMainWindow::handleText (const QString& text) {
         // Display the error message.
         QString msg_text = Seer::parseFirst(text, "msg=", false);
 
-        if (msg_text != "") {
-
-            handleShowMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
-
-            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
-
+        if (msg_text == "") {
             return;
         }
+
+        handleShowMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
+
+        if (msg_text == "No symbol \"disassembly\" in current context.") {
+            return;
+        }
+
+        QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+        return;
 
     }else if (text == "^running") {
         // Swallow this message.
