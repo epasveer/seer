@@ -112,6 +112,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestAssembly                     (QString address);
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
+        void                                            assemblyTabShown                    (bool shown);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();

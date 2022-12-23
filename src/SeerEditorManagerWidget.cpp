@@ -947,6 +947,9 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     // Add an entry to our table.
     _assemblyWidget = assemblyWidget;
 
+    // Send a signal to enable the Nexti/Stepi buttons.
+    emit assemblyTabShown(true);
+
     // Return the editor widget.
     return assemblyWidget;
 }
@@ -963,6 +966,9 @@ void SeerEditorManagerWidget::deleteAssemblyWidgetTab () {
     delete _assemblyWidget;                 // Delete the actual EditorWidget
 
     _assemblyWidget = 0;
+
+    // Send a signal to disable the Nexti/Stepi buttons.
+    emit assemblyTabShown(false);
 }
 
 void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {

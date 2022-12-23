@@ -8,6 +8,7 @@
 * Fixed '\t' character returned by some flavors of gdb that display the disassembly.
 * Remove whitespace from C/C++ lines in the Assembly tab.
 * Allow assembly code to have its own font format. See Config->Editor->AssemblyText.
+* Add Nexti and Stepi toolbar buttons if Assembly tab is shown.
 
 ## [1.13] - 2022-12-02
 

@@ -162,6 +162,8 @@
    <addaction name="actionGdbNext"/>
    <addaction name="actionGdbStep"/>
    <addaction name="actionGdbFinish"/>
+   <addaction name="actionGdbNexti"/>
+   <addaction name="actionGdbStepi"/>
    <addaction name="separator"/>
    <addaction name="actionRecordProcess"/>
    <addaction name="actionRecordDirection"/>
@@ -669,6 +671,30 @@
    </property>
    <property name="toolTip">
     <string>Launch a blank Image Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionGdbNexti">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Nexti</string>
+   </property>
+   <property name="toolTip">
+    <string>Nexti</string>
+   </property>
+  </action>
+  <action name="actionGdbStepi">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Stepi</string>
+   </property>
+   <property name="toolTip">
+    <string>Stepi</string>
    </property>
   </action>
  </widget>
