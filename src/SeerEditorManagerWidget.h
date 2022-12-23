@@ -121,7 +121,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorWidgetSource*                         createEditorWidgetTab               (const QString& fullname, const QString& file);
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
-        void                                            deleteAssemblyWidgetTab             ();
+        void                                            deleteAssemblyWidgetTab             (bool notify);
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;

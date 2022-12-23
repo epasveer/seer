@@ -75,7 +75,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
 
-    deleteAssemblyWidgetTab();
+    deleteAssemblyWidgetTab(false);
 }
 
 void SeerEditorManagerWidget::dumpEntries () const {
@@ -889,7 +889,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
     SeerEditorWidgetAssembly* assemblyWidget = dynamic_cast<SeerEditorWidgetAssembly*>(tabWidget->widget(index));
     if (assemblyWidget != 0) {
 
-        deleteAssemblyWidgetTab();
+        deleteAssemblyWidgetTab(true);
 
         return;
     }
@@ -954,7 +954,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     return assemblyWidget;
 }
 
-void SeerEditorManagerWidget::deleteAssemblyWidgetTab () {
+void SeerEditorManagerWidget::deleteAssemblyWidgetTab (bool notify) {
 
     if (_assemblyWidget == 0) {
         return;
@@ -968,7 +968,9 @@ void SeerEditorManagerWidget::deleteAssemblyWidgetTab () {
     _assemblyWidget = 0;
 
     // Send a signal to disable the Nexti/Stepi buttons.
-    emit assemblyTabShown(false);
+    if (notify) {
+        emit assemblyTabShown(false);
+    }
 }
 
 void SeerEditorManagerWidget::handleFileOpenToolButtonClicked () {
