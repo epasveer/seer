@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>833</width>
-    <height>555</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,88 @@
       </sizepolicy>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="pcLabel">
+       <property name="text">
+        <string>PC</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="pcLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>40</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Program counter</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Program counter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="flagsLabel">
+       <property name="text">
+        <string>FLAGS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="flagsLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>20</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Processor flags</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Processor flags</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="spLabel">
+       <property name="text">
+        <string>SP</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="spLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>20</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Stack pointer</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Stack pointer</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QWidget" name="searchBarWidget" native="true">

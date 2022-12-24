@@ -297,12 +297,14 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
 
     public slots:
         void                                        reloadAssembly                      ();
+        void                                        reloadRegisters                     ();
         void                                        showSearchBar                       (bool flag);
         void                                        setSearchMatchCase                  (bool flag);
         void                                        setShowAddressColumn                (bool flag);
         void                                        setShowOffsetColumn                 (bool flag);
         void                                        setShowOpcodeColumn                 (bool flag);
         void                                        setShowSourceLines                  (bool flag);
+        void                                        handleText                          (const QString& text);
 
     private slots:
         void                                        handleSearchLineNumberLineEdit      ();
@@ -317,7 +319,12 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleShowSourceLines               ();
 
     signals:
+        void                                        evaluateVariableExpression          (int expressionid, QString expression);
+
     private:
+        int                                         _pcId;
+        int                                         _spId;
+        int                                         _flagsId;
         SeerKeySettings                             _keySettings;
         QShortcut*                                  _textSearchShortcut;
         QShortcut*                                  _textSearchNextShortcut;

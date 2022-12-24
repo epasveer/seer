@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
+#include <QtCore/QSet>
 #include "ui_SeerVariableLoggerBrowserWidget.h"
 
 class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariableLoggerBrowserWidgetForm {
@@ -28,6 +29,7 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
 
     protected:
     private:
+        QSet<int>           _ids;
 
 };
 

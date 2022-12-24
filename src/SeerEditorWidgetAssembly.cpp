@@ -1,4 +1,5 @@
 #include "SeerEditorWidgetAssembly.h"
+#include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QTextBlock>
@@ -35,6 +36,15 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
 
     setKeySettings(SeerKeySettings::populate());
 
+    _pcId    = Seer::createID();
+    _spId    = Seer::createID();
+    _flagsId = Seer::createID();
+
+    // Clear PC, SP, and FLAGS.
+    pcLineEdit->clear();
+    spLineEdit->clear();
+    flagsLineEdit->clear();
+
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
     QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
@@ -43,6 +53,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadAssembly);
+    QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadRegisters);
     QObject::connect(showAddressCheckBox,               &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowAddressColumn);
     QObject::connect(showOffsetCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOffsetColumn);
     QObject::connect(showOpcodeCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
@@ -125,6 +136,19 @@ void SeerEditorWidgetAssembly::reloadAssembly () {
     QString addr = assemblyArea()->address();
 
     assemblyArea()->setAddress(addr, true);
+
+    // Get the PC, SP, and FLAGS
+    emit evaluateVariableExpression(_pcId,    "$pc");
+    emit evaluateVariableExpression(_spId,    "$sp");
+    emit evaluateVariableExpression(_flagsId, "$ps");
+}
+
+void SeerEditorWidgetAssembly::reloadRegisters () {
+
+    // Get the PC, SP, and FLAGS
+    emit evaluateVariableExpression(_pcId,    "$pc");
+    emit evaluateVariableExpression(_spId,    "$sp");
+    emit evaluateVariableExpression(_flagsId, "$ps");
 }
 
 void SeerEditorWidgetAssembly::showSearchBar (bool flag) {
@@ -168,6 +192,95 @@ void SeerEditorWidgetAssembly::setShowSourceLines (bool flag) {
     showSourceCheckBox->setChecked(flag);
 
     handleShowSourceLines();
+}
+
+void SeerEditorWidgetAssembly::handleText (const QString& text) {
+
+    if (text.startsWith("*stopped")) {
+
+        //qDebug() << text;
+
+        // *stopped,
+        //
+        // reason="end-stepping-range",
+        //
+        // frame={addr="0x0000000000400b45",
+        //        func="main",
+        //        args=[{name="argc",value="1"},{name="argv",value="0x7fffffffd5b8"}],
+        //        file="helloworld.cpp",
+        //        fullname="/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp",
+        //        line="7",
+        //        arch="i386:x86-64"},
+        //
+        // thread-id="1",
+        // stopped-threads="all",
+        // core="6"
+
+        QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+
+        QString frame_text = Seer::parseFirst(newtext, "frame=", '{', '}', false);
+
+        if (frame_text == "") {
+            return;
+        }
+
+        // Get the PC, SP, and FLAGS
+        emit evaluateVariableExpression(_pcId,    "$pc");
+        emit evaluateVariableExpression(_spId,    "$sp");
+        emit evaluateVariableExpression(_flagsId, "$ps");
+
+        return;
+
+    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+
+        QString id_text    = text.section('^', 0,0);
+        QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+        if (id_text == QString::number(_pcId)) {
+            pcLineEdit->setText(Seer::filterEscapes(value_text));
+            return;
+        }
+
+        if (id_text == QString::number(_spId)) {
+            spLineEdit->setText(Seer::filterEscapes(value_text));
+            return;
+        }
+
+        if (id_text == QString::number(_flagsId)) {
+            flagsLineEdit->setText(Seer::filterEscapes(value_text));
+            return;
+        }
+
+    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+
+        QString id_text  = text.section('^', 0,0);
+        QString msg_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+        if (id_text == QString::number(_pcId)) {
+            pcLineEdit->setText(Seer::filterEscapes(msg_text));
+            return;
+        }
+
+        if (id_text == QString::number(_spId)) {
+            spLineEdit->setText(Seer::filterEscapes(msg_text));
+            return;
+        }
+
+        if (id_text == QString::number(_flagsId)) {
+            flagsLineEdit->setText(Seer::filterEscapes(msg_text));
+            return;
+        }
+
+    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+
+        // Clear PC, SP, and FLAGS.
+        pcLineEdit->clear();
+        spLineEdit->clear();
+        flagsLineEdit->clear();
+
+    }else{
+        // Ignore others.
+    }
 }
 
 void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {

@@ -20,7 +20,7 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     variablesTreeWidget->resizeColumnToContents(1); // timestamp
     variablesTreeWidget->resizeColumnToContents(2); // name
     variablesTreeWidget->resizeColumnToContents(3); // value
-    variablesTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
+    variablesTreeWidget->setColumnHidden(0, true);  // Hide the 'number' column.
     variablesTreeWidget->clear();
 
     // Connect things.
@@ -47,10 +47,13 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
         QString id_text    = text.section('^', 0,0);
         QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+        if (_ids.contains(id_text.toInt()) == true) {
 
-        if (matches.size() > 0) {
-            matches.first()->setText(3, Seer::filterEscapes(value_text));
+            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+
+            if (matches.size() > 0) {
+                matches.first()->setText(3, Seer::filterEscapes(value_text));
+            }
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
@@ -62,13 +65,17 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
 
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+        if (_ids.contains(id_text.toInt()) == true) {
 
-        if (matches.size() > 0) {
-            matches.first()->setText(3, Seer::filterEscapes(msg_text));
+            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+
+            if (matches.size() > 0) {
+                matches.first()->setText(3, Seer::filterEscapes(msg_text));
+            }
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+
         variablesTreeWidget->clear();
 
     }else{
@@ -94,6 +101,10 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {
 
     QString id_text = QString::number(expressionid);
+
+    if (_ids.contains(id_text.toInt()) == false) {
+        return;
+    }
 
     QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
 
@@ -144,6 +155,8 @@ void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
     if (variable != "") {
 
         int id = Seer::createID();
+
+        _ids.insert(id); // Keep track of which ones are entered.
 
         emit evaluateVariableExpression(id, variable);
     }

@@ -151,6 +151,7 @@ void SeerEditorManagerWidget::showAssembly () {
     }
 
     assemblyWidgetTab()->assemblyArea()->setAddress("$pc");
+    assemblyWidgetTab()->reloadRegisters();
 }
 
 SeerEditorWidgetAssembly* SeerEditorManagerWidget::assemblyWidgetTab () {
@@ -445,6 +446,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
         }
 
         // Handle certain reasons uniquely.
@@ -584,6 +586,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
         }
 
     }else if (text.startsWith("^done,asm_insns=")) {
@@ -593,6 +596,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         if (assemblyWidget) {
             assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
@@ -617,6 +621,13 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         if (w) {
             static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
+        }
+
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
@@ -940,6 +951,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualize,             this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualize,              this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualize,             this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(assemblyWidget,                 &SeerEditorWidgetAssembly::evaluateVariableExpression,         this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
 
     // Load the file.
     assemblyWidget->assemblyArea()->setPlainText("");
