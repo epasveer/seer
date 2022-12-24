@@ -36,6 +36,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        showEvent                   (QShowEvent* event);
 
     private:
+        bool                        _needsRegisterNames;
 
 };
 

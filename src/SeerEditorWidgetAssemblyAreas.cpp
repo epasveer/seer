@@ -215,7 +215,7 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
 
     if (src_and_asm_list.size() > 0) {
 
-        qDebug() << "src_and_asm_text mode.";
+        //qDebug() << "src_and_asm_text mode.";
 
         // Loop through the asm list and print each line.
         int lineno = 1;
@@ -310,7 +310,7 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
 
     }else if (asm_list.size() > 0) {
 
-        qDebug() << "asm_text mode.";
+        //qDebug() << "asm_text mode.";
 
         // Loop through the asm list and print each line.
         int lineno = 1;

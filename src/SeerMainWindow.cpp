@@ -640,8 +640,6 @@ void SeerMainWindow::handleText (const QString& text) {
         // ^error,msg="The program is not being run."
         // ^error,msg="ptrace: No such process."
 
-        //qDebug() << text;
-
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
         // Filter out less important errors.
@@ -660,9 +658,15 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
+        // Show error on status bar.
         handleShowMessage(Seer::filterBookends(msg_text, '"', '"'), 3000);
 
+        // Break early for certain errors.
         if (msg_text == "No symbol \"disassembly\" in current context.") {
+            return;
+        }
+
+        if (msg_text == "\"-data-disassemble: No function contains specified address\"") {
             return;
         }
 

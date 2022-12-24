@@ -31,6 +31,8 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registerFormatComboBox->addItem("Decimal", QVariant("d"));
     registerFormatComboBox->addItem("Raw",     QVariant("r"));
 
+    _needsRegisterNames = true;
+
     // Create edit delegate.
     QAllowEditDelegate* editDelegate = new QAllowEditDelegate(this);
 
@@ -98,6 +100,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
             i++;
         }
+
+        _needsRegisterNames = false;
 
     }else if (text.startsWith("^done,register-values=[") && text.endsWith("]")) {
 
@@ -168,6 +172,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         registersTreeWidget->clear();
 
+        _needsRegisterNames = true;
+
     }else{
         // Ignore others.
     }
@@ -187,6 +193,13 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
         return;
     }
 
+    if (_needsRegisterNames) {
+
+        emit refreshRegisterNames();
+
+        _needsRegisterNames = false;
+    }
+
     // Get the format.
     QString fmt = registerFormatComboBox->currentData().toString();
 
@@ -197,6 +210,9 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerRegisterValuesBrowserWidget::refresh () {
+
+    // Force new names.
+    _needsRegisterNames = false;
 
     // Get the format.
     QString fmt = registerFormatComboBox->currentData().toString();
