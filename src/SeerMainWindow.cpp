@@ -670,6 +670,10 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
+        if (msg_text == "\"No symbol \"disassembly\" in current context.\"") {
+            return;
+        }
+
         QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
 
         return;
