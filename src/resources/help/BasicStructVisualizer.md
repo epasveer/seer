@@ -1,8 +1,9 @@
-## OldStruct Visualizer
+## Basic Struct Visualizer
 
 ### Introduction
 
-The Struct Visualizer shows the contents of C/C++ structs and classes in a tree view. This is the old implementation. The new implementation has features this old one doesn't.
+The Struct Visualizer shows the contents of C/C++ structs and classes in a tree view. It is read-only and doesn't follow pointers.
+Use the regular Struct Visualizer for that.
 
 For each variable of the struct, Seer shows these two columns:
 

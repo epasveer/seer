@@ -55,7 +55,7 @@
     <file>resources/RelaxLightIcons/tools-media-optical-burn-image.svg</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/StructVisualizer.md</file>
-    <file>resources/help/OldStructVisualizer.md</file>
+    <file>resources/help/BasicStructVisualizer.md</file>
     <file>resources/help/MemoryVisualizer.md</file>
     <file>resources/help/ArrayVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>

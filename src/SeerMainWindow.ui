@@ -70,6 +70,7 @@
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
     <addaction name="actionViewStructVisualizer"/>
+    <addaction name="actionViewBasicStructVisualizer"/>
     <addaction name="actionViewImageVisualizer"/>
     <addaction name="actionViewAssembly"/>
     <addaction name="menuConsole"/>
@@ -170,10 +171,7 @@
    <addaction name="separator"/>
    <addaction name="actionInterruptProcess"/>
    <addaction name="separator"/>
-   <addaction name="actionMemoryVisualizer"/>
-   <addaction name="actionArrayVisualizer"/>
-   <addaction name="actionStructVisualizer"/>
-   <addaction name="actionImageVisualizer"/>
+   <addaction name="actionVisualizers"/>
   </widget>
   <action name="actionFileQuit">
    <property name="icon">
@@ -283,7 +281,7 @@
     <string>Interrupt</string>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Send a 'Terminate' signal to the process.&lt;br/&gt;&lt;br/&gt;Hold down for alternate signals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>Send a 'Terminate' signal to the process.&lt;br/&gt;&lt;br/&gt;Hold down for alternate signals.</string>
    </property>
   </action>
   <action name="actionHelpAbout">
@@ -296,30 +294,6 @@
    </property>
    <property name="statusTip">
     <string>About Seer</string>
-   </property>
-  </action>
-  <action name="actionMemoryVisualizer">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Memory</string>
-   </property>
-   <property name="toolTip">
-    <string>Launch a blank Memory Visualizer.</string>
-   </property>
-  </action>
-  <action name="actionArrayVisualizer">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/array.svg</normaloff>:/seer/resources/thenounproject/array.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Array</string>
-   </property>
-   <property name="toolTip">
-    <string>Launch a blank Array Visualizer.</string>
    </property>
   </action>
   <action name="actionViewMemoryVisualizer">
@@ -559,18 +533,6 @@
     <string>Launch a blank Struct Visualizer.</string>
    </property>
   </action>
-  <action name="actionStructVisualizer">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Struct</string>
-   </property>
-   <property name="toolTip">
-    <string>Launch a blank Struct Visualizer.</string>
-   </property>
-  </action>
   <action name="actionControlRecordStop">
    <property name="icon">
     <iconset resource="resource.qrc">
@@ -661,18 +623,6 @@
     <string>Launch a blank Image Visualizer.</string>
    </property>
   </action>
-  <action name="actionImageVisualizer">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Image</string>
-   </property>
-   <property name="toolTip">
-    <string>Launch a blank Image Visualizer.</string>
-   </property>
-  </action>
   <action name="actionGdbNexti">
    <property name="icon">
     <iconset resource="resource.qrc">
@@ -695,6 +645,27 @@
    </property>
    <property name="toolTip">
     <string>Stepi</string>
+   </property>
+  </action>
+  <action name="actionVisualizers">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Visualizers</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a Memory visualizer.&lt;br/&gt;&lt;br/&gt;Hold down for alternate visualizers.</string>
+   </property>
+  </action>
+  <action name="actionViewBasicStructVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Basic Struct Visualizer</string>
    </property>
   </action>
  </widget>

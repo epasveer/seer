@@ -21,7 +21,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
 
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
-    setWindowTitle("Seer Struct Visualizer");
+    setWindowTitle("Seer Basic Struct Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
     variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -52,7 +52,7 @@ SeerStructVisualizerWidget::~SeerStructVisualizerWidget () {
 
 void SeerStructVisualizerWidget::setVariableName (const QString& name) {
 
-    setWindowTitle("Seer Struct Visualizer - '" + name + "'");
+    setWindowTitle("Seer Basic Struct Visualizer - '" + name + "'");
 
     variableNameLineEdit->setText(name);
 
@@ -429,7 +429,7 @@ void SeerStructVisualizerWidget::handleRefreshButton () {
 void SeerStructVisualizerWidget::handleHelpButton () {
 
     SeerHelpPageWidget* help = new SeerHelpPageWidget;
-    help->loadFile(":/seer/resources/help/OldStructVisualizer.md");
+    help->loadFile(":/seer/resources/help/BasicStructVisualizer.md");
     help->show();
 }
 
