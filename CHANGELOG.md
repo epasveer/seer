@@ -10,6 +10,9 @@
 * Allow assembly code to have its own font format. See Config->Editor->AssemblyText.
 * Add Nexti and Stepi toolbar buttons if Assembly tab is shown.
 * Add PC, SP, FLAGS status bar to Assembly tab.
+* Re-added the original struct visualizers as "Basic Struct Visualizer". The advanced
+  version is called "Struct Visualizer".
+* Moved selection of visualizers into a sub menu called "Visualizers" on the menu bar.
 
 ## [1.13] - 2022-12-02
 
