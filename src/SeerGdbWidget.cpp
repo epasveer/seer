@@ -766,9 +766,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     }
 
     if (gdbRandomizeStartAddress()) {
-        handleGdbCommand("-gdb-set disable-randomization off");
-    }else{
-        handleGdbCommand("-gdb-set disable-randomization on"); // Turn on randomization of starting address for process.
+        handleGdbCommand("-gdb-set disable-randomization off"); // Turn on randomization of starting address for process.
     }
 
     if (gdbEnablePrettyPrinting()) {
