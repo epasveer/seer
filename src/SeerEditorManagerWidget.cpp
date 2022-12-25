@@ -791,7 +791,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues , this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);

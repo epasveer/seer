@@ -140,6 +140,8 @@ void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression)
 
         int id = Seer::createID();
 
+        _ids.insert(id); // Keep track of which ones are entered.
+
         emit evaluateVariableExpression(id, expression);
     }
 }

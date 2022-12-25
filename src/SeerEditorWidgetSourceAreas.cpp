@@ -488,7 +488,8 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
         _selectedExpressionName = textCursor().selectedText();
     }
 
-    emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName);
+    emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
+    emit addVariableLoggerExpression(_selectedExpressionName);                       // For the variable logger.
 }
 
 bool SeerEditorWidgetSourceArea::event(QEvent* event) {
