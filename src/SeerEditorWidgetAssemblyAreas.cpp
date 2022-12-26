@@ -194,6 +194,8 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
     //                          },
     //
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
     // Clear the existing document.
     document()->clear();
 
@@ -368,6 +370,9 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
 
     // Move to the line that has our address.
     setCurrentLine(_currentAddress);
+
+    // Set the cursor back.
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
