@@ -167,10 +167,20 @@ Struct Visualizer
 -----------------
 
 When looking at the contents of a C/C++ struct or a C++ class in the Struct Visualizer, it looks like this.
-This example shows the contents of "*this" for the current C++ class that Seer is in.
+This example shows the contents of "*this" for the current C++ class that Seer is in. All structure members
+that are basic types can be edited.
 
 ![](images/structvisualizer.png)
 
+There is also a **Basic Struct Visualizer** that is more light weight, but can not follow pointers and can not
+be edited.
+
+Image Visualizer
+-----------------
+
+When looking at the contents of raw memory that is an image, the Image Visualizer can be used.
+
+![](images/imagevisualizer.png)
 
 Starting Seer
 =============
