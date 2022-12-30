@@ -20,6 +20,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
     // Setup the widgets
     setExecutableName("");
+    setExecutableSymbolName("");
     setExecutableArguments("");
     setBreakpointsFilename("");
     setExecutableWorkingDirectory(QDir::currentPath());
@@ -34,6 +35,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
     // Connect things.
     QObject::connect(executableNameToolButton,             &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableNameToolButton);
+    QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
@@ -59,6 +61,14 @@ void SeerDebugDialog::setExecutableName (const QString& executableName) {
 
 QString SeerDebugDialog::executableName () const {
     return executableNameLineEdit->text();
+}
+
+void SeerDebugDialog::setExecutableSymbolName (const QString& executableSymbolName) {
+    executableSymbolNameLineEdit->setText(executableSymbolName);
+}
+
+QString SeerDebugDialog::executableSymbolName () const {
+    return executableSymbolNameLineEdit->text();
 }
 
 void SeerDebugDialog::setExecutableWorkingDirectory (const QString& executableWorkingDirectory) {
@@ -268,6 +278,15 @@ void SeerDebugDialog::handleExecutableNameToolButton () {
 
     if (name != "") {
         setExecutableName(name);
+    }
+}
+
+void SeerDebugDialog::handleExecutableSymbolNameToolButton () {
+
+    QString name = QFileDialog::getOpenFileName(this, "Select a Symbol File for the executable.", executableSymbolName(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setExecutableSymbolName(name);
     }
 }
 

@@ -29,6 +29,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableName                   (const QString& executableName);
         const QString&                      executableName                      () const;
 
+        void                                setExecutableSymbolName             (const QString& executableSymbolName);
+        const QString&                      executableSymbolName                () const;
+
         void                                setNewExecutableFlag                (bool flag);
         bool                                newExecutableFlag                   () const;
 
@@ -332,6 +335,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _assemblyRegisterFormat;
 
         QString                             _executableName;
+        QString                             _executableSymbolName;
         QString                             _executableArguments;
         QString                             _executableWorkingDirectory;
         QString                             _executableBreakpointsFilename;

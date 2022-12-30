@@ -46,6 +46,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startOption(QStringList()<<"s"<<"start", QCoreApplication::translate("main", "Load the executable, break in \"main\", and run it."));
     parser.addOption(startOption);
 
+    QCommandLineOption symbolfileOption(QStringList()<<"sym"<<"symbol-file", QCoreApplication::translate("main", "Load symbols from a separate file than the executable."), "symbolfilename");
+    parser.addOption(symbolfileOption);
+
     QCommandLineOption breakfileOption(QStringList()<<"bl"<<"break-load", QCoreApplication::translate("main", "Load a previously saved breakpoints file. For --run or --start"), "filename");
     parser.addOption(breakfileOption);
 
@@ -108,6 +111,7 @@ int main (int argc, char* argv[]) {
     QString breakMode     = "none";
     int     executablePid = -1;
     QString executableHostPort;
+    QString executableSymbolFilename;
     QString executableBreakpointsFilename;
     QString executableBreakpointFunctionName;
     QString executableShowAssemblyTab;
@@ -123,6 +127,10 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(startOption)) {
         launchMode = "run";
         breakMode  = "inmain";
+    }
+
+    if (parser.isSet(symbolfileOption)) {
+        executableSymbolFilename = parser.value(symbolfileOption);
     }
 
     if (parser.isSet(breakfileOption)) {
@@ -178,6 +186,7 @@ int main (int argc, char* argv[]) {
 
     seer.setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     seer.setExecutableName(executableName);
+    seer.setExecutableSymbolName(executableSymbolFilename);
     seer.setExecutableArguments(positionalArguments);
 
     if (executableBreakpointsFilename != "") {

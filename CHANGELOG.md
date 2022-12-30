@@ -13,6 +13,7 @@
 * Re-added the original struct visualizers as "Basic Struct Visualizer". The advanced
   version is called "Struct Visualizer".
 * Moved selection of visualizers into a sub menu called "Visualizers" on the menu bar.
+* Added alternate file to load symbols from (instead of the debugee executable.
 
 ## [1.13] - 2022-12-02
 

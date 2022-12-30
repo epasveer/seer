@@ -224,6 +224,11 @@ with no start address randomization.
     % seergdb --start --sar yes  myprog arg1 arg2       # Debug myprog with its arguments.
                                                         # The program's start address is randomized.
 
+The program's symbols can be taken from a separated file instead of the executable.
+
+    % seergdb --sym myprog.db myprog arg1 arg2          # Debug myprog with its arguments.
+                                                        # Take the symbols from myprog.dbg.
+
 See "-h" for the full Seer help.
 
     % seergdb -h

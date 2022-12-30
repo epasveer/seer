@@ -18,6 +18,9 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    setExecutableName                               (const QString& executableName);
         QString                 executableName                                  () const;
 
+        void                    setExecutableSymbolName                         (const QString& executableSymbolName);
+        QString                 executableSymbolName                            () const;
+
         void                    setExecutableWorkingDirectory                   (const QString& executableWorkingDirectory);
         QString                 executableWorkingDirectory                      () const;
 
@@ -59,6 +62,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
 
     protected slots:
         void                    handleExecutableNameToolButton                  ();
+        void                    handleExecutableSymbolNameToolButton            ();
         void                    handleExecutableWorkingDirectoryToolButton      ();
         void                    handleLoadBreakpointsFilenameToolButton         ();
         void                    handleBreakpointInFunctionLineEdit              ();

@@ -7,24 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>777</height>
+    <height>857</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Select Executable to Debug</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
-   <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
+   <item>
     <widget class="QGroupBox" name="executableNameGroupBox">
      <property name="title">
       <string>Executable Name</string>
@@ -36,6 +29,9 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <property name="bottomMargin">
+       <number>9</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLineEdit" name="executableNameLineEdit">
         <property name="sizePolicy">
@@ -45,6 +41,9 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
+         <string>The path and name of an executable to debug.</string>
+        </property>
+        <property name="placeholderText">
          <string>The path and name of an executable to debug.</string>
         </property>
         <property name="clearButtonEnabled">
@@ -75,7 +74,61 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
+    <widget class="QGroupBox" name="executableSymbolNameGroupBox">
+     <property name="title">
+      <string>Symbol File Name</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="executableSymbolNameLineEdit">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Optional path and name of a symbol file for the executable.</string>
+        </property>
+        <property name="placeholderText">
+         <string>Optional path and name of a symbol file for the executable.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="executableSymbolNameToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Open a dialog to select the symbol file for the executable.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="executableWorkingDirectoryGroupBox">
      <property name="toolTip">
       <string/>
@@ -104,7 +157,10 @@
       <item row="0" column="0">
        <widget class="QLineEdit" name="executableWorkingDirectoryLineEdit">
         <property name="toolTip">
-         <string>The working directory path to tell GDB.</string>
+         <string>The working directory path to tell GDB. Default current directory.</string>
+        </property>
+        <property name="placeholderText">
+         <string>The working directory path to tell GDB. Default current directory.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
@@ -114,7 +170,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item>
     <widget class="QGroupBox" name="launchMethodGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -563,11 +619,22 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
   </layout>
   <zorder>launchMethodGroupBox</zorder>
   <zorder>executableNameGroupBox</zorder>
   <zorder>executableWorkingDirectoryGroupBox</zorder>
   <zorder>buttonBox</zorder>
+  <zorder>executableSymbolNameGroupBox</zorder>
  </widget>
  <resources>
   <include location="resource.qrc"/>

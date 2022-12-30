@@ -346,6 +346,17 @@ const QString& SeerGdbWidget::executableName () const {
     return _executableName;
 }
 
+void SeerGdbWidget::setExecutableSymbolName (const QString& executableSymbolName) {
+
+    _executableSymbolName = executableSymbolName;
+
+    setNewExecutableFlag(true);
+}
+
+const QString& SeerGdbWidget::executableSymbolName () const {
+    return _executableSymbolName;
+}
+
 void SeerGdbWidget::setNewExecutableFlag (bool flag) {
 
     _newExecutableFlag = flag;
@@ -1414,7 +1425,22 @@ void SeerGdbWidget::handleGdbExecutableName () {
         return;
     }
 
-    handleGdbCommand(QString("-file-exec-and-symbols \"") + executableName() + "\"");
+    //qDebug() << executableName();
+    //qDebug() << executableSymbolName();
+
+    // executableName() is expected to be non-blank.
+
+    // No symbol file? Symbols are expected in the executable.
+    if (executableSymbolName() == "") {
+
+        handleGdbCommand(QString("-file-exec-and-symbols \"") + executableName() + "\"");
+
+    // A symbol file?  Open the executable and symbol files separately.
+    }else{
+
+        handleGdbCommand(QString("-file-exec-file \"")   + executableName() + "\"");
+        handleGdbCommand(QString("-file-symbol-file \"") + executableSymbolName() + "\"");
+    }
 }
 
 void SeerGdbWidget::handleGdbExecutableArguments () {

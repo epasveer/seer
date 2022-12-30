@@ -22,6 +22,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
         void                        setExecutableName                   (const QString& executableName);
         const QString&              executableName                      () const;
+        void                        setExecutableSymbolName             (const QString& executableSymbolName);
+        const QString&              executableSymbolName                () const;
         void                        setExecutableArguments              (const QString& executableArguments);
         void                        setExecutableArguments              (const QStringList& executableArguments);
         const QString&              executableArguments                 () const;

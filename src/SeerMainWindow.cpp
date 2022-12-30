@@ -209,6 +209,14 @@ const QString& SeerMainWindow::executableName () const {
     return gdbWidget->executableName();
 }
 
+void SeerMainWindow::setExecutableSymbolName (const QString& executableSymbolName) {
+    gdbWidget->setExecutableSymbolName(executableSymbolName);
+}
+
+const QString& SeerMainWindow::executableSymbolName () const {
+    return gdbWidget->executableSymbolName();
+}
+
 void SeerMainWindow::setExecutableArguments (const QString& executableArguments) {
 
     gdbWidget->setExecutableArguments(executableArguments);
@@ -380,6 +388,7 @@ void SeerMainWindow::handleFileDebug () {
     SeerDebugDialog dlg(this);
 
     dlg.setExecutableName(executableName());
+    dlg.setExecutableSymbolName(executableSymbolName());
     dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
     dlg.setExecutableArguments(executableArguments());
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
@@ -409,6 +418,7 @@ void SeerMainWindow::handleFileDebug () {
     }
 
     setExecutableName(dlg.executableName());
+    setExecutableSymbolName(dlg.executableSymbolName());
     setExecutableWorkingDirectory(dlg.executableWorkingDirectory());
     setExecutableArguments(dlg.executableArguments());
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
