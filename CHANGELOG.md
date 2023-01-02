@@ -1,7 +1,8 @@
 
 # Seer Change Log
 
-## [1.14beta] - 2022-??-??
+## [1.14] - 2023-01-02
+* Happy New Year!
 * Add 'tabsize' property to Source Editors to properly display source files
   containing tab characters. Default is 4. Can be changed by the Editor config
   page.
