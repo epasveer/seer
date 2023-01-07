@@ -899,10 +899,10 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     //
 
     // Has a executable name been provided?
-    if (executableName() == "") {
+    if (executableName() != "") {
 
         QMessageBox::warning(this, "Seer",
-                                   QString("The executable name has not been provided.\n\nUse File->Debug..."),
+                                   QString("The executable name can't be provided for 'connect' mode."),
                                    QMessageBox::Ok);
         return;
     }
@@ -921,7 +921,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(executableName());
+        emit changeWindowTitle(executableHostPort());
 
         startGdb();
 
@@ -938,6 +938,11 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     // No console for 'connect' mode.
     setExecutableLaunchMode("connect");
     setExecutablePid(0);
+
+    // Connect to the remote gdbserver.
+    handleGdbCommand(QString("-gdb-set serial baud %1").arg(executableSerialBaud()));
+    handleGdbCommand(QString("-gdb-set serial parity %1").arg(executableSerialParity()));
+    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
@@ -962,12 +967,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     }else{
         handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
     }
-
-    // Connect to the remote gdbserver.
-    handleGdbCommand(QString("-gdb-set serial baud %1").arg(executableSerialBaud()));
-    handleGdbCommand(QString("-gdb-set serial parity %1").arg(executableSerialParity()));
-    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
-    //handleGdbCommand("-target-download");   // XXX Needed???
 
     QApplication::restoreOverrideCursor();
 
@@ -1430,15 +1429,20 @@ void SeerGdbWidget::handleGdbExecutableName () {
 
     // executableName() is expected to be non-blank.
 
-    // No symbol file? Symbols are expected in the executable.
-    if (executableSymbolName() == "") {
+    // An executable and no symbol file? Symbols are expected in the executable.
+    if (executableName() != "" && executableSymbolName() == "") {
 
         handleGdbCommand(QString("-file-exec-and-symbols \"") + executableName() + "\"");
 
-    // A symbol file?  Open the executable and symbol files separately.
-    }else{
+    // An executable and a symbol file?  Open the executable and symbol files separately.
+    }else if (executableName() != "" && executableSymbolName() != "") {
 
         handleGdbCommand(QString("-file-exec-file \"")   + executableName() + "\"");
+        handleGdbCommand(QString("-file-symbol-file \"") + executableSymbolName() + "\"");
+
+    // No executable and a symbol file?  Open the symbol files only.
+    }else if (executableName() != "" && executableSymbolName() != "") {
+
         handleGdbCommand(QString("-file-symbol-file \"") + executableSymbolName() + "\"");
     }
 }
