@@ -1,0 +1,23 @@
+
+
+Start the gdbserver running the program.
+
+    $ gdbserver localhost:9000 explorer -parallel job_sloth.j
+    Process /nas/erniep/Development/Peak/src/Apps/Explorer/explorer created; pid = 25423
+    Listening on port 9000
+    Remote debugging from host ::1, port 37114
+
+Connect with the gdbserver.
+
+    -target-select remote localhost:9000
+
+Optionally load the symbols from the executable.
+
+    -file-symbol-file /nas/erniep/Development/Peak/src/Apps/Explorer/explorer
+
+Notes:
+
+    o In this mode, seer can not restart program (?) As the gdbserver is externally launched.
+    o Execuable name is useless.
+    o Symbol name is optional.
+

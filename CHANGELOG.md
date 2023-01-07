@@ -1,6 +1,8 @@
 
 # Seer Change Log
 
+## [1.15beta] - 2023-xx-xx
+
 ## [1.14] - 2023-01-02
 * Happy New Year!
 * Add 'tabsize' property to Source Editors to properly display source files
