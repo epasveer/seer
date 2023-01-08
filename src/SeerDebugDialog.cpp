@@ -60,7 +60,12 @@ void SeerDebugDialog::setExecutableName (const QString& executableName) {
 }
 
 QString SeerDebugDialog::executableName () const {
-    return executableNameLineEdit->text();
+
+    if (executableNameLineEdit->isEnabled()) {
+        return executableNameLineEdit->text();
+    }
+
+    return "";
 }
 
 void SeerDebugDialog::setExecutableSymbolName (const QString& executableSymbolName) {
@@ -68,7 +73,12 @@ void SeerDebugDialog::setExecutableSymbolName (const QString& executableSymbolNa
 }
 
 QString SeerDebugDialog::executableSymbolName () const {
-    return executableSymbolNameLineEdit->text();
+
+    if (executableSymbolNameLineEdit->isEnabled()) {
+        return executableSymbolNameLineEdit->text();
+    }
+
+    return "";
 }
 
 void SeerDebugDialog::setExecutableWorkingDirectory (const QString& executableWorkingDirectory) {
@@ -76,7 +86,12 @@ void SeerDebugDialog::setExecutableWorkingDirectory (const QString& executableWo
 }
 
 QString SeerDebugDialog::executableWorkingDirectory () const {
-    return executableWorkingDirectoryLineEdit->text();
+
+    if (executableWorkingDirectoryLineEdit->isEnabled()) {
+        return executableWorkingDirectoryLineEdit->text();
+    }
+
+    return "";
 }
 
 void SeerDebugDialog::setExecutableArguments (const QString& executableArguments) {
@@ -338,7 +353,10 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // Disable all imprortant widgets.
     //
 
-    // ID == 1
+    // ID == 1   RUN/START
+    executableNameLineEdit->setEnabled(false);
+    executableSymbolNameLineEdit->setEnabled(false);
+    executableWorkingDirectoryLineEdit->setEnabled(false);
     runProgramArgumentsLabel->setEnabled(false);
     runProgramArgumentsLineEdit->setEnabled(false);
     loadBreakpointsFilenameLabel->setEnabled(false);
@@ -352,12 +370,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     randomizeStartAddressCheckBox->setEnabled(false);
     nonStopModeCheckBox->setEnabled(false);
 
-    // ID == 2
+    // ID == 2   ATTACH
     attachProgramPidLabel->setEnabled(false);
     attachProgramPidLineEdit->setEnabled(false);
     attachProgramPidToolButton->setEnabled(false);
 
-    // ID == 3
+    // ID == 3   CONNECT
     connectProgramHostPortLabel->setEnabled(false);
     connectProgramHostPortLineEdit->setEnabled(false);
     connectProgramSerialLabel->setEnabled(false);
@@ -365,7 +383,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     connectProgramParityLabel->setEnabled(false);
     connectProgramParityComboBox->setEnabled(false);
 
-    // ID == 4
+    // ID == 4   CORE
     loadCoreFilenameLabel->setEnabled(false);
     loadCoreFilenameLineEdit->setEnabled(false);
     loadCoreFilenameToolButton->setEnabled(false);
@@ -374,8 +392,11 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // Enable the newly selected one.
     //
 
-    // ID == 1
+    // ID == 1   RUN/START
     if (id == 1) {
+        executableNameLineEdit->setEnabled(true);
+        executableSymbolNameLineEdit->setEnabled(true);
+        executableWorkingDirectoryLineEdit->setEnabled(true);
         runProgramArgumentsLabel->setEnabled(true);
         runProgramArgumentsLineEdit->setEnabled(true);
         loadBreakpointsFilenameLabel->setEnabled(true);
@@ -390,15 +411,18 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         nonStopModeCheckBox->setEnabled(true);
     }
 
-    // ID == 2
+    // ID == 2   ATTACH
     if (id == 2) {
+        executableNameLineEdit->setEnabled(true);
+        executableSymbolNameLineEdit->setEnabled(true);
         attachProgramPidLabel->setEnabled(true);
         attachProgramPidLineEdit->setEnabled(true);
         attachProgramPidToolButton->setEnabled(true);
     }
 
-    // ID == 3
+    // ID == 3   CONNECT
     if (id == 3) {
+        executableSymbolNameLineEdit->setEnabled(true);
         connectProgramHostPortLabel->setEnabled(true);
         connectProgramHostPortLineEdit->setEnabled(true);
         connectProgramSerialLabel->setEnabled(true);
@@ -407,8 +431,10 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         connectProgramParityComboBox->setEnabled(true);
     }
 
-    // ID == 4
+    // ID == 4   CORE
     if (id == 4) {
+        executableSymbolNameLineEdit->setEnabled(true);
+        connectProgramHostPortLabel->setEnabled(true);
         loadCoreFilenameLabel->setEnabled(true);
         loadCoreFilenameLineEdit->setEnabled(true);
         loadCoreFilenameToolButton->setEnabled(true);
