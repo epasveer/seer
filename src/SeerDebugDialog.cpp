@@ -12,12 +12,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Set up the UI.
     setupUi(this);
 
-    _runModeButtonGroup = new QButtonGroup(this); // ID's 1 thru 4.
-    _runModeButtonGroup->addButton(runProgramRadioButton,     1); // "run" or "start". See breakpointMode().
-    _runModeButtonGroup->addButton(attachProgramRadioButton,  2); // "attach"
-    _runModeButtonGroup->addButton(connectProgramRadioButton, 3); // "connect"
-    _runModeButtonGroup->addButton(loadCoreRadioButton,       4); // "corefile"
-
     // Setup the widgets
     setExecutableName("");
     setExecutableSymbolName("");
@@ -34,18 +28,18 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setCoreFilename("");
 
     // Connect things.
-    QObject::connect(executableNameToolButton,             &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableNameToolButton);
-    QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
-    QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,                              this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
-    QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
-    QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
-    QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,                            this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
-    QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,                              this, &SeerDebugDialog::handleProgramPidToolButton);
+    QObject::connect(executableNameToolButton,             &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableNameToolButton);
+    QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
+    QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
+    QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
+    QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
+    QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
+    QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::idClicked),       this, &SeerDebugDialog::handleRunModeChanged);
+    QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
 #else
-    QObject::connect(_runModeButtonGroup,                  QOverload<int>::of(&QButtonGroup::buttonClicked),   this, &SeerDebugDialog::handleRunModeChanged);
+    QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
 #endif
 
     // Set initial run mode.
@@ -231,37 +225,45 @@ QString SeerDebugDialog::connectSerialParity () const {
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
     if (mode == "start") {
-        runProgramRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(0);
 
         setBreakpointMode("inmain");
 
     }else if (mode == "run") {
-        runProgramRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(0);
 
         setBreakpointMode("none");
 
     }else if (mode == "attach") {
-        attachProgramRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(1);
 
     }else if (mode == "connect") {
-        connectProgramRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(2);
 
     }else if (mode == "corefile") {
-        loadCoreRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(3);
 
     }else if (mode == "") {
-        runProgramRadioButton->click();
+
+        runModeTabWidget->setCurrentIndex(0);
 
         setBreakpointMode("none");
 
     }else{
+
         qWarning() << "Unknown launch mode of:" << mode;
     }
 }
 
 QString SeerDebugDialog::launchMode () {
 
-    if (_runModeButtonGroup->checkedId() == 1) {
+    if (runModeTabWidget->currentIndex() == 0) {
+
         if (breakpointMode() == "inmain") {
             return "start";
         }else if (breakpointMode() == "infunction") {
@@ -272,17 +274,20 @@ QString SeerDebugDialog::launchMode () {
             return "run";
         }
 
-    }else if (_runModeButtonGroup->checkedId() == 2) {
+    }else if (runModeTabWidget->currentIndex() == 1) {
+
         return "attach";
 
-    }else if (_runModeButtonGroup->checkedId() == 3) {
+    }else if (runModeTabWidget->currentIndex() == 2) {
+
         return "connect";
 
-    }else if (_runModeButtonGroup->checkedId() == 4) {
+    }else if (runModeTabWidget->currentIndex() == 3) {
+
         return "corefile";
     }
 
-    qWarning() << "Unknown launch mode of:" << _runModeButtonGroup->checkedId();
+    qWarning() << "Unknown launch mode of:" << runModeTabWidget->currentIndex();
 
     return "";
 }
@@ -353,7 +358,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // Disable all imprortant widgets.
     //
 
-    // ID == 1   RUN/START
+    // ID == 0   RUN/START
     executableNameLineEdit->setEnabled(false);
     executableSymbolNameLineEdit->setEnabled(false);
     executableWorkingDirectoryLineEdit->setEnabled(false);
@@ -370,12 +375,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     randomizeStartAddressCheckBox->setEnabled(false);
     nonStopModeCheckBox->setEnabled(false);
 
-    // ID == 2   ATTACH
+    // ID == 1   ATTACH
     attachProgramPidLabel->setEnabled(false);
     attachProgramPidLineEdit->setEnabled(false);
     attachProgramPidToolButton->setEnabled(false);
 
-    // ID == 3   CONNECT
+    // ID == 2   CONNECT
     connectProgramHostPortLabel->setEnabled(false);
     connectProgramHostPortLineEdit->setEnabled(false);
     connectProgramSerialLabel->setEnabled(false);
@@ -383,7 +388,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     connectProgramParityLabel->setEnabled(false);
     connectProgramParityComboBox->setEnabled(false);
 
-    // ID == 4   CORE
+    // ID == 3   CORE
     loadCoreFilenameLabel->setEnabled(false);
     loadCoreFilenameLineEdit->setEnabled(false);
     loadCoreFilenameToolButton->setEnabled(false);
@@ -392,8 +397,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // Enable the newly selected one.
     //
 
-    // ID == 1   RUN/START
-    if (id == 1) {
+    // ID == 0   RUN/START
+    if (id == 0) {
         executableNameLineEdit->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
@@ -411,8 +416,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         nonStopModeCheckBox->setEnabled(true);
     }
 
-    // ID == 2   ATTACH
-    if (id == 2) {
+    // ID == 1   ATTACH
+    if (id == 1) {
         executableNameLineEdit->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         attachProgramPidLabel->setEnabled(true);
@@ -420,8 +425,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         attachProgramPidToolButton->setEnabled(true);
     }
 
-    // ID == 3   CONNECT
-    if (id == 3) {
+    // ID == 2   CONNECT
+    if (id == 2) {
         executableSymbolNameLineEdit->setEnabled(true);
         connectProgramHostPortLabel->setEnabled(true);
         connectProgramHostPortLineEdit->setEnabled(true);
@@ -431,8 +436,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         connectProgramParityComboBox->setEnabled(true);
     }
 
-    // ID == 4   CORE
-    if (id == 4) {
+    // ID == 3   CORE
+    if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         connectProgramHostPortLabel->setEnabled(true);
         loadCoreFilenameLabel->setEnabled(true);

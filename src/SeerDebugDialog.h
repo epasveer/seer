@@ -71,6 +71,5 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleRunModeChanged                            (int id);
 
     private:
-        QButtonGroup*           _runModeButtonGroup;
 };
 
