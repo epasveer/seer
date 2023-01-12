@@ -183,7 +183,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
 
     if (conditionalEnabled()) {
         if (conditionalText() != "") {
-            printpointParameters += " -c " + conditionalText();
+            printpointParameters += " -c \"" + conditionalText() + "\"";
         }
     }
 

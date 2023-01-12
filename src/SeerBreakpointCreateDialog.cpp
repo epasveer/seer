@@ -180,7 +180,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
 
     if (conditionalEnabled()) {
         if (conditionalText() != "") {
-            breakpointParameters += " -c " + conditionalText();
+            breakpointParameters += " -c \"" + conditionalText() + "\"";
         }
     }
 

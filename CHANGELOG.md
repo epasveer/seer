@@ -2,6 +2,8 @@
 # Seer Change Log
 
 ## [1.15beta] - 2023-xx-xx
+* Revamp Debug dialog.
+* Fixed breakpoints with conditional statements.
 
 ## [1.14] - 2023-01-02
 * Happy New Year!

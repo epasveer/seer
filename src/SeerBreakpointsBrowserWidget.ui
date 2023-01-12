@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTreeWidget" name="breakpointsTreeWidget">
      <property name="columnCount">
-      <number>12</number>
+      <number>14</number>
      </property>
      <column>
       <property name="text">
@@ -71,7 +71,17 @@
      </column>
      <column>
       <property name="text">
+       <string>Condition</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Times</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Ignore</string>
       </property>
      </column>
      <column>

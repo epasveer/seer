@@ -27,8 +27,10 @@ SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : Q
   //breakpointsTreeWidget->resizeColumnToContents(7); // fullname  Too long to show
     breakpointsTreeWidget->resizeColumnToContents(8); // line
     breakpointsTreeWidget->resizeColumnToContents(9); // thread-groups
-    breakpointsTreeWidget->resizeColumnToContents(10); // times
-    breakpointsTreeWidget->resizeColumnToContents(11); // original-location
+    breakpointsTreeWidget->resizeColumnToContents(10); // cond
+    breakpointsTreeWidget->resizeColumnToContents(11); // times
+    breakpointsTreeWidget->resizeColumnToContents(12); // ignore
+    breakpointsTreeWidget->resizeColumnToContents(13); // original-location
 
     /*
     breakpointsTreeWidget->setColumnHidden(1, true); // ??? Hide or have a config to hide/show columns.
@@ -90,6 +92,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
         //                   fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",
         //                   line="7",
         //                   thread-groups=["i1"],
+        //                   cond="1 == 1",
         //                   times="0",
         //                   original-location="function1"}
         //          ]
@@ -117,7 +120,9 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
                 QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
+                QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
+                QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
                 // Only look for 'breakpoint' type break points.
@@ -137,8 +142,10 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(7, fullname_text);
                 topItem->setText(8, line_text);
                 topItem->setText(9, thread_groups_text);
-                topItem->setText(10, times_text);
-                topItem->setText(11, original_location_text);
+                topItem->setText(10, cond_text);
+                topItem->setText(11, times_text);
+                topItem->setText(12, ignore_text);
+                topItem->setText(13, original_location_text);
 
                 breakpointsTreeWidget->addTopLevelItem(topItem);
             }
@@ -163,6 +170,8 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
     breakpointsTreeWidget->resizeColumnToContents(9);
     breakpointsTreeWidget->resizeColumnToContents(10);
     breakpointsTreeWidget->resizeColumnToContents(11);
+    breakpointsTreeWidget->resizeColumnToContents(12);
+    breakpointsTreeWidget->resizeColumnToContents(13);
 
     QApplication::restoreOverrideCursor();
 }
