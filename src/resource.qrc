@@ -7,7 +7,6 @@
     <file>resources/seergdb_512x512.png</file>
     <file>resources/ABOUT.md</file>
     <file>resources/thenounproject/memory.svg</file>
-    <file>resources/thenounproject/array.svg</file>
     <file>resources/thenounproject/source.svg</file>
     <file>resources/thenounproject/assembly.svg</file>
     <file>resources/thenounproject/keyboard.svg</file>
@@ -15,9 +14,7 @@
     <file>resources/thenounproject/stop.svg</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
-    <file>resources/icons-icons/keyboard.png</file>
     <file>resources/icons-icons/font.png</file>
-    <file>resources/icons-icons/configure.png</file>
     <file>resources/icons-icons/arguments.png</file>
     <file>resources/icons-icons/debug.png</file>
     <file>resources/icons-icons/exit.png</file>

@@ -25,42 +25,18 @@ Files:
  src/resources/seergdb_*.png
 Copyright:
   FlatIcon https://www.flaticon.com/free-icon/seer_2689789
-License: Attribution - (https://support.flaticon.com/s/article/Attribution-How-when-and-where?language=en_US)
-
-Files:
- src/resources/icons-icons/gdb.png
-Copyright:
-  John Gardner <https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/>
-License: CC4.0
-
-Files:
- src/resources/icons-icons/keyboard.png
-Copyright:
- <https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets> Dirtyworks
-License: CC4.0
-
-Files:
- src/resources/icons-icons/editor.png
-Copyright:
- <https://icon-icons.com/users/14h9fJJJmBr3Dm13gYSpS/icon-sets> Piksart
-License: CC4.0
-
-Files:
- src/resources/icons-icons/font.png
-Copyright:
- <https://icon-icons.com/users/2LUKwJe4QDNsjuhkS98IX/icon-sets> DaveGandy
-License: CC4.0
-
-Files:
- src/resources/icons-icons/configure.png
-Copyright:
- <https://icon-icons.com/users/Nixd2U1fkolfZAGKcPLGu/icon-sets> Chameleon
-License: CC4.0
+License: FlatIcon Free Use License
 
 Files:
  src/resources/icons-icons/arguments.png
 Copyright:
  <https://icon-icons.com/users/67020lqBmzmzx0F3OH2GE/icon-sets> IconBox
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/console.png
+Copyright:
+ <https://icon-icons.com/users/Vn6TUStZ7Ng5JKLU3rRHX/icon-sets> Icons8
 License: CC4.0
 
 Files:
@@ -70,15 +46,33 @@ Copyright:
 License: CC4.0
 
 Files:
+ src/resources/icons-icons/editor.png
+Copyright:
+ <https://icon-icons.com/users/14h9fJJJmBr3Dm13gYSpS/icon-sets> Piksart
+License: CC4.0
+
+Files:
  src/resources/icons-icons/exit.png
 Copyright:
  <https://icon-icons.com/users/ah334sOoBVVE7GXS94Who/icon-sets> NickyLim
 License: CC4.0
 
 Files:
- src/resources/icons-icons/console.png
+ src/resources/icons-icons/font.png
 Copyright:
- <https://icon-icons.com/users/Vn6TUStZ7Ng5JKLU3rRHX/icon-sets> Icons8
+ <https://icon-icons.com/users/2LUKwJe4QDNsjuhkS98IX/icon-sets> DaveGandy
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/gdb.png
+Copyright:
+  John Gardner <https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/>
+License: CC4.0
+
+Files:
+ src/resources/icons-icons/hide.png
+Copyright:
+ <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
 License: CC4.0
 
 Files:
@@ -89,12 +83,6 @@ License: CC4.0
 
 Files:
  src/resources/icons-icons/minimize.png
-Copyright:
- <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
-License: CC4.0
-
-Files:
- src/resources/icons-icons/hide.png
 Copyright:
  <https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets> FerdiSetiadi
 License: CC4.0
@@ -112,9 +100,15 @@ Copyright:
 License: CC3.0
 
 Files:
- src/resources/thenounproject/source.svg
+ src/resources/thenounproject/configure.svg
 Copyright:
- <https://thenounproject.com/kozinn/> kozinn
+ <https://thenounproject.com/tomas.knopp/> tomas.knopp
+License: CC3.0
+
+Files:
+ src/resources/thenounproject/keyboard.svg
+Copyright:
+ <https://thenounproject.com/Flowicon/> Flowicon
 License: CC3.0
 
 Files:
@@ -124,25 +118,13 @@ Copyright:
 License: CC3.0
 
 Files:
- src/resources/thenounproject/configuratio
+ src/resources/thenounproject/source.svg
 Copyright:
- <https://thenounproject.com/tomas.knopp/> tomas.knopp
+ <https://thenounproject.com/kozinn/> kozinn
 License: CC3.0
 
 Files:
- src/resources/thenounproject/debug.sgv
-Copyright:
- <https://thenounproject.com/prosymbols/> prosymbols
-License: CC3.0
-
-Files:
- src/resources/thenounproject/keyboard.sgv
-Copyright:
- <https://thenounproject.com/Flowicon/> Flowicon
-License: CC3.0
-
-Files:
- src/resources/thenounproject/stop.sgv
+ src/resources/thenounproject/stop.svg
 Copyright:
  <https://thenounproject.com/andre.buand10/> andre.buand10
 License: CC3.0
@@ -241,4 +223,53 @@ License: Creative Commons Attribution 4.0 International (CC BY 4.0)
     No additional restrictions — You may not apply legal terms or
     technological measures that legally restrict others from doing
     anything the license permits.
+
+License: FlatIcon Free Use License
+
+ https://support.flaticon.com/s/article/Attribution-How-when-and-where?language=en_US
+
+ This is a human-readable summary of (and not a substitute for) the license.
+
+ If you are a Free user you must always attribute the author when using our resources,
+ below you can see the structure of the correct attribution line.
+
+ The attribution line would follow the same rules:
+
+   "Icon made by Freepik from www.flaticon.com"
+
+ You need to include one line for each author (not for each icon).
+
+ Please note that there are 18 packs created by third parties and therefore not covered by
+ our license:
+    All packs created by Google: https://www.flaticon.com/authors/google
+    And this pack: https://www.flaticon.com/autores/dave-gandy
+
+
+ Below you can find a few different scenarios and how the attribution must be inserted for
+ each of them:
+
+ Websites:
+
+    Insert the attribution on the page where the icon is shown. This can be placed next to
+    the image or on the footer of the website.
+
+ Printed products:
+
+    Paste this attribution on the final work so the authorship is known (for instance, in the
+    acknowledgements chapter of a book).
+
+ Apps/games:
+
+    Place the attribution on the app's credits page and on the description page on the app store.
+
+ Social Networks:
+
+    Insert the attribution line "Icon made by [author link] from @flaticon" (E.g.: Icon made by
+    Freepik from @flaticon) on the post or post comments.
+
+ Stickers:
+
+  It would be great if you could add the attribution line "Sticker made by Flaticon" where you use it,
+  but we understand that it's complicated to add this line in a chat, and therefore it's not mandatory
+  to add the attribution line if you use our stickers in a chat.
 

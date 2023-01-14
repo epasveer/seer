@@ -311,7 +311,7 @@
   <action name="actionViewArrayVisualizer">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/array.svg</normaloff>:/seer/resources/thenounproject/array.svg</iconset>
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
     <string>Array Visualizer</string>

@@ -1,52 +1,64 @@
-Seer icons are from Flat Icon and licensed under the terms of the Flat Icon free icon use.
-Most are 32x32.
 
-    https://www.flaticon.com/free-icon/seer_2689789                     https://www.flaticon.com/authors/flat-icons                         seergdb_xxx.png
-    https://www.flaticon.com/free-icon/matrix_3815250                   https://www.flaticon.com/authors/freepik                            memory.png
-    https://www.flaticon.com/premium-icon/array_725259                  https://www.flaticon.com/authors/voysla                             array.png
-    https://www.flaticon.com/free-icon/log-out_6238589                  https://www.flaticon.com/authors/creatype                           exit.png
-    https://www.flaticon.com/free-icon/bug_2535485                      https://www.flaticon.com/authors/flat-icons                         debug.png
-    https://www.flaticon.com/premium-icon/contrast-adjustment_4353977   https://www.flaticon.com/authors/creatype                           configure.png
-    https://www.flaticon.com/free-icon/blogger_3860232                  https://www.flaticon.com/authors/xnimrodx                           editor.png
-    https://www.flaticon.com/premium-icon/c_2085176                     https://www.flaticon.com/authors/justicon                           source.png
-    https://www.flaticon.com/premium-icon/command_6008504               https://www.flaticon.com/authors/flat-icons                         console.png
-    https://www.flaticon.com/free-icon/maximize_3580204                 https://www.flaticon.com/authors/mavadee                            maximize.png
-    https://www.flaticon.com/free-icon/minimize_3580225                 https://www.flaticon.com/authors/mavadee                            minimize.png
-    https://www.flaticon.com/premium-icon/close_3718000                 https://www.flaticon.com/authors/flat-icons                         hide.png
-    https://www.flaticon.com/free-icon/up-arrow_2223694                 https://www.flaticon.com/authors/bqlqn                              up_arrow.png
-    https://www.flaticon.com/free-icon/down-arrow_2223613               https://www.flaticon.com/authors/bqlqn                              down_arrow.png
-    https://www.flaticon.com/free-icons/keyboard                        https://www.flaticon.com/authors/freepik                            keyboard-key.png
-    https://www.flaticon.com/free-icons/compiler                        https://www.flaticon.com/authors/iconixar                           assembly.png
+The main Seer icon is from Flat Icon and licensed under the terms of the "Flat Icon free use" license.
+https://support.flaticon.com/s/article/Attribution-How-when-and-where?language=en_US
+
+    https://www.flaticon.com/free-icon/seer_2689789                                         https://www.flaticon.com/authors/flat-icons                         seergdb_*.png
 
 
-
-The debugging icons used are from the NetBeans project (via the Gede debugger) and licensed under the
+Some icons are used from "IconsIcons" and "TheNounProject" and are licensed under "CreativeCommons" CC3.0 and CC4.0 licenses.
 terms of the NetBeans License Agreement.
 
 
-    https://icon-icons.com/icon/GDB/132365                                                  https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/       gdb.png             CC4.0
-    https://icon-icons.com/icon/keyboard/122169                                             https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/       keyboard.png        CC4.0
-    https://icon-icons.com/icon/web-design-writing-coding-development/220538                https://icon-icons.com/users/14h9fJJJmBr3Dm13gYSpS/icon-sets/       editor.png          CC4.0
-    https://icon-icons.com/icon/font-symbol-of-letter-a/73556                               https://icon-icons.com/users/2LUKwJe4QDNsjuhkS98IX/icon-sets/       font.png            CC4.0
-    https://icon-icons.com/icon/setting-configure-repair-support-optimization-google/83447  https://icon-icons.com/users/Nixd2U1fkolfZAGKcPLGu/icon-sets/       configure.png       CC4.0
-    https://icon-icons.com/icon/setting-balance-equalizer/152217                            https://icon-icons.com/users/67020lqBmzmzx0F3OH2GE/icon-sets/       arguments.png       CC4.0
-    https://icon-icons.com/icon/debug/215819                                                https://icon-icons.com/users/7dBLqleqakUowFGJkWLXY/icon-sets/       debug.png           CC4.0
-    https://icon-icons.com/icon/logout-exit/176185                                          https://icon-icons.com/users/ah334sOoBVVE7GXS94Who/icon-sets/       exit.png            CC4.0
-    https://icon-icons.com/icon/console/5091                                                https://icon-icons.com/users/Vn6TUStZ7Ng5JKLU3rRHX/icon-sets/       console.png         CC4.0
-    https://icon-icons.com/icon/resize-maximize/175765                                      https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       maximize.png        CC4.0
-    https://icon-icons.com/icon/minimize-window/175768                                      https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       minimize.png        CC4.0
-    https://icon-icons.com/icon/delete-remove/175783                                        https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       hide.png            CC4.0
-    https://icon-icons.com/icon/face-glasses-sunglasses/107950                              https://icon-icons.com/users/7VZI9qW3el29z8Ka5fjmo/icon-sets/       style.png           CC4.0
+    https://icon-icons.com/icon/GDB/132365                                                  https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/       icons-icons/gdb.png                 CC4.0
+    https://icon-icons.com/icon/keyboard/122169                                             https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/       icons-icons/keyboard.png            CC4.0
+    https://icon-icons.com/icon/web-design-writing-coding-development/220538                https://icon-icons.com/users/14h9fJJJmBr3Dm13gYSpS/icon-sets/       icons-icons/editor.png              CC4.0
+    https://icon-icons.com/icon/font-symbol-of-letter-a/73556                               https://icon-icons.com/users/2LUKwJe4QDNsjuhkS98IX/icon-sets/       icons-icons/font.png                CC4.0
+    https://icon-icons.com/icon/setting-configure-repair-support-optimization-google/83447  https://icon-icons.com/users/Nixd2U1fkolfZAGKcPLGu/icon-sets/       icons-icons/configure.png           CC4.0
+    https://icon-icons.com/icon/setting-balance-equalizer/152217                            https://icon-icons.com/users/67020lqBmzmzx0F3OH2GE/icon-sets/       icons-icons/arguments.png           CC4.0
+    https://icon-icons.com/icon/debug/215819                                                https://icon-icons.com/users/7dBLqleqakUowFGJkWLXY/icon-sets/       icons-icons/debug.png               CC4.0
+    https://icon-icons.com/icon/logout-exit/176185                                          https://icon-icons.com/users/ah334sOoBVVE7GXS94Who/icon-sets/       icons-icons/exit.png                CC4.0
+    https://icon-icons.com/icon/console/5091                                                https://icon-icons.com/users/Vn6TUStZ7Ng5JKLU3rRHX/icon-sets/       icons-icons/console.png             CC4.0
+    https://icon-icons.com/icon/resize-maximize/175765                                      https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       icons-icons/maximize.png            CC4.0
+    https://icon-icons.com/icon/minimize-window/175768                                      https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       icons-icons/minimize.png            CC4.0
+    https://icon-icons.com/icon/delete-remove/175783                                        https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/       icons-icons/hide.png                CC4.0
+    https://icon-icons.com/icon/face-glasses-sunglasses/107950                              https://icon-icons.com/users/7VZI9qW3el29z8Ka5fjmo/icon-sets/       icons-icons/style.png               CC4.0
+
+    https://thenounproject.com/icon/asm-file-document-icon-2598539/                         https://thenounproject.com/iyikon/                                  thenounproject/assembly.svg         CC3.0
+    https://thenounproject.com/icon/configuration-1115171/                                  https://thenounproject.com/tomas.knopp/                             thenounproject/configure.svg        CC3.0
+    https://thenounproject.com/icon/keyboard-key-4571629/                                   https://thenounproject.com/Flowicon/                                thenounproject/keyboard.svg         CC3.0
+    https://thenounproject.com/icon/binary-data-search-4065152/                             https://thenounproject.com/mudassar.hussain323/                     thenounproject/memory.svg           CC3.0
+    https://thenounproject.com/icon/cpp-file-252779/                                        https://thenounproject.com/kozinn/                                  thenounproject/source.svg           CC3.0
+    https://thenounproject.com/icon/interruption-4417639/                                   https://thenounproject.com/andre.buand10/                           thenounproject/stop.sgv             CC3.0
 
 
+Some icons are used from the RelaxLightIcons set. Licensed under the GPL-3.0+ license.
+L4ki https://github.com/L4ki
 
-    https://thenounproject.com/icon/asm-file-document-icon-2598539/                         https://thenounproject.com/iyikon/                                  assembly.svg        CC3.0
-    https://thenounproject.com/icon/cpp-file-252779/                                        https://thenounproject.com/kozinn/                                  source.svg          CC3.0
-    https://thenounproject.com/icon/binary-data-search-4065152/                             https://thenounproject.com/mudassar.hussain323/                     memory.svg          CC3.0
-    https://thenounproject.com/icon/configuration-1115171/                                  https://thenounproject.com/tomas.knopp/                             configure.svg       CC3.0
-    https://thenounproject.com/icon/debugging-1978211/                                      https://thenounproject.com/prosymbols/                              debug.svg           CC3.0
-    https://thenounproject.com/icon/keyboard-key-4571629/                                   https://thenounproject.com/Flowicon/                                keyboard.svg        CC3.0
-    https://thenounproject.com/icon/interruption-4417639/                                   https://thenounproject.com/andre.buand10/                           stop.sgv            CC3.0
-
-
+    RelaxLightIcons/debug-execute-from-cursor.svg
+    RelaxLightIcons/debug-execute-to-cursor.svg
+    RelaxLightIcons/debug-run-cursor.svg
+    RelaxLightIcons/debug-run.svg
+    RelaxLightIcons/debug-step-instruction.svg
+    RelaxLightIcons/debug-step-into-instruction.svg
+    RelaxLightIcons/debug-step-into.svg
+    RelaxLightIcons/debug-step-out.svg
+    RelaxLightIcons/debug-step-over.svg
+    RelaxLightIcons/document-new.svg
+    RelaxLightIcons/document-open.svg
+    RelaxLightIcons/document-print.svg
+    RelaxLightIcons/document-save-as.svg
+    RelaxLightIcons/document-save.svg
+    RelaxLightIcons/edit-clear.svg
+    RelaxLightIcons/edit-delete.svg
+    RelaxLightIcons/edit-find.svg
+    RelaxLightIcons/go-down.svg
+    RelaxLightIcons/go-next.svg
+    RelaxLightIcons/go-previous.svg
+    RelaxLightIcons/go-up.svg
+    RelaxLightIcons/help-about.svg
+    RelaxLightIcons/help-whatsthis.svg
+    RelaxLightIcons/list-add.svg
+    RelaxLightIcons/list-remove.svg
+    RelaxLightIcons/tools-media-optical-burn-image.svg
+    RelaxLightIcons/view-refresh.svg
 

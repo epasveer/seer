@@ -4,6 +4,7 @@
 ## [1.15beta] - 2023-xx-xx
 * Revamp Debug dialog.
 * Fixed breakpoints with conditional statements.
+* Fixed up icons and Debian "copyright" file for Debian Intent-To-Package.
 
 ## [1.14] - 2023-01-02
 * Happy New Year!
