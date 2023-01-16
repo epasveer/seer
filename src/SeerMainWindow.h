@@ -43,10 +43,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         int                         executablePid                       () const;
         void                        setExecutableHostPort               (const QString& executableHostPort);
         const QString&              executableHostPort                  () const;
-        void                        setExecutableSerialBaud             (int executableBaudRate);
-        int                         executableSerialBaud                () const;
-        void                        setExecutableSerialParity           (const QString& executableParity);
-        const QString&              executableSerialParity              () const;
         void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
         const QString&              executableCoreFilename              () const;
 

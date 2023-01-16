@@ -53,12 +53,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableHostPort               (const QString& hostPort);
         const QString&                      executableHostPort                  () const;
 
-        void                                setExecutableSerialBaud             (int executableBaudRate);
-        int                                 executableSerialBaud                () const;
-
-        void                                setExecutableSerialParity           (const QString& executableParity);
-        const QString&                      executableSerialParity              () const;
-
         void                                setExecutableCoreFilename           (const QString& coreFilename);
         const QString&                      executableCoreFilename              () const;
 
@@ -342,8 +336,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointFunctionName;
         int                                 _executablePid;
         QString                             _executableHostPort;
-        int                                 _executableSerialBaud;
-        QString                             _executableSerialParity;
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;

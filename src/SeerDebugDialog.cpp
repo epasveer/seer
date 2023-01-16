@@ -194,34 +194,6 @@ QString SeerDebugDialog::connectHostPort () const {
     return connectProgramHostPortLineEdit->text();
 }
 
-void SeerDebugDialog::setConnectSerialBaud (int connectBaudRate) {
-
-    if (connectBaudRate < 1) {
-        connectProgramBaudLineEdit->setText("");
-    }else{
-        connectProgramBaudLineEdit->setText(QString::number(connectBaudRate));
-    }
-}
-
-int SeerDebugDialog::connectSerialBaud () const {
-
-    if (connectProgramBaudLineEdit->text() == "") {
-        return -1;
-    }else{
-        return connectProgramBaudLineEdit->text().toInt();
-    }
-}
-
-void SeerDebugDialog::setConnectSerialParity (const QString& connectParity) {
-
-    connectProgramParityComboBox->setCurrentText(connectParity);
-}
-
-QString SeerDebugDialog::connectSerialParity () const {
-
-    return connectProgramParityComboBox->currentText();
-}
-
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
     if (mode == "start") {
@@ -383,10 +355,6 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 2   CONNECT
     connectProgramHostPortLabel->setEnabled(false);
     connectProgramHostPortLineEdit->setEnabled(false);
-    connectProgramSerialLabel->setEnabled(false);
-    connectProgramBaudLineEdit->setEnabled(false);
-    connectProgramParityLabel->setEnabled(false);
-    connectProgramParityComboBox->setEnabled(false);
 
     // ID == 3   CORE
     loadCoreFilenameLabel->setEnabled(false);
@@ -430,10 +398,6 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameLineEdit->setEnabled(true);
         connectProgramHostPortLabel->setEnabled(true);
         connectProgramHostPortLineEdit->setEnabled(true);
-        connectProgramSerialLabel->setEnabled(true);
-        connectProgramBaudLineEdit->setEnabled(true);
-        connectProgramParityLabel->setEnabled(true);
-        connectProgramParityComboBox->setEnabled(true);
     }
 
     // ID == 3   CORE

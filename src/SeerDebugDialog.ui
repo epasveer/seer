@@ -191,7 +191,7 @@
       <item>
        <widget class="QTabWidget" name="runModeTabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="runTab">
          <attribute name="title">
@@ -499,13 +499,6 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout">
-              <item row="0" column="0">
-               <widget class="QLabel" name="connectProgramHostPortLabel">
-                <property name="text">
-                 <string>Gdbserver</string>
-                </property>
-               </widget>
-              </item>
               <item row="0" column="1" colspan="2">
                <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
                 <property name="sizePolicy">
@@ -528,95 +521,12 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="connectProgramSerialLabel">
+              <item row="0" column="0">
+               <widget class="QLabel" name="connectProgramHostPortLabel">
                 <property name="text">
-                 <string>Serial</string>
+                 <string>Gdbserver</string>
                 </property>
                </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="connectProgramBaudLineEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>100</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>Serial port baud rate.</string>
-                </property>
-                <property name="inputMask">
-                 <string>999999</string>
-                </property>
-                <property name="placeholderText">
-                 <string>baudrate</string>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="2">
-               <spacer name="horizontalSpacer_1">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>338</width>
-                  <height>21</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="connectProgramParityLabel">
-                <property name="text">
-                 <string>Parity</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QComboBox" name="connectProgramParityComboBox">
-                <property name="toolTip">
-                 <string>Serial port parity setting.</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>none</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>odd</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>even</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>338</width>
-                  <height>21</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
              </layout>
             </item>
