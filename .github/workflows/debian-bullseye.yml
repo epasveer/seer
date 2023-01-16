@@ -20,15 +20,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update debian
-      run: |
-        sudo apt-get update
-
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
         install-deps: 'true'
         modules: 'qtcharts'
+
+    - name: Update debian
+      run: |
+        sudo apt-get update
+        sudo apt list --installed |  grep mesa
 
     - name: Where Am I
       run: |
