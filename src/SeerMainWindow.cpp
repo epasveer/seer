@@ -48,7 +48,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add help button.
     QToolButton* helpToolButton = new QToolButton(this);
     helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
-    helpToolButton->setToolTip("Help on source/symbol/library information.");
+    helpToolButton->setToolTip("Help on Seer main window.");
 
     toolBar->addWidget(helpToolButton);
 

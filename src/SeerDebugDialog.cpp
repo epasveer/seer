@@ -330,10 +330,14 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // Disable all imprortant widgets.
     //
 
-    // ID == 0   RUN/START
     executableNameLineEdit->setEnabled(false);
+    executableNameToolButton->setEnabled(false);
     executableSymbolNameLineEdit->setEnabled(false);
+    executableSymbolNameToolButton->setEnabled(false);
     executableWorkingDirectoryLineEdit->setEnabled(false);
+    executableWorkingDirectoryToolButton->setEnabled(false);
+
+    // ID == 0   RUN/START
     runProgramArgumentsLabel->setEnabled(false);
     runProgramArgumentsLineEdit->setEnabled(false);
     loadBreakpointsFilenameLabel->setEnabled(false);
@@ -368,8 +372,11 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 0   RUN/START
     if (id == 0) {
         executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
+        executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
+        executableWorkingDirectoryToolButton->setEnabled(true);
         runProgramArgumentsLabel->setEnabled(true);
         runProgramArgumentsLineEdit->setEnabled(true);
         loadBreakpointsFilenameLabel->setEnabled(true);
@@ -387,7 +394,9 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 1   ATTACH
     if (id == 1) {
         executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
+        executableSymbolNameToolButton->setEnabled(true);
         attachProgramPidLabel->setEnabled(true);
         attachProgramPidLineEdit->setEnabled(true);
         attachProgramPidToolButton->setEnabled(true);
@@ -396,6 +405,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 2   CONNECT
     if (id == 2) {
         executableSymbolNameLineEdit->setEnabled(true);
+        executableSymbolNameToolButton->setEnabled(true);
         connectProgramHostPortLabel->setEnabled(true);
         connectProgramHostPortLineEdit->setEnabled(true);
     }
@@ -403,7 +413,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     // ID == 3   CORE
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
-        connectProgramHostPortLabel->setEnabled(true);
+        executableSymbolNameToolButton->setEnabled(true);
         loadCoreFilenameLabel->setEnabled(true);
         loadCoreFilenameLineEdit->setEnabled(true);
         loadCoreFilenameToolButton->setEnabled(true);
