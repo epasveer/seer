@@ -655,7 +655,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QToolButton" name="helpCoreToolButton">
+             <widget class="QToolButton" name="helpCorefileToolButton">
               <property name="toolTip">
                <string>Help for Corefile launch method.</string>
               </property>

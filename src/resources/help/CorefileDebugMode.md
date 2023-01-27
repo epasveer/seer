@@ -5,7 +5,7 @@
 This mode allows Seer to debug corefiles. Corefiles are files that are the state of a process that exits unexepectedly
 via a signal (SIGTERM, SIGSEGV, etc...)
 
-### Needed files
+### Requirements
 In this mode, Seer needs:
 
 * The executable

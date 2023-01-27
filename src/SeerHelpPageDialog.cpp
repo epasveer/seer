@@ -18,12 +18,9 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
 
     textBrowser->setOpenExternalLinks(true);
 
-    QAbstractButton* printToolButton = new QToolButton;
-    printToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-print.svg"));
-
-    buttonBox->addButton(printToolButton, QDialogButtonBox::NoRole);
-
     // Connect things.
+    QObject::connect(printToolButton,  &QToolButton::clicked,          this,  &SeerHelpPageDialog::handlePrintToolButton);
+    QObject::connect(okPushButton,     &QPushButton::clicked,          this,  &SeerHelpPageDialog::handleOkPushButton);
 
     // Restore window settings.
     readSettings();
@@ -55,6 +52,26 @@ void SeerHelpPageDialog::loadText (const QString& text) {
     textBrowser->setText(text);
 #endif
     textBrowser->moveCursor(QTextCursor::Start);
+}
+
+void SeerHelpPageDialog::handlePrintToolButton () {
+
+    QPrinter printer;
+
+    QPrintDialog* dlg = new QPrintDialog(&printer, this);
+
+    if (dlg->exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QTextDocument* document = textBrowser->document();
+
+    document->print(&printer);
+}
+
+void SeerHelpPageDialog::handleOkPushButton () {
+
+    done(QDialog::Accepted);
 }
 
 void SeerHelpPageDialog::writeSettings() {

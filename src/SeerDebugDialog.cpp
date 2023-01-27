@@ -37,7 +37,10 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
-    QObject::connect(helpCoreToolButton,                   &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCoreToolButtonClicked);
+    QObject::connect(helpRunToolButton,                    &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRunToolButtonClicked);
+    QObject::connect(helpAttachToolButton,                 &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpAttachToolButtonClicked);
+    QObject::connect(helpConnectToolButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpConnectToolButtonClicked);
+    QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
@@ -343,34 +346,6 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     executableWorkingDirectoryLineEdit->setEnabled(false);
     executableWorkingDirectoryToolButton->setEnabled(false);
 
-    // ID == 0   RUN/START
-    runProgramArgumentsLabel->setEnabled(false);
-    runProgramArgumentsLineEdit->setEnabled(false);
-    loadBreakpointsFilenameLabel->setEnabled(false);
-    loadBreakpointsFilenameLineEdit->setEnabled(false);
-    loadBreakpointsFilenameToolButton->setEnabled(false);
-    noBreakpointRadioButton->setEnabled(false);
-    breakpointInMainRadioButton->setEnabled(false);
-    breakpointInFunctionRadioButton->setEnabled(false);
-    breakpointInFunctionLineEdit->setEnabled(false);
-    showAsseblyTabCheckBox->setEnabled(false);
-    randomizeStartAddressCheckBox->setEnabled(false);
-    nonStopModeCheckBox->setEnabled(false);
-
-    // ID == 1   ATTACH
-    attachProgramPidLabel->setEnabled(false);
-    attachProgramPidLineEdit->setEnabled(false);
-    attachProgramPidToolButton->setEnabled(false);
-
-    // ID == 2   CONNECT
-    connectProgramHostPortLabel->setEnabled(false);
-    connectProgramHostPortLineEdit->setEnabled(false);
-
-    // ID == 3   CORE
-    loadCoreFilenameLabel->setEnabled(false);
-    loadCoreFilenameLineEdit->setEnabled(false);
-    loadCoreFilenameToolButton->setEnabled(false);
-
     //
     // Enable the newly selected one.
     //
@@ -383,18 +358,6 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
-        runProgramArgumentsLabel->setEnabled(true);
-        runProgramArgumentsLineEdit->setEnabled(true);
-        loadBreakpointsFilenameLabel->setEnabled(true);
-        loadBreakpointsFilenameLineEdit->setEnabled(true);
-        loadBreakpointsFilenameToolButton->setEnabled(true);
-        noBreakpointRadioButton->setEnabled(true);
-        breakpointInMainRadioButton->setEnabled(true);
-        breakpointInFunctionRadioButton->setEnabled(true);
-        breakpointInFunctionLineEdit->setEnabled(true);
-        showAsseblyTabCheckBox->setEnabled(true);
-        randomizeStartAddressCheckBox->setEnabled(true);
-        nonStopModeCheckBox->setEnabled(true);
     }
 
     // ID == 1   ATTACH
@@ -403,30 +366,46 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
-        attachProgramPidLabel->setEnabled(true);
-        attachProgramPidLineEdit->setEnabled(true);
-        attachProgramPidToolButton->setEnabled(true);
     }
 
     // ID == 2   CONNECT
     if (id == 2) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
-        connectProgramHostPortLabel->setEnabled(true);
-        connectProgramHostPortLineEdit->setEnabled(true);
     }
 
     // ID == 3   CORE
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
-        loadCoreFilenameLabel->setEnabled(true);
-        loadCoreFilenameLineEdit->setEnabled(true);
-        loadCoreFilenameToolButton->setEnabled(true);
     }
 }
 
-void SeerDebugDialog::handleHelpCoreToolButtonClicked () {
+void SeerDebugDialog::handleHelpRunToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/RunDebugMode.md");
+    help->show();
+    help->raise();
+}
+
+void SeerDebugDialog::handleHelpAttachToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/AttachDebugMode.md");
+    help->show();
+    help->raise();
+}
+
+void SeerDebugDialog::handleHelpConnectToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/ConnectDebugMode.md");
+    help->show();
+    help->raise();
+}
+
+void SeerDebugDialog::handleHelpCorefileToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/CorefileDebugMode.md");

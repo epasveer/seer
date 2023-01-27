@@ -22,6 +22,9 @@ class SeerHelpPageDialog: public QDialog, protected Ui::SeerHelpPageDialogForm {
         void                        resizeEvent                         (QResizeEvent* event);
 
     protected slots:
+        void                        handlePrintToolButton               ();
+        void                        handleOkPushButton                  ();
+
     private:
 };
 

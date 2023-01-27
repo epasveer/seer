@@ -67,7 +67,10 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleRunModeChanged                            (int id);
 
     private slots:
-        void                    handleHelpCoreToolButtonClicked                 ();
+        void                    handleHelpRunToolButtonClicked                  ();
+        void                    handleHelpAttachToolButtonClicked               ();
+        void                    handleHelpConnectToolButtonClicked              ();
+        void                    handleHelpCorefileToolButtonClicked             ();
 
     protected:
         void                    writeSettings                                   ();
