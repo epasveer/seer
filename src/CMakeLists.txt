@@ -88,6 +88,7 @@ set(HEADER_FILES
     SeerKeySettings.h
     SeerPlainTextEdit.h
     SeerHelpPageWidget.h
+    SeerHelpPageDialog.h
     SeerProgressIndicator.h
     QProcessInfo.h
     QProcessInfoWidget.h
@@ -174,6 +175,7 @@ set(SOURCE_FILES
     SeerKeySettings.cpp
     SeerPlainTextEdit.cpp
     SeerHelpPageWidget.cpp
+    SeerHelpPageDialog.cpp
     SeerProgressIndicator.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp

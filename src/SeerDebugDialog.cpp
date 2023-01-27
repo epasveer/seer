@@ -2,7 +2,7 @@
 #include "SeerExecutableFilterProxyModel.h"
 #include "SeerDirectoryFilterProxyModel.h"
 #include "SeerSlashProcDialog.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
@@ -428,9 +428,10 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
 void SeerDebugDialog::handleHelpCoreToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/CorefileDebugMode.md");
     help->show();
+    help->raise();
 }
 
 void SeerDebugDialog::writeSettings() {
