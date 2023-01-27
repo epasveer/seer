@@ -1,6 +1,7 @@
 #include "SeerHelpPageDialog.h"
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
+#include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
 #include <QtCore/QFile>
 #include <QtCore/QSettings>
@@ -14,9 +15,13 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Help");
-    setAttribute(Qt::WA_DeleteOnClose);
 
     textBrowser->setOpenExternalLinks(true);
+
+    QAbstractButton* printToolButton = new QToolButton;
+    printToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-print.svg"));
+
+    buttonBox->addButton(printToolButton, QDialogButtonBox::NoRole);
 
     // Connect things.
 
