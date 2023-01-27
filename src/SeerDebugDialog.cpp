@@ -336,7 +336,7 @@ void SeerDebugDialog::handleProgramPidToolButton () {
 void SeerDebugDialog::handleRunModeChanged (int id) {
 
     //
-    // Disable all imprortant widgets.
+    // Disable all important widgets.
     //
 
     executableNameLineEdit->setEnabled(false);
@@ -374,8 +374,10 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
     }
 
-    // ID == 3   CORE
+    // ID == 3   COREFILE
     if (id == 3) {
+        executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
     }
