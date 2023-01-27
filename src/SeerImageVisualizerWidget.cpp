@@ -1,5 +1,5 @@
 #include "SeerImageVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
@@ -295,9 +295,10 @@ void SeerImageVisualizerWidget::handleRefreshButton () {
 
 void SeerImageVisualizerWidget::handleHelpButton () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/ImageVisualizer.md");
     help->show();
+    help->raise();
 }
 
 void SeerImageVisualizerWidget::handleVariableNameLineEdit () {

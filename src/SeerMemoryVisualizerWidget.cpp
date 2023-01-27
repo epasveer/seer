@@ -1,5 +1,5 @@
 #include "SeerMemoryVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
@@ -274,9 +274,10 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
 
 void SeerMemoryVisualizerWidget::handleHelpButton () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/MemoryVisualizer.md");
     help->show();
+    help->raise();
 }
 
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {

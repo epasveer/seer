@@ -2,7 +2,7 @@
 #include "SeerEditorWidgetSource.h"
 #include "SeerEditorWidgetAssembly.h"
 #include "SeerCloseSourceDialog.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
@@ -1054,9 +1054,10 @@ void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/CodeManager.md");
     help->show();
+    help->raise();
 }
 
 void SeerEditorManagerWidget::handleAddAlternateDirectory (QString path) {

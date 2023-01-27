@@ -5,7 +5,7 @@
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
 #include "SeerImageVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtGui/QFont>
@@ -2262,9 +2262,10 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
 
 void SeerGdbWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/BreakpointGdbSeerManager.md");
     help->show();
+    help->raise();
 }
 
 

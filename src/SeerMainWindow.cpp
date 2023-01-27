@@ -3,7 +3,7 @@
 #include "SeerConfigDialog.h"
 #include "SeerArgumentsDialog.h"
 #include "SeerAboutDialog.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QMenu>
@@ -951,9 +951,10 @@ void SeerMainWindow::handleChangeWindowTitle (QString title) {
 
 void SeerMainWindow::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/MainWindow.md");
     help->show();
+    help->raise();
 }
 
 

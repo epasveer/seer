@@ -1,5 +1,5 @@
 #include "SeerArrayVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QSplineSeries>
@@ -507,9 +507,10 @@ void SeerArrayVisualizerWidget::handlebRefreshButton () {
 
 void SeerArrayVisualizerWidget::handleHelpButton () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/ArrayVisualizer.md");
     help->show();
+    help->raise();
 }
 
 void SeerArrayVisualizerWidget::handleaVariableNameLineEdit () {

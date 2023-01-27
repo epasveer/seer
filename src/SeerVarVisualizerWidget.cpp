@@ -1,5 +1,5 @@
 #include "SeerVarVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QEditDelegate.h"
 #include <QtWidgets/QTreeWidget>
@@ -823,9 +823,10 @@ void SeerVarVisualizerWidget::handleRefreshButton () {
 
 void SeerVarVisualizerWidget::handleHelpButton () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/StructVisualizer.md");
     help->show();
+    help->raise();
 }
 
 void SeerVarVisualizerWidget::handleDebugCheckBox () {

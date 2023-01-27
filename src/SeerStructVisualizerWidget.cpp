@@ -1,5 +1,5 @@
 #include "SeerStructVisualizerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -428,9 +428,10 @@ void SeerStructVisualizerWidget::handleRefreshButton () {
 
 void SeerStructVisualizerWidget::handleHelpButton () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/BasicStructVisualizer.md");
     help->show();
+    help->raise();
 }
 
 void SeerStructVisualizerWidget::handleVariableNameLineEdit () {

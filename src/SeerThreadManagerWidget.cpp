@@ -1,5 +1,5 @@
 #include "SeerThreadManagerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QTextBrowser>
@@ -103,9 +103,10 @@ void SeerThreadManagerWidget::handleRefreshToolButtonClicked () {
 
 void SeerThreadManagerWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/ThreadProcessInfoBrowser.md");
     help->show();
+    help->raise();
 }
 
 void SeerThreadManagerWidget::handleSchedulerLockingComboBox (int index) {

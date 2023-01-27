@@ -1,5 +1,5 @@
 #include "SeerVariableManagerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
@@ -67,8 +67,9 @@ void SeerVariableManagerWidget::handleRefreshToolButtonClicked () {
 
 void SeerVariableManagerWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/VariableRegisterInfoBrowser.md");
     help->show();
+    help->raise();
 }
 

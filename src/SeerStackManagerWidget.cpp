@@ -1,5 +1,5 @@
 #include "SeerStackManagerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
@@ -71,9 +71,10 @@ void SeerStackManagerWidget::handleRefreshToolButtonClicked () {
 
 void SeerStackManagerWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/StackInfoBrowser.md");
     help->show();
+    help->raise();
 }
 
 void SeerStackManagerWidget::handleText (const QString& text) {

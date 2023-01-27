@@ -1,5 +1,5 @@
 #include "SeerSourceSymbolLibraryManagerWidget.h"
-#include "SeerHelpPageWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
@@ -82,8 +82,9 @@ void SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked () {
 
 void SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked () {
 
-    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/SourceSymbolLibraryInfoBrowser.md");
     help->show();
+    help->raise();
 }
 
