@@ -2,8 +2,10 @@
 #include "SeerExecutableFilterProxyModel.h"
 #include "SeerDirectoryFilterProxyModel.h"
 #include "SeerSlashProcDialog.h"
+#include "SeerHelpPageWidget.h"
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QDir>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 
@@ -35,6 +37,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
+    QObject::connect(helpCoreToolButton,                   &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCoreToolButtonClicked);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
@@ -43,7 +46,10 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 #endif
 
     // Set initial run mode.
-    handleRunModeChanged(-1);
+    handleRunModeChanged(0);
+
+    // Restore window settings.
+    readSettings();
 }
 
 SeerDebugDialog::~SeerDebugDialog () {
@@ -418,5 +424,42 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         loadCoreFilenameLineEdit->setEnabled(true);
         loadCoreFilenameToolButton->setEnabled(true);
     }
+}
+
+void SeerDebugDialog::handleHelpCoreToolButtonClicked () {
+
+    SeerHelpPageWidget* help = new SeerHelpPageWidget;
+    help->loadFile(":/seer/resources/help/CorefileDebugMode.md");
+    help->show();
+}
+
+void SeerDebugDialog::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("debugdialog"); {
+        settings.setValue("size", size());
+    }settings.endGroup();
+
+    //qDebug() << size();
+}
+
+void SeerDebugDialog::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("debugdialog"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+
+    //qDebug() << size();
+}
+
+void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
+
+    // Write window settings.
+    writeSettings();
+
+    QWidget::resizeEvent(event);
 }
 

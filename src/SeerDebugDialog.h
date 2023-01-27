@@ -66,6 +66,14 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleProgramPidToolButton                      ();
         void                    handleRunModeChanged                            (int id);
 
+    private slots:
+        void                    handleHelpCoreToolButtonClicked                 ();
+
+    protected:
+        void                    writeSettings                                   ();
+        void                    readSettings                                    ();
+        void                    resizeEvent                                     (QResizeEvent* event);
+
     private:
 };
 

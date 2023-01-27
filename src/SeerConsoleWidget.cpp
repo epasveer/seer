@@ -374,8 +374,10 @@ void SeerConsoleWidget::readSettings() {
         }else{
             f = QFont("monospace", 10);
         }
+
         textEdit->setFont(f);
-    }settings.endGroup();
+
+    } settings.endGroup();
 
     //qDebug() << size();
 }
