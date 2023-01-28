@@ -3,6 +3,7 @@ README for dealing with coredumps.
 A good link:
 
     https://stackoverflow.com/questions/17965/how-to-generate-a-core-dump-in-linux-on-a-segmentation-fault
+    https://www.suse.com/support/kb/doc/?id=000015982
 
 On my system, core files are put here:
 
@@ -19,4 +20,15 @@ As per this linux config setting:
 
     gracie:~ # sysctl kernel.core_pattern
     kernel.core_pattern = /var/local/dumps/core.%e.%p
+
+Quick setup:
+
+    The quick step guide for this is as follows. Some as root.
+
+    Run:
+        % ulimit -c unlimited
+        % install -m 1777 -d /var/local/dumps
+        % echo "/var/local/dumps/core.%e.%p"> /proc/sys/kernel/core_pattern
+        % rcapparmor stop
+        % sysctl -w kernel.suid_dumpable=2
 

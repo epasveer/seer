@@ -1,0 +1,11 @@
+
+See notes/README.coredump
+
+Quick setup. Some as root.
+
+    % ulimit -c unlimited
+    % install -m 1777 -d /var/local/dumps
+    % echo "/var/local/dumps/core.%e.%p"> /proc/sys/kernel/core_pattern
+    % rcapparmor stop
+    % sysctl -w kernel.suid_dumpable=2
+

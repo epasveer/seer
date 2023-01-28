@@ -2,7 +2,9 @@
 # Seer Change Log
 
 ## [1.15beta] - 2023-xx-xx
-* Revamp Debug dialog.
+* Revamp Debug dialog. Move debug modes into "tabs".
+* Add "help" icon to each debug mode in Debug dialog.
+* Minor fixes when debugging corefiles.
 * Fixed breakpoints with conditional statements.
 * Fixed up icons and Debian "copyright" file for Debian Intent-To-Package.
 
