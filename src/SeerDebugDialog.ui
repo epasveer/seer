@@ -574,7 +574,7 @@
             <item row="0" column="1" rowspan="2">
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="QToolButton" name="loadCommandsToolButton">
+               <widget class="QToolButton" name="loadGdbCommandsToolButton">
                 <property name="toolTip">
                  <string>Load &quot;pre&quot; and &quot;post&quot; commands from a file.</string>
                 </property>
@@ -588,7 +588,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="saveCommandsToolButton">
+               <widget class="QToolButton" name="saveGdbCommandsToolButton">
                 <property name="toolTip">
                  <string>Save &quot;pre&quot; and &quot;post&quot; commands to a file.</string>
                 </property>

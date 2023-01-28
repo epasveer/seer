@@ -4,8 +4,12 @@
 #include "SeerSlashProcDialog.h"
 #include "SeerHelpPageDialog.h"
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QMessageBox>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonArray>
+#include <QtCore/QJsonDocument>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 
@@ -37,6 +41,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
+    QObject::connect(loadGdbCommandsToolButton,            &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadGdbCommandsToolButton);
+    QObject::connect(saveGdbCommandsToolButton,            &QToolButton::clicked,               this, &SeerDebugDialog::handleSaveGdbCommandsToolButton);
     QObject::connect(helpRunToolButton,                    &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRunToolButtonClicked);
     QObject::connect(helpAttachToolButton,                 &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpAttachToolButtonClicked);
     QObject::connect(helpConnectToolButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpConnectToolButtonClicked);
@@ -331,6 +337,58 @@ void SeerDebugDialog::handleProgramPidToolButton () {
     if (dlg.exec()) {
         setAttachPid(dlg.selectedPid());
     }
+}
+
+void SeerDebugDialog::handleLoadGdbCommandsToolButton () {
+}
+
+void SeerDebugDialog::handleSaveGdbCommandsToolButton () {
+
+    QFileDialog dialog(this, "Seer - Save CONNECT commands to a file.", "./", "GDB commands (*.connect);;All files (*.*)");
+    dialog.setOptions(QFileDialog::DontUseNativeDialog);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("connect");
+    dialog.selectFile("seer.connect");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    QString fname = files[0];
+
+    // Build the JSON document.
+
+    QJsonArray preConnectCommands;
+    QJsonArray postConnectCommands;
+
+    QJsonObject json;
+
+    json["pregdbcommands"]  = preConnectCommands;
+    json["postgdbcommands"] = postConnectCommands;
+
+    // Write the file.
+    QFile saveFile(fname);
+
+    if (saveFile.open(QIODevice::WriteOnly) == false) {
+        QMessageBox::critical(this, "Error", QString("Can't create %1.").arg(fname));
+        return;
+    }
+
+    saveFile.write(QJsonDocument(json).toJson());
+
+    QMessageBox::information(this, "Success", QString("Created %1.").arg(fname));
 }
 
 void SeerDebugDialog::handleRunModeChanged (int id) {
