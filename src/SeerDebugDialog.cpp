@@ -9,6 +9,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
+#include <QtCore/QJsonValue>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDebug>
 #include <QtGlobal>
@@ -340,45 +341,110 @@ void SeerDebugDialog::handleProgramPidToolButton () {
 }
 
 void SeerDebugDialog::handleLoadGdbCommandsToolButton () {
+
+    // Get the filename to load from.
+    QString fname = QFileDialog::getOpenFileName(this, "Load CONNECT commands from a session file.", "seer.connect", "GDB commands (*.connect);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (fname == "") {
+        return;
+    }
+
+    // Open the session file.
+    QFile loadFile(fname);;
+    loadFile.open(QIODevice::ReadOnly);
+
+    if (loadFile.error() != 0) {
+        QMessageBox::critical(this, "Error", QString("Can't open %1.").arg(fname));
+        return;
+    }
+
+    // Populate the JSON document from the session file.
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(loadFile.readAll());
+    QJsonObject   rootJson;
+    QJsonObject   seerSessionJson;
+    QJsonObject   connectModeJson;
+    QJsonArray    preConnectCommands;
+    QJsonArray    postConnectCommands;
+
+    if (jsonDoc.isObject() == false) {
+        QMessageBox::critical(this, "Error", QString("%1 is not a Seer session file (bad Json format).").arg(fname));
+        return;
+    }
+
+    rootJson            = jsonDoc.object();
+    seerSessionJson     = rootJson.value("seersession").toObject();
+    connectModeJson     = seerSessionJson.value("connectmode").toObject();
+    preConnectCommands  = connectModeJson.value("pregdbcommands").toArray();
+    postConnectCommands = connectModeJson.value("postgdbcommands").toArray();
+
+
+    if (seerSessionJson.isEmpty() == true) {
+        QMessageBox::critical(this, "Error", QString("%1 is not a Seer session file (missing 'seersession' section).").arg(fname));
+        return;
+    }
+
+    if (connectModeJson.isEmpty() == true) {
+        QMessageBox::critical(this, "Error", QString("%1 is not a Seer session file (missing 'connectmode' section).").arg(fname));
+        return;
+    }
+
+    QString       gdbServer = connectModeJson["gdbserver"].toString();
+    QStringList   preCommands;
+    QStringList   postCommands;
+
+    for (const auto& i : preConnectCommands) {
+        preCommands.push_back(i.toString());
+    }
+
+    for (const auto& i : postConnectCommands) {
+        postCommands.push_back(i.toString());
+    }
+
+    connectProgramHostPortLineEdit->setText(gdbServer);
+    preCommandsPlainTextEdit->setPlainText(preCommands.join("\n"));
+    postCommandsPlainTextEdit->setPlainText(postCommands.join("\n"));
+
+    QMessageBox::information(this, "Success", QString("Loaded %1.").arg(fname));
 }
 
 void SeerDebugDialog::handleSaveGdbCommandsToolButton () {
 
-    QFileDialog dialog(this, "Seer - Save CONNECT commands to a file.", "./", "GDB commands (*.connect);;All files (*.*)");
-    dialog.setOptions(QFileDialog::DontUseNativeDialog);
-    dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("connect");
-    dialog.selectFile("seer.connect");
+    // Get the filename to save to.
+    QString fname = QFileDialog::getSaveFileName(this, "Save CONNECT commands to a session file.", "seer.connect", "GDB commands (*.connect);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
 
-    if (dialog.exec() != QDialog::Accepted) {
+    if (fname == "") {
         return;
     }
-
-    QStringList files = dialog.selectedFiles();
-
-    if (files.size() == 0) {
-        return;
-    }
-
-    if (files.size() > 1) {
-        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
-        return;
-    }
-
-    QString fname = files[0];
 
     // Build the JSON document.
+    QJsonDocument jsonDoc;
+    QJsonObject   rootJson;
+    QJsonObject   seerSessionJson;
+    QJsonObject   connectModeJson;
+    QJsonArray    preConnectCommands;
+    QJsonArray    postConnectCommands;
 
-    QJsonArray preConnectCommands;
-    QJsonArray postConnectCommands;
+    QString       gdbServer    = connectProgramHostPortLineEdit->text();
+    QStringList   preCommands  = preCommandsPlainTextEdit->toPlainText().split("\n");
+    QStringList   postCommands = postCommandsPlainTextEdit->toPlainText().split("\n");
 
-    QJsonObject json;
+    for (const auto& i : preCommands) {
+        preConnectCommands.push_back(QJsonValue(i));
+    }
 
-    json["pregdbcommands"]  = preConnectCommands;
-    json["postgdbcommands"] = postConnectCommands;
+    for (const auto& i : postCommands) {
+        postConnectCommands.push_back(QJsonValue(i));
+    }
 
-    // Write the file.
+    connectModeJson["gdbserver"]       = gdbServer;
+    connectModeJson["pregdbcommands"]  = preConnectCommands;
+    connectModeJson["postgdbcommands"] = postConnectCommands;
+    seerSessionJson["connectmode"]     = connectModeJson;
+    rootJson["seersession"]            = seerSessionJson;
+
+    jsonDoc.setObject(rootJson);
+
+    // Write the JSON document to the session file.
     QFile saveFile(fname);
 
     if (saveFile.open(QIODevice::WriteOnly) == false) {
@@ -386,7 +452,7 @@ void SeerDebugDialog::handleSaveGdbCommandsToolButton () {
         return;
     }
 
-    saveFile.write(QJsonDocument(json).toJson());
+    saveFile.write(jsonDoc.toJson());
 
     QMessageBox::information(this, "Success", QString("Created %1.").arg(fname));
 }

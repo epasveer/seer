@@ -143,7 +143,7 @@
       <item row="0" column="0">
        <widget class="QTabWidget" name="runModeTabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="runTab">
          <attribute name="title">
@@ -576,7 +576,7 @@
               <item>
                <widget class="QToolButton" name="loadGdbCommandsToolButton">
                 <property name="toolTip">
-                 <string>Load &quot;pre&quot; and &quot;post&quot; commands from a file.</string>
+                 <string>Load CONNECT session from a file.</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -590,7 +590,7 @@
               <item>
                <widget class="QToolButton" name="saveGdbCommandsToolButton">
                 <property name="toolTip">
-                 <string>Save &quot;pre&quot; and &quot;post&quot; commands to a file.</string>
+                 <string>Save CONNECT session to a file.</string>
                 </property>
                 <property name="text">
                  <string>...</string>
