@@ -470,6 +470,9 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     executableWorkingDirectoryLineEdit->setEnabled(false);
     executableWorkingDirectoryToolButton->setEnabled(false);
 
+    preCommandsPlainTextEdit->setPlaceholderText("");
+    postCommandsPlainTextEdit->setPlaceholderText("");
+
     //
     // Enable the newly selected one.
     //
@@ -482,6 +485,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"run\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"run\"");
     }
 
     // ID == 1   ATTACH
@@ -490,12 +495,16 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"attach\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"attach\"");
     }
 
     // ID == 2   CONNECT
     if (id == 2) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }
 
     // ID == 3   COREFILE
@@ -504,6 +513,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading  \"corefile\"");
     }
 }
 
