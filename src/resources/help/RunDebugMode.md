@@ -21,5 +21,3 @@ specified in the optional breakpoint file.
 
 From this point, you can debug the process as normal (stepping and setting breakpoints, etc...)
 
-### References
-

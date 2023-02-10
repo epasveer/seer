@@ -2190,11 +2190,11 @@ void SeerGdbWidget::handleLogOuputChanged () {
 
 void SeerGdbWidget::handleGdbLoadBreakpoints () {
 
-    QFileDialog dialog(this, "Seer - Load Breakpoints from a file.", "./", "Breakpoints (*.brk);;All files (*.*)");
+    QFileDialog dialog(this, "Seer - Load Breakpoints from a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
     dialog.setOptions(QFileDialog::DontUseNativeDialog);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
     dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("brk");
+    dialog.setDefaultSuffix("seer");
 
     if (dialog.exec() != QDialog::Accepted) {
         return;
@@ -2231,12 +2231,12 @@ void SeerGdbWidget::handleGdbSaveBreakpoints () {
         return;
     }
 
-    QFileDialog dialog(this, "Seer - Save Breakpoints to a file.", "./", "Breakpoints (*.brk);;All files (*.*)");
+    QFileDialog dialog(this, "Seer - Save Breakpoints to a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
     dialog.setOptions(QFileDialog::DontUseNativeDialog);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("brk");
-    dialog.selectFile("seer.brk");
+    dialog.setDefaultSuffix("seer");
+    dialog.selectFile("breakpoints.seer");
 
     if (dialog.exec() != QDialog::Accepted) {
         return;

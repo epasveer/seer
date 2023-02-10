@@ -64,11 +64,12 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleBreakpointInFunctionLineEdit              ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
-        void                    handleLoadGdbCommandsToolButton                 ();
-        void                    handleSaveGdbCommandsToolButton                 ();
+        void                    handleLoadSessionToolButton                     ();
+        void                    handleSaveSessionToolButton                     ();
         void                    handleRunModeChanged                            (int id);
 
     private slots:
+        void                    handleHelpModeToolButtonClicked                 ();
         void                    handleHelpRunToolButtonClicked                  ();
         void                    handleHelpAttachToolButtonClicked               ();
         void                    handleHelpConnectToolButtonClicked              ();

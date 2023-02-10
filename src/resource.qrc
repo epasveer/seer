@@ -62,6 +62,7 @@
     <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
     <file>resources/help/MainWindow.md</file>
+    <file>resources/help/DebugModes.md</file>
     <file>resources/help/RunDebugMode.md</file>
     <file>resources/help/AttachDebugMode.md</file>
     <file>resources/help/ConnectDebugMode.md</file>

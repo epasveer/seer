@@ -18,15 +18,6 @@ In this mode, Seer needs:
 In this mode, Seer will connect to the process via the gdbserver. Typically you set breakpoints first then
 tell the process to continue. From this point, you can debug the process as normal (stepping and setting breakpoints, etc...)
 
-### Sessions
-A session file can be saved then loaded the next time Seer is used.
-
-The session file will save:
-
-* The gdbserver settings
-* The commands to execute before Seer connects to the gdbserver.
-* The commands to execute after Seer connects to the gdbserver.
-
 ### References
 
 Check references for gdbserver and other gdb servers.

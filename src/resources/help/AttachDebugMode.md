@@ -17,7 +17,4 @@ Seer will show the source and line number where the program was interrupted. The
 
 From this point, you can debug the process as normal (stepping and setting breakpoints, etc...)
 
-### References
-
-
 
