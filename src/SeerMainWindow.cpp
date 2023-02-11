@@ -107,6 +107,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     // Set the inital key settings.
     setKeySettings(SeerKeySettings::populate());
+    setProjectFilename("");
 
     //
     // Set up signals/slots.
@@ -327,6 +328,15 @@ const QString& SeerMainWindow::executableCoreFilename () const {
     return gdbWidget->executableCoreFilename();
 }
 
+void SeerMainWindow::setProjectFilename (const QString& projectFilename) {
+
+    _projectFile = projectFilename;
+}
+
+const QString& SeerMainWindow::projectFilename () const {
+    return _projectFile;
+}
+
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     if (launchMode == "run") {
@@ -343,6 +353,11 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
     }else if (launchMode == "corefile") {
         gdbWidget->handleGdbCoreFileExecutable();
+
+    }else if (launchMode == "project") {
+
+        // If no mode, schedule the opening of the debug dialog.
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else if (launchMode == "none") {
 
@@ -385,6 +400,9 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
     dlg.setBreakpointMode(executableBreakMode());
+    dlg.setProjectFilename(projectFilename());
+
+    setProjectFilename(""); // Clear project name here. No need to have it anymore.
 
     int ret = dlg.exec();
 

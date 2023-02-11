@@ -15,10 +15,10 @@ you can specify 'pre' and 'post' native gdb commands.
 * 'pre' - gdb commands to execute before the executable is loaded (or attach, or connect, or loading of corefile).
 * 'post' - gdb commands to execute afterwards
 
-Click OK and Seer will starting the debugging session.
+Click OK and Seer will start the debugging session.
 
-### Sessions
-A session file can be saved. The session file will save:
+### Projects
+A project file can be created. The project file will save:
 
 * Name of executable
 * Name of symbol file
@@ -26,5 +26,5 @@ A session file can be saved. The session file will save:
 * All arguments and settings for the selected mode
 * All 'pre' and 'post' commands
 
-The session file can then be loaded the next time Seer is used. The session file has a simple Json layout and can be hand edited.
+The project file can then be loaded the next time Seer is used. The project file has a simple Json layout and can be hand edited.
 

@@ -73,6 +73,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
     parser.addOption(corefileOption);
 
+    QCommandLineOption projectOption(QStringList()<<"project", QCoreApplication::translate("main", "Load a Seer project."), "project");
+    parser.addOption(projectOption);
+
     QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog.\nSave settings with:\n    'Settings->Save Configuration'"));
     parser.addOption(configOption);
 
@@ -118,6 +121,7 @@ int main (int argc, char* argv[]) {
     QString executableStartAddressRandomize;
     QString executableNonStopMode;
     QString executableCoreFilename;
+    QString projectFilename;
 
     if (parser.isSet(runOption)) {
         launchMode = "run";
@@ -172,6 +176,12 @@ int main (int argc, char* argv[]) {
         launchMode = "corefile";
 
         executableCoreFilename = parser.value(corefileOption);
+    }
+
+    if (parser.isSet(projectOption)) {
+        launchMode = "project";
+
+        projectFilename = parser.value(projectOption);
     }
 
     if (parser.isSet(configOption)) {
@@ -239,6 +249,7 @@ int main (int argc, char* argv[]) {
     seer.setExecutablePid(executablePid);
     seer.setExecutableHostPort(executableHostPort);
     seer.setExecutableCoreFilename(executableCoreFilename);
+    seer.setProjectFilename(projectFilename);
 
     seer.launchExecutable(launchMode, breakMode);
 

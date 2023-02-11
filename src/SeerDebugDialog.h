@@ -54,7 +54,12 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
 
         // Get the launch mode.
         void                    setLaunchMode                                   (const QString& mode);
-        QString                 launchMode                                      ();
+        QString                 launchMode                                      () const;
+
+        // Get the project filename.
+        void                    setProjectFilename                              (const QString& filename);
+        QString                 projectFilename                                 () const;
+        void                    loadProject                                     (const QString& filename, bool notify);
 
     protected slots:
         void                    handleExecutableNameToolButton                  ();
@@ -64,8 +69,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleBreakpointInFunctionLineEdit              ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
-        void                    handleLoadSessionToolButton                     ();
-        void                    handleSaveSessionToolButton                     ();
+        void                    handleLoadProjectToolButton                     ();
+        void                    handleSaveProjectToolButton                     ();
         void                    handleRunModeChanged                            (int id);
 
     private slots:
@@ -81,5 +86,6 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    resizeEvent                                     (QResizeEvent* event);
 
     private:
+        QString                 _projectFilename;
 };
 

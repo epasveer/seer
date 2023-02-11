@@ -45,6 +45,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableHostPort                  () const;
         void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
         const QString&              executableCoreFilename              () const;
+        void                        setProjectFilename                  (const QString& projectFilename);
+        const QString&              projectFilename                     () const;
 
         void                        launchExecutable                    (const QString& launchMode, const QString& breakMode);
         const QString&              executableLaunchMode                () const;
@@ -92,5 +94,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         QActionGroup*               _styleMenuActionGroup;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
+        QString                     _projectFile;
 };
 

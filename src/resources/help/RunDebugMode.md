@@ -14,10 +14,12 @@ In this mode, Seer needs:
 * Various Seer/gdb options to start the program by
 
 ### What can you do?
-If 'start' is selected, the program is started and breaks in 'main'.
+There are a couple gdb settings that you can choose from when running the executable.
+The main one, though, is the initial breakpoint, which there are three ways:
 
-If 'run' is selected, the program is started and executes without any breakpoints unless they are
-specified in the optional breakpoint file.
+* No initial breakpoint. The program is started and executes without any breakpoints unless they are specified in the optional breakpoint file.
+* Break in 'main'. The program is started and breaks in the program's main function.
+* Break in 'function'. The program is started and breaks in a named function or at an address.
 
 From this point, you can debug the process as normal (stepping and setting breakpoints, etc...)
 
