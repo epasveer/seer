@@ -3,6 +3,7 @@
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QButtonGroup>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include "ui_SeerDebugDialog.h"
 
@@ -39,6 +40,10 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         bool                    randomizeStartAddress                           () const;
         void                    setNonStopMode                                  (bool flag);
         bool                    nonStopMode                                     () const;
+        void                    setPreGdbCommands                               (const QStringList& preGdbCommands);
+        QStringList             preGdbCommands                                  () const;
+        void                    setPostGdbCommands                              (const QStringList& postGdbCommands);
+        QStringList             postGdbCommands                                 () const;
 
         // Attach to a running process. "attach".
         void                    setAttachPid                                    (int pid);

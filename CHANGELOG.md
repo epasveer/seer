@@ -4,6 +4,10 @@
 ## [1.15beta] - 2023-xx-xx
 * Revamp Debug dialog. Move debug modes into "tabs".
 * Add "help" icon to each debug mode in Debug dialog.
+* Add 'pre' and 'post' gdb commands that can be executed
+  just before and just after the program is loaded into gdb.
+* Add the concept of 'project' files that can be created and loaded.
+  Project files contain all settings available in the Debug dialog.
 * Minor fixes when debugging corefiles.
 * Fixed breakpoints with conditional statements.
 * Fixed up icons and Debian "copyright" file for Debian Intent-To-Package.

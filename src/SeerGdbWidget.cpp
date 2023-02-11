@@ -422,6 +422,22 @@ const QString& SeerGdbWidget::executableCoreFilename () const {
     return _executableCoreFilename;
 }
 
+void SeerGdbWidget::setExecutablePreGdbCommands (const QStringList& preGdbCommands) {
+    _executablePreGdbCommands = preGdbCommands;
+}
+
+const QStringList& SeerGdbWidget::executablePreGdbCommands () const {
+    return _executablePreGdbCommands;
+}
+
+void SeerGdbWidget::setExecutablePostGdbCommands (const QStringList& postGdbCommands) {
+    _executablePostGdbCommands = postGdbCommands;
+}
+
+const QStringList& SeerGdbWidget::executablePostGdbCommands () const {
+    return _executablePostGdbCommands;
+}
+
 void SeerGdbWidget::setExecutableLaunchMode (const QString& launchMode) {
     _executableLaunchMode = launchMode;
 }
@@ -737,6 +753,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
+        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -781,11 +798,14 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         }
     }
 
-    // Run the executable. Do not stop in main.
+    // Run any 'post' commands after program is loaded.
+    handleGdbExecutablePostCommands();
+
+    // Run the executable.
     if (_executableBreakMode == "inmain") {
-        handleGdbCommand("-exec-run --all --start");
+        handleGdbCommand("-exec-run --all --start"); // Stop in main
     }else{
-        handleGdbCommand("-exec-run --all");
+        handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
     }
 
     QApplication::restoreOverrideCursor();
@@ -845,6 +865,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
+        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -870,15 +891,13 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // Attach to the executable's pid.
     handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
 
+    // Run any 'post' commands after program is loaded.
+    handleGdbExecutablePostCommands();
+
     QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbConnectExecutable () {
-
-    //
-    // XXX This section likely needs reworking to make it look
-    // XXX like the other start methods.
-    //
 
     // Has a executable name been provided?
     if (executableName() != "") {
@@ -926,10 +945,11 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
+        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-                                                //
+
         setNewExecutableFlag(false);
     }
 
@@ -947,6 +967,9 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     }else{
         handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
     }
+
+    // Run any 'post' commands after program is loaded.
+    handleGdbExecutablePostCommands();
 
     QApplication::restoreOverrideCursor();
 
@@ -1009,6 +1032,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     setExecutablePid(0);
 
     if (newExecutableFlag() == true) {
+        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
         handleGdbExecutableName();              // Load the program into the gdb process.
         handleGdbExecutableSources();           // Load the program source files.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
@@ -1023,6 +1047,9 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // Load the executable's core file.
     handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
+
+    // Run any 'post' commands after program is loaded.
+    handleGdbExecutablePostCommands();
 
     // This is needed for code mode to refresh the stack frame, for some reason.
     handleGdbStackListFrames();
@@ -1455,6 +1482,20 @@ void SeerGdbWidget::handleGdbExecutableLoadBreakpoints () {
 
     handleGdbCommand("source -v " + executableBreakpointsFilename());
     handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbExecutablePreCommands () {
+
+    for (const auto& i : _executablePreGdbCommands) {
+        handleGdbCommand(i);
+    }
+}
+
+void SeerGdbWidget::handleGdbExecutablePostCommands () {
+
+    for (const auto& i : _executablePostGdbCommands) {
+        handleGdbCommand(i);
+    }
 }
 
 void SeerGdbWidget::handleGdbTtyDeviceName () {

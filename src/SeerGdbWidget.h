@@ -56,6 +56,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableCoreFilename           (const QString& coreFilename);
         const QString&                      executableCoreFilename              () const;
 
+        void                                setExecutablePreGdbCommands         (const QStringList& preGdbCommands);
+        const QStringList&                  executablePreGdbCommands            () const;
+
+        void                                setExecutablePostGdbCommands        (const QStringList& postGdbCommands);
+        const QStringList&                  executablePostGdbCommands           () const;
+
         void                                setExecutableLaunchMode             (const QString& launchMode);
         const QString&                      executableLaunchMode                () const;
         const QString&                      executableBreakMode                 () const;
@@ -220,6 +226,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbExecutableArguments        ();
         void                                handleGdbExecutableWorkingDirectory ();
         void                                handleGdbExecutableLoadBreakpoints  ();
+        void                                handleGdbExecutablePreCommands      ();
+        void                                handleGdbExecutablePostCommands     ();
         void                                handleGdbTtyDeviceName              ();
         void                                handleGdbStackListFrames            ();
         void                                handleGdbStackSelectFrame           (int frameno);
@@ -339,6 +347,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;
+        QStringList                         _executablePreGdbCommands;
+        QStringList                         _executablePostGdbCommands;
         bool                                _newExecutableFlag;
         int                                 _currentFrame;
 

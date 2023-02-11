@@ -206,6 +206,22 @@ bool SeerDebugDialog::nonStopMode () const {
     return nonStopModeCheckBox->isChecked();
 }
 
+void SeerDebugDialog::setPreGdbCommands (const QStringList& preGdbCommands) {
+    preCommandsPlainTextEdit->setPlainText(preGdbCommands.join("\n"));
+}
+
+QStringList SeerDebugDialog::preGdbCommands () const {
+    return preCommandsPlainTextEdit->toPlainText().split("\n");
+}
+
+void SeerDebugDialog::setPostGdbCommands (const QStringList& postGdbCommands) {
+    postCommandsPlainTextEdit->setPlainText(postGdbCommands.join("\n"));
+}
+
+QStringList SeerDebugDialog::postGdbCommands () const {
+    return postCommandsPlainTextEdit->toPlainText().split("\n");
+}
+
 void SeerDebugDialog::setCoreFilename (const QString& coreFilename) {
     loadCoreFilenameLineEdit->setText(coreFilename);
 }
@@ -463,8 +479,8 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
         postCommands.push_back(i.toString());
     }
 
-    preCommandsPlainTextEdit->setPlainText(preCommands.join("\n"));
-    postCommandsPlainTextEdit->setPlainText(postCommands.join("\n"));
+    setPreGdbCommands(preCommands);
+    setPostGdbCommands(postCommands);
 
     // Load RUN project.
     if (runModeJson.isEmpty() == false) {
@@ -544,8 +560,8 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
     QJsonArray    postConnectCommands;
 
     // Save pre/post gdb commands.
-    QStringList   preCommands  = preCommandsPlainTextEdit->toPlainText().split("\n");
-    QStringList   postCommands = postCommandsPlainTextEdit->toPlainText().split("\n");
+    QStringList   preCommands  = preGdbCommands();
+    QStringList   postCommands = postGdbCommands();
 
     for (const auto& i : preCommands) {
         preConnectCommands.push_back(QJsonValue(i));

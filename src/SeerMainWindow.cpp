@@ -328,8 +328,23 @@ const QString& SeerMainWindow::executableCoreFilename () const {
     return gdbWidget->executableCoreFilename();
 }
 
-void SeerMainWindow::setProjectFilename (const QString& projectFilename) {
+void SeerMainWindow::setExecutablePreGdbCommands (const QStringList& preGdbCommands) {
+    gdbWidget->setExecutablePreGdbCommands(preGdbCommands);
+}
 
+const QStringList& SeerMainWindow::executablePreGdbCommands() const {
+    return gdbWidget->executablePreGdbCommands();
+}
+
+void SeerMainWindow::setExecutablePostGdbCommands (const QStringList& postGdbCommands) {
+    gdbWidget->setExecutablePostGdbCommands(postGdbCommands);
+}
+
+const QStringList& SeerMainWindow::executablePostGdbCommands() const {
+    return gdbWidget->executablePostGdbCommands();
+}
+
+void SeerMainWindow::setProjectFilename (const QString& projectFilename) {
     _projectFile = projectFilename;
 }
 
@@ -400,6 +415,8 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
     dlg.setBreakpointMode(executableBreakMode());
+    dlg.setPreGdbCommands(executablePreGdbCommands());
+    dlg.setPostGdbCommands(executablePostGdbCommands());
     dlg.setProjectFilename(projectFilename());
 
     setProjectFilename(""); // Clear project name here. No need to have it anymore.
@@ -429,6 +446,8 @@ void SeerMainWindow::handleFileDebug () {
     setExecutablePid(dlg.attachPid());
     setExecutableHostPort(dlg.connectHostPort());
     setExecutableCoreFilename(dlg.coreFilename());
+    setExecutablePreGdbCommands(dlg.preGdbCommands());
+    setExecutablePostGdbCommands(dlg.postGdbCommands());
 
     launchExecutable(launchMode, breakMode);
 }

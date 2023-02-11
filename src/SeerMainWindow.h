@@ -45,6 +45,10 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableHostPort                  () const;
         void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
         const QString&              executableCoreFilename              () const;
+        void                        setExecutablePreGdbCommands         (const QStringList& preGdbCommands);
+        const QStringList&          executablePreGdbCommands            () const;
+        void                        setExecutablePostGdbCommands        (const QStringList& postGdbCommands);
+        const QStringList&          executablePostGdbCommands           () const;
         void                        setProjectFilename                  (const QString& projectFilename);
         const QString&              projectFilename                     () const;
 
