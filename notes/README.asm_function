@@ -1,5 +1,6 @@
 
-Disassemble the entire file containing $pc
+Disassemble the entire function containing $pc
+"-a" requires debug information to find which function contains $pc.
 
 -data-disassemble -a $pc -- 2
 

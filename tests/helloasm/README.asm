@@ -20,4 +20,8 @@ debug dialog and start command line.
 Typical _start address is: 0x8048080
 
 
+In gdb, to disassemble a range of memmory. 20 bytes before an
+address to 20 bytes after.
+
+    (gdb) disassemble 0x08048080-20, +20
 

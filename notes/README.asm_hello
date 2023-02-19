@@ -1,4 +1,5 @@
 # Dissembly without and with source lines. Code from .asm do not have source lines. Just assembly.
+# "-a" requires debug information to find which function contains $pc.
 
 -data-disassemble -a $pc -- 2
 
