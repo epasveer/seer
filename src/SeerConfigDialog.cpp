@@ -379,6 +379,21 @@ QString SeerConfigDialog::assemblyRegisterFormat () const {
     return _assemblyConfigPage->registerFormat();
 }
 
+void SeerConfigDialog::setAssemblyDisassemblyMode (const QString& mode, int bytes) {
+
+    _assemblyConfigPage->setDisassemblyMode(mode, bytes);
+}
+
+QString SeerConfigDialog::assemblyDisassemblyMode () const {
+
+    return _assemblyConfigPage->disassemblyMode();
+}
+
+int SeerConfigDialog::assemblyDisassemblyBytes () const {
+
+    return _assemblyConfigPage->disassemblyBytes();
+}
+
 void SeerConfigDialog::setKeySettings (const SeerKeySettings& settings) {
 
     _keysConfigPage->setKeySettings(settings);

@@ -158,6 +158,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setAssemblyRegisterFormat           (const QString& format);
         QString                             assemblyRegisterFormat              () const;
 
+        void                                setAssemblyDisassemblyMode          (const QString& mode, int bytes);
+        QString                             assemblyDisassemblyMode             () const;
+        int                                 assemblyDisassemblyBytes            () const;
+
         void                                setGdbOutputLogEnabled              (bool flag);
         bool                                isGdbOutputLogEnabled               () const;
 
@@ -335,6 +339,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _assemblyDisassemblyFlavor;
         QString                             _assemblySymbolDemangling;
         QString                             _assemblyRegisterFormat;
+        QString                             _assemblyDisassemblyMode;
+        int                                 _assemblyDisassemblyBytes;
 
         QString                             _executableName;
         QString                             _executableSymbolName;

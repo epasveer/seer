@@ -1541,8 +1541,6 @@ int SeerEditorWidgetAssemblyArea::editorTabSize () const {
 
 void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
-    qDebug() << text;
-
     if (text.startsWith("*stopped")) {
 
         // *stopped,

@@ -110,6 +110,10 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setAssemblyRegisterFormat                       (const QString& format);
         QString                             assemblyRegisterFormat                          () const;
 
+        void                                setAssemblyDisassemblyMode                      (const QString& mode, int bytes);
+        QString                             assemblyDisassemblyMode                         () const;
+        int                                 assemblyDisassemblyBytes                        () const;
+
         // Key settings.
         void                                setKeySettings                                  (const SeerKeySettings& settings);
         SeerKeySettings                     keySettings                                     () const;

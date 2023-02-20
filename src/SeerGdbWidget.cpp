@@ -2146,7 +2146,7 @@ void SeerGdbWidget::handleGdbAsmEvaluateExpression (int expressionid, QString ad
         return;
     }
 
-    handleGdbCommand(QString("%1-data-disassemble -s \"%2\" -e \"%3\" -- %4").arg(expressionid).arg(address).arg(address + " + " + QString::number(count)).arg(mode));
+    handleGdbCommand(QString("%1-data-disassemble -s \"%2 - %3\" -e \"%4 + %5\" -- %6").arg(expressionid).arg(address).arg(0).arg(address).arg(count).arg(mode));
 }
 
 void SeerGdbWidget::handleGdbArrayEvaluateExpression (int expressionid, QString address, int count) {
@@ -2164,9 +2164,21 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
         return;
     }
 
-    //qDebug() << "Getting assembly for address" << address;
+    qDebug() << "Getting assembly for address" << address << "for mode" << assemblyDisassemblyMode();
 
-    handleGdbCommand("-data-disassemble -a " + address + " -- 2"); // Use '2' to add opcodes. '0' has no opcodes.
+    QString command;
+
+    if (assemblyDisassemblyMode() == "length") {
+        command = QString("-data-disassemble -s \"%1\" -e \"%1 + %2\" -- 2").arg(address).arg(assemblyDisassemblyBytes());
+    }else if (assemblyDisassemblyMode() == "function") {
+        command = QString("-data-disassemble -a \"%1\" -- 2").arg(address);
+    }else{
+        command = QString("-data-disassemble -a \"%1\" -- 2").arg(address);
+    }
+
+    qDebug() << command;
+
+    handleGdbCommand(command);
 }
 
 void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
@@ -2175,9 +2187,21 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
         return;
     }
 
-    //qDebug() << "Getting source and assembly for address" << address;
+    qDebug() << "Getting source and assembly for address" << address << "for mode" << assemblyDisassemblyMode();
 
-    handleGdbCommand("-data-disassemble -a " + address + " -- 5");
+    QString command;
+
+    if (assemblyDisassemblyMode() == "length") {
+        command = QString("-data-disassemble -s \"%1\" -e \"%1 + %2\" -- 5").arg(address).arg(assemblyDisassemblyBytes());
+    }else if (assemblyDisassemblyMode() == "function") {
+        command = QString("-data-disassemble -a \"%1\" -- 5").arg(address);
+    }else{
+        command = QString("-data-disassemble -a \"%1\" -- 5").arg(address);
+    }
+
+    qDebug() << command;
+
+    handleGdbCommand(command);
 }
 
 void SeerGdbWidget::handleGdbMemoryVisualizer () {
@@ -2434,6 +2458,8 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("assemblyshowoffsetcolumn",    assemblyShowOffsetColumn());
         settings.setValue("assemblyshowopcodecolumn",    assemblyShowOpcodeColumn());
         settings.setValue("assemblyshowsourcelines",     assemblyShowSourceLines());
+        settings.setValue("assemblydisassemblymode",     assemblyDisassemblyMode());
+        settings.setValue("assemblydisassemblybytes",    assemblyDisassemblyBytes());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2540,15 +2566,16 @@ void SeerGdbWidget::readSettings () {
     }
 
     settings.beginGroup("assembly"); {
-        setAssemblyShowAssemblyTabOnStartup(settings.value("showassemblytabonstartup", false).toBool());
-        setAssemblyKeepAssemblyTabOnTop(settings.value("keepassemblytabontop", true).toBool());
-        setAssemblyDisassemblyFlavor(settings.value("assemblydisassemblyflavor", "att").toString());
-        setAssemblySymbolDemagling(settings.value("assemblysymboldemagling", "on").toString());
-        setAssemblyRegisterFormat(settings.value("assemblyregisterformat", "Natural").toString());
-        setAssemblyShowAddressColumn(settings.value("assemblyshowaddresscolumn", true).toBool());
-        setAssemblyShowOffsetColumn(settings.value("assemblyshowoffsetcolumn", false).toBool());
-        setAssemblyShowOpcodeColumn(settings.value("assemblyshowopcodecolumn", false).toBool());
-        setAssemblyShowSourceLines(settings.value("assemblyshowsourcelines", false).toBool());
+        setAssemblyShowAssemblyTabOnStartup( settings.value("showassemblytabonstartup",  false).toBool());
+        setAssemblyKeepAssemblyTabOnTop(     settings.value("keepassemblytabontop",      true).toBool());
+        setAssemblyDisassemblyFlavor(        settings.value("assemblydisassemblyflavor", "att").toString());
+        setAssemblySymbolDemagling(          settings.value("assemblysymboldemagling",   "on").toString());
+        setAssemblyRegisterFormat(           settings.value("assemblyregisterformat",    "Natural").toString());
+        setAssemblyShowAddressColumn(        settings.value("assemblyshowaddresscolumn", true).toBool());
+        setAssemblyShowOffsetColumn(         settings.value("assemblyshowoffsetcolumn",  false).toBool());
+        setAssemblyShowOpcodeColumn(         settings.value("assemblyshowopcodecolumn",  false).toBool());
+        setAssemblyShowSourceLines(          settings.value("assemblyshowsourcelines",   false).toBool());
+        setAssemblyDisassemblyMode(          settings.value("assemblydisassemblymode",   "function").toString(),    settings.value("assemblydisassemblybytes", "256").toInt());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -2959,6 +2986,23 @@ QString SeerGdbWidget::assemblyRegisterFormat () const {
 
     return _assemblyRegisterFormat;
 }
+
+void SeerGdbWidget::setAssemblyDisassemblyMode (const QString& mode, int bytes) {
+
+    _assemblyDisassemblyMode  = mode;
+    _assemblyDisassemblyBytes = bytes;
+}
+
+QString SeerGdbWidget::assemblyDisassemblyMode () const {
+
+    return _assemblyDisassemblyMode;
+}
+
+int SeerGdbWidget::assemblyDisassemblyBytes () const {
+
+    return _assemblyDisassemblyBytes;
+}
+
 
 void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {
 

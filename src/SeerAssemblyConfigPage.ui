@@ -7,19 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>926</width>
-    <height>694</height>
+    <height>901</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerAssemblyConfigPage</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="printPointGroupBox">
      <property name="title">
@@ -33,7 +27,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="5" colspan="2">
        <spacer name="horizontalSpacer_7">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -53,7 +47,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="5">
+      <item row="1" column="5" colspan="2">
        <spacer name="horizontalSpacer_8">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -125,7 +119,7 @@
         </attribute>
        </widget>
       </item>
-      <item row="3" column="5">
+      <item row="3" column="5" colspan="2">
        <spacer name="horizontalSpacer_5">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -184,7 +178,7 @@
         </attribute>
        </widget>
       </item>
-      <item row="4" column="5">
+      <item row="4" column="5" colspan="2">
        <spacer name="horizontalSpacer_6">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -305,7 +299,7 @@
         </item>
        </widget>
       </item>
-      <item row="6" column="5">
+      <item row="6" column="5" colspan="2">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -316,6 +310,84 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>616</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="registerFormatLabel_2">
+        <property name="text">
+         <string>Disassembly Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <spacer name="horizontalSpacer_9">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>38</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="7" column="2">
+       <widget class="QRadioButton" name="pcFunctionRadioButton">
+        <property name="toolTip">
+         <string>Start and end address is defined by current function.</string>
+        </property>
+        <property name="text">
+         <string>Function</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">disassemblyModeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QRadioButton" name="pcLengthRadioButton">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;End address is defined by N bytes after current $PC&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Length</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">disassemblyModeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="7" column="4">
+       <widget class="QSpinBox" name="pcLengthSpinBox">
+        <property name="toolTip">
+         <string>Number of bytes after current $PC</string>
+        </property>
+        <property name="maximum">
+         <number>9999</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="5" colspan="2">
+       <spacer name="horizontalSpacer_10">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>373</width>
           <height>20</height>
          </size>
         </property>
@@ -353,7 +425,9 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Offset&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opcode&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Source&lt;/li&gt;&lt;/ul&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Assembly Editor does its best to show relevant assembly.  This means setting the 'start' and 'end' address of the disassembly. There are two modes.&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Function - The start and end address is defined by the function the current $PC is in. Needs debug information. Otherwise, a blank editor is shown.&lt;/li&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Length - A number of bytes after the current $PC is shown.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;In the Register browser, register values can be shown in various formats:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Natural (A predefined format, based on the register name)&lt;/span&gt;&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hex&lt;/li&gt;
@@ -388,5 +462,6 @@ p, li { white-space: pre-wrap; }
  <buttongroups>
   <buttongroup name="disassemblyFlavorButtonGroup"/>
   <buttongroup name="assemblyDemangleButtonGroup"/>
+  <buttongroup name="disassemblyModeButtonGroup"/>
  </buttongroups>
 </ui>

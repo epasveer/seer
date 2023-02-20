@@ -73,6 +73,22 @@ QString SeerAssemblyConfigPage::registerFormat () const {
     return registerFormatComboBox->currentText();
 }
 
+QString SeerAssemblyConfigPage::disassemblyMode () const {
+
+    if (pcFunctionRadioButton->isChecked()) {
+        return "function";
+    }else if (pcLengthRadioButton->isChecked()) {
+        return "length";
+    }else{
+        return "unknown";
+    }
+}
+
+int SeerAssemblyConfigPage::disassemblyBytes () const {
+
+    return pcLengthSpinBox->value();
+}
+
 void SeerAssemblyConfigPage::setShowAssemblyTabOnStartup (bool flag) {
 
     assemblyTabOnStartupCheckBox->setChecked(flag);
@@ -128,6 +144,19 @@ void SeerAssemblyConfigPage::setRegisterFormat (const QString& format) {
     registerFormatComboBox->setCurrentText(format);
 }
 
+void SeerAssemblyConfigPage::setDisassemblyMode (const QString& mode, int bytes) {
+
+    if (mode == "function") {
+        pcFunctionRadioButton->setChecked(true);
+    }else if (mode == "length") {
+        pcLengthRadioButton->setChecked(true);
+    }else{
+        pcFunctionRadioButton->setChecked(true);
+    }
+
+    pcLengthSpinBox->setValue(bytes);
+}
+
 void SeerAssemblyConfigPage::reset () {
 
     setShowAssemblyTabOnStartup(false);
@@ -139,5 +168,6 @@ void SeerAssemblyConfigPage::reset () {
     setShowOpcodeColumn(false);
     setShowSourceLines(false);
     setRegisterFormat("Natural");
+    setDisassemblyMode("function", 256);
 }
 

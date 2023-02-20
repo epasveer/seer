@@ -8,6 +8,11 @@
   just before and just after the program is loaded into gdb.
 * Add the concept of 'project' files that can be created and loaded.
   Project files contain all settings available in the Debug dialog.
+* Assembly view can now be shown in 2 modes. See "Settings->Configure->Assembly"
+     - Function. The view shows all assembly in the function 
+       the $PC is in.
+     - Length. The view shows N bytes of assembly after the $PC. Used
+       for code that is pure assembly or has no debug information.
 * Minor fixes when debugging corefiles.
 * Fixed breakpoints with conditional statements.
 * Fixed up icons and Debian "copyright" file for Debian Intent-To-Package.

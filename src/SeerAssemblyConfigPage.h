@@ -21,6 +21,8 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         bool                    showOpcodeColumn                                () const;
         bool                    showSourceLines                                 () const;
         QString                 registerFormat                                  () const;
+        QString                 disassemblyMode                                 () const;
+        int                     disassemblyBytes                                () const;
 
         void                    setShowAssemblyTabOnStartup                     (bool flag);
         void                    setKeepAssemblyTabOnTop                         (bool flag);
@@ -31,6 +33,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         void                    setShowOpcodeColumn                             (bool flag);
         void                    setShowSourceLines                              (bool flag);
         void                    setRegisterFormat                               (const QString& format);
+        void                    setDisassemblyMode                              (const QString& mode, int bytes);
 
         void                    reset                                           ();
 
