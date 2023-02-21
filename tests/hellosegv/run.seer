@@ -1,0 +1,26 @@
+{
+    "seerproject": {
+        "executable": "/nas/erniep/Development/seer/tests/hellosegv/hellosegv",
+        "postgdbcommands": [
+            "info break",
+            "info program",
+            "info signals"
+        ],
+        "pregdbcommands": [
+            "show radix"
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

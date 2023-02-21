@@ -1,0 +1,24 @@
+{
+    "seerproject": {
+        "executable": "/nas/erniep/Development/seer/tests/helloasm/helloasm_stabs",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "runmode": {
+            "arguments": "",
+            "breakinfunction": true,
+            "breakinfunctionname": "0x8048080",
+            "breakinmain": false,
+            "breakpointsfile": "",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": true
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}
