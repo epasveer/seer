@@ -10,7 +10,7 @@
         "runmode": {
             "arguments": "",
             "breakinfunction": true,
-            "breakinfunctionname": "0x8048080",
+            "breakinfunctionname": "0x08048080",
             "breakinmain": false,
             "breakpointsfile": "",
             "nobreak": false,

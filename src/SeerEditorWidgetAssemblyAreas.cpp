@@ -1452,7 +1452,7 @@ void SeerEditorWidgetAssemblyArea::setQuickBreakpoint (QMouseEvent* event) {
             emit enableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
         }else{
             // Emit the disable breakpoint signal.
-            emit disableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+            emit deleteBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
         }
 
     // Otherwise, do a quick create of a new breakpoint.

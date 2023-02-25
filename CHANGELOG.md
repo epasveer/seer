@@ -16,6 +16,12 @@
 * Minor fixes when debugging corefiles.
 * Fixed breakpoints with conditional statements.
 * Fixed up icons and Debian "copyright" file for Debian Intent-To-Package.
+* Double-clicking on a breakpoint in the source window will delete it.
+  Previously it would disable it.
+* Assembly Tab - show only Nexti and Stepi buttons.
+  Source tabs - show only Next and Step buttons.
+* Hide certains buttons (Run, Start, ...) depending on Debug mode (run, attach,
+  connect, etc...)
 
 ## [1.14] - 2023-01-02
 * Happy New Year!

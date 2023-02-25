@@ -9,16 +9,16 @@
         "pregdbcommands": [
             "show radix"
         ],
-        "startmode": {
+        "runmode": {
             "arguments": "",
             "breakinfunction": false,
             "breakinfunctionname": "",
-            "breakinmain": true,
+            "breakinmain": false,
             "breakpointsfile": "",
-            "nobreak": false,
+            "nobreak": true,
             "nonstopmode": false,
             "randomizestartaddress": false,
-            "showassemblytab": false
+            "showassemblytab": true
         },
         "symbolfile": "",
         "workingdirectory": ""

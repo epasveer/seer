@@ -28,6 +28,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showOffsetColumn          = false;
     _showOpcodeColumn          = false;
     _showSourceLines           = false;
+    _notifyAssemblyTabShown    = true;
 
     // Setup UI
     setupUi(this);
@@ -67,6 +68,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Connect things.
     QObject::connect(tabWidget,             &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
+    QObject::connect(tabWidget,             &QTabWidget::currentChanged,       this, &SeerEditorManagerWidget::handleTabCurrentChanged);
     QObject::connect(fileOpenToolButton,    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
     QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
@@ -75,7 +77,9 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
 
-    deleteAssemblyWidgetTab(false);
+    _notifyAssemblyTabShown = false;
+
+    deleteAssemblyWidgetTab();
 }
 
 void SeerEditorManagerWidget::dumpEntries () const {
@@ -665,6 +669,19 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
     }
 }
 
+void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
+
+    if (_notifyAssemblyTabShown == false) {
+        return;
+    }
+
+    if (tabWidget->tabText(index) == "Assembly") {
+        emit assemblyTabShown(true);
+    }else{
+        emit assemblyTabShown(false);
+    }
+}
+
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
 
     // Must have a valid filename.
@@ -900,7 +917,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
     SeerEditorWidgetAssembly* assemblyWidget = dynamic_cast<SeerEditorWidgetAssembly*>(tabWidget->widget(index));
     if (assemblyWidget != 0) {
 
-        deleteAssemblyWidgetTab(true);
+        deleteAssemblyWidgetTab();
 
         return;
     }
@@ -966,7 +983,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     return assemblyWidget;
 }
 
-void SeerEditorManagerWidget::deleteAssemblyWidgetTab (bool notify) {
+void SeerEditorManagerWidget::deleteAssemblyWidgetTab () {
 
     if (_assemblyWidget == 0) {
         return;
@@ -980,7 +997,7 @@ void SeerEditorManagerWidget::deleteAssemblyWidgetTab (bool notify) {
     _assemblyWidget = 0;
 
     // Send a signal to disable the Nexti/Stepi buttons.
-    if (notify) {
+    if (_notifyAssemblyTabShown) {
         emit assemblyTabShown(false);
     }
 }

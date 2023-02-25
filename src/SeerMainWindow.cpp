@@ -73,8 +73,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     }
 
     // Hide Nexti and Stepi. Enabled/disabled by SeerEditorManagerWidget.
+    actionGdbNext->setVisible(true);
     actionGdbNexti->setVisible(false);
+    actionGdbStep->setVisible(true);
     actionGdbStepi->setVisible(false);
+    actionGdbFinish->setVisible(true);
 
     // Set up Interrupt menu.
     QMenu* menuInterrupt = new QMenu(this);
@@ -354,19 +357,48 @@ const QString& SeerMainWindow::projectFilename () const {
 
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
+    actionGdbRun->setVisible(true);
+    actionGdbStart->setVisible(true);
+    actionGdbContinue->setVisible(true);
+    actionGdbNext->setVisible(true);
+    actionGdbNexti->setVisible(true);
+    actionGdbStep->setVisible(true);
+    actionGdbStepi->setVisible(true);
+    actionGdbFinish->setVisible(true);
+
     if (launchMode == "run") {
+
         gdbWidget->handleGdbRunExecutable(breakMode);
 
     }else if (launchMode == "start") {
+
         gdbWidget->handleGdbRunExecutable(breakMode);
 
     }else if (launchMode == "attach") {
+
+        actionGdbRun->setVisible(false);
+        actionGdbStart->setVisible(false);
+
         gdbWidget->handleGdbAttachExecutable();
 
     }else if (launchMode == "connect") {
+
+        actionGdbRun->setVisible(false);
+        actionGdbStart->setVisible(false);
+
         gdbWidget->handleGdbConnectExecutable();
 
     }else if (launchMode == "corefile") {
+
+        actionGdbRun->setVisible(false);
+        actionGdbStart->setVisible(false);
+        actionGdbContinue->setVisible(false);
+        actionGdbNext->setVisible(false);
+        actionGdbNexti->setVisible(false);
+        actionGdbStep->setVisible(false);
+        actionGdbStepi->setVisible(false);
+        actionGdbFinish->setVisible(false);
+
         gdbWidget->handleGdbCoreFileExecutable();
 
     }else if (launchMode == "project") {
@@ -506,8 +538,23 @@ void SeerMainWindow::handleViewAssembly () {
 
 void SeerMainWindow::handleViewAssemblyShown (bool shown) {
 
-    actionGdbNexti->setVisible(shown);
-    actionGdbStepi->setVisible(shown);
+    // Corefile always have them off.
+    if (executableLaunchMode() == "corefile") {
+
+        actionGdbNext->setVisible(false);
+        actionGdbNexti->setVisible(false);
+        actionGdbStep->setVisible(false);
+        actionGdbStepi->setVisible(false);
+        actionGdbFinish->setVisible(false);
+
+    // Toggle regular and instruction buttons.
+    }else{
+        actionGdbNext->setVisible(!shown);
+        actionGdbNexti->setVisible(shown);
+        actionGdbStep->setVisible(!shown);
+        actionGdbStepi->setVisible(shown);
+        actionGdbFinish->setVisible(!shown);
+    }
 }
 
 void SeerMainWindow::handleViewConsoleNormal () {

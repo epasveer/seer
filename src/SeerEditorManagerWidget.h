@@ -65,6 +65,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
     public slots:
         void                                            handleText                          (const QString& text);
         void                                            handleTabCloseRequested             (int index);
+        void                                            handleTabCurrentChanged             (int index);
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
         void                                            handleOpenAddress                   (const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
@@ -121,7 +122,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorWidgetSource*                         createEditorWidgetTab               (const QString& fullname, const QString& file);
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
-        void                                            deleteAssemblyWidgetTab             (bool notify);
+        void                                            deleteAssemblyWidgetTab             ();
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -138,5 +139,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showOffsetColumn;
         bool                                            _showOpcodeColumn;
         bool                                            _showSourceLines;
+        bool                                            _notifyAssemblyTabShown;
 };
 

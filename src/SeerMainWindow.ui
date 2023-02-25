@@ -162,9 +162,9 @@
    <addaction name="actionGdbContinue"/>
    <addaction name="actionGdbNext"/>
    <addaction name="actionGdbStep"/>
-   <addaction name="actionGdbFinish"/>
    <addaction name="actionGdbNexti"/>
    <addaction name="actionGdbStepi"/>
+   <addaction name="actionGdbFinish"/>
    <addaction name="separator"/>
    <addaction name="actionRecordProcess"/>
    <addaction name="actionRecordDirection"/>
