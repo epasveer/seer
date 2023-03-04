@@ -917,7 +917,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         deleteConsole();
     }
 
-    qDebug() << "Starting GdbConnect.";
+    //qDebug() << "Starting GdbConnect.";
 
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
@@ -973,7 +973,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     QApplication::restoreOverrideCursor();
 
-    qDebug() << "Finishing GdbConnect.";
+    //qDebug() << "Finishing GdbConnect.";
 
     // "-file-symbol-file %s"
     // "-file-exec-file %s"
@@ -2164,7 +2164,7 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
         return;
     }
 
-    qDebug() << "Getting assembly for address" << address << "for mode" << assemblyDisassemblyMode();
+    //qDebug() << "Getting assembly for address" << address << "for mode" << assemblyDisassemblyMode();
 
     QString command;
 
@@ -2176,7 +2176,7 @@ void SeerGdbWidget::handleGdbGetAssembly (QString address) {
         command = QString("-data-disassemble -a \"%1\" -- 2").arg(address);
     }
 
-    qDebug() << command;
+    //qDebug() << command;
 
     handleGdbCommand(command);
 }
@@ -2187,7 +2187,7 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
         return;
     }
 
-    qDebug() << "Getting source and assembly for address" << address << "for mode" << assemblyDisassemblyMode();
+    //qDebug() << "Getting source and assembly for address" << address << "for mode" << assemblyDisassemblyMode();
 
     QString command;
 
@@ -2199,7 +2199,7 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
         command = QString("-data-disassemble -a \"%1\" -- 5").arg(address);
     }
 
-    qDebug() << command;
+    //qDebug() << command;
 
     handleGdbCommand(command);
 }
