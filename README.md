@@ -194,8 +194,11 @@ methods for debugging a program. So Seer natually does too.
     % seergdb --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
     % seergdb --core <corefile> myprog                  # Debug a corefile for myprog.
 
-    % seergdb                                           # Bring up a dialog box to set the program and debug method.
-    % seergdb myprog arg1 arg2                          # Bring up a dialog box to set the debug method.
+    % seergdb --project myproject.seer                  # Load a debug session from a project file.
+                                                        # Define and save a project in the Debug dialog.
+
+    % seergdb                                           # Bring up a Debug dialog to set the program and debug method.
+    % seergdb myprog arg1 arg2                          # Bring up a Debug dialog to set the debug method.
 
     % seergdb --config                                  # Bring up Seer config dialog.
                                                         # Save settings with 'Settings->Save Configuration'.
