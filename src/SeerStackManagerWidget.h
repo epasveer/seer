@@ -23,6 +23,10 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
     signals:
         void                                            refreshThreadFrames                 ();
 
+    protected:
+        void                                            writeSettings                       ();
+        void                                            readSettings                        ();
+
     public slots:
         void                                            handleText                          (const QString& text);
         void                                            handleStoppingPointReached          ();
@@ -31,6 +35,8 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
         void                                            handleHelpToolButtonClicked         ();
+        void                                            handleTabMoved                      (int from, int to);
+        void                                            handleTabChanged                    (int index);
 
     private:
         SeerStackFramesBrowserWidget*                   _stackFramesBrowserWidget;

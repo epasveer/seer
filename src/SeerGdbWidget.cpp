@@ -13,6 +13,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QLoggingCategory>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -121,7 +122,13 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbMonitor = new GdbMonitor(this);
     _gdbMonitor->setProcess(_gdbProcess);
 
+    // Restore tab ordering.
+    readLogsSettings();
+
     // Connect things.
+    QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
+    QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::currentChanged,                                                                   this,                                                           &SeerGdbWidget::handleLogsTabChanged);
+
     QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
@@ -584,6 +591,94 @@ SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
 const SeerEditorManagerWidget* SeerGdbWidget::editorManager () const {
 
     return editorManagerWidget;
+}
+
+void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
+
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+
+    writeLogsSettings();
+}
+
+void SeerGdbWidget::handleLogsTabChanged (int index) {
+
+    Q_UNUSED(index);
+
+    writeLogsSettings();
+}
+
+void SeerGdbWidget::writeLogsSettings () {
+
+    // Write tab order to settings.
+    QStringList tabs;
+
+    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
+        tabs.append(logsTabWidget->tabBar()->tabText(i));
+    }
+
+    QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    QSettings settings;
+
+    settings.beginGroup("logsmanagerwindow"); {
+        settings.setValue("taborder",   tabs.join(','));
+        settings.setValue("tabcurrent", current);
+    } settings.endGroup();
+}
+
+void SeerGdbWidget::readLogsSettings () {
+
+    // Can't move things?
+    if (logsTabWidget->tabBar()->isMovable() == false) {
+        return;
+    }
+
+    // Read tab order from settings.
+    QSettings   settings;
+    QStringList tabs;
+    QString     current;
+
+    settings.beginGroup("logsmanagerwindow"); {
+        tabs    = settings.value("taborder").toString().split(',');
+        current = settings.value("tabcurrent").toString();
+    } settings.endGroup();
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    // Move tabs to the requested order.
+    for (int i=0; i<tabs.count(); i++) {
+
+        QString tab = tabs[i];
+        int     tb  = -1;
+
+        for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
+            if (logsTabWidget->tabBar()->tabText(j) == tab) {
+                tb = j;
+                break;
+            }
+        }
+
+        if (tb != -1) {
+            logsTabWidget->tabBar()->moveTab(tb, i);
+        }
+    }
+
+    // Make a tab current.
+    if (current != "") {
+        for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
+            if (logsTabWidget->tabBar()->tabText(i) == current) {
+                logsTabWidget->setCurrentIndex(i);
+                break;
+            }
+        }
+    }else{
+        logsTabWidget->setCurrentIndex(0);
+    }
 }
 
 void SeerGdbWidget::handleText (const QString& text) {

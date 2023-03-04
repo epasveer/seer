@@ -22,6 +22,7 @@
   Source tabs - show only Next and Step buttons.
 * Hide certains buttons (Run, Start, ...) depending on Debug mode (run, attach,
   connect, etc...)
+* Save state of tabs (tab order and current tab). So next session will get them.
 
 ## [1.14] - 2023-01-02
 * Happy New Year!

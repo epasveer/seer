@@ -3,6 +3,7 @@
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtGui/QIcon>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWidget* parent) : QWidget(parent) {
@@ -43,9 +44,14 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
 
     tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
+    // Restore tab ordering.
+    readSettings();
+
     // Connect things.
-    QObject::connect(refreshToolButton, &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(helpToolButton,    &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(refreshToolButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,        &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,        this,  &SeerSourceSymbolLibraryManagerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),   &QTabBar::currentChanged,  this,  &SeerSourceSymbolLibraryManagerWidget::handleTabChanged);
 }
 
 SeerSourceSymbolLibraryManagerWidget::~SeerSourceSymbolLibraryManagerWidget () {
@@ -86,5 +92,93 @@ void SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked () {
     help->loadFile(":/seer/resources/help/SourceSymbolLibraryInfoBrowser.md");
     help->show();
     help->raise();
+}
+
+void SeerSourceSymbolLibraryManagerWidget::handleTabMoved (int from, int to) {
+
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+
+    writeSettings();
+}
+
+void SeerSourceSymbolLibraryManagerWidget::handleTabChanged (int index) {
+
+    Q_UNUSED(index);
+
+    writeSettings();
+}
+
+void SeerSourceSymbolLibraryManagerWidget::writeSettings () {
+
+    // Write tab order to settings.
+    QStringList tabs;
+
+    for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+        tabs.append(tabWidget->tabBar()->tabText(i));
+    }
+
+    QString current = tabWidget->tabBar()->tabText(tabWidget->tabBar()->currentIndex());
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    QSettings settings;
+
+    settings.beginGroup("sourcemanagerwindow"); {
+        settings.setValue("taborder",   tabs.join(','));
+        settings.setValue("tabcurrent", current);
+    } settings.endGroup();
+}
+
+void SeerSourceSymbolLibraryManagerWidget::readSettings () {
+
+    // Can't move things?
+    if (tabWidget->tabBar()->isMovable() == false) {
+        return;
+    }
+
+    // Read tab order from settings.
+    QSettings   settings;
+    QStringList tabs;
+    QString     current;
+
+    settings.beginGroup("sourcemanagerwindow"); {
+        tabs    = settings.value("taborder").toString().split(',');
+        current = settings.value("tabcurrent").toString();
+    } settings.endGroup();
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    // Move tabs to the requested order.
+    for (int i=0; i<tabs.count(); i++) {
+
+        QString tab = tabs[i];
+        int     tb  = -1;
+
+        for (int j=0; j<tabWidget->tabBar()->count(); j++) {
+            if (tabWidget->tabBar()->tabText(j) == tab) {
+                tb = j;
+                break;
+            }
+        }
+
+        if (tb != -1) {
+            tabWidget->tabBar()->moveTab(tb, i);
+        }
+    }
+
+    // Make a tab current.
+    if (current != "") {
+        for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+            if (tabWidget->tabBar()->tabText(i) == current) {
+                tabWidget->setCurrentIndex(i);
+                break;
+            }
+        }
+    }else{
+        tabWidget->setCurrentIndex(0);
+    }
 }
 

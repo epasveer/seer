@@ -24,11 +24,15 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         SeerStaticBrowserWidget*                        staticBrowserWidget             ();
         SeerLibraryBrowserWidget*                       libraryBrowserWidget            ();
 
-    signals:
-    public slots:
+    protected:
+        void                                            writeSettings                   ();
+        void                                            readSettings                    ();
+
     private slots:
         void                                            handleRefreshToolButtonClicked  ();
         void                                            handleHelpToolButtonClicked     ();
+        void                                            handleTabMoved                  (int from, int to);
+        void                                            handleTabChanged                (int index);
 
     private:
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;

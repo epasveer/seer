@@ -20,11 +20,15 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
         SeerVariableLoggerBrowserWidget*                variableLoggerBrowserWidget           ();
         SeerRegisterValuesBrowserWidget*                registerValuesBrowserWidget         ();
 
-    signals:
-    public slots:
+    protected:
+        void                                            writeSettings                       ();
+        void                                            readSettings                        ();
+
     private slots:
         void                                            handleRefreshToolButtonClicked      ();
         void                                            handleHelpToolButtonClicked         ();
+        void                                            handleTabMoved                      (int from, int to);
+        void                                            handleTabChanged                    (int index);
 
     private:
         SeerVariableTrackerBrowserWidget*               _variableTrackerBrowserWidget;

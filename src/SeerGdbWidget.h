@@ -180,6 +180,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                resetDprintf                        ();
 
     public slots:
+        void                                handleLogsTabMoved                  (int from, int to);
+        void                                handleLogsTabChanged                (int index);
+
         void                                handleText                          (const QString& text);
         void                                handleManualCommandExecute          ();
         void                                handleGdbCommand                    (const QString& command);
@@ -312,6 +315,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                recordSettingsChanged               ();
 
     protected:
+        void                                writeLogsSettings                   ();
+        void                                readLogsSettings                    ();
 
     private:
         bool                                isGdbRuning                         () const;

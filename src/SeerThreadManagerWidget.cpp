@@ -5,6 +5,7 @@
 #include <QtWidgets/QTextBrowser>
 #include <QtGui/QIcon>
 #include <QtCore/QFile>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(parent) {
@@ -41,12 +42,17 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
 
     tabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
+    // Restore tab ordering.
+    readSettings();
+
     // Connect things.
     QObject::connect(refreshToolButton,        &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
     QObject::connect(helpToolButton,           &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(schedulerLockingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleSchedulerLockingComboBox);
     QObject::connect(scheduleMultipleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleScheduleMultipleComboBox);
     QObject::connect(forkFollowsComboBox,      QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleForkFollowComboBox);
+    QObject::connect(tabWidget->tabBar(),      &QTabBar::tabMoved,                                      this,  &SeerThreadManagerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),      &QTabBar::currentChanged,                                this,  &SeerThreadManagerWidget::handleTabChanged);
 }
 
 SeerThreadManagerWidget::~SeerThreadManagerWidget () {
@@ -128,5 +134,93 @@ void SeerThreadManagerWidget::handleForkFollowComboBox (int index) {
     Q_UNUSED(index);
 
     emit forkFollowsModeChanged(forkFollowsComboBox->currentText());
+}
+
+void SeerThreadManagerWidget::handleTabMoved (int from, int to) {
+
+    Q_UNUSED(from);
+    Q_UNUSED(to);
+
+    writeSettings();
+}
+
+void SeerThreadManagerWidget::handleTabChanged (int index) {
+
+    Q_UNUSED(index);
+
+    writeSettings();
+}
+
+void SeerThreadManagerWidget::writeSettings () {
+
+    // Write tab order to settings.
+    QStringList tabs;
+
+    for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+        tabs.append(tabWidget->tabBar()->tabText(i));
+    }
+
+    QString current = tabWidget->tabBar()->tabText(tabWidget->tabBar()->currentIndex());
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    QSettings settings;
+
+    settings.beginGroup("threadmanagerwindow"); {
+        settings.setValue("taborder", tabs.join(','));
+        settings.setValue("tabcurrent", current);
+    } settings.endGroup();
+}
+
+void SeerThreadManagerWidget::readSettings () {
+
+    // Can't move things?
+    if (tabWidget->tabBar()->isMovable() == false) {
+        return;
+    }
+
+    // Read tab order from settings.
+    QSettings   settings;
+    QStringList tabs;
+    QString     current;
+
+    settings.beginGroup("threadmanagerwindow"); {
+        tabs    = settings.value("taborder").toString().split(',');
+        current = settings.value("tabcurrent").toString();
+    } settings.endGroup();
+
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
+
+    // Move tabs to the requested order.
+    for (int i=0; i<tabs.count(); i++) {
+
+        QString tab = tabs[i];
+        int     tb  = -1;
+
+        for (int j=0; j<tabWidget->tabBar()->count(); j++) {
+            if (tabWidget->tabBar()->tabText(j) == tab) {
+                tb = j;
+                break;
+            }
+        }
+
+        if (tb != -1) {
+            tabWidget->tabBar()->moveTab(tb, i);
+        }
+    }
+
+    // Make a tab current.
+    if (current != "") {
+        for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+            if (tabWidget->tabBar()->tabText(i) == current) {
+                tabWidget->setCurrentIndex(i);
+                break;
+            }
+        }
+    }else{
+        tabWidget->setCurrentIndex(0);
+    }
 }
 

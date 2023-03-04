@@ -25,6 +25,10 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         void                                            scheduleMultipleModeChanged         (const QString& mode);
         void                                            forkFollowsModeChanged              (const QString& mode);
 
+    protected:
+        void                                            writeSettings                       ();
+        void                                            readSettings                        ();
+
     public slots:
         void                                            setSchedulerLockingMode             (const QString& mode);
         QString                                         schedulerLockingMode                () const;
@@ -41,6 +45,8 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         void                                            handleSchedulerLockingComboBox      (int index);
         void                                            handleScheduleMultipleComboBox      (int index);
         void                                            handleForkFollowComboBox            (int index);
+        void                                            handleTabMoved                      (int from, int to);
+        void                                            handleTabChanged                    (int index);
 
     private:
         SeerThreadFramesBrowserWidget*                  _threadFramesBrowserWidget;
