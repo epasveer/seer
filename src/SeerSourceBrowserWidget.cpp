@@ -17,15 +17,22 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     // Setup the widgets
     sourceSearchLineEdit->setPlaceholderText("Search regex...");
     sourceSearchLineEdit->setClearButtonEnabled(true);
+
+    _sourceFilesItems = new QTreeWidgetItem;
+    _sourceFilesItems->setText(0, "Source files");
+
+    _headerFilesItems = new QTreeWidgetItem;
+    _headerFilesItems->setText(0, "Header files");
+
+    _miscFilesItems = new QTreeWidgetItem;
+    _miscFilesItems->setText(0, "Misc files");
+
     sourceTreeWidget->setMouseTracking(true);
+    sourceTreeWidget->addTopLevelItem(_sourceFilesItems);
+    sourceTreeWidget->addTopLevelItem(_headerFilesItems);
+    sourceTreeWidget->addTopLevelItem(_miscFilesItems);
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
-    sourceTreeWidget->clear();
-    sourceTreeWidget->setSortingEnabled(false);
-
-    _sourceFilesItems = 0;
-    _headerFilesItems = 0;
-    _miscFilesItems   = 0;
 
     _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go"} ); // Default settings.
     _headerFilePatterns = QStringList( {"*.hpp", "*.h"} );
@@ -76,22 +83,18 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,files=[") && text.endsWith("]")) {
 
-        sourceTreeWidget->clear();
-        sourceTreeWidget->setSortingEnabled(false);
-        sourceTreeWidget->sortByColumn(-1, Qt::AscendingOrder);
+        // Delete previous files.
+        foreach (auto i, _sourceFilesItems->takeChildren()) {
+            delete i;
+        }
 
-        _sourceFilesItems = new QTreeWidgetItem;
-        _sourceFilesItems->setText(0, "Source files");
+        foreach (auto i, _headerFilesItems->takeChildren()) {
+            delete i;
+        }
 
-        _headerFilesItems = new QTreeWidgetItem;
-        _headerFilesItems->setText(0, "Header files");
-
-        _miscFilesItems = new QTreeWidgetItem;
-        _miscFilesItems->setText(0, "Misc files");
-
-        sourceTreeWidget->addTopLevelItem(_sourceFilesItems);
-        sourceTreeWidget->addTopLevelItem(_headerFilesItems);
-        sourceTreeWidget->addTopLevelItem(_miscFilesItems);
+        foreach (auto i, _miscFilesItems->takeChildren()) {
+            delete i;
+        }
 
         // ^done,files=[
         //     {file=\"../sysdeps/x86_64/start.S\",fullname=\"/home/abuild/rpmbuild/BUILD/glibc-2.26/csu/../sysdeps/x86_64/start.S\"},
