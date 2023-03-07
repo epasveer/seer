@@ -1543,7 +1543,7 @@ void SeerGdbWidget::handleGdbExecutableName () {
         handleGdbCommand(QString("-file-symbol-file \"") + executableSymbolName() + "\"");
 
     // No executable and a symbol file?  Open the symbol files only.
-    }else if (executableName() != "" && executableSymbolName() != "") {
+    }else if (executableName() == "" && executableSymbolName() != "") {
 
         handleGdbCommand(QString("-file-symbol-file \"") + executableSymbolName() + "\"");
     }
