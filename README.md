@@ -37,7 +37,7 @@ Examples of the various Seer views and dialogs.
 Main View
 ---------
 
-The main view for Seer looks like:
+The main view for Seer looks like this:
 ![](images/mainview.png)
 
 * Source/Function/Types/Variables/Libraries
@@ -45,17 +45,17 @@ The main view for Seer looks like:
     * Search for Functions, Types, and Static Variables.
       Dobule clicking will open the source file.
     * The list of shared libraries referenced by the program.
-    * The list of source/header files can be searched in. This will "shrink" the list of files shown.
+    * The list of source/header files can be searched. This will "shrink" the list of files shown.
     * Double clicking on a file will open it in the Code Manager.
 
 * Variable/Register Info
     * Show variable and register values.
     * "Logger" - log the value of a variable. Manually enter it or double click on the variable in the file
       that is opened in the code manager.
-    * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point.
-      (step, next, finish, etc.) When the stopping point is reached, all variables in the list will show
+    * "Tracker" - create a list of variables to show the value for whenever gdb reaches a stopping point
+      (step, next, finish, etc.). When the stopping point is reached, all variables in the list will show
       their potentially new value.
-    * "Registers" - show the values of all cpu registgers.
+    * "Registers" - show the values of all cpu registers.
 
 * Code Manager.
     * The large area of the middle part of the Seer gui.
@@ -65,9 +65,9 @@ The main view for Seer looks like:
       Double click with CTLR key pressed will prepend variable with "*".
       Double click with SHIFT key pressed will prepend variable with "&".
       Double click with CTRL+SHIFT key pressed will prepend variable with "*&".
-    * Variables can be added to the "Tracker" by selecting the varible name and RMB and select
+    * Variables can be added to the "Tracker" by selecting the variable name and RMB and select
       "Add variable to Tracker".
-    * Variables can be added to the "Memory Visualizer" by selecting the varible name and RMB and select
+    * Variables can be added to the "Memory Visualizer" by selecting the variable name and RMB and select
       "Add variable to Memory Visualizer".
     * A breakpoint/printpoint can be created by RMB on a specific line.
     * Can execute to a specific line by RMB on a specific line.
@@ -105,25 +105,25 @@ The main view for Seer looks like:
 Open Dialog
 -----------
 
-When the open executable dialog is invoked, it looks like this :
+When the open executable dialog is invoked, it looks like this:
 ![](images/opendialog.png)
 
 Seer Console
 ------------
 
-All text output from the executable will go to the Seer console.  Text input for the executable can be entered via the console too.
+All text output from the executable will go to the Seer console. Text input for the executable can be entered via the console too.
 ![](images/console.png)
 
 
 Assembly View
 -------------
 
-Normally Seer will just show the source code as tabs in the Code Manager.  The program's assembly can also be show as a tab.
+Normally Seer will just show the source code as tabs in the Code Manager. The program's assembly can also be show as a tab.
 
-Select "View->Assembly View" and an extra tab will be shown along side the source code tabs that shows the current assembly being executed. Here is an example.
+Select "View->Assembly View" and an extra tab will be shown alongside the source code tabs that shows the current assembly being executed. Here is an example.
 ![](images/mainview_assemby.png )
 
-Like the source code tabs, breakpoints can be set in the assemby tab. The current instruction is highlighted.
+Like the source code tabs, breakpoints can be set in the assembly tab. The current instruction is highlighted.
 
 Double-clicking on entries in the "Breakpoints" tab and the "Stack frames" tab will show the assembly for those addresses.
 
@@ -186,7 +186,7 @@ Starting Seer
 =============
 
 Seer is meant to easily start the program to debug from the command line. gdb has multiple
-methods for debugging a program. So Seer natually does too.
+methods for debugging a program. So Seer naturally does too.
 
     % seergdb --start myprog arg1 arg2                  # Debug myprog with its arguments. Break in main().
     % seergdb --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
@@ -266,7 +266,7 @@ root access.
     % cp seergdb /usr/bin/seergdb
     % rehash
 
-Or use the 'install' make target. Which will usually copy it to /usr/local/bin.
+Or use the 'install' make target, which will usually copy it to /usr/local/bin.
 May need root access.
 
     % cd seer/src/build
