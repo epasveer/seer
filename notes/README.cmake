@@ -4,6 +4,6 @@ Notes for cmake.
 % cmake -DCMAKE_BUILD_TYPE=Debug ..
 % cmake -DCMAKE_BUILD_TYPE=Release ..
 % make clean
-% make seer
+% make seergdb
 % sudo make install
 
