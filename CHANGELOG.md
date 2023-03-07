@@ -1,6 +1,8 @@
 
 # Seer Change Log
 
+## [1.16beta] - 2023-??-??
+
 ## [1.15] - 2023-03-04
 * Revamp Debug dialog. Move debug modes into "tabs".
 * Add "help" icon to each debug mode in Debug dialog.
