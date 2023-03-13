@@ -22,6 +22,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
 
+    public slots:
+        void                handleChangeWindowTitle     (QString title);
+
     protected slots:
         void                handleClearButton           ();
         void                handlePrintButton           ();

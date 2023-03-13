@@ -2,6 +2,7 @@
 # Seer Change Log
 
 ## [1.16beta] - 2023-??-??
+* Add pid to main window and console title bars.
 
 ## [1.15] - 2023-03-04
 * Revamp Debug dialog. Move debug modes into "tabs".

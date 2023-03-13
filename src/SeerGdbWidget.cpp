@@ -9,11 +9,13 @@
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtGui/QFont>
+#include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QSettings>
+#include <QtCore/QProcess>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -818,8 +820,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(executableName());
-
         startGdb();
 
         if (gdbAsyncMode()) {
@@ -905,6 +905,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
     QApplication::restoreOverrideCursor();
 
+    // Set window titles with name of program.
+    emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
+
     qCDebug(LC) << "Finishing 'gdb run/start'.";
 }
 
@@ -943,7 +946,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(executableName());
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
 
         startGdb();
 
@@ -1017,7 +1020,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(executableHostPort());
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableHostPort()).arg(QGuiApplication::applicationPid()));
 
         startGdb();
 
@@ -1110,7 +1113,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(executableName());
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
 
         startGdb();
 
@@ -2759,6 +2762,9 @@ void SeerGdbWidget::createConsole () {
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
+
+        // Connect window title changes.
+        QObject::connect(this, &SeerGdbWidget::changeWindowTitle,    _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
     }
 }
 

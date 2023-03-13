@@ -112,6 +112,15 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
     }
 }
 
+void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
+
+    if (title == "") {
+        setWindowTitle("Seer Console");
+    }else{
+        setWindowTitle("Seer Console - '" + title + "'");
+    }
+}
+
 void SeerConsoleWidget::handleClearButton () {
     textEdit->clear();
     _cursor.movePosition(QTextCursor::End);
