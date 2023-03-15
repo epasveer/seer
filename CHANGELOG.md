@@ -3,6 +3,9 @@
 
 ## [1.16beta] - 2023-??-??
 * Add pid to main window and console title bars.
+* The Pending flag is automatically supplied to the breakpoint function in
+  the Debug dialog for the Run mode. Some apps use deferred loading of code
+  with dlopen().
 
 ## [1.15] - 2023-03-04
 * Revamp Debug dialog. Move debug modes into "tabs".

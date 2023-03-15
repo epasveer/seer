@@ -889,7 +889,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         if (addrRegex.exactMatch(executableBreakpointFunctionName())) {
             handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
         }else{
-            handleGdbBreakpointInsert("-t --function " + executableBreakpointFunctionName());
+            handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
         }
     }
 
