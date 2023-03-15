@@ -485,30 +485,56 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Load RUN/START project.
     if (runModeJson.isEmpty() == false || startModeJson.isEmpty() == false) {
 
-        runProgramArgumentsLineEdit->setText(runModeJson["arguments"].toString());
-        loadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
-
-        if (runModeJson["nobreak"].toBool()) {
-            noBreakpointRadioButton->setChecked(true);
-        }
-
-        if (runModeJson["breakinmain"].toBool()) {
-            breakpointInMainRadioButton->setChecked(true);
-        }
-
-        if (runModeJson["breakinfunction"].toBool()) {
-            breakpointInFunctionRadioButton->setChecked(true);
-        }
-        breakpointInFunctionLineEdit->setText(runModeJson["breakinfunctionname"].toString());
-
-        showAsseblyTabCheckBox->setChecked(runModeJson["showassemblytab"].toBool());
-        nonStopModeCheckBox->setChecked(runModeJson["nonstopmode"].toBool());
-        randomizeStartAddressCheckBox->setChecked(runModeJson["randomizestartaddress"].toBool());
-
         if (runModeJson.isEmpty() == false) {
+
+            runProgramArgumentsLineEdit->setText(runModeJson["arguments"].toString());
+            loadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
+
+            if (runModeJson["nobreak"].toBool()) {
+                noBreakpointRadioButton->setChecked(true);
+            }
+
+            if (runModeJson["breakinmain"].toBool()) {
+                breakpointInMainRadioButton->setChecked(true);
+            }
+
+            if (runModeJson["breakinfunction"].toBool()) {
+                breakpointInFunctionRadioButton->setChecked(true);
+            }
+
+            breakpointInFunctionLineEdit->setText(runModeJson["breakinfunctionname"].toString());
+            showAsseblyTabCheckBox->setChecked(runModeJson["showassemblytab"].toBool());
+            nonStopModeCheckBox->setChecked(runModeJson["nonstopmode"].toBool());
+            randomizeStartAddressCheckBox->setChecked(runModeJson["randomizestartaddress"].toBool());
+
             setLaunchMode("run");
-        }else{
+
+        }else if (startModeJson.isEmpty() == false) {
+
+            runProgramArgumentsLineEdit->setText(startModeJson["arguments"].toString());
+            loadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
+
+            if (startModeJson["nobreak"].toBool()) {
+                noBreakpointRadioButton->setChecked(true);
+            }
+
+            if (startModeJson["breakinmain"].toBool()) {
+                breakpointInMainRadioButton->setChecked(true);
+            }
+
+            if (startModeJson["breakinfunction"].toBool()) {
+                breakpointInFunctionRadioButton->setChecked(true);
+            }
+
+            breakpointInFunctionLineEdit->setText(startModeJson["breakinfunctionname"].toString());
+            showAsseblyTabCheckBox->setChecked(startModeJson["showassemblytab"].toBool());
+            nonStopModeCheckBox->setChecked(startModeJson["nonstopmode"].toBool());
+            randomizeStartAddressCheckBox->setChecked(startModeJson["randomizestartaddress"].toBool());
+
             setLaunchMode("start");
+
+        }else{
+            setLaunchMode("");
         }
     }
 
