@@ -26,7 +26,6 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setWindowTitle("Seer Memory Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
-  //memoryLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
     memoryLengthLineEdit->setValidator(new QRegExpValidator(QRegExp("\\s*([1-9]\\d*\\s*)+"), this));
     columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
 
@@ -158,13 +157,14 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
-#else
-            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
-#endif
+            // Look for an address in the value.
+            QRegExp re("0[xX][0-9a-fA-F]+");
 
-            setVariableAddress(words.first());
+            re.indexIn(text);
+
+            QString address = re.cap();
+
+            setVariableAddress((address == "") ? "not an address" : address);
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
