@@ -81,7 +81,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     // Set up Interrupt menu.
     QMenu* menuInterrupt = new QMenu(this);
-    QAction* interruptAction = menuInterrupt->addAction("GDB Interrupt");
+    _interruptAction = menuInterrupt->addAction("Interrupt");
     menuInterrupt->addSeparator();
     QAction* interruptActionSIGINT  = menuInterrupt->addAction("SIGINT");
     QAction* interruptActionSIGKILL = menuInterrupt->addAction("SIGKILL");
@@ -159,7 +159,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionRecordDirection,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordDirectionToggle);
 
     QObject::connect(actionInterruptProcess,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
-    QObject::connect(interruptAction,                   &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(_interruptAction,                  &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
     QObject::connect(interruptActionSIGINT,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGINT);
     QObject::connect(interruptActionSIGKILL,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGKILL);
     QObject::connect(interruptActionSIGFPE,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterruptSIGFPE);
@@ -1338,6 +1338,14 @@ void SeerMainWindow::refreshShortCuts () {
         actionGdbContinue->setToolTip(setting._description);
         actionGdbContinue->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlContinue->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("Interrupt")) {
+
+        SeerKeySetting setting = _keySettings.get("Interrupt");
+
+        _interruptAction->setText(setting._action + " (" + setting._sequence.toString() + ")");
+        actionControlInterrupt->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Debug")) {

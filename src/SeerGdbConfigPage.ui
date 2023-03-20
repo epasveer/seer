@@ -104,12 +104,18 @@
         <property name="toolTip">
          <string>The name of a function in your program to use.</string>
         </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="1" colspan="4">
        <widget class="QLineEdit" name="channelLineEdit">
         <property name="toolTip">
          <string>The channel value, if required by the function.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -171,6 +177,9 @@ p, li { white-space: pre-wrap; }
         <property name="toolTip">
          <string>Specify the path and name of the gdb debugger.</string>
         </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="2">
@@ -198,6 +207,9 @@ p, li { white-space: pre-wrap; }
        <widget class="QLineEdit" name="gdbArgumentsLineEdit">
         <property name="toolTip">
          <string>Arguments to pass to the gdb debugger.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

@@ -96,6 +96,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
     private:
         QActionGroup*               _styleMenuActionGroup;
+        QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
         QString                     _projectFile;

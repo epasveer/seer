@@ -8,6 +8,7 @@
   with dlopen().
 * Fixed bug when restoring from project file with 'start' mode.
 * Improve visualizers for Ada arrays. "(system.address) 0x7fffffffcf10"
+* Add a Shortcut (CTRL-I) to interrupt the running program.
 
 ## [1.15] - 2023-03-04
 * Revamp Debug dialog. Move debug modes into "tabs".

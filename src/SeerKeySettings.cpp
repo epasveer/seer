@@ -64,6 +64,7 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("Nexti",            SeerKeySetting("Nexti",            QKeySequence::fromString("Ctrl+F5"),      "Execute the next instruction. Step over functions."));
     keySettings.add("Stepi",            SeerKeySetting("Stepi",            QKeySequence::fromString("Ctrl+F6"),      "Execute the next instruction. Step into functions."));
     keySettings.add("Finish",           SeerKeySetting("Finish",           QKeySequence::fromString("F7"),           "Finish the current function."));
+    keySettings.add("Interrupt",        SeerKeySetting("Interrupt",        QKeySequence::fromString("Ctrl+I"),       "Interrupt the executing program."));
     keySettings.add("Debug",            SeerKeySetting("Debug",            QKeySequence::fromString("Alt+D"),        "Open the debug dialog."));
     keySettings.add("Arguments",        SeerKeySetting("Arguments",        QKeySequence::fromString("Alt+A"),        "Open the argument dialog."));
     keySettings.add("Quit",             SeerKeySetting("Quit",             QKeySequence::fromString("Alt+Q"),        "Quit Seer."));
