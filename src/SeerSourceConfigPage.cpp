@@ -223,8 +223,8 @@ void SeerSourceConfigPage::reset () {
     setIgnoreDirectories(QStringList());
 
     setMiscFilePatterns(   {"/usr/include/"} );
-    setSourceFilePatterns( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", "*.F90", "*.rs", "*.go"} );
-    setHeaderFilePatterns( {"*.hpp", "*.h"} );
+    setSourceFilePatterns( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", "*.F90", "*.rs", "*.go", "*.ada", "*.adb"} );
+    setHeaderFilePatterns( {"*.hpp", "*.h", "*.ads"} );
 }
 
 void SeerSourceConfigPage::handleAddAlternateButtonClicked () {

@@ -34,8 +34,8 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
 
-    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go"} ); // Default settings.
-    _headerFilePatterns = QStringList( {"*.hpp", "*.h"} );
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb"} ); // Default settings.
+    _headerFilePatterns = QStringList( {"*.hpp", "*.h", "*.ads"} );
     _miscFilePatterns   = QStringList( {"/usr/include/"} );
 
     // Connect things.
