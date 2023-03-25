@@ -1,4 +1,4 @@
-name: ubuntu-latest Developement Build
+name: macos-latest Developement Build
 
 on:
   push:
