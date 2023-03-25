@@ -61,6 +61,17 @@ jobs:
         # Build your program with the given configuration
         run: |
           cd src
-          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel `grep -c processor /proc/cpuinfo`
+          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel 4
 
+      - name: Tar
+        run: |
+          cd src/build
+          cp ../../LICENSE .
+          cp ../../CHANGELOG.md .
+          tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
+
+      - name: List Results
+        run: |
+          cd src
+          ls -l build/
 
