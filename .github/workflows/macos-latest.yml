@@ -75,3 +75,14 @@ jobs:
           cd src
           ls -l build/
 
+      - name: Build MacOS Developement Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          automatic_release_tag: "macos-latest"
+          prerelease: true
+          title: "MacOS Development Release"
+          files: |
+            src/build/seergdb.tar.gz
+
+
