@@ -44,8 +44,7 @@ jobs:
         run: |
           pwd
           ls -l
-          lscpu
-
+          
       - name: Versions
         run: g++ --version
 
