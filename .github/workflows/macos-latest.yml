@@ -57,4 +57,10 @@ jobs:
           cd src
           cmake -B ${{github.workspace}}/src/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
+      - name: Build
+        # Build your program with the given configuration
+        run: |
+          cd src
+          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel `grep -c processor /proc/cpuinfo`
+
 
