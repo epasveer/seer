@@ -1,0 +1,46 @@
+
+-ada-task-info [ task-id ]
+
+
+^done,tasks={
+                nr_rows="3",
+                nr_cols="8",
+                hdr=[
+                     {
+                        width="1",alignment="-1",col_name="current",colhdr=""
+                     },
+                     {
+                        width="3",alignment="1",col_name="id",colhdr="ID"
+                     },
+                     {
+                        width="9",alignment="1",col_name="task-id",colhdr="TID"
+                     },
+                     {
+                        width="4",alignment="1",col_name="thread-id",colhdr=""
+                     },
+                     {
+                        width="4",alignment="1",col_name="parent-id",colhdr="P-ID"
+                     },
+                     {
+                        width="3",alignment="1",col_name="priority",colhdr="Pri"
+                     },
+                     {
+                        width="22",alignment="-1",col_name="state",colhdr="State"
+                     },
+                     {
+                        width="1",alignment="2",col_name="name",colhdr="Name"
+                     }
+                    ],
+                body=[
+                      {
+                          id="1",task-id="45d030",thread-id="1",priority="48",state="Waiting on RV with 2  ",name="main_task"
+                      },
+                      {
+                          current="*",id="2",task-id="45de30",thread-id="2",parent-id="1",priority="48",state="Runnable",name="task_a"
+                      },
+                      {
+                          id="3",task-id="461460",thread-id="3",parent-id="1",priority="48",state="Delay Sleep",name="task_b"
+                      }
+                     ]
+            }
+
