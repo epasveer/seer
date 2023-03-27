@@ -13,11 +13,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5Core         REQUIRED)
-find_package(Qt5Gui          REQUIRED)
-find_package(Qt5Widgets      REQUIRED)
-find_package(Qt5PrintSupport REQUIRED)
-find_package(Qt5Charts       REQUIRED)
+find_package(Qt5 COMPONENTS REQUIRED Core)
+find_package(Qt5 COMPONENTS REQUIRED Gui)
+find_package(Qt5 COMPONENTS REQUIRED Widgets)
+find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
+find_package(Qt5 COMPONENTS REQUIRED Charts)
 
 set(HEADER_FILES
     GdbMonitor.h
