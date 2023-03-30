@@ -738,6 +738,10 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
+        if (newtext == "^error,msg=\"Cannot inspect Ada tasks when program is not running\"") {
+            return;
+        }
+
         // Display the error message.
         QString msg_text = Seer::parseFirst(text, "msg=", false);
 

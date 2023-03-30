@@ -7,7 +7,8 @@
   the Debug dialog for the Run mode. Some apps use deferred loading of code
   with dlopen().
 * Fixed bug when restoring from project file with 'start' mode.
-* Improve visualizers for Ada arrays. "(system.address) 0x7fffffffcf10"
+* ADA: Improve visualizers for Ada arrays. "(system.address) 0x7fffffffcf10"
+* ADA: Add task browser.
 * Add a Shortcut (CTRL-I) to interrupt the running program.
 
 ## [1.15] - 2023-03-04

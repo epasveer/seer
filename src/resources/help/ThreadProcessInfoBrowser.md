@@ -33,7 +33,8 @@ This information is shown for each Thread Id:
 Clicking on a Thread Id will cause Seer to make that Thread Id the active thread. This will in turn cause the Stack Info Browser to refer to that Thread Id.
 
 ### Ids
-Ids is a simplified list ofThread Ids, with no other information. Clicking on a Thread Id will cause Seer to make that Thread Id the active thread. This will in turn cause the Stack Info Browser to refer to that Thread Id.
+Ids is a simplified list of Thread Ids, with no other information. Clicking on a Thread Id will cause Seer to make that Thread Id the active thread.
+This will in turn cause the Stack Info Browser to refer to that Thread Id.
 
 ### Groups
 Groups is a list of Thread Groups. Basically, inferior processes. Most programs are just one inferior, even if they use threads. Program's that use fork and exec will have multiple inferiors.
@@ -47,6 +48,25 @@ This information is shown for each Thread Id:
       Pid               The process id
       Executable        The name and path of the process executable
       Cores             List of cpu cores used by the process
+```
+### AdaTasks
+When debugging an Ada program, this view will show the state of all Ada tasks. Clicking on a Task Id will cause that Task Id to be the active task.
+This will in turn cause the Stack Info Browser to refer to the thread for that Task Id.
+
+This information is shown for each Task Id:
+
+```
+      Column            Description
+      ---------------   ----------------------------------------------
+      Active            The current task that is active
+      Id                The identifier that GDB uses to refer to the Ada task
+      Task Id           The identifier that the target uses to refer to the Ada task
+      Thread Id         The global thread identifier of the thread corresponding to the Ada task
+      Parent Id         This field exists only when the task was created by another task.
+                        In this case, it provides the ID of the parent task
+      Priority          The base priority of the task
+      State             The current state of the task
+      Name              The name of the task
 ```
 ### Scheduler Locking mode
 
@@ -76,5 +96,6 @@ Consult these gdb references
 1. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Threads.html#thread-ID-lists) Listing thread information.
 2. [Link](https://sourceware.org/gdb/onlinedocs/gdb/All_002dStop-Mode.html#All_002dStop-Mode) GDB all-stop mode.
 3. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Forks.html) GDB follow-fork mode.
-3. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Process-Record-and-Replay.html) GDB Record or Replay mode.
+4. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Process-Record-and-Replay.html) GDB Record or Replay mode.
+5. [Link](https://sourceware.org/gdb/download/onlinedocs/gdb/Ada-Tasks.html) Ada tasks.
 

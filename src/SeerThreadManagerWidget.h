@@ -3,6 +3,7 @@
 #include "SeerThreadFramesBrowserWidget.h"
 #include "SeerThreadIdsBrowserWidget.h"
 #include "SeerThreadGroupsBrowserWidget.h"
+#include "SeerAdaTasksBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -19,6 +20,7 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         SeerThreadFramesBrowserWidget*                  threadFramesBrowserWidget           ();
         SeerThreadIdsBrowserWidget*                     threadIdsBrowserWidget              ();
         SeerThreadGroupsBrowserWidget*                  threadGroupsBrowserWidget           ();
+        SeerAdaTasksBrowserWidget*                      adaTasksBrowserWidget               ();
 
     signals:
         void                                            schedulerLockingModeChanged         (const QString& mode);
@@ -52,5 +54,6 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         SeerThreadFramesBrowserWidget*                  _threadFramesBrowserWidget;
         SeerThreadIdsBrowserWidget*                     _threadIdsBrowserWidget;
         SeerThreadGroupsBrowserWidget*                  _threadGroupsBrowserWidget;
+        SeerAdaTasksBrowserWidget*                      _adaTasksBrowserWidget;
 };
 
