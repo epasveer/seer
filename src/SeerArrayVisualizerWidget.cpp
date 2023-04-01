@@ -296,33 +296,63 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
     if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
 
-        // 10^done,value="1"
+        // 11^done,value="1"
         // 11^done,value="0x7fffffffd538"
 
         QString id_text = text.section('^', 0,0);
 
         if (id_text.toInt() == _aVariableId) {
 
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+            QString address    = "";
+
             // Look for an address in the value.
-            QRegExp re("0[xX][0-9a-fA-F]+");
+            if (address == "") {
+                QRegExp re("0[xX][0-9a-fA-F]+");
 
-            re.indexIn(text);
+                re.indexIn(value_text);
 
-            QString address = re.cap();
+                address = re.cap();
+            }
 
-            setAVariableAddress((address == "") ? "not an address" : address);
+            // Look for a number in the value.
+            if (address == "") {
+                QRegExp re("[0-9]+");
+
+                re.indexIn(value_text);
+
+                address = re.cap();
+            }
+
+            // Set the variable address.
+            setAVariableAddress(address);
         }
 
         if (id_text.toInt() == _bVariableId) {
 
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+            QString address    = "";
+
             // Look for an address in the value.
-            QRegExp re("0[xX][0-9a-fA-F]+");
+            if (address == "") {
+                QRegExp re("0[xX][0-9a-fA-F]+");
 
-            re.indexIn(text);
+                re.indexIn(value_text);
 
-            QString address = re.cap();
+                address = re.cap();
+            }
 
-            setBVariableAddress((address == "") ? "not an address" : address);
+            // Look for a number in the value.
+            if (address == "") {
+                QRegExp re("[0-9]+");
+
+                re.indexIn(value_text);
+
+                address = re.cap();
+            }
+
+            // Set the variable address.
+            setBVariableAddress(address);
         }
 
     }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
