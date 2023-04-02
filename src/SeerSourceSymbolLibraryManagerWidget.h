@@ -5,6 +5,7 @@
 #include "SeerTypeBrowserWidget.h"
 #include "SeerStaticBrowserWidget.h"
 #include "SeerLibraryBrowserWidget.h"
+#include "SeerAdaExceptionsBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -23,6 +24,7 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         SeerTypeBrowserWidget*                          typeBrowserWidget               ();
         SeerStaticBrowserWidget*                        staticBrowserWidget             ();
         SeerLibraryBrowserWidget*                       libraryBrowserWidget            ();
+        SeerAdaExceptionsBrowserWidget*                 adaExceptionsBrowserWidget      ();
 
     protected:
         void                                            writeSettings                   ();
@@ -40,5 +42,6 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         SeerTypeBrowserWidget*                          _typeBrowserWidget;
         SeerStaticBrowserWidget*                        _staticBrowserWidget;
         SeerLibraryBrowserWidget*                       _libraryBrowserWidget;
+        SeerAdaExceptionsBrowserWidget*                 _adaExceptionsBrowserWidget;
 };
 

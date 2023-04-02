@@ -73,6 +73,7 @@ set(HEADER_FILES
     SeerThreadIdsBrowserWidget.h
     SeerThreadGroupsBrowserWidget.h
     SeerAdaTasksBrowserWidget.h
+    SeerAdaExceptionsBrowserWidget.h
     SeerThreadManagerWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
@@ -160,6 +161,7 @@ set(SOURCE_FILES
     SeerThreadIdsBrowserWidget.cpp
     SeerThreadGroupsBrowserWidget.cpp
     SeerAdaTasksBrowserWidget.cpp
+    SeerAdaExceptionsBrowserWidget.cpp
     SeerThreadManagerWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp

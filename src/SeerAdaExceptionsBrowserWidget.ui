@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerAdaExceptionsBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerAdaExceptionsBrowserWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>730</width>
+    <height>698</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Ada Exceptions Browser</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0" colspan="2">
+    <widget class="QTreeWidget" name="adaExceptionsTreeWidget">
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QHistoryLineEdit" name="adaExceptionsSearchLineEdit">
+     <property name="toolTip">
+      <string>Search in the list of libraries. &quot;*&quot; is allowed.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

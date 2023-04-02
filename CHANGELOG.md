@@ -8,7 +8,9 @@
   with dlopen().
 * Fixed bug when restoring from project file with 'start' mode.
 * ADA: Improve visualizers for Ada arrays. "(system.address) 0x7fffffffcf10"
-* ADA: Add task browser.
+* ADA: Add Ada task browser.
+* ADA: Add Ada specific catchpoints.
+* ADA: Add Ada exception brower.
 * Add a Shortcut (CTRL-I) to interrupt the running program.
 
 ## [1.15] - 2023-03-04

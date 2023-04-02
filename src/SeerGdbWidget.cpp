@@ -151,6 +151,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->typeBrowserWidget(),                &SeerTypeBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->staticBrowserWidget(),              &SeerStaticBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->libraryBrowserWidget(),             &SeerLibraryBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),       &SeerAdaExceptionsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleText);
@@ -203,6 +204,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->staticBrowserWidget(),         &SeerStaticBrowserWidget::refreshVariableList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableVariables);
     QObject::connect(sourceLibraryManagerWidget->staticBrowserWidget(),         &SeerStaticBrowserWidget::selectedFile,                                                     editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(sourceLibraryManagerWidget->libraryBrowserWidget(),        &SeerLibraryBrowserWidget::refreshLibraryList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableLibraries);
+    QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::refreshAdaExceptions,                                      this,                                                           &SeerGdbWidget::handleGdbAdaListExceptions);
 
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::refreshStackFrames,                                          this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedFrame,                                               this,                                                           &SeerGdbWidget::handleGdbStackSelectFrame);
@@ -259,7 +261,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(threadManagerWidget->threadGroupsBrowserWidget(),          &SeerThreadGroupsBrowserWidget::interruptThreadGroup,                                       this,                                                           &SeerGdbWidget::handleGdbInterruptThreadGroup);
 
     QObject::connect(threadManagerWidget->adaTasksBrowserWidget(),              &SeerAdaTasksBrowserWidget::refreshAdaTasks,                                                this,                                                           &SeerGdbWidget::handleGdbAdaListTasks);
-    QObject::connect(threadManagerWidget->adaTasksBrowserWidget(),              &SeerAdaTasksBrowserWidget::selectedThread,                                                this,                                                            &SeerGdbWidget::handleGdbThreadSelectId);
+    QObject::connect(threadManagerWidget->adaTasksBrowserWidget(),              &SeerAdaTasksBrowserWidget::selectedThread,                                                 this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
 
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::schedulerLockingModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbSchedulerLockingMode);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::scheduleMultipleModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbScheduleMultipleMode);
@@ -1890,7 +1892,16 @@ void SeerGdbWidget::handleGdbAdaListTasks () {
         return;
     }
 
-    handleGdbCommand("-ada-task-info ");
+    handleGdbCommand("-ada-task-info");
+}
+
+void SeerGdbWidget::handleGdbAdaListExceptions () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-info-ada-exceptions");
 }
 
 void SeerGdbWidget::handleGdbRegisterListNames () {

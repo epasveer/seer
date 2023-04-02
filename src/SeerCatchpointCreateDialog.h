@@ -19,6 +19,9 @@ class SeerCatchpointCreateDialog : public QDialog, protected Ui::SeerCatchpointC
         void            setTemporaryEnabled         (bool flag);
         bool            temporaryEnabled            () const;
 
+        void            setDisabledEnabled          (bool flag);
+        bool            disabledEnabled             () const;
+
         void            setNameEnabled              (bool flag);
         bool            nameEnabled                 () const;
 

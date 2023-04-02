@@ -10,7 +10,8 @@ SeerCatchpointCreateDialog::SeerCatchpointCreateDialog (QWidget* parent) : QDial
     setType("");
     setNameText("");
 
-    setTemporaryEnabled (false);
+    setTemporaryEnabled(false);
+    setDisabledEnabled(false);
 
     // Connect things.
 }
@@ -35,6 +36,15 @@ void SeerCatchpointCreateDialog::setType (const QString& text) {
     }else if (text == "unload") {
         unloadRadioButton->setChecked(true);
 
+    }else if (text == "assert") {
+        adaAssertRadioButton->setChecked(true);
+
+    }else if (text == "exception") {
+        adaExceptionRadioButton->setChecked(true);
+
+    }else if (text == "handlers") {
+        adaHandlersRadioButton->setChecked(true);
+
     }else{
         throwRadioButton->setChecked(true);
     }
@@ -57,6 +67,15 @@ QString SeerCatchpointCreateDialog::typeText () const {
     }else if (unloadRadioButton->isChecked()) {
         return "unload";
 
+    }else if (adaAssertRadioButton->isChecked()) {
+        return "assert";
+
+    }else if (adaExceptionRadioButton->isChecked()) {
+        return "exception";
+
+    }else if (adaHandlersRadioButton->isChecked()) {
+        return "handlers";
+
     }else{
         return "throw";
     }
@@ -64,6 +83,10 @@ QString SeerCatchpointCreateDialog::typeText () const {
 
 void SeerCatchpointCreateDialog::setTemporaryEnabled (bool flag) {
     temporaryCheckBox->setChecked(flag);
+}
+
+void SeerCatchpointCreateDialog::setDisabledEnabled (bool flag) {
+    disabledCheckBox->setChecked(flag);
 }
 
 void SeerCatchpointCreateDialog::setNameText (const QString& text) {
@@ -78,6 +101,10 @@ bool SeerCatchpointCreateDialog::temporaryEnabled () const {
     return temporaryCheckBox->isChecked();
 }
 
+bool SeerCatchpointCreateDialog::disabledEnabled () const {
+    return disabledCheckBox->isChecked();
+}
+
 QString SeerCatchpointCreateDialog::catchpointText () const {
 
     // Build a catchpoint specification.
@@ -87,16 +114,40 @@ QString SeerCatchpointCreateDialog::catchpointText () const {
         catchpointParameters += " -t";
     }
 
-    if (typeText() == "load" || typeText() == "unload") { // These don't need a "-r"
+    if (disabledEnabled()) {
+        catchpointParameters += " -d";
+    }
+
+    if (typeText() == "assert") { // Handle Ada 'assert'. Nothing to add here.
+
+    }else if (typeText() == "exception") { // Handle Ada 'exception'.
+
+        if (nameText() != "") {
+            catchpointParameters += " -e " + nameText();
+        }
+
+    }else if (typeText() == "handlers") { // Handle Ada 'handlers'.
+
+        if (nameText() != "") {
+            catchpointParameters += " -e " + nameText();
+        }
+
+    }else if (typeText() == "load") { // Handle library 'load'. Must have a name.
+
         catchpointParameters += " " + nameText();
 
-    }else{  // These do, but only if there is a name.
+    }else if (typeText() == "unload") { // Handle library 'unload'. Must have a name.
+
+        catchpointParameters += " " + nameText();
+
+    }else{  // C++ throw, rethrow, catch. These require '-r', but only if there is a name.
+
         if (nameText() != "") {
             catchpointParameters += " -r " + nameText();
         }
     }
 
-    //qDebug() << catchpointParameters;
+    // qDebug() << catchpointParameters;
 
     return catchpointParameters;
 }

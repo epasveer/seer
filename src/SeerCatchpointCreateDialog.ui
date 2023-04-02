@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>304</height>
+    <width>537</width>
+    <height>297</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,16 @@
         </attribute>
        </widget>
       </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="adaAssertRadioButton">
+        <property name="text">
+         <string>Catch on Ada 'assert'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QRadioButton" name="rethrowRadioButton">
         <property name="text">
@@ -60,10 +70,30 @@
         </attribute>
        </widget>
       </item>
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="adaExceptionRadioButton">
+        <property name="text">
+         <string>Catch on Ada 'exception'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
       <item row="2" column="0">
        <widget class="QRadioButton" name="catchRadioButton">
         <property name="text">
          <string>Catch on 'catch'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QRadioButton" name="adaHandlersRadioButton">
+        <property name="text">
+         <string>Catch on Ada 'handlers'</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">typeButtonGroup</string>
@@ -80,11 +110,41 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="temporaryCheckBox">
-        <property name="text">
-         <string>Temporary</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="temporaryCheckBox">
+          <property name="toolTip">
+           <string>Create a temporary catchpoint.</string>
+          </property>
+          <property name="text">
+           <string>Temporary</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="disabledCheckBox">
+          <property name="toolTip">
+           <string>Create a disabled catchpoint.</string>
+          </property>
+          <property name="text">
+           <string>Disabled</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="nameLabel">
