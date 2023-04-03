@@ -1,4 +1,5 @@
 #include "SeerAdaExceptionsBrowserWidget.h"
+#include "SeerCatchpointCreateDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
@@ -22,6 +23,7 @@ SeerAdaExceptionsBrowserWidget::SeerAdaExceptionsBrowserWidget (QWidget* parent)
 
     // Connect things.
     QObject::connect(adaExceptionsSearchLineEdit, &QLineEdit::textChanged,            this,  &SeerAdaExceptionsBrowserWidget::handleSearchLineEdit);
+    QObject::connect(addCatchpointToolButton,     &QToolButton::clicked,              this,  &SeerAdaExceptionsBrowserWidget::handleAddCatchpointToolButtonClicked);
 }
 
 SeerAdaExceptionsBrowserWidget::~SeerAdaExceptionsBrowserWidget () {
@@ -146,6 +148,35 @@ void SeerAdaExceptionsBrowserWidget::handleSearchLineEdit (const QString& text) 
 
     adaExceptionsTreeWidget->resizeColumnToContents(0);
     adaExceptionsTreeWidget->resizeColumnToContents(1);
+}
+
+void SeerAdaExceptionsBrowserWidget::handleAddCatchpointToolButtonClicked () {
+
+    SeerCatchpointCreateDialog dlg(this);
+    dlg.setType("exception");
+
+    QTreeWidgetItem* item = adaExceptionsTreeWidget->currentItem();
+
+    if (item != 0) {
+        dlg.setNameText(item->text(0));
+    }
+
+    int ret = dlg.exec();
+
+    if (ret == 0) {
+        return;
+    }
+
+    // Build a catchpoint specification.
+    QString catchpointParameters = dlg.catchpointText();
+
+    // If nothing, just return.
+    if (catchpointParameters == "") {
+        return;
+    }
+
+    // Otherwise send the command to create the catchpoint.
+    emit insertCatchpoint(catchpointParameters);
 }
 
 void SeerAdaExceptionsBrowserWidget::refresh () {

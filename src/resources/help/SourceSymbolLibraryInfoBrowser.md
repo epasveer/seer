@@ -11,6 +11,7 @@ Seer presents this information in three tabs:
 * Types
 * Statics
 * Libraries
+* Ada exceptions
 
 ### Source
 
@@ -30,7 +31,7 @@ Source files can be searched for using an Unix style wildcard. This will limit t
 
 ### Functions
 
-This browser list all the functions that match a Regex wildcard the program being debugged uses.
+This browser lists all the functions that match a Regex wildcard the program being debugged uses.
 
 This information is shown for each Function:
 ```
@@ -47,7 +48,7 @@ Double-clicking on an entry will load the source file in the Code Manager.
 
 ### Types
 
-This browser list all the class/struct types that match a Regex wildcard the program being debugged uses.
+This browser lists all the class/struct types that match a Regex wildcard the program being debugged uses.
 
 This information is shown for each Type:
 ```
@@ -62,7 +63,7 @@ Double-clicking on an entry will load the source file in the Code Manager.
 
 ### Statics
 
-This browser list all the static variables that match a Regex wildcard the program being debugged uses.
+This browser lists all the static variables that match a Regex wildcard the program being debugged uses.
 
 This information is shown for each Static:
 ```
@@ -79,7 +80,7 @@ Double-clicking on an entry will load the source file in the Code Manager.
 
 ### Libraries
 
-This browser list all the shared libraries that match a Regex wildcard the program being debugged uses.
+This browser lists all the shared libraries that match a Regex wildcard the program being debugged uses.
 
 This information is shown for each Library:
 ```
@@ -92,6 +93,21 @@ This information is shown for each Library:
       Thread Group      Which thread group is this entry for.
       Ranges            Memory range where the shared library is loaded.
 ```
+### Ada exceptions
+
+This browser lists all the Ada exceptions that match a Regex wildcard the program being debugged uses.
+The program must be an Ada program.
+
+This information is shown for each exception:
+```
+      Column            Description
+      ----------        -------------------------------------------------
+      Name              The name of the exception.
+      Address           The address of the exception.
+```
+There is a button to quickly create a catchpoint for a selected exception. Once created, Seer will
+stop the program when the exception is raised.
+
 ### References
 
 Consult these references
