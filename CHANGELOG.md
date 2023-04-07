@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [1.16beta] - 2023-??-??
+## [1.16] - 2023-04-07
 * Add pid to main window and console title bars.
 * The Pending flag is automatically supplied to the breakpoint function in
   the Debug dialog for the Run mode. Some apps use deferred loading of code
