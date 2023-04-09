@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [1.17beta] - 2023-??-??
+* Add a dialog when a breakpoint is reached.
+
 ## [1.16] - 2023-04-07
 * Add pid to main window and console title bars.
 * The Pending flag is automatically supplied to the breakpoint function in

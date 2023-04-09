@@ -884,6 +884,15 @@ void SeerMainWindow::handleText (const QString& text) {
 
             QMessageBox::warning(this, "Warning.", "Program encountered a '" + signalname_text + "' signal.");
 
+        }else if (reason_text == "breakpoint-hit") {
+
+            QString bkptno_text = Seer::parseFirst(text, "bkptno=", '"', '"', false);
+            QString disp_text   = Seer::parseFirst(text, "disp=",   '"', '"', false);
+
+            if (disp_text != "del") {
+                QMessageBox::information(this, "Note.", "Program reached breakpoint '" + bkptno_text + "'.");
+            }
+
         }else if (reason_text == "watchpoint-trigger") {
             //*stopped,reason="watchpoint-trigger",wpt={number="3",exp="i"},value={old="32767",new="42"},frame={addr="0x0000000000400d79",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="9",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="0"
 
