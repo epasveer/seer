@@ -1,0 +1,66 @@
+
+-info-ada-exceptions
+
+^done,ada-exceptions={
+                        nr_rows="16",
+                        nr_cols="2",
+                        hdr=[
+                             {
+                                 width="1",alignment="-1",col_name="name",colhdr="Name"
+                             },
+                             {
+                                 width="1",alignment="-1",col_name="address",colhdr="Address"
+                             }
+                            ],
+                        body=[
+                             {
+                                 name="constraint_error",address="0x000000000042c9a0"
+                             },
+                             {
+                                 name="program_error",address="0x000000000042c920"
+                             },
+                             {
+                                 name="storage_error",address="0x000000000042c8e0"
+                             },
+                             {
+                                 name="tasking_error",address="0x000000000042c8a0"
+                             },
+                             {
+                                 name="<_abort_signal>",address="0x000000000042c860"
+                             },
+                             {
+                                 name="ada.io_exceptions.data_error",address="0x000000000042c3e0"
+                             },
+                             {
+                                 name="ada.io_exceptions.device_error",address="0x000000000042c460"
+                             },
+                             {
+                                 name="ada.io_exceptions.end_error",address="0x000000000042c420"
+                             },
+                             {
+                                 name="ada.io_exceptions.layout_error",address="0x000000000042c3a0"
+                             },
+                             {
+                                 name="ada.io_exceptions.mode_error",address="0x000000000042c520"
+                             },
+                             {
+                                 name="ada.io_exceptions.name_error",address="0x000000000042c4e0"
+                             },
+                             {
+                                 name="ada.io_exceptions.status_error",address="0x000000000042c560"
+                             },
+                             {
+                                 name="ada.io_exceptions.use_error",address="0x000000000042c4a0"
+                             },
+                             {
+                                 name="ada.tags.tag_error",address="0x000000000042c5c0"
+                             },
+                             {
+                                 name="interfaces.c.terminator_error",address="0x000000000042c660"
+                             },
+                             {
+                                 name="system.exceptions.foreign_exception",address="0x000000000042c6a0"
+                             }
+                            ]
+                     }
+
