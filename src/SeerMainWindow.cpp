@@ -889,7 +889,9 @@ void SeerMainWindow::handleText (const QString& text) {
             QString bkptno_text = Seer::parseFirst(text, "bkptno=", '"', '"', false);
             QString disp_text   = Seer::parseFirst(text, "disp=",   '"', '"', false);
 
-            if (disp_text != "del") {
+            if (disp_text == "del") {
+                QMessageBox::information(this, "Note.", "Program reached temporary breakpoint '" + bkptno_text + "'.");
+            }else{
                 QMessageBox::information(this, "Note.", "Program reached breakpoint '" + bkptno_text + "'.");
             }
 
