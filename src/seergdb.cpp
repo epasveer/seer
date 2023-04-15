@@ -27,7 +27,7 @@ int main (int argc, char* argv[]) {
 
     QCoreApplication::setApplicationName("seergdb");
     QCoreApplication::setOrganizationName("seergdb");
-    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021");
+    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2023");
 
     //
     // Parse arguments.
@@ -69,6 +69,9 @@ int main (int argc, char* argv[]) {
 
     QCommandLineOption connectOption(QStringList()<<"connect", QCoreApplication::translate("main", "Connect to a running process with gdbserver (local or remote). Manually start gdbserver first.\nPossible connection mediums are:\n    host:port\n    /dev/<serialdev>"), "medium");
     parser.addOption(connectOption);
+
+    QCommandLineOption rrOption(QStringList()<<"rr", QCoreApplication::translate("main", "Connect to a running 'rr replay -s <port> -k' session."), "port");
+    parser.addOption(rrOption);
 
     QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
     parser.addOption(corefileOption);
@@ -113,7 +116,8 @@ int main (int argc, char* argv[]) {
     QString launchMode    = "none";
     QString breakMode     = "none";
     int     executablePid = -1;
-    QString executableHostPort;
+    QString executableConnectHostPort;
+    QString executableRRHostPort;
     QString executableSymbolFilename;
     QString executableBreakpointsFilename;
     QString executableBreakpointFunctionName;
@@ -169,7 +173,13 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(connectOption)) {
         launchMode = "connect";
 
-        executableHostPort = parser.value(connectOption);
+        executableConnectHostPort = parser.value(connectOption);
+    }
+
+    if (parser.isSet(rrOption)) {
+        launchMode = "rr";
+
+        executableRRHostPort = parser.value(rrOption);
     }
 
     if (parser.isSet(corefileOption)) {
@@ -247,7 +257,8 @@ int main (int argc, char* argv[]) {
     }
 
     seer.setExecutablePid(executablePid);
-    seer.setExecutableHostPort(executableHostPort);
+    seer.setExecutableConnectHostPort(executableConnectHostPort);
+    seer.setExecutableRRHostPort(executableRRHostPort);
     seer.setExecutableCoreFilename(executableCoreFilename);
     seer.setProjectFilename(projectFilename);
 

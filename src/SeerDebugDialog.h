@@ -53,6 +53,10 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    setConnectHostPort                              (const QString& connectHostPort);
         QString                 connectHostPort                                 () const;
 
+        // Connectect to a RR server. "rr".
+        void                    setRRHostPort                                   (const QString& rrHostPort);
+        QString                 rrHostPort                                      () const;
+
         // Load a core file. "corefile".
         void                    setCoreFilename                                 (const QString& coreFilename);
         QString                 coreFilename                                    () const;
@@ -83,6 +87,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleHelpRunToolButtonClicked                  ();
         void                    handleHelpAttachToolButtonClicked               ();
         void                    handleHelpConnectToolButtonClicked              ();
+        void                    handleHelpRRToolButtonClicked                   ();
         void                    handleHelpCorefileToolButtonClicked             ();
 
     protected:

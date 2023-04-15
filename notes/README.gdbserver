@@ -21,3 +21,24 @@ Notes:
     o Execuable name is useless.
     o Symbol name is optional.
 
+Notes (2);
+
+    This will automatically stop in _start.  Setting a breakpoint in 'main' from the gdb entry field
+    will not refresh the breakpoint list. However, this message is sent. So maybe it can be refreshed.
+
+        =breakpoint-created,bkpt={
+                                    number="1",
+                                    type="breakpoint",
+                                    disp="keep",
+                                    enabled="y",
+                                    addr="0x0000000000400c12",
+                                    func="main(int, char**)",
+                                    file="hellosegv.cpp",
+                                    fullname="/nas/erniep/Development/seer/tests/hellosegv/hellosegv.cpp",
+                                    line="7",
+                                    thread-groups=["i1"],
+                                    times="0",
+                                    original-location="main"
+                                 }
+        ^done
+

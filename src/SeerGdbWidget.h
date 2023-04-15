@@ -50,8 +50,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutablePid                    (int pid);
         int                                 executablePid                       () const;
 
-        void                                setExecutableHostPort               (const QString& hostPort);
-        const QString&                      executableHostPort                  () const;
+        void                                setExecutableConnectHostPort        (const QString& connectHostPort);
+        const QString&                      executableConnectHostPort           () const;
+
+        void                                setExecutableRRHostPort             (const QString& rrHostPort);
+        const QString&                      executableRRHostPort                () const;
 
         void                                setExecutableCoreFilename           (const QString& coreFilename);
         const QString&                      executableCoreFilename              () const;
@@ -190,6 +193,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbRunExecutable              (const QString& breakMode);
         void                                handleGdbAttachExecutable           ();
         void                                handleGdbConnectExecutable          ();
+        void                                handleGdbRRExecutable               ();
         void                                handleGdbCoreFileExecutable         ();
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -356,7 +360,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointsFilename;
         QString                             _executableBreakpointFunctionName;
         int                                 _executablePid;
-        QString                             _executableHostPort;
+        QString                             _executableConnectHostPort;
+        QString                             _executableRRHostPort;
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;

@@ -315,12 +315,20 @@ int SeerMainWindow::executablePid () const {
     return gdbWidget->executablePid();
 }
 
-void SeerMainWindow::setExecutableHostPort (const QString& executableHostPort) {
-    gdbWidget->setExecutableHostPort(executableHostPort);
+void SeerMainWindow::setExecutableConnectHostPort (const QString& executableConnectHostPort) {
+    gdbWidget->setExecutableConnectHostPort(executableConnectHostPort);
 }
 
-const QString& SeerMainWindow::executableHostPort () const {
-    return gdbWidget->executableHostPort();
+const QString& SeerMainWindow::executableConnectHostPort () const {
+    return gdbWidget->executableConnectHostPort();
+}
+
+void SeerMainWindow::setExecutableRRHostPort (const QString& executableRRHostPort) {
+    gdbWidget->setExecutableRRHostPort(executableRRHostPort);
+}
+
+const QString& SeerMainWindow::executableRRHostPort () const {
+    return gdbWidget->executableRRHostPort();
 }
 
 void SeerMainWindow::setExecutableCoreFilename (const QString& executableCoreFilename) {
@@ -388,6 +396,13 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
         gdbWidget->handleGdbConnectExecutable();
 
+    }else if (launchMode == "rr") {
+
+        actionGdbRun->setVisible(false);
+        actionGdbStart->setVisible(false);
+
+        gdbWidget->handleGdbRRExecutable();
+
     }else if (launchMode == "corefile") {
 
         actionGdbRun->setVisible(false);
@@ -443,7 +458,8 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
-    dlg.setConnectHostPort(executableHostPort());
+    dlg.setConnectHostPort(executableConnectHostPort());
+    dlg.setRRHostPort(executableRRHostPort());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
     dlg.setBreakpointMode(executableBreakMode());
@@ -476,7 +492,8 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
-    setExecutableHostPort(dlg.connectHostPort());
+    setExecutableConnectHostPort(dlg.connectHostPort());
+    setExecutableRRHostPort(dlg.rrHostPort());
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());
@@ -990,7 +1007,7 @@ void SeerMainWindow::handleRunStatusChanged (SeerRunStatusIndicator::RunStatus s
 
 void SeerMainWindow::handleRecordSettingsChanged () {
 
-    if (gdbWidget->gdbRecordMode() == "stop") {
+    if (gdbWidget->gdbRecordMode() == "stop" || gdbWidget->gdbRecordMode() == "") {
 
         // Menu Control
         actionControlRecordStart->setEnabled(true);
@@ -1002,6 +1019,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Record");
+        actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(false);
         actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
 
@@ -1034,6 +1052,39 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Recording");
+        actionRecordProcess->setEnabled(true);
+        actionRecordDirection->setEnabled(true);
+
+    }else if (gdbWidget->gdbRecordMode() == "rr") {
+
+        // Menu Control
+        actionControlRecordStart->setEnabled(false);
+        actionControlRecordStop->setEnabled(false);
+        actionControlRecordForward->setEnabled(true);
+        actionControlRecordReverse->setEnabled(true);
+
+        if (gdbWidget->gdbRecordDirection() == "") {
+
+            actionControlRecordForward->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+        }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
+
+            actionControlRecordReverse->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-previous.svg"));
+
+        }else{
+
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(false);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+            qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
+        }
+
+        // Toolbar
+        actionRecordProcess->setText("RR");
+        actionRecordProcess->setEnabled(false);
         actionRecordDirection->setEnabled(true);
 
     }else{

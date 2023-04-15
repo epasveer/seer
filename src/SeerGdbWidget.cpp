@@ -36,7 +36,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableWorkingDirectory         = "";
     _executableBreakpointsFilename      = "";
     _executableBreakpointFunctionName   = "";
-    _executableHostPort                 = "";
+    _executableConnectHostPort          = "";
+    _executableRRHostPort               = "";
     _executableCoreFilename             = "";
     _executablePid                      = 0;
 
@@ -424,12 +425,20 @@ int SeerGdbWidget::executablePid () const {
     return _executablePid;
 }
 
-void SeerGdbWidget::setExecutableHostPort (const QString& hostPort) {
-    _executableHostPort = hostPort;
+void SeerGdbWidget::setExecutableConnectHostPort (const QString& connectHostPort) {
+    _executableConnectHostPort = connectHostPort;
 }
 
-const QString& SeerGdbWidget::executableHostPort () const {
-    return _executableHostPort;
+const QString& SeerGdbWidget::executableConnectHostPort () const {
+    return _executableConnectHostPort;
+}
+
+void SeerGdbWidget::setExecutableRRHostPort (const QString& rrHostPort) {
+    _executableRRHostPort = rrHostPort;
+}
+
+const QString& SeerGdbWidget::executableRRHostPort () const {
+    return _executableRRHostPort;
 }
 
 void SeerGdbWidget::setExecutableCoreFilename (const QString& coreFilename) {
@@ -1024,20 +1033,12 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         deleteConsole();
     }
 
-    //qDebug() << "Starting GdbConnect.";
-
     // If gdb isn't running, start it.
     if (isGdbRuning() == false) {
 
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableHostPort()).arg(QGuiApplication::applicationPid()));
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableConnectHostPort()).arg(QGuiApplication::applicationPid()));
 
         startGdb();
-
-        /* Do not use for 'connect' mode. Possible too quick for a gdbserver/vdbg.
-        if (gdbAsyncMode()) {
-            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
-        }
-        */
     }
 
     // Set dprint parameters.
@@ -1048,7 +1049,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     setExecutablePid(0);
 
     // Connect to the remote gdbserver.
-    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableHostPort()));
+    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
@@ -1079,12 +1080,75 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     handleGdbExecutablePostCommands();
 
     QApplication::restoreOverrideCursor();
+}
 
-    //qDebug() << "Finishing GdbConnect.";
+void SeerGdbWidget::handleGdbRRExecutable () {
 
-    // "-file-symbol-file %s"
-    // "-file-exec-file %s"
-    // "-target-download"
+    // Has a executable name been provided?
+    if (executableName() != "") {
+
+        QMessageBox::warning(this, "Seer",
+                                   QString("The executable name can't be provided for 'rr' mode."),
+                                   QMessageBox::Ok);
+        return;
+    }
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    // Delete the old gdb and console if there is a new executable
+    if (newExecutableFlag() == true) {
+        killGdb();
+        disconnectConsole();
+        deleteConsole();
+    }
+
+    // If gdb isn't running, start it.
+    if (isGdbRuning() == false) {
+
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
+
+        startGdb();
+    }
+
+    // Set dprint parameters.
+    resetDprintf();
+
+    // No console for 'connect' mode.
+    setExecutableLaunchMode("rr");
+    setExecutablePid(0);
+
+    // Connect to the remote gdbserver.
+    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableRRHostPort()));
+
+    // Load ithe executable, if needed.
+    if (newExecutableFlag() == true) {
+        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+        handleGdbExecutableName();              // Load the program into the gdb process.
+        handleGdbExecutableSources();           // Load the program source files.
+        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+        setNewExecutableFlag(false);
+    }
+
+    // Set or reset some things.
+    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+    if (assemblyShowAssemblyTabOnStartup()) {
+        editorManager()->showAssembly();
+    }
+
+    if (gdbHandleTerminatingException()) {
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+    }else{
+        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+    }
+
+    // Run any 'post' commands after program is loaded.
+    handleGdbExecutablePostCommands();
+
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbCoreFileExecutable () {
@@ -1263,6 +1327,11 @@ void SeerGdbWidget::handleGdbRecordStart () {
         return;
     }
 
+    if (executableLaunchMode() == "rr") {
+        QMessageBox::warning(this, "Seer", QString("Record 'Start' not available in RR mode."), QMessageBox::Ok);
+        return;
+    }
+
     setGdbRecordMode("full");
     setGdbRecordDirection("");
 }
@@ -1270,6 +1339,11 @@ void SeerGdbWidget::handleGdbRecordStart () {
 void SeerGdbWidget::handleGdbRecordStop () {
 
     if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (executableLaunchMode() == "rr") {
+        QMessageBox::warning(this, "Seer", QString("Record 'Stop' not available in RR mode."), QMessageBox::Ok);
         return;
     }
 

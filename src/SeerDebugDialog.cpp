@@ -34,6 +34,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setNonStopMode(false);
     setAttachPid(0);
     setConnectHostPort("");
+    setRRHostPort("");
     setCoreFilename("");
     setProjectFilename("");
 
@@ -72,6 +73,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpRunToolButton,                    &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRunToolButtonClicked);
     QObject::connect(helpAttachToolButton,                 &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpAttachToolButtonClicked);
     QObject::connect(helpConnectToolButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpConnectToolButtonClicked);
+    QObject::connect(helpRRToolButton,                     &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRRToolButtonClicked);
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
@@ -251,6 +253,14 @@ QString SeerDebugDialog::connectHostPort () const {
     return connectProgramHostPortLineEdit->text();
 }
 
+void SeerDebugDialog::setRRHostPort (const QString& rrHostPort) {
+    rrHostPortLineEdit->setText(rrHostPort);
+}
+
+QString SeerDebugDialog::rrHostPort () const {
+    return rrHostPortLineEdit->text();
+}
+
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
     if (mode == "start") {
@@ -273,9 +283,13 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
         runModeTabWidget->setCurrentIndex(2);
 
-    }else if (mode == "corefile") {
+    }else if (mode == "rr") {
 
         runModeTabWidget->setCurrentIndex(3);
+
+    }else if (mode == "corefile") {
+
+        runModeTabWidget->setCurrentIndex(4);
 
     }else if (mode == "") {
 
@@ -312,6 +326,10 @@ QString SeerDebugDialog::launchMode () const {
         return "connect";
 
     }else if (runModeTabWidget->currentIndex() == 3) {
+
+        return "rr";
+
+    }else if (runModeTabWidget->currentIndex() == 4) {
 
         return "corefile";
     }
@@ -438,6 +456,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     QJsonObject   startModeJson;
     QJsonObject   attachModeJson;
     QJsonObject   connectModeJson;
+    QJsonObject   rrModeJson;
     QJsonObject   corefileModeJson;
     QJsonArray    preConnectCommands;
     QJsonArray    postConnectCommands;
@@ -453,6 +472,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     startModeJson       = seerProjectJson.value("startmode").toObject();
     attachModeJson      = seerProjectJson.value("attachmode").toObject();
     connectModeJson     = seerProjectJson.value("connectmode").toObject();
+    rrModeJson          = seerProjectJson.value("rrmode").toObject();
     corefileModeJson    = seerProjectJson.value("corefilemode").toObject();
     preConnectCommands  = seerProjectJson.value("pregdbcommands").toArray();
     postConnectCommands = seerProjectJson.value("postgdbcommands").toArray();
@@ -552,6 +572,14 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
         connectProgramHostPortLineEdit->setText(connectModeJson["gdbserver"].toString());
 
         setLaunchMode("connect");
+    }
+
+    // Load RR project.
+    if (rrModeJson.isEmpty() == false) {
+
+        connectProgramHostPortLineEdit->setText(rrModeJson["rrserver"].toString());
+
+        setLaunchMode("rr");
     }
 
     // Load COREFILE project.
@@ -657,6 +685,16 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         seerProjectJson["connectmode"] = modeJson;
     }
 
+    // Save RR project.
+    if (launchMode() == "rr") {
+
+        QJsonObject modeJson;
+
+        modeJson["rrserver"]           = rrHostPortLineEdit->text();
+
+        seerProjectJson["rrmode"]      = modeJson;
+    }
+
     // Save COREFILE project.
     if (launchMode() == "corefile") {
 
@@ -734,8 +772,16 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }
 
-    // ID == 3   COREFILE
+    // ID == 3   RR
     if (id == 3) {
+        executableSymbolNameLineEdit->setEnabled(true);
+        executableSymbolNameToolButton->setEnabled(true);
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
+    }
+
+    // ID == 4   COREFILE
+    if (id == 4) {
         executableNameLineEdit->setEnabled(true);
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
@@ -773,6 +819,14 @@ void SeerDebugDialog::handleHelpConnectToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/ConnectDebugMode.md");
+    help->show();
+    help->raise();
+}
+
+void SeerDebugDialog::handleHelpRRToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/RRDebugMode.md");
     help->show();
     help->raise();
 }
