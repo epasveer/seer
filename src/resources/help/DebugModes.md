@@ -6,6 +6,7 @@ Seer supports most debugging modes that gdb provides. These are:
 * Starting and running a program
 * Attaching to a local process on the system
 * Connecting to a gdbserver
+* Connecting to a RR replay session
 * Loading a corefile leftover from a program that crashed
 
 ### What can you do?

@@ -776,8 +776,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
-        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
-        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR connect\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR connect\"");
     }
 
     // ID == 4   COREFILE

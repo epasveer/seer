@@ -856,6 +856,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,asm_insns=[")) {
         return;
 
+    }else if (text.startsWith("^done,ada-exceptions={") && text.endsWith("}")) {
+        return;
+
     }else if (text.contains(QRegExp("^([0-9]+)\\^done"))) {
         return;
 
@@ -1084,7 +1087,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("RR");
-        actionRecordProcess->setEnabled(false);
+        actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
     }else{

@@ -58,7 +58,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
     _gdbEnablePrettyPrinting            = true;
-    _gdbRecordMode                      = "stop";
+    _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
     _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
@@ -551,7 +551,9 @@ void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
 
     _gdbRecordMode = mode;
 
-    handleGdbCommand("record " + gdbRecordMode());
+    if (mode != "rr" && mode != "") {
+        handleGdbCommand("record " + gdbRecordMode());
+    }
 
     emit recordSettingsChanged();
 }
@@ -862,6 +864,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     connectConsole();
 
     setExecutableLaunchMode("run");
+    setGdbRecordMode("");
     setExecutablePid(0);
 
     // Load ithe executable, if needed.
@@ -978,6 +981,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
     // No console for 'attach' mode.
     setExecutableLaunchMode("attach");
+    setGdbRecordMode("");
 
     // Load ithe executable, if needed.
     if (newExecutableFlag() == true) {
@@ -1046,6 +1050,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     // No console for 'connect' mode.
     setExecutableLaunchMode("connect");
+    setGdbRecordMode("");
     setExecutablePid(0);
 
     // Connect to the remote gdbserver.
@@ -1115,6 +1120,7 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
     // No console for 'connect' mode.
     setExecutableLaunchMode("rr");
+    setGdbRecordMode("rr");
     setExecutablePid(0);
 
     // Connect to the remote gdbserver.
@@ -1200,6 +1206,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
     // No console for 'core' mode.
     setExecutableLaunchMode("corefile");
+    setGdbRecordMode("");
     setExecutablePid(0);
 
     if (newExecutableFlag() == true) {
@@ -1236,6 +1243,7 @@ void SeerGdbWidget::handleGdbShutdown () {
 
     // We are in no mode now.
     setExecutableLaunchMode("");
+    setGdbRecordMode("");
 
     // Give the gdb and 'exit' command.
     // This should handle detaching from an attached pid.
@@ -1363,7 +1371,7 @@ void SeerGdbWidget::handleGdbRecordReverse () {
 
 void SeerGdbWidget::handleGdbRecordStartStopToggle () {
 
-    if (gdbRecordMode() == "stop") {
+    if (gdbRecordMode() == "stop" || gdbRecordMode() == "") {
 
         setGdbRecordMode("full");
         setGdbRecordDirection("");
@@ -1372,6 +1380,10 @@ void SeerGdbWidget::handleGdbRecordStartStopToggle () {
 
         setGdbRecordMode("stop");
         setGdbRecordDirection("");
+
+    }else if (gdbRecordMode() == "rr") {
+
+        // Don't do anthing.
 
     }else{
 
@@ -2840,6 +2852,7 @@ void SeerGdbWidget::killGdb () {
 
     // Clear the launch mode.
     setExecutableLaunchMode("");
+    setGdbRecordMode("");
 
     // Kill the process.
     _gdbProcess->kill();

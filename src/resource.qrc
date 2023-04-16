@@ -66,6 +66,7 @@
     <file>resources/help/RunDebugMode.md</file>
     <file>resources/help/AttachDebugMode.md</file>
     <file>resources/help/ConnectDebugMode.md</file>
+    <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
   </qresource>
 </RCC>

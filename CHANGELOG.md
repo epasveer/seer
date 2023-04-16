@@ -3,6 +3,7 @@
 
 ## [1.17beta] - 2023-??-??
 * Add a dialog when a breakpoint is reached.
+* Add support for the RR debugger.  (seergdb --rr host:port)
 
 ## [1.16] - 2023-04-07
 * Add pid to main window and console title bars.
