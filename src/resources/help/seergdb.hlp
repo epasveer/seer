@@ -1,0 +1,48 @@
+Usage: seergdb [LAUNCHOPTIONS] [MISCOPTIONS] executable [arguments ...]
+
+Seer - A gui frontend for gdb.
+
+  -h, --help                                 Displays help on commandline options.
+  -v, --version                              Displays version information.
+
+
+Launch Options (pick one):
+
+  -r, --run                                  Load the executable and run it.
+
+  -s, --start                                Load the executable, break in "main", and run it.
+
+  --attach <pid>                             Attach to a locally running process.
+
+  --connect <medium>                         Connect to an already running gdbserver (local or remote).
+                                             Possible connection mediums are:
+
+                                                host:port
+                                                /dev/<serialdev>
+
+  --rr <host:port>                           Connect to an already running 'rr replay -s <port> -k' session.
+
+  --core <corefile>                          Load a corefile.
+
+  --project <project>                        Launch using a Seer project.
+
+  --config                                   Launch with Seer's config dialog.
+                                             Save settings with: 'Settings->Save Configuration'
+
+Misc Options:
+
+  --sym, --symbol-file <symbolfilename>      Load symbols from a separate file than the executable.
+  --bl, --break-load <filename>              Load a previously saved breakpoints file. For --run or --start
+  --bf, --break-function <function>          Set a breakpoint in a function/address. For --run or --start
+  --sat, --show-assembly-tab <yes|no>        Show the Assembly Tab on Seer startup. For --run or --start
+  --sar, --start-address-randomize <yes|no>  Randomize the program's starting address. For --run or --start
+  --nsm, --non-stop-mode <yes|no>            Continue to run other threads at breakpoints. For --run or --start
+  --xxx                                      Turn on internal Seer debugging messages.
+
+
+Arguments:
+
+  executable                                 The executable to debug. Needed for all run modes.
+  arguments                                  Arguments for the executable.
+                                             Needed for --run and --start.
+

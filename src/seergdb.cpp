@@ -6,7 +6,30 @@
 #include <QtCore/QCommandLineOption>
 #include <QtCore/QStringList>
 #include <QtCore/QString>
+#include <QtCore/QTextStream>
+#include <QtCore/QObject>
 #include <QtCore/QDebug>
+#include <iostream>
+
+static void seerhelp() {
+
+    QString text;
+    QString fileName(":/seer/resources/help/seergdb.hlp");
+
+    QFile file(fileName);
+
+    if (file.open(QIODevice::ReadOnly) == false) {
+        text = "seer: no help available.\n";
+    }else{
+        text = file.readAll();
+    }
+
+    file.close();
+
+    QTextStream(stdout) << text;
+
+    exit(0);
+}
 
 int main (int argc, char* argv[]) {
 
@@ -36,63 +59,69 @@ int main (int argc, char* argv[]) {
     parser.setApplicationDescription("\nSeer - A gui frontend for gdb.");
     parser.setOptionsAfterPositionalArgumentsMode(QCommandLineParser::ParseAsPositionalArguments); // Treat all arguments after the executable name as positional arguments too.
     parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions); // Treat all arguments long options.
-    parser.addHelpOption();
     parser.addVersionOption();
 
     // Run or start options.
-    QCommandLineOption runOption(QStringList()<<"r"<<"run", QCoreApplication::translate("main", "Load the executable and run it."));
+    QCommandLineOption runOption(QStringList() << "r" << "run");
     parser.addOption(runOption);
 
-    QCommandLineOption startOption(QStringList()<<"s"<<"start", QCoreApplication::translate("main", "Load the executable, break in \"main\", and run it."));
+    QCommandLineOption startOption(QStringList() << "s" << "start");
     parser.addOption(startOption);
 
-    QCommandLineOption symbolfileOption(QStringList()<<"sym"<<"symbol-file", QCoreApplication::translate("main", "Load symbols from a separate file than the executable."), "symbolfilename");
-    parser.addOption(symbolfileOption);
-
-    QCommandLineOption breakfileOption(QStringList()<<"bl"<<"break-load", QCoreApplication::translate("main", "Load a previously saved breakpoints file. For --run or --start"), "filename");
-    parser.addOption(breakfileOption);
-
-    QCommandLineOption breakfunctionOption(QStringList()<<"bf"<<"break-function", QCoreApplication::translate("main", "Set a breakpoint in a function/address. For --run or --start"), "function");
-    parser.addOption(breakfunctionOption);
-
-    QCommandLineOption showAssemblyTabOption(QStringList()<<"sat"<<"show-assembly-tab", QCoreApplication::translate("main", "Show the Assembly Tab on Seer startup. For --run or --start"), "yes|no");
-    parser.addOption(showAssemblyTabOption);
-
-    QCommandLineOption startAddressRandomizeOption(QStringList()<<"sar"<<"start-address-randomize", QCoreApplication::translate("main", "Randomize the program's starting address. For --run or --start"), "yes|no");
-    parser.addOption(startAddressRandomizeOption);
-
-    QCommandLineOption nonStopModeOption(QStringList()<<"nsm"<<"non-stop-mode", QCoreApplication::translate("main", "Continue to run other threads at breakpoints. For --run or --start"), "yes|no");
-    parser.addOption(nonStopModeOption);
-
-    QCommandLineOption attachOption(QStringList()<<"attach", QCoreApplication::translate("main", "Attach to a locally running process."), "pid");
+    QCommandLineOption attachOption(QStringList() << "attach");
     parser.addOption(attachOption);
 
-    QCommandLineOption connectOption(QStringList()<<"connect", QCoreApplication::translate("main", "Connect to a running process with gdbserver (local or remote). Manually start gdbserver first.\nPossible connection mediums are:\n    host:port\n    /dev/<serialdev>"), "medium");
+    QCommandLineOption connectOption(QStringList() << "connect");
     parser.addOption(connectOption);
 
-    QCommandLineOption rrOption(QStringList()<<"rr", QCoreApplication::translate("main", "Connect to a running 'rr replay -s <port> -k' session."), "port");
+    QCommandLineOption rrOption(QStringList() << "rr");
     parser.addOption(rrOption);
 
-    QCommandLineOption corefileOption(QStringList()<<"core", QCoreApplication::translate("main", "Load a corefile."), "corefile");
+    QCommandLineOption corefileOption(QStringList() << "core");
     parser.addOption(corefileOption);
 
-    QCommandLineOption projectOption(QStringList()<<"project", QCoreApplication::translate("main", "Load a Seer project."), "project");
+    QCommandLineOption projectOption(QStringList() << "project");
     parser.addOption(projectOption);
 
-    QCommandLineOption configOption(QStringList()<<"config", QCoreApplication::translate("main", "Launch with config dialog.\nSave settings with:\n    'Settings->Save Configuration'"));
+    QCommandLineOption configOption(QStringList() << "config");
     parser.addOption(configOption);
 
-    QCommandLineOption xxdebugOption(QStringList()<<"xxx", QCoreApplication::translate("main", "Turn on internal Seer debugging messages."));
+    QCommandLineOption symbolfileOption(QStringList() << "sym" << "symbol-file");
+    parser.addOption(symbolfileOption);
+
+    QCommandLineOption breakfileOption(QStringList() << "bl" << "break-load");
+    parser.addOption(breakfileOption);
+
+    QCommandLineOption breakfunctionOption(QStringList() << "bf" << "break-function");
+    parser.addOption(breakfunctionOption);
+
+    QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
+    parser.addOption(showAssemblyTabOption);
+
+    QCommandLineOption startAddressRandomizeOption(QStringList() << "sar" << "start-address-randomize");
+    parser.addOption(startAddressRandomizeOption);
+
+    QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode");
+    parser.addOption(nonStopModeOption);
+
+    QCommandLineOption xxdebugOption(QStringList() << "xxx");
     parser.addOption(xxdebugOption);
 
+    QCommandLineOption helpOption(QStringList() << "h" << "help");
+    parser.addOption(helpOption);
 
     // A positional argument for executable name.
     // All other arguments after that are treated as positional arguments for the executable.
-    parser.addPositionalArgument("executable", QCoreApplication::translate("main", "The executable to debug. Needed for all run modes."));
-    parser.addPositionalArgument("arguments",  QCoreApplication::translate("main", "Arguments for the executable. Needed for --run and --start."), "[arguments ...]");
+    parser.addPositionalArgument("executable", QObject::tr("The executable to debug. Needed for all run modes."));
+    parser.addPositionalArgument("arguments",  QObject::tr("Arguments for the executable. Needed for --run and --start."), "[arguments ...]");
 
     // Process the arguments.
     parser.process(app);
+
+    if (parser.isSet(helpOption)) {
+        //parser.showHelp();
+        seerhelp();
+    }
 
     if (parser.isSet(xxdebugOption)) {
         QLoggingCategory::setFilterRules("*.debug=false\n"
