@@ -68,31 +68,31 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startOption(QStringList() << "s" << "start");
     parser.addOption(startOption);
 
-    QCommandLineOption attachOption(QStringList() << "attach");
+    QCommandLineOption attachOption(QStringList() << "attach", "", "pid");
     parser.addOption(attachOption);
 
-    QCommandLineOption connectOption(QStringList() << "connect");
+    QCommandLineOption connectOption(QStringList() << "connect", "", "medium");
     parser.addOption(connectOption);
 
-    QCommandLineOption rrOption(QStringList() << "rr");
+    QCommandLineOption rrOption(QStringList() << "rr", "", "hostport");
     parser.addOption(rrOption);
 
-    QCommandLineOption corefileOption(QStringList() << "core");
+    QCommandLineOption corefileOption(QStringList() << "core", "", "corefile");
     parser.addOption(corefileOption);
 
-    QCommandLineOption projectOption(QStringList() << "project");
+    QCommandLineOption projectOption(QStringList() << "project", "", "project");
     parser.addOption(projectOption);
 
     QCommandLineOption configOption(QStringList() << "config");
     parser.addOption(configOption);
 
-    QCommandLineOption symbolfileOption(QStringList() << "sym" << "symbol-file");
+    QCommandLineOption symbolfileOption(QStringList() << "sym" << "symbol-file", "", "symbolfile");
     parser.addOption(symbolfileOption);
 
-    QCommandLineOption breakfileOption(QStringList() << "bl" << "break-load");
+    QCommandLineOption breakfileOption(QStringList() << "bl" << "break-load", "", "breakpointfile");
     parser.addOption(breakfileOption);
 
-    QCommandLineOption breakfunctionOption(QStringList() << "bf" << "break-function");
+    QCommandLineOption breakfunctionOption(QStringList() << "bf" << "break-function", "", "breakpointfunction");
     parser.addOption(breakfunctionOption);
 
     QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
@@ -112,8 +112,7 @@ int main (int argc, char* argv[]) {
 
     // A positional argument for executable name.
     // All other arguments after that are treated as positional arguments for the executable.
-    parser.addPositionalArgument("executable", QObject::tr("The executable to debug. Needed for all run modes."));
-    parser.addPositionalArgument("arguments",  QObject::tr("Arguments for the executable. Needed for --run and --start."), "[arguments ...]");
+    parser.addPositionalArgument("executableandarguments", "");
 
     // Process the arguments.
     parser.process(app);
@@ -284,6 +283,15 @@ int main (int argc, char* argv[]) {
             return 1;
         }
     }
+
+    qDebug() << "EXECUTABLENAME"    << executableName;
+    qDebug() << "SYMBOLNAME"        << executableSymbolFilename;
+    qDebug() << "PID"               << executablePid;
+    qDebug() << "CONNECTHOST"       << executableConnectHostPort;
+    qDebug() << "RRHOSTPORT"        << executableRRHostPort;
+    qDebug() << "COREFILENAME"      << executableCoreFilename;
+    qDebug() << "PROJECTFILE"       << projectFilename;
+    qDebug() << "ARGUMENTS"         << positionalArguments;
 
     seer.setExecutablePid(executablePid);
     seer.setExecutableConnectHostPort(executableConnectHostPort);

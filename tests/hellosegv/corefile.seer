@@ -1,7 +1,7 @@
 {
     "seerproject": {
         "corefilemode": {
-            "corefile": "/nas/erniep/Development/seer/tests/hellosegv/core.hellosegv.26364"
+            "corefile": "/nas/erniep/Development/seer/tests/hellosegv/core.hellosegv.18539"
         },
         "executable": "/nas/erniep/Development/seer/tests/hellosegv/hellosegv",
         "postgdbcommands": [

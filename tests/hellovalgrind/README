@@ -1,0 +1,20 @@
+
+https://github.com/epasveer/seer/wiki/Valgrind-and-Seer.
+
+In one terminal, run:
+
+    $ valgrind -q --vgdb-error=0 ./hellovalgrind
+    ==12596== (action at startup) vgdb me ...
+    ==12596==
+    ==12596== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+    ==12596==   /path/to/gdb ./hellovalgrind
+    ==12596== and then give GDB the following command
+    ==12596==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=12596
+    ==12596== --pid is optional if only one valgrind process is running
+    ==12596==
+
+In another terminal, start Seer.
+
+    $ seergdb --connect '| vgdb' --sym hellovalgrind
+
+
