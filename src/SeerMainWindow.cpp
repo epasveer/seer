@@ -759,6 +759,10 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
+        if (newtext == "^error,msg=\"The current thread has terminated\"") {
+            return;
+        }
+
         // Display the error message.
         QString msg_text = Seer::parseFirst(text, "msg=", false);
 
