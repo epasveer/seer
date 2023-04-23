@@ -22,11 +22,13 @@ Requirements
 * When building Seer from source, you will need the QT5 "devel" packages
   installed on your system for your distribution.
 
-NOTE
+NEWS
 ====
 
-As of the v1.9 release, **the Seer binary is now named 'seergdb'**. Previously it was named 'seer'. This is to remove a possibly
-confusion with an existing project with the same name. And, hopefully, will allow easier packaging of Seer into distributions.
+Check out Seer's Wiki page on github.
+
+* Seer now supports the RR time-travelling debugger.
+* Seer now supports gdb's extra commands for the ADA language.
 
 
 GUI overview
@@ -192,6 +194,7 @@ methods for debugging a program. So Seer naturally does too.
     % seergdb --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
     % seergdb --attach <pid>  myprog                    # Debug myprog by attaching to the currently running pid.
     % seergdb --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
+    % seergdb --rr      <host:port>                     # Debug a program by connecting to a RR replay session.
     % seergdb --core <corefile> myprog                  # Debug a corefile for myprog.
 
     % seergdb --project myproject.seer                  # Load a debug session from a project file.
