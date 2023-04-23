@@ -19,8 +19,8 @@ Using RR in a gui debugger. Basically, attach to the rr server port.
     Launch gdb with
     gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellosegv/hellosegv
 
-In a different terminal, use "Connect" method in Debug dialog and connect to "127.0.0.1:50505".
+In a different terminal, use "RR" method in the Debug dialog and connect to "127.0.0.1:50505".
 
-    $ seergdb --connect localhost:50505
+    $ seergdb --rr localhost:50505
 
 
