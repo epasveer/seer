@@ -1,9 +1,10 @@
 
 # Seer Change Log
 
-## [1.17beta] - 2023-??-??
+## [1.17] - 2023-04-23
+* Add support for the RR debugger.
+  https://github.com/epasveer/seer/wiki/RR-and-Seer
 * Add a dialog when a breakpoint is reached.
-* Add support for the RR debugger.  (seergdb --rr host:port)
 
 ## [1.16] - 2023-04-07
 * Add pid to main window and console title bars.
