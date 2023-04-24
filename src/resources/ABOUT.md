@@ -4,7 +4,7 @@ Version VERSIONNUMBER
 
 Seer, a simple and easy-to-use gui frontend to the GDB debugger, having many features.  
 
-Copyright (C) 2021-2022 &nbsp;&nbsp; Ernie Pasveer.  
+Copyright (C) 2021-2023 &nbsp;&nbsp; Ernie Pasveer.  
 &nbsp;  
 
 &nbsp;&nbsp;&nbsp;&nbsp;[https://github.com/epasveer/seer](https://github.com/epasveer/seer)  
