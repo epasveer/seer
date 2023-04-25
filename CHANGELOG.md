@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [1.18beta] - 2023-xx-xx
+* Prepare for version 1.18 release cycle.
+
 ## [1.17] - 2023-04-23
 * Add support for the RR debugger.
   https://github.com/epasveer/seer/wiki/RR-and-Seer

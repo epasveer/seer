@@ -8,7 +8,7 @@
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "1.17"
+#define SEER_VERSION "1.18beta"
 
 namespace Seer {
 
