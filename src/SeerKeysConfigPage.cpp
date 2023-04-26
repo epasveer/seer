@@ -2,6 +2,7 @@
 #include <QtWidgets/QKeySequenceEdit>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QWidget>
+#include <QtCore/QDebug>
 
 SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
 
@@ -56,6 +57,14 @@ SeerKeySettings SeerKeysConfigPage::keySettings() const {
 
     SeerKeySettings settings;
 
+    if (keysTableWidget->rowCount() == 0) {
+        return settings;
+    }
+
+    if (keysTableWidget->columnCount() == 2) {
+        return settings;
+    }
+
     for (int r=0; r<keysTableWidget->rowCount(); r++) {
 
         // Get the key (label) for this row.
@@ -66,10 +75,23 @@ SeerKeySettings SeerKeysConfigPage::keySettings() const {
         QLabel*           descriptionLabel = dynamic_cast<QLabel*>(keysTableWidget->cellWidget(r,1));
 
         // Create key setting.
-        SeerKeySetting setting(key, keySequenceEdit->keySequence(), descriptionLabel->text());
+        if (keySequenceEdit != 0 && descriptionLabel != 0) {
 
-        // Add the setting to our settings.
-        settings.add(key, setting);
+            SeerKeySetting setting(key, keySequenceEdit->keySequence(), descriptionLabel->text());
+
+            // Add the setting to our settings.
+            settings.add(key, setting);
+
+        }else{
+
+            if (keySequenceEdit == 0) {
+                qDebug() << "QKeySequenceEdit for row" << r << "is null!";
+            }
+
+            if (descriptionLabel == 0) {
+                qDebug() << "QLabel for row" << r << "is null!";
+            }
+        }
     }
 
     return settings;

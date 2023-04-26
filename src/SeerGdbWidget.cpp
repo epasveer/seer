@@ -712,6 +712,10 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         emit stoppingPointReached();
 
+    }else if (text.startsWith("=breakpoint-created,")) {
+
+        handleGdbGenericpointList();
+
     }else if (text.startsWith("=thread-group-started,")) {
         // =thread-group-started,id="i1",pid="30916"
 
