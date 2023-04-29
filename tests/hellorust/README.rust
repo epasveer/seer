@@ -1,0 +1,5 @@
+
+Simple test program for Rust.
+
+Use /usr/bin/rust-gdb as the gdb debugger. Set this in Seer's config dialog.
+
