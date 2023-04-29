@@ -25,7 +25,7 @@ Requirements
 NEWS
 ====
 
-Check out Seer's Wiki page on github.
+Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 
 * Seer now supports the RR time-travelling debugger.
 * Seer now supports gdb's extra commands for the ADA language.
