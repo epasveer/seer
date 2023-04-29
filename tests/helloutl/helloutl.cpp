@@ -100,16 +100,24 @@ int main (int argc, char** argv) {
     //
     //
 
-    QString envtext;
+    QString envtext("Home dir is '$HOME' - My path is '${PATH}'");
     bool    envflag = false;
 
-    envtext = Seer::expandEnv("My path is '$(PATH)'", &envflag);
+    QString text4 = Seer::expandEnv(envtext, &envflag);
 
-    std::cout << "ENV expansion of '$(PATH)' " << (envflag ? "worked" : "failed") << " Text is '" << envtext.toStdString() << std::endl;
+    std::cout << "ENV text            : '" << envtext.toStdString() << "'" << std::endl;
+    std::cout << "ENV expansion status: "  << (envflag ? "worked" : "failed") << std::endl;
+    std::cout << "ENV expansion text  : '" << text4.toStdString() << std::endl;
+    std::cout << std::endl;
 
-    envtext = Seer::expandEnv("My path is '$(path)'", &envflag);
+    envtext = QString("Good '$HOME' - Other bad '${XXXX}'");
 
-    std::cout << "ENV expansion of '$(path)' " << (envflag ? "worked" : "failed") << " Text is '" << envtext.toStdString() << std::endl;
+    text4 = Seer::expandEnv(envtext, &envflag);
+
+    std::cout << "ENV text            : '" << envtext.toStdString() << "'" << std::endl;
+    std::cout << "ENV expansion status: "  << (envflag ? "worked" : "failed") << std::endl;
+    std::cout << "ENV expansion text  : '" << text4.toStdString() << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
