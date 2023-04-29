@@ -66,20 +66,37 @@ namespace Seer {
 
     QString expandEnv (const QString& str, bool* ok) {
 
-        QRegExp env_var("\\$\\([A-Za-z0-9_]+\\)");
+        QRegExp env_re1("\\$\\{[A-Za-z0-9_]+\\}");      // ${PATH}
+        QRegExp env_re2("\\$[a-zA-Z0-9_]+");            // $PATH
         QString r = str;
         bool    f = true;
         int     i;
 
-        while ((i = env_var.indexIn(r)) != -1) {
+        while ((i = env_re1.indexIn(r)) != -1) {
 
-            QString capstr = env_var.cap(0);
+            QString capstr = env_re1.cap(0);
             QString envstr = capstr.mid(2,capstr.length()-3);
 
             QByteArray value(qgetenv(envstr.toLatin1().data()));
 
             if (value.size() > 0) {
-                r.remove(i, env_var.matchedLength());
+                r.remove(i, env_re1.matchedLength());
+                r.insert(i, value);
+            }else{
+                f = false; // Not expanded.
+                break;
+            }
+        }
+
+        while ((i = env_re2.indexIn(r)) != -1) {
+
+            QString capstr = env_re2.cap(0);
+            QString envstr = capstr.mid(1,capstr.length()-1);
+
+            QByteArray value(qgetenv(envstr.toLatin1().data()));
+
+            if (value.size() > 0) {
+                r.remove(i, env_re2.matchedLength());
                 r.insert(i, value);
             }else{
                 f = false; // Not expanded.
