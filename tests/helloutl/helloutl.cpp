@@ -79,7 +79,7 @@ int main (int argc, char** argv) {
 
     QStringList lines;
 
-    bool f = Seer::readFile("test_utl.cpp", lines);
+    bool f = Seer::readFile("helloutl.cpp", lines);
 
     if (f == false) {
         std::cout << "== Can't open file for Seer::readFile()" << std::endl;
