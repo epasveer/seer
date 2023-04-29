@@ -92,6 +92,24 @@ int main (int argc, char** argv) {
     }
 
     std::cout << "== Done." << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    //
+    //
+    //
+
+    QString envtext;
+    bool    envflag = false;
+
+    envtext = Seer::expandEnv("My path is '$(PATH)'", &envflag);
+
+    std::cout << "ENV expansion of '$(PATH)' " << (envflag ? "worked" : "failed") << " Text is '" << envtext.toStdString() << std::endl;
+
+    envtext = Seer::expandEnv("My path is '$(path)'", &envflag);
+
+    std::cout << "ENV expansion of '$(path)' " << (envflag ? "worked" : "failed") << " Text is '" << envtext.toStdString() << std::endl;
 
     return 0;
 }
