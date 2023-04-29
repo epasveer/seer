@@ -809,434 +809,499 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
     qCDebug(LC) << "Starting 'gdb run/start'.";
 
-    // Has a executable name been provided?
-    if (executableName() == "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name has not been provided.\n\nUse File->Debug..."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    // Do you really want to restart?
-    if (isGdbRuning() == true) {
-
-        int result = QMessageBox::warning(this, "Seer",
-                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-        if (result == QMessageBox::Cancel) {
-            return;
-        }
-    }
-
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    _executableBreakMode = breakMode;
+    while (1) {
+        // Has a executable name been provided?
+        if (executableName() == "") {
 
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
-
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
-
-        startGdb();
-
-        if (gdbAsyncMode()) {
-            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
+                    QMessageBox::Ok);
+            break;
         }
 
-        if (gdbNonStopMode()) {
-            handleGdbCommand("-gdb-set pagination off");
-            handleGdbCommand("-gdb-set non-stop on");
-        }else{
-            handleGdbCommand("-gdb-set non-stop off");
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            int result = QMessageBox::warning(this, "Seer",
+                    QString("The executable is already running.\n\nAre you sure to restart it?"),
+                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Cancel) {
+                break;
+            }
         }
-    }
 
-    // Set dprint parameters.
-    resetDprintf();
+        _executableBreakMode = breakMode;
 
-    // Create a new console.
-    // Set the program's tty device for stdin and stdout.
-    createConsole();
-    handleGdbTtyDeviceName();
-    connectConsole();
-
-    setExecutableLaunchMode("run");
-    setGdbRecordMode("");
-    setExecutablePid(0);
-
-    // Load ithe executable, if needed.
-    if (newExecutableFlag() == true) {
-        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-        setNewExecutableFlag(false);
-    }
-
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-    if (assemblyShowAssemblyTabOnStartup()) {
-        editorManager()->showAssembly();
-    }
-
-    if (gdbHandleTerminatingException()) {
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-    }else{
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-    }
-
-    if (gdbRandomizeStartAddress()) {
-        handleGdbCommand("-gdb-set disable-randomization off"); // Turn on randomization of starting address for process.
-    }
-
-    if (gdbEnablePrettyPrinting()) {
-        handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
-    }
-
-    // Set the program's arguments before running.
-    handleGdbExecutableArguments();
-
-    // Set a temporary breakpoint for start up.
-    if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
-
-        QRegExp addrRegex("0[xX][0-9a-fA-F]+");
-
-        if (addrRegex.exactMatch(executableBreakpointFunctionName())) {
-            handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
-        }else{
-            handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
+        // Delete the old gdb and console if there is a new executable
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
         }
-    }
 
-    // Run any 'post' commands after program is loaded.
-    handleGdbExecutablePostCommands();
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
 
-    // Run the executable.
-    if (_executableBreakMode == "inmain") {
-        handleGdbCommand("-exec-run --all --start"); // Stop in main
-    }else{
-        handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
-    }
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
 
-    QApplication::restoreOverrideCursor();
+            if (gdbAsyncMode()) {
+                handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+            }
 
-    // Set window titles with name of program.
-    emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
-
-    qCDebug(LC) << "Finishing 'gdb run/start'.";
-}
-
-void SeerGdbWidget::handleGdbAttachExecutable () {
-
-    // Has a executable name been provided?
-    if (executableName() == "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name has not been provided.\n\nUse File->Debug..."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    // Do you really want to restart?
-    if (isGdbRuning() == true) {
-
-        int result = QMessageBox::warning(this, "Seer",
-                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-        if (result == QMessageBox::Cancel) {
-            return;
+            if (gdbNonStopMode()) {
+                handleGdbCommand("-gdb-set pagination off");
+                handleGdbCommand("-gdb-set non-stop on");
+            }else{
+                handleGdbCommand("-gdb-set non-stop off");
+            }
         }
-    }
 
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+        // Set dprint parameters.
+        resetDprintf();
 
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
+        // Create a new console.
+        // Set the program's tty device for stdin and stdout.
+        createConsole();
+        handleGdbTtyDeviceName();
+        connectConsole();
 
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
+        setExecutableLaunchMode("run");
+        setGdbRecordMode("");
+        setExecutablePid(0);
 
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
+        // Load ithe executable, if needed.
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-        startGdb();
-
-        if (gdbAsyncMode()) {
-            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+            setNewExecutableFlag(false);
         }
-    }
 
-    // Set dprint parameters.
-    resetDprintf();
-
-    // No console for 'attach' mode.
-    setExecutableLaunchMode("attach");
-    setGdbRecordMode("");
-
-    // Load ithe executable, if needed.
-    if (newExecutableFlag() == true) {
-        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-        setNewExecutableFlag(false);
-    }
-
-    // Set or reset some things.
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-                                            //
-    if (assemblyShowAssemblyTabOnStartup()) {
-        editorManager()->showAssembly();
-    }
-
-    if (gdbHandleTerminatingException()) {
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-    }else{
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-    }
-
-    // Attach to the executable's pid.
-    handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
-
-    // Run any 'post' commands after program is loaded.
-    handleGdbExecutablePostCommands();
-
-    QApplication::restoreOverrideCursor();
-}
-
-void SeerGdbWidget::handleGdbConnectExecutable () {
-
-    // Has a executable name been provided?
-    if (executableName() != "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name can't be provided for 'connect' mode."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
-
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
-
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableConnectHostPort()).arg(QGuiApplication::applicationPid()));
-
-        startGdb();
-    }
-
-    // Set dprint parameters.
-    resetDprintf();
-
-    // No console for 'connect' mode.
-    setExecutableLaunchMode("connect");
-    setGdbRecordMode("");
-    setExecutablePid(0);
-
-    // Connect to the remote gdbserver.
-    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
-
-    // Load ithe executable, if needed.
-    if (newExecutableFlag() == true) {
-        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-        setNewExecutableFlag(false);
-    }
-
-    // Set or reset some things.
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-    if (assemblyShowAssemblyTabOnStartup()) {
-        editorManager()->showAssembly();
-    }
-
-    if (gdbHandleTerminatingException()) {
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-    }else{
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-    }
-
-    // Run any 'post' commands after program is loaded.
-    handleGdbExecutablePostCommands();
-
-    QApplication::restoreOverrideCursor();
-}
-
-void SeerGdbWidget::handleGdbRRExecutable () {
-
-    // Has a executable name been provided?
-    if (executableName() != "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name can't be provided for 'rr' mode."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
-
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
-
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
-
-        startGdb();
-    }
-
-    // Set dprint parameters.
-    resetDprintf();
-
-    // No console for 'connect' mode.
-    setExecutableLaunchMode("rr");
-    setGdbRecordMode("rr");
-    setExecutablePid(0);
-
-    // Connect to the remote gdbserver.
-    handleGdbCommand(QString("-target-select extended-remote %1").arg(executableRRHostPort()));
-
-    // Load ithe executable, if needed.
-    if (newExecutableFlag() == true) {
-        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
-        handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-        setNewExecutableFlag(false);
-    }
-
-    // Set or reset some things.
-    handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
-    handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
-    handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-    if (assemblyShowAssemblyTabOnStartup()) {
-        editorManager()->showAssembly();
-    }
-
-    if (gdbHandleTerminatingException()) {
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
-    }else{
-        handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
-    }
-
-    // Run any 'post' commands after program is loaded.
-    handleGdbExecutablePostCommands();
-
-    QApplication::restoreOverrideCursor();
-}
-
-void SeerGdbWidget::handleGdbCoreFileExecutable () {
-
-    // Has a executable name been provided?
-    if (executableName() == "") {
-
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable name has not been provided.\n\nUse File->Debug..."),
-                                   QMessageBox::Ok);
-        return;
-    }
-
-    // Do you really want to restart?
-    if (isGdbRuning() == true) {
-
-        int result = QMessageBox::warning(this, "Seer",
-                                          QString("The executable is already running.\n\nAre you sure to restart it?"),
-                                          QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-        if (result == QMessageBox::Cancel) {
-            return;
-        }
-    }
-
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
-    // Delete the old gdb and console if there is a new executable
-    if (newExecutableFlag() == true) {
-        killGdb();
-        disconnectConsole();
-        deleteConsole();
-    }
-
-    // If gdb isn't running, start it.
-    if (isGdbRuning() == false) {
-
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
-
-        startGdb();
-
-        if (gdbAsyncMode()) {
-            handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
-        }
-    }
-
-    // Set dprint parameters.
-    resetDprintf();
-
-    // No console for 'core' mode.
-    setExecutableLaunchMode("corefile");
-    setGdbRecordMode("");
-    setExecutablePid(0);
-
-    if (newExecutableFlag() == true) {
-        handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-        handleGdbExecutableName();              // Load the program into the gdb process.
-        handleGdbExecutableSources();           // Load the program source files.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
         }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        if (gdbRandomizeStartAddress()) {
+            handleGdbCommand("-gdb-set disable-randomization off"); // Turn on randomization of starting address for process.
+        }
+
+        if (gdbEnablePrettyPrinting()) {
+            handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
+        }
+
+        // Set the program's arguments before running.
+        handleGdbExecutableArguments();
+
+        // Set a temporary breakpoint for start up.
+        if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
+
+            QRegExp addrRegex("0[xX][0-9a-fA-F]+");
+
+            if (addrRegex.exactMatch(executableBreakpointFunctionName())) {
+                handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
+            }else{
+                handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
+            }
+        }
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // Run the executable.
+        if (_executableBreakMode == "inmain") {
+            handleGdbCommand("-exec-run --all --start"); // Stop in main
+        }else{
+            handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
+        }
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
+
+        break;
     }
 
-    setNewExecutableFlag(false);
+    QApplication::restoreOverrideCursor();
 
-    // Load the executable's core file.
-    handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
+    qCDebug(LC) << "Finishing 'gdb run/start'.";
+}
 
-    // Run any 'post' commands after program is loaded.
-    handleGdbExecutablePostCommands();
+void SeerGdbWidget::handleGdbAttachExecutable () {
 
-    // This is needed for code mode to refresh the stack frame, for some reason.
-    handleGdbStackListFrames();
+    qCDebug(LC) << "Starting 'gdb attach'.";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        // Has a executable name been provided?
+        if (executableName() == "") {
+
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
+                    QMessageBox::Ok);
+            break;
+        }
+
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            int result = QMessageBox::warning(this, "Seer",
+                    QString("The executable is already running.\n\nAre you sure to restart it?"),
+                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Cancel) {
+                break;
+            }
+        }
+
+
+        // Delete the old gdb and console if there is a new executable
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
+        }
+
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+
+            if (gdbAsyncMode()) {
+                handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+            }
+        }
+
+        // Set dprint parameters.
+        resetDprintf();
+
+        // No console for 'attach' mode.
+        setExecutableLaunchMode("attach");
+        setGdbRecordMode("");
+
+        // Load ithe executable, if needed.
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            setNewExecutableFlag(false);
+        }
+
+        // Set or reset some things.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+                                                //
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        // Attach to the executable's pid.
+        handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
+
+        break;
+    }
 
     QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb attach'.";
+}
+
+void SeerGdbWidget::handleGdbConnectExecutable () {
+
+    qCDebug(LC) << "Starting 'gdb connect'.";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        // Has a executable name been provided?
+        if (executableName() != "") {
+
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name can't be provided for 'connect' mode."),
+                    QMessageBox::Ok);
+            break;
+        }
+
+        // Delete the old gdb and console if there is a new executable
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
+        }
+
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+        }
+
+        // Set dprint parameters.
+        resetDprintf();
+
+        // No console for 'connect' mode.
+        setExecutableLaunchMode("connect");
+        setGdbRecordMode("");
+        setExecutablePid(0);
+
+        // Connect to the remote gdbserver.
+        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
+
+        // Load ithe executable, if needed.
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            setNewExecutableFlag(false);
+        }
+
+        // Set or reset some things.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableConnectHostPort()).arg(QGuiApplication::applicationPid()));
+
+        break;
+    }
+
+    QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb connect'.";
+}
+
+void SeerGdbWidget::handleGdbRRExecutable () {
+
+    qCDebug(LC) << "Starting 'gdb rr'.";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        // Has a executable name been provided?
+        if (executableName() != "") {
+
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name can't be provided for 'rr' mode."),
+                    QMessageBox::Ok);
+            break;
+        }
+
+        // Delete the old gdb and console if there is a new executable
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
+        }
+
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+        }
+
+        // Set dprint parameters.
+        resetDprintf();
+
+        // No console for 'connect' mode.
+        setExecutableLaunchMode("rr");
+        setGdbRecordMode("rr");
+        setExecutablePid(0);
+
+        // Connect to the remote gdbserver.
+        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableRRHostPort()));
+
+        // Load ithe executable, if needed.
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            setNewExecutableFlag(false);
+        }
+
+        // Set or reset some things.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
+    }
+
+    QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb rr'.";
+}
+
+void SeerGdbWidget::handleGdbCoreFileExecutable () {
+
+    qCDebug(LC) << "Starting 'gdb corefile'.";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        // Has a executable name been provided?
+        if (executableName() == "") {
+
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name has not been provided.\n\nUse File->Debug..."),
+                    QMessageBox::Ok);
+            break;
+        }
+
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            int result = QMessageBox::warning(this, "Seer",
+                    QString("The executable is already running.\n\nAre you sure to restart it?"),
+                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Cancel) {
+                break;
+            }
+        }
+
+        QApplication::setOverrideCursor(Qt::BusyCursor);
+
+        // Delete the old gdb and console if there is a new executable
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
+        }
+
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdb();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+
+            if (gdbAsyncMode()) {
+                handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
+            }
+        }
+
+        // Set dprint parameters.
+        resetDprintf();
+
+        // No console for 'core' mode.
+        setExecutableLaunchMode("corefile");
+        setGdbRecordMode("");
+        setExecutablePid(0);
+
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+            handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+            if (assemblyShowAssemblyTabOnStartup()) {
+                editorManager()->showAssembly();
+            }
+        }
+
+        setNewExecutableFlag(false);
+
+        // Load the executable's core file.
+        handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // This is needed for code mode to refresh the stack frame, for some reason.
+        handleGdbStackListFrames();
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
+
+        break;
+    }
+
+    QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb corefile'.";
 }
 
 void SeerGdbWidget::handleGdbShutdown () {
@@ -2573,6 +2638,7 @@ void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus
         QMessageBox::warning(this, "Seer",
                 QString("The GDB program exited unexpectedly.\n\n") +
                 QString("Exit code=%1 Exit status=%2").arg(exitCode).arg(exitStatus) + "\n\n" +
+                QString("'%1 %2'").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
                 QString("Please restart Seer."),
                 QMessageBox::Ok);
     }
@@ -2585,7 +2651,7 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the GDB program.\n\n") +
-                                   QString("(%1 %2)").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
+                                   QString("'%1 %2'").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
                                    QString("Error status=%1)").arg(errorStatus),
                                    QMessageBox::Ok);
     }
@@ -2822,29 +2888,57 @@ bool SeerGdbWidget::isGdbRuning () const {
     return true;
 }
 
-void SeerGdbWidget::startGdb () {
+bool SeerGdbWidget::startGdb () {
 
     // Don't do anything, if already running.
     if (isGdbRuning()) {
         qWarning() << "Already running";
-        return;
+        return false;
     }
 
     // Set the gdb program name to use.
-    _gdbProcess->setProgram(gdbProgram());
+    bool    ok;
+    QString command = Seer::expandEnv(gdbProgram(), &ok);
+
+    qDebug() << "Raw command     : " << gdbProgram();
+    qDebug() << "Expanded command: " << command;
+
+    if (ok == false) {
+
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(command));
+
+        return false;
+    }
 
     // Build the gdb argument list.
+    QString arguments = Seer::expandEnv(gdbArguments(), &ok);
+
+    qDebug() << "Raw arguments     : " << gdbArguments();
+    qDebug() << "Expanded arguments: " << arguments;
+
+    if (ok == false) {
+
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(arguments));
+
+        return false;
+    }
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
-    QStringList args = gdbArguments().split(' ', Qt::SkipEmptyParts);
+    QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
 #else
-    QStringList args = gdbArguments().split(' ', QString::SkipEmptyParts);
+    QStringList args = arguments.split(' ', QString::SkipEmptyParts);
 #endif
 
-    // Give the gdb process the argument list.
+    // Give the gdb process the program and the argument list.
+    _gdbProcess->setProgram(command);
     _gdbProcess->setArguments(args);
 
     // Start the gdb process.
     _gdbProcess->start();
+
+    qDebug() << _gdbProcess->state();
+
+    return true;
 }
 
 void SeerGdbWidget::killGdb () {

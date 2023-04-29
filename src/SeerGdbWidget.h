@@ -326,7 +326,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
     private:
         bool                                isGdbRuning                         () const;
-        void                                startGdb                            ();
+        bool                                startGdb                            ();
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
