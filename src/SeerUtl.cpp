@@ -2,6 +2,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
+#include <QtCore/QRegExp>
 #include <mutex>
 
 //
@@ -61,6 +62,36 @@ namespace Seer {
         }
 
         return result;
+    }
+
+    QString expandEnv (const QString& str, bool* ok) {
+
+        QRegExp env_var("\\$\\([A-Za-z0-9_]+\\)");
+        QString r = str;
+        bool    f = true;
+        int     i;
+
+        while ((i = env_var.indexIn(r)) != -1) {
+
+            QString capstr = env_var.cap(0);
+            QString envstr = capstr.mid(2,capstr.length()-3);
+
+            QByteArray value(qgetenv(envstr.toLatin1().data()));
+
+            if (value.size() > 0) {
+                r.remove(i, env_var.matchedLength());
+                r.insert(i, value);
+            }else{
+                f = false; // Not expanded.
+                break;
+            }
+        }
+
+        if (ok) {
+            *ok = f;
+        }
+
+        return r;
     }
 
     QStringList parse (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {

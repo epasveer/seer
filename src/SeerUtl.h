@@ -10,6 +10,7 @@ namespace Seer {
 
     QString         filterEscapes   (const QString& str);
     QString         expandTabs      (const QString& str, int tabwidth, bool morph);
+    QString         expandEnv       (const QString& str, bool* ok = nullptr);
     QStringList     parse           (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearch);
     QString         parseFirst      (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearch);
     QString         parseFirst      (const QString& str, const QString& search, bool includeSearch);
