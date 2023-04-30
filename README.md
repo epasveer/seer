@@ -5,7 +5,7 @@ Seer - a gui frontend to gdb for Linux.   (Ernie Pasveer  epasveer@att.net)
 
 This project is actively worked on. The aim is a simple, yet pleasing gui to gdb.
 
-Please report any bugs or desired features to my email or create a task in my
+Please report any bugs or desired features to my email or create a [task](https://github.com/epasveer/seer/issues) in my
 GitHub project page.
 
 
@@ -206,6 +206,6 @@ https://github.com/epasveer/seer/wiki/Building-Seer
 Support/Contact
 ===============
 
-Send an email to epasveer@att.net for any bugs or features. Or create a task
+Send an email to epasveer@att.net for any bugs or features. Or create a [task](https://github.com/epasveer/seer/issues)
 in my GitHub project page.
 
