@@ -247,39 +247,9 @@ See "-h" for the full Seer help.
 Building Seer
 =============
 
-Download the latest code using 'clone'.
+Go to the Wiki to see how to build Seer.
 
-    % git clone https://github.com/epasveer/seer
-
-Setup cmake and build
-
-    % cd seer/src
-    % mkdir build
-    % cd build
-    % cmake ..
-
-    % make seergdb
-
-Copy the Seer binary to your bin directory of choice. One of the below. May need
-root access.
-
-    % cd seer/src/build
-    % cp seergdb ~/bin/seergdb
-    % cp seergdb /usr/local/bin/seergdb
-    % cp seergdb /usr/bin/seergdb
-    % rehash
-
-Or use the 'install' make target, which will usually copy it to /usr/local/bin.
-May need root access.
-
-    % cd seer/src/build
-    % sudo make install
-
-For Debian based releases, you can use the normal tooling to build a .deb
-package containing Seer. You need the `build-essential` package installed.
-
-    % cd seer
-    % dpkg-buildpackage
+https://github.com/epasveer/seer/wiki/Building-Seer
 
 
 Support/Contact
