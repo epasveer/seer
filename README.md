@@ -190,59 +190,10 @@ Starting Seer
 Seer is meant to easily start the program to debug from the command line. gdb has multiple
 methods for debugging a program. So Seer naturally does too.
 
-    % seergdb --start myprog arg1 arg2                  # Debug myprog with its arguments. Break in main().
-    % seergdb --run   myprog arg1 arg2                  # Debug myprog with its arguments. Run it immediately without breaking.
-    % seergdb --attach <pid>  myprog                    # Debug myprog by attaching to the currently running pid.
-    % seergdb --connect <host:port> myprog              # Debug myprog by connecting to the currently started gdbserver process.
-    % seergdb --rr      <host:port>                     # Debug a program by connecting to a RR replay session.
-    % seergdb --core <corefile> myprog                  # Debug a corefile for myprog.
+Go to the Wiki to see all the ways to run Seer.
 
-    % seergdb --project myproject.seer                  # Load a debug session from a project file.
-                                                        # Define and save a project in the Debug dialog.
+https://github.com/epasveer/seer/wiki/Starting-Seer
 
-    % seergdb                                           # Bring up a Debug dialog to set the program and debug method.
-    % seergdb myprog arg1 arg2                          # Bring up a Debug dialog to set the debug method.
-
-    % seergdb --config                                  # Bring up Seer config dialog.
-                                                        # Save settings with 'Settings->Save Configuration'.
-
-A breakpoint file can be read for --start and --run modes. This file contains previously saved
-breakpoints (breakpoints, catchpoints, printpoints, etc.)
-
-    % seergdb --run --bl myprog.brk  myprog arg1 arg2   # Debug myprog with its arguments.
-                                                        # Run it immediately and break at points describe in
-                                                        # myprog.brk
-
-A breakpoint function can be set for --start and --run modes. The function can be a function name or
-an address (eg: _start or 0xadad23220)
-
-    % seergdb --run --bf _start myprog arg1 arg2        # Debug myprog with its arguments.
-                                                        # Run it immediately and break in the function '_start'.
-
-The Assembly Tab can be shown for --start and --run modes.
-
-    % seergdb --start --sat yes myprog arg1 arg2        # Debug myprog with its arguments.
-                                                        # Break in "main" and show the Assemby Tab.
-
-The program's starting address can be randomizes for --start and --run modes. Normally gdb runs the program
-with no start address randomization.
-
-    % seergdb --start --sar yes  myprog arg1 arg2       # Debug myprog with its arguments.
-                                                        # The program's start address is randomized.
-
-The program's symbols can be taken from a separated file instead of the executable.
-
-    % seergdb --sym myprog.db myprog arg1 arg2          # Debug myprog with its arguments.
-                                                        # Take the symbols from myprog.dbg.
-
-See "-h" for the full Seer help.
-
-    % seergdb -h
-
-**Some of the command line options can be permamently set in the Seer configuration.**
-
-    % seergdb --config                                  # Bring up Seer config dialog.
-                                                        # Save settings with 'Settings->Save Configuration'.
 
 Building Seer
 =============
