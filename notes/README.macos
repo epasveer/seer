@@ -1,0 +1,31 @@
+
+Building on MacOS
+
+
+It turns out in order to build Seer for MacOS, you need to set the cmake qt5 environment variable manually.
+You might want to make a note of it in the build instructions with an example:
+
+    In order for find_package to be successful, Qt 5 must be found below the CMAKE_PREFIX_PATH,
+    or the Qt5_DIR must be set in the CMake cache to the location of the Qt5Config.cmake file.
+    The easiest way to use CMake is to set the CMAKE_PREFIX_PATH environment variable to the install
+    prefix of Qt 5.
+
+Other info:
+
+    https://stackoverflow.com/questions/18722329/cmake-does-not-find-qt-5-1-1
+
+    I successfully built my GUI on MacOSX 10.10 by exporting Linux environment variables
+
+        $ brew install qt5
+        $ ls /usr/local/opt/qt5/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake
+        $ /usr/local/opt/qt5/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake
+        $ export CMAKE_PREFIX_PATH=/usr/local/opt/qt5/
+        $ cd ./build
+        $ cmake ../CMakeLists.txt
+        $ make -j8
+
+
+So for Seer on MacOS:
+
+    % cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5/ ..
+
