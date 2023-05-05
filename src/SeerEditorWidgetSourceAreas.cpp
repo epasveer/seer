@@ -14,7 +14,7 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QToolTip>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
@@ -24,7 +24,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QDebug>
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
@@ -228,7 +228,7 @@ void SeerEditorWidgetSourceArea::lineNumberAreaPaintEvent (QPaintEvent* event) {
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -265,7 +265,7 @@ void SeerEditorWidgetSourceArea::breakPointAreaPaintEvent (QPaintEvent* event) {
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -481,7 +481,7 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
     }else if (modifiers == Qt::ShiftModifier) {
         _selectedExpressionName = QString("&") + textCursor().selectedText();
 
-    }else if (modifiers == (Qt::ShiftModifier + Qt::ControlModifier)) {
+    }else if (modifiers == (Qt::ShiftModifier | Qt::ControlModifier)) {
         _selectedExpressionName = QString("*&") + textCursor().selectedText();
 
     }else{
@@ -647,7 +647,7 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegExp cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
+    QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
         _sourceHighlighter = new SeerCppSourceHighlighter(0);
 
@@ -955,7 +955,7 @@ bool SeerEditorWidgetSourceArea::breakpointLineEnabled (int lineno) const {
 
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
-    showContextMenu(event->pos(), event->globalPos());
+    showContextMenu(event->pos(), event->globalPosition());
 }
 
 void SeerEditorWidgetSourceArea::showContextMenu (QContextMenuEvent* event) {
@@ -963,7 +963,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (QContextMenuEvent* event) {
     showContextMenu(event->pos(), event->globalPos());
 }
 
-void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoint& globalPos) {
+void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPointF& globalPos) {
 
     // Get the line number for the cursor position.
     QTextCursor cursor = cursorForPosition(pos);
@@ -1129,7 +1129,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     }
 
     // Launch the menu. Get the response.
-    QAction* action = menu.exec(globalPos);
+    QAction* action = menu.exec(globalPos.toPoint());
 
     // Do nothing.
     if (action == 0) {
@@ -1611,7 +1611,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         // 10^done,value="1"
         // 11^done,value="0x7fffffffd538"
@@ -1627,7 +1627,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         // 12^error,msg="No symbol \"return\" in current context."
         // 13^error,msg="No symbol \"cout\" in current context."

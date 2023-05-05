@@ -219,7 +219,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
     printpointParameters += " ";
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    if (format().front() != "\"") {
+    if (format().front() != QString("\"")) {
 #else
     if (format().at(0) != "\"") {
 #endif
@@ -229,7 +229,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
     printpointParameters += format();
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
-    if (format().back() != "\"") {
+    if (format().back() != QString("\"")) {
 #else
     if (format().at(format().size() - 1) != "\"") {
 #endif

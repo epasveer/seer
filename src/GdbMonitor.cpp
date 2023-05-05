@@ -1,7 +1,7 @@
 #include "GdbMonitor.h"
 #include <QtCore/QtCore>
 #include <QtCore/QProcess>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QDebug>
 #include <iostream>
@@ -97,15 +97,15 @@ void GdbMonitor::handleReadyReadStandardOutput () {
             emit ampersandTextOutput(text);
         }else if (text[0] == '@') {
             emit atsignTextOutput(text);
-        }else if (text.contains(QRegExp("^([0-9]+)\\~"))) {
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\~"))) {
             emit tildeTextOutput(text);
-        }else if (text.contains(QRegExp("^([0-9]+)\\="))) {
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\="))) {
             emit equalTextOutput(text);
-        }else if (text.contains(QRegExp("^([0-9]+)\\*"))) {
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\*"))) {
             emit astrixTextOutput(text);
-        }else if (text.contains(QRegExp("^([0-9]+)\\^"))) {
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\^"))) {
             emit caretTextOutput(text);
-        }else if (text.contains(QRegExp("^([0-9]+)\\&"))) {
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\&"))) {
             emit ampersandTextOutput(text);
         }else{
             emit textOutput(text);
@@ -132,15 +132,15 @@ void GdbMonitor::handleTextOutput (QString text) {
         emit caretTextOutput(text);
     }else if (text[0] == '&') {
         emit ampersandTextOutput(text);
-    }else if (text.contains(QRegExp("^([0-9]+)\\~"))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\~"))) {
         emit tildeTextOutput(text);
-    }else if (text.contains(QRegExp("^([0-9]+)\\="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\="))) {
         emit equalTextOutput(text);
-    }else if (text.contains(QRegExp("^([0-9]+)\\*"))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\*"))) {
         emit astrixTextOutput(text);
-    }else if (text.contains(QRegExp("^([0-9]+)\\^"))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^"))) {
         emit caretTextOutput(text);
-    }else if (text.contains(QRegExp("^([0-9]+)\\&"))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\&"))) {
         emit ampersandTextOutput(text);
     }else{
         emit textOutput(text);

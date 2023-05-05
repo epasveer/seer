@@ -2,8 +2,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <mutex>
+#include <QRegularExpression>
 
 //
 // Increment this with every release on GitHub.
@@ -466,7 +467,9 @@ namespace Seer {
     bool matches (const QStringList& regexpatterns, const QString& string, QRegExp::PatternSyntax syntax) {
 
         foreach (const auto& regex, regexpatterns) {
-            if (string.contains(QRegExp(regex, Qt::CaseSensitive, syntax))) {
+            QRegExp regexPattern(regex, Qt::CaseSensitive, syntax);
+            QRegularExpression qt6Regex(regexPattern.pattern(), QRegularExpression::NoPatternOption );
+            if (string.contains(qt6Regex)) {
                 return true;
             }
         }

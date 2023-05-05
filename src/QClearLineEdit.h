@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QAction>
+#include <QAction>
 
 class QClearLineEdit : public QLineEdit {
 

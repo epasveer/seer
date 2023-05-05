@@ -3,7 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
@@ -38,7 +38,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         //qDebug() << text;
 
@@ -56,7 +56,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         //qDebug() << text;
 

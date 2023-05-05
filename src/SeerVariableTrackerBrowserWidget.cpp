@@ -3,7 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <iostream>
@@ -122,7 +122,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
             qDeleteAll(matches);
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         //qDebug() << text;
 
@@ -137,7 +137,7 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
             matches.first()->setText(2, Seer::filterEscapes(value_text));
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         //qDebug() << text;
 

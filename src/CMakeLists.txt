@@ -13,11 +13,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS REQUIRED Core)
-find_package(Qt5 COMPONENTS REQUIRED Gui)
-find_package(Qt5 COMPONENTS REQUIRED Widgets)
-find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
-find_package(Qt5 COMPONENTS REQUIRED Charts)
+
+
+find_package(Qt6 COMPONENTS REQUIRED Core)
+find_package(Qt6 COMPONENTS REQUIRED Gui)
+find_package(Qt6 COMPONENTS REQUIRED Widgets)
+find_package(Qt6 COMPONENTS REQUIRED Core5Compat)
+find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
+find_package(Qt6 COMPONENTS REQUIRED Charts)
 
 set(HEADER_FILES
     GdbMonitor.h
@@ -194,7 +197,7 @@ set(SOURCE_FILES
     QImageViewer.cpp
     )
 
-qt5_add_resources(SOURCE_FILES resource.qrc)
+qt6_add_resources(SOURCE_FILES resource.qrc)
 
 # Set non-Debug build as GUI application.
 # Debug build remains consle application.
@@ -216,5 +219,5 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
-target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
+target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Core5Compat)
 

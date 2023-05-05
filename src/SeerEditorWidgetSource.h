@@ -3,7 +3,7 @@
 #include "SeerCppSourceHighlighter.h"
 #include "SeerKeySettings.h"
 #include "SeerPlainTextEdit.h"
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 #include <QtWidgets/QWidget>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
@@ -77,7 +77,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
-        void                                        showContextMenu                     (const QPoint& pos, const QPoint& globalPos);
+        void                                        showContextMenu                     (const QPoint& pos, const QPointF& globalPos);
         void                                        setQuickBreakpoint                  (QMouseEvent* event);
 
         void                                        clearExpression                     ();

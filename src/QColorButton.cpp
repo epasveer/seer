@@ -6,7 +6,7 @@
 
 QColorButton::QColorButton(QWidget* parent) : QWidget(parent) {
 
-    _color = palette().color(QPalette::Background);
+    _color = palette().color(QPalette::Window);
 }
 
 QColorButton::QColorButton(const QColor& color, QWidget* parent) : QWidget(parent) {

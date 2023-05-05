@@ -1,7 +1,7 @@
 #include "QDetachTabWidget.h"
 #include <QtWidgets/QTabBar>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QCursor>
 #include <QtCore/QDebug>
 

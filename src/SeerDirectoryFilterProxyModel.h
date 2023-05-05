@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QtWidgets/QFileSystemModel>
+#include <QFileSystemModel>
 #include <QtCore/QSortFilterProxyModel>
 #include <QtCore/QDebug>
 

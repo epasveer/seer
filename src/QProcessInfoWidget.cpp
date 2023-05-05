@@ -5,6 +5,7 @@
 #include <QtWidgets/QApplication>
 #include <QtGui/QFont>
 #include <QtCore/QDebug>
+#include <QRegularExpression>
 
 
 //
@@ -183,7 +184,7 @@ void QProcessInfoWidget::refreshView () {
     }else{
         // To find [xxx] processes   :  "^(\\[).*(\\])$"
         // To exclude [xxx] processes:  "^(?!\\[).*(?!\\])$"
-        processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegExp | Qt::MatchRecursive, 2);
+        processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegularExpression | Qt::MatchRecursive, 2);
         //qDebug() << "Checkbox is off." << processMatches.size();
     }
 

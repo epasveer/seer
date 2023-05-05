@@ -616,7 +616,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             b++;
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         // 10^done,value="1"
         // 11^done,value="0x7fffffffd538"
@@ -634,7 +634,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             assemblyWidget->handleText(text);
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         // 12^error,msg="No symbol \"return\" in current context."
         // 13^error,msg="No symbol \"cout\" in current context."

@@ -9,7 +9,7 @@
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
 #include <QtCore/QList>
@@ -231,7 +231,7 @@ void SeerEditorWidgetAssembly::handleText (const QString& text) {
 
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         QString id_text    = text.section('^', 0,0);
         QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
@@ -251,7 +251,7 @@ void SeerEditorWidgetAssembly::handleText (const QString& text) {
             return;
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "value=", '"', '"', false);

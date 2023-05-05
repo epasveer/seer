@@ -7,7 +7,7 @@
 #include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -26,7 +26,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setWindowTitle("Seer Memory Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
-    memoryLengthLineEdit->setValidator(new QRegExpValidator(QRegExp("\\s*([1-9]\\d*\\s*)+"), this));
+    memoryLengthLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("\\s*([1-9]\\d*\\s*)+"), this));
     columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
 
     if (memoryHexEditor->memoryMode() == SeerHexWidget::HexMemoryMode) {
@@ -148,7 +148,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
     //qDebug() << text;
 
-    if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         // 11^done,value="1"
         // 11^done,value="0x7fffffffd538"
@@ -182,7 +182,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             setVariableAddress(address);
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
 
         // 3^done,memory=[{begin="0x0000000000613e70",offset="0x0000000000000000",end="0x0000000000613e71",contents="00"}]
         // 4^done,memory=[{begin="0x0000000000613e70",offset="0x0000000000000000",end="0x0000000000613ed4",contents="000000000000000000000000"}]
@@ -219,7 +219,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,asm_insns="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,asm_insns="))) {
 
         QString id_text = text.section('^', 0,0);
 
@@ -228,7 +228,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             memoryAsmEditor->setData(text);
         }
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         // 12^error,msg="No symbol \"return\" in current context."
         // 13^error,msg="No symbol \"cout\" in current context."

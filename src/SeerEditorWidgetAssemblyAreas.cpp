@@ -14,7 +14,7 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QToolTip>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
@@ -24,7 +24,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QDebug>
 
 //
@@ -590,7 +590,7 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -633,7 +633,7 @@ void SeerEditorWidgetAssemblyArea::offsetAreaPaintEvent (QPaintEvent* event) {
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -676,7 +676,7 @@ void SeerEditorWidgetAssemblyArea::breakPointAreaPaintEvent (QPaintEvent* event)
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -744,7 +744,7 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
 
     QFont font = painter.font();
     font.setItalic(format.fontItalic());
-    font.setWeight(format.fontWeight());
+    font.setWeight(QFont::Weight(format.fontWeight()));
     painter.setFont(font);
 
     QTextBlock block       = firstVisibleBlock();
@@ -1244,7 +1244,7 @@ bool SeerEditorWidgetAssemblyArea::breakpointAddressEnabled (const QString& addr
 
 void SeerEditorWidgetAssemblyArea::showContextMenu (QMouseEvent* event) {
 
-    showContextMenu(event->pos(), event->globalPos());
+    showContextMenu(event->pos(), event->globalPosition());
 }
 
 void SeerEditorWidgetAssemblyArea::showContextMenu (QContextMenuEvent* event) {
@@ -1252,7 +1252,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (QContextMenuEvent* event) {
     showContextMenu(event->pos(), event->globalPos());
 }
 
-void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPoint& globalPos) {
+void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPointF& globalPos) {
 
     // Get the line number for the cursor position.
     QTextCursor cursor = cursorForPosition(pos);
@@ -1338,7 +1338,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     }
 
     // Launch the menu. Get the response.
-    QAction* action = menu.exec(globalPos);
+    QAction* action = menu.exec(globalPos.toPoint());
 
     // Do nothing.
     if (action == 0) {
