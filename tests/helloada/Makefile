@@ -6,5 +6,5 @@ helloada: helloada.adb
 
 .PHONY: clean
 clean:
-	rm -f helloada helloada.o helloada.ali b~*
+	rm -f helloada helloada.o helloada.ali b~* increment_by.ali increment_by.o
 

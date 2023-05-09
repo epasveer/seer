@@ -1,0 +1,12 @@
+
+$ gnatmake -c --GCC=/usr/bin/gcc-7 -O3 increment_by.adb
+$ gnatmake -c --GCC=/usr/bin/gcc-7 -g  helloada.adb
+$ gnatmake -b --GCC=/usr/bin/gcc-7 -g  helloada.adb
+$ gnatlink helloada
+
+$ file helloada helloada.o increment_by.o
+helloada:       ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=dfc77b85b759a22a42ddaa75c050d4458b3175a4, for GNU/Linux 3.2.0, with debug_info, not stripped
+helloada.o:     ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), with debug_info, not stripped
+increment_by.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
+
+
