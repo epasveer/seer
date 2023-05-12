@@ -27,8 +27,9 @@ NEWS
 
 Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 
-* Seer now supports the RR time-travelling debugger.
-* Seer now supports gdb's extra commands for the ADA language.
+* Version v1.17 will be the last Qt5 release.  The next release will be v2.0 and will be Qt6 based.
+* It is likely the "main" tree of the Seer project will be broken/non-usable until I fix all the porting issues.
+* If you want the latest stable source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
 
 
 GUI overview
