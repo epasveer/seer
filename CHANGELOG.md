@@ -1,8 +1,9 @@
 
 # Seer Change Log
 
-## [1.18beta] - 2023-xx-xx
-* Prepare for version 1.18 release cycle.
+## [2.0beta] - 2023-xx-xx
+* Prepare for version 2.0 release cycle.
+* Qt6 based.
 
 ## [1.17] - 2023-04-23
 * Add support for the RR debugger.
