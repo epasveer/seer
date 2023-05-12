@@ -9,7 +9,8 @@
 #include "QProcessInfo.h"
 #include <QtCore/QDir>
 #include <QtCore/QProcess>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
+#include <QRegularExpression>
 #include <QtCore/QStandardPaths>
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
@@ -85,7 +86,7 @@ QProcessList QProcessInfo::populate() {
                         //qDebug() << line.split(QRegExp("\\s+")).at(0);
                         //qDebug() << line.split(QRegExp("\\s+")).at(1);
                         //qDebug() << "";
-                        info.setUsername(line.split(QRegExp("\\s+")).at(1));
+                        info.setUsername(line.split(QRegularExpression("\\s+")).at(1));
                         break;
                     }
                 }

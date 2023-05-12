@@ -1,16 +1,15 @@
 #pragma once
 
+#include <QtCharts>
 #include <QtCharts/QChartView>
 #include <QtWidgets/QRubberBand>
 #include <QtCore/QPointF>
-
-using namespace QtCharts;
 
 class QZoomChartView : public QChartView {
 
     public:
         QZoomChartView (QWidget* parent = 0);
-        QZoomChartView (QtCharts::QChart* chart, QWidget* parent = 0);
+        QZoomChartView (QChart* chart, QWidget* parent = 0);
 
     public slots:
         void                    printView                   ();

@@ -4,7 +4,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtCore/QDebug>
 
 SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* parent) : QWidget(parent) {

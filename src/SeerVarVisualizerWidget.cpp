@@ -5,10 +5,10 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QIcon>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QTimer>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -145,7 +145,7 @@ QString SeerVarVisualizerWidget::variableName () const {
 
 void SeerVarVisualizerWidget::handleText (const QString& text) {
 
-    if (text.contains(QRegExp("^([0-9]+)\\^done,name="))) {
+    if (text.contains(QRegularExpression("^([0-9]+)\\^done,name="))) {
 
         //
         // "-var-create x2112 "*" me"
@@ -223,7 +223,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,numchild="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,numchild="))) {
 
         //
         // "-var-list-children --all-values x2112.public"
@@ -337,7 +337,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,changelist="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,changelist="))) {
 
         //qDebug() << "var-update-children" << text;
 
@@ -415,7 +415,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,attr="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,attr="))) {
 
         //qDebug() << "var-show-attributes" << text;
 
@@ -439,7 +439,7 @@ void SeerVarVisualizerWidget::handleText (const QString& text) {
         }
 
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);

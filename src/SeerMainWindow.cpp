@@ -13,7 +13,8 @@
 #include <QtGui/QPalette>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QTimer>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
+#include <QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -863,16 +864,16 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,ada-exceptions={") && text.endsWith("}")) {
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done"))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done"))) {
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
         return;
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^done,memory="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
         return;
 
     }else if (text == "^exit") {

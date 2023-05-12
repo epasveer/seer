@@ -4,9 +4,9 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QIcon>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -85,7 +85,7 @@ void SeerStructVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.contains(QRegExp("^([0-9]+)\\^done,value="))) {
+    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         QString id_text    = text.section('^', 0,0);
         QString value_text = Seer::parseFirst(text,       "value=", '"', '"', false);
@@ -108,7 +108,7 @@ void SeerStructVisualizerWidget::handleText (const QString& text) {
         }
 
 
-    }else if (text.contains(QRegExp("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         QString id_text  = text.section('^', 0,0);
         QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);

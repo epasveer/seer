@@ -23,7 +23,7 @@
 #include <QtWidgets/QCompleter>
 #include <QtWidgets/QAbstractItemView>
 #include <QtWidgets/QScrollBar>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QWheelEvent>
 #include <QtCore/QDebug>
@@ -315,9 +315,9 @@ int QHistoryLineEdit::_wordStart () const {
 
     // lastIndexOf returns the index of the last space or -1 if there are no spaces
     // so that + 1 returns the index of the character starting the word or 0
-    int after_space = text().leftRef(cursorPosition()).lastIndexOf(' ') + 1;
+    int after_space = text().left(cursorPosition()).lastIndexOf(' ') + 1;
 
-    if ( text().rightRef(text().size()-after_space).startsWith(_completionPrefix) ) {
+    if ( text().right(text().size()-after_space).startsWith(_completionPrefix) ) {
         after_space += _completionPrefix.size();
     }
 

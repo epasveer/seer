@@ -2,7 +2,7 @@
 #include "QStringPair.h"
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QRegExp>
+#include <QtCore5Compat/QRegExp>
 
 namespace Seer {
 

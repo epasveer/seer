@@ -1,7 +1,7 @@
 #include "SeerSeerLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
-#include <QtCore/QRegExp>
+#include <QRegularExpression>
 #include <QtCore/QDebug>
 
 SeerSeerLogWidget::SeerSeerLogWidget (QWidget* parent) : SeerLogWidget(parent) {
@@ -39,15 +39,15 @@ void SeerSeerLogWidget::processText (const QString& text) {
         selected = true;
     }
 
-    if (selected == false && text.contains(QRegExp("^([0-9]+)\\^")) == true) {
+    if (selected == false && text.contains(QRegularExpression("^([0-9]+)\\^")) == true) {
         selected = true;
     }
 
-    if (selected == false && text.contains(QRegExp("^([0-9]+)\\*")) == true) {
+    if (selected == false && text.contains(QRegularExpression("^([0-9]+)\\*")) == true) {
         selected = true;
     }
 
-    if (selected == false && text.contains(QRegExp("^([0-9]+)\\=")) == true) {
+    if (selected == false && text.contains(QRegularExpression("^([0-9]+)\\=")) == true) {
         selected = true;
     }
 

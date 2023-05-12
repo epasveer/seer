@@ -521,7 +521,8 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
 
                 unsigned char ch = Seer::ucharToAscii( arr[i] );
 
-                val += QString(ch);
+                QChar symbol = QChar(ch);
+                val += QString(symbol);
             }
 
         }else if (charMode() == SeerHexWidget::EbcdicCharMode) {
@@ -529,7 +530,8 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
 
                 unsigned char ch = Seer::ebcdicToAscii( arr[i] );
 
-                val += QString(ch);
+                QChar symbol = QChar(ch);
+                val += QString(symbol);
             }
 
         }else{
@@ -648,7 +650,8 @@ void SeerHexWidget::create () {
 
                 unsigned char ch = Seer::ucharToAscii( data[b] );
 
-                QString val(ch);
+                QChar symbol = QChar(ch);
+                QString val(symbol);
 
                 // Write display character to document.
                 cursor.insertText (val, defaultFormat);
@@ -659,7 +662,8 @@ void SeerHexWidget::create () {
 
                 unsigned char ch = Seer::ebcdicToAscii( data[b] );
 
-                QString val(ch);
+                QChar symbol = QChar(ch);
+                QString val(symbol);
 
                 // Write display character to document.
                 cursor.insertText (val, defaultFormat);

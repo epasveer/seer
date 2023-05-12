@@ -2,8 +2,6 @@
 
 #include <QtCharts/QChart>
 
-using namespace QtCharts;
-
 class QGestureEvent;
 
 class QZoomChart : public QChart {

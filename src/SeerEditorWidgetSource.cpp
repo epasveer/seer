@@ -8,7 +8,7 @@
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
 #include <QtCore/QList>

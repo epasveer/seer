@@ -5,8 +5,8 @@
 #include "SeerKeySettings.h"
 #include "SeerProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QShortcut>
-#include <QtWidgets/QActionGroup>
+#include <QShortcut>
+#include <QActionGroup>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QResizeEvent>
 #include <QtCore/QString>

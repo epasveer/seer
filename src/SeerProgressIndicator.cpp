@@ -1,6 +1,6 @@
 #include "SeerProgressIndicator.h"
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtGui/QCursor>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
