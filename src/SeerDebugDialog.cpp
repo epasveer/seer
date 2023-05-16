@@ -75,12 +75,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpConnectToolButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpConnectToolButtonClicked);
     QObject::connect(helpRRToolButton,                     &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRRToolButtonClicked);
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
-#else
-    QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
-#endif
 
     // Set initial run mode.
     handleRunModeChanged(0);

@@ -6,7 +6,7 @@
 #include <QtWidgets/QMenu>
 #include <QAction>
 #include <QtGui/QIcon>
-#include <QtCore5Compat/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>

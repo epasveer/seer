@@ -7,7 +7,6 @@
 #include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
-#include <QtCore5Compat/QRegExp>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -140,11 +139,7 @@ void SeerImageVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
-#else
-            QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', QString::SkipEmptyParts);
-#endif
 
             setVariableAddress(words.first());
         }

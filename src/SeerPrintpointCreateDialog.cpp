@@ -218,21 +218,13 @@ QString SeerPrintpointCreateDialog::printpointText () const {
     // Build the format string, ensuring a \" at the beggining and end of the string.
     printpointParameters += " ";
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (format().front() != QString("\"")) {
-#else
-    if (format().at(0) != "\"") {
-#endif
         printpointParameters += "\"";
     }
 
     printpointParameters += format();
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (format().back() != QString("\"")) {
-#else
-    if (format().at(format().size() - 1) != "\"") {
-#endif
         printpointParameters += "\"";
     }
 

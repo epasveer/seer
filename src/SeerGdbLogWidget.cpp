@@ -1,7 +1,6 @@
 #include "SeerGdbLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
-#include <QtCore5Compat/QRegExp>
 #include <QRegularExpression>
 #include <QtCore/QDebug>
 
@@ -18,76 +17,43 @@ void SeerGdbLogWidget::processText (const QString& text) {
     // Remove leading "~"
     // ~"For help, type "help".
     // "
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     if (text.front() == '~') {
-#else
-    if (text.at(0) == '~') {
-#endif
         str = text.mid(1);
 
         // Remove leading """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.front() == '"') {
-#else
-        if (str.at(0) == '"') {
-#endif
             str = str.mid(1);
         }
 
         // Remove trailing """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '"') {
-#else
-        if (str.at(str.size() - 1) == '"') {
-#endif
-
             str.chop(1);
         }
 
         // Remove trailing "\n"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '\n') {
-#else
-        if (str.at(str.size() - 1) == '\n') {
-#endif
             str.chop(1);
         }
 
     // Remove leading "&"
     // &"p name
     // "
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     } else if (text.front() == '&') {
-#else
-    } else if (text.at(0) == '&') {
-#endif
 
         str = text.mid(1);
 
         // Remove leading """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.front() == '"') {
-#else
-        if (str.at(0) == '"') {
-#endif
             str = str.mid(1);
         }
 
         // Remove trailing """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '"') {
-#else
-        if (str.at(str.size() - 1) == '"') {
-#endif
             str.chop(1);
         }
 
         // Remove trailing "\n"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '\n') {
-#else
-        if (str.at(str.size() - 1) == '\n') {
-#endif
             str.chop(1);
         }
 
@@ -95,38 +61,22 @@ void SeerGdbLogWidget::processText (const QString& text) {
     // Remove leading "@"
     // @"memcheck monitor commands:
     // "
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     } else if (text.front() == '@') {
-#else
-    } else if (text.at(0) == '@') {
-#endif
 
         str = text.mid(1);
 
         // Remove leading """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.front() == '"') {
-#else
-        if (str.at(0) == '"') {
-#endif
             str = str.mid(1);
         }
 
         // Remove trailing """
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '"') {
-#else
-        if (str.at(str.size() - 1) == '"') {
-#endif
             str.chop(1);
         }
 
         // Remove trailing "\n"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
         if (str.back() == '\n') {
-#else
-        if (str.at(str.size() - 1) == '\n') {
-#endif
             str.chop(1);
         }
 
@@ -140,11 +90,7 @@ void SeerGdbLogWidget::processText (const QString& text) {
     str = Seer::filterEscapes(str);
 
     // Remove trailing "\n"
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     while (str.back() == '\n') {
-#else
-    while (str.at(str.size() - 1) == '\n') {
-#endif
         str.chop(1);
         break;
     }

@@ -3,7 +3,6 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
-#include <QtCore5Compat/QRegExp>
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <iostream>

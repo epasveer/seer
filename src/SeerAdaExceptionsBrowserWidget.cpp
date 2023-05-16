@@ -119,11 +119,7 @@ void SeerAdaExceptionsBrowserWidget::handleSearchLineEdit (const QString& text) 
 
         QList<QTreeWidgetItem*> matches;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         matches = adaExceptionsTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
-#else
-        matches = adaExceptionsTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
-#endif
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
         QList<QTreeWidgetItem*>::const_iterator e  = matches.end();

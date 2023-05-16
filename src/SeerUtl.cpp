@@ -2,9 +2,8 @@
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
-#include <QtCore5Compat/QRegExp>
-#include <mutex>
 #include <QRegularExpression>
+#include <mutex>
 
 //
 // Increment this with every release on GitHub.
@@ -67,21 +66,29 @@ namespace Seer {
 
     QString expandEnv (const QString& str, bool* ok) {
 
-        QRegExp env_re1("\\$\\{[A-Za-z0-9_]+\\}");      // ${PATH}
-        QRegExp env_re2("\\$[a-zA-Z0-9_]+");            // $PATH
+        QRegularExpression env_re1("\\$\\{[A-Za-z0-9_]+\\}");      // ${PATH}
+        QRegularExpression env_re2("\\$[a-zA-Z0-9_]+");            // $PATH
+
         QString r = str;
         bool    f = true;
-        int     i;
 
-        while ((i = env_re1.indexIn(r)) != -1) {
+        while (true) {
 
-            QString capstr = env_re1.cap(0);
-            QString envstr = capstr.mid(2,capstr.length()-3);
+            QRegularExpressionMatch match = env_re1.match(r);
+
+            if (match.hasMatch() == false) {
+                break;
+            }
+
+            qsizetype i      = match.capturedStart();
+            qsizetype len    = match.capturedLength();
+            QString   capstr = match.captured();
+            QString   envstr = capstr.mid(2,capstr.length()-3);
 
             QByteArray value(qgetenv(envstr.toLatin1().data()));
 
             if (value.size() > 0) {
-                r.remove(i, env_re1.matchedLength());
+                r.remove(i, len);
                 r.insert(i, value);
             }else{
                 f = false; // Not expanded.
@@ -89,15 +96,23 @@ namespace Seer {
             }
         }
 
-        while ((i = env_re2.indexIn(r)) != -1) {
+        while (true) {
 
-            QString capstr = env_re2.cap(0);
-            QString envstr = capstr.mid(1,capstr.length()-1);
+            QRegularExpressionMatch match = env_re2.match(r);
+
+            if (match.hasMatch() == false) {
+                break;
+            }
+
+            qsizetype i      = match.capturedStart();
+            qsizetype len    = match.capturedLength();
+            QString   capstr = match.captured();
+            QString   envstr = capstr.mid(1,capstr.length()-1);
 
             QByteArray value(qgetenv(envstr.toLatin1().data()));
 
             if (value.size() > 0) {
-                r.remove(i, env_re2.matchedLength());
+                r.remove(i, len);
                 r.insert(i, value);
             }else{
                 f = false; // Not expanded.
@@ -464,12 +479,13 @@ namespace Seer {
     //
     //
 
-    bool matches (const QStringList& regexpatterns, const QString& string, QRegExp::PatternSyntax syntax) {
+    bool matchesWildcard (const QStringList& patterns, const QString& string) {
 
-        foreach (const auto& regex, regexpatterns) {
-            QRegExp regexPattern(regex, Qt::CaseSensitive, syntax);
-            QRegularExpression qt6Regex(regexPattern.pattern(), QRegularExpression::NoPatternOption );
-            if (string.contains(qt6Regex)) {
+        foreach (const auto& pattern, patterns) {
+
+            QRegularExpression re = QRegularExpression::fromWildcard(pattern, Qt::CaseInsensitive, QRegularExpression::UnanchoredWildcardConversion);
+
+            if (re.match(string).hasMatch()) {
                 return true;
             }
         }

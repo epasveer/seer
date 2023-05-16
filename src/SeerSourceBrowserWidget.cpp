@@ -128,11 +128,11 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
-            if (Seer::matches(miscFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+            if (Seer::matchesWildcard(miscFilePatterns(), fullname_text)) {
                 _miscFilesItems->addChild(item);
-            }else if (Seer::matches(sourceFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+            }else if (Seer::matchesWildcard(sourceFilePatterns(), fullname_text)) {
                 _sourceFilesItems->addChild(item);
-            }else if (Seer::matches(headerFilePatterns(), fullname_text, QRegExp::WildcardUnix)) {
+            }else if (Seer::matchesWildcard(headerFilePatterns(), fullname_text)) {
                 _headerFilesItems->addChild(item);
             }else{
                 _miscFilesItems->addChild(item);
@@ -224,11 +224,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
 
         QList<QTreeWidgetItem*> matches;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         matches = sourceTreeWidget->findItems(text, Qt::MatchRegularExpression | Qt::MatchRecursive, 0);
-#else
-        matches = sourceTreeWidget->findItems(text, Qt::MatchWildcard | Qt::MatchRecursive, 0);
-#endif
 
         QList<QTreeWidgetItem*>::const_iterator it = matches.begin();
         QList<QTreeWidgetItem*>::const_iterator e  = matches.end();

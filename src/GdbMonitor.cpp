@@ -1,7 +1,6 @@
 #include "GdbMonitor.h"
 #include <QtCore/QtCore>
 #include <QtCore/QProcess>
-#include <QtCore5Compat/QRegExp>
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QDebug>
 #include <iostream>

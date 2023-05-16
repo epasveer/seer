@@ -7,7 +7,7 @@
 #include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
-#include <QtCore5Compat/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -162,20 +162,22 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
             // Look for an address in the value.
             if (address == "") {
-                QRegExp re("0[xX][0-9a-fA-F]+");
+                QRegularExpression      re("0[xX][0-9a-fA-F]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Look for a number in the value.
             if (address == "") {
-                QRegExp re("[0-9]+");
+                QRegularExpression      re("0[xX][0-9a-fA-F]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Set the variable address.

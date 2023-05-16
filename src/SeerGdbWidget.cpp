@@ -16,6 +16,7 @@
 #include <QtCore/QLoggingCategory>
 #include <QtCore/QSettings>
 #include <QtCore/QProcess>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -914,9 +915,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         // Set a temporary breakpoint for start up.
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
-            QRegExp addrRegex("0[xX][0-9a-fA-F]+");
-
-            if (addrRegex.exactMatch(executableBreakpointFunctionName())) {
+            if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
                 handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
             }else{
                 handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
@@ -2268,11 +2267,7 @@ void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
     }else{
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
         QStringList ids = expressionids.split(' ', Qt::SkipEmptyParts);
-#else
-        QStringList ids = expressionids.split(' ', QString::SkipEmptyParts);
-#endif
 
         bool first = true;
         for (int i=0; i<ids.size(); i++) {
@@ -2923,11 +2918,7 @@ bool SeerGdbWidget::startGdb () {
         return false;
     }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
-#else
-    QStringList args = arguments.split(' ', QString::SkipEmptyParts);
-#endif
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(command);

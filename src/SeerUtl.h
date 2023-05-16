@@ -2,7 +2,6 @@
 #include "QStringPair.h"
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore5Compat/QRegExp>
 
 namespace Seer {
 
@@ -19,7 +18,7 @@ namespace Seer {
     QStringList     parseCommaList  (const QString& str, QChar startBracket, QChar endBracket);
     QStringPair     parseNameValue  (const QString& str, QChar separator);
     QString         varObjParent    (const QString& str);
-    bool            matches         (const QStringList& regexpatterns, const QString& string, QRegExp::PatternSyntax syntax);
+    bool            matchesWildcard (const QStringList& regexpatterns, const QString& string);
 
     int             createID        ();
 

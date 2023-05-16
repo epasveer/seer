@@ -110,11 +110,7 @@ void QImageViewer::zoom (double factor) {
 
     _zoomFactor = factor;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     _imageLabel->resize(_zoomFactor * _imageLabel->pixmap(Qt::ReturnByValue).size());
-#else
-    _imageLabel->resize(_zoomFactor * _imageLabel->pixmap()->size());
-#endif
 }
 
 void QImageViewer::zoomIn () {
@@ -136,7 +132,6 @@ void QImageViewer::print () {
 
     QPrintDialog dialog(&_printer, this);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     if (dialog.exec()) {
         QPainter painter(&_printer);
         QRect rect = painter.viewport();
@@ -146,17 +141,6 @@ void QImageViewer::print () {
         painter.setWindow(_imageLabel->pixmap(Qt::ReturnByValue).rect());
         painter.drawPixmap(0, 0, _imageLabel->pixmap(Qt::ReturnByValue));
     }
-#else
-    if (dialog.exec()) {
-        QPainter painter(&_printer);
-        QRect rect = painter.viewport();
-        QSize size = _imageLabel->pixmap()->size();
-        size.scale(rect.size(), Qt::KeepAspectRatio);
-        painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-        painter.setWindow(_imageLabel->pixmap()->rect());
-        painter.drawPixmap(0, 0, *_imageLabel->pixmap());
-    }
-#endif
 }
 
 void QImageViewer::keyPressEvent (QKeyEvent* event) {

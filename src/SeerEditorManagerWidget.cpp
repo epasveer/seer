@@ -775,7 +775,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     //dumpEntries();
 
     // Are we asked to ignore this file?
-    if (Seer::matches(editorIgnoreDirectories(), fullname, QRegExp::WildcardUnix) == true) {
+    if (Seer::matchesWildcard(editorIgnoreDirectories(), fullname) == true) {
         emit showMessage(QString("Ignored opening of: '%1'").arg(fullname), 3000);
         return 0;
     }
@@ -833,7 +833,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     //dumpEntries();
 
     // Are we asked to ignore this file?
-    if (Seer::matches(editorIgnoreDirectories(), fullname, QRegExp::WildcardUnix) == true) {
+    if (Seer::matchesWildcard(editorIgnoreDirectories(), fullname) == true) {
         emit showMessage(QString("Ignored opening of: '%1'").arg(fullname), 3000);
         return 0;
     }

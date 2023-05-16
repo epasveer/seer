@@ -11,8 +11,7 @@
 #include <QtGui/QIcon>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
-#include <QtCore5Compat/QRegExp>
-#include <QRegularExpression>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <QtGlobal>
@@ -91,13 +90,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleTitleLineEdit);
     QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handlePointsCheckBox);
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handleLabelsCheckBox);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
-#else
-    QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::buttonClicked),          this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
-#endif
-
     QObject::connect(printPushButton,               &QPushButton::clicked,                                     arrayChartView,  &QZoomChartView::printView);
 
     // Restore window settings.
@@ -309,20 +302,22 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
             // Look for an address in the value.
             if (address == "") {
-                QRegExp re("0[xX][0-9a-fA-F]+");
+                QRegularExpression      re("0[xX][0-9a-fA-F]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Look for a number in the value.
             if (address == "") {
-                QRegExp re("[0-9]+");
+                QRegularExpression      re("[0-9]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Set the variable address.
@@ -336,20 +331,22 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
             // Look for an address in the value.
             if (address == "") {
-                QRegExp re("0[xX][0-9a-fA-F]+");
+                QRegularExpression      re("0[xX][0-9a-fA-F]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Look for a number in the value.
             if (address == "") {
-                QRegExp re("[0-9]+");
+                QRegularExpression      re("[0-9]+");
+                QRegularExpressionMatch match = re.match(value_text);
 
-                re.indexIn(value_text);
-
-                address = re.cap();
+                if (match.hasMatch()) {
+                    address = match.captured();
+                }
             }
 
             // Set the variable address.

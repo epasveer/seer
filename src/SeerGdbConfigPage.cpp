@@ -10,12 +10,7 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
 
     // Connect things.
     QObject::connect(gdbProgramToolButton, &QToolButton::clicked,                                  this, &SeerGdbConfigPage::handleGdbProgramToolButton);
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::idClicked),           this, &SeerGdbConfigPage::handleDprintfButtonGroup);
-#else
-    QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::buttonClicked),       this, &SeerGdbConfigPage::handleDprintfButtonGroup);
-#endif
 
     // Setup the defaults.
     reset();

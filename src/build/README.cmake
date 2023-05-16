@@ -13,7 +13,7 @@ Notes for building Seer with cmake.
     % cmake --build . --config Release
     % sudo cmake --install .
 
-MacOS may need help finding the cmake config file for Qt5.
+MacOS may need help finding the cmake config file for Qt6.
 
-    % cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt5/ -DCMAKE_BUILD_TYPE=Release ..
+    % cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt6/ -DCMAKE_BUILD_TYPE=Release ..
 

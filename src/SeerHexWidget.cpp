@@ -77,11 +77,7 @@ SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
     _memoryMode    = SeerHexWidget::HexMemoryMode;
     _charMode      = SeerHexWidget::AsciiCharMode;
     _addressOffset = 0;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     _charWidth     = plainTextEdit->fontMetrics().horizontalAdvance(QLatin1Char('9'));
-#else
-    _charWidth     = plainTextEdit->fontMetrics().width(QLatin1Char('9'));
-#endif
     _charHeight    = plainTextEdit->fontMetrics().height();
     _gapAddrHex    = 10; // Gap between address and hex fields.
     _gapHexAscii   = 16; // Gap between hex and ascii fields.
@@ -682,7 +678,7 @@ void SeerHexWidget::create () {
 
     // Print checksum.
     {
-        quint16 crc16    = qChecksum(_pdata->getData().data(), _pdata->getData().size(), Qt::ChecksumIso3309);
+        quint16 crc16    = qChecksum(_pdata->getData(), Qt::ChecksumIso3309);
         QString crc16str = QString::number(crc16);
 
         lineEdit_15->setText(crc16str);

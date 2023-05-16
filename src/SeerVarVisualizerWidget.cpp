@@ -8,7 +8,7 @@
 #include <QAction>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QIcon>
-#include <QtCore5Compat/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QTimer>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>

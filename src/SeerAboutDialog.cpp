@@ -23,11 +23,7 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
     text.replace("VERSIONNUMBER", Seer::version());
 
     // Put the About text in as markdown. Move back to the begining.
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     textBrowser->setMarkdown(text);
-#else
-    textBrowser->setText(text);
-#endif
     textBrowser->moveCursor (QTextCursor::Start);
 
     // Set the TextBrowser's background to the same as the window's.
