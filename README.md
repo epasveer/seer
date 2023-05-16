@@ -16,11 +16,15 @@ Requirements
 * C++17
 * gdb with "mi" interpreter
 * CMake (3.10 or newer)
-* QT5 (5.15.2 or newer)
-* QT5 QtCharts (5.15.2 or newer)
-* QT as old as 5.9.5 (e.g., Ubuntu 18.04 LTS) is supported but has certain limitations.
-* When building Seer from source, you will need the QT5 "devel" packages
-  installed on your system for your distribution.
+* QT6
+   * Core
+   * Gui
+   * Widgets
+   * PrintSupport
+   * Charts
+   * Svg
+* When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
+
 
 NEWS
 ====
@@ -30,6 +34,7 @@ Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 * Version v1.17 will be the last Qt5 release.  The next release will be v2.0 and will be Qt6 based.
 * It is likely the "main" tree of the Seer project will be broken/non-usable until I fix all the porting issues.
 * If you want the latest stable source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
+* Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 
 GUI overview
@@ -201,8 +206,7 @@ Building Seer
 
 Go to the Wiki to see how to build Seer.
 
-https://github.com/epasveer/seer/wiki/Building-Seer
-
+https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
 
 Support/Contact
 ===============
