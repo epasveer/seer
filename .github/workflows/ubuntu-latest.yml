@@ -27,6 +27,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
+        version: 6.2.*
         install-deps: 'true'
         modules: 'qtcharts'
 
