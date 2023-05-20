@@ -1,6 +1,7 @@
 #include "SeerArrayVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
+#include <QtCharts/QChart>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QSplineSeries>
 #include <QtCharts/QScatterSeries>

@@ -495,7 +495,6 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
 
         // If the text isn't empty, display a took tip.
         if (cursor.selectedText().isEmpty() == false && cursor.selectedText() == _selectedExpressionCursor.selectedText()) {
-          //QToolTip::showText(helpEvent->globalPos(), QString("%1 = %2").arg(_selectedExpressionName).arg(_selectedExpressionValue) );
             QToolTip::showText(helpEvent->globalPos(), _selectedExpressionValue);
 
         // Otherwise, hide any old one.
@@ -942,7 +941,11 @@ bool SeerEditorWidgetSourceArea::breakpointLineEnabled (int lineno) const {
 
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
+#if QT_VERSION >= 0x060000
     showContextMenu(event->pos(), event->globalPosition());
+#else
+    showContextMenu(event->pos(), event->globalPos());
+#endif
 }
 
 void SeerEditorWidgetSourceArea::showContextMenu (QContextMenuEvent* event) {

@@ -1223,7 +1223,11 @@ bool SeerEditorWidgetAssemblyArea::breakpointAddressEnabled (const QString& addr
 
 void SeerEditorWidgetAssemblyArea::showContextMenu (QMouseEvent* event) {
 
+#if QT_VERSION >= 0x060000
     showContextMenu(event->pos(), event->globalPosition());
+#else
+    showContextMenu(event->pos(), event->globalPos());
+#endif
 }
 
 void SeerEditorWidgetAssemblyArea::showContextMenu (QContextMenuEvent* event) {

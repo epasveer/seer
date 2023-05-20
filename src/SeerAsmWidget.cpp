@@ -73,9 +73,9 @@ void SeerAsmWidget::setData (const QString& data) {
         QString opcodes_text = Seer::parseFirst(asm_text, "opcodes=", '"', '"', false);
         QString inst_text    = Seer::parseFirst(asm_text, "inst=",    '"', '"', false);
 
-        address_width = std::max((qsizetype)address_width, address_text.length());
-        opcode_width  = std::max((qsizetype)opcode_width, opcodes_text.length());
-        inst_width    = std::max((qsizetype)inst_width,   inst_text.length());
+        address_width = std::max((qsizetype)address_width, (qsizetype)address_text.length());
+        opcode_width  = std::max((qsizetype)opcode_width,  (qsizetype)opcodes_text.length());
+        inst_width    = std::max((qsizetype)inst_width,    (qsizetype)inst_text.length());
     }
 
     // Write header.

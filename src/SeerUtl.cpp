@@ -483,7 +483,14 @@ namespace Seer {
 
         foreach (const auto& pattern, patterns) {
 
-            QRegularExpression re = QRegularExpression::fromWildcard(pattern, Qt::CaseInsensitive, QRegularExpression::UnanchoredWildcardConversion);
+
+            QRegularExpression re;
+
+#if QT_VERSION >= 0x060000
+            re = QRegularExpression::fromWildcard(pattern, Qt::CaseInsensitive, QRegularExpression::UnanchoredWildcardConversion);
+#else
+            re = QRegularExpression(QRegularExpression::wildcardToRegularExpression(pattern), QRegularExpression::CaseInsensitiveOption);
+#endif
 
             if (re.match(string).hasMatch()) {
                 return true;

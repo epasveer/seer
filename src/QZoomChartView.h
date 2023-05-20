@@ -5,6 +5,10 @@
 #include <QtWidgets/QRubberBand>
 #include <QtCore/QPointF>
 
+#if QT_VERSION < 0x060000
+using namespace QtCharts;
+#endif
+
 class QZoomChartView : public QChartView {
 
     public:

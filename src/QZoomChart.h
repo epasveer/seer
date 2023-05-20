@@ -2,12 +2,16 @@
 
 #include <QtCharts/QChart>
 
+#if QT_VERSION < 0x060000
+using namespace QtCharts;
+#endif
+
 class QGestureEvent;
 
 class QZoomChart : public QChart {
 
     public:
-        explicit QZoomChart(QGraphicsItem* parent = nullptr, Qt::WindowFlags wFlags = {});
+        QZoomChart(QGraphicsItem* parent = nullptr, Qt::WindowFlags wFlags = {});
        ~QZoomChart();
 
     protected:
