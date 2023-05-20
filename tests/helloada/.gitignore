@@ -1,6 +1,6 @@
 helloada
-helloada.ali
-helloada.o
+*.ali
+*.o
 b~helloada.*
 *.seer
 core.*

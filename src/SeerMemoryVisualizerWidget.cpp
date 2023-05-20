@@ -160,6 +160,8 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
             QString address    = "";
 
+            qDebug() << value_text;
+
             // Look for an address in the value.
             if (address == "") {
                 QRegularExpression      re("0[xX][0-9a-fA-F]+");
@@ -172,7 +174,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
             // Look for a number in the value.
             if (address == "") {
-                QRegularExpression      re("0[xX][0-9a-fA-F]+");
+                QRegularExpression      re("[0-9]+");
                 QRegularExpressionMatch match = re.match(value_text);
 
                 if (match.hasMatch()) {
