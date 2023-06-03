@@ -14,7 +14,7 @@
 namespace Seer {
 
     QString version () {
-        return SEER_VERSION;
+        return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
     QString filterEscapes (const QString& str) {
