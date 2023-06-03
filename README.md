@@ -17,24 +17,26 @@ Requirements
 * gdb with "mi" interpreter
 * CMake (3.10 or newer)
 * QT6
+   * When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
    * Core
    * Gui
    * Widgets
    * PrintSupport
    * Charts
    * Svg
-* When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
 
+* QT5
+   * For the time being, Seer can still be built with Qt5.
+   * Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 NEWS
 ====
 
 Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 
-* Version v1.17 will be the last Qt5 release.  The next release will be v2.0 and will be Qt6 based.
-* It is likely the "main" tree of the Seer project will be broken/non-usable until I fix all the porting issues.
-* If you want the latest stable source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
-* Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
+* Version v1.17 will be the last Qt5 release.
+* The next release will be v2.0 and will be Qt6 based. However, for the time being, it can still be compiled with Qt5.
+* If you want the latest stable Qt5 source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
 
 
 GUI overview
@@ -204,9 +206,11 @@ https://github.com/epasveer/seer/wiki/Starting-Seer
 Building Seer
 =============
 
-Go to the Wiki to see how to build Seer.
+Go to the Wiki to see how to build Seer. Seer can be built with Qt6. As well, for the time being, it can still be built with Qt5.
 
 https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
+</br>
+https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 Support/Contact
 ===============
