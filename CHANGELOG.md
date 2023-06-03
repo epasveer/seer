@@ -1,9 +1,10 @@
 
 # Seer Change Log
 
-## [2.0beta] - 2023-xx-xx
-* Prepare for version 2.0 release cycle.
-* Qt6 based.
+## [2.0] - 2023-03-06
+* Seer is Qt6 based. Still compiles with Qt5.
+* See Seer's Wiki page for compile instructions.
+     https://github.com/epasveer/seer/wiki
 
 ## [1.17] - 2023-04-23
 * Add support for the RR debugger.
