@@ -4,6 +4,18 @@ project(seergdb VERSION 2.0.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 
+if(NOT DEFINED QTVERSION)
+    set(QTVERSION "QT6" CACHE STRING "" FORCE)
+endif()
+
+if(${QTVERSION} STREQUAL "QT6")
+    message("-- Compile with QT6")
+elseif(${QTVERSION} STREQUAL "QT5")
+    message("-- Compile with QT5")
+else()
+    message(FATAL_ERROR "-- Use -DQTVERSION=QT5|QT6 not \"${QTVERSION}\"")
+endif()
+
 # Find includes in the build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -13,14 +25,20 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-
-
-find_package(Qt6 COMPONENTS REQUIRED Core)
-find_package(Qt6 COMPONENTS REQUIRED Gui)
-find_package(Qt6 COMPONENTS REQUIRED Widgets)
-find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
-find_package(Qt6 COMPONENTS REQUIRED Charts)
-find_package(Qt6 COMPONENTS REQUIRED Svg)
+if(${QTVERSION} STREQUAL "QT6")
+    find_package(Qt6 COMPONENTS REQUIRED Core)
+    find_package(Qt6 COMPONENTS REQUIRED Gui)
+    find_package(Qt6 COMPONENTS REQUIRED Widgets)
+    find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
+    find_package(Qt6 COMPONENTS REQUIRED Charts)
+    find_package(Qt6 COMPONENTS REQUIRED Svg)
+elseif(${QTVERSION} STREQUAL "QT5")
+    find_package(Qt5 COMPONENTS REQUIRED Core)
+    find_package(Qt5 COMPONENTS REQUIRED Gui)
+    find_package(Qt5 COMPONENTS REQUIRED Widgets)
+    find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
+    find_package(Qt5 COMPONENTS REQUIRED Charts)
+endif()
 
 set(HEADER_FILES
     GdbMonitor.h
@@ -205,7 +223,7 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug) #Release, RelWithDebInfo and MinSizeRel
     if(WIN32) # Check if we are on Windows
         set(SYSTEM_TYPE WIN32)
     endif()
-    message("System type is " ${SYSTEM_TYPE})
+    message("-- System type is " ${SYSTEM_TYPE})
 endif()
 
 # for Linux, BSD, Solaris, Minix
@@ -219,5 +237,9 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg)
+if(${QTVERSION} STREQUAL "QT6")
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg)
+elseif(${QTVERSION} STREQUAL "QT5")
+    target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
+endif()
 
