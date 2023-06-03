@@ -215,7 +215,11 @@ set(SOURCE_FILES
     QImageViewer.cpp
     )
 
-qt6_add_resources(SOURCE_FILES resource.qrc)
+if(${QTVERSION} STREQUAL "QT6")
+    qt6_add_resources(SOURCE_FILES resource.qrc)
+elseif(${QTVERSION} STREQUAL "QT5")
+    qt5_add_resources(SOURCE_FILES resource.qrc)
+endif()
 
 # Set non-Debug build as GUI application.
 # Debug build remains consle application.
