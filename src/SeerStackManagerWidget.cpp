@@ -193,7 +193,7 @@ void SeerStackManagerWidget::handleText (const QString& text) {
 
         QString currentthreadid_text = Seer::parseFirst(newtext,   "current-thread-id=", '"', '"', false);
 
-        groupBox->setTitle("Stack Info for Thread Id : " + currentthreadid_text);
+        groupBox->setTitle("Stack Info for Thread Id : " + currentthreadid_text + "  "); // Add trailing spaces. Some window styles will loose the number.
 
         stackFramesBrowserWidget()->refresh();
         stackArgumentsBrowserWidget()->refresh();
