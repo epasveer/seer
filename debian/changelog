@@ -1,4 +1,4 @@
-seergdb (2.0) UNRELEASED; urgency=medium
+seergdb (2.1beta) UNRELEASED; urgency=medium
 
   * Seer is Qt6 based. Still can compile with Qt5.
 

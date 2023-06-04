@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [2.1beta] - 2023-XX-XX
+* Start version 2.1 development cycle.
+
 ## [2.0] - 2023-03-06
 * Seer is Qt6 based. Still compiles with Qt5.
 * See Seer's Wiki page for compile instructions.
