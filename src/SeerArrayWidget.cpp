@@ -589,6 +589,6 @@ QByteArray SeerArrayWidget::DataStorageArray::getData(int position, int length) 
 }
 
 int SeerArrayWidget::DataStorageArray::size() {
-    return _data.count();
+    return _data.size();
 }
 

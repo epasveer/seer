@@ -703,6 +703,6 @@ QByteArray SeerHexWidget::DataStorageArray::getData() {
 }
 
 int SeerHexWidget::DataStorageArray::size() {
-    return _data.count();
+    return _data.size();
 }
 
