@@ -2970,6 +2970,12 @@ bool SeerGdbWidget::startGdb () {
     _gdbProcess->setProgram(command);
     _gdbProcess->setArguments(args);
 
+    // We need to set the C language, otherwise the MI interface is translated and our message
+    // filters will not work.
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LANG", "C");
+    _gdbProcess->setProcessEnvironment(env);
+
     // Start the gdb process.
     _gdbProcess->start();
 
