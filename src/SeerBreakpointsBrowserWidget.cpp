@@ -4,6 +4,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QInputDialog>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
@@ -44,6 +46,9 @@ SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : Q
     QObject::connect(deleteBreakpointsToolButton,   &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleDeleteToolButton);
     QObject::connect(enableBreakpointsToolButton,   &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleEnableToolButton);
     QObject::connect(disableBreakpointsToolButton,  &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleDisableToolButton);
+    QObject::connect(conditionBreakpointToolButton, &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleConditionToolButton);
+    QObject::connect(ignoreBreakpointToolButton,    &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleIgnoreToolButton);
+    QObject::connect(commandsBreakpointToolButton,  &QToolButton::clicked,              this,  &SeerBreakpointsBrowserWidget::handleCommandsToolButton);
 }
 
 SeerBreakpointsBrowserWidget::~SeerBreakpointsBrowserWidget () {
@@ -300,6 +305,93 @@ void SeerBreakpointsBrowserWidget::handleDisableToolButton () {
 
     // Send the signal.
     emit disableBreakpoints(breakpoints);
+}
+
+void SeerBreakpointsBrowserWidget::handleConditionToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = breakpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one breakpoint when adding a condition.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the condition text.
+    bool ok;
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this breakpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, QString(), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected breakpoint number.
+    QString breakpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCondition(breakpoint, condition);
+}
+
+void SeerBreakpointsBrowserWidget::handleIgnoreToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = breakpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one breakpoint when adding an ignore count.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this breakpoint.\nA count of 0 will remove an existing one.", 0, 0, 2147483647, 1, &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected breakpoint number.
+    QString breakpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointIgnore(breakpoint, QString::number(count));
+}
+
+void SeerBreakpointsBrowserWidget::handleCommandsToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = breakpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one breakpoint when adding commands.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    QString commands = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this breakpoint.\nA blank list will remove existing ones.", QString(), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected breakpoint number.
+    QString breakpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCommands(breakpoint, commands.split('\n', Qt::SkipEmptyParts));
 }
 
 void SeerBreakpointsBrowserWidget::showEvent (QShowEvent* event) {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
+    <width>896</width>
     <height>528</height>
    </rect>
   </property>
@@ -92,22 +92,8 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QToolButton" name="refreshBreakpointsToolButton">
-       <property name="toolTip">
-        <string>Refresh the list of breakpoints.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
       <widget class="QToolButton" name="addBreakpointToolButton">
        <property name="toolTip">
         <string>Add a new breakpoint.</string>
@@ -121,21 +107,21 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QToolButton" name="deleteBreakpointsToolButton">
+     <item row="0" column="1">
+      <widget class="QToolButton" name="refreshBreakpointsToolButton">
        <property name="toolTip">
-        <string>Delete selected breakpoints.</string>
+        <string>Refresh the list of breakpoints.</string>
        </property>
        <property name="text">
-        <string>...</string>
+        <string/>
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="0">
       <widget class="QToolButton" name="enableBreakpointsToolButton">
        <property name="toolTip">
         <string>Enable selected breakpoints.</string>
@@ -149,7 +135,7 @@
        </property>
       </widget>
      </item>
-     <item>
+     <item row="1" column="1">
       <widget class="QToolButton" name="disableBreakpointsToolButton">
        <property name="toolTip">
         <string>Disable selected breakpoints.</string>
@@ -163,8 +149,69 @@
        </property>
       </widget>
      </item>
-     <item>
-      <spacer name="verticalSpacer">
+     <item row="2" column="0">
+      <widget class="QToolButton" name="conditionBreakpointToolButton">
+       <property name="toolTip">
+        <string>Add condition to selected breakpoint.</string>
+       </property>
+       <property name="text">
+        <string>?</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QToolButton" name="ignoreBreakpointToolButton">
+       <property name="toolTip">
+        <string>Add ignore count to selected breakpoint.</string>
+       </property>
+       <property name="text">
+        <string>5</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QToolButton" name="commandsBreakpointToolButton">
+       <property name="toolTip">
+        <string>Add commands to selected breakpoint.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QToolButton" name="deleteBreakpointsToolButton">
+       <property name="toolTip">
+        <string>Delete selected breakpoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <spacer name="verticalSpacer_1">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="4" column="1">
+      <spacer name="verticalSpacer_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>

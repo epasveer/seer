@@ -62,6 +62,11 @@ void SeerLogWidget::moveToEnd () {
     textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
 }
 
+void SeerLogWidget::setPlaceholderText (const QString& text) {
+
+    textEdit->setPlaceholderText(text);
+}
+
 void SeerLogWidget::handleText (const QString& text) {
 
     // Don't do anything if we're not enabled.

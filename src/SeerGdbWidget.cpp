@@ -80,8 +80,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
     _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
     _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
+
     _gdbOutputLog             = new SeerGdbLogWidget(this);
     _seerOutputLog            = new SeerSeerLogWidget(this);
+    _gdbOutputLog->setPlaceholderText("[gdb output]");
+    _seerOutputLog->setPlaceholderText("[seer output]");
 
     logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
@@ -275,6 +278,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::enableBreakpoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::disableBreakpoints,                                          this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::insertBreakpoint,                                            this,                                                           &SeerGdbWidget::handleGdbBreakpointInsert);
+    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedAddress,                                             editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
 
@@ -1858,6 +1864,46 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     }
 
     handleGdbCommand("-break-insert " + breakpoint);
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbBreakpointCondition (QString breakpoint, QString condition) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-break-condition " + breakpoint + " " + condition);
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbBreakpointIgnore (QString breakpoint, QString count) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-break-after " + breakpoint + " " + count);
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbBreakpointCommands (QString breakpoint, QStringList commands) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    QString commandstext;
+
+    for (int i=0; i<commands.count(); i++) {
+        if (commands[i].trimmed().isEmpty()) {
+            continue;
+        }
+
+        commandstext += QString(" \"") + commands[i] + "\"";
+    }
+
+    handleGdbCommand("-break-commands " + breakpoint + commandstext);
     handleGdbGenericpointList();
 }
 

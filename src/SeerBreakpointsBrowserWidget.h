@@ -26,12 +26,18 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
         void                handleDeleteToolButton      ();
         void                handleEnableToolButton      ();
         void                handleDisableToolButton     ();
+        void                handleConditionToolButton   ();
+        void                handleIgnoreToolButton      ();
+        void                handleCommandsToolButton    ();
 
     signals:
         void                refreshBreakpointsList      ();
         void                deleteBreakpoints           (QString breakpoints);
         void                enableBreakpoints           (QString breakpoints);
         void                disableBreakpoints          (QString breakpoints);
+        void                addBreakpointCondition      (QString breakpoint, QString condition);
+        void                addBreakpointIgnore         (QString breakpoint, QString count);
+        void                addBreakpointCommands       (QString breakpoint, QStringList commands);
         void                insertBreakpoint            (QString breakpoint);
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedAddress             (QString address);

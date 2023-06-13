@@ -17,6 +17,7 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
         bool                isLogEnabled                () const;
         void                setLogEnabled               (bool flag);
         void                moveToEnd                   ();
+        void                setPlaceholderText          (const QString& text);
 
     signals:
         void                logEnabledChanged           (bool flag);
