@@ -12,6 +12,12 @@ QMessageListWidget::QMessageListWidget (QWidget* parent) : QWidget(parent) {
     // Construct the UI.
     setupUi(this);
 
+    Qt::WindowFlags flags = windowFlags();
+
+    flags |= Qt::WindowStaysOnTopHint;
+
+    setWindowFlags(flags);
+
     // Setup the widgets.
     messageTreeWidget->setSortingEnabled(false);
     messageTreeWidget->resizeColumnToContents(0); // timestamp
@@ -80,6 +86,8 @@ void QMessageListWidget::addMessage (const QString& message, QMessageBox::Icon m
     QTreeWidgetItem* lastItem = messageTreeWidget->topLevelItem(messageTreeWidget->topLevelItemCount()-1);
     if (lastItem) {
         messageTreeWidget->scrollToItem(lastItem);
+        messageTreeWidget->clearSelection();
+        lastItem->setSelected(true);
     }
 }
 

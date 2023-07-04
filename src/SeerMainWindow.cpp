@@ -110,6 +110,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     // Create the message list.
     _messageList = new QMessageListWidget;
+    _messageList->setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    _messageList->setWindowTitle("Seer Execution Messages");
 
     //
     // Set up signals/slots.
