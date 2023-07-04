@@ -108,6 +108,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     setKeySettings(SeerKeySettings::populate());
     setProjectFilename("");
 
+    // Create the message list.
+    _messageList = new QMessageListWidget;
+
     //
     // Set up signals/slots.
     //
@@ -782,7 +785,7 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
-        QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+        _messageList->addMessage(Seer::filterEscapes(msg_text), QMessageBox::Warning);
 
         return;
 
@@ -902,7 +905,7 @@ void SeerMainWindow::handleText (const QString& text) {
 
             QString signalname_text = Seer::parseFirst(text, "signal-name=", '"', '"', false);
 
-            QMessageBox::warning(this, "Warning.", "Program encountered a '" + signalname_text + "' signal.");
+            _messageList->addMessage("Program encountered a '" + signalname_text + "' signal.", QMessageBox::Warning);
 
         }else if (reason_text == "breakpoint-hit") {
 
@@ -910,9 +913,9 @@ void SeerMainWindow::handleText (const QString& text) {
             QString disp_text   = Seer::parseFirst(text, "disp=",   '"', '"', false);
 
             if (disp_text == "del") {
-                QMessageBox::information(this, "Note.", "Program reached temporary breakpoint '" + bkptno_text + "'.");
+                _messageList->addMessage("Program reached temporary breakpoint '" + bkptno_text + "'.", QMessageBox::Information);
             }else{
-                QMessageBox::information(this, "Note.", "Program reached breakpoint '" + bkptno_text + "'.");
+                _messageList->addMessage("Program reached breakpoint '" + bkptno_text + "'.", QMessageBox::Information);
             }
 
         }else if (reason_text == "watchpoint-trigger") {
@@ -925,7 +928,7 @@ void SeerMainWindow::handleText (const QString& text) {
             QString old_text    = Seer::parseFirst(value_text, "old=",    '"', '"', false);
             QString new_text    = Seer::parseFirst(value_text, "new=",    '"', '"', false);
 
-            QMessageBox::information(this, "Note.", QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nOld value: %3\nNew value: %4").arg(number_text).arg(exp_text).arg(old_text).arg(new_text) );
+            _messageList->addMessage(QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nOld value: %3\nNew value: %4").arg(number_text).arg(exp_text).arg(old_text).arg(new_text), QMessageBox::Information);
 
         }else if (reason_text == "read-watchpoint-trigger") {
             //*stopped,reason="read-watchpoint-trigger",hw-rwpt={number="5",exp="i"},value={value="42"},frame={addr="0x0000000000400d9a",func="function1",args=[{name="text",value="\"Hello, World!\""}],file="function1.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloworld/function1.cpp",line="11",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="4"
@@ -936,7 +939,7 @@ void SeerMainWindow::handleText (const QString& text) {
             QString value_text  = Seer::parseFirst(text,       "value=",   '{', '}', false);
             QString value_text2 = Seer::parseFirst(value_text, "value=",   '"', '"', false);
 
-            QMessageBox::information(this, "Note.", QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nValue: %3").arg(number_text).arg(exp_text).arg(value_text2) );
+            _messageList->addMessage(QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nValue: %3").arg(number_text).arg(exp_text).arg(value_text2), QMessageBox::Information);
 
         }else if (reason_text == "access-watchpoint-trigger") {
             //*stopped,reason="access-watchpoint-trigger",hw-awpt={number="3",exp="v"},value={old="1",new="11"},frame={addr="0x000000000040059a",func="bar",args=[{name="v",value="11"}],file="helloonefile.cpp",fullname="/home/erniep/Development/Peak/src/Seer/helloonefile/helloonefile.cpp",line="15",arch="i386:x86-64"},thread-id="1",stopped-threads="all",core="3"
@@ -948,33 +951,33 @@ void SeerMainWindow::handleText (const QString& text) {
             QString old_text    = Seer::parseFirst(value_text,  "old=",     '"', '"', false);
             QString new_text    = Seer::parseFirst(value_text,  "new=",     '"', '"', false);
 
-            QMessageBox::information(this, "Note.", QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nOld value: %3\nNew value: %4").arg(number_text).arg(exp_text).arg(old_text).arg(new_text) );
+            _messageList->addMessage(QString("Watchpoint triggered.\n\nNumber: %1\nExpression: %2\nOld value: %3\nNew value: %4").arg(number_text).arg(exp_text).arg(old_text).arg(new_text), QMessageBox::Information);
 
         }else if (reason_text == "watchpoint-scope") {
             //*stopped,reason="watchpoint-scope",wpnum="5", frame={func="callee3",args=[{name="strarg", value="0x11940 \"A string argument.\""}], file="../../../devo/gdb/testsuite/gdb.mi/basics.c", fullname="/home/foo/bar/devo/gdb/testsuite/gdb.mi/basics.c",line="18"}
 
             QString wpnum_text = Seer::parseFirst(text, "wpnum=", '"', '"', false);
 
-            QMessageBox::information(this, "Note.", QString("Watchpoint went out of scope. Will be deleted.\n\nNumber: %1").arg(wpnum_text) );
+            _messageList->addMessage(QString("Watchpoint went out of scope. Will be deleted.\n\nNumber: %1").arg(wpnum_text), QMessageBox::Information);
 
         }else if (reason_text == "exited-normally") {
             //*stopped,reason="exited-normally"
 
-            QMessageBox::information(this, "Note.", "Program exited normally.");
+            _messageList->addMessage("Program exited normally.", QMessageBox::Information);
 
         }else if (reason_text == "exited") {
             //*stopped,reason="exited",exit-code="01"
 
             QString exitcode_text = Seer::parseFirst(text, "exit-code=", '"', '"', false);
 
-            QMessageBox::information(this, "Note.", "Program exited with code '" + exitcode_text +"'");
+            _messageList->addMessage("Program exited with code '" + exitcode_text +"'", QMessageBox::Information);
 
         }else if (reason_text == "exited-signalled") {
             //*stopped,reason="exited-signalled",signal-name="SIGSEGV",signal-meaning="Segmentation fault"
 
             QString signalname_text = Seer::parseFirst(text, "signal-name=", '"', '"', false);
 
-            QMessageBox::warning(this, "Error.", "Program exited abnormally.\n\nIt encountered a '" + signalname_text + "' signal.");
+            _messageList->addMessage("Program exited abnormally.\nIt encountered a '" + signalname_text + "' signal.", QMessageBox::Warning);
 
         }else if (reason_text == "unknown") {
 
@@ -982,7 +985,8 @@ void SeerMainWindow::handleText (const QString& text) {
             // Attaching to a pid will generate an unknown *stopped message that is useless.
 
             //qDebug() << "Text=" << text;
-            //QMessageBox::warning(this, "Warning.", "Program encountered an unknown problem. See the Gdb output tab for messages.");
+
+            _messageList->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
         }
 
         return;

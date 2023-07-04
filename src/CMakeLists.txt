@@ -126,6 +126,7 @@ set(HEADER_FILES
     QEditDelegate.h
     QHContainerWidget.h
     QImageViewer.h
+    QMessageListWidget.h
     )
 
 set(SOURCE_FILES
@@ -213,6 +214,7 @@ set(SOURCE_FILES
     QEditDelegate.cpp
     QHContainerWidget.cpp
     QImageViewer.cpp
+    QMessageListWidget.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")

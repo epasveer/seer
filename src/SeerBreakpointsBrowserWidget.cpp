@@ -32,7 +32,8 @@ SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : Q
     breakpointsTreeWidget->resizeColumnToContents(10); // cond
     breakpointsTreeWidget->resizeColumnToContents(11); // times
     breakpointsTreeWidget->resizeColumnToContents(12); // ignore
-    breakpointsTreeWidget->resizeColumnToContents(13); // original-location
+  //breakpointsTreeWidget->resizeColumnToContents(13); // script   Too long to show
+    breakpointsTreeWidget->resizeColumnToContents(14); // original-location
 
     /*
     breakpointsTreeWidget->setColumnHidden(1, true); // ??? Hide or have a config to hide/show columns.
@@ -99,6 +100,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
         //                   thread-groups=["i1"],
         //                   cond="1 == 1",
         //                   times="0",
+        //                   script={"print i argc"},
         //                   original-location="function1"}
         //          ]
         // }
@@ -128,6 +130,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
                 QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
                 // Only look for 'breakpoint' type break points.
@@ -150,7 +153,8 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(10, cond_text);
                 topItem->setText(11, times_text);
                 topItem->setText(12, ignore_text);
-                topItem->setText(13, original_location_text);
+                topItem->setText(13, script_text);
+                topItem->setText(14, original_location_text);
 
                 breakpointsTreeWidget->addTopLevelItem(topItem);
             }
@@ -176,7 +180,8 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
     breakpointsTreeWidget->resizeColumnToContents(10);
     breakpointsTreeWidget->resizeColumnToContents(11);
     breakpointsTreeWidget->resizeColumnToContents(12);
-    breakpointsTreeWidget->resizeColumnToContents(13);
+  //breakpointsTreeWidget->resizeColumnToContents(13);
+    breakpointsTreeWidget->resizeColumnToContents(14);
 
     QApplication::restoreOverrideCursor();
 }
@@ -323,7 +328,7 @@ void SeerBreakpointsBrowserWidget::handleConditionToolButton () {
 
     // Get the condition text.
     bool ok;
-    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this breakpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, QString(), &ok);
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this breakpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(10), &ok);
 
     if (ok == false) {
         return;
@@ -352,7 +357,7 @@ void SeerBreakpointsBrowserWidget::handleIgnoreToolButton () {
 
     // Get the ignore text.
     bool ok;
-    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this breakpoint.\nA count of 0 will remove an existing one.", 0, 0, 2147483647, 1, &ok);
+    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this breakpoint.\nA count of 0 will remove an existing one.", items.front()->text(12).toInt(), 0, 2147483647, 1, &ok);
 
     if (ok == false) {
         return;
