@@ -2,7 +2,6 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QStyle>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
@@ -26,12 +25,11 @@ QMessageListWidget::QMessageListWidget (QWidget* parent) : QWidget(parent) {
     messageTreeWidget->clear();
 
     // Get icons.
-    QStyle* style = QApplication::style();
+    _informationIcon = QIcon(":/seer/resources/RelaxLightIcons/data-information.svg");
+    _warningIcon     = QIcon(":/seer/resources/RelaxLightIcons/data-warning.svg");
+    _criticalIcon    = QIcon(":/seer/resources/RelaxLightIcons/data-error.svg");
+    _questionIcon    = QIcon(":/seer/resources/RelaxLightIcons/dialog-question.svg");
 
-    _informationIcon = style->standardIcon(QStyle::SP_MessageBoxInformation, 0, this);
-    _warningIcon     = style->standardIcon(QStyle::SP_MessageBoxWarning,     0, this);
-    _criticalIcon    = style->standardIcon(QStyle::SP_MessageBoxCritical,    0, this);
-    _questionIcon    = style->standardIcon(QStyle::SP_MessageBoxQuestion,    0, this);
 
     // Connect things.
     QObject::connect(okPushButton,      &QToolButton::clicked,              this,  &QMessageListWidget::handleOkButtonClicked);
