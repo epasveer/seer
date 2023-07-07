@@ -18,6 +18,16 @@ QMessageListWidget::QMessageListWidget (QWidget* parent) : QWidget(parent) {
     setWindowFlags(flags);
 
     // Setup the widgets.
+    QString style = "QTreeWidget::item:!selected "
+                    "{ "
+                       "border: 1px solid gainsboro; "
+                       "border-left: none; "
+                       "border-top: none; "
+                    "}"
+                    "QTreeWidget::item:selected {}";
+
+    messageTreeWidget->setRootIsDecorated(false);
+    messageTreeWidget->setStyleSheet(style);
     messageTreeWidget->setSortingEnabled(false);
     messageTreeWidget->resizeColumnToContents(0); // timestamp
     messageTreeWidget->resizeColumnToContents(1); // message type icon
