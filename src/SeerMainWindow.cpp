@@ -109,7 +109,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     setProjectFilename("");
 
     // Create the message list.
-    _messageList = new QMessageListWidget;
+    _messageList = new SeerMessagesWidget;
     _messageList->setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     _messageList->setWindowTitle("Seer Execution Messages");
 

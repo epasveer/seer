@@ -112,6 +112,7 @@ set(HEADER_FILES
     SeerPlainTextEdit.h
     SeerHelpPageDialog.h
     SeerProgressIndicator.h
+    SeerMessagesWidget.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -126,7 +127,6 @@ set(HEADER_FILES
     QEditDelegate.h
     QHContainerWidget.h
     QImageViewer.h
-    QMessageListWidget.h
     )
 
 set(SOURCE_FILES
@@ -201,6 +201,7 @@ set(SOURCE_FILES
     SeerPlainTextEdit.cpp
     SeerHelpPageDialog.cpp
     SeerProgressIndicator.cpp
+    SeerMessagesWidget.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
@@ -214,7 +215,6 @@ set(SOURCE_FILES
     QEditDelegate.cpp
     QHContainerWidget.cpp
     QImageViewer.cpp
-    QMessageListWidget.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")

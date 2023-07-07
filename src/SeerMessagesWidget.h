@@ -4,15 +4,15 @@
 #include <QtWidgets/QWidget>
 #include <QtGui/QIcon>
 #include <QtCore/QString>
-#include "ui_QMessageListWidget.h"
+#include "ui_SeerMessagesWidget.h"
 
-class QMessageListWidget : public QWidget, protected Ui::QMessageListWidget {
+class SeerMessagesWidget : public QWidget, protected Ui::SeerMessagesWidget {
 
     Q_OBJECT
 
     public:
-        explicit QMessageListWidget (QWidget* parent = 0);
-       ~QMessageListWidget ();
+        explicit SeerMessagesWidget (QWidget* parent = 0);
+       ~SeerMessagesWidget ();
 
     signals:
 

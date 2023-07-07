@@ -1,4 +1,4 @@
-#include "QMessageListWidget.h"
+#include "SeerMessagesWidget.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QApplication>
@@ -6,7 +6,7 @@
 #include <QtCore/QDebug>
 
 
-QMessageListWidget::QMessageListWidget (QWidget* parent) : QWidget(parent) {
+SeerMessagesWidget::SeerMessagesWidget (QWidget* parent) : QWidget(parent) {
 
     // Construct the UI.
     setupUi(this);
@@ -42,15 +42,15 @@ QMessageListWidget::QMessageListWidget (QWidget* parent) : QWidget(parent) {
 
 
     // Connect things.
-    QObject::connect(okPushButton,      &QToolButton::clicked,              this,  &QMessageListWidget::handleOkButtonClicked);
+    QObject::connect(okPushButton,      &QToolButton::clicked,              this,  &SeerMessagesWidget::handleOkButtonClicked);
 
     hide();
 }
 
-QMessageListWidget::~QMessageListWidget () {
+SeerMessagesWidget::~SeerMessagesWidget () {
 }
 
-void QMessageListWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
+void SeerMessagesWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
     show();
     raise();
@@ -99,7 +99,7 @@ void QMessageListWidget::addMessage (const QString& message, QMessageBox::Icon m
     }
 }
 
-void QMessageListWidget::handleOkButtonClicked () {
+void SeerMessagesWidget::handleOkButtonClicked () {
 
     hide();
 }

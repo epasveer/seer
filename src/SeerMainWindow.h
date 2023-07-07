@@ -4,7 +4,7 @@
 #include "SeerRunStatusIndicator.h"
 #include "SeerKeySettings.h"
 #include "SeerProgressIndicator.h"
-#include "QMessageListWidget.h"
+#include "SeerMessagesWidget.h"
 #include <QtWidgets/QMainWindow>
 #include <QShortcut>
 #include <QActionGroup>
@@ -103,6 +103,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
         QString                     _projectFile;
-        QMessageListWidget*         _messageList;
+        SeerMessagesWidget*         _messageList;
 };
 
