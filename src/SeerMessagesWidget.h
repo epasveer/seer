@@ -23,6 +23,10 @@ class SeerMessagesWidget : public QWidget, protected Ui::SeerMessagesWidget {
         void                handleOkButtonClicked           ();
 
     protected:
+        void                writeSettings                   ();
+        void                readSettings                    ();
+        void                resizeEvent                     (QResizeEvent* event);
+
     private:
         QIcon               _noIcon;
         QIcon               _informationIcon;

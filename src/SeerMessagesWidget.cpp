@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QApplication>
 #include <QtCore/QTime>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 
@@ -44,6 +45,10 @@ SeerMessagesWidget::SeerMessagesWidget (QWidget* parent) : QWidget(parent) {
     // Connect things.
     QObject::connect(okPushButton,      &QToolButton::clicked,              this,  &SeerMessagesWidget::handleOkButtonClicked);
 
+    // Restore window settings.
+    readSettings();
+
+    // Hide right away.
     hide();
 }
 
@@ -102,5 +107,31 @@ void SeerMessagesWidget::addMessage (const QString& message, QMessageBox::Icon m
 void SeerMessagesWidget::handleOkButtonClicked () {
 
     hide();
+}
+
+void SeerMessagesWidget::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("executionmessagesdialog"); {
+        settings.setValue("size", size());
+    }settings.endGroup();
+}
+
+void SeerMessagesWidget::readSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("executionmessagesdialog"); {
+        resize(settings.value("size", QSize(425, 150)).toSize());
+    } settings.endGroup();
+}
+
+void SeerMessagesWidget::resizeEvent (QResizeEvent* event) {
+
+    // Write window settings.
+    writeSettings();
+
+    QWidget::resizeEvent(event);
 }
 
