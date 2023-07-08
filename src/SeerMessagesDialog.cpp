@@ -47,12 +47,7 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
          _closePushButton = buttonBox->button(QDialogButtonBox::Close);
     }
 
-    if (_clearPushButton) {
-        _clearPushButton->setDefault(false);
-    }
-    if (_closePushButton) {
-        _closePushButton->setDefault(true);
-    }
+    resetDefaultButton();
 
     // Get icons.
     _informationIcon = QIcon(":/seer/resources/RelaxLightIcons/data-information.svg");
@@ -123,32 +118,22 @@ void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon m
         lastItem->setSelected(true);
     }
 
-    // Make sure the CLOSE has the default action still.
-    if (_clearPushButton) {
-        _clearPushButton->setDefault(false);
-    }
-    if (_closePushButton) {
-        _closePushButton->setDefault(true);
-    }
+    resetDefaultButton();
 }
 
 void SeerMessagesDialog::clearMessages () {
 
     messageTreeWidget->clear();
 
-    // Make sure the CLOSE has the default action still.
-    if (_clearPushButton) {
-        _clearPushButton->setDefault(false);
-    }
-    if (_closePushButton) {
-        _closePushButton->setDefault(true);
-    }
+    resetDefaultButton();
 }
 
 void SeerMessagesDialog::showMessages () {
 
     // Show the dialog.
     show();
+
+    resetDefaultButton();
 }
 
 void SeerMessagesDialog::writeSettings () {
@@ -175,5 +160,16 @@ void SeerMessagesDialog::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QDialog::resizeEvent(event);
+}
+
+void SeerMessagesDialog::resetDefaultButton () {
+
+    if (_clearPushButton) {
+        _clearPushButton->setDefault(false);
+    }
+
+    if (_closePushButton) {
+        _closePushButton->setDefault(true);
+    }
 }
 

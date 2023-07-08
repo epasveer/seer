@@ -28,6 +28,7 @@ class SeerMessagesDialog : public QDialog, protected Ui::SeerMessagesDialog {
         void                writeSettings                   ();
         void                readSettings                    ();
         void                resizeEvent                     (QResizeEvent* event);
+        void                resetDefaultButton              ();
 
     private:
         QIcon               _noIcon;
