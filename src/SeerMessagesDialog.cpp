@@ -72,6 +72,9 @@ SeerMessagesDialog::~SeerMessagesDialog () {
 
 void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
+    // Give this dialog the focus.
+    //setFocus(Qt::OtherFocusReason);
+
     // Show messages any time a messaged is added.
     showMessages();
 
