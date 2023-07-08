@@ -15,14 +15,8 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Execution Messages");
 
-    Qt::WindowFlags flags = windowFlags();
-
-    flags |= Qt::WindowStaysOnTopHint;
-
-    setWindowFlags(flags);
-
     // Setup the widgets.
-    QString style = "QTreeWidget::item:!selected "
+    QString style = "QTreeWidget::item:!selected "          // Items in tree widget will have a border.
                     "{ "
                        "border: 1px solid gainsboro; "
                        "border-left: none; "
