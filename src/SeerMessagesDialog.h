@@ -18,6 +18,7 @@ class SeerMessagesDialog : public QDialog, protected Ui::SeerMessagesDialog {
 
     public slots:
         void                addMessage                      (const QString& message, QMessageBox::Icon messageType);
+        void                clearMessages                   ();
 
     protected slots:
 

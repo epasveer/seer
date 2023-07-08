@@ -123,6 +123,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
     QObject::connect(actionViewAssembly,                &QAction::triggered,                            this,           &SeerMainWindow::handleViewAssembly);
+    QObject::connect(actionViewExecutionMessages,       &QAction::triggered,                            this,           &SeerMainWindow::handleViewExecutionMessages);
     QObject::connect(actionConsoleNormal,               &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleNormal);
     QObject::connect(actionConsoleHidden,               &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleHidden);
     QObject::connect(actionConsoleMinimized,            &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleMinimized);
@@ -176,6 +177,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::showMessage,          this,           &SeerMainWindow::handleShowMessage);
     QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::assemblyTabShown,     this,           &SeerMainWindow::handleViewAssemblyShown);
 
@@ -550,6 +552,11 @@ void SeerMainWindow::handleViewImageVisualizer () {
 void SeerMainWindow::handleViewAssembly () {
 
     gdbWidget->editorManager()->showAssembly();
+}
+
+void SeerMainWindow::handleViewExecutionMessages () {
+
+    _executionMessages->show();
 }
 
 void SeerMainWindow::handleViewAssemblyShown (bool shown) {
@@ -990,6 +997,15 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         return;
+
+    }else if (text.startsWith("=thread-group-started,")) {
+        // =thread-group-started,id="i1",pid="30916"
+
+        QString pid_text = Seer::parseFirst(text, "pid=", '"', '"', false);
+
+        //qDebug() << "Inferior pid = " << pid_text;
+
+        _executionMessages->addMessage("Program started. (pid=" + pid_text +")", QMessageBox::Information);
     }
 
     // Leave in for stray error messages.

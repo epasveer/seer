@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1206</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -73,6 +73,7 @@
     <addaction name="actionViewBasicStructVisualizer"/>
     <addaction name="actionViewImageVisualizer"/>
     <addaction name="actionViewAssembly"/>
+    <addaction name="actionViewExecutionMessages"/>
     <addaction name="menuConsole"/>
     <addaction name="menuStyles"/>
    </widget>
@@ -666,6 +667,14 @@
    </property>
    <property name="text">
     <string>Basic Struct Visualizer</string>
+   </property>
+  </action>
+  <action name="actionViewExecutionMessages">
+   <property name="text">
+    <string>Execution Messages</string>
+   </property>
+   <property name="statusTip">
+    <string>View the program's execution messages.</string>
    </property>
   </action>
  </widget>

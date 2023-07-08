@@ -1,7 +1,8 @@
 #include "SeerMessagesDialog.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
-#include <QtWidgets/QApplication>
+#include <QtWidgets/QDialogButtonBox>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -30,7 +31,14 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
     messageTreeWidget->resizeColumnToContents(0); // timestamp
     messageTreeWidget->resizeColumnToContents(1); // message type icon
     messageTreeWidget->resizeColumnToContents(2); // message
-    messageTreeWidget->clear();
+
+    // Add a "CLEAR" button to the dialog's buttonbox.
+    QDialogButtonBox* buttonBox = findChild<QDialogButtonBox*>("buttonBox");
+    if (buttonBox) {
+        QPushButton* clearPushButton = buttonBox->addButton("Clear", QDialogButtonBox::ActionRole);
+
+        QObject::connect(clearPushButton, &QPushButton::clicked,      this, &SeerMessagesDialog::clearMessages);
+    }
 
     // Get icons.
     _informationIcon = QIcon(":/seer/resources/RelaxLightIcons/data-information.svg");
@@ -40,6 +48,9 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
 
 
     // Connect things.
+
+    // Clear messages
+    clearMessages();
 
     // Restore window settings.
     readSettings();
@@ -53,8 +64,8 @@ SeerMessagesDialog::~SeerMessagesDialog () {
 
 void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
+    // Shot messages any time a messaged is added.
     show();
-  //raise();
 
     // Create an entry with our message.
     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -100,7 +111,12 @@ void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon m
     }
 }
 
-void SeerMessagesDialog::writeSettings() {
+void SeerMessagesDialog::clearMessages () {
+
+    messageTreeWidget->clear();
+}
+
+void SeerMessagesDialog::writeSettings () {
 
     QSettings settings;
 
@@ -109,7 +125,7 @@ void SeerMessagesDialog::writeSettings() {
     }settings.endGroup();
 }
 
-void SeerMessagesDialog::readSettings() {
+void SeerMessagesDialog::readSettings () {
 
     QSettings settings;
 
