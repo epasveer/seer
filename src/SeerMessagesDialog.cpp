@@ -2,13 +2,15 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QDialogButtonBox>
-#include <QtWidgets/QPushButton>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 
 SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
+
+    _closePushButton = 0;
+    _clearPushButton = 0;
 
     // Construct the UI.
     setupUi(this);
@@ -33,11 +35,23 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
     messageTreeWidget->resizeColumnToContents(2); // message
 
     // Add a "CLEAR" button to the dialog's buttonbox.
+    // Make sure the CLOSE has the default action still.
     QDialogButtonBox* buttonBox = findChild<QDialogButtonBox*>("buttonBox");
-    if (buttonBox) {
-        QPushButton* clearPushButton = buttonBox->addButton("Clear", QDialogButtonBox::ActionRole);
 
-        QObject::connect(clearPushButton, &QPushButton::clicked,      this, &SeerMessagesDialog::clearMessages);
+    if (buttonBox) {
+
+        _clearPushButton = buttonBox->addButton("Clear", QDialogButtonBox::ActionRole);
+
+        QObject::connect(_clearPushButton, &QPushButton::clicked,      this, &SeerMessagesDialog::clearMessages);
+
+         _closePushButton = buttonBox->button(QDialogButtonBox::Close);
+    }
+
+    if (_clearPushButton) {
+        _clearPushButton->setDefault(false);
+    }
+    if (_closePushButton) {
+        _closePushButton->setDefault(true);
     }
 
     // Get icons.
@@ -45,7 +59,6 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
     _warningIcon     = QIcon(":/seer/resources/RelaxLightIcons/data-warning.svg");
     _criticalIcon    = QIcon(":/seer/resources/RelaxLightIcons/data-error.svg");
     _questionIcon    = QIcon(":/seer/resources/RelaxLightIcons/dialog-question.svg");
-
 
     // Connect things.
 
@@ -64,8 +77,8 @@ SeerMessagesDialog::~SeerMessagesDialog () {
 
 void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
-    // Shot messages any time a messaged is added.
-    show();
+    // Show messages any time a messaged is added.
+    showMessages();
 
     // Create an entry with our message.
     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -109,11 +122,33 @@ void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon m
         messageTreeWidget->clearSelection();
         lastItem->setSelected(true);
     }
+
+    // Make sure the CLOSE has the default action still.
+    if (_clearPushButton) {
+        _clearPushButton->setDefault(false);
+    }
+    if (_closePushButton) {
+        _closePushButton->setDefault(true);
+    }
 }
 
 void SeerMessagesDialog::clearMessages () {
 
     messageTreeWidget->clear();
+
+    // Make sure the CLOSE has the default action still.
+    if (_clearPushButton) {
+        _clearPushButton->setDefault(false);
+    }
+    if (_closePushButton) {
+        _closePushButton->setDefault(true);
+    }
+}
+
+void SeerMessagesDialog::showMessages () {
+
+    // Show the dialog.
+    show();
 }
 
 void SeerMessagesDialog::writeSettings () {

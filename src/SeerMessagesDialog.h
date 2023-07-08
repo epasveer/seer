@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QPushButton>
 #include <QtGui/QIcon>
 #include <QtCore/QString>
 #include "ui_SeerMessagesDialog.h"
@@ -19,6 +20,7 @@ class SeerMessagesDialog : public QDialog, protected Ui::SeerMessagesDialog {
     public slots:
         void                addMessage                      (const QString& message, QMessageBox::Icon messageType);
         void                clearMessages                   ();
+        void                showMessages                    ();
 
     protected slots:
 
@@ -33,5 +35,7 @@ class SeerMessagesDialog : public QDialog, protected Ui::SeerMessagesDialog {
         QIcon               _warningIcon;
         QIcon               _criticalIcon;
         QIcon               _questionIcon;
+        QPushButton*        _closePushButton;
+        QPushButton*        _clearPushButton;
 };
 

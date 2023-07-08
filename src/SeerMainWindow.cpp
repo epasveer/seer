@@ -556,7 +556,7 @@ void SeerMainWindow::handleViewAssembly () {
 
 void SeerMainWindow::handleViewExecutionMessages () {
 
-    _executionMessages->show();
+    _executionMessages->showMessages();
 }
 
 void SeerMainWindow::handleViewAssemblyShown (bool shown) {
@@ -1006,6 +1006,13 @@ void SeerMainWindow::handleText (const QString& text) {
         //qDebug() << "Inferior pid = " << pid_text;
 
         _executionMessages->addMessage("Program started. (pid=" + pid_text +")", QMessageBox::Information);
+
+        return;
+
+    }else if (text.startsWith("=")) {
+        // Suppress all other '=' messages.
+
+        return;
     }
 
     // Leave in for stray error messages.
