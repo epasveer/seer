@@ -1,18 +1,18 @@
 #pragma once
 
 #include <QtWidgets/QMessageBox>
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QDialog>
 #include <QtGui/QIcon>
 #include <QtCore/QString>
-#include "ui_SeerMessagesWidget.h"
+#include "ui_SeerMessagesDialog.h"
 
-class SeerMessagesWidget : public QWidget, protected Ui::SeerMessagesWidget {
+class SeerMessagesDialog : public QDialog, protected Ui::SeerMessagesDialog {
 
     Q_OBJECT
 
     public:
-        explicit SeerMessagesWidget (QWidget* parent = 0);
-       ~SeerMessagesWidget ();
+        explicit SeerMessagesDialog (QWidget* parent = 0);
+       ~SeerMessagesDialog ();
 
     signals:
 
@@ -20,7 +20,6 @@ class SeerMessagesWidget : public QWidget, protected Ui::SeerMessagesWidget {
         void                addMessage                      (const QString& message, QMessageBox::Icon messageType);
 
     protected slots:
-        void                handleOkButtonClicked           ();
 
     protected:
         void                writeSettings                   ();

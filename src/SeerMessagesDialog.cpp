@@ -1,4 +1,4 @@
-#include "SeerMessagesWidget.h"
+#include "SeerMessagesDialog.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItem>
 #include <QtWidgets/QApplication>
@@ -7,10 +7,13 @@
 #include <QtCore/QDebug>
 
 
-SeerMessagesWidget::SeerMessagesWidget (QWidget* parent) : QWidget(parent) {
+SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
 
     // Construct the UI.
     setupUi(this);
+
+    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowTitle("Seer Execution Messages");
 
     Qt::WindowFlags flags = windowFlags();
 
@@ -43,7 +46,6 @@ SeerMessagesWidget::SeerMessagesWidget (QWidget* parent) : QWidget(parent) {
 
 
     // Connect things.
-    QObject::connect(okPushButton,      &QToolButton::clicked,              this,  &SeerMessagesWidget::handleOkButtonClicked);
 
     // Restore window settings.
     readSettings();
@@ -52,13 +54,13 @@ SeerMessagesWidget::SeerMessagesWidget (QWidget* parent) : QWidget(parent) {
     hide();
 }
 
-SeerMessagesWidget::~SeerMessagesWidget () {
+SeerMessagesDialog::~SeerMessagesDialog () {
 }
 
-void SeerMessagesWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
+void SeerMessagesDialog::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
     show();
-    raise();
+  //raise();
 
     // Create an entry with our message.
     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -104,12 +106,7 @@ void SeerMessagesWidget::addMessage (const QString& message, QMessageBox::Icon m
     }
 }
 
-void SeerMessagesWidget::handleOkButtonClicked () {
-
-    hide();
-}
-
-void SeerMessagesWidget::writeSettings() {
+void SeerMessagesDialog::writeSettings() {
 
     QSettings settings;
 
@@ -118,7 +115,7 @@ void SeerMessagesWidget::writeSettings() {
     }settings.endGroup();
 }
 
-void SeerMessagesWidget::readSettings() {
+void SeerMessagesDialog::readSettings() {
 
     QSettings settings;
 
@@ -127,11 +124,11 @@ void SeerMessagesWidget::readSettings() {
     } settings.endGroup();
 }
 
-void SeerMessagesWidget::resizeEvent (QResizeEvent* event) {
+void SeerMessagesDialog::resizeEvent (QResizeEvent* event) {
 
     // Write window settings.
     writeSettings();
 
-    QWidget::resizeEvent(event);
+    QDialog::resizeEvent(event);
 }
 
