@@ -1,0 +1,7 @@
+break -source /home/erniep/Development/seer/tests/helloworld/helloworld.cpp -line 13
+  commands
+    printf "argc=%d  argv=%s", i, argv[i]
+    continue
+  end
+break -source /home/erniep/Development/seer/tests/helloworld/helloworld.cpp -line 24
+break -source /home/erniep/Development/seer/tests/helloworld/helloworld.cpp -line 10
