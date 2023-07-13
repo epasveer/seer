@@ -392,7 +392,7 @@ void SeerBreakpointsBrowserWidget::handleCommandsToolButton () {
 
     // Get the ignore text.
     bool ok;
-    QString commands = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this breakpoint.\nA blank list will remove existing ones.", QString(), &ok);
+    QString commandstr = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this breakpoint.\nA blank list will remove existing ones.", items.front()->text(13), &ok);
 
     if (ok == false) {
         return;
@@ -401,8 +401,10 @@ void SeerBreakpointsBrowserWidget::handleCommandsToolButton () {
     // Get the selected breakpoint number.
     QString breakpoint = items.front()->text(0);
 
+    QStringList commands = Seer::quoteChars(commandstr.split('\n', Qt::SkipEmptyParts), "\"");
+
     // Send the signal.
-    emit addBreakpointCommands(breakpoint, commands.split('\n', Qt::SkipEmptyParts));
+    emit addBreakpointCommands(breakpoint, commands);
 }
 
 void SeerBreakpointsBrowserWidget::showEvent (QShowEvent* event) {

@@ -463,6 +463,44 @@ namespace Seer {
     }
 
     //
+    // Quote certain characters in a string.
+    //
+    //       "hello"  =>  \"hello\"
+    //
+    QString quoteChars (const QString& str, const QString& chars) {
+
+        QString string;
+
+        for (int i=0; i<str.size(); i++) {
+
+            QChar c = str[i];
+
+            if (chars.contains(c)) {
+                string.append('\\');
+                string.append(c);
+            }else{
+                string.append(c);
+            }
+        }
+
+        return string;
+    }
+
+    QStringList quoteChars (const QStringList& strings, const QString& chars) {
+
+        QStringList list;
+
+        // For a list of strings, quote certain characters.
+        for (int i=0; i<strings.size(); i++) {
+            list.append(Seer::quoteChars(strings[i], chars));
+        }
+
+        // Return the new list.
+        return list;
+    }
+
+
+    //
     //
     //
 

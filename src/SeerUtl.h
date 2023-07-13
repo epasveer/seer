@@ -18,6 +18,8 @@ namespace Seer {
     QStringList     filterBookends  (const QStringList& strings, QChar startBracket, QChar endBracket);
     QStringList     parseCommaList  (const QString& str, QChar startBracket, QChar endBracket);
     QStringPair     parseNameValue  (const QString& str, QChar separator);
+    QString         quoteChars      (const QString& str, const QString& chars);
+    QStringList     quoteChars      (const QStringList& strings, const QString& chars);
     QString         varObjParent    (const QString& str);
     bool            matchesWildcard (const QStringList& regexpatterns, const QString& string);
 
