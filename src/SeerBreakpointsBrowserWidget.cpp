@@ -138,6 +138,8 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                     continue;
                 }
 
+                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
+
                 // Add the level to the tree.
                 QTreeWidgetItem* topItem = new QTreeWidgetItem;
                 topItem->setText(0, number_text);
@@ -155,6 +157,10 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(12, ignore_text);
                 topItem->setText(13, script_text);
                 topItem->setText(14, original_location_text);
+
+                for (int i=0; i<topItem->columnCount(); i++) {
+                    topItem->setTextAlignment(i, Qt::AlignLeft|Qt::AlignTop);
+                }
 
                 breakpointsTreeWidget->addTopLevelItem(topItem);
             }

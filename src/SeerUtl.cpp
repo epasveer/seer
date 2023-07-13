@@ -264,6 +264,19 @@ namespace Seer {
         return str;
     }
 
+    QStringList filterBookends (const QStringList& strings, QChar startBracket, QChar endBracket) {
+
+        QStringList list;
+
+        // For a list of strings, remove the bookends, if possible.
+        for (int i=0; i<strings.size(); i++) {
+            list.append(Seer::filterBookends(strings[i], startBracket, endBracket));
+        }
+
+        // Return the new list.
+        return list;
+    }
+
     QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
 
         // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
