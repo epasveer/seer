@@ -25,12 +25,18 @@ class SeerWatchpointsBrowserWidget : public QWidget, protected Ui::SeerWatchpoin
         void                handleDeleteToolButton      ();
         void                handleEnableToolButton      ();
         void                handleDisableToolButton     ();
+        void                handleConditionToolButton   ();
+        void                handleIgnoreToolButton      ();
+        void                handleCommandsToolButton    ();
 
     signals:
         void                refreshWatchpointsList      ();
         void                deleteWatchpoints           (QString watchpoints);
         void                enableWatchpoints           (QString watchpoints);
         void                disableWatchpoints          (QString watchpoints);
+        void                addBreakpointCondition      (QString watchpoint, QString condition);
+        void                addBreakpointIgnore         (QString watchpoint, QString count);
+        void                addBreakpointCommands       (QString watchpoint, QStringList commands);
         void                insertWatchpoint            (QString watchpoint);
         void                selectedFile                (QString file, QString fullname, int lineno);
 
