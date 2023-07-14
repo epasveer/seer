@@ -5,10 +5,17 @@ Notes for building Seer with cmake.
     % cmake -DCMAKE_BUILD_TYPE=Release ..   # Optimized release -O.
     % cmake -DCMAKE_CXX_FLAGS=-Wall ..      # With all compile warnings turned on.
 
+The above defaults to Qt6. If you want to use Qt5, add the '-DQTVERSION' flag.
+
+    % cmake -DQTVERSION=QT5 -DCMAKE_BUILD_TYPE=Debug ..
+
+Once cmake is run, then just build Seer.
 
     % make clean                            # Clean files.
     % make seergdb                          # Build Seer.
     % sudo make install                     # Install it.
+
+Another way to ask cmake to do the build for you.
 
     % cmake --build . --config Release
     % sudo cmake --install .

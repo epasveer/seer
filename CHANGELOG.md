@@ -2,7 +2,11 @@
 # Seer Change Log
 
 ## [2.1beta] - 2023-XX-XX
-* Start version 2.1 development cycle.
+* Add Exection dialog record breakpoint events. This solves the problem
+  of too many break/error dialogs to "swat away".
+* Add a way to add/change gdb commands to execute when a breakpoint is reached.
+* Add a way to add/change a breakpoint's condition command.
+* Add a way to add/change a breakpoint's ignore count.
 
 ## [2.0] - 2023-03-06
 * Seer is Qt6 based. Still compiles with Qt5.
