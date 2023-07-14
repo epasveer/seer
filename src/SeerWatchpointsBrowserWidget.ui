@@ -26,6 +26,21 @@
      </column>
      <column>
       <property name="text">
+       <string>Expression</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>New Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
        <string>Type</string>
       </property>
      </column>
@@ -87,21 +102,6 @@
      <column>
       <property name="text">
        <string>Commands</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Expression</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>New Value</string>
       </property>
      </column>
      <column>

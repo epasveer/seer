@@ -20,26 +20,26 @@ SeerWatchpointsBrowserWidget::SeerWatchpointsBrowserWidget (QWidget* parent) : Q
     watchpointsTreeWidget->setSortingEnabled(false);
     watchpointsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     watchpointsTreeWidget->resizeColumnToContents(0); // number
-    watchpointsTreeWidget->resizeColumnToContents(1); // type
-    watchpointsTreeWidget->resizeColumnToContents(2); // disp
-    watchpointsTreeWidget->resizeColumnToContents(3); // enabled
-    watchpointsTreeWidget->resizeColumnToContents(4); // addr
-  //watchpointsTreeWidget->resizeColumnToContents(5); // func      Too long to show
-    watchpointsTreeWidget->resizeColumnToContents(6); // file
-  //watchpointsTreeWidget->resizeColumnToContents(7); // fullname  Too long to show
-    watchpointsTreeWidget->resizeColumnToContents(8); // line
-    watchpointsTreeWidget->resizeColumnToContents(9); // thread-groups
-    watchpointsTreeWidget->resizeColumnToContents(10); // cond
-    watchpointsTreeWidget->resizeColumnToContents(11); // times
-    watchpointsTreeWidget->resizeColumnToContents(12); // ignore
-  //watchpointsTreeWidget->resizeColumnToContents(13); // script   Too long to show
-    watchpointsTreeWidget->resizeColumnToContents(14); // original-location / expression
-    watchpointsTreeWidget->resizeColumnToContents(15); // value
-    watchpointsTreeWidget->resizeColumnToContents(16); // new value
+    watchpointsTreeWidget->resizeColumnToContents(1); // original-location / expression
+    watchpointsTreeWidget->resizeColumnToContents(2); // value
+    watchpointsTreeWidget->resizeColumnToContents(3); // new value
+    watchpointsTreeWidget->resizeColumnToContents(4); // type
+    watchpointsTreeWidget->resizeColumnToContents(5); // disp
+    watchpointsTreeWidget->resizeColumnToContents(6); // enabled
+    watchpointsTreeWidget->resizeColumnToContents(7); // addr
+  //watchpointsTreeWidget->resizeColumnToContents(8); // func      Too long to show
+    watchpointsTreeWidget->resizeColumnToContents(9); // file
+  //watchpointsTreeWidget->resizeColumnToContents(10); // fullname  Too long to show
+    watchpointsTreeWidget->resizeColumnToContents(11); // line
+    watchpointsTreeWidget->resizeColumnToContents(12); // thread-groups
+    watchpointsTreeWidget->resizeColumnToContents(13); // cond
+    watchpointsTreeWidget->resizeColumnToContents(14); // times
+    watchpointsTreeWidget->resizeColumnToContents(15); // ignore
+  //watchpointsTreeWidget->resizeColumnToContents(16); // script   Too long to show
     watchpointsTreeWidget->resizeColumnToContents(17); // used
 
-    watchpointsTreeWidget->setColumnHidden(4, true); // Hide the 'addr' column.
-    watchpointsTreeWidget->setColumnHidden(5, true); // Hide the 'func' column.
+    watchpointsTreeWidget->setColumnHidden(7, true); // Hide the 'addr' column.
+    watchpointsTreeWidget->setColumnHidden(8, true); // Hide the 'func' column.
     watchpointsTreeWidget->setColumnHidden(17, true); // Hide the 'used' column.
     watchpointsTreeWidget->clear();
 
@@ -152,6 +152,8 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     continue;
                 }
 
+                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
+
                 // Instead of creating a new tree each time, we will reuse existing items, if they are there.
                 // This allows the expanded items to remain expanded.
                 QList<QTreeWidgetItem*> matches = watchpointsTreeWidget->findItems(number_text, Qt::MatchExactly, 0);
@@ -162,22 +164,22 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     // Add the level to the tree.
                     QTreeWidgetItem* topItem = new QTreeWidgetItem;
                     topItem->setText(0, number_text);
-                    topItem->setText(1, type_text);
-                    topItem->setText(2, disp_text);
-                    topItem->setText(3, enabled_text);
-                    topItem->setText(4, addr_text);
-                    topItem->setText(5, func_text);
-                    topItem->setText(6, QFileInfo(file_text).fileName());
-                    topItem->setText(7, fullname_text);
-                    topItem->setText(8, line_text);
-                    topItem->setText(9, thread_groups_text);
-                    topItem->setText(10, cond_text);
-                    topItem->setText(11, times_text);
-                    topItem->setText(12, ignore_text);
-                    topItem->setText(13, script_text);
-                    topItem->setText(14, original_location_text);
-                    topItem->setText(15, "");
-                    topItem->setText(16, "");
+                    topItem->setText(1, original_location_text);
+                    topItem->setText(2, "");
+                    topItem->setText(3, "");
+                    topItem->setText(4, type_text);
+                    topItem->setText(5, disp_text);
+                    topItem->setText(6, enabled_text);
+                    topItem->setText(7, addr_text);
+                    topItem->setText(8, func_text);
+                    topItem->setText(9, QFileInfo(file_text).fileName());
+                    topItem->setText(10, fullname_text);
+                    topItem->setText(11, line_text);
+                    topItem->setText(12, thread_groups_text);
+                    topItem->setText(13, cond_text);
+                    topItem->setText(14, times_text);
+                    topItem->setText(15, ignore_text);
+                    topItem->setText(16, script_text);
                     topItem->setText(17, "new");
 
                     watchpointsTreeWidget->addTopLevelItem(topItem);
@@ -189,22 +191,22 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     QTreeWidgetItem* topItem = matches.takeFirst();
 
                     topItem->setText(0, number_text);
-                    topItem->setText(1, type_text);
-                    topItem->setText(2, disp_text);
-                    topItem->setText(3, enabled_text);
-                    topItem->setText(4, addr_text);
-                    topItem->setText(5, func_text);
-                  //topItem->setText(6, QFileInfo(file_text).fileName());
-                  //topItem->setText(7, fullname_text);
-                  //topItem->setText(8, line_text);
-                    topItem->setText(9, thread_groups_text);
-                    topItem->setText(10, cond_text);
-                    topItem->setText(11, times_text);
-                    topItem->setText(12, ignore_text);
-                    topItem->setText(13, script_text);
-                    topItem->setText(14, original_location_text);
-                  //topItem->setText(15, "");
-                  //topItem->setText(16, "");
+                    topItem->setText(1, original_location_text);
+                  //topItem->setText(2, "");
+                  //topItem->setText(3, "");
+                    topItem->setText(4, type_text);
+                    topItem->setText(5, disp_text);
+                    topItem->setText(6, enabled_text);
+                    topItem->setText(7, addr_text);
+                    topItem->setText(8, func_text);
+                  //topItem->setText(9, QFileInfo(file_text).fileName());
+                  //topItem->setText(10, fullname_text);
+                  //topItem->setText(11, line_text);
+                    topItem->setText(12, thread_groups_text);
+                    topItem->setText(13, cond_text);
+                    topItem->setText(14, times_text);
+                    topItem->setText(15, ignore_text);
+                    topItem->setText(16, script_text);
                     topItem->setText(17, "reused");
                 }
             }
@@ -239,11 +241,11 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             if (matches.size() > 0) {
                 //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
-                item->setText(6, QFileInfo(file_text).fileName());
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(15, old_text);
-                item->setText(16, new_text);
+                item->setText(2, old_text);
+                item->setText(3, new_text);
+                item->setText(9, QFileInfo(file_text).fileName());
+                item->setText(10, fullname_text);
+                item->setText(11, line_text);
             }
 
         }else if (reason_text == "read-watchpoint-trigger") {
@@ -264,11 +266,11 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             if (matches.size() > 0) {
                 //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
-                item->setText(6, QFileInfo(file_text).fileName());
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(15, value_text2);
-                item->setText(16, "");
+                item->setText(2, value_text2);
+                item->setText(3, "");
+                item->setText(9, QFileInfo(file_text).fileName());
+                item->setText(10, fullname_text);
+                item->setText(11, line_text);
             }
 
         }else if (reason_text == "access-watchpoint-trigger") {
@@ -290,11 +292,11 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             if (matches.size() > 0) {
                 //qDebug() << text;
                 QTreeWidgetItem* item = matches.first();
-                item->setText(6, QFileInfo(file_text).fileName());
-                item->setText(7, fullname_text);
-                item->setText(8, line_text);
-                item->setText(15, old_text);
-                item->setText(16, new_text);
+                item->setText(2, old_text);
+                item->setText(3, new_text);
+                item->setText(9, QFileInfo(file_text).fileName());
+                item->setText(10, fullname_text);
+                item->setText(11, line_text);
             }
         }
 
@@ -310,18 +312,18 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
     watchpointsTreeWidget->resizeColumnToContents(2);
     watchpointsTreeWidget->resizeColumnToContents(3);
     watchpointsTreeWidget->resizeColumnToContents(4);
-  //watchpointsTreeWidget->resizeColumnToContents(5);
+    watchpointsTreeWidget->resizeColumnToContents(5);
     watchpointsTreeWidget->resizeColumnToContents(6);
-  //watchpointsTreeWidget->resizeColumnToContents(7);
-    watchpointsTreeWidget->resizeColumnToContents(8);
+    watchpointsTreeWidget->resizeColumnToContents(7);
+  //watchpointsTreeWidget->resizeColumnToContents(8);
     watchpointsTreeWidget->resizeColumnToContents(9);
-    watchpointsTreeWidget->resizeColumnToContents(10);
+  //watchpointsTreeWidget->resizeColumnToContents(10);
     watchpointsTreeWidget->resizeColumnToContents(11);
     watchpointsTreeWidget->resizeColumnToContents(12);
-  //watchpointsTreeWidget->resizeColumnToContents(13);
+    watchpointsTreeWidget->resizeColumnToContents(13);
     watchpointsTreeWidget->resizeColumnToContents(14);
     watchpointsTreeWidget->resizeColumnToContents(15);
-    watchpointsTreeWidget->resizeColumnToContents(16);
+  //watchpointsTreeWidget->resizeColumnToContents(16);
     watchpointsTreeWidget->resizeColumnToContents(17);
 
     QApplication::restoreOverrideCursor();
@@ -341,9 +343,9 @@ void SeerWatchpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
     Q_UNUSED(column);
 
-    int lineno = item->text(8).toInt();
+    int lineno = item->text(11).toInt();
 
-    emit selectedFile(item->text(6), item->text(7), lineno);
+    emit selectedFile(item->text(9), item->text(10), lineno);
 }
 
 void SeerWatchpointsBrowserWidget::handleRefreshToolButton () {
@@ -468,7 +470,7 @@ void SeerWatchpointsBrowserWidget::handleConditionToolButton () {
 
     // Get the condition text.
     bool ok;
-    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this watchpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(10), &ok);
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this watchpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(13), &ok);
 
     if (ok == false) {
         return;
@@ -497,7 +499,7 @@ void SeerWatchpointsBrowserWidget::handleIgnoreToolButton () {
 
     // Get the ignore text.
     bool ok;
-    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this watchpoint.\nA count of 0 will remove an existing one.", items.front()->text(12).toInt(), 0, 2147483647, 1, &ok);
+    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this watchpoint.\nA count of 0 will remove an existing one.", items.front()->text(15).toInt(), 0, 2147483647, 1, &ok);
 
     if (ok == false) {
         return;
@@ -526,7 +528,7 @@ void SeerWatchpointsBrowserWidget::handleCommandsToolButton () {
 
     // Get the ignore text.
     bool ok;
-    QString commandstr = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this watchpoint.\nA blank list will remove existing ones.", items.front()->text(13), &ok);
+    QString commandstr = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this watchpoint.\nA blank list will remove existing ones.", items.front()->text(16), &ok);
 
     if (ok == false) {
         return;
