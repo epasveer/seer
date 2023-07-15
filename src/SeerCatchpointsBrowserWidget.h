@@ -24,12 +24,18 @@ class SeerCatchpointsBrowserWidget : public QWidget, protected Ui::SeerCatchpoin
         void                handleDeleteToolButton      ();
         void                handleEnableToolButton      ();
         void                handleDisableToolButton     ();
+        void                handleConditionToolButton   ();
+        void                handleIgnoreToolButton      ();
+        void                handleCommandsToolButton    ();
 
     signals:
         void                refreshCatchpointsList      ();
         void                deleteCatchpoints           (QString catchpoints);
         void                enableCatchpoints           (QString catchpoints);
         void                disableCatchpoints          (QString catchpoints);
+        void                addBreakpointCondition      (QString catchpoint, QString condition);
+        void                addBreakpointIgnore         (QString catchpoint, QString count);
+        void                addBreakpointCommands       (QString catchpoint, QStringList commands);
         void                insertCatchpoint            (QString catchpoint);
 
     protected:

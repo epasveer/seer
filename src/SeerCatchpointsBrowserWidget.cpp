@@ -4,6 +4,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QInputDialog>
 #include <QtCore/QDebug>
 
 SeerCatchpointsBrowserWidget::SeerCatchpointsBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -24,9 +26,12 @@ SeerCatchpointsBrowserWidget::SeerCatchpointsBrowserWidget (QWidget* parent) : Q
     catchpointsTreeWidget->resizeColumnToContents(5); // catch-type
     catchpointsTreeWidget->resizeColumnToContents(6); // name
     catchpointsTreeWidget->resizeColumnToContents(7); // thread-groups
-    catchpointsTreeWidget->resizeColumnToContents(8); // times
+    catchpointsTreeWidget->resizeColumnToContents(8); // cond
+    catchpointsTreeWidget->resizeColumnToContents(9); // times
+    catchpointsTreeWidget->resizeColumnToContents(10); // ignore
+  //catchpointsTreeWidget->resizeColumnToContents(11); // script   Too long to show
 
-    catchpointsTreeWidget->setColumnHidden(9, true);  // Hide the 'used' column.
+    catchpointsTreeWidget->setColumnHidden(12, true); // Hide the 'used' column.
     catchpointsTreeWidget->clear();
 
     // Connect things.
@@ -35,6 +40,9 @@ SeerCatchpointsBrowserWidget::SeerCatchpointsBrowserWidget (QWidget* parent) : Q
     QObject::connect(deleteCatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleDeleteToolButton);
     QObject::connect(enableCatchpointsToolButton,   &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleEnableToolButton);
     QObject::connect(disableCatchpointsToolButton,  &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleDisableToolButton);
+    QObject::connect(conditionCatchpointToolButton, &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleConditionToolButton);
+    QObject::connect(ignoreCatchpointToolButton,    &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleIgnoreToolButton);
+    QObject::connect(commandsCatchpointToolButton,  &QToolButton::clicked,              this,  &SeerCatchpointsBrowserWidget::handleCommandsToolButton);
 }
 
 SeerCatchpointsBrowserWidget::~SeerCatchpointsBrowserWidget () {
@@ -102,7 +110,7 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
             // be deleted.
             QTreeWidgetItemIterator it(catchpointsTreeWidget);
             while (*it) {
-                (*it)->setText(9, "unused");
+                (*it)->setText(12, "unused");
                 ++it;
             }
 
@@ -118,12 +126,17 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
                 QString catch_type_text        = Seer::parseFirst(bkpt_text, "catch-type=",        '"', '"', false);
                 QString name_text              = Seer::parseFirst(bkpt_text, "regexp=",            '"', '"', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
+                QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
+                QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
 
                 // Only look for 'catchpoint' type break points.
                 if (type_text != "catchpoint") {
                     continue;
                 }
+
+                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
 
                 // Hack for library 'load' and 'unload' catchpoints.
                 // Unlike 'catch' catchpoints, the "regexp" field is blank. The
@@ -163,8 +176,15 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(5, catch_type_text);
                     topItem->setText(6, name_text);
                     topItem->setText(7, thread_groups_text);
-                    topItem->setText(8, times_text);
-                    topItem->setText(9, "new");
+                    topItem->setText(8, cond_text);
+                    topItem->setText(9, times_text);
+                    topItem->setText(10, ignore_text);
+                    topItem->setText(11, script_text);
+                    topItem->setText(12, "new");
+
+                    for (int i=0; i<topItem->columnCount(); i++) {
+                        topItem->setTextAlignment(i, Qt::AlignLeft|Qt::AlignTop);
+                    }
 
                     catchpointsTreeWidget->addTopLevelItem(topItem);
 
@@ -181,14 +201,17 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(5, catch_type_text);
                     topItem->setText(6, name_text);
                     topItem->setText(7, thread_groups_text);
-                    topItem->setText(8, times_text);
-                    topItem->setText(9, "reused");
+                    topItem->setText(8, cond_text);
+                    topItem->setText(9, times_text);
+                    topItem->setText(10, ignore_text);
+                    topItem->setText(11, script_text);
+                    topItem->setText(12, "reused");
                 }
             }
 
             // At this point, there are some new entries, some reused entries, and some unused ones.
             // Delete the unused ones. They are obsolete.
-            QList<QTreeWidgetItem*> matches = catchpointsTreeWidget->findItems("unused", Qt::MatchExactly, 9);
+            QList<QTreeWidgetItem*> matches = catchpointsTreeWidget->findItems("unused", Qt::MatchExactly, 12);
 
             qDeleteAll(matches);
         }
@@ -210,6 +233,9 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
     catchpointsTreeWidget->resizeColumnToContents(7);
     catchpointsTreeWidget->resizeColumnToContents(8);
     catchpointsTreeWidget->resizeColumnToContents(9);
+    catchpointsTreeWidget->resizeColumnToContents(10);
+  //catchpointsTreeWidget->resizeColumnToContents(11);
+    catchpointsTreeWidget->resizeColumnToContents(12);
 
     QApplication::restoreOverrideCursor();
 }
@@ -328,6 +354,95 @@ void SeerCatchpointsBrowserWidget::handleDisableToolButton () {
 
     // Send the signal.
     emit disableCatchpoints(catchpoints);
+}
+
+void SeerCatchpointsBrowserWidget::handleConditionToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one catchpoint when adding a condition.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the condition text.
+    bool ok;
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this catchpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(8), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected catchpoint number.
+    QString catchpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCondition(catchpoint, condition);
+}
+
+void SeerCatchpointsBrowserWidget::handleIgnoreToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one catchpoint when adding an ignore count.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this catchpoint.\nA count of 0 will remove an existing one.", items.front()->text(10).toInt(), 0, 2147483647, 1, &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected catchpoint number.
+    QString catchpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointIgnore(catchpoint, QString::number(count));
+}
+
+void SeerCatchpointsBrowserWidget::handleCommandsToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = catchpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one watcpoint when adding commands.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    QString commandstr = QInputDialog::getMultiLineText(this, "Seer", "Enter the commands to execute for this catchpoint.\nA blank list will remove existing ones.", items.front()->text(11), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected catchpoint number.
+    QString catchpoint = items.front()->text(0);
+
+    QStringList commands = Seer::quoteChars(commandstr.split('\n', Qt::SkipEmptyParts), "\"");
+
+    // Send the signal.
+    emit addBreakpointCommands(catchpoint, commands);
 }
 
 void SeerCatchpointsBrowserWidget::showEvent (QShowEvent* event) {

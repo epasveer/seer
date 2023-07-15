@@ -182,6 +182,10 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(16, script_text);
                     topItem->setText(17, "new");
 
+                    for (int i=0; i<topItem->columnCount(); i++) {
+                        topItem->setTextAlignment(i, Qt::AlignLeft|Qt::AlignTop);
+                    }
+
                     watchpointsTreeWidget->addTopLevelItem(topItem);
 
                 // Found a match. Reuse it.
