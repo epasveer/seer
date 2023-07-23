@@ -7,6 +7,7 @@
 * Add a method to add/change gdb commands to execute when a breakpoint (breakpoint, watchpoint, catchpoint) is reached.
 * Add a method to add/change a breakpoint's condition command.
 * Add a method to add/change a breakpoint's ignore count.
+* Add a method to add/change a breakpoint's command list.
 
 ## [2.0] - 2023-03-06
 * Seer is Qt6 based. Still compiles with Qt5.

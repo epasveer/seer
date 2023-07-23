@@ -83,7 +83,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>28</width>
+             <width>0</width>
              <height>20</height>
             </size>
            </property>
@@ -120,7 +120,7 @@
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
+             <width>0</width>
              <height>20</height>
             </size>
            </property>
@@ -130,6 +130,12 @@
        </item>
        <item>
         <widget class="QCheckBox" name="wrapTextCheckBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="toolTip">
           <string>Wrap long lines to the next line.</string>
          </property>
@@ -137,7 +143,7 @@
           <string/>
          </property>
          <property name="text">
-          <string>Wrap Text</string>
+          <string>Wrap</string>
          </property>
         </widget>
        </item>

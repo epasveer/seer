@@ -44,6 +44,21 @@ There are other types of catchpoints but GDB/mi only supports the above list at 
 
 A printpoint is a type of breakpoint that will print the value of a variable at a certain line of a function. It relies on gdb's ```dprintf``` feature.
 
+
+### Modifying existing breakpoints.
+
+Once a breakpoint (Breakpoint, Watchpoint, Catchpoint, Printpoint) is created, certain things about the breakpoint can be modified.
+Not everything, though. For example, you can not change the function or line number for a breakpoint. In that case, you need to delete
+the breakpoint and recreated it.
+
+These things can be modified.
+
+* Enable/disable state.
+* Add or remove a condition. eg: Break if 'i == 10'.
+* Add or remove an ignore count. eg: Ignore the first 5 occurences of the breakpoint.
+* Add or remove a series of gdb commands to execute when the breakpoint is reached. Not available for Printpoints.
+
+
 ### GDB output
 
 Any output from the GDB program is output to this logger. This is any regualar GDB output, including the result of any GDB command manually entered.

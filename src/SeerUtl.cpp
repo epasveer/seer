@@ -17,16 +17,32 @@ namespace Seer {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
-    QString filterEscapes (const QString& str) {
+    QString filterEscapes (const QString& str, bool handleCR) {
 
         QString tmp = str;
 
         tmp.replace("\\r",  "\r");
-        tmp.replace("\\n",  "\n");
         tmp.replace("\\t",  "\t");
         tmp.replace("\\\"", "\"");
 
+        if (handleCR) {
+            tmp.replace("\\n",  "\n");
+        }
+
         return tmp;
+    }
+
+    QStringList filterEscapes (const QStringList& strings, bool handleCR) {
+
+        QStringList list;
+
+        // For a list of strings, quote certain characters.
+        for (int i=0; i<strings.size(); i++) {
+            list.append(Seer::filterEscapes(strings[i], handleCR));
+        }
+
+        // Return the new list.
+        return list;
     }
 
     QString expandTabs (const QString& str, int tabsize, bool morph) {

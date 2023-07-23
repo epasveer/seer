@@ -4,6 +4,8 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QInputDialog>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
@@ -26,10 +28,12 @@ SeerPrintpointsBrowserWidget::SeerPrintpointsBrowserWidget (QWidget* parent) : Q
     printpointsTreeWidget->resizeColumnToContents(6); // file
   //printpointsTreeWidget->resizeColumnToContents(7); // fullname  Too long to show
     printpointsTreeWidget->resizeColumnToContents(8); // line
-    printpointsTreeWidget->resizeColumnToContents(9); // dprintf
+  //printpointsTreeWidget->resizeColumnToContents(9); // script    Too long to show
     printpointsTreeWidget->resizeColumnToContents(10); // thread-groups
-    printpointsTreeWidget->resizeColumnToContents(11); // times
-    printpointsTreeWidget->resizeColumnToContents(12); // original-location
+    printpointsTreeWidget->resizeColumnToContents(11); // cond
+    printpointsTreeWidget->resizeColumnToContents(12); // times
+    printpointsTreeWidget->resizeColumnToContents(13); // ignore
+    printpointsTreeWidget->resizeColumnToContents(14); // original-location
 
     /*
     printpointsTreeWidget->setColumnHidden(1, true); // ??? Hide or have a config to hide/show columns.
@@ -43,6 +47,8 @@ SeerPrintpointsBrowserWidget::SeerPrintpointsBrowserWidget (QWidget* parent) : Q
     QObject::connect(deletePrintpointsToolButton,   &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleDeleteToolButton);
     QObject::connect(enablePrintpointsToolButton,   &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleEnableToolButton);
     QObject::connect(disablePrintpointsToolButton,  &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleDisableToolButton);
+    QObject::connect(conditionBreakpointToolButton, &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleConditionToolButton);
+    QObject::connect(ignoreBreakpointToolButton,    &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleIgnoreToolButton);
 }
 
 SeerPrintpointsBrowserWidget::~SeerPrintpointsBrowserWidget () {
@@ -116,15 +122,19 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                 QString file_text              = Seer::parseFirst(bkpt_text, "file=",              '"', '"', false);
                 QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
                 QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
-                QString dprintf_text           = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
+                QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
+                QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
-                // Only look for 'breakpoint' type break points.
+                // Only look for 'breakpoint' type dprintf points.
                 if (type_text != "dprintf") {
                     continue;
                 }
+
+                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
 
                 // Add the level to the tree.
                 QTreeWidgetItem* topItem = new QTreeWidgetItem;
@@ -137,10 +147,16 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(6, QFileInfo(file_text).fileName());
                 topItem->setText(7, fullname_text);
                 topItem->setText(8, line_text);
-                topItem->setText(9, dprintf_text);
+                topItem->setText(9, script_text);
                 topItem->setText(10, thread_groups_text);
-                topItem->setText(11, times_text);
-                topItem->setText(12, original_location_text);
+                topItem->setText(11, cond_text);
+                topItem->setText(12, times_text);
+                topItem->setText(13, ignore_text);
+                topItem->setText(14, original_location_text);
+
+                for (int i=0; i<topItem->columnCount(); i++) {
+                    topItem->setTextAlignment(i, Qt::AlignLeft|Qt::AlignTop);
+                }
 
                 printpointsTreeWidget->addTopLevelItem(topItem);
             }
@@ -166,6 +182,8 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
     printpointsTreeWidget->resizeColumnToContents(10);
     printpointsTreeWidget->resizeColumnToContents(11);
     printpointsTreeWidget->resizeColumnToContents(12);
+    printpointsTreeWidget->resizeColumnToContents(13);
+    printpointsTreeWidget->resizeColumnToContents(14);
 
     QApplication::restoreOverrideCursor();
 }
@@ -293,6 +311,64 @@ void SeerPrintpointsBrowserWidget::handleDisableToolButton () {
 
     // Send the signal.
     emit disablePrintpoints(printpoints);
+}
+
+void SeerPrintpointsBrowserWidget::handleConditionToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = printpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one printpoint when adding a condition.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the condition text.
+    bool ok;
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this printpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(11), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected printpoint number.
+    QString printpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCondition(printpoint, condition);
+}
+
+void SeerPrintpointsBrowserWidget::handleIgnoreToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = printpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one printpoint when adding an ignore count.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    int count = QInputDialog::getInt(this, "Seer", "Enter the ignore count for this printpoint.\nA count of 0 will remove an existing one.", items.front()->text(13).toInt(), 0, 2147483647, 1, &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected printpoint number.
+    QString printpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointIgnore(printpoint, QString::number(count));
 }
 
 void SeerPrintpointsBrowserWidget::showEvent (QShowEvent* event) {

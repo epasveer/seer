@@ -215,7 +215,7 @@ QString SeerPrintpointCreateDialog::printpointText () const {
         printpointParameters += " --line " + lineNumberText();
     }
 
-    // Build the format string, ensuring a \" at the beggining and end of the string.
+    // Build the format string, ensuring a \" at the beginning and end of the string.
     printpointParameters += " ";
 
     if (format().front() != QString("\"")) {
