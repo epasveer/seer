@@ -83,8 +83,8 @@ Seer maintains a history of N commands, as set in the Seer Config dialogs. This 
 
 Consult these gdb references
 
-1. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Breaks.html#Set-Breaks) Using Breakpoints.
-2. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Watchpoints.html#Set-Watchpoints) Using Watchpoints.
-3. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb/Set-Catchpoints.html#Set-Catchpoints) Using Catchpoints.
-4. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Dynamic-Printf.html#Dynamic-Printf) Using DPrintf.
+1. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Breaks.html#Set-Breaks) Using Breakpoints.
+2. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Watchpoints.html#Set-Watchpoints) Using Watchpoints.
+3. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Catchpoints.html#Set-Catchpoints) Using Catchpoints.
+4. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Dynamic-Printf.html#Dynamic-Printf) Using DPrintf.
 
