@@ -11,6 +11,7 @@ class QProcessInfo {
         QProcessInfo();
 
         static QProcessList populate();
+        static QProcessInfo populate(uint32_t pid);
 
         uint32_t            pid                 () const;
         void                setPid              (uint32_t pid);

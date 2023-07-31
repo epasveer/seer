@@ -13,7 +13,10 @@ Launch Options (pick one):
 
   -s, --start <executable> <arguments>              Load the executable, break in "main", and run it.
 
-  --attach <pid> <executable>                       Attach to a locally running process.
+  --attach <pid> [<executable>]                     Attach to a locally running process.
+                                                    <executable> is the path to the executable to load.
+                                                    If <executable> is not given, use the executable stated
+                                                    by /proc/<pid>/exe
 
   --connect <medium> [--sym <symbolfile>]           Connect to an already running gdbserver (local or remote).
                                                     Possible connection mediums are:

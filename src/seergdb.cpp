@@ -1,5 +1,6 @@
 #include "SeerMainWindow.h"
 #include "SeerUtl.h"
+#include "QProcessInfo.h"
 #include <QtWidgets/QApplication>
 #include <QtGui/QIcon>
 #include <QtCore/QCommandLineParser>
@@ -196,6 +197,13 @@ int main (int argc, char* argv[]) {
         QString pid = parser.value(attachOption);
 
         executablePid = pid.toInt();
+
+        if (executableName == "") {
+
+            QProcessInfo info = QProcessInfo::populate(executablePid);
+
+            executableName = info.path() + "/" + info.name();
+        }
     }
 
     if (parser.isSet(connectOption)) {
