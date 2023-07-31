@@ -405,6 +405,9 @@ void SeerDebugDialog::handleProgramPidToolButton () {
     // Execute the dialog and get the result.
     if (dlg.exec()) {
         setAttachPid(dlg.selectedPid());
+        if (executableName() == "") {
+            setExecutableName(dlg.selectedFullname());
+        }
     }
 }
 

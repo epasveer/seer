@@ -21,6 +21,9 @@ class QProcessInfo {
         const QString&      name                () const;
         void                setName             (const QString& name);
 
+        const QString&      path                () const;
+        void                setPath             (const QString& path);
+
         const QString&      commandLine         () const;
         void                setCommandLine      (const QString& cmd);
 
@@ -28,6 +31,7 @@ class QProcessInfo {
         uint32_t            _pid;
         QString             _username;
         QString             _name;
+        QString             _path;
         QString             _cmdLine;
 };
 

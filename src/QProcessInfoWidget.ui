@@ -37,7 +37,7 @@
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/HighContrast/view-refresh.svg</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
      </property>
     </widget>
    </item>
@@ -47,7 +47,7 @@
       <bool>true</bool>
      </property>
      <property name="columnCount">
-      <number>4</number>
+      <number>5</number>
      </property>
      <column>
       <property name="text">
@@ -57,6 +57,11 @@
      <column>
       <property name="text">
        <string>User Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Program Path</string>
       </property>
      </column>
      <column>

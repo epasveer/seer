@@ -15,6 +15,7 @@ class QProcessInfoWidget : public QWidget, protected Ui::QProcessInfoWidget {
         int                 selectedPid                     () const;
         QString             selectedUsername                () const;
         QString             selectedName                    () const;
+        QString             selectedFullname                () const;
         QString             selectedCommandLine             () const;
 
     signals:

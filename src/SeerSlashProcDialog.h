@@ -15,6 +15,7 @@ class SeerSlashProcDialog : public QDialog, protected Ui::SeerSlashProcDialogFor
 
         int                 selectedPid                 () const;
         QString             selectedName                () const;
+        QString             selectedFullname            () const;
         QString             selectedCommandLine         () const;
 
     public slots:

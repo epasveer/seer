@@ -44,6 +44,7 @@ QProcessList QProcessInfo::populate() {
             QFileInfo exe(processDir.absoluteFilePath(QStringLiteral("exe")));
             exe = QFileInfo(exe.symLinkTarget());
             info.setName(exe.completeBaseName());
+            info.setPath(exe.absolutePath());
 
             // if we didn't get a name from the symlink, check in the status file
             if (info.name().isEmpty()) {
@@ -62,6 +63,7 @@ QProcessList QProcessInfo::populate() {
                             line.remove(0, 5);
                             // if we're using this name, surround with []s to indicate it's not a file
                             info.setName(QStringLiteral("[%1]").arg(line.trimmed()));
+                            info.setPath("");
                             break;
                         }
                     }
@@ -108,11 +110,13 @@ QProcessList QProcessInfo::populate() {
                     // if name is a truncated form of a filename, replace it
                     if (firstparam.endsWith(info.name()) && QFileInfo::exists(firstparam)) {
                         info.setName(QFileInfo(firstparam).completeBaseName());
+                        info.setPath(QFileInfo(firstparam).absolutePath());
                     }
 
                     // if we don't have a name, replace it but with []s
                     if (info.name().isEmpty()) {
                         info.setName(QStringLiteral("[%1]").arg(firstparam));
+                        info.setPath("");
                     }
 
                     contents.replace('\0', ' ');
@@ -143,27 +147,35 @@ void QProcessInfo::setPid(uint32_t pid) {
     _pid = pid;
 }
 
-const QString &QProcessInfo::username() const {
+const QString& QProcessInfo::username() const {
     return _username;
 }
 
-void QProcessInfo::setUsername(const QString &username) {
+void QProcessInfo::setUsername(const QString& username) {
     _username = username;
 }
 
-const QString &QProcessInfo::name() const {
+const QString& QProcessInfo::name() const {
     return _name;
 }
 
-void QProcessInfo::setName(const QString &name) {
+void QProcessInfo::setName(const QString& name) {
     _name = name;
 }
 
-const QString &QProcessInfo::commandLine() const {
+const QString& QProcessInfo::path() const {
+    return _path;
+}
+
+void QProcessInfo::setPath(const QString& path) {
+    _path = path;
+}
+
+const QString& QProcessInfo::commandLine() const {
     return _cmdLine;
 }
 
-void QProcessInfo::setCommandLine(const QString &cmd) {
+void QProcessInfo::setCommandLine(const QString& cmd) {
     _cmdLine = cmd;
 }
 

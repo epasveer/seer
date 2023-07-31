@@ -8,6 +8,7 @@
 * Add a method to add/change a breakpoint's condition command.
 * Add a method to add/change a breakpoint's ignore count.
 * Add a method to add/change a breakpoint's command list.
+* Debug dialog for "attach" mode now detects executable name and path.
 
 ## [2.0] - 2023-03-06
 * Seer is Qt6 based. Still compiles with Qt5.

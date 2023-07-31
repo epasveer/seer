@@ -24,6 +24,11 @@ QString SeerSlashProcDialog::selectedName () const {
     return processInfoWidget->selectedName();
 }
 
+QString SeerSlashProcDialog::selectedFullname () const {
+
+    return processInfoWidget->selectedFullname();
+}
+
 QString SeerSlashProcDialog::selectedCommandLine () const {
 
     return processInfoWidget->selectedCommandLine();

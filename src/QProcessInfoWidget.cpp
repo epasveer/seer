@@ -41,10 +41,11 @@ QProcessInfoWidget::QProcessInfoWidget (QWidget* parent) : QWidget(parent) {
 
     // Setup the widgets
     processTreeWidget->setMouseTracking(true);
-    processTreeWidget->resizeColumnToContents(0);
-    processTreeWidget->resizeColumnToContents(1);
-    processTreeWidget->resizeColumnToContents(2);
-    processTreeWidget->resizeColumnToContents(3);
+    processTreeWidget->resizeColumnToContents(0);  // PID
+    processTreeWidget->resizeColumnToContents(1);  // User name
+    processTreeWidget->resizeColumnToContents(2);  // Path name
+    processTreeWidget->resizeColumnToContents(3);  // Program name
+  //processTreeWidget->resizeColumnToContents(4);  // Command line
     processTreeWidget->setSortingEnabled(true);
     processTreeWidget->clear();
     systemProcessesCheckBox->setChecked(false);
@@ -93,7 +94,18 @@ QString QProcessInfoWidget::selectedName () const {
         return "";
     }
 
-    return items[0]->text(2);
+    return items[0]->text(3);
+}
+
+QString QProcessInfoWidget::selectedFullname () const {
+
+    QList<QTreeWidgetItem*> items = processTreeWidget->selectedItems();
+
+    if (items.size() == 0) {
+        return "";
+    }
+
+    return items[0]->text(2) + "/" + items[0]->text(3);
 }
 
 QString QProcessInfoWidget::selectedCommandLine () const {
@@ -104,7 +116,7 @@ QString QProcessInfoWidget::selectedCommandLine () const {
         return "";
     }
 
-    return items[0]->text(3);
+    return items[0]->text(4);
 }
 
 void QProcessInfoWidget::refreshList () {
@@ -122,8 +134,9 @@ void QProcessInfoWidget::refreshList () {
         QTreeWidgetItem* item = new QProcessInfoWidgetItem;
         item->setText(0, QString::number(info.pid()));
         item->setText(1, info.username());
-        item->setText(2, info.name());
-        item->setText(3, info.commandLine());
+        item->setText(2, info.path());
+        item->setText(3, info.name());
+        item->setText(4, info.commandLine());
 
         processTreeWidget->addTopLevelItem(item);
     }
@@ -134,6 +147,7 @@ void QProcessInfoWidget::refreshList () {
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
     processTreeWidget->resizeColumnToContents(3);
+  //processTreeWidget->resizeColumnToContents(4);
 
     // Don't clear the line edits.
     // programNameLineEdit->clear();
@@ -150,13 +164,13 @@ void QProcessInfoWidget::refreshView () {
     QList<QTreeWidgetItem*> programNameMatches;
 
     if (programNameLineEdit->text() == "") {
-        programNameMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 2);
+        programNameMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 3);
 
     }else{
         if (programNameLineEdit->text().contains('*')) {
-            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchWildcard   | Qt::MatchRecursive, 2);
+            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchWildcard   | Qt::MatchRecursive, 3);
         }else{
-            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchStartsWith | Qt::MatchRecursive, 2);
+            programNameMatches = processTreeWidget->findItems(programNameLineEdit->text(), Qt::MatchStartsWith | Qt::MatchRecursive, 3);
         }
     }
 
@@ -178,13 +192,13 @@ void QProcessInfoWidget::refreshView () {
     QList<QTreeWidgetItem*> processMatches;
 
     if (systemProcessesCheckBox->isChecked() == true) {
-        processMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 2);
+        processMatches = processTreeWidget->findItems("*", Qt::MatchWildcard | Qt::MatchRecursive, 3);
         //qDebug() << "Checkbox is on." << processMatches.size();
 
     }else{
         // To find [xxx] processes   :  "^(\\[).*(\\])$"
         // To exclude [xxx] processes:  "^(?!\\[).*(?!\\])$"
-        processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegularExpression | Qt::MatchRecursive, 2);
+        processMatches = processTreeWidget->findItems("^(?!\\[).*(?!\\])$", Qt::MatchRegularExpression | Qt::MatchRecursive, 3);
         //qDebug() << "Checkbox is off." << processMatches.size();
     }
 
@@ -209,6 +223,7 @@ void QProcessInfoWidget::refreshView () {
     processTreeWidget->resizeColumnToContents(1);
     processTreeWidget->resizeColumnToContents(2);
     processTreeWidget->resizeColumnToContents(3);
+  //processTreeWidget->resizeColumnToContents(4);
 }
 
 void QProcessInfoWidget::handleDoubleClicked () {
