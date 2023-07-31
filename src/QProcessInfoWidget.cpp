@@ -57,6 +57,9 @@ QProcessInfoWidget::QProcessInfoWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(refreshToolButton,       &QToolButton::clicked,              this,  &QProcessInfoWidget::refreshList);
     QObject::connect(processTreeWidget,       &QTreeWidget::itemDoubleClicked,    this,  &QProcessInfoWidget::handleDoubleClicked);
 
+    // Give focus to the program line edit.
+    programNameLineEdit->setFocus(Qt::OtherFocusReason);
+
     // Load the initial process list.
     refreshList();
 }

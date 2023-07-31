@@ -107,6 +107,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>programNameLineEdit</tabstop>
+  <tabstop>userNameLineEdit</tabstop>
+  <tabstop>systemProcessesCheckBox</tabstop>
+  <tabstop>refreshToolButton</tabstop>
+  <tabstop>processTreeWidget</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>
