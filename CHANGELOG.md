@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [2.1beta] - 2023-XX-XX
+## [2.1] - 2023-08-23
 * Add Execution dialog to record breakpoint events. This solves the problem
   of too many break/error dialogs to "swat away" as the program is debugged.
 * Add a method to add/change gdb commands to execute when a breakpoint (breakpoint, watchpoint, catchpoint) is reached.
