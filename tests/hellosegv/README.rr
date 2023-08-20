@@ -3,15 +3,21 @@ Record a RR session.
 
     https://github.com/rr-debugger/rr/wiki/Usage
 
+    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellosegv/rr
+
     $ rr record -n hellosegv one two three
 
 Replay the RR session in gdb.
+
+    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellosegv/rr
 
     $ rr replay
 
 Using RR in a gui debugger. Basically, attach to the rr server port.
 
     https://github.com/rr-debugger/rr/wiki/Using-rr-in-an-IDE
+
+    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellosegv/rr
 
     $ rr replay -s 50505 -k
 
@@ -20,6 +26,8 @@ Using RR in a gui debugger. Basically, attach to the rr server port.
     gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellosegv/hellosegv
 
 In a different terminal, use "RR" method in the Debug dialog and connect to "127.0.0.1:50505".
+
+    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellosegv/rr
 
     $ seergdb --rr localhost:50505
 

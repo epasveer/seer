@@ -1,3 +1,4 @@
 hellosegv
 *.seer
 core.*
+rr/*
