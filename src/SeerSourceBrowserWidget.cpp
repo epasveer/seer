@@ -77,6 +77,16 @@ const QStringList& SeerSourceBrowserWidget::headerFilePatterns () const {
     return _headerFilePatterns;
 }
 
+void SeerSourceBrowserWidget::setIgnoreFilePatterns (const QStringList& patterns) {
+
+    _ignoreFilePatterns = patterns;
+}
+
+const QStringList& SeerSourceBrowserWidget::ignoreFilePatterns () const {
+
+    return _ignoreFilePatterns;
+}
+
 void SeerSourceBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
@@ -128,7 +138,10 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
-            if (Seer::matchesWildcard(miscFilePatterns(), fullname_text)) {
+
+            if (Seer::matchesWildcard(ignoreFilePatterns(), fullname_text)) {
+                continue;
+            }else if (Seer::matchesWildcard(miscFilePatterns(), fullname_text)) {
                 _miscFilesItems->addChild(item);
             }else if (Seer::matchesWildcard(sourceFilePatterns(), fullname_text)) {
                 _sourceFilesItems->addChild(item);

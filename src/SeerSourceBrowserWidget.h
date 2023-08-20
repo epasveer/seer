@@ -22,6 +22,9 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
         void                        setHeaderFilePatterns       (const QStringList& patterns);
         const QStringList&          headerFilePatterns          () const;
 
+        void                        setIgnoreFilePatterns       (const QStringList& patterns);
+        const QStringList&          ignoreFilePatterns          () const;
+
     public slots:
         void                        handleText                  (const QString& text);
         void                        refresh                     ();
@@ -43,5 +46,6 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
         QStringList                 _sourceFilePatterns;
         QStringList                 _headerFilePatterns;
         QStringList                 _miscFilePatterns;
+        QStringList                 _ignoreFilePatterns;
 };
 

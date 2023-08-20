@@ -249,14 +249,14 @@ QStringList SeerConfigDialog::sourceAlternateDirectories () const {
     return _sourceConfigPage->alternateDirectories();
 }
 
-void SeerConfigDialog::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
+void SeerConfigDialog::setSourceIgnoreFilePatterns (const QStringList& filePatterns) {
 
-    _sourceConfigPage->setIgnoreDirectories(ignoreDirectories);
+    _sourceConfigPage->setIgnoreFilePatterns(filePatterns);
 }
 
-QStringList SeerConfigDialog::sourceIgnoreDirectories () const {
+QStringList SeerConfigDialog::sourceIgnoreFilePatterns () const {
 
-    return _sourceConfigPage->ignoreDirectories();
+    return _sourceConfigPage->ignoreFilePatterns();
 }
 
 void SeerConfigDialog::setSourceMiscFilePatterns (const QStringList& filePatterns) {

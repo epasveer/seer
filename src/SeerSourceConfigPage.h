@@ -17,8 +17,8 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
         void                                setAlternateDirectories                 (const QStringList& alternateDirectories);
         QStringList                         alternateDirectories                    () const;
 
-        void                                setIgnoreDirectories                    (const QStringList& ignoreDirectories);
-        QStringList                         ignoreDirectories                       () const;
+        void                                setIgnoreFilePatterns                   (const QStringList& filePatterns);
+        QStringList                         ignoreFilePatterns                      () const;
 
         void                                setMiscFilePatterns                     (const QStringList& filePatterns);
         QStringList                         miscFilePatterns                        () const;
@@ -37,9 +37,8 @@ class SeerSourceConfigPage : public QWidget, public Ui::SeerSourceConfigPage {
         void                                handleDownAlternateButtonClicked        ();
         void                                handleDeleteAlternateButtonClicked      ();
 
-        void                                handleAddIgnoreButtonClicked            ();
-        void                                handleDeleteIgnoreButtonClicked         ();
-
+        void                                handleAddIgnorePatternButtonClicked     ();
+        void                                handleDeleteIgnorePatternButtonClicked  ();
         void                                handleAddMiscPatternButtonClicked       ();
         void                                handleDeleteMiscPatternButtonClicked    ();
         void                                handleAddSourcePatternButtonClicked     ();

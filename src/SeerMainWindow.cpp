@@ -614,7 +614,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
-    dlg.setSourceIgnoreDirectories(gdbWidget->sourceIgnoreDirectories());
+    dlg.setSourceIgnoreFilePatterns(gdbWidget->sourceIgnoreFilePatterns());
     dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
     dlg.setSourceSourceFilePatterns(gdbWidget->sourceSourceFilePatterns());
     dlg.setSourceHeaderFilePatterns(gdbWidget->sourceHeaderFilePatterns());
@@ -654,7 +654,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
-    gdbWidget->setSourceIgnoreDirectories(dlg.sourceIgnoreDirectories());
+    gdbWidget->setSourceIgnoreFilePatterns(dlg.sourceIgnoreFilePatterns());
     gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
     gdbWidget->setSourceSourceFilePatterns(dlg.sourceSourceFilePatterns());
     gdbWidget->setSourceHeaderFilePatterns(dlg.sourceHeaderFilePatterns());

@@ -548,15 +548,36 @@ namespace Seer {
 
     bool matchesWildcard (const QStringList& patterns, const QString& string) {
 
-        foreach (const auto& pattern, patterns) {
-
-
-            QRegularExpression re;
+        foreach (auto pattern, patterns) {
 
 #if QT_VERSION >= 0x060000
-            re = QRegularExpression::fromWildcard(pattern, Qt::CaseInsensitive, QRegularExpression::UnanchoredWildcardConversion);
+
+            QRegularExpression re = QRegularExpression::fromWildcard(pattern, Qt::CaseInsensitive, QRegularExpression::UnanchoredWildcardConversion);
+
 #else
-            re = QRegularExpression(QRegularExpression::wildcardToRegularExpression(pattern), QRegularExpression::CaseInsensitiveOption);
+            // With Qt5, 'wildcardToRegularExpression' needs a "/*" at the start of 'pattern'
+            // if 'string' start with a "/".
+            //if (string[0] == '/') {
+            //    if (pattern[0] != '/') {
+            //        pattern = "/*/" + pattern;
+            //    }
+            //}
+
+            // This pattern needs to be converted from a glob to a regex.
+            // All '*' are replaced with '.*'
+            // The pattern is terminated with a '$', if it doesn't have one.
+            pattern.replace("*", ".*");
+
+            //if (string[0] != '/') {
+            //    if (pattern.back() != '$') {
+            //        pattern += '$';
+            //    }
+            //}
+
+            // qDebug() << pattern << string;
+
+            // QRegularExpression re = QRegularExpression(QRegularExpression::wildcardToRegularExpression(pattern));
+            QRegularExpression re = QRegularExpression(pattern);
 #endif
 
             if (re.match(string).hasMatch()) {

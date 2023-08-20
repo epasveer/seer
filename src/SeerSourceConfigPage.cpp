@@ -16,10 +16,10 @@ SeerSourceConfigPage::SeerSourceConfigPage(QWidget* parent) : QWidget(parent) {
     alternateDirectoriesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     alternateDirectoriesTreeWidget->resizeColumnToContents(0); // directory
 
-    ignoreDirectoriesTreeWidget->clear();
-    ignoreDirectoriesTreeWidget->setSortingEnabled(false);
-    ignoreDirectoriesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    ignoreDirectoriesTreeWidget->resizeColumnToContents(0); // directory
+    ignoreFilePatternsTreeWidget->clear();
+    ignoreFilePatternsTreeWidget->setSortingEnabled(false);
+    ignoreFilePatternsTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    ignoreFilePatternsTreeWidget->resizeColumnToContents(0); // file pattern
 
     miscFilePatternsTreeWidget->clear();
     miscFilePatternsTreeWidget->setSortingEnabled(false);
@@ -42,8 +42,8 @@ SeerSourceConfigPage::SeerSourceConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(moveUpAlternateDirectoriesToolButton,   &QToolButton::clicked,     this, &SeerSourceConfigPage::handleUpAlternateButtonClicked);
     QObject::connect(moveDownAlternateDirectoriesToolButton, &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDownAlternateButtonClicked);
     QObject::connect(deleteAlternateDirectoriesToolButton,   &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteAlternateButtonClicked);
-    QObject::connect(addIgnoreDirectoryToolButton,           &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddIgnoreButtonClicked);
-    QObject::connect(deleteIgnoreDirectoriesToolButton,      &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteIgnoreButtonClicked);
+    QObject::connect(addIgnoreFilePatternToolButton,         &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddIgnorePatternButtonClicked);
+    QObject::connect(deleteIgnoreFilePatternesToolButton,    &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteIgnorePatternButtonClicked);
     QObject::connect(addMiscFilePatternToolButton,           &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddMiscPatternButtonClicked);
     QObject::connect(deleteMiscFilePatternsToolButton,       &QToolButton::clicked,     this, &SeerSourceConfigPage::handleDeleteMiscPatternButtonClicked);
     QObject::connect(addSourceFilePatternToolButton,         &QToolButton::clicked,     this, &SeerSourceConfigPage::handleAddSourcePatternButtonClicked);
@@ -89,28 +89,28 @@ QStringList SeerSourceConfigPage::alternateDirectories () const {
     return list;
 }
 
-void SeerSourceConfigPage::setIgnoreDirectories (const QStringList& ignoreDirectories) {
+void SeerSourceConfigPage::setIgnoreFilePatterns (const QStringList& filePatterns) {
 
-    ignoreDirectoriesTreeWidget->clear();
+    ignoreFilePatternsTreeWidget->clear();
 
-    QStringListIterator iter(ignoreDirectories);
+    QStringListIterator iter(filePatterns);
 
     while (iter.hasNext()) {
 
         QTreeWidgetItem* topItem = new QTreeWidgetItem;
         topItem->setText(0, iter.next());
 
-        ignoreDirectoriesTreeWidget->addTopLevelItem(topItem);
+        ignoreFilePatternsTreeWidget->addTopLevelItem(topItem);
     }
 
-    ignoreDirectoriesTreeWidget->resizeColumnToContents(0);
+    ignoreFilePatternsTreeWidget->resizeColumnToContents(0);
 }
 
-QStringList SeerSourceConfigPage::ignoreDirectories () const {
+QStringList SeerSourceConfigPage::ignoreFilePatterns () const {
 
     QStringList list;
 
-    QTreeWidgetItemIterator iter(ignoreDirectoriesTreeWidget);
+    QTreeWidgetItemIterator iter(ignoreFilePatternsTreeWidget);
 
     while (*iter) {
         list << (*iter)->text(0);
@@ -220,9 +220,9 @@ void SeerSourceConfigPage::reset () {
     alternateDirectories << "./";
 
     setAlternateDirectories(alternateDirectories);
-    setIgnoreDirectories(QStringList());
 
-    setMiscFilePatterns(   {"/usr/include/"} );
+    setIgnoreFilePatterns(QStringList());
+    setMiscFilePatterns(   {"/usr/include/*"} );
     setSourceFilePatterns( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", "*.F90", "*.rs", "*.go", "*.ada", "*.adb"} );
     setHeaderFilePatterns( {"*.hpp", "*.h", "*.ads"} );
 }
@@ -334,7 +334,7 @@ void SeerSourceConfigPage::handleDeleteAlternateButtonClicked () {
     alternateDirectoriesTreeWidget->resizeColumnToContents(0);
 }
 
-void SeerSourceConfigPage::handleAddIgnoreButtonClicked () {
+void SeerSourceConfigPage::handleAddIgnorePatternButtonClicked () {
 
     // Ask for the ignore directory to add to the list.
     QString directory = QInputDialog::getText(this, "Seer - Enter a directory to ignore", "Ignore directory:");
@@ -348,21 +348,21 @@ void SeerSourceConfigPage::handleAddIgnoreButtonClicked () {
     topItem->setText(0, directory);
 
     // Just add it to the end of the list.
-    ignoreDirectoriesTreeWidget->addTopLevelItem(topItem);
+    ignoreFilePatternsTreeWidget->addTopLevelItem(topItem);
 
     // Resize the columns and select the item we just added.
-    ignoreDirectoriesTreeWidget->resizeColumnToContents(0);
-    ignoreDirectoriesTreeWidget->setCurrentItem(topItem, 0);
+    ignoreFilePatternsTreeWidget->resizeColumnToContents(0);
+    ignoreFilePatternsTreeWidget->setCurrentItem(topItem, 0);
 }
 
-void SeerSourceConfigPage::handleDeleteIgnoreButtonClicked () {
+void SeerSourceConfigPage::handleDeleteIgnorePatternButtonClicked () {
 
-    QList<QTreeWidgetItem*> matches = ignoreDirectoriesTreeWidget->selectedItems();
+    QList<QTreeWidgetItem*> matches = ignoreFilePatternsTreeWidget->selectedItems();
 
     qDeleteAll(matches);
 
     // Resize the columns and select the items we just deleted.
-    ignoreDirectoriesTreeWidget->resizeColumnToContents(0);
+    ignoreFilePatternsTreeWidget->resizeColumnToContents(0);
 }
 
 void SeerSourceConfigPage::handleAddMiscPatternButtonClicked () {

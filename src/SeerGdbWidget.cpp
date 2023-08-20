@@ -3177,6 +3177,8 @@ const QStringList& SeerGdbWidget::sourceIgnoreDirectories() const {
 void SeerGdbWidget::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
 
     editorManager()->setEditorIgnoreDirectories(ignoreDirectories);
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setIgnoreFilePatterns(ignoreDirectories);
 }
 
 void SeerGdbWidget::setSourceMiscFilePatterns (const QStringList& filePatterns) {
@@ -3207,6 +3209,16 @@ void SeerGdbWidget::setSourceHeaderFilePatterns (const QStringList& filePatterns
 const QStringList& SeerGdbWidget::sourceHeaderFilePatterns () const {
 
     return sourceLibraryManagerWidget->sourceBrowserWidget()->headerFilePatterns();
+}
+
+void SeerGdbWidget::setSourceIgnoreFilePatterns (const QStringList& filePatterns) {
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setIgnoreFilePatterns(filePatterns);
+}
+
+const QStringList& SeerGdbWidget::sourceIgnoreFilePatterns () const {
+
+    return sourceLibraryManagerWidget->sourceBrowserWidget()->ignoreFilePatterns();
 }
 
 void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {

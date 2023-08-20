@@ -70,8 +70,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;
 
-        void                                setSourceIgnoreDirectories                      (const QStringList& ignoreDirectories);
-        QStringList                         sourceIgnoreDirectories                         () const;
+        void                                setSourceIgnoreFilePatterns                     (const QStringList& filePatterns);
+        QStringList                         sourceIgnoreFilePatterns                        () const;
 
         void                                setSourceMiscFilePatterns                       (const QStringList& filePatterns);
         QStringList                         sourceMiscFilePatterns                          () const;
