@@ -14,11 +14,15 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     setupUi(this);
 
     // Setup the widgets
+    QSize size(96, 84);
+    int   spacing = 12;
+
     contentsListWidget->setViewMode(QListView::IconMode);
-    contentsListWidget->setIconSize(QSize(96, 84));
+    contentsListWidget->setIconSize(size);
     contentsListWidget->setMovement(QListView::Static);
-    contentsListWidget->setMaximumWidth(128);
-    contentsListWidget->setSpacing(12);
+    contentsListWidget->setSpacing(spacing);
+    contentsListWidget->setFixedWidth(size.width()+(spacing*3));
+    contentsListWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     QPushButton* resetButton = buttonBox->button(QDialogButtonBox::Reset);
     if (resetButton) {
