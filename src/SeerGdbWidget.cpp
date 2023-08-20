@@ -1216,6 +1216,8 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
+
+        break;
     }
 
     QApplication::restoreOverrideCursor();

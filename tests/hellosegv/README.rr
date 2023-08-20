@@ -26,9 +26,10 @@ Using RR in a gui debugger. Basically, attach to the rr server port.
     gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellosegv/hellosegv
 
 In a different terminal, use "RR" method in the Debug dialog and connect to "127.0.0.1:50505".
+You may need to tell Seer to load the executable for the symbols.
 
     $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellosegv/rr
 
-    $ seergdb --rr localhost:50505
+    $ seergdb --rr localhost:50505 --sym hellosegv
 
 
