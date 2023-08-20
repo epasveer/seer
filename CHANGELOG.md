@@ -1,6 +1,11 @@
 
 # Seer Change Log
 
+## [2.2beta] - 2023-XX-XX
+* Fixed infinit loop when starting with RR mode.
+* Fixed Source handling in source browser. Qt5 mode was broken.
+  Qt6 works.  Directory paths need a tailing "/*"
+
 ## [2.1] - 2023-08-23
 * Add Execution dialog to record breakpoint events. This solves the problem
   of too many break/error dialogs to "swat away" as the program is debugged.
