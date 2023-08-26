@@ -22,6 +22,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
 
+        void                setMode                     (const QString& mode);
+        QString             mode                        () const;
+
     public slots:
         void                handleChangeWindowTitle     (QString title);
 
@@ -43,6 +46,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                resizeEvent                 (QResizeEvent* event);
 
     private:
+        QString             _mode;
         QTextCursor         _cursor;
         QString             _ttyDeviceName;
         int                 _ptsFD;

@@ -24,6 +24,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ttyDeviceName = "";
     _ptsFD         = -1;
     _ptsListener   = 0;
+    _mode          = "normal";
 
     // Set up UI.
     setupUi(this);
@@ -31,6 +32,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Console");
+    setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
     QFont font;
     font.setFamily("monospace");
@@ -48,6 +50,8 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     // Create psuedo terminal for console.
     createConsole();
     connectConsole();
+
+    setMode("normal");
 
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
@@ -356,6 +360,48 @@ void SeerConsoleWidget::setScrollLines (int count) {
 int SeerConsoleWidget::scrollLines () const {
 
     return textEdit->maximumBlockCount();
+}
+
+void SeerConsoleWidget::setMode (const QString& mode) {
+
+    qDebug() << mode;
+
+    if (mode == "normal") {
+
+        _mode = mode;
+
+        show();
+        setWindowState(Qt::WindowNoState);
+
+    }else if (mode == "minimized") {
+
+        _mode = mode;
+
+        show();
+        setWindowState(Qt::WindowMinimized);
+
+    }else if (mode == "hidden") {
+
+        _mode = mode;
+
+        hide();
+
+    }else if (mode == "") {
+
+        _mode = "normal";
+
+        show();
+        setWindowState(Qt::WindowNoState);
+    }
+}
+
+QString SeerConsoleWidget::mode () const {
+
+    if (_mode == "") {
+        return "normal";
+    }
+
+    return _mode;
 }
 
 void SeerConsoleWidget::writeSettings() {

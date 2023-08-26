@@ -197,6 +197,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbAttachExecutable           ();
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbRRExecutable               ();
+        void                                handleGdbDirectRRExecutable         ();
         void                                handleGdbCoreFileExecutable         ();
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -333,11 +334,13 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
     private:
         bool                                isGdbRuning                         () const;
         bool                                startGdb                            ();
+        bool                                startGdbRR                          ();
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
         void                                connectConsole                      ();
         void                                disconnectConsole                   ();
+        SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
 
         QString                             _gdbProgram;

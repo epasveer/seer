@@ -61,7 +61,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbEnablePrettyPrinting            = true;
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
-    _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
@@ -1141,6 +1140,94 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     qCDebug(LC) << "Finishing 'gdb connect'.";
 }
 
+void SeerGdbWidget::handleGdbDirectRRExecutable () {
+
+    qCDebug(LC) << "Starting 'gdb direct rr'.";
+
+    QApplication::setOverrideCursor(Qt::BusyCursor);
+
+    while (1) {
+
+        // Has a executable name been provided?
+        if (executableName() != "") {
+
+            QMessageBox::warning(this, "Seer",
+                    QString("The executable name can't be provided for 'rr' mode."),
+                    QMessageBox::Ok);
+            break;
+        }
+
+        // Delete the old gdb and console if there is a new executable
+        // Create a new console.
+        if (newExecutableFlag() == true) {
+            killGdb();
+            disconnectConsole();
+            deleteConsole();
+            createConsole();
+            connectConsole();
+        }
+
+        // If gdb isn't running, start it.
+        if (isGdbRuning() == false) {
+
+            bool f = startGdbRR();
+            if (f == false) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
+                break;
+            }
+        }
+
+        // Set dprint parameters.
+        resetDprintf();
+
+        // Set the launch mode.
+        setExecutableLaunchMode("rr");
+        setGdbRecordMode("rr");
+        setExecutablePid(0);
+
+        // Load ithe executable, if needed.
+        if (newExecutableFlag() == true) {
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            setNewExecutableFlag(false);
+        }
+
+        // Set or reset some things.
+        handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
+        handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
+        handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
+
+        if (assemblyShowAssemblyTabOnStartup()) {
+            editorManager()->showAssembly();
+        }
+
+        if (gdbHandleTerminatingException()) {
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
+        }else{
+            handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
+        }
+
+        if (gdbEnablePrettyPrinting()) {
+            handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
+        }
+
+        // Run any 'post' commands after program is loaded.
+        handleGdbExecutablePostCommands();
+
+        // Set window titles with name of program.
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
+
+        break;
+    }
+
+    QApplication::restoreOverrideCursor();
+
+    qCDebug(LC) << "Finishing 'gdb rr'.";
+}
+
 void SeerGdbWidget::handleGdbRRExecutable () {
 
     qCDebug(LC) << "Starting 'gdb rr'.";
@@ -1178,7 +1265,7 @@ void SeerGdbWidget::handleGdbRRExecutable () {
         // Set dprint parameters.
         resetDprintf();
 
-        // No console for 'connect' mode.
+        // No console for 'rr' mode.
         setExecutableLaunchMode("rr");
         setGdbRecordMode("rr");
         setExecutablePid(0);
@@ -2994,6 +3081,40 @@ bool SeerGdbWidget::startGdb () {
     return true;
 }
 
+bool SeerGdbWidget::startGdbRR () {
+
+    // Don't do anything, if already running.
+    if (isGdbRuning()) {
+        qWarning() << "Already running";
+        return false;
+    }
+
+    // Set the gdb program name to use.
+    QString     command   = "/usr/local/bin/rr";
+    QString     arguments = "replay --interpreter=mi --tty " + _consoleWidget->ttyDeviceName();
+    QStringList args      = arguments.split(' ', Qt::SkipEmptyParts);
+
+    qDebug() << "Expanded command: "   << command;
+    qDebug() << "Expanded arguments: " << arguments;
+
+    // Give the gdb process the program and the argument list.
+    _gdbProcess->setProgram(command);
+    _gdbProcess->setArguments(args);
+
+    // We need to set the C language, otherwise the MI interface is translated and our message
+    // filters will not work.
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LANG", "C");
+    _gdbProcess->setProcessEnvironment(env);
+
+    // Start the gdb process.
+    _gdbProcess->start();
+
+    qDebug() << _gdbProcess->state();
+
+    return true;
+}
+
 void SeerGdbWidget::killGdb () {
 
     // Don't do anything, if already running.
@@ -3023,7 +3144,6 @@ void SeerGdbWidget::createConsole () {
 
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
-        _consoleWidget->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
@@ -3031,6 +3151,11 @@ void SeerGdbWidget::createConsole () {
         // Connect window title changes.
         QObject::connect(this, &SeerGdbWidget::changeWindowTitle,    _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
     }
+}
+
+SeerConsoleWidget* SeerGdbWidget::console () {
+
+    return _consoleWidget;
 }
 
 void SeerGdbWidget::deleteConsole () {
@@ -3057,37 +3182,18 @@ void SeerGdbWidget::disconnectConsole () {
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
-    _consoleMode = mode;
-
     if (_consoleWidget != 0) {
-        if (_consoleMode == "normal") {
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowNoState);
-
-        }else if (_consoleMode == "minimized") {
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowMinimized);
-
-        }else if (_consoleMode == "hidden") {
-            _consoleWidget->hide();
-
-        }else if (_consoleMode == "") {
-            _consoleMode = "normal";
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowNoState);
-
-        }else{
-        }
+        _consoleWidget->setMode(mode);
     }
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    if (_consoleMode == "") {
-        return "normal";
+    if (_consoleWidget != 0) {
+        return _consoleWidget->mode();
     }
 
-    return _consoleMode;
+    return "normal";
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {

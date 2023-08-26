@@ -402,7 +402,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbRun->setVisible(false);
         actionGdbStart->setVisible(false);
 
-        gdbWidget->handleGdbRRExecutable();
+      //gdbWidget->handleGdbRRExecutable();
+        gdbWidget->handleGdbDirectRRExecutable();
 
     }else if (launchMode == "corefile") {
 
