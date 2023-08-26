@@ -1,0 +1,10 @@
+Simple test program to builds with SCons.
+
+    $ scons
+    scons: Reading SConscript files ...
+    scons: done reading SConscript files.
+    scons: Building targets ...
+    g++ -o helloscons.o -c helloscons.cpp
+    g++ -o helloscons function1.o helloscons.o
+    scons: done building targets.
+

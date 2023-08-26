@@ -1,0 +1,5 @@
+
+#Program('helloscons', ['helloscons.cpp', 'function1.cpp'])
+
+Program('helloscons', Glob('*.cpp'))
+
