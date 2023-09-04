@@ -8,6 +8,7 @@ Build-Depends: debhelper (>= 10.0.0),
   qt6-base-dev,
   libqt6gui6,
   libqt6charts6-dev,
+  libqt6opengl6-dev,
   libqt6svg6-dev
 Standards-Version: 4.1.3
 Homepage: https://github.com/epasveer/seer
