@@ -65,7 +65,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(rrLoadTraceDirectoryToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRTraceDirectoryToolButton);
-    QObject::connect(rrLoadBreakpointsFilenameToolButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRBreakpointsFilenameToolButton);
+    QObject::connect(rrLoadBreakpointsFilenameToolButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
@@ -138,6 +138,7 @@ QString SeerDebugDialog::executableArguments () const {
 
 void SeerDebugDialog::setBreakpointsFilename (const QString& breakpointsFilename) {
     loadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
+    rrLoadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
 }
 
 QString SeerDebugDialog::breakpointsFilename () const {
@@ -256,14 +257,6 @@ void SeerDebugDialog::setRRTraceDirectory (const QString& rrTraceDirectory) {
 
 QString SeerDebugDialog::rrTraceDirectory () const {
     return rrTraceDirectoryLineEdit->text();
-}
-
-void SeerDebugDialog::setRRBreakpointsFilename (const QString& breakpointsFilename) {
-    rrLoadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
-}
-
-QString SeerDebugDialog::rrBreakpointsFilename () const {
-    return rrLoadBreakpointsFilenameLineEdit->text();
 }
 
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
@@ -385,15 +378,6 @@ void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
     }
 }
 
-void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
-
-    QString name = QFileDialog::getOpenFileName(this, "Select a breakpoints file to load.", breakpointsFilename(), "Breakpoints (*.seer);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
-
-    if (name != "") {
-        setBreakpointsFilename(name);
-    }
-}
-
 void SeerDebugDialog::handleBreakpointInFunctionLineEdit () {
 
     breakpointInFunctionRadioButton->setChecked(true);
@@ -408,12 +392,12 @@ void SeerDebugDialog::handleLoadRRTraceDirectoryToolButton () {
     }
 }
 
-void SeerDebugDialog::handleLoadRRBreakpointsFilenameToolButton () {
+void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
 
     QString name = QFileDialog::getOpenFileName(this, "Select a breakpoints file to load.", breakpointsFilename(), "Breakpoints (*.seer);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
-        setRRBreakpointsFilename(name);
+        setBreakpointsFilename(name);
     }
 }
 

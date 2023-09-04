@@ -769,59 +769,6 @@
            </layout>
           </item>
           <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <widget class="QRadioButton" name="rrNoBreakpointRadioButton">
-              <property name="toolTip">
-               <string>No initial breakpoint.</string>
-              </property>
-              <property name="text">
-               <string>No breakpoint</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rrBreakpointInMainRadioButton">
-              <property name="toolTip">
-               <string>Set a breakpoint in &quot;main&quot;.</string>
-              </property>
-              <property name="text">
-               <string>Break in &quot;main&quot;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rrBreakpointInFunctionRadioButton">
-              <property name="toolTip">
-               <string>Set a breakpoint in a function or at an address.</string>
-              </property>
-              <property name="text">
-               <string>Break in</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="rrBreakpointInFunctionLineEdit">
-              <property name="toolTip">
-               <string>The breakpoint function or address.</string>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string>_function or 0xaddress</string>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>

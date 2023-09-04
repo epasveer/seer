@@ -1059,7 +1059,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-                                                //
+
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
         }

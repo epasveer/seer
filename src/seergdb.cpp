@@ -119,7 +119,6 @@ int main (int argc, char* argv[]) {
     parser.process(app);
 
     if (parser.isSet(helpOption)) {
-        //parser.showHelp();
         seerhelp();
     }
 
@@ -309,9 +308,8 @@ int main (int argc, char* argv[]) {
 
     seer.launchExecutable(launchMode, breakMode);
 
-  //seer.move(800, 400);
     seer.show();
-  //seer.activateWindow();
+    seer.activateWindow();
 
     return app.exec();
 }

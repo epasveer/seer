@@ -4,32 +4,47 @@ Record a RR session.
     https://github.com/rr-debugger/rr/wiki/Usage
 
     $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
-
     $ rr record -n hellorr
 
-Replay the RR session in gdb.
+    Or...
 
-    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+    $ rr record -n --output-trace-dir=/path/to/rr/trace-directory  hellorr arg1 arg2
 
-    $ rr replay
 
-Using RR in a gui debugger. Basically, attach to the rr server port.
+Replay the RR session in Seer.
 
-    https://github.com/rr-debugger/rr/wiki/Using-rr-in-an-IDE
+    $ seergdb --rr /path/to/rr/trace-directory
 
-    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
 
-    $ rr replay -s 50505 -k
 
-    $ rr replay -s 50505 -k
-    Launch gdb with
-    gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellorr/hellorr
+THE FOLLOWING IS OLD!!
 
-In a different terminal, use "RR" method in the Debug dialog and connect to "127.0.0.1:50505".
-You may need to tell Seer to load the executable for the symbols.
+This method allowed Seer to connect to a RR debug server via a host:port.
+I've deprecated this in favor of running 'rr replay' directly.
 
-    $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+    Replay the RR session in gdb.
 
-    $ seergdb --rr localhost:50505 --sym hellorr
+        $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+
+        $ rr replay
+
+    Using RR in a gui debugger. Basically, attach to the rr server port.
+
+        https://github.com/rr-debugger/rr/wiki/Using-rr-in-an-IDE
+
+        $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+
+        $ rr replay -s 50505 -k
+
+        $ rr replay -s 50505 -k
+        Launch gdb with
+        gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellorr/hellorr
+
+    In a different terminal, use "RR" method in the Debug dialog and connect to "127.0.0.1:50505".
+    You may need to tell Seer to load the executable for the symbols.
+
+        $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+
+        $ seergdb --rr localhost:50505 --sym hellorr
 
 
