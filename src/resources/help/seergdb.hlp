@@ -26,7 +26,7 @@ Launch Options (pick one):
 
                                                     'sym' is optional if the debugging info is in a separate file.
 
-  --rr <host:port>                                  Connect to an already running 'rr replay -s <port> -k' session.
+  --rr <trace-directory>                            Load a previously created RR trace session from 'trace-directory'.
 
   --core <corefile> <executable>                    Load a corefile.
 

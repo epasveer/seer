@@ -34,7 +34,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setNonStopMode(false);
     setAttachPid(0);
     setConnectHostPort("");
-    setRRHostPort("");
+    setRRTraceDirectory("");
     setCoreFilename("");
     setProjectFilename("");
 
@@ -248,12 +248,12 @@ QString SeerDebugDialog::connectHostPort () const {
     return connectProgramHostPortLineEdit->text();
 }
 
-void SeerDebugDialog::setRRHostPort (const QString& rrHostPort) {
-    rrHostPortLineEdit->setText(rrHostPort);
+void SeerDebugDialog::setRRTraceDirectory (const QString& rrTraceDirectory) {
+    rrTraceDirectoryLineEdit->setText(rrTraceDirectory);
 }
 
-QString SeerDebugDialog::rrHostPort () const {
-    return rrHostPortLineEdit->text();
+QString SeerDebugDialog::rrTraceDirectory () const {
+    return rrTraceDirectoryLineEdit->text();
 }
 
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
@@ -575,7 +575,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Load RR project.
     if (rrModeJson.isEmpty() == false) {
 
-        connectProgramHostPortLineEdit->setText(rrModeJson["rrserver"].toString());
+        rrTraceDirectoryLineEdit->setText(rrModeJson["rrtracedirectory"].toString());
 
         setLaunchMode("rr");
     }
@@ -688,7 +688,7 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
 
         QJsonObject modeJson;
 
-        modeJson["rrserver"]           = rrHostPortLineEdit->text();
+        modeJson["rrtracedirectory"]   = rrTraceDirectoryLineEdit->text();
 
         seerProjectJson["rrmode"]      = modeJson;
     }

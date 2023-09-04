@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SeerGdbConfigPage.h"
+#include "SeerRRConfigPage.h"
 #include "SeerEditorConfigPage.h"
 #include "SeerSourceConfigPage.h"
 #include "SeerAssemblyConfigPage.h"
@@ -21,6 +22,22 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
     public:
         explicit SeerConfigDialog (QWidget* parent = 0);
        ~SeerConfigDialog ();
+
+        // Seer settings.
+        void                                setSeerConsoleMode                              (const QString& mode);
+        QString                             seerConsoleMode                                 () const;
+
+        void                                setSeerConsoleScrollLines                       (int count);
+        int                                 seerConsoleScrollLines                          () const;
+
+        void                                setSeerRememberWindowSizes                      (bool flag);
+        bool                                seerRememberWindowSizes                         () const;
+
+        void                                setSeerRememberManualCommandCount               (int count);
+        int                                 seerRememberManualCommandCount                  () const;
+
+        void                                setSeerClearManualCommandHistory                (bool flag);
+        bool                                seerClearManualCommandHistory                   () const;
 
         // Gdb settings.
         void                                setGdbProgram                                   (const QString& program);
@@ -118,21 +135,15 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setKeySettings                                  (const SeerKeySettings& settings);
         SeerKeySettings                     keySettings                                     () const;
 
-        // Seer settings.
-        void                                setSeerConsoleMode                              (const QString& mode);
-        QString                             seerConsoleMode                                 () const;
+        // RR settings.
+        void                                setRRProgram                                    (const QString& program);
+        QString                             rrProgram                                       () const;
 
-        void                                setSeerConsoleScrollLines                       (int count);
-        int                                 seerConsoleScrollLines                          () const;
+        void                                setRRArguments                                  (const QString& arguments);
+        QString                             rrArguments                                     () const;
 
-        void                                setSeerRememberWindowSizes                      (bool flag);
-        bool                                seerRememberWindowSizes                         () const;
-
-        void                                setSeerRememberManualCommandCount               (int count);
-        int                                 seerRememberManualCommandCount                  () const;
-
-        void                                setSeerClearManualCommandHistory                (bool flag);
-        bool                                seerClearManualCommandHistory                   () const;
+        void                                setRRGdbArguments                               (const QString& arguments);
+        QString                             rrGdbArguments                                  () const;
 
     public slots:
         void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
@@ -140,6 +151,7 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
 
     private:
         SeerGdbConfigPage*                  _gdbConfigPage;
+        SeerRRConfigPage*                   _rrConfigPage;
         SeerEditorConfigPage*               _editorConfigPage;
         SeerSourceConfigPage*               _sourceConfigPage;
         SeerAssemblyConfigPage*             _assemblyConfigPage;

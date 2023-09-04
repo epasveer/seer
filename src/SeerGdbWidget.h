@@ -53,8 +53,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableConnectHostPort        (const QString& connectHostPort);
         const QString&                      executableConnectHostPort           () const;
 
-        void                                setExecutableRRHostPort             (const QString& rrHostPort);
-        const QString&                      executableRRHostPort                () const;
+        void                                setExecutableRRTraceDirectory       (const QString& rrTraceDirectory);
+        const QString&                      executableRRTraceDirectory          () const;
 
         void                                setExecutableCoreFilename           (const QString& coreFilename);
         const QString&                      executableCoreFilename              () const;
@@ -174,6 +174,16 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSeerOutputLogEnabled             (bool flag);
         bool                                isSeerOutputLogEnabled              () const;
 
+        // RR settings.
+        void                                setRRProgram                        (const QString& program);
+        QString                             rrProgram                           () const;
+
+        void                                setRRArguments                      (const QString& arguments);
+        QString                             rrArguments                         () const;
+
+        void                                setRRGdbArguments                   (const QString& arguments);
+        QString                             rrGdbArguments                      () const;
+
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
         const SeerEditorManagerWidget*      editorManager                       () const;
@@ -197,7 +207,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbAttachExecutable           ();
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbRRExecutable               ();
-        void                                handleGdbDirectRRExecutable         ();
         void                                handleGdbCoreFileExecutable         ();
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -345,6 +354,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         QString                             _gdbProgram;
         QString                             _gdbArguments;
+        QString                             _gdbRRProgram;
+        QString                             _gdbRRArguments;
+        QString                             _gdbRRGdbArguments;
         bool                                _gdbASyncMode;
         bool                                _gdbNonStopMode;
         bool                                _gdbHandleTerminatingException;
@@ -370,7 +382,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointFunctionName;
         int                                 _executablePid;
         QString                             _executableConnectHostPort;
-        QString                             _executableRRHostPort;
+        QString                             _executableRRTraceDirectory;
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;

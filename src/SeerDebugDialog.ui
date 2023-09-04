@@ -207,7 +207,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="runTab">
          <property name="sizePolicy">
@@ -650,7 +650,7 @@
               <item>
                <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>Connect to a RR replay session.</string>
+                 <string>Load a RR trace session.</string>
                 </property>
                </widget>
               </item>
@@ -686,14 +686,14 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_12">
               <item>
-               <widget class="QLabel" name="rrHostPortLabel">
+               <widget class="QLabel" name="rrTraceDirectoryLabel">
                 <property name="text">
-                 <string>RR replay session</string>
+                 <string>RR trace directory</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="rrHostPortLineEdit">
+               <widget class="QLineEdit" name="rrTraceDirectoryLineEdit">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>100</horstretch>
@@ -701,13 +701,13 @@
                  </sizepolicy>
                 </property>
                 <property name="toolTip">
-                 <string>How to access the RR session.</string>
+                 <string>How to access the RR trace session.</string>
                 </property>
                 <property name="text">
                  <string/>
                 </property>
                 <property name="placeholderText">
-                 <string>host:port</string>
+                 <string>/path/to/rr/trace/directory</string>
                 </property>
                 <property name="clearButtonEnabled">
                  <bool>true</bool>

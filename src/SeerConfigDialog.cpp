@@ -40,22 +40,30 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     }
 
     // Create pages.
+    _seerConfigPage     = new SeerSeerConfigPage;
     _gdbConfigPage      = new SeerGdbConfigPage;
     _editorConfigPage   = new SeerEditorConfigPage;
     _sourceConfigPage   = new SeerSourceConfigPage;
     _assemblyConfigPage = new SeerAssemblyConfigPage;
     _keysConfigPage     = new SeerKeysConfigPage;
-    _seerConfigPage     = new SeerSeerConfigPage;
+    _rrConfigPage       = new SeerRRConfigPage;
 
     // Add the pages to the stacked widget.
+    pagesStackedWidget->addWidget(_seerConfigPage);
     pagesStackedWidget->addWidget(_gdbConfigPage);
     pagesStackedWidget->addWidget(_editorConfigPage);
     pagesStackedWidget->addWidget(_sourceConfigPage);
     pagesStackedWidget->addWidget(_assemblyConfigPage);
     pagesStackedWidget->addWidget(_keysConfigPage);
-    pagesStackedWidget->addWidget(_seerConfigPage);
+    pagesStackedWidget->addWidget(_rrConfigPage);
 
     // Create icons.
+    QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
+    configSeerButton->setIcon(QIcon(":/seer/resources/seergdb_128x128.png"));
+    configSeerButton->setText(tr("Seer"));
+    configSeerButton->setTextAlignment(Qt::AlignHCenter);
+    configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
     QListWidgetItem* configGdbButton = new QListWidgetItem(contentsListWidget);
     configGdbButton->setIcon(QIcon(":/seer/resources/icons-icons/gdb.png"));
     configGdbButton->setText(tr("GDB"));
@@ -86,11 +94,11 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configKeysButton->setTextAlignment(Qt::AlignHCenter);
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-    QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
-    configSeerButton->setIcon(QIcon(":/seer/resources/seergdb_128x128.png"));
-    configSeerButton->setText(tr("Seer"));
-    configSeerButton->setTextAlignment(Qt::AlignHCenter);
-    configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    QListWidgetItem* configRRButton = new QListWidgetItem(contentsListWidget);
+    configRRButton->setIcon(QIcon(":/seer/resources/rr_256x256.png"));
+    configRRButton->setText(tr("RR"));
+    configRRButton->setTextAlignment(Qt::AlignHCenter);
+    configRRButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     // Connect things.
     connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::handleChangePage);
@@ -101,6 +109,55 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
 }
 
 SeerConfigDialog::~SeerConfigDialog() {
+}
+
+void SeerConfigDialog::setSeerConsoleMode (const QString& mode) {
+
+    _seerConfigPage->setConsoleMode(mode);
+}
+
+QString SeerConfigDialog::seerConsoleMode () const {
+
+    return _seerConfigPage->consoleMode();
+}
+
+void SeerConfigDialog::setSeerConsoleScrollLines (int count) {
+
+    _seerConfigPage->setConsoleScrollLines(count);
+}
+
+int SeerConfigDialog::seerConsoleScrollLines () const {
+
+    return _seerConfigPage->consoleScrollLines();
+}
+void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
+
+    _seerConfigPage->setRememberWindowSizes(flag);
+}
+
+bool SeerConfigDialog::seerRememberWindowSizes () const {
+
+    return _seerConfigPage->rememberWindowSizes();
+}
+
+void SeerConfigDialog::setSeerRememberManualCommandCount (int count) {
+
+    _seerConfigPage->setRememberManualCommandCount(count);
+}
+
+int SeerConfigDialog::seerRememberManualCommandCount () const {
+
+    return _seerConfigPage->rememberManualCommandCount();
+}
+
+void SeerConfigDialog::setSeerClearManualCommandHistory (bool flag) {
+
+    _seerConfigPage->setClearManualCommandHistory(flag);
+}
+
+bool SeerConfigDialog::seerClearManualCommandHistory () const {
+
+    return _seerConfigPage->clearManualCommandHistory();
 }
 
 void SeerConfigDialog::setGdbProgram (const QString& program) {
@@ -408,53 +465,34 @@ SeerKeySettings SeerConfigDialog::keySettings () const {
     return _keysConfigPage->keySettings();
 }
 
-void SeerConfigDialog::setSeerConsoleMode (const QString& mode) {
+void SeerConfigDialog::setRRProgram (const QString& program) {
 
-    _seerConfigPage->setConsoleMode(mode);
+    _rrConfigPage->setRRProgram(program);
 }
 
-QString SeerConfigDialog::seerConsoleMode () const {
+QString SeerConfigDialog::rrProgram () const {
 
-    return _seerConfigPage->consoleMode();
+    return _rrConfigPage->rrProgram();
 }
 
-void SeerConfigDialog::setSeerConsoleScrollLines (int count) {
+void SeerConfigDialog::setRRArguments (const QString& arguments) {
 
-    _seerConfigPage->setConsoleScrollLines(count);
+    _rrConfigPage->setRRArguments(arguments);
 }
 
-int SeerConfigDialog::seerConsoleScrollLines () const {
+QString SeerConfigDialog::rrArguments () const {
 
-    return _seerConfigPage->consoleScrollLines();
-}
-void SeerConfigDialog::setSeerRememberWindowSizes (bool flag) {
-
-    _seerConfigPage->setRememberWindowSizes(flag);
+    return _rrConfigPage->rrArguments();
 }
 
-bool SeerConfigDialog::seerRememberWindowSizes () const {
+void SeerConfigDialog::setRRGdbArguments (const QString& arguments) {
 
-    return _seerConfigPage->rememberWindowSizes();
+    _rrConfigPage->setGdbArguments(arguments);
 }
 
-void SeerConfigDialog::setSeerRememberManualCommandCount (int count) {
+QString SeerConfigDialog::rrGdbArguments () const {
 
-    _seerConfigPage->setRememberManualCommandCount(count);
-}
-
-int SeerConfigDialog::seerRememberManualCommandCount () const {
-
-    return _seerConfigPage->rememberManualCommandCount();
-}
-
-void SeerConfigDialog::setSeerClearManualCommandHistory (bool flag) {
-
-    _seerConfigPage->setClearManualCommandHistory(flag);
-}
-
-bool SeerConfigDialog::seerClearManualCommandHistory () const {
-
-    return _seerConfigPage->clearManualCommandHistory();
+    return _rrConfigPage->gdbArguments();
 }
 
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
@@ -506,6 +544,10 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         }else if (itemLabel == "Seer") {
 
             _seerConfigPage->reset();
+
+        }else if (itemLabel == "RR") {
+
+            _rrConfigPage->reset();
         }
     }
 }

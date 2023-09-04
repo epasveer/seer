@@ -146,7 +146,7 @@ int main (int argc, char* argv[]) {
     QString breakMode     = "none";
     int     executablePid = -1;
     QString executableConnectHostPort;
-    QString executableRRHostPort;
+    QString executableRRTraceDirectory;
     QString executableSymbolFilename;
     QString executableBreakpointsFilename;
     QString executableBreakpointFunctionName;
@@ -215,7 +215,7 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(rrOption)) {
         launchMode = "rr";
 
-        executableRRHostPort = parser.value(rrOption);
+        executableRRTraceDirectory = parser.value(rrOption);
     }
 
     if (parser.isSet(corefileOption)) {
@@ -296,14 +296,14 @@ int main (int argc, char* argv[]) {
     qDebug() << "SYMBOLNAME"        << executableSymbolFilename;
     qDebug() << "PID"               << executablePid;
     qDebug() << "CONNECTHOST"       << executableConnectHostPort;
-    qDebug() << "RRHOSTPORT"        << executableRRHostPort;
+    qDebug() << "RRTRACEDIRECTORY"  << executableRRTraceDirectory;
     qDebug() << "COREFILENAME"      << executableCoreFilename;
     qDebug() << "PROJECTFILE"       << projectFilename;
     qDebug() << "ARGUMENTS"         << positionalArguments;
 
     seer.setExecutablePid(executablePid);
     seer.setExecutableConnectHostPort(executableConnectHostPort);
-    seer.setExecutableRRHostPort(executableRRHostPort);
+    seer.setExecutableRRTraceDirectory(executableRRTraceDirectory);
     seer.setExecutableCoreFilename(executableCoreFilename);
     seer.setProjectFilename(projectFilename);
 

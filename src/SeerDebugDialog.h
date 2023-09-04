@@ -54,8 +54,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 connectHostPort                                 () const;
 
         // Connectect to a RR server. "rr".
-        void                    setRRHostPort                                   (const QString& rrHostPort);
-        QString                 rrHostPort                                      () const;
+        void                    setRRTraceDirectory                             (const QString& rrTraceDirectory);
+        QString                 rrTraceDirectory                                () const;
 
         // Load a core file. "corefile".
         void                    setCoreFilename                                 (const QString& coreFilename);

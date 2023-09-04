@@ -44,8 +44,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         int                         executablePid                       () const;
         void                        setExecutableConnectHostPort        (const QString& executableConnectHostPort);
         const QString&              executableConnectHostPort           () const;
-        void                        setExecutableRRHostPort             (const QString& executableRRHostPort);
-        const QString&              executableRRHostPort                () const;
+        void                        setExecutableRRTraceDirectory       (const QString& executableRRTraceDirectory);
+        const QString&              executableRRTraceDirectory          () const;
         void                        setExecutableCoreFilename           (const QString& executableCoreFilename);
         const QString&              executableCoreFilename              () const;
         void                        setExecutablePreGdbCommands         (const QStringList& preGdbCommands);
