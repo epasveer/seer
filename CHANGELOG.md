@@ -2,7 +2,9 @@
 # Seer Change Log
 
 ## [2.2beta] - 2023-XX-XX
-* Fixed infinit loop when starting with RR mode.
+* Fixed infinite loop when starting with RR mode.
+* Reworked RR mode to directly run 'rr replay'.
+  No need to start a 'rr server' and connect to it.
 * Fixed Source handling in source browser. Qt5 mode was broken.
   Qt6 works.  Directory paths need a tailing "/*"
 

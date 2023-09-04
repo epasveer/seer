@@ -191,15 +191,19 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     handleRecordSettingsChanged();
 
+    //
+    // Initialize contents.
+    //
+
     // Restore window settings.
     readSettings();
 
     // Restore configuration settings.
     readConfigSettings();
 
-    //
-    // Initialize contents.
-    //
+    // Show the main window.
+    show();
+
     handleShowMessage("Welcome to Seer. The All Knowing...", 3000);
 }
 
@@ -324,12 +328,12 @@ const QString& SeerMainWindow::executableConnectHostPort () const {
     return gdbWidget->executableConnectHostPort();
 }
 
-void SeerMainWindow::setExecutableRRHostPort (const QString& executableRRHostPort) {
-    gdbWidget->setExecutableRRHostPort(executableRRHostPort);
+void SeerMainWindow::setExecutableRRTraceDirectory (const QString& executableRRTraceDirectory) {
+    gdbWidget->setExecutableRRTraceDirectory(executableRRTraceDirectory);
 }
 
-const QString& SeerMainWindow::executableRRHostPort () const {
-    return gdbWidget->executableRRHostPort();
+const QString& SeerMainWindow::executableRRTraceDirectory () const {
+    return gdbWidget->executableRRTraceDirectory();
 }
 
 void SeerMainWindow::setExecutableCoreFilename (const QString& executableCoreFilename) {
@@ -366,6 +370,7 @@ const QString& SeerMainWindow::projectFilename () const {
 
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
+    // Show all buttons by default. Turn some off depending on debug mode.
     actionGdbRun->setVisible(true);
     actionGdbStart->setVisible(true);
     actionGdbContinue->setVisible(true);
@@ -398,9 +403,6 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         gdbWidget->handleGdbConnectExecutable();
 
     }else if (launchMode == "rr") {
-
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
 
         gdbWidget->handleGdbRRExecutable();
 
@@ -460,7 +462,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableConnectHostPort());
-    dlg.setRRHostPort(executableRRHostPort());
+    dlg.setRRTraceDirectory(executableRRTraceDirectory());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setLaunchMode(executableLaunchMode());
     dlg.setBreakpointMode(executableBreakMode());
@@ -494,7 +496,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
     setExecutableConnectHostPort(dlg.connectHostPort());
-    setExecutableRRHostPort(dlg.rrHostPort());
+    setExecutableRRTraceDirectory(dlg.rrTraceDirectory());
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());
@@ -599,6 +601,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
 
     SeerConfigDialog dlg(this);
 
+    dlg.setSeerConsoleMode(gdbWidget->consoleMode());
+    dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
+    dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
@@ -628,9 +633,6 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setAssemblyShowSourceLines(gdbWidget->assemblyShowSourceLines());
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setAssemblyDisassemblyMode(gdbWidget->assemblyDisassemblyMode(), gdbWidget->assemblyDisassemblyBytes());
-    dlg.setSeerConsoleMode(gdbWidget->consoleMode());
-    dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
-    dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
     dlg.setKeySettings(keySettings());
 
     int ret = dlg.exec();
@@ -640,6 +642,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     }
 
     // Update the GdbWidget with the new settings.
+    gdbWidget->setConsoleMode(dlg.seerConsoleMode());
+    gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
+    gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
@@ -668,9 +673,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setAssemblyShowSourceLines(dlg.assemblyShowSourceLines());
     gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setAssemblyDisassemblyMode(dlg.assemblyDisassemblyMode(), dlg.assemblyDisassemblyBytes());
-    gdbWidget->setConsoleMode(dlg.seerConsoleMode());
-    gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
-    gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
+    gdbWidget->setRRProgram(dlg.rrProgram());
+    gdbWidget->setRRArguments(dlg.rrArguments());
+    gdbWidget->setRRGdbArguments(dlg.rrGdbArguments());
 
     // Clear history, if we need to.
     bool clearManualCommandHistory = dlg.seerClearManualCommandHistory();
@@ -710,20 +715,35 @@ void SeerMainWindow::handleHelpAbout () {
 }
 
 void SeerMainWindow::handleRunExecutable () {
-    gdbWidget->handleGdbRunExecutable("none");
+
+    if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable();
+
+    }else{
+
+        gdbWidget->handleGdbRunExecutable("none");
+    }
 }
 
 void SeerMainWindow::handleStartExecutable () {
 
-    QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+    if (gdbWidget->executableLaunchMode() == "rr") {
 
-    // No break function, attempt to stop in "main".
-    if (breakfunction == "") {
-        gdbWidget->handleGdbRunExecutable("inmain");
+        gdbWidget->handleGdbRRExecutable();
 
-    // Otherwise, attempt to stop in the function.
     }else{
-        gdbWidget->handleGdbRunExecutable("infunction");
+
+        QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+
+        // No break function, attempt to stop in "main".
+        if (breakfunction == "") {
+            gdbWidget->handleGdbRunExecutable("inmain");
+
+            // Otherwise, attempt to stop in the function.
+        }else{
+            gdbWidget->handleGdbRunExecutable("infunction");
+        }
     }
 }
 
@@ -1177,6 +1197,12 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
     } settings.endGroup();
 
+    settings.beginGroup("rr"); {
+        settings.setValue("program",                    gdbWidget->rrProgram());
+        settings.setValue("arguments",                  gdbWidget->rrArguments());
+        settings.setValue("gdbarguments",               gdbWidget->rrGdbArguments());
+    } settings.endGroup();
+
     settings.beginGroup("printpoints"); {
         settings.setValue("style",    gdbWidget->dprintfStyle());
         settings.setValue("function", gdbWidget->dprintfFunction());
@@ -1250,6 +1276,12 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
         gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());
+    } settings.endGroup();
+
+    settings.beginGroup("rr"); {
+        gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
+        gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
+        gdbWidget->setRRArguments(settings.value("gdbarguments", "").toString());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {

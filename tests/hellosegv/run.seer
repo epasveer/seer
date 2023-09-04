@@ -5,15 +5,14 @@
             ""
         ],
         "pregdbcommands": [
-            "set breakpoint pending on",
-            "b function1"
+            ""
         ],
         "startmode": {
             "arguments": "one two three",
             "breakinfunction": false,
             "breakinfunctionname": "",
             "breakinmain": true,
-            "breakpointsfile": "",
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/hellosegv/breakpoints.seer",
             "nobreak": false,
             "nonstopmode": false,
             "randomizestartaddress": false,

@@ -26,7 +26,7 @@ Launch Options (pick one):
 
                                                     'sym' is optional if the debugging info is in a separate file.
 
-  --rr <host:port>                                  Connect to an already running 'rr replay -s <port> -k' session.
+  --rr <trace-directory>                            Load a previously created RR trace session from 'trace-directory'.
 
   --core <corefile> <executable>                    Load a corefile.
 
@@ -38,7 +38,7 @@ Launch Options (pick one):
 Misc Options:
 
   --sym, --symbol-file <symbolfilename>             Load symbols from a separate file than the executable.
-  --bl, --break-load <filename>                     Load a previously saved breakpoints file. For 'run' or 'start'.
+  --bl, --break-load <filename>                     Load a previously saved breakpoints file. For 'run', 'start', or 'rr'.
   --bf, --break-function <function>                 Set a breakpoint in a function/address. For 'run' or 'start'.
   --sat, --show-assembly-tab <yes|no>               Show the Assembly Tab on Seer startup. For 'run' or 'start'.
   --sar, --start-address-randomize <yes|no>         Randomize the program's starting address. For 'run' or 'start'.

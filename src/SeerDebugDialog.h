@@ -54,8 +54,9 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 connectHostPort                                 () const;
 
         // Connectect to a RR server. "rr".
-        void                    setRRHostPort                                   (const QString& rrHostPort);
-        QString                 rrHostPort                                      () const;
+        void                    setRRTraceDirectory                             (const QString& rrTraceDirectory);
+        QString                 rrTraceDirectory                                () const;
+        QString                 rrBreakpointsFilename                           () const;
 
         // Load a core file. "corefile".
         void                    setCoreFilename                                 (const QString& coreFilename);
@@ -76,6 +77,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleExecutableWorkingDirectoryToolButton      ();
         void                    handleLoadBreakpointsFilenameToolButton         ();
         void                    handleBreakpointInFunctionLineEdit              ();
+        void                    handleLoadRRTraceDirectoryToolButton            ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
         void                    handleLoadProjectToolButton                     ();

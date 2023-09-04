@@ -57,7 +57,7 @@
       <string/>
      </property>
      <property name="text">
-      <string>Wrap Text</string>
+      <string>Wrap</string>
      </property>
     </widget>
    </item>

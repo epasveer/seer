@@ -17,6 +17,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QProcess>
 #include <QtCore/QRegularExpression>
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -38,7 +39,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableBreakpointsFilename      = "";
     _executableBreakpointFunctionName   = "";
     _executableConnectHostPort          = "";
-    _executableRRHostPort               = "";
+    _executableRRTraceDirectory         = "";
     _executableCoreFilename             = "";
     _executablePid                      = 0;
 
@@ -61,7 +62,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbEnablePrettyPrinting            = true;
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
-    _consoleMode                        = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
@@ -448,12 +448,12 @@ const QString& SeerGdbWidget::executableConnectHostPort () const {
     return _executableConnectHostPort;
 }
 
-void SeerGdbWidget::setExecutableRRHostPort (const QString& rrHostPort) {
-    _executableRRHostPort = rrHostPort;
+void SeerGdbWidget::setExecutableRRTraceDirectory (const QString& rrTraceDirectory) {
+    _executableRRTraceDirectory = rrTraceDirectory;
 }
 
-const QString& SeerGdbWidget::executableRRHostPort () const {
-    return _executableRRHostPort;
+const QString& SeerGdbWidget::executableRRTraceDirectory () const {
+    return _executableRRTraceDirectory;
 }
 
 void SeerGdbWidget::setExecutableCoreFilename (const QString& coreFilename) {
@@ -510,6 +510,36 @@ void SeerGdbWidget::setGdbArguments (const QString& arguments) {
 QString SeerGdbWidget::gdbArguments () const {
 
     return _gdbArguments;
+}
+
+void SeerGdbWidget::setRRProgram (const QString& program) {
+
+    _gdbRRProgram = program;
+}
+
+QString SeerGdbWidget::rrProgram () const {
+
+    return _gdbRRProgram;
+}
+
+void SeerGdbWidget::setRRArguments (const QString& arguments) {
+
+    _gdbRRArguments = arguments;
+}
+
+QString SeerGdbWidget::rrArguments () const {
+
+    return _gdbRRArguments;
+}
+
+void SeerGdbWidget::setRRGdbArguments (const QString& arguments) {
+
+    _gdbRRGdbArguments = arguments;
+}
+
+QString SeerGdbWidget::rrGdbArguments () const {
+
+    return _gdbRRGdbArguments;
 }
 
 void SeerGdbWidget::setGdbAsyncMode (bool flag) {
@@ -1029,7 +1059,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-                                                //
+
         if (assemblyShowAssemblyTabOnStartup()) {
             editorManager()->showAssembly();
         }
@@ -1143,7 +1173,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
 void SeerGdbWidget::handleGdbRRExecutable () {
 
-    qCDebug(LC) << "Starting 'gdb rr'.";
+    qCDebug(LC) << "Starting 'gdb direct rr'.";
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -1158,17 +1188,32 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             break;
         }
 
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            int result = QMessageBox::warning(this, "Seer",
+                    QString("The executable is already running.\n\nAre you sure to restart it?"),
+                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Cancel) {
+                break;
+            }
+        }
+
         // Delete the old gdb and console if there is a new executable
+        // Create a new console.
         if (newExecutableFlag() == true) {
             killGdb();
             disconnectConsole();
             deleteConsole();
+            createConsole();
+            connectConsole();
         }
 
         // If gdb isn't running, start it.
         if (isGdbRuning() == false) {
 
-            bool f = startGdb();
+            bool f = startGdbRR();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
@@ -1178,22 +1223,18 @@ void SeerGdbWidget::handleGdbRRExecutable () {
         // Set dprint parameters.
         resetDprintf();
 
-        // No console for 'connect' mode.
+        // Set the launch mode.
         setExecutableLaunchMode("rr");
         setGdbRecordMode("rr");
         setExecutablePid(0);
 
-        // Connect to the remote gdbserver.
-        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableRRHostPort()));
-
         // Load ithe executable, if needed.
+        // For RR, this will start it.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-            setNewExecutableFlag(false);
         }
 
         // Set or reset some things.
@@ -1211,11 +1252,27 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
 
+        if (gdbEnablePrettyPrinting()) {
+            handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
+        }
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
+        // Restart the executable if it was already running.
+        if (newExecutableFlag() == false) {
+            if (_executableBreakMode == "inmain") {
+                handleGdbCommand("-exec-run --all --start"); // Stop in main
+            }else{
+                handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
+            }
+        }
+
+        // We are no longer a new executable.
+        setNewExecutableFlag(false);
+
         // Set window titles with name of program.
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
 
         break;
     }
@@ -2689,7 +2746,7 @@ void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus
         QMessageBox::warning(this, "Seer",
                 QString("The GDB program exited unexpectedly.\n\n") +
                 QString("Exit code=%1 Exit status=%2").arg(exitCode).arg(exitStatus) + "\n\n" +
-                QString("'%1 %2'").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
+                QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
                 QString("Please restart Seer."),
                 QMessageBox::Ok);
     }
@@ -2702,7 +2759,7 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the GDB program.\n\n") +
-                                   QString("'%1 %2'").arg(gdbProgram()).arg(gdbArguments()) + "\n\n" +
+                                    QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
                                    QString("Error status=%1)").arg(errorStatus),
                                    QMessageBox::Ok);
     }
@@ -2994,6 +3051,53 @@ bool SeerGdbWidget::startGdb () {
     return true;
 }
 
+bool SeerGdbWidget::startGdbRR () {
+
+    // Don't do anything, if already running.
+    if (isGdbRuning()) {
+        qWarning() << "Already running";
+        return false;
+    }
+
+    // Does the RR trace directory exist?
+    if (QFile::exists(executableRRTraceDirectory()) == false) {
+        QMessageBox::critical(this, "Seer",
+                                    QString("The RR trace-directory '" + executableRRTraceDirectory() + "' doesn't exist."),
+                                    QMessageBox::Ok);
+        return false;
+    }
+
+    // Set the gdb program name to use.
+    QString command   = "/usr/local/bin/rr";
+    QString arguments = "replay --interpreter=mi --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
+
+    if (rrGdbArguments() != "") {
+        arguments += " -- " + rrGdbArguments();
+    }
+
+    QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
+
+    qDebug() << "Expanded command: "   << command;
+    qDebug() << "Expanded arguments: " << arguments;
+
+    // Give the gdb process the program and the argument list.
+    _gdbProcess->setProgram(command);
+    _gdbProcess->setArguments(args);
+
+    // We need to set the C language, otherwise the MI interface is translated and our message
+    // filters will not work.
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("LANG", "C");
+    _gdbProcess->setProcessEnvironment(env);
+
+    // Start the gdb process.
+    _gdbProcess->start();
+
+    qDebug() << _gdbProcess->state();
+
+    return true;
+}
+
 void SeerGdbWidget::killGdb () {
 
     // Don't do anything, if already running.
@@ -3023,7 +3127,6 @@ void SeerGdbWidget::createConsole () {
 
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
-        _consoleWidget->setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
@@ -3031,6 +3134,11 @@ void SeerGdbWidget::createConsole () {
         // Connect window title changes.
         QObject::connect(this, &SeerGdbWidget::changeWindowTitle,    _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
     }
+}
+
+SeerConsoleWidget* SeerGdbWidget::console () {
+
+    return _consoleWidget;
 }
 
 void SeerGdbWidget::deleteConsole () {
@@ -3057,37 +3165,18 @@ void SeerGdbWidget::disconnectConsole () {
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
-    _consoleMode = mode;
-
     if (_consoleWidget != 0) {
-        if (_consoleMode == "normal") {
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowNoState);
-
-        }else if (_consoleMode == "minimized") {
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowMinimized);
-
-        }else if (_consoleMode == "hidden") {
-            _consoleWidget->hide();
-
-        }else if (_consoleMode == "") {
-            _consoleMode = "normal";
-            _consoleWidget->show();
-            _consoleWidget->setWindowState(Qt::WindowNoState);
-
-        }else{
-        }
+        _consoleWidget->setMode(mode);
     }
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    if (_consoleMode == "") {
-        return "normal";
+    if (_consoleWidget != 0) {
+        return _consoleWidget->mode();
     }
 
-    return _consoleMode;
+    return "normal";
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {

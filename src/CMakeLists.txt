@@ -53,6 +53,7 @@ set(HEADER_FILES
     SeerConsoleWidget.h
     SeerConfigDialog.h
     SeerGdbConfigPage.h
+    SeerRRConfigPage.h
     SeerEditorConfigPage.h
     SeerSourceConfigPage.h
     SeerAssemblyConfigPage.h
@@ -143,6 +144,7 @@ set(SOURCE_FILES
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp
     SeerGdbConfigPage.cpp
+    SeerRRConfigPage.cpp
     SeerEditorConfigPage.cpp
     SeerSourceConfigPage.cpp
     SeerAssemblyConfigPage.cpp
