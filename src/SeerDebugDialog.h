@@ -76,6 +76,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleExecutableWorkingDirectoryToolButton      ();
         void                    handleLoadBreakpointsFilenameToolButton         ();
         void                    handleBreakpointInFunctionLineEdit              ();
+        void                    handleLoadRRTraceDirectoryToolButton            ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
         void                    handleLoadProjectToolButton                     ();

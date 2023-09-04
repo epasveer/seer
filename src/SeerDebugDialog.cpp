@@ -64,6 +64,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
+    QObject::connect(rrLoadTraceDirectoryToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRTraceDirectoryToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
@@ -387,6 +388,15 @@ void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
 void SeerDebugDialog::handleBreakpointInFunctionLineEdit () {
 
     breakpointInFunctionRadioButton->setChecked(true);
+}
+
+void SeerDebugDialog::handleLoadRRTraceDirectoryToolButton () {
+
+    QString name = QFileDialog::getExistingDirectory(this, "Select a RR trace-directory to load.", rrTraceDirectory(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if (name != "") {
+        setRRTraceDirectory(name);
+    }
 }
 
 void SeerDebugDialog::handleLoadCoreFilenameToolButton () {

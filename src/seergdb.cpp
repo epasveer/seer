@@ -309,9 +309,9 @@ int main (int argc, char* argv[]) {
 
     seer.launchExecutable(launchMode, breakMode);
 
-    seer.move(800, 400);
+  //seer.move(800, 400);
     seer.show();
-    seer.activateWindow();
+  //seer.activateWindow();
 
     return app.exec();
 }

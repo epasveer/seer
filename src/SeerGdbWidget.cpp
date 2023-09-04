@@ -1188,6 +1188,18 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             break;
         }
 
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            int result = QMessageBox::warning(this, "Seer",
+                    QString("The executable is already running.\n\nAre you sure to restart it?"),
+                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+            if (result == QMessageBox::Cancel) {
+                break;
+            }
+        }
+
         // Delete the old gdb and console if there is a new executable
         // Create a new console.
         if (newExecutableFlag() == true) {
@@ -1217,13 +1229,12 @@ void SeerGdbWidget::handleGdbRRExecutable () {
         setExecutablePid(0);
 
         // Load ithe executable, if needed.
+        // For RR, this will start it.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-            setNewExecutableFlag(false);
         }
 
         // Set or reset some things.
@@ -1247,6 +1258,18 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
+
+        // Restart the executable if it was already running.
+        if (newExecutableFlag() == false) {
+            if (_executableBreakMode == "inmain") {
+                handleGdbCommand("-exec-run --all --start"); // Stop in main
+            }else{
+                handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
+            }
+        }
+
+        // We are no longer a new executable.
+        setNewExecutableFlag(false);
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));

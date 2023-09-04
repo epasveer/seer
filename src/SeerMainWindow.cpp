@@ -370,6 +370,7 @@ const QString& SeerMainWindow::projectFilename () const {
 
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
+    // Show all buttons by default. Turn some off depending on debug mode.
     actionGdbRun->setVisible(true);
     actionGdbStart->setVisible(true);
     actionGdbContinue->setVisible(true);
@@ -402,9 +403,6 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         gdbWidget->handleGdbConnectExecutable();
 
     }else if (launchMode == "rr") {
-
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
 
         gdbWidget->handleGdbRRExecutable();
 
@@ -718,20 +716,34 @@ void SeerMainWindow::handleHelpAbout () {
 
 void SeerMainWindow::handleRunExecutable () {
 
-    gdbWidget->handleGdbRunExecutable("none");
+    if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable();
+
+    }else{
+
+        gdbWidget->handleGdbRunExecutable("none");
+    }
 }
 
 void SeerMainWindow::handleStartExecutable () {
 
-    QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+    if (gdbWidget->executableLaunchMode() == "rr") {
 
-    // No break function, attempt to stop in "main".
-    if (breakfunction == "") {
-        gdbWidget->handleGdbRunExecutable("inmain");
+        gdbWidget->handleGdbRRExecutable();
 
-    // Otherwise, attempt to stop in the function.
     }else{
-        gdbWidget->handleGdbRunExecutable("infunction");
+
+        QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+
+        // No break function, attempt to stop in "main".
+        if (breakfunction == "") {
+            gdbWidget->handleGdbRunExecutable("inmain");
+
+            // Otherwise, attempt to stop in the function.
+        }else{
+            gdbWidget->handleGdbRunExecutable("infunction");
+        }
     }
 }
 
