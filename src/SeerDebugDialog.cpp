@@ -65,6 +65,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(rrLoadTraceDirectoryToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRTraceDirectoryToolButton);
+    QObject::connect(rrLoadBreakpointsFilenameToolButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
@@ -257,6 +258,14 @@ QString SeerDebugDialog::rrTraceDirectory () const {
     return rrTraceDirectoryLineEdit->text();
 }
 
+void SeerDebugDialog::setRRBreakpointsFilename (const QString& breakpointsFilename) {
+    rrLoadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
+}
+
+QString SeerDebugDialog::rrBreakpointsFilename () const {
+    return rrLoadBreakpointsFilenameLineEdit->text();
+}
+
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
     if (mode == "start") {
@@ -396,6 +405,15 @@ void SeerDebugDialog::handleLoadRRTraceDirectoryToolButton () {
 
     if (name != "") {
         setRRTraceDirectory(name);
+    }
+}
+
+void SeerDebugDialog::handleLoadRRBreakpointsFilenameToolButton () {
+
+    QString name = QFileDialog::getOpenFileName(this, "Select a breakpoints file to load.", breakpointsFilename(), "Breakpoints (*.seer);;All files (*.*)", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setRRBreakpointsFilename(name);
     }
 }
 
@@ -784,8 +802,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
-        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR connect\"");
-        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR connect\"");
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR trace-directory load\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR trace-directory load\"");
     }
 
     // ID == 4   COREFILE
@@ -795,7 +813,7 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
-        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading  \"corefile\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
     }
 }
 

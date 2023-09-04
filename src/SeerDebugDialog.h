@@ -56,6 +56,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         // Connectect to a RR server. "rr".
         void                    setRRTraceDirectory                             (const QString& rrTraceDirectory);
         QString                 rrTraceDirectory                                () const;
+        void                    setRRBreakpointsFilename                        (const QString& breakpointsFilename);
+        QString                 rrBreakpointsFilename                           () const;
 
         // Load a core file. "corefile".
         void                    setCoreFilename                                 (const QString& coreFilename);
@@ -77,6 +79,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleLoadBreakpointsFilenameToolButton         ();
         void                    handleBreakpointInFunctionLineEdit              ();
         void                    handleLoadRRTraceDirectoryToolButton            ();
+        void                    handleLoadRRBreakpointsFilenameToolButton       ();
         void                    handleLoadCoreFilenameToolButton                ();
         void                    handleProgramPidToolButton                      ();
         void                    handleLoadProjectToolButton                     ();
