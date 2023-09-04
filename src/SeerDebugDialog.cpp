@@ -137,6 +137,8 @@ QString SeerDebugDialog::executableArguments () const {
 }
 
 void SeerDebugDialog::setBreakpointsFilename (const QString& breakpointsFilename) {
+
+    // Try to keep these in sync. Arg!
     loadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
     rrLoadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
 }
@@ -519,6 +521,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
             runProgramArgumentsLineEdit->setText(runModeJson["arguments"].toString());
             loadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
+            rrLoadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
 
             if (runModeJson["nobreak"].toBool()) {
                 noBreakpointRadioButton->setChecked(true);
@@ -543,6 +546,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
             runProgramArgumentsLineEdit->setText(startModeJson["arguments"].toString());
             loadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
+            rrLoadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
 
             if (startModeJson["nobreak"].toBool()) {
                 noBreakpointRadioButton->setChecked(true);
@@ -587,7 +591,9 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Load RR project.
     if (rrModeJson.isEmpty() == false) {
 
-        rrTraceDirectoryLineEdit->setText(rrModeJson["rrtracedirectory"].toString());
+        rrTraceDirectoryLineEdit->setText(rrModeJson["tracedirectory"].toString());
+        loadBreakpointsFilenameLineEdit->setText(rrModeJson["breakpointsfile"].toString());
+        rrLoadBreakpointsFilenameLineEdit->setText(rrModeJson["breakpointsfile"].toString());
 
         setLaunchMode("rr");
     }
@@ -700,7 +706,8 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
 
         QJsonObject modeJson;
 
-        modeJson["rrtracedirectory"]   = rrTraceDirectoryLineEdit->text();
+        modeJson["tracedirectory"]     = rrTraceDirectoryLineEdit->text();
+        modeJson["breakpointsfile"]    = rrLoadBreakpointsFilenameLineEdit->text();
 
         seerProjectJson["rrmode"]      = modeJson;
     }
