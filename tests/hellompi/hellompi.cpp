@@ -1,5 +1,7 @@
 #include <mpi.h>
-#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <iostream>
 
 int main(int argc, char** argv) {
 
@@ -20,7 +22,13 @@ int main(int argc, char** argv) {
     MPI_Get_processor_name(processor_name, &name_len);
 
     // Print off a hello world message
-    printf("Hello world from processor %s, rank %d out of %d processors\n", processor_name, world_rank, world_size);
+    std::cout << "Hello world from processor " << processor_name << " rank " << world_rank << " size " << world_size << std::endl;
+
+    std::cout << "Waiting for debugger to be attached, PID: " << getpid() << std::endl;
+
+    bool attached = false;
+
+    while (!attached) sleep(1);
 
     // Finalize the MPI environment.
     MPI_Finalize();
