@@ -1373,7 +1373,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
         return;
     }
 
-    // Handle running to a line number.
+    // Handle running to an address.
     if (action == runToAddressAction) {
 
         // Emit the runToLine signal.
@@ -1442,6 +1442,25 @@ void SeerEditorWidgetAssemblyArea::setQuickBreakpoint (QMouseEvent* event) {
     }else{
         emit insertBreakpoint(QString("-f *%1").arg(address));
     }
+}
+
+void SeerEditorWidgetAssemblyArea::setQuickRunToAddress (QMouseEvent* event) {
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(event->pos());
+
+    int lineno = cursor.blockNumber()+1;
+
+    QString address = _lineAddressMap[lineno];
+
+    //qDebug() << "runToAddress" << address;
+
+    // Emit the runToAddress signal.
+    if (address != "") {
+        emit runToAddress(address);
+    }
+
+    return;
 }
 
 void SeerEditorWidgetAssemblyArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -1647,7 +1666,11 @@ void SeerEditorWidgetAssemblyLineNumberArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetAssemblyLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToAddress(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);
@@ -1693,7 +1716,11 @@ void SeerEditorWidgetAssemblyOffsetArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetAssemblyOffsetArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToAddress(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);
@@ -1739,7 +1766,11 @@ void SeerEditorWidgetAssemblyBreakPointArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetAssemblyBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToAddress(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);
@@ -1785,7 +1816,11 @@ void SeerEditorWidgetAssemblyOpcodeArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetAssemblyOpcodeArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToAddress(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);

@@ -84,6 +84,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        showContextMenu                     (QContextMenuEvent* event);
         void                                        showContextMenu                     (const QPoint& pos, const QPointF& globalPos);
         void                                        setQuickBreakpoint                  (QMouseEvent* event);
+        void                                        setQuickRunToAddress                (QMouseEvent* event);
 
         void                                        setHighlighterSettings              (const SeerHighlighterSettings& settings);
         const SeerHighlighterSettings&              highlighterSettings                 () const;

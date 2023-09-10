@@ -79,6 +79,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showContextMenu                     (QContextMenuEvent* event);
         void                                        showContextMenu                     (const QPoint& pos, const QPointF& globalPos);
         void                                        setQuickBreakpoint                  (QMouseEvent* event);
+        void                                        setQuickRunToLine                   (QMouseEvent* event);
 
         void                                        clearExpression                     ();
 

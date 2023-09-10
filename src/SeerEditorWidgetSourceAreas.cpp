@@ -1464,6 +1464,21 @@ void SeerEditorWidgetSourceArea::setQuickBreakpoint (QMouseEvent* event) {
     }
 }
 
+void SeerEditorWidgetSourceArea::setQuickRunToLine (QMouseEvent* event) {
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(event->pos());
+
+    int lineno = cursor.blockNumber()+1;
+
+    //qDebug() << "runToLine" << lineno;
+
+    // Emit the runToLine signal.
+    emit runToLine(fullname(), lineno);
+
+    return;
+}
+
 void SeerEditorWidgetSourceArea::clearExpression() {
 
     _selectedExpressionId     = 0;
@@ -1685,7 +1700,11 @@ void SeerEditorWidgetSourceLineNumberArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetSourceLineNumberArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToLine(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);
@@ -1732,7 +1751,12 @@ void SeerEditorWidgetSourceBreakPointArea::paintEvent (QPaintEvent* event) {
 void SeerEditorWidgetSourceBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
-        _editorWidget->setQuickBreakpoint(event);
+
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToLine(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
 
     }else{
         QWidget::mouseDoubleClickEvent(event);
