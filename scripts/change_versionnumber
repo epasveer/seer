@@ -1,65 +1,32 @@
-#!/bin/sh -f
 
-#
-# Beginning of a script to set the Seer version number.
-# Need to update 3 files.
-#
-# Run from this 'script' directory.
-#
+Seer version number to modify in some files.
+These files are affected:
 
-# % cat ../src/CMakeLists.txt      | sed 's/^project(seergdb VERSION \b\S\+\b/project(seergdb VERSION x.x/g'
-# % cat ../src/SeerUtl.cpp         | sed 's/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION "x.x"/g'
-# % cat ../debian/changelog        | sed 's/^seergdb (\b\S\+\b)/seergdb (x.x)/g'
-# % vim ../CHANGELOG.md
+*** seer/src/CMakeLists.txt
 
-VERSION=""
+    project(seergdb VERSION 2.2 LANGUAGES CXX)          # Full version
+    project(seergdb VERSION 2.2.0 LANGUAGES CXX)        # Beta version
 
-usage() {
-    echo "usage: $0  -v VERSION" 1>&2
-}
 
-exit_abnormal() {
-    usage
-    exit 1
-}
+*** seer/src/SeerUtl.cpp
 
-while getopts "hv:" options; do
+    #define SEER_VERSION "2.2"                          # Full version
+    #define SEER_VERSION "2.2beta"                      # Beta version
 
-  case "${options}" in
-    h)
-      exit_abnormal
-      ;;
-    v)
-      VERSION=${OPTARG}
-      ;;
-    :)
-      echo "Error: -${OPTARG} requires an argument."
-      exit 1
-      ;;
-    *)
-      exit_abnormal
-      ;;
-  esac
-done
 
-if [ "$VERSION" = "" ]; then
-    exit_abnormal
-fi
+*** seer/debian/changelog
 
-VERSION_CMAKE="`echo $VERSION | sed -e s/beta/0/g`"
+    seergdb (2.2) UNRELEASED; urgency=medium            # Full version
+    seergdb (2.2beta) UNRELEASED; urgency=medium        # Beta version
 
-echo "Changing Seer files to version ${VERSION}."
+    o Modify date. Must be a valid date.
+    o Modify change history.
 
-echo "../debian/changelog"
-sed -i "s/^seergdb (\b\S\+\b)/seergdb ($VERSION)/g"                                         ../debian/changelog
+*** seer/CHANGELOG.md
 
-echo "../src/SeerUtl.cpp"
-sed -i "s/SEER_VERSION \"\b\S\+\b\"/SEER_VERSION \"$VERSION\"/g"                            ../src/SeerUtl.cpp
+    ## [2.2] - 2023-09-07                               # Full version
+    ## [2.2beta] - 2023-XX-XX                           # Beta version
 
-echo "../src/CMakeLists.txt"
-sed -i "s/^project(seergdb VERSION \b\S\+\b/project(seergdb VERSION $VERSION_CMAKE/g"       ../src/CMakeLists.txt
-
-echo "Done."
-
-exit 0
+    o Modify date. Must be a valid date.
+    o Modify change history.
 
