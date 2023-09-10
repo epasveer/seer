@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [2.3beta] - 2023-XX-XX
+* Perpare for the 2.3 release cycle.
+
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.
 * Reworked RR mode to directly run 'rr replay'.

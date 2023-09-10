@@ -1,11 +1,6 @@
-seergdb (2.2) UNRELEASED; urgency=medium
+seergdb (2.3beta) UNRELEASED; urgency=medium
 
-  * Fixed infinite loop when starting with RR mode.
-  * Reworked RR mode to directly run 'rr replay'.
-    No need to start a 'rr server' and connect to it.
-    https://github.com/epasveer/seer/wiki/RR-and-Seer
-  * Fixed Source handling in source browser. Qt5 mode was broken.
-    Qt6 works.  Directory paths need a tailing "/*"
+  * Prepare for the 2.3 release cycle.
 
  -- Ernie Pasveer <epasveer@att.net>  Thu, 7 Sep 2023 22:18:38 +0200
 
