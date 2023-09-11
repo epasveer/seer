@@ -76,6 +76,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbArguments                     (const QString& arguments);
         QString                             gdbArguments                        () const;
 
+        void                                setGdbProgramOverride               (const QString& program);
+        QString                             gdbProgramOverride                  () const;
+
+        void                                setGdbArgumentsOverride             (const QString& arguments);
+        QString                             gdbArgumentsOverride                () const;
+
         void                                setGdbAsyncMode                     (bool flag);
         bool                                gdbAsyncMode                        () const;
 
@@ -354,6 +360,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         QString                             _gdbProgram;
         QString                             _gdbArguments;
+        QString                             _gdbProgramOverride;
+        QString                             _gdbArgumentsOverride;
         QString                             _gdbRRProgram;
         QString                             _gdbRRArguments;
         QString                             _gdbRRGdbArguments;

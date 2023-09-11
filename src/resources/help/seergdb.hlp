@@ -32,23 +32,29 @@ Launch Options (pick one):
 
   --project <project>                               Launch using a Seer project.
 
-  --config                                          Launch with Seer's config dialog.
-                                                    Save settings with: 'Settings->Save Configuration'
-
-Misc Options:
-
-  --sym, --symbol-file <symbolfilename>             Load symbols from a separate file than the executable.
-  --bl, --break-load <filename>                     Load a previously saved breakpoints file. For 'run', 'start', or 'rr'.
-  --bf, --break-function <function>                 Set a breakpoint in a function/address. For 'run' or 'start'.
-  --sat, --show-assembly-tab <yes|no>               Show the Assembly Tab on Seer startup. For 'run' or 'start'.
-  --sar, --start-address-randomize <yes|no>         Randomize the program's starting address. For 'run' or 'start'.
-  --nsm, --non-stop-mode <yes|no>                   Continue to run other threads at breakpoints. For 'run' or 'start'.
-  --xxx                                             Turn on internal Seer debugging messages.
-
 
 Arguments:
 
   executable                                        The executable to debug. Needed for 'run', 'start', 'attach', and
                                                     'core' run modes.
   arguments                                         Arguments for the executable. Needed for 'run' and 'start'.
+
+
+Misc Options:
+
+  --sym, --symbol-file <symbolfilename>             Load symbols from a separate file than the executable.
+  --bl,  --break-load <filename>                    Load a previously saved breakpoints file. For 'run', 'start', or 'rr'.
+  --bf,  --break-function <function>                Set a breakpoint in a function/address. For 'run' or 'start'.
+  --sat, --show-assembly-tab <yes|no>               Show the Assembly Tab on Seer startup. For 'run' or 'start'.
+  --sar, --start-address-randomize <yes|no>         Randomize the program's starting address. For 'run' or 'start'.
+  --nsm, --non-stop-mode <yes|no>                   Continue to run other threads at breakpoints. For 'run' or 'start'.
+
+  --gdb-program  <gdbprogram>                       Use a different gdb than what's set in Seer's configuration.
+  --gdb-arguments <gdbarguments>                    Use different gdb arguments than what's set in Seer's configuration.
+
+  --config                                          Launch with Seer's config dialog.
+                                                    Save settings with: 'Settings->Save Configuration'
+
+  --xxx                                             Turn on internal Seer debugging messages.
+
 

@@ -368,6 +368,22 @@ const QString& SeerMainWindow::projectFilename () const {
     return _projectFile;
 }
 
+void SeerMainWindow::setGdbProgramOverride (const QString& gdbProgram) {
+    gdbWidget->setGdbProgramOverride(gdbProgram);
+}
+
+QString SeerMainWindow::gdbProgramOverride () const {
+    return gdbWidget->gdbProgramOverride();
+}
+
+void SeerMainWindow::setGdbArgumentsOverride (const QString& gdbArguments) {
+    gdbWidget->setGdbArgumentsOverride(gdbArguments);
+}
+
+QString SeerMainWindow::gdbArgumentsOverride () const {
+    return gdbWidget->gdbArgumentsOverride();
+}
+
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.

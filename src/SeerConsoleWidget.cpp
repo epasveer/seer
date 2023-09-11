@@ -364,7 +364,7 @@ int SeerConsoleWidget::scrollLines () const {
 
 void SeerConsoleWidget::setMode (const QString& mode) {
 
-    qDebug() << mode;
+    //qDebug() << mode;
 
     if (mode == "normal") {
 

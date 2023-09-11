@@ -3,6 +3,9 @@
 
 ## [2.3beta] - 2023-XX-XX
 * Perpare for the 2.3 release cycle.
+* In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
+* Add --gdb-program and --gdb-arguments to command line to override settings from Seer's config.
+* Fixed a rare bug with blank lines from gdb causing a segv in GdbMonitor.
 
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.

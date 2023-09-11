@@ -75,6 +75,10 @@ void GdbMonitor::handleReadyReadStandardOutput () {
             buf.chop(1);
         }
 
+        if (buf.size() == 0) { // Ignore empty lines.
+            continue;
+        }
+
         // Convert to a string.
         QString text(buf);
 

@@ -105,6 +105,12 @@ int main (int argc, char* argv[]) {
     QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode");
     parser.addOption(nonStopModeOption);
 
+    QCommandLineOption gdbProgramOption(QStringList() << "gdb-program", "", "gdbprogram");
+    parser.addOption(gdbProgramOption);
+
+    QCommandLineOption gdbArgumentsOption(QStringList() << "gdb-arguments", "", "gdbarguments");
+    parser.addOption(gdbArgumentsOption);
+
     QCommandLineOption xxdebugOption(QStringList() << "xxx");
     parser.addOption(xxdebugOption);
 
@@ -154,6 +160,8 @@ int main (int argc, char* argv[]) {
     QString executableNonStopMode;
     QString executableCoreFilename;
     QString projectFilename;
+    QString gdbProgram;
+    QString gdbArguments;
 
     if (parser.isSet(runOption)) {
         launchMode = "run";
@@ -233,6 +241,14 @@ int main (int argc, char* argv[]) {
         launchMode = "configdialog";
     }
 
+    if (parser.isSet(gdbProgramOption)) {
+        gdbProgram = parser.value(gdbProgramOption);
+    }
+
+    if (parser.isSet(gdbArgumentsOption)) {
+        gdbArguments = parser.value(gdbArgumentsOption);
+    }
+
 
     //
     // Start Seer
@@ -289,6 +305,14 @@ int main (int argc, char* argv[]) {
             printf("%s: Unknown --non-stop-mode option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableNonStopMode));
             return 1;
         }
+    }
+
+    if (gdbProgram != "") {
+        seer.setGdbProgramOverride(gdbProgram);
+    }
+
+    if (gdbArguments != "") {
+        seer.setGdbArgumentsOverride(gdbArguments);
     }
 
     qDebug() << "EXECUTABLENAME"    << executableName;

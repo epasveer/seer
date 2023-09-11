@@ -54,6 +54,10 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QStringList&          executablePostGdbCommands           () const;
         void                        setProjectFilename                  (const QString& projectFilename);
         const QString&              projectFilename                     () const;
+        void                        setGdbProgramOverride               (const QString& gdbProgram);
+        QString                     gdbProgramOverride                  () const;
+        void                        setGdbArgumentsOverride             (const QString& gdbProgram);
+        QString                     gdbArgumentsOverride                () const;
 
         void                        launchExecutable                    (const QString& launchMode, const QString& breakMode);
         const QString&              executableLaunchMode                () const;

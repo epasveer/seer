@@ -512,6 +512,26 @@ QString SeerGdbWidget::gdbArguments () const {
     return _gdbArguments;
 }
 
+void SeerGdbWidget::setGdbProgramOverride (const QString& program) {
+
+    _gdbProgramOverride = program;
+}
+
+QString SeerGdbWidget::gdbProgramOverride () const {
+
+    return _gdbProgramOverride;
+}
+
+void SeerGdbWidget::setGdbArgumentsOverride (const QString& arguments) {
+
+    _gdbArgumentsOverride = arguments;
+}
+
+QString SeerGdbWidget::gdbArgumentsOverride () const {
+
+    return _gdbArgumentsOverride;
+}
+
 void SeerGdbWidget::setRRProgram (const QString& program) {
 
     _gdbRRProgram = program;
@@ -3005,36 +3025,49 @@ bool SeerGdbWidget::startGdb () {
     }
 
     // Set the gdb program name to use.
-    bool    ok;
-    QString command = Seer::expandEnv(gdbProgram(), &ok);
+    bool ok;
 
-    qDebug() << "Raw command     : " << gdbProgram();
-    qDebug() << "Expanded command: " << command;
+    QString rawcommand = gdbProgramOverride();
+
+    if (rawcommand == "") {
+        rawcommand = gdbProgram();
+    }
+
+    QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
+
+    qDebug() << "Raw command     : " << rawcommand;
+    qDebug() << "Expanded command: " << expandedcommand;
 
     if (ok == false) {
 
-        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(command));
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(rawcommand));
 
         return false;
     }
 
     // Build the gdb argument list.
-    QString arguments = Seer::expandEnv(gdbArguments(), &ok);
+    QString rawarguments = gdbArgumentsOverride();
 
-    qDebug() << "Raw arguments     : " << gdbArguments();
-    qDebug() << "Expanded arguments: " << arguments;
+    if (rawarguments == "") {
+        rawarguments = gdbArguments();
+    }
+
+    QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
+
+    qDebug() << "Raw arguments     : " << rawarguments;
+    qDebug() << "Expanded arguments: " << expandedarguments;
 
     if (ok == false) {
 
-        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(arguments));
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(rawarguments));
 
         return false;
     }
 
-    QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
+    QStringList args = expandedarguments.split(' ', Qt::SkipEmptyParts);
 
     // Give the gdb process the program and the argument list.
-    _gdbProcess->setProgram(command);
+    _gdbProcess->setProgram(expandedcommand);
     _gdbProcess->setArguments(args);
 
     // We need to set the C language, otherwise the MI interface is translated and our message
