@@ -4,3 +4,7 @@ References:
     https://docs.nvidia.com/cuda/cuda-gdb/index.html#walk-through-examples
     https://developer.nvidia.com/cuda-gdb
 
+Use a different gdb program without changing Seer's config.
+
+    $ seergdb --gdb-program /usr/local/cuda-12.2/bin/cuda-gdb  program arg1 arg2 ...
+
