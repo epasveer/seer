@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// https://docs.nvidia.com/cuda/cuda-gdb/index.html#walk-through-examples
+
 // Simple 8-bit bit reversal Compute test
 
 #define N 256

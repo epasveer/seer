@@ -1,10 +1,13 @@
 .PHONY: all
-all: hellocuda
+all: hellocudasimple hellocudabitreverse
 
-hellocuda: hellocuda.cu
-	/usr/local/cuda-12.2/bin/nvcc -g -G hellocuda.cu -o hellocuda
+hellocudasimple: hellocudasimple.cu
+	/usr/local/cuda-12.2/bin/nvcc -g -G hellocudasimple.cu -o hellocudasimple
+
+hellocudabitreverse: hellocudabitreverse.cu
+	/usr/local/cuda-12.2/bin/nvcc -g -G hellocudabitreverse.cu -o hellocudabitreverse
 
 .PHONY: clean
 clean:
-	rm -f hellocuda hellocuda.o
+	rm -f hellocudasimple hellocudasimple.o hellocudabitreverse hellocudabitreverse.o
 
