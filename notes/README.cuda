@@ -1,0 +1,29 @@
+
+Andrew Gontarek <notifications@github.com>
+Unsubscribe
+To:
+NVIDIA/cuda-gdb
+Cc:
+Ernie Pasveer
+,
+Author
+
+Mon, Sep 18 at 11:18 AM
+
+We have defined the following mi commands in the current cuda-gdb release:
+
+  add_mi_cmd_mi ("cuda-info-devices", mi_cmd_cuda_info_devices);
+  add_mi_cmd_mi ("cuda-info-sms", mi_cmd_cuda_info_sms);
+  add_mi_cmd_mi ("cuda-info-warps", mi_cmd_cuda_info_warps);
+  add_mi_cmd_mi ("cuda-info-lanes", mi_cmd_cuda_info_lanes);
+  add_mi_cmd_mi ("cuda-info-kernels", mi_cmd_cuda_info_kernels);
+  add_mi_cmd_mi ("cuda-info-blocks", mi_cmd_cuda_info_blocks);
+  add_mi_cmd_mi ("cuda-info-threads", mi_cmd_cuda_info_threads);
+  add_mi_cmd_mi ("cuda-info-launch-trace", mi_cmd_cuda_info_launch_trace);
+  add_mi_cmd_mi ("cuda-info-contexts",  mi_cmd_cuda_info_contexts);
+  add_mi_cmd_mi ("cuda-focus-query", mi_cmd_cuda_focus_query);
+  add_mi_cmd_mi ("cuda-focus-switch", mi_cmd_cuda_focus_switch);
+These however just work as entry points to the associated command without needing to pass it in as a console command.
+
+We plan on adding more robust GDB/MI support for both the cuda and info cuda commands in a future release.
+

@@ -1,0 +1,73 @@
+
+Online doc for writing mi commands in python.
+
+    https://sourceware.org/gdb/current/onlinedocs/gdb.html/GDB_002fMI-Commands-In-Python.html#GDB_002fMI-Commands-In-Python
+
+The following code snippet shows how some trivial MI commands can be implemented in Python:
+
+    class MIEcho(gdb.MICommand):
+        """Echo arguments passed to the command."""
+
+        def __init__(self, name, mode):
+            self._mode = mode
+            super(MIEcho, self).__init__(name)
+
+        def invoke(self, argv):
+            if self._mode == 'dict':
+                return { 'dict': { 'argv' : argv } }
+            elif self._mode == 'list':
+                return { 'list': argv }
+            else:
+                return { 'string': ", ".join(argv) }
+
+
+    MIEcho("-echo-dict", "dict")
+    MIEcho("-echo-list", "list")
+    MIEcho("-echo-string", "string")
+
+The last three lines instantiate the class three times, creating three new GDB/MI commands -echo-dict, -echo-list, and -echo-string. Each time a subclass of gdb.MICommand is instantiated, the new command is automatically registered with GDB.
+
+Source the py file at the gdb prompt.
+
+    (gdb) source MIEcho.py
+
+    Depending on how the Python code is read into GDB, you may need to import the gdb module explicitly.
+
+The following example shows a GDB session in which the above commands have been added:
+
+    (gdb)
+    -echo-dict abc def ghi
+    ^done,dict={argv=["abc","def","ghi"]}
+    (gdb)
+    -echo-list abc def ghi
+    ^done,list=["abc","def","ghi"]
+    (gdb)
+    -echo-string abc def ghi
+    ^done,string="abc, def, ghi"
+    (gdb)
+
+
+
+Here's a simple non-MI command added with python to gdb.
+
+    class HelloWorld (gdb.Command):
+
+    """Greet the whole world."""
+
+    def __init__ (self):
+        super (HelloWorld, self).__init__ ("hello-world", gdb.COMMAND_USER)
+
+    def invoke (self, arg, from_tty):
+        print ("Hello, World!")
+
+    HelloWorld ()
+
+Put it in a .py file and load it in gdb.
+
+    (gdb) source HelloWorld.py
+
+Then execute it.
+
+    (gdb) hello-world
+    Hello, World!
+
