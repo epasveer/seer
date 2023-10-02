@@ -73,6 +73,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleDeleteBreakpoints             (QString breakpoints);
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
+        void                                            handleRefreshBreakpointsStackFrames ();
         void                                            handleRunToLine                     (QString fullname, int lineno);
         void                                            handleRunToAddress                  (QString address);
         void                                            handleAddVariableLoggerExpression   (QString expression);

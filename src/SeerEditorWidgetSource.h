@@ -15,6 +15,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
 #include <QtCore/QMap>
+#include <QtCore/QFileSystemWatcher>
+
 
 class SeerEditorWidgetSourceLineNumberArea;
 class SeerEditorWidgetSourceBreakPointArea;
@@ -48,9 +50,10 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         bool                                        isOpen                              () const;
         void                                        open                                (const QString& fullname, const QString& file, const QString& alternateDirectory="");
         void                                        openText                            (const QString& text,     const QString& file);
+        void                                        close                               ();
+        void                                        reload                              ();
         const QString&                              fullname                            () const;
         const QString&                              file                                () const;
-        void                                        close                               ();
         void                                        setAlternateDirectory               (const QString& alternateDirectory);
         const QString&                              alternateDirectory                  () const;
         void                                        setAlternateDirectories             (const QStringList& alternateDirectories);
@@ -99,6 +102,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        deleteBreakpoints                   (QString breakpoints);
         void                                        enableBreakpoints                   (QString breakpoints);
         void                                        disableBreakpoints                  (QString breakpoints);
+        void                                        refreshBreakpointsStackFrames       ();
         void                                        runToLine                           (QString fullname, int lineno);
         void                                        addVariableLoggerExpression         (QString expression);
         void                                        addVariableTrackerExpression        (QString expression);
@@ -109,12 +113,13 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        addStructVisualize                  (QString expression);
         void                                        showSearchBar                       (bool flag);
         void                                        showAlternateBar                    (bool flag);
+        void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
 
     public slots:
         void                                        handleText                          (const QString& text);
         void                                        handleHighlighterSettingsChanged    ();
-
+        void                                        handleWatchFileModified             (const QString& path);
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
@@ -135,6 +140,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                                     _file;
         QString                                     _alternateDirectory;
         QStringList                                 _alternateDirectories;
+        QFileSystemWatcher*                         _fileWatcher;
 
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
@@ -244,6 +250,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        showSearchBar                           (bool flag);
         void                                        setSearchMatchCase                      (bool flag);
         void                                        showAlternateBar                        (bool flag);
+        void                                        showReloadBar                           (bool flag);
 
     private slots:
         void                                        handleSearchLineNumberLineEdit          ();
@@ -256,6 +263,8 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        handleAlternateLineEdit                 ();
         void                                        handleTextSearchShortcut                ();
         void                                        handleAlternateDirectoryShortcut        ();
+        void                                        handleReloadToolButton                  ();
+        void                                        handleReloadCloseToolButton             ();
 
     signals:
         void                                        addAlternateDirectory                   (QString path);
@@ -265,6 +274,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         QShortcut*                                  _textSearchShortcut;
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
+        QShortcut*                                  _textSearchReloadShortcut;
         QShortcut*                                  _alternateDirShortcut;
 };
 

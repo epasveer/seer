@@ -28,6 +28,7 @@
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
+    _fileWatcher                = 0;
     _enableLineNumberArea       = false;
     _enableBreakPointArea       = false;
     _enableMiniMapArea          = false;
@@ -543,6 +544,11 @@ bool SeerEditorWidgetSourceArea::isOpen () const {
 
 void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& file, const QString& alternateDirectory) {
 
+    // Delete old file watcher, if any.
+    if (_fileWatcher) {
+        delete _fileWatcher; _fileWatcher = 0;
+    }
+
     // Close the previous file, if any.
     if (isOpen()) {
         close();
@@ -616,6 +622,12 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     // Put the contents in the editor.
     openText(text, _fullname);
+
+    // Watch the file.
+    _fileWatcher = new QFileSystemWatcher(this);
+    _fileWatcher->addPath(filename);
+
+    QObject::connect(_fileWatcher, &QFileSystemWatcher::fileChanged,      this, &SeerEditorWidgetSourceArea::handleWatchFileModified);
 }
 
 void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& file) {
@@ -648,19 +660,60 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     }
 }
 
+void SeerEditorWidgetSourceArea::reload () {
+
+    // Open the same file again.
+    QString fullname           = _fullname;
+    QString file               = _file;
+    QString alternateDirectory = _alternateDirectory;
+
+    if (fullname == "") return;
+    if (file     == "") return;
+
+    // Save old cursor and scroll position.
+    int blockno    = textCursor().blockNumber();
+    int posinblock = textCursor().positionInBlock();
+    int vscrollpos = verticalScrollBar()->value();
+
+    // Reload file.
+    open(fullname, file, alternateDirectory);
+
+    // Restore to old cursor and scroll position.
+    QTextCursor c = textCursor();
+
+    c.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
+    c.movePosition(QTextCursor::Down,  QTextCursor::MoveAnchor, blockno);
+    c.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor, posinblock);
+
+    setTextCursor(c);
+
+    ensureCursorVisible();
+
+    verticalScrollBar()->setValue(vscrollpos);
+
+    // Refresh any breakpoints or current lines in the stackframes.
+    emit refreshBreakpointsStackFrames();
+}
+
+void SeerEditorWidgetSourceArea::close () {
+
+    setDocumentTitle("");
+    setPlainText("");
+
+    clearExpression();
+
+    // Delete old file watcher, if any.
+    if (_fileWatcher) {
+        delete _fileWatcher; _fileWatcher = 0;
+    }
+}
+
 const QString& SeerEditorWidgetSourceArea::fullname () const {
     return _fullname;
 }
 
 const QString& SeerEditorWidgetSourceArea::file () const {
     return _file;
-}
-
-void SeerEditorWidgetSourceArea::close () {
-    setDocumentTitle("");
-    setPlainText("");
-
-    clearExpression();
 }
 
 void SeerEditorWidgetSourceArea::setAlternateDirectory (const QString& alternateDirectory) {
@@ -1679,6 +1732,13 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
 
     // Note. The margins are automatically updated by their own paint events.
     //       The new highlighter settings will be used.
+}
+
+void SeerEditorWidgetSourceArea::handleWatchFileModified (const QString& path) {
+
+    Q_UNUSED(path);
+
+    emit showReloadBar(true);
 }
 
 //

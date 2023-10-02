@@ -805,6 +805,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshBreakpointsStackFrames, this, &SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
@@ -863,6 +864,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshBreakpointsStackFrames, this, &SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
@@ -962,6 +964,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::deleteBreakpoints,              this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::enableBreakpoints,              this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::disableBreakpoints,             this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::refreshBreakpointsStackFrames,  this, &SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::runToAddress,                   this, &SeerEditorManagerWidget::handleRunToAddress);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,                this, &SeerEditorManagerWidget::handleRequestAssembly);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestSourceAndAssembly,       this, &SeerEditorManagerWidget::handleRequestSourceAndAssembly);
@@ -1140,6 +1143,15 @@ void SeerEditorManagerWidget::handleDisableBreakpoints (QString breakpoints) {
 
     // rethrow
     emit disableBreakpoints (breakpoints);
+}
+
+void SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames () {
+
+    // Ask for the breakpoint list to be resent, in case files have breakpoints.
+    emit refreshBreakpointsList();
+
+    // Ask for the stackframe list to be resent, in case files have currently executing lines.
+    emit refreshStackFrames();
 }
 
 void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
