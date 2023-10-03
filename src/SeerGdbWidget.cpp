@@ -3101,7 +3101,7 @@ bool SeerGdbWidget::startGdbRR () {
     }
 
     // Set the gdb program name to use.
-    QString command   = "/usr/local/bin/rr";
+    QString command   = rrProgram();
     QString arguments = "replay --interpreter=mi --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
 
     if (rrGdbArguments() != "") {
