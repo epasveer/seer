@@ -7,6 +7,7 @@
 * Add --gdb-program and --gdb-arguments to command line to override settings from Seer's config.
 * Fixed a rare bug with blank lines from gdb causing a segv in GdbMonitor.
 * Fixed bug specifying path to "rr" debugger.
+* Add option to reload source file if it changes.
 
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.

@@ -104,6 +104,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        deleteBreakpoints                   (QString breakpoints);
         void                                        enableBreakpoints                   (QString breakpoints);
         void                                        disableBreakpoints                  (QString breakpoints);
+        void                                        refreshBreakpointsStackFrames       ();
         void                                        runToAddress                        (QString address);
         void                                        addMemoryVisualize                  (QString expression);
         void                                        addArrayVisualize                   (QString expression);

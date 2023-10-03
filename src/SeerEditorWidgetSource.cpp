@@ -28,12 +28,14 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
 
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
     showAlternateBar(false);   // Hide the alternate bar. ctrl+O to show it again.
+    showReloadBar(false);      // Hide the reload file bar. Automatically shown if file gets updated.
     setSearchMatchCase(true);  // Search with case sensitivity.
 
-    _textSearchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")), this);
-    _textSearchNextShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")), this);
-    _textSearchPrevShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
-    _alternateDirShortcut   = new QShortcut(QKeySequence(tr("Ctrl+O")), this);
+    _textSearchShortcut       = new QShortcut(QKeySequence(tr("Ctrl+F")),       this);
+    _textSearchNextShortcut   = new QShortcut(QKeySequence(tr("Ctrl+G")),       this);
+    _textSearchPrevShortcut   = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+    _textSearchReloadShortcut = new QShortcut(QKeySequence(tr("Ctrl+R")),       this);
+    _alternateDirShortcut     = new QShortcut(QKeySequence(tr("Ctrl+O")),       this);
 
     setKeySettings(SeerKeySettings::populate());
 
@@ -43,16 +45,21 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleSearchLineNumberLineEdit);
+    QObject::connect(searchReloadToolButton,            &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchCloseToolButton);
     QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateCloseToolButton);
     QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateFileOpenToolButton);
     QObject::connect(alternateLineEdit,                 &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleAlternateLineEdit);
+    QObject::connect(reloadToolButton,                  &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
+    QObject::connect(reloadCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadCloseToolButton);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,             this,  &SeerEditorWidgetSource::showSearchBar);
     QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,          this,  &SeerEditorWidgetSource::showAlternateBar);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showReloadBar,             this,  &SeerEditorWidgetSource::showReloadBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleTextSearchShortcut);
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
+    QObject::connect(_textSearchReloadShortcut,         &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
 }
 
@@ -128,6 +135,19 @@ void SeerEditorWidgetSource::showAlternateBar (bool flag) {
         originalLineEdit->setText(sourceArea()->fullname());    // Set the original text.
         rememberAlternateCheckBox->setChecked(true);            // Set the default remember setting.
         alternateLineEdit->setFocus(Qt::MouseFocusReason);      // If 'show', give the alternateLineEdit the focus.
+    }
+}
+
+void SeerEditorWidgetSource::showReloadBar (bool flag) {
+
+    reloadBarWidget->setVisible(flag);
+    reloadBarWidget->setStyleSheet("QWidget { background-color : #00AA00; color : #FFFF00; }");
+
+    if (flag) {
+        reloadFilenameLabel->setText("The file \"" + sourceArea()->file() + "\" has changed on disk.");
+        reloadToolButton->setFocus(Qt::MouseFocusReason);      // If 'show', give the reload button the focus.
+    }else{
+        reloadFilenameLabel->setText("");
     }
 }
 
@@ -251,5 +271,17 @@ void SeerEditorWidgetSource::handleAlternateDirectoryShortcut () {
     }else{
         showAlternateBar(true);
     }
+}
+
+void SeerEditorWidgetSource::handleReloadToolButton () {
+
+    showReloadBar(false);
+
+    sourceArea()->reload();
+}
+
+void SeerEditorWidgetSource::handleReloadCloseToolButton () {
+
+    showReloadBar(false);
 }
 
