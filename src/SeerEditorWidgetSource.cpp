@@ -142,6 +142,8 @@ void SeerEditorWidgetSource::showReloadBar (bool flag) {
 
     reloadBarWidget->setVisible(flag);
     reloadBarWidget->setStyleSheet("QWidget { background-color : #00AA00; color : #FFFF00; }");
+    reloadToolButton->setStyleSheet("background-color : #00AA00; color : #FFFF00;");
+    reloadCloseToolButton->setStyleSheet("QToolButton { background : #00AA00; color : #FFFF00; }");
 
     if (flag) {
         reloadFilenameLabel->setText("The file \"" + sourceArea()->file() + "\" has changed on disk.");

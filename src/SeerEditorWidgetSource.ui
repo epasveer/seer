@@ -123,8 +123,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="reloadFilenameLabel">
-       </widget>
+       <widget class="QLabel" name="reloadFilenameLabel"/>
       </item>
       <item>
        <widget class="QToolButton" name="reloadToolButton">
@@ -132,7 +131,11 @@
          <string>Reload source file.</string>
         </property>
         <property name="text">
-         <string>Reload</string>
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
         </property>
        </widget>
       </item>
