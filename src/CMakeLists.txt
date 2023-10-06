@@ -44,6 +44,7 @@ set(HEADER_FILES
     GdbMonitor.h
     SeerArgumentsDialog.h
     SeerBreakpointCreateDialog.h
+    SeerMessagesBrowserWidget.h
     SeerBreakpointsBrowserWidget.h
     SeerCatchpointCreateDialog.h
     SeerCatchpointsBrowserWidget.h
@@ -135,6 +136,7 @@ set(SOURCE_FILES
     GdbMonitor.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
+    SeerMessagesBrowserWidget.cpp
     SeerBreakpointsBrowserWidget.cpp
     SeerCatchpointCreateDialog.cpp
     SeerCatchpointsBrowserWidget.cpp
