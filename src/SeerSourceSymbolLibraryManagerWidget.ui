@@ -6,34 +6,47 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>854</width>
-    <height>571</height>
+    <width>771</width>
+    <height>479</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
    <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
     <number>0</number>
    </property>
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="verticalSpacing">
+    <number>3</number>
+   </property>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">font-weight: bold;</string>
+     </property>
+     <property name="text">
       <string>Source/Symbol/Library Info</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_1">
-      <item row="0" column="0">
-       <widget class="QDetachTabWidget" name="tabWidget">
-        <property name="currentIndex">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="textFormat">
+      <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDetachTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
     </widget>
    </item>
   </layout>
