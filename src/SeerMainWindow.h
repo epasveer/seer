@@ -4,7 +4,6 @@
 #include "SeerRunStatusIndicator.h"
 #include "SeerKeySettings.h"
 #include "SeerProgressIndicator.h"
-#include "SeerMessagesDialog.h"
 #include <QtWidgets/QMainWindow>
 #include <QShortcut>
 #include <QActionGroup>
@@ -73,7 +72,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleViewVarVisualizer             ();
         void                        handleViewImageVisualizer           ();
         void                        handleViewAssembly                  ();
-        void                        handleViewExecutionMessages         ();
         void                        handleViewAssemblyShown             (bool shown);
         void                        handleViewConsoleNormal             ();
         void                        handleViewConsoleHidden             ();
@@ -108,6 +106,5 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
         QString                     _projectFile;
-        SeerMessagesDialog*         _executionMessages;
 };
 

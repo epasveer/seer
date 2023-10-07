@@ -4,6 +4,7 @@
 #include "SeerEditorWidgetSource.h"
 #include "SeerGdbLogWidget.h"
 #include "SeerSeerLogWidget.h"
+#include "SeerMessagesBrowserWidget.h"
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
@@ -193,6 +194,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // Editor manager.
         SeerEditorManagerWidget*            editorManager                       ();
         const SeerEditorManagerWidget*      editorManager                       () const;
+
+        // Messages
+        void                                addMessage                          (const QString& message, QMessageBox::Icon messageType);
 
         // Settings
         void                                writeSettings                       ();
@@ -403,6 +407,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _consoleMode;
         int                                 _consoleScrollLines;
         int                                 _rememberManualCommandCount;
+        SeerMessagesBrowserWidget*          _messagesBrowserWidget;
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
