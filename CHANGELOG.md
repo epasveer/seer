@@ -8,6 +8,7 @@
 * Fixed a rare bug with blank lines from gdb causing a segv in GdbMonitor.
 * Fixed bug specifying path to "rr" debugger.
 * Add option to reload source file if it changes.
+* Tighten up the layout by removing some needless whitespace.
 
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.
