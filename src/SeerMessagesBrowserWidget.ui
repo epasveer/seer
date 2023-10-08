@@ -58,6 +58,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="preferencesToolButton">
+         <property name="toolTip">
+          <string>Preferences</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

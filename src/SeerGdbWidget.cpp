@@ -137,6 +137,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     // Connect things.
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::currentChanged,                                                                   this,                                                           &SeerGdbWidget::handleLogsTabChanged);
+    QObject::connect(_messagesBrowserWidget,                                    &SeerMessagesBrowserWidget::showMessages,                                                   this,                                                           &SeerGdbWidget::handleRaiseMessageTab);
 
     QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
 
@@ -704,6 +705,17 @@ void SeerGdbWidget::handleLogsTabChanged (int index) {
     Q_UNUSED(index);
 
     writeLogsSettings();
+}
+
+void SeerGdbWidget::handleRaiseMessageTab () {
+
+    int idx = logsTabWidget->indexOf(_messagesBrowserWidget);
+
+    if (idx < 0) {
+        return;
+    }
+
+    logsTabWidget->setCurrentIndex(idx);
 }
 
 void SeerGdbWidget::writeLogsSettings () {

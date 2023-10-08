@@ -1,11 +1,14 @@
 #include "SeerMessagesBrowserWidget.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
-#include <QtWidgets/QMessageBox>
+#include <QtCore/QSettings>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
 SeerMessagesBrowserWidget::SeerMessagesBrowserWidget (QWidget* parent) : QWidget(parent) {
+
+    _raiseMode = "any";  // Default. Raise message tab on any message.
+    _raiseMenu = 0;
 
     // Construct the UI.
     setupUi(this);
@@ -26,6 +29,19 @@ SeerMessagesBrowserWidget::SeerMessagesBrowserWidget (QWidget* parent) : QWidget
     messagesTreeWidget->resizeColumnToContents(1); // message type icon
     messagesTreeWidget->resizeColumnToContents(2); // message
 
+
+    _raiseMenu = new QMenu("Raise Messages Tab");
+
+    QMenu* menu = new QMenu();
+    menu->addMenu(_raiseMenu);
+
+    _anyMessageAction       = _raiseMenu->addAction("Any message");
+    _importanMessagesAction = _raiseMenu->addAction("Important messages");
+    _neverMessagesAction    = _raiseMenu->addAction("Never");
+
+    preferencesToolButton->setMenu(menu);
+    preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
+
     // Get icons.
     _informationIcon = QIcon(":/seer/resources/RelaxLightIcons/data-information.svg");
     _warningIcon     = QIcon(":/seer/resources/RelaxLightIcons/data-warning.svg");
@@ -35,21 +51,20 @@ SeerMessagesBrowserWidget::SeerMessagesBrowserWidget (QWidget* parent) : QWidget
 
     // Connect things.
     QObject::connect(deleteMessagesToolButton,   &QToolButton::clicked,         this,  &SeerMessagesBrowserWidget::handleDeleteToolButton);
+    QObject::connect(_raiseMenu,                 &QMenu::aboutToShow,           this,  &SeerMessagesBrowserWidget::handleRaiseMenuShow);
+    QObject::connect(_raiseMenu,                 &QMenu::triggered,             this,  &SeerMessagesBrowserWidget::handleRaiseMenuTriggered);
 
     // Clear messages
     clearMessages();
+
+    // Read the default settings.
+    readSettings();
 }
 
 SeerMessagesBrowserWidget::~SeerMessagesBrowserWidget () {
 }
 
 void SeerMessagesBrowserWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
-
-    // Give this dialog the focus.
-    //setFocus(Qt::OtherFocusReason);
-
-    // Show messages any time a messaged is added.
-    emit showMessages();
 
     // Create an entry with our message.
     QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -93,6 +108,21 @@ void SeerMessagesBrowserWidget::addMessage (const QString& message, QMessageBox:
         messagesTreeWidget->clearSelection();
         lastItem->setSelected(true);
     }
+
+    // Signal that a message was added, depending on the 'raise' mode.
+    if (_raiseMode == "any") {
+        emit showMessages();
+    }else if (_raiseMode == "important") {
+        if (messageType == QMessageBox::Warning || messageType == QMessageBox::Critical || messageType == QMessageBox::Question) {
+            emit showMessages();
+        }else if (message.startsWith("Program started")) {
+            emit showMessages();
+        }else if (message.startsWith("Program exited")) {
+            emit showMessages();
+        }
+    }else if (_raiseMode == "never") {
+        // Do nothing.
+    }
 }
 
 void SeerMessagesBrowserWidget::clearMessages () {
@@ -100,9 +130,55 @@ void SeerMessagesBrowserWidget::clearMessages () {
     messagesTreeWidget->clear();
 }
 
+void SeerMessagesBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("executionmessages"); {
+        settings.setValue("raisetabmode", _raiseMode);
+    }settings.endGroup();
+}
+
+void SeerMessagesBrowserWidget::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("executionmessages"); {
+        _raiseMode = settings.value("raisetabmode", "any").toString();
+    } settings.endGroup();
+}
+
 void SeerMessagesBrowserWidget::handleDeleteToolButton () {
 
     // Delete all messages.
     clearMessages();
+}
+
+void SeerMessagesBrowserWidget::handleRaiseMenuShow () {
+
+    if (_raiseMode == "any") {
+        _raiseMenu->setDefaultAction(_anyMessageAction);
+    }else if (_raiseMode == "important") {
+        _raiseMenu->setDefaultAction(_importanMessagesAction);
+    }else if (_raiseMode == "never") {
+        _raiseMenu->setDefaultAction(_neverMessagesAction);
+    }else{
+        _raiseMenu->setDefaultAction(_anyMessageAction);
+    }
+}
+
+void SeerMessagesBrowserWidget::handleRaiseMenuTriggered (QAction* action) {
+
+    if (action == _anyMessageAction) {
+        _raiseMode = "any";
+    }else if (action == _importanMessagesAction) {
+        _raiseMode = "important";
+    }else if (action == _neverMessagesAction) {
+        _raiseMode = "never";
+    }else{
+        _raiseMode = "any";
+    }
+
+    writeSettings();
 }
 

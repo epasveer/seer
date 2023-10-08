@@ -208,6 +208,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
     public slots:
         void                                handleLogsTabMoved                  (int from, int to);
         void                                handleLogsTabChanged                (int index);
+        void                                handleRaiseMessageTab               ();
 
         void                                handleText                          (const QString& text);
         void                                handleManualCommandExecute          ();
