@@ -1,8 +1,10 @@
 #pragma once
 
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QWidget>
 #include <QtGui/QIcon>
+#include <QtGui/QAction>
 #include <QtCore/QString>
 #include "ui_SeerMessagesBrowserWidget.h"
 
@@ -20,13 +22,22 @@ class SeerMessagesBrowserWidget : public QWidget, protected Ui::SeerMessagesBrow
 
     private slots:
         void                handleDeleteToolButton      ();
+        void                handleRaiseMenuShow         ();
+        void                handleRaiseMenuTriggered    (QAction* action);
 
     signals:
         void                showMessages                ();
 
     protected:
+        void                writeSettings               ();
+        void                readSettings                ();
 
     private:
+        QString             _raiseMode;
+        QMenu*              _raiseMenu;
+        QAction*            _anyMessageAction;
+        QAction*            _importanMessagesAction;
+        QAction*            _neverMessagesAction;
         QIcon               _noIcon;
         QIcon               _informationIcon;
         QIcon               _warningIcon;

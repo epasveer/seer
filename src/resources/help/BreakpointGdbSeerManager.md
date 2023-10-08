@@ -3,6 +3,7 @@
 ### Introduction
 This part of Seer shows Breakpoints, GDB log, and Seer log information. In detailed, the information is:
 
+* Messages
 * Breakpoints
 * Watchpoints
 * Catchpoints
@@ -11,6 +12,21 @@ This part of Seer shows Breakpoints, GDB log, and Seer log information. In detai
 * Seer output
 * Save and load breakpoints
 * Manual GDB commands.
+
+### Messages
+
+Various gdb execution messages are listed in this tab. These occur as you debug the program. The message types are:
+
+* Program startup and completion
+* Breakpoint encouters
+* Signal encounters
+* General gdb errors
+
+The message tab can be raised in various ways when a message is added to the tab:
+
+* Any message
+* Important messages (program startup, signal encounters)
+* Never
 
 ### Breakpoints
 
