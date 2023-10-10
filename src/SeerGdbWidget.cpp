@@ -76,6 +76,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
 
+    _messagesBrowserWidget    = new SeerMessagesBrowserWidget(this);
     _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
     _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
     _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
@@ -86,11 +87,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbOutputLog->setPlaceholderText("[gdb output]");
     _seerOutputLog->setPlaceholderText("[seer output]");
 
+    logsTabWidget->addTab(_messagesBrowserWidget,    "Messages");
     logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
     logsTabWidget->addTab(_catchpointsBrowserWidget, "Catchpoints");
     logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
-    logsTabWidget->addTab(_gdbOutputLog,             "GDB  output");
+    logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
@@ -135,6 +137,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     // Connect things.
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::currentChanged,                                                                   this,                                                           &SeerGdbWidget::handleLogsTabChanged);
+    QObject::connect(_messagesBrowserWidget,                                    &SeerMessagesBrowserWidget::showMessages,                                                   this,                                                           &SeerGdbWidget::handleRaiseMessageTab);
 
     QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
 
@@ -680,6 +683,15 @@ const SeerEditorManagerWidget* SeerGdbWidget::editorManager () const {
     return editorManagerWidget;
 }
 
+void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
+
+    if (_messagesBrowserWidget == 0) {
+        return;
+    }
+
+    _messagesBrowserWidget->addMessage(message, messageType);
+}
+
 void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
 
     Q_UNUSED(from);
@@ -693,6 +705,17 @@ void SeerGdbWidget::handleLogsTabChanged (int index) {
     Q_UNUSED(index);
 
     writeLogsSettings();
+}
+
+void SeerGdbWidget::handleRaiseMessageTab () {
+
+    int idx = logsTabWidget->indexOf(_messagesBrowserWidget);
+
+    if (idx < 0) {
+        return;
+    }
+
+    logsTabWidget->setCurrentIndex(idx);
 }
 
 void SeerGdbWidget::writeLogsSettings () {

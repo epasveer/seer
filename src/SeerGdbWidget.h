@@ -4,6 +4,7 @@
 #include "SeerEditorWidgetSource.h"
 #include "SeerGdbLogWidget.h"
 #include "SeerSeerLogWidget.h"
+#include "SeerMessagesBrowserWidget.h"
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
@@ -194,6 +195,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerEditorManagerWidget*            editorManager                       ();
         const SeerEditorManagerWidget*      editorManager                       () const;
 
+        // Messages
+        void                                addMessage                          (const QString& message, QMessageBox::Icon messageType);
+
         // Settings
         void                                writeSettings                       ();
         void                                readSettings                        ();
@@ -204,6 +208,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
     public slots:
         void                                handleLogsTabMoved                  (int from, int to);
         void                                handleLogsTabChanged                (int index);
+        void                                handleRaiseMessageTab               ();
 
         void                                handleText                          (const QString& text);
         void                                handleManualCommandExecute          ();
@@ -403,6 +408,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _consoleMode;
         int                                 _consoleScrollLines;
         int                                 _rememberManualCommandCount;
+        SeerMessagesBrowserWidget*          _messagesBrowserWidget;
         SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;

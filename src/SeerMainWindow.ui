@@ -73,7 +73,6 @@
     <addaction name="actionViewBasicStructVisualizer"/>
     <addaction name="actionViewImageVisualizer"/>
     <addaction name="actionViewAssembly"/>
-    <addaction name="actionViewExecutionMessages"/>
     <addaction name="menuConsole"/>
     <addaction name="menuStyles"/>
    </widget>
