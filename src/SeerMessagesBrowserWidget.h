@@ -4,8 +4,8 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QWidget>
 #include <QtGui/QIcon>
-#include <QtGui/QAction>
 #include <QtCore/QString>
+#include <QAction>
 #include "ui_SeerMessagesBrowserWidget.h"
 
 class SeerMessagesBrowserWidget : public QWidget, protected Ui::SeerMessagesBrowserWidgetForm {
