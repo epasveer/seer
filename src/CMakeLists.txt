@@ -32,12 +32,21 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+
 elseif(${QTVERSION} STREQUAL "QT5")
     find_package(Qt5 COMPONENTS REQUIRED Core)
     find_package(Qt5 COMPONENTS REQUIRED Gui)
     find_package(Qt5 COMPONENTS REQUIRED Widgets)
     find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt5 COMPONENTS REQUIRED Charts)
+
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
 set(HEADER_FILES
