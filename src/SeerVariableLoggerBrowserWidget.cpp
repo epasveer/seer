@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtGui/QFontDatabase>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 
@@ -121,6 +122,8 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
         item->setText(1, QTime::currentTime().toString(Qt::TextDate));
         item->setText(2, expression);
         item->setText(3, "");
+
+        item->setFont(3, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
         variablesTreeWidget->addTopLevelItem(item);
     }

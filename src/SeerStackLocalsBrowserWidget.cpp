@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
+#include <QtGui/QFontDatabase>
 #include <QAction>
 #include <QtCore/QDebug>
 
@@ -94,6 +95,7 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
                     item->setText(0, name_text);
                     item->setText(1, arg_text);
                     item->setText(2, Seer::filterEscapes(value_text));
+                    item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                     item->setText(3, "new");
 
                     topItem->addChild(item);
@@ -104,6 +106,7 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
                     item->setText(0, name_text);
                     item->setText(1, arg_text);
                     item->setText(2, Seer::filterEscapes(value_text));
+                    item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                     item->setText(3, "new");
 
                     localsTreeWidget->addTopLevelItem(item);
@@ -135,6 +138,7 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
                     child->setText(0, name_text);
                     child->setText(1, arg_text);
                     child->setText(2, Seer::filterEscapes(value_text));
+                    child->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                     child->setText(3, "reused");
 
                 // Add the simple entry to the tree.

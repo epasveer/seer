@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
+#include <QtGui/QFontDatabase>
 #include <QAction>
 #include <QtCore/QDebug>
 
@@ -89,6 +90,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
                 QTreeWidgetItem* item = new QTreeWidgetItem;
                 item->setText(1, name_text); // Set the name and value. Don't set the level.
                 item->setText(2, Seer::filterEscapes(value_text));
+                item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
                 topItem->addChild(item);
             }
