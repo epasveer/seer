@@ -69,6 +69,7 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
 
             if (matches.size() > 0) {
+                matches.first()->setText(2, ""); // Overwrite "name" with "" because it's not a valid "name".
                 matches.first()->setText(3, Seer::filterEscapes(msg_text));
             }
         }
@@ -124,11 +125,7 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
         variablesTreeWidget->addTopLevelItem(item);
     }
 
-    // Resize columns.
-    variablesTreeWidget->resizeColumnToContents(0);
-    variablesTreeWidget->resizeColumnToContents(1);
-    variablesTreeWidget->resizeColumnToContents(2);
-    variablesTreeWidget->resizeColumnToContents(3);
+    // Resize columns done later in handleText().
 }
 
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
