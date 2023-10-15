@@ -3,9 +3,12 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QClipboard>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
+#include <QAction>
 
 SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* parent) : QWidget(parent) {
 
@@ -15,6 +18,7 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     // Setup the widgets
     variablesTreeWidget->setMouseTracking(true);
     variablesTreeWidget->setSortingEnabled(false);
+    variablesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variablesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variablesTreeWidget->resizeColumnToContents(0); // id
     variablesTreeWidget->resizeColumnToContents(1); // timestamp
@@ -29,6 +33,7 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteToolButton);
     QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                                         this, &SeerVariableLoggerBrowserWidget::handleItemEntered);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,                          this, &SeerVariableLoggerBrowserWidget::handleContextMenu);
 }
 
 SeerVariableLoggerBrowserWidget::~SeerVariableLoggerBrowserWidget () {
@@ -203,5 +208,65 @@ void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
     for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
     }
+}
+
+void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    // Get the item at the cursor.
+    QTreeWidgetItem* item = variablesTreeWidget->itemAt(pos);
+
+    // Construct the menu.
+    QMenu*   clipboardMenu = new QMenu("Clipboard");
+    QAction* copyAction    = clipboardMenu->addAction("Copy selected");
+    QAction* copyAllAction = clipboardMenu->addAction("Copy all");
+    QMenu*   menu          = new QMenu(this);
+
+    menu->addMenu(clipboardMenu);
+
+    // If no selected item, disable 'selected' copy but allow 'all'.
+    if (item == 0) {
+        copyAction->setEnabled(false);
+    }
+
+    // Execute the menu. Return if nothing.
+    QAction* action = menu->exec(variablesTreeWidget->mapToGlobal(pos));
+
+    if (action == 0) {
+        return;
+    }
+
+    // Get selected tree items.
+    QList<QTreeWidgetItem*> items;
+
+    // Get list of 'select' items.
+    if (action == copyAction) {
+        items = variablesTreeWidget->selectedItems();
+    }
+
+    // Get list of 'all' items.
+    if (action == copyAllAction) {
+        items = variablesTreeWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    }
+
+    // Populate the clipboard.
+    if (items.size() == 0) {
+        return;
+    }
+
+    QClipboard* clipboard = QGuiApplication::clipboard();
+
+    QString text;
+
+    for (int i=0; i<items.size(); i++){
+
+        if (i != 0) {
+            text += '\n';
+        }
+
+        text += items[i]->text(2) + ":" + items[i]->text(3);
+    }
+
+    clipboard->setText(text, QClipboard::Clipboard);
+    clipboard->setText(text, QClipboard::Selection);
 }
 

@@ -268,7 +268,6 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     emit setRegisterValue(fmt, name, value);
 }
 
-
 void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelIndex& index) {
 
     QTreeWidgetItem* item = registersTreeWidget->getItemFromIndex(index);
