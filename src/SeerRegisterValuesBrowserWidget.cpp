@@ -5,6 +5,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtGui/QFontDatabase>
 #include <QtCore/QDebug>
 
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -95,6 +96,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
             topItem->setText(1, name_text);
             topItem->setText(2, "");
             topItem->setText(3, "new");
+
+            topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
             registersTreeWidget->addTopLevelItem(topItem);
 

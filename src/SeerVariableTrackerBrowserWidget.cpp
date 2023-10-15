@@ -3,6 +3,7 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtGui/QFontDatabase>
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <iostream>
@@ -72,6 +73,8 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
             topItem->setText(1, expression_text);
             topItem->setText(2, "");
 
+            topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
             variablesTreeWidget->addTopLevelItem(topItem);
         }
 
@@ -93,6 +96,8 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
         topItem->setText(0, id_text);
         topItem->setText(1, expression_text);
         topItem->setText(2, "");
+
+        topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
         variablesTreeWidget->addTopLevelItem(topItem);
 
