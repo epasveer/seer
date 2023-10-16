@@ -216,12 +216,9 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QTreeWidgetItem* item = variablesTreeWidget->itemAt(pos);
 
     // Construct the menu.
-    QMenu*   clipboardMenu = new QMenu("Clipboard");
-    QAction* copyAction    = clipboardMenu->addAction("Copy selected");
-    QAction* copyAllAction = clipboardMenu->addAction("Copy all");
-    QMenu*   menu          = new QMenu(this);
-
-    menu->addMenu(clipboardMenu);
+    QMenu*   menu          = new QMenu("Options", this);
+    QAction* copyAction    = menu->addAction("Copy selected");
+    QAction* copyAllAction = menu->addAction("Copy all");
 
     // If no selected item, disable 'selected' copy but allow 'all'.
     if (item == 0) {
@@ -257,7 +254,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     QString text;
 
-    for (int i=0; i<items.size(); i++){
+    for (int i=0; i<items.size(); i++) {
 
         if (i != 0) {
             text += '\n';
