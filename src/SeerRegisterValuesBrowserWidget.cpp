@@ -5,7 +5,9 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QClipboard>
 #include <QtCore/QDebug>
 
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -237,37 +239,97 @@ void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
 
 void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
 
+    // Get the item at the cursor.
     QTreeWidgetItem* item = registersTreeWidget->itemAt(pos);
 
-    // Bring up the register edit dialog.
-    SeerRegisterEditValueDialog dlg(this);
-    dlg.set(item->text(1), item->text(2));
+    // Construct the menu.
+    QMenu*   menu          = new QMenu("Options", this);
+    QAction* editAction    = menu->addAction("Edit selected");
+    QAction* copyAction    = menu->addAction("Copy selected");
+    QAction* copyAllAction = menu->addAction("Copy all");
 
-    int ret = dlg.exec();
+    // If no selected item, disable 'selected' copy but allow 'all'.
+    if (item == 0) {
+        editAction->setEnabled(false);
+        copyAction->setEnabled(false);
+    }
 
-    if (ret == 0) {
+    // Execute the menu. Return if nothing.
+    QAction* action = menu->exec(registersTreeWidget->mapToGlobal(pos));
+
+    if (action == 0) {
         return;
     }
 
-    // The register name could be changed, as well as the value.
-    QString name  = dlg.nameText();
-    QString value = dlg.valueText();
+    // Do register edit.
+    if (action == editAction) {
 
-    if (name == "") {
+        // Bring up the register edit dialog.
+        SeerRegisterEditValueDialog dlg(this);
+
+        dlg.set(item->text(1), item->text(2));
+
+        int ret = dlg.exec();
+
+        if (ret == 0) {
+            return;
+        }
+
+        // The register name could be changed, as well as the value.
+        QString name  = dlg.nameText();
+        QString value = dlg.valueText();
+
+        if (name == "") {
+            return;
+        }
+
+        if (value == "") {
+            return;
+        }
+
+        // Get the format.
+        QString fmt = registerFormatComboBox->currentData().toString();
+
+        // Emit the signal to change the register to the new value.
+        emit setRegisterValue(fmt, name, value);
+
         return;
     }
 
-    if (value == "") {
+    // Get selected tree items.
+    QList<QTreeWidgetItem*> items;
+
+    // Get list of 'select' items.
+    if (action == copyAction) {
+        items = registersTreeWidget->selectedItems();
+    }
+
+    // Get list of 'all' items.
+    if (action == copyAllAction) {
+        items = registersTreeWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    }
+
+    // Populate the clipboard.
+    if (items.size() == 0) {
         return;
     }
 
-    // Get the format.
-    QString fmt = registerFormatComboBox->currentData().toString();
+    QClipboard* clipboard = QGuiApplication::clipboard();
 
-    // Emit the signal to change the register to the new value.
-    emit setRegisterValue(fmt, name, value);
+    QString text;
+
+    for (int i=0; i<items.size(); i++) {
+
+        if (i != 0) {
+            text += '\n';
+        }
+
+        text += items[i]->text(1) + ":" + items[i]->text(2);
+    }
+
+    clipboard->setText(text, QClipboard::Clipboard);
+    clipboard->setText(text, QClipboard::Selection);
 }
-
 
 void SeerRegisterValuesBrowserWidget::handleIndexEditingFinished  (const QModelIndex& index) {
 

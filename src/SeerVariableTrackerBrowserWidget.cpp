@@ -3,7 +3,9 @@
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QClipboard>
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <iostream>
@@ -16,20 +18,20 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     // Setup the widgets
     variablesTreeWidget->setMouseTracking(true);
     variablesTreeWidget->setSortingEnabled(false);
+    variablesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variablesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     variablesTreeWidget->resizeColumnToContents(0); // id
     variablesTreeWidget->resizeColumnToContents(1); // name
     variablesTreeWidget->resizeColumnToContents(2); // value
-
     variablesTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
-
     variablesTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,          this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
-    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
-    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,              this, &SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton);
-    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,          this, &SeerVariableTrackerBrowserWidget::handleItemEntered);
+    QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                     this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
+    QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                         this, &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
+    QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,                         this, &SeerVariableTrackerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                     this, &SeerVariableTrackerBrowserWidget::handleItemEntered);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,      this, &SeerVariableTrackerBrowserWidget::handleContextMenu);
 }
 
 SeerVariableTrackerBrowserWidget::~SeerVariableTrackerBrowserWidget () {
@@ -256,5 +258,62 @@ void SeerVariableTrackerBrowserWidget::showEvent (QShowEvent* event) {
     QWidget::showEvent(event);
 
     refresh();
+}
+
+void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    // Get the item at the cursor.
+    QTreeWidgetItem* item = variablesTreeWidget->itemAt(pos);
+
+    // Construct the menu.
+    QMenu*   menu          = new QMenu("Options", this);
+    QAction* copyAction    = menu->addAction("Copy selected");
+    QAction* copyAllAction = menu->addAction("Copy all");
+
+    // If no selected item, disable 'selected' copy but allow 'all'.
+    if (item == 0) {
+        copyAction->setEnabled(false);
+    }
+
+    // Execute the menu. Return if nothing.
+    QAction* action = menu->exec(variablesTreeWidget->mapToGlobal(pos));
+
+    if (action == 0) {
+        return;
+    }
+
+    // Get selected tree items.
+    QList<QTreeWidgetItem*> items;
+
+    // Get list of 'select' items.
+    if (action == copyAction) {
+        items = variablesTreeWidget->selectedItems();
+    }
+
+    // Get list of 'all' items.
+    if (action == copyAllAction) {
+        items = variablesTreeWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+    }
+
+    // Populate the clipboard.
+    if (items.size() == 0) {
+        return;
+    }
+
+    QClipboard* clipboard = QGuiApplication::clipboard();
+
+    QString text;
+
+    for (int i=0; i<items.size(); i++) {
+
+        if (i != 0) {
+            text += '\n';
+        }
+
+        text += items[i]->text(1) + ":" + items[i]->text(2);
+    }
+
+    clipboard->setText(text, QClipboard::Clipboard);
+    clipboard->setText(text, QClipboard::Selection);
 }
 
