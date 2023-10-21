@@ -16,6 +16,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QMap>
 #include <QtCore/QFileSystemWatcher>
+#include <QtCore/QPoint>
 
 
 class SeerEditorWidgetSourceLineNumberArea;
@@ -152,6 +153,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QList<QTextEdit::ExtraSelection>            _currentLinesExtraSelections;
 
         QTextCursor                                 _selectedExpressionCursor;
+        QPoint                                      _selectedExpressionPosition;
         int                                         _selectedExpressionId;
         QString                                     _selectedExpressionName;
         QString                                     _selectedExpressionValue;

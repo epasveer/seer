@@ -1,7 +1,13 @@
 
-
 #include <string>
 #include <iostream>
+
+// argc         == number of arguments passed to the program.
+// argv         == argument array.
+// j            == some misc integer.
+// i            == loop counter for printing arguments.
+// message      == say hi to the world.
+// function1    == a function to call to simulate work.
 
 void function1 (const std::string& message);
 

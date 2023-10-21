@@ -12,6 +12,7 @@
 #include <QtGui/QHelpEvent>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGuiApplication>
+#include <QtGui/QHelpEvent>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
 #include <QAction>
@@ -25,6 +26,8 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
+
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
@@ -35,6 +38,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _selectedExpressionId       = Seer::createID();
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
@@ -456,9 +460,9 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
         return;
     }
 
-    _selectedExpressionCursor = textCursor();
-    _selectedExpressionValue  = "";
-    _selectedExpressionId     = Seer::createID();
+    _selectedExpressionCursor   = textCursor();
+    _selectedExpressionPosition = event->pos();
+    _selectedExpressionValue    = "";
 
     // Look for a keyboard modifier to prepend a '*', '&', or '*&'.
     Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
@@ -476,8 +480,7 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
         _selectedExpressionName = textCursor().selectedText();
     }
 
-    emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
-    emit addVariableLoggerExpression(_selectedExpressionName);                       // For the variable logger.
+    emit addVariableLoggerExpression(_selectedExpressionName); // For the variable logger.
 }
 
 bool SeerEditorWidgetSourceArea::event(QEvent* event) {
@@ -485,22 +488,61 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
     // Handle the ToolTip event.
     if (event->type() == QEvent::ToolTip) {
 
-        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+        while (1) { // Create a region of the code that does one pass.
 
-        // Massage the event location to account for the linenumber and breakpoint widgets.
-        QPoint pos = QPoint(helpEvent->pos().x() - _lineNumberArea->width() - _breakPointArea->width(), helpEvent->pos().y());
+            // Convert the event to a Help event.
+            QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
 
-        // Create a cursor at the position so we can get the text underneath at the cursor.
-        QTextCursor cursor = cursorForPosition(pos);
-        cursor.select(QTextCursor::WordUnderCursor);
+            // Massage the event location to account for the linenumber and breakpoint widgets.
+            QPoint pos = QPoint(helpEvent->pos().x() - _lineNumberArea->width() - _breakPointArea->width(), helpEvent->pos().y());
 
-        // If the text isn't empty, display a took tip.
-        if (cursor.selectedText().isEmpty() == false && cursor.selectedText() == _selectedExpressionCursor.selectedText()) {
-            QToolTip::showText(helpEvent->globalPos(), _selectedExpressionValue);
+            // Create a cursor at the position so we can get the text underneath at the cursor.
+            QTextCursor cursor = cursorForPosition(pos);
+            cursor.select(QTextCursor::WordUnderCursor);
 
-        // Otherwise, hide any old one.
-        }else{
-            QToolTip::hideText();
+            // If the hover text is empty, do nothing. Reset things. Exit this function.
+            QString word = cursor.selectedText();
+
+            //qDebug() << "Hover text=" << word;
+
+            if (word.isEmpty() == true) {
+
+                QToolTip::hideText();
+
+                _selectedExpressionCursor   = QTextCursor();
+                _selectedExpressionPosition = QPoint();
+                _selectedExpressionName     = "";
+                _selectedExpressionValue    = "";
+
+                break;
+            }
+
+            // Is our cursor the same as the previous.
+            if (cursor == _selectedExpressionCursor) {
+
+                // Same word as before? Display the tooltip value.
+                if (word == _selectedExpressionName) {
+
+                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + _selectedExpressionValue);
+
+                // Otherwise, hide any old one.
+                }else{
+                    QToolTip::hideText();
+                }
+
+            // Otherwise it's a different spot. Create a new request to get the variable's value.
+            }else{
+                QToolTip::hideText();
+
+                _selectedExpressionCursor   = cursor;
+                _selectedExpressionPosition = helpEvent->pos();
+                _selectedExpressionName     = word;
+                _selectedExpressionValue    = "";
+
+                emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
+            }
+
+            break;
         }
 
         return true;
@@ -1534,10 +1576,10 @@ void SeerEditorWidgetSourceArea::setQuickRunToLine (QMouseEvent* event) {
 
 void SeerEditorWidgetSourceArea::clearExpression() {
 
-    _selectedExpressionId     = 0;
-    _selectedExpressionCursor = QTextCursor();
-    _selectedExpressionName   = "";
-    _selectedExpressionValue  = "";
+    _selectedExpressionCursor   = QTextCursor();
+    _selectedExpressionPosition = QPoint();
+    _selectedExpressionName     = "";
+    _selectedExpressionValue    = "";
 }
 
 void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -1677,6 +1719,11 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
 
             //qDebug() << _selectedExpressionValue;
+
+            // Refresh the tooltip event.
+            QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
+
+            QCoreApplication::postEvent(this, event);
         }
 
         return;
@@ -1693,6 +1740,11 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false));
 
             //qDebug() << _selectedExpressionValue;
+
+            // Refresh the tooltip event.
+            QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
+
+            QCoreApplication::postEvent(this, event);
         }
 
         return;
