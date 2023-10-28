@@ -21,7 +21,7 @@ SeerStackLocalsBrowserWidget::SeerStackLocalsBrowserWidget (QWidget* parent) : Q
     localsTreeWidget->resizeColumnToContents(1); // arg
     localsTreeWidget->resizeColumnToContents(2); // value
     localsTreeWidget->resizeColumnToContents(3); // used
-    localsTreeWidget->setColumnHidden(3, true); // Hide the 'used' column.
+    localsTreeWidget->setColumnHidden(3, true);  // Hide the 'used' column.
     localsTreeWidget->clear();
 
     _frameNumber = 0;
@@ -47,6 +47,18 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,variables=[") && text.endsWith("]")) {
 
+        // ^done,variables=[
+        //     {name=\"message\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"},
+        //     {name=\"something\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"}
+        // ]
+
+        //qDebug() << text;
+
+        // Parse the text. Create a list of variables.
+        QString frame_text = Seer::parseFirst(text, "variables=", '[', ']', false);
+
+        QStringList variable_list = Seer::parse(frame_text, "", '{', '}', false);
+
         // Mark each entry initially as "unused".
         // Later, some will be marked as "reused" or "new". Then the "unused" ones will
         // be deleted.
@@ -56,111 +68,23 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
             ++it;
         }
 
-        // ^done,variables=[
-        //     {name=\"message\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"},
-        //     {name=\"something\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"}
-        // ]
-
-        //qDebug() << text;
-
-        QString frame_text = Seer::parseFirst(text, "variables=", '[', ']', false);
-
-        QStringList variable_list = Seer::parse(frame_text, "", '{', '}', false);
-
-        for ( const auto& variable_text : variable_list  ) {
+        // Loop through each variable.
+        for (const auto& variable_text : variable_list) {
 
             QString name_text  = Seer::parseFirst(variable_text, "name=",  '"', '"', false);
             QString arg_text   = Seer::parseFirst(variable_text, "arg=",   '"', '"', false);
             QString value_text = Seer::parseFirst(variable_text, "value=", '"', '"', false);
 
-            // Instead of creating a new tree each time, we will reuse existing items, if they are there.
-            // This allows the expanded items to remain expanded.
-            QList<QTreeWidgetItem*> matches = localsTreeWidget->findItems(name_text, Qt::MatchExactly, 0);
+            // Morph 'is function argument' from a '1' to 'yes'.
+            arg_text = (arg_text == "1" ? "yes" : "");
 
-            // No matches. So can't reuse. Add the new entry.
-            if (matches.size() == 0) {
-
-                // Add a complex entry to the tree.
-                if (value_text.startsWith("{") && value_text.endsWith("}")) {
-
-                    QTreeWidgetItem* topItem = new QTreeWidgetItem;
-                    topItem->setText(0, name_text);
-                    topItem->setText(1, "");
-                    topItem->setText(2, "");
-                    topItem->setText(3, "new");
-
-                    localsTreeWidget->addTopLevelItem(topItem);
-
-                    QTreeWidgetItem* item = new QTreeWidgetItem;
-                    item->setText(0, name_text);
-                    item->setText(1, arg_text);
-                    item->setText(2, Seer::filterEscapes(value_text));
-                    item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-                    item->setText(3, "new");
-
-                    topItem->addChild(item);
-
-                // Add the simple entry to the tree.
-                }else{
-                    QTreeWidgetItem* item = new QTreeWidgetItem;
-                    item->setText(0, name_text);
-                    item->setText(1, arg_text);
-                    item->setText(2, Seer::filterEscapes(value_text));
-                    item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-                    item->setText(3, "new");
-
-                    localsTreeWidget->addTopLevelItem(item);
-                }
-
-            // Found a match. Reuse it.
-            }else{
-
-                QTreeWidgetItem* item = matches.takeFirst();
-
-                // Add a complex entry to the tree.
-                if (value_text.startsWith("{") && value_text.endsWith("}")) {
-                    // Complex entries have a child. Reuse one or create one.
-                    QTreeWidgetItem* child;
-
-                    if (item->childCount() > 0) {
-                        child = item->child(0);
-
-                    }else{
-                        child = new QTreeWidgetItem;
-                        item->addChild(item);
-                    }
-
-                    item->setText(0, name_text);
-                    item->setText(1, "");
-                    item->setText(2, "");
-                    item->setText(3, "reused");
-
-                    child->setText(0, name_text);
-                    child->setText(1, arg_text);
-                    child->setText(2, Seer::filterEscapes(value_text));
-                    child->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-                    child->setText(3, "reused");
-
-                // Add the simple entry to the tree.
-                }else{
-                    // Simple entries don't have children. Delete them.
-                    if (item->childCount() > 0) {
-                        QList<QTreeWidgetItem*> children = item->takeChildren();
-
-                        qDeleteAll(children);
-                    }
-
-                    item->setText(0, name_text);
-                    item->setText(1, arg_text);
-                    item->setText(2, Seer::filterEscapes(value_text));
-                    item->setText(3, "reused");
-                }
-            }
+            // Populate the tree.
+            handleItemCreate(0, name_text, arg_text, value_text);
         }
 
         // At this point, there are some new entries, some reused entries, and some unused ones.
         // Delete the unused ones. They are obsolete.
-        QList<QTreeWidgetItem*> matches = localsTreeWidget->findItems("unused", Qt::MatchExactly, 3);
+        QList<QTreeWidgetItem*> matches = localsTreeWidget->findItems("unused", Qt::MatchExactly|Qt::MatchRecursive, 3);
 
         qDeleteAll(matches);
 
@@ -536,6 +460,102 @@ void SeerStackLocalsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int
 
     for (int i=1; i<localsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
         item->setToolTip(i, item->toolTip(0));
+    }
+}
+
+void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& name_text, const QString& arg_text, const QString& value_text) {
+
+    // Instead of creating a new tree each time, we will reuse existing items, if they are there.
+    // This allows the expanded items to remain expanded. We start by looking for matches that
+    // may already be there. If there are matches, the code will reuse it.  If not, a new item
+    // is created by the code. Note, when searching, we only look at the current level. Not any
+    // children.
+    QList<QTreeWidgetItem*> matches;
+
+    if (parentItem == 0) {
+        matches = localsTreeWidget->findItems(name_text, Qt::MatchExactly, 0);
+    }else{
+        for (int i=0; i<parentItem->childCount(); i++) {
+            if (parentItem->child(i)->text(0) == name_text) {
+                matches.append(parentItem->child(i));
+            }
+        }
+    }
+
+    // Add the complex entry to the tree. Reuse, if possible.
+    if (Seer::hasBookends(value_text, '{', '}')) {
+
+        // Remove bookends
+        QString text = Seer::filterBookends(value_text, '{', '}');
+
+        QTreeWidgetItem* item = 0;
+
+        // Use the privously created item. Or create a new one.
+        if (matches.size() > 0) {
+            item = matches[0];
+            item->setText(3, "reused");
+
+        }else{
+            item = new QTreeWidgetItem;
+            item->setText(3, "new");
+
+            // If we're dealing with a top-level item, attach it to the tree.
+            // Otherwise, attach it to the parent.
+            if (parentItem) {
+                parentItem->addChild(item);
+            }else{
+                localsTreeWidget->addTopLevelItem(item);
+            }
+        }
+
+        // Set the flatvalue text.
+        item->setText(0, name_text);
+        item->setText(1, arg_text);
+        item->setText(2, Seer::filterEscapes(text));
+        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
+        // Convert to a list of name/value pairs.
+        QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
+
+        // Go through each pair and add the name and its value to the tree.
+        for (const auto& nv : nv_pairs) {
+
+            QStringPair pair = Seer::parseNameValue(nv, '=');
+
+            handleItemCreate(item, pair.first, arg_text, pair.second);
+        }
+
+    // Add the simple entry to the tree. Reuse, if possible.
+    }else{
+        QTreeWidgetItem* item = 0;
+
+        // Use the privously created item. Or create a new one.
+        if (matches.size() > 0) {
+            item = matches[0];
+            item->setText(3, "reused");
+
+        }else{
+            item = new QTreeWidgetItem;
+            item->setText(3, "new");
+
+            // If we're dealing with a top-level item, attach it to the tree.
+            // Otherwise, attach it to the parent.
+            if (parentItem) {
+                parentItem->addChild(item);
+            }else{
+                localsTreeWidget->addTopLevelItem(item);
+            }
+        }
+
+        // Simple entries don't have children. Delete them.
+        QList<QTreeWidgetItem*> children = item->takeChildren();
+        qDeleteAll(children);
+
+        // Populate the item.
+        item->setText(0, name_text);
+        item->setText(1, arg_text);
+        item->setText(2, Seer::filterEscapes(value_text));
+        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
     }
 }
 

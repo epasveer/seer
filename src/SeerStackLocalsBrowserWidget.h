@@ -33,6 +33,7 @@ class SeerStackLocalsBrowserWidget : public QWidget, protected Ui::SeerStackLoca
         void                addStructVisualize                  (QString expression);
 
     protected:
+        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& name_text, const QString& arg_text, const QString& value_text);
         void                showEvent                           (QShowEvent* event);
 
     private:
