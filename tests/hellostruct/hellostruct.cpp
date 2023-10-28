@@ -25,21 +25,33 @@ struct Person {
 int main (int argc, char** argv) {
 
     Person me;
+    Person you;
 
-    me.name                  = "Pasveer, Ernie";
-    me.age                   = 60;
-    me.salary                = 0.25;
-    me.location.city         = "Houston";
-    me.location.state        = "Texas";
-    me.location.zip          = 77063;
-    me.location.cell         = (Cell*)malloc(sizeof(Cell));
-    me.location.cell->number = 2813877580;
+    me.name                   = "Pasveer, Ernie";
+    me.age                    = 60;
+    me.salary                 = 0.25;
+    me.location.city          = "Houston";
+    me.location.state         = "Texas";
+    me.location.zip           = 77063;
+    me.location.cell          = (Cell*)malloc(sizeof(Cell));
+    me.location.cell->number  = 2226669999;
+
+    you.name                  = "Pitt, Dirk";
+    you.age                   = 60;
+    you.salary                = 0.25;
+    you.location.city         = "Houston";
+    you.location.state        = "Texas";
+    you.location.zip          = 77063;
+    you.location.cell         = (Cell*)malloc(sizeof(Cell));
+    you.location.cell->number = 2226669999;
 
     std::cout << "'" << me.name << "', from '" << me.location.city << "', is " << me.age << " years old and makes " << me.salary << " per year." << std::endl;
 
     free(me.location.cell);
+    free(you.location.cell);
 
     me.location.cell = 0;
+    you.location.cell = 0;
 
     return 0;
 }
