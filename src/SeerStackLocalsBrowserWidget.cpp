@@ -7,6 +7,7 @@
 #include <QtGui/QFontDatabase>
 #include <QAction>
 #include <QtCore/QDebug>
+#include <QtGlobal>
 
 SeerStackLocalsBrowserWidget::SeerStackLocalsBrowserWidget (QWidget* parent) : QWidget(parent) {
 
@@ -84,9 +85,27 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
 
         // At this point, there are some new entries, some reused entries, and some unused ones.
         // Delete the unused ones. They are obsolete.
+        // Don't use qDeleteAll() here. It doesn't work as expected for items that are "found".
+        // Instead, get a list of matches and delete them from the bottom up.
         QList<QTreeWidgetItem*> matches = localsTreeWidget->findItems("unused", Qt::MatchExactly|Qt::MatchRecursive, 3);
 
-        qDeleteAll(matches);
+        while (matches.isEmpty() == false) {
+            foreach (QTreeWidgetItem* item, matches) {
+                if (item->childCount() == 0) {
+                    QTreeWidgetItem* parent = item->parent();
+                    if (parent) {
+                        parent->removeChild(item);
+                    }
+
+                    bool f = matches.removeOne(item);
+                    Q_ASSERT(f != false);
+
+                    delete item;
+
+                    break;
+                }
+            }
+        }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         localsTreeWidget->clear();
@@ -549,7 +568,9 @@ void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem
 
         // Simple entries don't have children. Delete them.
         QList<QTreeWidgetItem*> children = item->takeChildren();
-        qDeleteAll(children);
+        if (matches.size() > 0) {
+            qDeleteAll(children);
+        }
 
         // Populate the item.
         item->setText(0, name_text);

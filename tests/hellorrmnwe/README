@@ -1,0 +1,23 @@
+
+https://github.com/epasveer/seer/issues/181
+
+I can reproduce it like this:
+
+Create a segfaulting file, e.g. this mnwe.cpp file:
+
+    int main() {
+        int * i = nullptr;
+        *i = 42;
+
+        return 0;
+    }
+
+Compile as g++ -g -O0 mnwe.cpp -o mnwe
+
+Record the trace using rr: rr record --output-trace-dir=rrrun ./mnwe (you should see the segfault)
+
+Start seergdb with this trace: seergdb --rr rrrun
+
+When seergbd stops before main(), make sure that the 'Locals' tab is open
+Hit F8 to run the trace
+
