@@ -29,6 +29,8 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                evaluateVariableExpression          (int expressionid, QString expression);
 
     protected:
+        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& timestamp_text, const QString& name_text, const QString& value_text);
+
     private:
         QSet<int>           _ids;
 
