@@ -5,6 +5,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtCore/QRegularExpressionMatch>
 #include <QAction>
 #include <QtCore/QDebug>
 #include <QtGlobal>
@@ -52,8 +53,6 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
         //     {name=\"message\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"},
         //     {name=\"something\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"}
         // ]
-
-        //qDebug() << text;
 
         // Parse the text. Create a list of variables.
         QString frame_text = Seer::parseFirst(text, "variables=", '[', ']', false);
@@ -509,11 +508,32 @@ void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem
         }
     }
 
+    // Parse bookmarks.
+    QString capture0; // With bookends.
+    QString capture1; // Without.
+
+    QRegularExpression withaddress_re("^@0[xX][0-9a-fA-F]+: \\{(.*?)\\}$");
+    QRegularExpressionMatch withaddress_match = withaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+    if (withaddress_match.hasMatch()) {
+        capture0 = withaddress_match.captured(0);
+        capture1 = withaddress_match.captured(1);
+
+    }else{
+        QRegularExpression noaddress_re("^\\{(.*?)\\}$");
+        QRegularExpressionMatch noaddress_match   = noaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+        if (noaddress_match.hasMatch()) {
+            capture0 = noaddress_match.captured(0);
+            capture1 = noaddress_match.captured(1);
+        }
+    }
+
     // Add the complex entry to the tree. Reuse, if possible.
-    if (Seer::hasBookends(value_text, '{', '}')) {
+    if (capture0 != "" && capture1 != "") {
 
         // Remove bookends
-        QString text = Seer::filterBookends(value_text, '{', '}');
+        QString text = capture1;
 
         QTreeWidgetItem* item = 0;
 
@@ -543,6 +563,8 @@ void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem
 
         // Convert to a list of name/value pairs.
         QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
+
+        qDebug() << nv_pairs;
 
         // Go through each pair and add the name and its value to the tree.
         for (const auto& nv : nv_pairs) {
