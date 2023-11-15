@@ -20,11 +20,11 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     variablesTreeWidget->setSortingEnabled(false);
     variablesTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     variablesTreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    variablesTreeWidget->resizeColumnToContents(0); // id
-    variablesTreeWidget->resizeColumnToContents(1); // timestamp
-    variablesTreeWidget->resizeColumnToContents(2); // name
-    variablesTreeWidget->resizeColumnToContents(3); // value
-    variablesTreeWidget->setColumnHidden(0, true);  // Hide the 'id' column.
+    variablesTreeWidget->resizeColumnToContents(0); // timestamp
+    variablesTreeWidget->resizeColumnToContents(1); // name
+    variablesTreeWidget->resizeColumnToContents(2); // value
+    variablesTreeWidget->resizeColumnToContents(3); // id
+    variablesTreeWidget->setColumnHidden(3, true);  // Hide the 'id' column.
     variablesTreeWidget->clear();
 
     // Connect things.
@@ -32,6 +32,8 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                                         this, &SeerVariableLoggerBrowserWidget::handleAddLineEdit);
     QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteToolButton);
     QObject::connect(variableDeleteAllToolButton,    &QToolButton::clicked,                                             this, &SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemCollapsed,                                       this, &SeerVariableLoggerBrowserWidget::handleItemCollapsed);
+    QObject::connect(variablesTreeWidget,            &QTreeWidget::itemExpanded,                                        this, &SeerVariableLoggerBrowserWidget::handleItemExpanded);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                                         this, &SeerVariableLoggerBrowserWidget::handleItemEntered);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,                          this, &SeerVariableLoggerBrowserWidget::handleContextMenu);
 }
@@ -52,13 +54,24 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
         QString id_text    = text.section('^', 0,0);
         QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
-        if (_ids.contains(id_text.toInt()) == true) {
+        if (_ids.contains(id_text.toInt()) == false) {
+            QApplication::restoreOverrideCursor();
+            return;
+        }
 
-            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
 
-            if (matches.size() > 0) {
-                matches.first()->setText(3, Seer::filterEscapes(value_text));
-            }
+        if (matches.size() > 0) {
+
+            QTreeWidgetItem* match = matches[0];
+
+            Q_ASSERT(match->parent() == NULL);
+
+            QString timestamp_text = match->text(0);
+            QString name_text      = match->text(1);
+
+            // Populate the tree.
+            handleItemCreate(match, id_text, timestamp_text, name_text, value_text);
         }
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
@@ -72,11 +85,11 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
         if (_ids.contains(id_text.toInt()) == true) {
 
-            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
 
             if (matches.size() > 0) {
-                matches.first()->setText(2, ""); // Overwrite "name" with "" because it's not a valid "name".
-                matches.first()->setText(3, Seer::filterEscapes(msg_text));
+                matches.first()->setText(1, ""); // Overwrite "name" with "" because it's not a valid "name".
+                matches.first()->setText(2, Seer::filterEscapes(msg_text));
             }
         }
 
@@ -112,31 +125,16 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
         return;
     }
 
-    QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 0);
+    // Add new item. Will be filled in by handleText().
+    QTreeWidgetItem* item = new QTreeWidgetItem;
+    item->setText(0, QTime::currentTime().toString(Qt::TextDate));
+    item->setText(1, expression);
+    item->setText(2, "");
+    item->setText(3, id_text);
 
-    // Reuse existing item.
-    if (matches.size() > 0) {
-        matches.first()->setText(1, QTime::currentTime().toString(Qt::TextDate));
-        matches.first()->setText(2, "");
-        matches.first()->setText(3, "");
+    item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
-    // Add new item.
-    }else{
-        /*
-        QTreeWidgetItem* item = new QTreeWidgetItem;
-        item->setText(0, id_text);
-        item->setText(1, QTime::currentTime().toString(Qt::TextDate));
-        item->setText(2, expression);
-        item->setText(3, "");
-
-        item->setFont(3, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-
-        variablesTreeWidget->addTopLevelItem(item);
-        */
-
-        // Populate the tree.
-        handleItemCreate(0, timestamp_text, name_text, value_text);
-    }
+    variablesTreeWidget->addTopLevelItem(item);
 
     // Resize columns done later in handleText().
 }
@@ -159,17 +157,17 @@ void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
 
     //qDebug();
 
-    QString variable = variableAddLineEdit->text();
+    QString expression = variableAddLineEdit->text();
 
     variableAddLineEdit->clear();
 
-    if (variable != "") {
+    if (expression != "") {
 
         int id = Seer::createID();
 
         _ids.insert(id); // Keep track of which ones are entered.
 
-        emit evaluateVariableExpression(id, variable);
+        emit evaluateVariableExpression(id, expression);
     }
 }
 
@@ -202,69 +200,53 @@ void SeerVariableLoggerBrowserWidget::handleDeleteAllToolButton () {
     variablesTreeWidget->resizeColumnToContents(3);
 }
 
+void SeerVariableLoggerBrowserWidget::handleItemExpanded (QTreeWidgetItem* item) {
+
+    Q_UNUSED(item);
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
+void SeerVariableLoggerBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item) {
+
+    Q_UNUSED(item);
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
 
-    //qDebug() << item->text(0) << column;
+    //qDebug() << item->text(3) << column;
 
-    item->setToolTip(0, item->text(1) + " : " + item->text(2) + " : " + item->text(3));
+    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2));
 
     for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
     }
 }
 
-void SeerVariableLoggerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& timestamp_text, const QString& name_text, const QString& value_text) {
+void SeerVariableLoggerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& id_text, const QString& timestamp_text, const QString& name_text, const QString& value_text) {
 
-    // Instead of creating a new tree each time, we will reuse existing items, if they are there.
-    // This allows the expanded items to remain expanded. We start by looking for matches that
-    // may already be there. If there are matches, the code will reuse it.  If not, a new item
-    // is created by the code. Note, when searching, we only look at the current level. Not any
-    // children.
-    QList<QTreeWidgetItem*> matches;
-
-    if (parentItem == 0) {
-        matches = localsTreeWidget->findItems(name_text, Qt::MatchExactly, 0);
-    }else{
-        for (int i=0; i<parentItem->childCount(); i++) {
-            if (parentItem->child(i)->text(0) == name_text) {
-                matches.append(parentItem->child(i));
-            }
-        }
-    }
-
-    // Add the complex entry to the tree. Reuse, if possible.
+    // Add the complex entry to the tree.
     if (Seer::hasBookends(value_text, '{', '}')) {
 
         // Remove bookends
         QString text = Seer::filterBookends(value_text, '{', '}');
 
-        QTreeWidgetItem* item = 0;
-
-        // Use the privously created item. Or create a new one.
-        if (matches.size() > 0) {
-            item = matches[0];
-            item->setText(3, "reused");
-
-        }else{
-            item = new QTreeWidgetItem;
-            item->setText(3, "new");
-
-            // If we're dealing with a top-level item, attach it to the tree.
-            // Otherwise, attach it to the parent.
-            if (parentItem) {
-                parentItem->addChild(item);
-            }else{
-                localsTreeWidget->addTopLevelItem(item);
-            }
-        }
-
         // Set the flatvalue text.
-        item->setText(0, name_text);
-        item->setText(1, arg_text);
-        item->setText(2, Seer::filterEscapes(text));
-        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+        parentItem->setText(0, timestamp_text);
+        parentItem->setText(1, name_text);
+        parentItem->setText(2, Seer::filterEscapes(text));
+        parentItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+        parentItem->setText(3, id_text);
 
         // Convert to a list of name/value pairs.
         QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
@@ -274,40 +256,21 @@ void SeerVariableLoggerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentI
 
             QStringPair pair = Seer::parseNameValue(nv, '=');
 
-            handleItemCreate(item, pair.first, arg_text, pair.second);
+            // Create a new item and attach it to the parent.
+            QTreeWidgetItem* item = new QTreeWidgetItem;
+
+            handleItemCreate(item, id_text, timestamp_text, pair.first, pair.second);
+
+            parentItem->addChild(item);
         }
 
-    // Add the simple entry to the tree. Reuse, if possible.
+    // Add the simple entry to the tree.
     }else{
-        QTreeWidgetItem* item = 0;
-
-        // Use the privously created item. Or create a new one.
-        if (matches.size() > 0) {
-            item = matches[0];
-            item->setText(3, "reused");
-
-        }else{
-            item = new QTreeWidgetItem;
-            item->setText(3, "new");
-
-            // If we're dealing with a top-level item, attach it to the tree.
-            // Otherwise, attach it to the parent.
-            if (parentItem) {
-                parentItem->addChild(item);
-            }else{
-                localsTreeWidget->addTopLevelItem(item);
-            }
-        }
-
-        // Simple entries don't have children. Delete them.
-        QList<QTreeWidgetItem*> children = item->takeChildren();
-        qDeleteAll(children);
-
-        // Populate the item.
-        item->setText(0, name_text);
-        item->setText(1, arg_text);
-        item->setText(2, Seer::filterEscapes(value_text));
-        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+        parentItem->setText(0, timestamp_text);
+        parentItem->setText(1, name_text);
+        parentItem->setText(2, Seer::filterEscapes(value_text));
+        parentItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+        parentItem->setText(3, id_text);
     }
 }
 
@@ -361,7 +324,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
             text += '\n';
         }
 
-        text += items[i]->text(2) + ":" + items[i]->text(3);
+        text += items[i]->text(1) + ":" + items[i]->text(2);
     }
 
     clipboard->setText(text, QClipboard::Clipboard);

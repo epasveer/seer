@@ -18,7 +18,7 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
         void                refresh                             ();
 
     protected slots:
-        void                handleContextMenu                   (const QPoint&    pos);
+        void                handleContextMenu                   (const QPoint& pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
 
     signals:
