@@ -564,8 +564,6 @@ void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem
         // Convert to a list of name/value pairs.
         QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
 
-        qDebug() << nv_pairs;
-
         // Go through each pair and add the name and its value to the tree.
         for (const auto& nv : nv_pairs) {
 
