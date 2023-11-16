@@ -5,6 +5,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtCore/QRegularExpressionMatch>
 #include <QAction>
 #include <QtCore/QDebug>
 #include <QtGlobal>
@@ -52,8 +53,6 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
         //     {name=\"message\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"},
         //     {name=\"something\",arg=\"1\",value=\"\\\"Hello, World!\\\"\"}
         // ]
-
-        //qDebug() << text;
 
         // Parse the text. Create a list of variables.
         QString frame_text = Seer::parseFirst(text, "variables=", '[', ']', false);
@@ -223,14 +222,22 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
+    // Build up a variable string, incase it is a nested struct.
+    QTreeWidgetItem* i = item;
+    QString variable = item->text(0);
+    while (i->parent() != 0) {
+        variable = i->parent()->text(0) + "." + variable;
+        i = i->parent();
+    }
+
     // Handle adding a variable to log.
     if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << "addVariableLoggerExpression" << item->text(0);
+        //qDebug() << "addVariableLoggerExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableLoggerExpression(item->text(0));
+        if (variable != "") {
+            emit addVariableLoggerExpression(variable);
         }
 
         return;
@@ -239,11 +246,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAsteriskExpression" << item->text(0);
+        //qDebug() << "addVariableLoggerAsteriskExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableLoggerExpression(QString("*") + item->text(0));
+        if (variable != "") {
+            emit addVariableLoggerExpression(QString("*") + variable);
         }
 
         return;
@@ -252,11 +259,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAmpersandExpression" << item->text(0);
+        //qDebug() << "addVariableLoggerAmpersandExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableLoggerExpression(QString("&") + item->text(0));
+        if (variable != "") {
+            emit addVariableLoggerExpression(QString("&") + variable);
         }
 
         return;
@@ -265,11 +272,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << item->text(0);
+        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableLoggerExpression(QString("*&") + item->text(0));
+        if (variable != "") {
+            emit addVariableLoggerExpression(QString("*&") + variable);
         }
 
         return;
@@ -278,11 +285,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
-        //qDebug() << "addVariableTrackerExpression" << item->text(0);
+        //qDebug() << "addVariableTrackerExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableTrackerExpression(item->text(0));
+        if (variable != "") {
+            emit addVariableTrackerExpression(variable);
             emit refreshVariableTrackerValues();
         }
 
@@ -292,11 +299,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskExpression" << item->text(0);
+        //qDebug() << "addVariableTrackerAsteriskExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableTrackerExpression(QString("*") + item->text(0));
+        if (variable != "") {
+            emit addVariableTrackerExpression(QString("*") + variable);
             emit refreshVariableTrackerValues();
         }
 
@@ -306,11 +313,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAmpersandExpression" << item->text(0);
+        //qDebug() << "addVariableTrackerAmpersandExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableTrackerExpression(QString("&") + item->text(0));
+        if (variable != "") {
+            emit addVariableTrackerExpression(QString("&") + variable);
             emit refreshVariableTrackerValues();
         }
 
@@ -320,11 +327,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << item->text(0);
+        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addVariableTrackerExpression(QString("*&") + item->text(0));
+        if (variable != "") {
+            emit addVariableTrackerExpression(QString("*&") + variable);
             emit refreshVariableTrackerValues();
         }
 
@@ -334,11 +341,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
-        //qDebug() << "addMemoryVisualizer" << item->text(0);
+        //qDebug() << "addMemoryVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addMemoryVisualize(item->text(0));
+        if (variable != "") {
+            emit addMemoryVisualize(variable);
         }
 
         return;
@@ -347,11 +354,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryAsteriskVisualizerAction) {
 
-        //qDebug() << "addMemoryAsteriskVisualizer" << item->text(0);
+        //qDebug() << "addMemoryAsteriskVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addMemoryVisualize(QString("*") + item->text(0));
+        if (variable != "") {
+            emit addMemoryVisualize(QString("*") + variable);
         }
 
         return;
@@ -360,11 +367,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryAmpersandVisualizerAction) {
 
-        //qDebug() << "addMemoryAmpersandVisualizer" << item->text(0);
+        //qDebug() << "addMemoryAmpersandVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addMemoryVisualize(QString("&") + item->text(0));
+        if (variable != "") {
+            emit addMemoryVisualize(QString("&") + variable);
         }
 
         return;
@@ -373,11 +380,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addArrayVisualizerAction) {
 
-        //qDebug() << "addArrayVisualizer" << item->text(0);
+        //qDebug() << "addArrayVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addArrayVisualize(item->text(0));
+        if (variable != "") {
+            emit addArrayVisualize(variable);
         }
 
         return;
@@ -386,11 +393,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addArrayAsteriskVisualizerAction) {
 
-        //qDebug() << "addArrayAsteriskVisualizer" << item->text(0);
+        //qDebug() << "addArrayAsteriskVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addArrayVisualize(QString("*") + item->text(0));
+        if (variable != "") {
+            emit addArrayVisualize(QString("*") + variable);
         }
 
         return;
@@ -399,11 +406,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addArrayAmpersandVisualizerAction) {
 
-        //qDebug() << "addArrayAmpersandVisualizer" << item->text(0);
+        //qDebug() << "addArrayAmpersandVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addArrayVisualize(QString("&") + item->text(0));
+        if (variable != "") {
+            emit addArrayVisualize(QString("&") + variable);
         }
 
         return;
@@ -412,11 +419,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding struct to visualize.
     if (action == addStructVisualizerAction) {
 
-        //qDebug() << "addStructVisualizer" << item->text(0);
+        //qDebug() << "addStructVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addStructVisualize(item->text(0));
+        if (variable != "") {
+            emit addStructVisualize(variable);
         }
 
         return;
@@ -425,11 +432,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding struct to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
-        //qDebug() << "addStructAsteriskVisualizer" << item->text(0);
+        //qDebug() << "addStructAsteriskVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addStructVisualize(QString("*") + item->text(0));
+        if (variable != "") {
+            emit addStructVisualize(QString("*") + variable);
         }
 
         return;
@@ -438,11 +445,11 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding struct to visualize.
     if (action == addStructAmpersandVisualizerAction) {
 
-        //qDebug() << "addStructAmpersandVisualizer" << item->text(0);
+        //qDebug() << "addStructAmpersandVisualizer" << variable;
 
         // Emit the signals.
-        if (item->text(0) != "") {
-            emit addStructVisualize(QString("&") + item->text(0));
+        if (variable != "") {
+            emit addStructVisualize(QString("&") + variable);
         }
 
         return;
@@ -501,11 +508,32 @@ void SeerStackLocalsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem
         }
     }
 
+    // Parse bookmarks.
+    QString capture0; // With bookends.
+    QString capture1; // Without.
+
+    QRegularExpression withaddress_re("^@0[xX][0-9a-fA-F]+: \\{(.*?)\\}$");
+    QRegularExpressionMatch withaddress_match = withaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+    if (withaddress_match.hasMatch()) {
+        capture0 = withaddress_match.captured(0);
+        capture1 = withaddress_match.captured(1);
+
+    }else{
+        QRegularExpression noaddress_re("^\\{(.*?)\\}$");
+        QRegularExpressionMatch noaddress_match   = noaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+        if (noaddress_match.hasMatch()) {
+            capture0 = noaddress_match.captured(0);
+            capture1 = noaddress_match.captured(1);
+        }
+    }
+
     // Add the complex entry to the tree. Reuse, if possible.
-    if (Seer::hasBookends(value_text, '{', '}')) {
+    if (capture0 != "" && capture1 != "") {
 
         // Remove bookends
-        QString text = Seer::filterBookends(value_text, '{', '}');
+        QString text = capture1;
 
         QTreeWidgetItem* item = 0;
 
