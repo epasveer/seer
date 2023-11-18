@@ -19,6 +19,8 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
 
     protected slots:
         void                handleContextMenu                   (const QPoint& pos);
+        void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleItemCollapsed                 (QTreeWidgetItem* item);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
 
     signals:
@@ -31,6 +33,7 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
         void                addStructVisualize                  (QString expression);
 
     protected:
+        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& level_text, const QString& name_text, const QString& value_text);
         void                showEvent                           (QShowEvent* event);
 
     private:

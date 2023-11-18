@@ -21,9 +21,14 @@ struct Person {
     struct Location  location;
 };
 
-void print(const Location& where) {
+void print(const Person& person, const Location& where) {
 
-    std::cout << "From '" << where.city << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
+    std::cout << "'" << person.name << "' from '" << where.city << "'." << std::endl;
 }
 
 
@@ -49,7 +54,7 @@ int main (int argc, char** argv) {
 
     std::cout << "'" << me.name << "', from '" << me.location.city << "', is " << me.age << " years old and makes " << me.salary << " per year." << std::endl;
 
-    print(where);
+    print(me, where);
 
     free(me.location.cell);
     free(where.cell);
