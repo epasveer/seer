@@ -23,6 +23,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleDeleteToolButton          ();
         void                handleDeleteAllToolButton       ();
         void                handleItemEntered               (QTreeWidgetItem* item, int column);
+        void                handleItemExpanded              (QTreeWidgetItem* item);
+        void                handleItemCollapsed             (QTreeWidgetItem* item);
         void                handleContextMenu               (const QPoint& pos);
 
     signals:
@@ -32,6 +34,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                deleteVariableExpressions       (QString expressionids);
 
     protected:
+        void                handleItemCreate                (QTreeWidgetItem* item,       const QString& value_text);
+        void                handleItemCreate                (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text);
         void                showEvent                       (QShowEvent* event);
 
     private:
