@@ -1,8 +1,7 @@
 
 # Seer Change Log
 
-## [2.3beta] - 2023-XX-XX
-* Perpare for the 2.3 release cycle.
+## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
 * Add --gdb-program and --gdb-arguments to command line to override settings from Seer's config.
 * Fixed a rare bug with blank lines from gdb causing a segv in GdbMonitor.
@@ -10,6 +9,13 @@
 * Add option to reload source file if it changes.
 * Tighten up the layout by removing some needless whitespace.
 * Move gdb messages to a tab in the breakpoints window.
+    - Options to raise on every message, never, or important messages.
+* Add C++ level (11 or 17) depending on qt5 or qt6 compile.
+* Fixed up column resizing for the Variable logger (#173)
+* Use monspace font, where it makes sense (#175)
+* Allow copy to clipboard (#176)
+* Fixed hovering a variable name and value (#179)
+* Add nested struct viewing in "locals", "arguments", "logger", and "tracker" tabs. (#180)
 
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.

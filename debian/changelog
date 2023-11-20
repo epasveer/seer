@@ -1,6 +1,6 @@
-seergdb (2.3beta) UNRELEASED; urgency=medium
+seergdb (2.3) UNRELEASED; urgency=medium
 
-  * Prepare for the 2.3 release cycle.
+  * Release Seer version 2.3
 
- -- Ernie Pasveer <epasveer@att.net>  Thu, 7 Sep 2023 22:18:38 +0200
+ -- Ernie Pasveer <epasveer@att.net>  Sun, 11 Nov 2023 22:18:38 +0200
 
