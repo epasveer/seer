@@ -1,0 +1,7 @@
+
+Simple program to show gdb's "pretty print" feature on custom data types.
+In this case, two structs. One struct contains the second.
+
+Gdb's "pretty print" will use the custom printers instead of gdb's default.
+
+
