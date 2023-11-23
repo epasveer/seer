@@ -29,7 +29,11 @@ namespace Seer {
             tmp.replace("\\n",  "\n");
         }
 
-        return tmp;
+        if (tmp == str) {
+            return tmp;
+        }
+
+        return Seer::filterEscapes(tmp, handleCR);
     }
 
     QStringList filterEscapes (const QStringList& strings, bool handleCR) {
