@@ -18,15 +18,11 @@ class QStringPrinter:
             size = self.val['d']['size']
             if size == 0:
                 return ret
-            isQt4 = has_field(self.val['d'], 'data') # Qt4 has d->data, Qt5 doesn't.
-            isQt6 = has_field(self.val['d'], 'ptr') # Qt6 has d->ptr, Qt5 doesn't.
-            if isQt4:
-                dataAsCharPointer = self.val['d']['data'].cast(gdb.lookup_type("char").pointer())
-            elif isQt6:
-                dataAsCharPointer = self.val['d']['ptr'].cast(gdb.lookup_type("char").pointer())
-            else:
-                dataAsCharPointer = (self.val['d'] + 1).cast(gdb.lookup_type("char").pointer())
+
+            dataAsCharPointer = self.val['d']['ptr'].cast(gdb.lookup_type("char").pointer())
+
             ret = dataAsCharPointer.string(encoding = 'UTF-16', length = size * 2)
+
         except Exception as e:
             # swallow the exception and return empty string
             # pass
