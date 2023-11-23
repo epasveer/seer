@@ -1,0 +1,3 @@
+break -source /nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp -line 23
+break -source /nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp -line 29
+  condition $bpnum nextTerm > 10
