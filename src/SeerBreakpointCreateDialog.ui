@@ -161,7 +161,7 @@
       <item row="0" column="2">
        <widget class="QCheckBox" name="conditionalCheckBox">
         <property name="text">
-         <string>Conditional</string>
+         <string>Condition if:</string>
         </property>
        </widget>
       </item>

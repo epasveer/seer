@@ -297,6 +297,102 @@ namespace Seer {
         return list;
     }
 
+    QStringList parseCommaList (const QString& str) {
+
+        //
+        // number="2",type="breakpoint",disp="keep",enabled="y",addr="0x00000000004016cd",func="main(int, char**)",file="hellofibonacci.cpp",fullname="/nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp",line="34",thread-groups=["i1"],cond="$_streq(s.c_str(), "21")",times="0",original-location="hellofibonacci.cpp:34"
+        //
+        // returns...
+        //
+        // number="2"
+        // type="breakpoint"
+        // disp="keep"
+        // enabled="y"
+        // addr="0x00000000004016cd"
+        // func="main(int char**)"
+        // file="hellofibonacci.cpp"
+        // fullname="/nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp"
+        // line="34"
+        // thread-groups=["i1"]
+        // cond="$_streq(s.c_str() "21")"
+        // times="0"
+        // original-location="hellofibonacci.cpp:34"
+        //
+
+        QStringList list;
+        int         index        = 0;
+        int         state        = 0;
+        int         start        = 0;
+        int         end          = 0;
+        bool        inquotes     = false;
+        int         bracketlevel = 0;
+
+        while (index < str.length()) {
+
+            // Handle start of field.
+            if (state == 0) {     // Start of field.
+                start = index;
+                end   = index;
+                state = 1; // Look for end of field (a command or eol).
+
+                continue;
+            }
+
+            // Handle end of field.
+            if (state == 1) {
+
+                // Handle """
+                if (str[index] == '"') {
+                    if (inquotes == false) {
+                        inquotes = true;
+                    }else{
+                        inquotes = false;
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle ","
+                if (str[index] == ',') {
+                    if (inquotes) {
+                        index++; continue;
+                    }
+
+                    // Extract field, only if the bracket level is at zero.
+                    // Otherwise, continue.
+                    if (bracketlevel == 0) {
+                        end = index;
+
+                        QString field = str.mid(start, end-start);
+
+                        list.append(field.trimmed());
+
+                        state = 0; // Look for the next field.
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle any other character.
+                index++; continue;
+            }
+
+            qDebug() << "Bad state!";
+            index++; continue;
+        }
+
+        // Handle last field, if any.
+        if (state == 1) {
+            end = index;
+
+            QString field = str.mid(start, end-start);
+
+            list.append(field.trimmed());
+        }
+
+        return list;
+    }
+
     QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
 
         // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
@@ -402,11 +498,24 @@ namespace Seer {
         return list;
     }
 
+    QMap<QString,QString> createKeyValueMap (const QStringList& list, QChar separator) {
+
+        QMap<QString,QString> map;
+
+        for (const auto& i : list) {
+            QStringPair pair = parseNameValue(i, separator);
+
+            map[pair.first] = pair.second;
+        }
+
+        return map;
+    }
+
     //
     //
     //
 
-    QStringPair parseNameValue  (const QString& str, QChar separator) {
+    QStringPair parseNameValue (const QString& str, QChar separator) {
 
         // name = "Pasveer, Ernie"
         //

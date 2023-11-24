@@ -26,7 +26,12 @@ int main (int argc, char* argv[]) {
     nextTerm = t1 + t2;
 
     while (nextTerm <= n) {
-        std::cout << nextTerm << ", ";
+
+        std::string s = "";
+
+        s = std::to_string(nextTerm);
+
+        std::cout << s << ", ";
         t1 = t2;
         t2 = nextTerm;
         nextTerm = t1 + t2;
