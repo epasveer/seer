@@ -96,6 +96,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption breakfunctionOption(QStringList() << "bf" << "break-function", "", "breakpointfunction");
     parser.addOption(breakfunctionOption);
 
+    QCommandLineOption breaksourceOption(QStringList() << "bs" << "break-source", "", "breakpointsource");
+    parser.addOption(breaksourceOption);
+
     QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
     parser.addOption(showAssemblyTabOption);
 
@@ -155,6 +158,7 @@ int main (int argc, char* argv[]) {
     QString executableSymbolFilename;
     QString executableBreakpointsFilename;
     QString executableBreakpointFunctionName;
+    QString executableBreakpointSourceName;
     QString executableShowAssemblyTab;
     QString executableStartAddressRandomize;
     QString executableNonStopMode;
@@ -184,6 +188,11 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(breakfunctionOption)) {
         executableBreakpointFunctionName = parser.value(breakfunctionOption);
         breakMode  = "infunction";
+    }
+
+    if (parser.isSet(breakfunctionOption)) {
+        executableBreakpointSourceName = parser.value(breaksourceOption);
+        breakMode  = "insource";
     }
 
     if (parser.isSet(showAssemblyTabOption)) {
@@ -266,6 +275,10 @@ int main (int argc, char* argv[]) {
 
     if (executableBreakpointFunctionName != "") {
         seer.setExecutableBreakpointFunctionName(executableBreakpointFunctionName);
+    }
+
+    if (executableBreakpointSourceName != "") {
+        seer.setExecutableBreakpointSourceName(executableBreakpointSourceName);
     }
 
     if (executableShowAssemblyTab != "") {

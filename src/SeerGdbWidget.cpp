@@ -435,6 +435,14 @@ const QString& SeerGdbWidget::executableBreakpointFunctionName () const {
     return _executableBreakpointFunctionName;
 }
 
+void SeerGdbWidget::setExecutableBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+    _executableBreakpointSourceName = sourceFilenameAndLineno;
+}
+
+const QString& SeerGdbWidget::executableBreakpointSourceName () const {
+    return _executableBreakpointSourceName;
+}
+
 void SeerGdbWidget::setExecutablePid (int pid) {
     _executablePid = pid;
 }
@@ -895,7 +903,7 @@ void SeerGdbWidget::handleGdbExit () {
 
 void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
-    qCDebug(LC) << "Starting 'gdb run/start'.";
+    qCDebug(LC) << "Starting 'gdb run/start':" << breakMode;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -1003,10 +1011,14 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
             if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
-                handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
+                handleGdbBreakpointInsert("*" + executableBreakpointFunctionName());
             }else{
-                handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
+                handleGdbBreakpointInsert("-f --function " + executableBreakpointFunctionName());
             }
+        }
+
+        if (_executableBreakMode == "insource" && executableBreakpointSourceName() != "") {
+            handleGdbBreakpointInsert("-t " + executableBreakpointSourceName());
         }
 
         // Run any 'post' commands after program is loaded.

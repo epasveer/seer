@@ -149,6 +149,8 @@ QString SeerDebugDialog::breakpointsFilename () const {
 
 void SeerDebugDialog::setBreakpointMode (const QString& mode) {
 
+    qDebug() << mode;
+
     if (mode == "none") {
         noBreakpointRadioButton->setChecked(true);
         return;
@@ -177,7 +179,16 @@ QString SeerDebugDialog::breakpointMode () const {
 }
 
 void SeerDebugDialog::setBreakpointFunctionName (const QString& nameoraddress) {
+
+    qDebug() << nameoraddress;
+
     breakpointInFunctionLineEdit->setText(nameoraddress);
+
+    if (nameoraddress == "") {
+        noBreakpointRadioButton->setChecked(true);
+    }else{
+        breakpointInFunctionRadioButton->setChecked(true);
+    }
 }
 
 QString SeerDebugDialog::breakpointFunctionName () const {
