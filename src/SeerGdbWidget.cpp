@@ -1995,7 +1995,9 @@ void SeerGdbWidget::handleGdbBreakpointCondition (QString breakpoint, QString co
         return;
     }
 
-    handleGdbCommand("-break-condition " + breakpoint + " " + condition);
+    QString str = condition.replace('"', "\\\""); // Quote " characters.
+
+    handleGdbCommand("-break-condition " + breakpoint + " \"" + condition + "\"");
     handleGdbGenericpointList();
 }
 
