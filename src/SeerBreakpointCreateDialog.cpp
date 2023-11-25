@@ -180,7 +180,10 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
 
     if (conditionalEnabled()) {
         if (conditionalText() != "") {
-            breakpointParameters += " -c \"" + conditionalText() + "\"";
+
+            QString str = conditionalText().replace('"', "\\\""); // Quote " characters.
+
+            breakpointParameters += " -c \"" + str + "\"";
         }
     }
 
