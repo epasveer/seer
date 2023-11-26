@@ -4,6 +4,7 @@
 ## [2.4beta] - 2023-XX-XX
 * Prepare for the 2.4 release cycle.
 * Fixed string compares for breakpoint conditions (#184)
+* Added '--bs' command line option to specify a breakpoint at a source.cpp:lineno
 
 ## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
