@@ -14,52 +14,6 @@
    <string>Select Executable to Debug</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="executableWorkingDirectoryGroupBox">
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="title">
-      <string>Working Directory</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QLineEdit" name="executableWorkingDirectoryLineEdit">
-          <property name="toolTip">
-           <string>The working directory path to tell GDB. Default current directory.</string>
-          </property>
-          <property name="placeholderText">
-           <string>The working directory path to tell GDB. Default current directory.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="executableWorkingDirectoryToolButton">
-          <property name="toolTip">
-           <string>Open a dialog to select a path.</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="executableNameGroupBox">
      <property name="title">
@@ -116,16 +70,6 @@
        </layout>
       </item>
      </layout>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
    <item row="1" column="0">
@@ -186,6 +130,52 @@
      </layout>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="executableWorkingDirectoryGroupBox">
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="title">
+      <string>Working Directory</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLineEdit" name="executableWorkingDirectoryLineEdit">
+          <property name="toolTip">
+           <string>The working directory path to tell GDB. Default current directory.</string>
+          </property>
+          <property name="placeholderText">
+           <string>The working directory path to tell GDB. Default current directory.</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="executableWorkingDirectoryToolButton">
+          <property name="toolTip">
+           <string>Open a dialog to select a path.</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="3" column="0">
     <widget class="QGroupBox" name="launchMethodGroupBox">
      <property name="sizePolicy">
@@ -197,8 +187,38 @@
      <property name="title">
       <string>Launch Method</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
+     <layout class="QGridLayout" name="gridLayout_12">
+      <item row="1" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPlainTextEdit" name="preCommandsPlainTextEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>40</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="placeholderText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="postCommandsPlainTextEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>40</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="placeholderText">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
        <widget class="QTabWidget" name="runModeTabWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -207,7 +227,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="runTab">
          <property name="sizePolicy">
@@ -219,7 +239,45 @@
          <attribute name="title">
           <string>Run</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_9">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Run and debug an executable.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QToolButton" name="helpRunToolButton">
+              <property name="toolTip">
+               <string>Help for Run launch method.</string>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resource.qrc">
+                <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_6">
             <item row="0" column="0">
@@ -290,59 +348,9 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
-           <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="showAsseblyTabCheckBox">
-              <property name="toolTip">
-               <string>Show Assembly tab at startup.</string>
-              </property>
-              <property name="text">
-               <string>Show Assembly tab</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QCheckBox" name="nonStopModeCheckBox">
-              <property name="toolTip">
-               <string>Allow other threads to continue if any thread reaches a breakpoint.</string>
-              </property>
-              <property name="text">
-               <string>Non-stop mode</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QCheckBox" name="randomizeStartAddressCheckBox">
-              <property name="toolTip">
-               <string>Randomize the process start address.</string>
-              </property>
-              <property name="text">
-               <string>Randomize start address</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="2" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QRadioButton" name="noBreakpointRadioButton">
-              <property name="toolTip">
-               <string>No initial breakpoint.</string>
-              </property>
-              <property name="text">
-               <string>No breakpoint</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">breakpointButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
              <widget class="QRadioButton" name="breakpointInMainRadioButton">
               <property name="toolTip">
                <string>Set a breakpoint in &quot;main&quot;.</string>
@@ -355,7 +363,7 @@
               </attribute>
              </widget>
             </item>
-            <item>
+            <item row="1" column="0">
              <widget class="QRadioButton" name="breakpointInFunctionRadioButton">
               <property name="toolTip">
                <string>Set a breakpoint in a function or at an address.</string>
@@ -368,7 +376,7 @@
               </attribute>
              </widget>
             </item>
-            <item>
+            <item row="1" column="1">
              <widget class="QLineEdit" name="breakpointInFunctionLineEdit">
               <property name="toolTip">
                <string>The breakpoint function or address.</string>
@@ -384,43 +392,97 @@
               </property>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="breakpointAtSourceRadioButton">
+              <property name="toolTip">
+               <string>Set a breakpoint at a line number in a source file.</string>
+              </property>
+              <property name="text">
+               <string>Break at</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">breakpointButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="breakpointAtSourceLineEdit">
+              <property name="toolTip">
+               <string>The breakpoint using filename and lineno.</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="placeholderText">
+               <string>sourcefile.cpp:line</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="noBreakpointRadioButton">
+              <property name="toolTip">
+               <string>No initial breakpoint.</string>
+              </property>
+              <property name="text">
+               <string>No breakpoint</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">breakpointButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
            </layout>
           </item>
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item row="3" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QLabel" name="label_3">
+             <widget class="QCheckBox" name="showAsseblyTabCheckBox">
+              <property name="toolTip">
+               <string>Show Assembly tab at startup.</string>
+              </property>
               <property name="text">
-               <string>Run and debug an executable.</string>
+               <string>Show Assembly tab</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_5">
+             <widget class="QCheckBox" name="nonStopModeCheckBox">
+              <property name="toolTip">
+               <string>Allow other threads to continue if any thread reaches a breakpoint.</string>
+              </property>
+              <property name="text">
+               <string>Non-stop mode</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="randomizeStartAddressCheckBox">
+              <property name="toolTip">
+               <string>Randomize the process start address.</string>
+              </property>
+              <property name="text">
+               <string>Randomize start address</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_9">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>258</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
-            </item>
-            <item>
-             <widget class="QToolButton" name="helpRunToolButton">
-              <property name="toolTip">
-               <string>Help for Run launch method.</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset resource="resource.qrc">
-                <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -471,21 +533,12 @@
           </item>
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="0" column="3">
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="0" column="0">
+             <widget class="QLabel" name="attachProgramPidLabel">
+              <property name="text">
+               <string>Process PID</string>
               </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>248</width>
-                <height>24</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
             </item>
             <item row="0" column="1">
              <widget class="QLineEdit" name="attachProgramPidLineEdit">
@@ -494,6 +547,12 @@
                 <horstretch>100</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="toolTip">
                <string>The process pid.</string>
@@ -509,14 +568,33 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="attachProgramPidLabel">
+            <item row="0" column="2">
+             <widget class="QToolButton" name="attachProgramPidToolButton">
+              <property name="toolTip">
+               <string>Open a dialog to select a pid on the local system.</string>
+              </property>
               <property name="text">
-               <string>Process PID</string>
+               <string>...</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="0" column="3">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>468</width>
+                <height>24</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="3">
              <spacer name="verticalSpacer_3">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -528,16 +606,6 @@
                </size>
               </property>
              </spacer>
-            </item>
-            <item row="0" column="2">
-             <widget class="QToolButton" name="attachProgramPidToolButton">
-              <property name="toolTip">
-               <string>Open a dialog to select a pid on the local system.</string>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-             </widget>
             </item>
            </layout>
           </item>
@@ -884,33 +952,17 @@
         </widget>
        </widget>
       </item>
-      <item>
-       <widget class="QPlainTextEdit" name="preCommandsPlainTextEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>40</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPlainTextEdit" name="postCommandsPlainTextEdit">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>40</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>
@@ -920,6 +972,43 @@
   <zorder>executableWorkingDirectoryGroupBox</zorder>
   <zorder>launchMethodGroupBox</zorder>
  </widget>
+ <tabstops>
+  <tabstop>executableNameLineEdit</tabstop>
+  <tabstop>executableNameToolButton</tabstop>
+  <tabstop>executableSymbolNameLineEdit</tabstop>
+  <tabstop>executableSymbolNameToolButton</tabstop>
+  <tabstop>executableWorkingDirectoryLineEdit</tabstop>
+  <tabstop>executableWorkingDirectoryToolButton</tabstop>
+  <tabstop>runModeTabWidget</tabstop>
+  <tabstop>helpRunToolButton</tabstop>
+  <tabstop>runProgramArgumentsLineEdit</tabstop>
+  <tabstop>loadBreakpointsFilenameLineEdit</tabstop>
+  <tabstop>loadBreakpointsFilenameToolButton</tabstop>
+  <tabstop>breakpointInMainRadioButton</tabstop>
+  <tabstop>breakpointInFunctionRadioButton</tabstop>
+  <tabstop>breakpointInFunctionLineEdit</tabstop>
+  <tabstop>breakpointAtSourceRadioButton</tabstop>
+  <tabstop>breakpointAtSourceLineEdit</tabstop>
+  <tabstop>noBreakpointRadioButton</tabstop>
+  <tabstop>showAsseblyTabCheckBox</tabstop>
+  <tabstop>nonStopModeCheckBox</tabstop>
+  <tabstop>randomizeStartAddressCheckBox</tabstop>
+  <tabstop>preCommandsPlainTextEdit</tabstop>
+  <tabstop>postCommandsPlainTextEdit</tabstop>
+  <tabstop>helpAttachToolButton</tabstop>
+  <tabstop>attachProgramPidLineEdit</tabstop>
+  <tabstop>attachProgramPidToolButton</tabstop>
+  <tabstop>helpConnectToolButton</tabstop>
+  <tabstop>connectProgramHostPortLineEdit</tabstop>
+  <tabstop>helpRRToolButton</tabstop>
+  <tabstop>rrTraceDirectoryLineEdit</tabstop>
+  <tabstop>rrLoadTraceDirectoryToolButton</tabstop>
+  <tabstop>rrLoadBreakpointsFilenameLineEdit</tabstop>
+  <tabstop>rrLoadBreakpointsFilenameToolButton</tabstop>
+  <tabstop>helpCorefileToolButton</tabstop>
+  <tabstop>loadCoreFilenameLineEdit</tabstop>
+  <tabstop>loadCoreFilenameToolButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>

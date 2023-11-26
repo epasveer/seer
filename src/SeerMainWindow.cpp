@@ -284,6 +284,14 @@ const QString& SeerMainWindow::executableBreakpointFunctionName () const {
     return gdbWidget->executableBreakpointFunctionName();
 }
 
+void  SeerMainWindow::setExecutableBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+    gdbWidget->setExecutableBreakpointSourceName(sourceFilenameAndLineno);
+}
+
+const QString& SeerMainWindow::executableBreakpointSourceName () const {
+    return gdbWidget->executableBreakpointSourceName();
+}
+
 void SeerMainWindow::setExecutableShowAssemblyTab (bool flag) {
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(flag);
 }
@@ -467,8 +475,11 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setExecutableSymbolName(executableSymbolName());
     dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
     dlg.setExecutableArguments(executableArguments());
+    dlg.setLaunchMode(executableLaunchMode());
+    dlg.setBreakpointMode(executableBreakMode());
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
+    dlg.setBreakpointSourceName(executableBreakpointSourceName());
     dlg.setShowAssemblyTab(executableShowAssemblyTab());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
@@ -476,8 +487,6 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setConnectHostPort(executableConnectHostPort());
     dlg.setRRTraceDirectory(executableRRTraceDirectory());
     dlg.setCoreFilename(executableCoreFilename());
-    dlg.setLaunchMode(executableLaunchMode());
-    dlg.setBreakpointMode(executableBreakMode());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
     dlg.setProjectFilename(projectFilename());
@@ -503,6 +512,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableArguments(dlg.executableArguments());
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
+    setExecutableBreakpointSourceName(dlg.breakpointSourceName());
     setExecutableShowAssemblyTab(dlg.showAssemblyTab());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
@@ -742,14 +752,21 @@ void SeerMainWindow::handleStartExecutable () {
     }else{
 
         QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+        QString breaksource   = gdbWidget->executableBreakpointSourceName();
 
-        // No break function, attempt to stop in "main".
-        if (breakfunction == "") {
-            gdbWidget->handleGdbRunExecutable("inmain");
+        // Stop in function?
+        if (breakfunction != "") {
 
-            // Otherwise, attempt to stop in the function.
-        }else{
             gdbWidget->handleGdbRunExecutable("infunction");
+
+        // Stop at source:line?
+        }else if (breaksource != "") {
+
+            gdbWidget->handleGdbRunExecutable("insource");
+
+        // Otherwise, attempt to stop in "main".
+        }else{
+            gdbWidget->handleGdbRunExecutable("inmain");
         }
     }
 }

@@ -1,6 +1,10 @@
 
 # Seer Change Log
 
+## [2.4beta] - 2023-XX-XX
+* Prepare for the 2.4 release cycle.
+* Fixed string compares for breakpoint conditions (#184)
+
 ## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
 * Add --gdb-program and --gdb-arguments to command line to override settings from Seer's config.

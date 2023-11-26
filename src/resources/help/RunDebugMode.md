@@ -15,11 +15,18 @@ In this mode, Seer needs:
 
 ### What can you do?
 There are a couple gdb settings that you can choose from when running the executable.
-The main one, though, is the initial breakpoint, which there are three ways:
+The main one, though, is the initial breakpoint, which there are four ways:
 
-* No initial breakpoint. The program is started and executes without any breakpoints unless they are specified in the optional breakpoint file.
 * Break in 'main'. The program is started and breaks in the program's main function.
+  The definition of 'main' is language dependant. Seer/gdb will stop in the initial
+  function for that language.
 * Break in 'function'. The program is started and breaks in a named function or at an address.
+* Break at 'source'. The program is started and breaks at a line number of a source file.
+    eg: myprog.cpp:36
+* No initial breakpoint. The program is started and executes without any breakpoints unless
+  they are specified in the optional breakpoint file. The program will run til the end or when it
+  encounters a signal or breakpoint. No source files will be loaded until a signal or breakpoint
+  is encountered.
 
 From this point, you can debug the process as normal (stepping and setting breakpoints, etc...)
 

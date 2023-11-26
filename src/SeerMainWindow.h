@@ -33,6 +33,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableBreakpointsFilename       () const;
         void                        setExecutableBreakpointFunctionName (const QString& nameoraddress);
         const QString&              executableBreakpointFunctionName    () const;
+        void                        setExecutableBreakpointSourceName   (const QString& sourceFilenameAndLineno);
+        const QString&              executableBreakpointSourceName      () const;
         void                        setExecutableShowAssemblyTab        (bool flag);
         bool                        executableShowAssemblyTab           () const;
         void                        setExecutableRandomizeStartAddress  (bool flag);
