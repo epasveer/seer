@@ -479,6 +479,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setBreakpointMode(executableBreakMode());
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
+    dlg.setBreakpointSourceName(executableBreakpointSourceName());
     dlg.setShowAssemblyTab(executableShowAssemblyTab());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
@@ -511,6 +512,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableArguments(dlg.executableArguments());
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
+    setExecutableBreakpointSourceName(dlg.breakpointSourceName());
     setExecutableShowAssemblyTab(dlg.showAssemblyTab());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());

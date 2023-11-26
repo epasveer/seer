@@ -21,6 +21,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Set up the UI.
     setupUi(this);
 
+    buttonBox->button(QDialogButtonBox::Ok)->setText("Launch");
+
     // Setup the widgets
     setExecutableName("");
     setExecutableSymbolName("");
@@ -149,8 +151,6 @@ QString SeerDebugDialog::breakpointsFilename () const {
 
 void SeerDebugDialog::setBreakpointMode (const QString& mode) {
 
-    qDebug() << mode;
-
     if (mode == "none") {
         noBreakpointRadioButton->setChecked(true);
         return;
@@ -160,9 +160,13 @@ void SeerDebugDialog::setBreakpointMode (const QString& mode) {
     }else if (mode == "infunction") {
         breakpointInFunctionRadioButton->setChecked(true);
         return;
+    }else if (mode == "insource") {
+        breakpointAtSourceRadioButton->setChecked(true);
+        return;
     }
 
-    noBreakpointRadioButton->setChecked(true);
+    // Default of "inmain".
+    breakpointInMainRadioButton->setChecked(true);
 }
 
 QString SeerDebugDialog::breakpointMode () const {
@@ -173,26 +177,37 @@ QString SeerDebugDialog::breakpointMode () const {
         return "inmain";
     }else if (breakpointInFunctionRadioButton->isChecked()) {
         return "infunction";
+    }else if (breakpointAtSourceRadioButton->isChecked()) {
+        return "insource";
     }
 
-    return "none";
+    return "inmain";
 }
 
 void SeerDebugDialog::setBreakpointFunctionName (const QString& nameoraddress) {
 
-    qDebug() << nameoraddress;
-
     breakpointInFunctionLineEdit->setText(nameoraddress);
 
-    if (nameoraddress == "") {
-        noBreakpointRadioButton->setChecked(true);
-    }else{
+    if (nameoraddress != "") {
         breakpointInFunctionRadioButton->setChecked(true);
     }
 }
 
 QString SeerDebugDialog::breakpointFunctionName () const {
     return breakpointInFunctionLineEdit->text();
+}
+
+void SeerDebugDialog::setBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+
+    breakpointAtSourceLineEdit->setText(sourceFilenameAndLineno);
+
+    if (sourceFilenameAndLineno != "") {
+        breakpointAtSourceRadioButton->setChecked(true);
+    }
+}
+
+QString SeerDebugDialog::breakpointSourceName () const {
+    return breakpointAtSourceLineEdit->text();
 }
 
 void SeerDebugDialog::setShowAssemblyTab (bool flag) {

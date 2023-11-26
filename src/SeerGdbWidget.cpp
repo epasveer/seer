@@ -1007,7 +1007,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         // Set the program's arguments before running.
         handleGdbExecutableArguments();
 
-        // Set a temporary breakpoint for start up.
+        // Set a breakpoint for start up if "infunction" or "insource".
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
             if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
@@ -1018,7 +1018,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         }
 
         if (_executableBreakMode == "insource" && executableBreakpointSourceName() != "") {
-            handleGdbBreakpointInsert("-t " + executableBreakpointSourceName());
+            handleGdbBreakpointInsert(executableBreakpointSourceName());
         }
 
         // Run any 'post' commands after program is loaded.
@@ -3072,8 +3072,8 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
 
-    qDebug() << "Raw command     : " << rawcommand;
-    qDebug() << "Expanded command: " << expandedcommand;
+    //qDebug() << "Raw command     : " << rawcommand;
+    //qDebug() << "Expanded command: " << expandedcommand;
 
     if (ok == false) {
 
@@ -3091,8 +3091,8 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
 
-    qDebug() << "Raw arguments     : " << rawarguments;
-    qDebug() << "Expanded arguments: " << expandedarguments;
+    //qDebug() << "Raw arguments     : " << rawarguments;
+    //qDebug() << "Expanded arguments: " << expandedarguments;
 
     if (ok == false) {
 
@@ -3116,7 +3116,7 @@ bool SeerGdbWidget::startGdb () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    qDebug() << _gdbProcess->state();
+    //qDebug() << _gdbProcess->state();
 
     return true;
 }
@@ -3147,8 +3147,8 @@ bool SeerGdbWidget::startGdbRR () {
 
     QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
 
-    qDebug() << "Expanded command: "   << command;
-    qDebug() << "Expanded arguments: " << arguments;
+    //qDebug() << "Expanded command: "   << command;
+    //qDebug() << "Expanded arguments: " << arguments;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(command);
@@ -3163,7 +3163,7 @@ bool SeerGdbWidget::startGdbRR () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    qDebug() << _gdbProcess->state();
+    //qDebug() << _gdbProcess->state();
 
     return true;
 }
