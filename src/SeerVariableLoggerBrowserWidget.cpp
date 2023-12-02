@@ -47,8 +47,6 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
-        //qDebug() << text;
-
         // "6^done,value=\"\\\"abc\\\"\""
 
         QString id_text    = text.section('^', 0,0);
@@ -226,7 +224,7 @@ void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
 
     //qDebug() << item->text(3) << column;
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(2));
+    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + Seer::elideText(item->text(2), Qt::ElideRight, 100));
 
     for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));

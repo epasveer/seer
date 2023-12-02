@@ -523,7 +523,7 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
                 // Same word as before? Display the tooltip value.
                 if (word == _selectedExpressionName) {
 
-                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + _selectedExpressionValue);
+                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
 
                 // Otherwise, hide any old one.
                 }else{

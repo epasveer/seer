@@ -293,7 +293,7 @@ void SeerVariableTrackerBrowserWidget::handleItemEntered (QTreeWidgetItem* item,
 
     Q_UNUSED(column);
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(1));
+    item->setToolTip(0, item->text(0) + " : " + Seer::elideText(item->text(1), Qt::ElideRight, 100));
 
     for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));

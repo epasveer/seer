@@ -17,32 +17,39 @@ namespace Seer {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
-    QString filterEscapes (const QString& str, bool handleCR) {
+    QString filterEscapes (const QString& str) {
 
-        QString tmp = str;
+        // Remove one level of '\'.
+        // value="\"'Treasure' by Lucillius\\n\\n\\tbut theirs.\\n\""
 
-        tmp.replace("\\r",  "\r");
-        tmp.replace("\\t",  "\t");
-        tmp.replace("\\\"", "\"");
+        QString tmp;
+        bool    escaped = false;
 
-        if (handleCR) {
-            tmp.replace("\\n",  "\n");
+        for (int i=0; i<str.length(); i++) {
+            if (str[i] == '\\') {
+                if (escaped == false) {
+                    escaped = true;
+                    continue;
+                }else{
+                    escaped = false;
+                    tmp.append(str[i]);
+                }
+            }else{
+                escaped = false;
+                tmp.append(str[i]);
+            }
         }
 
-        if (tmp == str) {
-            return tmp;
-        }
-
-        return Seer::filterEscapes(tmp, handleCR);
+        return tmp;
     }
 
-    QStringList filterEscapes (const QStringList& strings, bool handleCR) {
+    QStringList filterEscapes (const QStringList& strings) {
 
         QStringList list;
 
         // For a list of strings, quote certain characters.
         for (int i=0; i<strings.size(); i++) {
-            list.append(Seer::filterEscapes(strings[i], handleCR));
+            list.append(Seer::filterEscapes(strings[i]));
         }
 
         // Return the new list.
@@ -699,6 +706,44 @@ namespace Seer {
         }
 
         return false;
+    }
+
+
+
+    QString elideText (const QString& str, Qt::TextElideMode mode, int length) {
+
+        QString leftElide("... ");
+        QString middleElide(" ... ");
+        QString rightElide(" ...");
+
+        // The string is fine. Just return it.
+        if (str.length() <= length) {
+            return str;
+        }
+
+        // The string is too long but don't add elide.
+        if (mode == Qt::ElideNone) {
+            return str.left(length);
+        }
+
+        // The string is too long. Add elilde on the left.
+        if (mode == Qt::ElideLeft) {
+            return leftElide + str.right(length);
+        }
+
+        // The string is too long. Add elilde on the right.
+        if (mode == Qt::ElideRight) {
+            return str.left(length) + rightElide;
+        }
+
+        // The string is too long. Add elilde in the middle.
+        if (mode == Qt::ElideRight) {
+            int halve = length / 2;
+            return str.left(halve) + middleElide + str.right(halve);
+        }
+
+        // Bad mode. Just return the string.
+        return str;
     }
 
     //

@@ -5,6 +5,9 @@
 * Prepare for the 2.4 release cycle.
 * Fixed string compares for breakpoint conditions (#184)
 * Added '--bs' command line option to specify a breakpoint at a source.cpp:lineno
+* Fixed long tooltips text by restricting them to 100 characters. (#189)
+  The text in the various viewing dialogs is still the full length.
+  The 100 limit probably needs to be configurable.
 
 ## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.

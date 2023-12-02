@@ -482,7 +482,7 @@ void SeerStackLocalsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int
 
     //qDebug() << item->text(0) << column;
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(2));
+    item->setToolTip(0, item->text(0) + " : " + Seer::elideText(item->text(2), Qt::ElideRight, 100));
 
     for (int i=1; i<localsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
         item->setToolTip(i, item->toolTip(0));
