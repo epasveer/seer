@@ -521,7 +521,7 @@ void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
     }else{
         QTreeWidgetItem* parent = item->parent(); // Get parent item, which is the level.
 
-        item->setToolTip(0, parent->text(0) + " : " + item->text(1) + " : " + item->text(2));
+        item->setToolTip(0, parent->text(0) + " : " + item->text(1) + " : " + Seer::elideText(item->text(2), Qt::ElideRight, 100));
 
         for (int i=1; i<argumentsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
             item->setToolTip(i, item->toolTip(0));
