@@ -159,6 +159,8 @@
    </attribute>
    <addaction name="actionGdbRun"/>
    <addaction name="actionGdbStart"/>
+   <addaction name="actionGdbReconnect"/>
+   <addaction name="actionGdbReattach"/>
    <addaction name="actionGdbContinue"/>
    <addaction name="actionGdbNext"/>
    <addaction name="actionGdbStep"/>
@@ -674,6 +676,30 @@
    </property>
    <property name="statusTip">
     <string>View the program's execution messages.</string>
+   </property>
+  </action>
+  <action name="actionGdbReconnect">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reconnect</string>
+   </property>
+   <property name="toolTip">
+    <string>Reconnect to a previously connected server.</string>
+   </property>
+  </action>
+  <action name="actionGdbReattach">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reattach</string>
+   </property>
+   <property name="toolTip">
+    <string>Reattach to a previosly attached pid.</string>
    </property>
   </action>
  </widget>

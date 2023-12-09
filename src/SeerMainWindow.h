@@ -88,6 +88,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleHelpToolButtonClicked         ();
         void                        handleRunExecutable                 ();
         void                        handleStartExecutable               ();
+        void                        handleAttachExecutable              ();
+        void                        handleConnectExecutable             ();
         void                        handleStyleMenuChanged              ();
         void                        handleShowMessage                   (QString message, int time);
 
