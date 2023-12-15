@@ -42,6 +42,7 @@ Arguments:
 
 Misc Options:
 
+  --cwd, --working-dir <path>                       Set gdb's working directory path.
   --sym, --symbol-file <symbolfilename>             Load symbols from a separate file than the executable.
   --bl,  --break-load <filename>                    Load a previously saved breakpoints file. For 'run', 'start', or 'rr'.
   --bf,  --break-function <function>                Set a breakpoint in a function/address. For 'run' or 'start'.
