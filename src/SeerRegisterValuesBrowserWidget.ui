@@ -49,9 +49,12 @@
      <property name="columnCount">
       <number>4</number>
      </property>
+     <attribute name="headerShowSortIndicator" stdset="0">
+      <bool>true</bool>
+     </attribute>
      <column>
       <property name="text">
-       <string>Number</string>
+       <string>#</string>
       </property>
      </column>
      <column>
