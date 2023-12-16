@@ -26,6 +26,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        handleContextMenu           (const QPoint& pos);
         void                        handleIndexEditingFinished  (const QModelIndex& index);
         void                        handleFormatChanged         (int index);
+        void                        handleColumnSelected        (int logicalIndex);
 
     signals:
         void                        refreshRegisterNames        ();
@@ -34,6 +35,8 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
 
     protected:
         void                        showEvent                   (QShowEvent* event);
+        void                        readSettings                ();
+        void                        writeSettings               ();
 
     private:
         bool                        _needsRegisterNames;

@@ -8,7 +8,53 @@
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
+
+
+//
+// SeerRegisterTreeWidgetItem
+//
+class SeerRegisterTreeWidgetItem : public QTreeWidgetItem {
+
+    public:
+        /* Do we need to specify the base constructors?
+        QTreeWidgetItem(const QTreeWidgetItem &other)
+        QTreeWidgetItem(QTreeWidgetItem *parent, QTreeWidgetItem *preceding, int type = Type)
+        QTreeWidgetItem(QTreeWidgetItem *parent, const QStringList &strings, int type = Type)
+        QTreeWidgetItem(QTreeWidgetItem *parent, int type = Type)
+        QTreeWidgetItem(QTreeWidget *parent, QTreeWidgetItem *preceding, int type = Type)
+        QTreeWidgetItem(QTreeWidget *parent, const QStringList &strings, int type = Type)
+        QTreeWidgetItem(QTreeWidget *parent, int type = Type)
+        QTreeWidgetItem(const QStringList &strings, int type = Type)
+        QTreeWidgetItem(int type = Type)
+        */
+
+        virtual bool operator< (const QTreeWidgetItem& other) const;
+};
+
+bool SeerRegisterTreeWidgetItem::operator< (const QTreeWidgetItem& other) const {
+
+    int column = treeWidget()->sortColumn();
+
+    // If no sort column set, then default to ascending order.
+    if (column < 0) {
+        return true;
+    }
+
+    // If sort on column 0, then compare numerically.
+    if (column == 0) {
+        return text(column).toInt() < other.text(column).toInt();
+    }
+
+    // Otherwise, all other columns are textual.
+    return text(column) < other.text(column);
+}
+
+
+//
+// Seer Register Tree
+//
 
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
 
@@ -17,13 +63,13 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
 
     // Setup the widgets
     registersTreeWidget->setMouseTracking(true);
-    registersTreeWidget->setSortingEnabled(false);
+    registersTreeWidget->sortByColumn(0, Qt::AscendingOrder);
+    registersTreeWidget->setSortingEnabled(true);  // We can sort on columns.
     registersTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     registersTreeWidget->resizeColumnToContents(0); // number
     registersTreeWidget->resizeColumnToContents(1); // name
     registersTreeWidget->resizeColumnToContents(2); // value
     registersTreeWidget->resizeColumnToContents(3); // used
-    registersTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
     registersTreeWidget->setColumnHidden(3, true); // Hide the 'used' column.
     registersTreeWidget->clear();
 
@@ -45,10 +91,14 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->setItemDelegateForColumn(3, new QNoEditDelegate(this));
 
     // Connect things.
-    QObject::connect(registersTreeWidget,    &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
-    QObject::connect(registersTreeWidget,    &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
-    QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
-    QObject::connect(registerFormatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
+    QObject::connect(registersTreeWidget,               &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(registersTreeWidget,               &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
+    QObject::connect(editDelegate,                      &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(registerFormatComboBox,            QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
+    QObject::connect(registersTreeWidget->header(),     &QHeaderView::sectionClicked,                              this, &SeerRegisterValuesBrowserWidget::handleColumnSelected);
+
+    // Restore settings.
+    readSettings();
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -92,7 +142,7 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
                 continue;
             }
 
-            QTreeWidgetItem* topItem = new QTreeWidgetItem;
+            QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
             topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
             topItem->setText(0, QString::number(i));
             topItem->setText(1, name_text);
@@ -217,7 +267,7 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.
-    _needsRegisterNames = false;
+    _needsRegisterNames = true;
 
     // Get the format.
     QString fmt = registerFormatComboBox->currentData().toString();
@@ -356,6 +406,37 @@ void SeerRegisterValuesBrowserWidget::handleFormatChanged (int index) {
 
     // Refresh the register values.
     emit refreshRegisterValues(fmt);
+}
+
+void SeerRegisterValuesBrowserWidget::handleColumnSelected (int logicalIndex) {
+
+    Q_UNUSED(logicalIndex);
+
+    writeSettings();
+}
+
+void SeerRegisterValuesBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("registerswindow"); {
+        settings.setValue("sortcolumn", registersTreeWidget->header()->sortIndicatorSection());
+        settings.setValue("sortorder",  registersTreeWidget->header()->sortIndicatorOrder());
+    }settings.endGroup();
+}
+
+void SeerRegisterValuesBrowserWidget::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("registerswindow"); {
+
+        int column = settings.value("sortcolumn", 0).toInt();
+        int order  = settings.value("sortorder",  Qt::AscendingOrder).toInt();
+
+        registersTreeWidget->header()->setSortIndicator(column, (Qt::SortOrder)order);
+
+    } settings.endGroup();
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {
