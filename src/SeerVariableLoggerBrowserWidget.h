@@ -29,6 +29,9 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
+        void                addMemoryVisualize                  (QString expression);
+        void                addArrayVisualize                   (QString expression);
+        void                addStructVisualize                  (QString expression);
 
     protected:
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& id_text, const QString& timestamp_text, const QString& name_text, const QString& value_text);
