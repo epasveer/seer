@@ -131,8 +131,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         QString frame_text = Seer::parseFirst(newtext, "register-names=", '[', ']', false);
 
-        //qDebug() << frame_text;
-
         QStringList name_list = Seer::parse(frame_text, "", '"', '"', false);
 
         int i = 0;
@@ -172,8 +170,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         // "^done,register-values=[{number=\"0\",value=\"0x4005e7\"},{number=\"1\",value=\"0x0\"},{number=\"2\",value=\"0x100\"},
         //                    {number=\"3\",value=\"0x7fffffffd548\"},{number=\"4\",value=\"0x7fffffffd538\"},{number=\"5\",value=\"0x1\"},...
         //                    {number=\"205\",value=\"0x0\"},{number=\"206\",value=\"0x0\"}]"
-
-        //qDebug() << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
