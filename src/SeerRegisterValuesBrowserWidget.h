@@ -2,6 +2,7 @@
 
 #include "ui_SeerRegisterValuesBrowserWidget.h"
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QMenu>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 
@@ -27,6 +28,9 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        handleIndexEditingFinished  (const QModelIndex& index);
         void                        handleFormatChanged         (int index);
         void                        handleColumnSelected        (int logicalIndex);
+        void                        handleNewProfile            ();
+        void                        handleDeleteProfile         ();
+        void                        handleShowHideRegisters     (const QStringList& registerNames, QVector<bool>& registerEnabled);
 
     signals:
         void                        refreshRegisterNames        ();
@@ -40,6 +44,8 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
 
     private:
         bool                        _needsRegisterNames;
+        QAction*                    _newProfileAction;
+        QAction*                    _deleteProfileAction;
 
 };
 

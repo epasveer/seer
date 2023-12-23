@@ -2253,6 +2253,10 @@ void SeerGdbWidget::handleGdbRegisterListValues (QString fmt) {
         fmt = "N";
     }
 
+    // XXX Not sure what --skip-unavailable does.
+    // XXX Perhaps skips registers that can't get value for.
+    // XXX handleGdbCommand("-data-list-register-values --skip-unavailable " + fmt);
+
     handleGdbCommand("-data-list-register-values " + fmt);
 }
 
