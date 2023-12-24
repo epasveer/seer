@@ -61,7 +61,8 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     QMenu* menu = new QMenu();
 
     _newProfileAction    = menu->addAction("New profile");
-    _deleteProfileAction = menu->addAction("Delete profile");
+    _modifyProfileAction = menu->addAction("Modify current profile");
+    _deleteProfileAction = menu->addAction("Delete current profile");
 
     preferencesToolButton->setMenu(menu);
     preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
@@ -73,6 +74,7 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     QObject::connect(registerFormatComboBox,            QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
     QObject::connect(registersTreeWidget->header(),     &QHeaderView::sectionClicked,                              this, &SeerRegisterValuesBrowserWidget::handleColumnSelected);
     QObject::connect(_newProfileAction,                 &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleNewProfile);
+    QObject::connect(_modifyProfileAction,              &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleModifyProfile);
     QObject::connect(_deleteProfileAction,              &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleDeleteProfile);
     QObject::connect(registerProfileComboBox,           QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleProfileChanged);
 
@@ -443,9 +445,47 @@ void SeerRegisterValuesBrowserWidget::handleNewProfile () {
     }
 }
 
+void SeerRegisterValuesBrowserWidget::handleModifyProfile () {
+
+    QMessageBox::warning(this, "Seer", "There are no profiles to modify.", QMessageBox::Ok);
+}
+
 void SeerRegisterValuesBrowserWidget::handleDeleteProfile () {
 
-    QMessageBox::warning(this, "Seer", "There are no profiles to delete.", QMessageBox::Ok);
+    int index = registerProfileComboBox->currentIndex();
+
+    if (index < 0) {
+        return;
+    }
+
+    QString profileName = registerProfileComboBox->itemText(index);
+
+    if (profileName == "") {
+        return;
+    }
+
+    if (profileName == "allregisters") {
+        QMessageBox::warning(this, "Seer", "The profile 'allregisters' is reserved.\n\nIt can't be deleted.", QMessageBox::Ok);
+        return;
+    }
+
+    // Delete the profile from the settings.
+    deleteProfileSettings(profileName);
+
+    // Delete the profile from the list of profiles.
+    registerProfileComboBox->removeItem(index);
+
+    // Write the current settings.
+    writeSettings();
+
+    // Switch to the next profile in the list of profiles.
+    index = registerProfileComboBox->currentIndex();
+
+    if (index < 0) {
+        return;
+    }
+
+    handleProfileChanged (index);
 }
 
 void SeerRegisterValuesBrowserWidget::handleShowHideRegisters () {
@@ -599,6 +639,15 @@ bool SeerRegisterValuesBrowserWidget::readProfileSettings (const QString& profil
     } settings.endGroup();
 
     return true;
+}
+
+void SeerRegisterValuesBrowserWidget::deleteProfileSettings (const QString& profileName) {
+
+    QSettings   settings;
+
+    settings.beginGroup("registerprofile_" + profileName); {
+        settings.remove(""); //removes the group, and all it keys
+    } settings.endGroup();
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

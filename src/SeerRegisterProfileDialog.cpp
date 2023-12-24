@@ -19,7 +19,7 @@ SeerRegisterProfileDialog::SeerRegisterProfileDialog (QWidget* parent) : QDialog
     registersTreeWidget->resizeColumnToContents(2); // checkbox
     registersTreeWidget->clear();
 
-    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("[a-z0-9]+"));
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("[a-z0-9\\.\\-\\_]+"));
 
     profileNameLineEdit->setValidator(validator);
 
