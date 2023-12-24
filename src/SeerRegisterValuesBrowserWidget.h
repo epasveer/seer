@@ -4,6 +4,8 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMenu>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QVector>
 #include <QtCore/QDebug>
 
 class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegisterValuesBrowserWidgetForm {
@@ -30,7 +32,8 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        handleColumnSelected        (int logicalIndex);
         void                        handleNewProfile            ();
         void                        handleDeleteProfile         ();
-        void                        handleShowHideRegisters     (const QStringList& registerNames, QVector<bool>& registerEnabled);
+        void                        handleShowHideRegisters     ();
+        void                        handleProfileChanged        (int index);
 
     signals:
         void                        refreshRegisterNames        ();
@@ -41,9 +44,13 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        showEvent                   (QShowEvent* event);
         void                        readSettings                ();
         void                        writeSettings               ();
+        bool                        readProfileSettings         (const QString& profileName, QStringList& registerNames, QVector<bool>& registerEnabled);
+        void                        writeProfileSettings        (const QString& profileName, const QStringList& registerNames, const QVector<bool>& registerEnabled);
 
     private:
         bool                        _needsRegisterNames;
+        QStringList                 _registerNames;
+        QVector<bool>               _registerEnabled;
         QAction*                    _newProfileAction;
         QAction*                    _deleteProfileAction;
 

@@ -18,6 +18,9 @@ class SeerRegisterProfileDialog : public QDialog, protected Ui::SeerRegisterProf
         QStringList                 registerNames               () const;
         QVector<bool>               registerEnabled             () const;
 
+        void                        setProfileName              (const QString& profileName);
+        QString                     profileName                 () const;
+
     public slots:
          void                       accept                      ();
 

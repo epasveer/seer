@@ -1,6 +1,8 @@
 #include "SeerRegisterProfileDialog.h"
 #include "SeerRegisterTreeWidgetItem.h"
 #include <QtWidgets/QMessageBox>
+#include <QtGui/QRegularExpressionValidator>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
 #include <QtCore/QList>
 #include <QtCore/QDebug>
@@ -16,6 +18,10 @@ SeerRegisterProfileDialog::SeerRegisterProfileDialog (QWidget* parent) : QDialog
     registersTreeWidget->resizeColumnToContents(1); // name
     registersTreeWidget->resizeColumnToContents(2); // checkbox
     registersTreeWidget->clear();
+
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("[a-z0-9]+"));
+
+    profileNameLineEdit->setValidator(validator);
 
     // Setup the widgets
     setRegisters(QStringList(), QVector<bool>());
@@ -87,10 +93,25 @@ QVector<bool> SeerRegisterProfileDialog::registerEnabled () const {
     return registerEnabled;
 }
 
+void SeerRegisterProfileDialog::setProfileName (const QString& profileName) {
+
+    profileNameLineEdit->setText(profileName);
+}
+
+QString SeerRegisterProfileDialog::profileName () const {
+
+    return profileNameLineEdit->text();
+}
+
 void SeerRegisterProfileDialog::accept () {
 
     if (profileNameLineEdit->text() == "") {
         QMessageBox::warning(this, "Seer", "The register profile name is blank.", QMessageBox::Ok);
+        return;
+    }
+
+    if (profileNameLineEdit->text() == "allregisters") {
+        QMessageBox::warning(this, "Seer", "The register profile name of 'allregisters' is reserved.\n\nChoose a different name.", QMessageBox::Ok);
         return;
     }
 
