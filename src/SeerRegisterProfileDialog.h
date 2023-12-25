@@ -27,6 +27,8 @@ class SeerRegisterProfileDialog : public QDialog, protected Ui::SeerRegisterProf
     private slots:
         void                        handleEnableSelected        ();
         void                        handleDisableSelected       ();
+        void                        handleImportFile            ();
+        void                        handleExportFile            ();
 
     protected:
         void                        writeSettings               ();

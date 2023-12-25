@@ -1,6 +1,7 @@
 #include "SeerRegisterProfileDialog.h"
 #include "SeerRegisterTreeWidgetItem.h"
 #include <QtWidgets/QMessageBox>
+#include <QtWidgets/QFileDialog>
 #include <QtGui/QRegularExpressionValidator>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
@@ -29,6 +30,8 @@ SeerRegisterProfileDialog::SeerRegisterProfileDialog (QWidget* parent) : QDialog
     // Connect things.
     QObject::connect(enablePushButton,   &QPushButton::clicked,          this, &SeerRegisterProfileDialog::handleEnableSelected);
     QObject::connect(disablePushButton,  &QPushButton::clicked,          this, &SeerRegisterProfileDialog::handleDisableSelected);
+    QObject::connect(importPushButton,   &QPushButton::clicked,          this, &SeerRegisterProfileDialog::handleImportFile);
+    QObject::connect(exportPushButton,   &QPushButton::clicked,          this, &SeerRegisterProfileDialog::handleExportFile);
 
     // Restore window settings.
     readSettings();
@@ -134,6 +137,147 @@ void SeerRegisterProfileDialog::handleDisableSelected () {
      foreach (QTreeWidgetItem* item, selected) {
         item->setCheckState(2, Qt::Unchecked);
      }
+}
+
+void SeerRegisterProfileDialog::handleImportFile () {
+
+    //
+    // Get the name of the file to import.
+    //
+    QFileDialog dialog(this, "Seer Register Profile File", "./", "Text files (*.txt);;All files (*.*)");
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("txt");
+    dialog.selectFile("registerprofile.txt");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    //
+    // Open the file and read from it.
+    // A simple format of:
+    //      <registername>   <enable|disable>
+    //
+    QFile file(files[0]);
+
+    if (file.open(QIODevice::ReadOnly)) {
+
+        QStringList     registerNames;
+        QVector<bool>   registerEnabled;
+        QTextStream     stream(&file);
+
+        while (stream.atEnd() == false) {
+
+            QString line = stream.readLine();
+
+            QStringList words = line.split(QRegularExpression("\\s+"));
+
+            // Ignore empty lines.
+            if (words.count() == 0) {
+                continue;
+            }
+
+            // Ignore null lines.
+            if (words.count() == 1 && words[0] == "") {
+                continue;
+            }
+
+            // There should be only two words on each line.
+            if (words.count() != 2) {
+                QMessageBox::critical(this, tr("Error"), tr("Can't load register profile file.\nEncountered a line not the form of:\n\n<registername>   <enabled|disabled>"));
+                return;
+            }
+
+            // The second word must be 'enabled' or 'disabled'.
+            if (words[1] != "enabled" && words[1] != "disabled") {
+                QMessageBox::critical(this, tr("Error"), tr("Can't load register profile file.\nEncountered a line not the form of:\n\n<registername>   <enabled|disabled>"));
+                return;
+            }
+
+            registerNames.push_back(words[0]);
+            registerEnabled.push_back(words[1] == "enabled" ? true : false);
+        }
+
+        // Populate the list with the imported values.
+        setRegisters (registerNames, registerEnabled);
+
+        QMessageBox::information(this, "Seer", "Loaded.");
+
+    }else{
+
+        QMessageBox::critical(this, tr("Error"), tr("Can't open register profile file."));
+        return;
+    }
+
+}
+
+void SeerRegisterProfileDialog::handleExportFile () {
+
+    //
+    // Get the name of the file to export.
+    //
+    QFileDialog dialog(this, "Seer Register Profile File", "./", "Text files (*.txt);;All files (*.*)");
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("txt");
+    dialog.selectFile("registerprofile.txt");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    //
+    // Create the file and write to it.
+    // A simple format of:
+    //      <registername>   <enable|disable>
+    //
+    QFile file(files[0]);
+
+    if (file.open(QIODevice::ReadWrite)) {
+
+        QTextStream stream(&file);
+
+        QStringList   names   = registerNames();
+        QVector<bool> enabled = registerEnabled();
+
+        for (int i=0; i<names.count(); i++) {
+            stream << names[i] << "    " << (enabled[i] == true ? "enabled" : "disabled") << "\n";
+        }
+
+        file.flush();
+        file.close();
+
+        QMessageBox::information(this, "Seer", "Saved.");
+
+    }else{
+
+        QMessageBox::critical(this, tr("Error"), tr("Can't create register profile file."));
+
+        return;
+    }
 }
 
 void SeerRegisterProfileDialog::writeSettings() {
