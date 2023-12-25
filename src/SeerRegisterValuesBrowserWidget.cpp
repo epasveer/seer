@@ -447,7 +447,51 @@ void SeerRegisterValuesBrowserWidget::handleNewProfile () {
 
 void SeerRegisterValuesBrowserWidget::handleModifyProfile () {
 
-    QMessageBox::warning(this, "Seer", "There are no profiles to modify.", QMessageBox::Ok);
+    QString profileName = registerProfileComboBox->currentText();
+
+    if (profileName == "allregisters") {
+        QMessageBox::warning(this, "Seer", "The profile 'allregisters' is reserved.\n\nIt can't be modified.", QMessageBox::Ok);
+        return;
+    }
+
+    // Build a list of registers.
+    QStringList   registerNames   = _registerNames;
+    QVector<bool> registerEnabled = _registerEnabled;
+
+    // Bring up the register profile dialog.
+    SeerRegisterProfileDialog dlg(this);
+
+    dlg.setProfileName(profileName);
+    dlg.setRegisters(registerNames, registerEnabled);
+
+    if (dlg.exec()) {
+
+        // Get the (potenially new) profile name.
+        QString newProfileName = dlg.profileName();
+
+        if (newProfileName == "") {
+            return;
+        }
+
+        registerNames   = dlg.registerNames();
+        registerEnabled = dlg.registerEnabled();
+
+        // If it's a new name, add it to the list and switch to it.
+        if (newProfileName != profileName) {
+            registerProfileComboBox->addItem(newProfileName);
+            registerProfileComboBox->setCurrentText(newProfileName);
+        }
+
+        // Write out the setting changes.
+        writeProfileSettings(newProfileName, registerNames, registerEnabled);
+        writeSettings();
+
+        // Use them.
+        _registerNames   = registerNames;
+        _registerEnabled = registerEnabled;
+
+        handleShowHideRegisters();
+    }
 }
 
 void SeerRegisterValuesBrowserWidget::handleDeleteProfile () {
@@ -466,6 +510,12 @@ void SeerRegisterValuesBrowserWidget::handleDeleteProfile () {
 
     if (profileName == "allregisters") {
         QMessageBox::warning(this, "Seer", "The profile 'allregisters' is reserved.\n\nIt can't be deleted.", QMessageBox::Ok);
+        return;
+    }
+
+    QMessageBox::StandardButton ans = QMessageBox::question(this, "Seer", "Delete profile '" + profileName + "'?");
+
+    if (ans != QMessageBox::Yes) {
         return;
     }
 
