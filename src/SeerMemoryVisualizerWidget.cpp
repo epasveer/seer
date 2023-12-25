@@ -9,6 +9,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 
 SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidget(parent) {
@@ -376,7 +377,7 @@ void SeerMemoryVisualizerWidget::handlePrintButton () {
 
 void SeerMemoryVisualizerWidget::handleSaveButton () {
 
-    QFileDialog dialog(this, "Seer visualizer file", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
+    QFileDialog dialog(this, "Seer Visualizer File", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("log");
