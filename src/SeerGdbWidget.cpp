@@ -987,6 +987,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             setNewExecutableFlag(false);
         }
 
+        // Set or reset some things.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
@@ -1862,6 +1863,8 @@ void SeerGdbWidget::handleGdbExecutableWorkingDirectory () {
     if (executableLaunchMode() == "") {
         return;
     }
+
+    qDebug() << executableWorkingDirectory();
 
     if (executableWorkingDirectory() != "") {
         handleGdbCommand(QString("-environment-cd \"") + executableWorkingDirectory() + "\"");
