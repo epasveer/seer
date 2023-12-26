@@ -68,6 +68,12 @@ The register value can be printed in multiple formats.
 
 Register values can be modified. Double-click on a Value column for a register will allow the value to be edited and changed.  Using a RMB on a register will bring up a menu to change the register value as well. This second method can better handle resisters that have 'union' like properties (eg: xmm0 with xmm0.v8_bfloat16, xmm0.v4_float, etc...) where the register name needs to be modified slightly to include the 'union' field name.
 
+Register profiles can be created. A profile selects which registers to actually show. Multiple profiles are allowed. You can create
+new ones and modify existing ones. There is one profile that is special. It's called 'allregisters'. It means show all
+registers. It can't be modified or deleted.
+
+Switching between register profiles is easily done using the "Profile" list selector.
+
 ### References
 
 Consult these gdb references

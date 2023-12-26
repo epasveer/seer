@@ -62,8 +62,6 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         QStringList frame_list = Seer::parse(text, "frame=", '{', '}', false);
 
-        //qDebug() << frame_list.count() << frame_list;
-
         // Mark each entry initially as "unused".
         // Later, some will be marked as "reused" or "new". Then the "unused" ones will
         // be deleted.
@@ -75,13 +73,8 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         for ( const auto& frame_text : frame_list  ) {
 
-            //qDebug() << frame_text;
-
             QString level_text = Seer::parseFirst(frame_text, "level=", '"', '"', false);
             QString args_text  = Seer::parseFirst(frame_text, "args=",  '[', ']', false);
-
-            //qDebug() << level_text;
-            //qDebug() << args_text;
 
             QStringList namevalue_list  = Seer::parse(args_text, "",  '{', '}', false);
 
@@ -264,8 +257,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << "addVariableLoggerExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(item->text(1));
@@ -276,8 +267,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskExpressionAction) {
-
-        //qDebug() << "addVariableLoggerAsteriskExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -290,8 +279,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(QString("&") + item->text(1));
@@ -303,8 +290,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(QString("*&") + item->text(1));
@@ -315,8 +300,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
-
-        //qDebug() << "addVariableTrackerExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -330,8 +313,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableTrackerExpression(QString("*") + item->text(1));
@@ -343,8 +324,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerAmpersandExpressionAction) {
-
-        //qDebug() << "addVariableTrackerAmpersandExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -358,8 +337,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableTrackerExpression(QString("*&") + item->text(1));
@@ -372,8 +349,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
-        //qDebug() << "addMemoryVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addMemoryVisualize(item->text(1));
@@ -384,8 +359,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding memory to visualize.
     if (action == addMemoryAsteriskVisualizerAction) {
-
-        //qDebug() << "addMemoryAsteriskVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -398,8 +371,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryAmpersandVisualizerAction) {
 
-        //qDebug() << "addMemoryAmpersandVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addMemoryVisualize(QString("&") + item->text(1));
@@ -410,8 +381,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addArrayVisualizerAction) {
-
-        //qDebug() << "addArrayVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -424,8 +393,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addArrayAsteriskVisualizerAction) {
 
-        //qDebug() << "addArrayAsteriskVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addArrayVisualize(QString("*") + item->text(1));
@@ -436,8 +403,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addArrayAmpersandVisualizerAction) {
-
-        //qDebug() << "addArrayAmpersandVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -450,8 +415,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding struct to visualize.
     if (action == addStructVisualizerAction) {
 
-        //qDebug() << "addStructVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addStructVisualize(item->text(1));
@@ -463,8 +426,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
-        //qDebug() << "addStructAsteriskVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addStructVisualize(QString("*") + item->text(1));
@@ -475,8 +436,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addStructAmpersandVisualizerAction) {
-
-        //qDebug() << "addStructAmpersandVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -510,8 +469,6 @@ void SeerStackArgumentsBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item
 void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
-
-    //qDebug() << item->text(0) << column;
 
     if (item->text(0) != "") {
         for (int i=0; i<argumentsTreeWidget->columnCount(); i++) { // The "level" item does not have a tooltip.
