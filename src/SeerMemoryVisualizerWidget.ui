@@ -97,6 +97,21 @@
        </item>
        <item>
         <property name="text">
+         <string>utf8</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>utf16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>utf32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>ebcdic</string>
         </property>
        </item>

@@ -9,6 +9,7 @@
   The text in the various viewing dialogs is still the full length.
   The 100 limit probably needs to be configurable.
 * Added register profiles to show only interesting/relevant registers.
+* Added UTF-8,16,32 support in the Memory Visualizer.
 
 ## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
