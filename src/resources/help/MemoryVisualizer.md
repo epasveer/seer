@@ -9,6 +9,7 @@ The Memory Visualizer shows the contents of a region of memory in different form
 * Binary
 * Decimal
 * Ascii
+* UTF-8, UTF-16, UTF-32
 * Ebcdic
 * Assembly
 
@@ -68,7 +69,14 @@ The memory dump can be displayed in these formats:
 The memory dump can be displayed in these character formats:
 
 * Ascii
+* UTF-8, UTF-16, UTF-32
 * Ebcdic
+
+Note, when displaying UTF, some features in the visualizer are restricted. For example, when clicking on
+a byte in the memory dump, the corresponding character in the text view is not highlighted. This is
+because UTF can be a variable length of bytes per character - due to UTF encoding.
+
+A possible delay may happen to load the extra fonts needs for the extra characters that UTF provides.
 
 ### Column width
 

@@ -44,8 +44,14 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
 
     if (memoryHexEditor->charMode() == SeerHexWidget::AsciiCharMode) {
         charDisplayFormatComboBox->setCurrentIndex(0);
-    }else if (memoryHexEditor->charMode() == SeerHexWidget::EbcdicCharMode) {
+    }else if (memoryHexEditor->charMode() == SeerHexWidget::Utf8Mode) {
         charDisplayFormatComboBox->setCurrentIndex(1);
+    }else if (memoryHexEditor->charMode() == SeerHexWidget::Utf16Mode) {
+        charDisplayFormatComboBox->setCurrentIndex(2);
+    }else if (memoryHexEditor->charMode() == SeerHexWidget::Utf32Mode) {
+        charDisplayFormatComboBox->setCurrentIndex(3);
+    }else if (memoryHexEditor->charMode() == SeerHexWidget::EbcdicCharMode) {
+        charDisplayFormatComboBox->setCurrentIndex(4);
     }else{
         charDisplayFormatComboBox->setCurrentIndex(0);
     }
@@ -328,6 +334,15 @@ void SeerMemoryVisualizerWidget::handleCharDisplayFormatComboBox (int index) {
         memoryHexEditor->setCharMode(SeerHexWidget::AsciiCharMode);
 
     }else if (index == 1) {
+        memoryHexEditor->setCharMode(SeerHexWidget::Utf8Mode);
+
+    }else if (index == 2) {
+        memoryHexEditor->setCharMode(SeerHexWidget::Utf16Mode);
+
+    }else if (index == 3) {
+        memoryHexEditor->setCharMode(SeerHexWidget::Utf32Mode);
+
+    }else if (index == 4) {
         memoryHexEditor->setCharMode(SeerHexWidget::EbcdicCharMode);
 
     }else{
