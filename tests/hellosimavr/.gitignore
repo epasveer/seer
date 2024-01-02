@@ -1,0 +1,6 @@
+*.o
+*.elf
+*.hex
+*.pre
+*.dep
+GNUmakefile

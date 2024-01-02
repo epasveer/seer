@@ -1,0 +1,12 @@
+[Unit]
+Description=[pipower] Monitor SHUTDOWN signal
+
+[Service]
+Type=simple
+Environment=GPIO_CHIP=/dev/gpiochip0
+Environment=PIN_SHUTDOWN=17
+EnvironmentFile=-/etc/default/pipower
+ExecStart=/usr/bin/pipowerd -d ${GPIO_CHIP} -p ${PIN_SHUTDOWN} -vv
+
+[Install]
+WantedBy=multi-user.target

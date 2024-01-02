@@ -1,0 +1,29 @@
+[*]
+[*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
+[*] Tue Jan 22 03:15:30 2019
+[*]
+[dumpfile] "pipower.vcd"
+[dumpfile_mtime] "Tue Jan 22 02:57:35 2019"
+[dumpfile_size] 861392
+[savefile] "save.file.gtkw"
+[timestart] 1769000000
+[size] 1920 1200
+[pos] -1 -1
+*-28.891159 1960000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 229
+[signals_width] 126
+[sst_expanded] 1
+[sst_vpaned_height] 348
+@2023
+^1 state_filter.txt
+logic.STATE[7:0]
+@200
+-
+@28
+logic.PIN_BOOT
+logic.PIN_EN
+logic.PIN_POWER
+logic.PIN_SHUTDOWN
+logic.PIN_USB
+[pattern_trace] 1
+[pattern_trace] 0
