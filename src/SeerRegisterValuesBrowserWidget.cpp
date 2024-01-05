@@ -56,7 +56,6 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->setItemDelegateForColumn(2, editDelegate);
     registersTreeWidget->setItemDelegateForColumn(3, new QNoEditDelegate(this));
 
-
     // Preference menu.
     QMenu* menu = new QMenu();
 
