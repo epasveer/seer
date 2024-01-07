@@ -10,6 +10,7 @@ something to connect to it. When Seer connects with it, the process is ready to 
 ### Requirements
 In this mode, Seer needs:
 
+* Optional executable file if the remote gdbserver/gdbstub hasn't loaded one
 * Optional symbol file if the executable doesn't have debug information
 * How to look for the gdbserver (machine and port)
 * Optional gdb commands to execute before and after Seer connects to the gdbserver
