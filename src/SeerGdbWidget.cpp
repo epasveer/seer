@@ -1156,15 +1156,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Has a executable name been provided?
-        if (executableName() != "") {
-
-            QMessageBox::warning(this, "Seer",
-                    QString("The executable name can't be provided for 'connect' mode."),
-                    QMessageBox::Ok);
-            break;
-        }
-
         // Delete the old gdb and console if there is a new executable
         if (newExecutableFlag() == true) {
             killGdb();
@@ -1242,7 +1233,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
         // Has a executable name been provided?
         if (executableName() != "") {
-
             QMessageBox::warning(this, "Seer",
                     QString("The executable name can't be provided for 'rr' mode."),
                     QMessageBox::Ok);

@@ -811,6 +811,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
 
     // ID == 2   CONNECT
     if (id == 2) {
+        executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
