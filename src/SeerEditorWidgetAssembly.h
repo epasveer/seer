@@ -3,12 +3,13 @@
 #include "SeerCppSourceHighlighter.h"
 #include "SeerKeySettings.h"
 #include "SeerPlainTextEdit.h"
-#include <QShortcut>
-#include <QtWidgets/QWidget>
+#include <QtGui/QShortcut>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QTextCursor>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QMenu>
 #include <QtCore/QSize>
 #include <QtCore/QRect>
 #include <QtCore/QString>
@@ -293,6 +294,9 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         bool                                        showOffsetColumn                    () const;
         bool                                        showOpcodeColumn                    () const;
         bool                                        showSourceLines                     () const;
+        QString                                     regiserNamePC                       () const;
+        QString                                     regiserNameFLAGS                    () const;
+        QString                                     regiserNameSP                       () const;
 
         void                                        setKeySettings                      (const SeerKeySettings& settings);
         const SeerKeySettings&                      keySettings                         () const;
@@ -306,6 +310,9 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        setShowOffsetColumn                 (bool flag);
         void                                        setShowOpcodeColumn                 (bool flag);
         void                                        setShowSourceLines                  (bool flag);
+        void                                        setRegiserNamePC                    (const QString& name);
+        void                                        setRegiserNameFLAGS                 (const QString& name);
+        void                                        setRegiserNameSP                    (const QString& name);
         void                                        handleText                          (const QString& text);
 
     private slots:
@@ -319,9 +326,14 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleShowOffsetColumn              ();
         void                                        handleShowOpcodeColumn              ();
         void                                        handleShowSourceLines               ();
+        void                                        handleEditPreferences               ();
 
     signals:
         void                                        evaluateVariableExpression          (int expressionid, QString expression);
+
+    protected:
+        void                                        writeSettings                       ();
+        void                                        readSettings                        ();
 
     private:
         int                                         _pcId;
@@ -331,5 +343,9 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         QShortcut*                                  _textSearchShortcut;
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
+        QAction*                                    _editPreferencesAction;
+        QString                                     _pcName;
+        QString                                     _spName;
+        QString                                     _flagsName;
 };
 

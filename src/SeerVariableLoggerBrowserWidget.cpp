@@ -74,8 +74,6 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
-        //qDebug() << text;
-
         // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
 
         QString id_text  = text.section('^', 0,0);
@@ -139,8 +137,6 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
 
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
 
-    //qDebug();
-
     if (expression != "") {
 
         int id = Seer::createID();
@@ -152,8 +148,6 @@ void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression)
 }
 
 void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
-
-    //qDebug();
 
     QString expression = variableAddLineEdit->text();
 
@@ -222,8 +216,6 @@ void SeerVariableLoggerBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
 
     Q_UNUSED(column);
 
-    //qDebug() << item->text(3) << column;
-
     item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + Seer::elideText(item->text(2), Qt::ElideRight, 100));
 
     for (int i=1; i<variablesTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
@@ -278,54 +270,214 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QTreeWidgetItem* item = variablesTreeWidget->itemAt(pos);
 
     // Construct the menu.
-    QMenu*   menu          = new QMenu("Options", this);
-    QAction* copyAction    = menu->addAction("Copy selected");
-    QAction* copyAllAction = menu->addAction("Copy all");
+    QAction* addMemoryVisualizerAction           = new QAction();
+    QAction* addMemoryAsteriskVisualizerAction   = new QAction();
+    QAction* addMemoryAmpersandVisualizerAction  = new QAction();
+    QAction* addArrayVisualizerAction            = new QAction();
+    QAction* addArrayAsteriskVisualizerAction    = new QAction();
+    QAction* addArrayAmpersandVisualizerAction   = new QAction();
+    QAction* addStructVisualizerAction           = new QAction();
+    QAction* addStructAsteriskVisualizerAction   = new QAction();
+    QAction* addStructAmpersandVisualizerAction  = new QAction();
 
-    // If no selected item, disable 'selected' copy but allow 'all'.
+    QMenu menu("Options", this);
+
+    QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
+    memoryVisualizerMenu.addAction(addMemoryVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAsteriskVisualizerAction);
+    memoryVisualizerMenu.addAction(addMemoryAmpersandVisualizerAction);
+    menu.addMenu(&memoryVisualizerMenu);
+
+    QMenu arrayVisualizerMenu("Add variable to an Array Visualizer");
+    arrayVisualizerMenu.addAction(addArrayVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
+    arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
+    structVisualizerMenu.addAction(addStructVisualizerAction);
+    structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
+    structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
+    menu.addMenu(&structVisualizerMenu);
+
+    QAction* copyAction    = menu.addAction("Copy selected");
+    QAction* copyAllAction = menu.addAction("Copy all");
+
+    QString actionText;
+    if (item != 0) {
+        actionText = item->text(1);
+    }
+
+    QString variable;
+    if (item != 0) {
+        // Build up a variable string, incase it is a nested struct.
+        QTreeWidgetItem* i = item;
+        variable = item->text(1);
+        while (i->parent() != 0) {
+            variable = i->parent()->text(1) + "." + variable;
+            i = i->parent();
+        }
+    }
+
+    addMemoryVisualizerAction->setText(QString("\"%1\"").arg(actionText));
+    addMemoryAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
+    addMemoryAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
+    addArrayVisualizerAction->setText(QString("\"%1\"").arg(actionText));
+    addArrayAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
+    addArrayAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
+    addStructVisualizerAction->setText(QString("\"%1\"").arg(actionText));
+    addStructAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
+    addStructAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
+
+
+    // If no selected item, disable everything but allow 'copyall'.
     if (item == 0) {
+        memoryVisualizerMenu.setEnabled(false);
+        arrayVisualizerMenu.setEnabled(false);
+        structVisualizerMenu.setEnabled(false);
         copyAction->setEnabled(false);
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu->exec(variablesTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(variablesTreeWidget->mapToGlobal(pos));
 
     if (action == 0) {
         return;
     }
 
-    // Get selected tree items.
-    QList<QTreeWidgetItem*> items;
+    if (action == copyAction || action == copyAction) {
+        // Get selected tree items.
+        QList<QTreeWidgetItem*> items;
 
-    // Get list of 'select' items.
-    if (action == copyAction) {
-        items = variablesTreeWidget->selectedItems();
+        // Get list of 'select' items.
+        if (action == copyAction) {
+            items = variablesTreeWidget->selectedItems();
+        }
+
+        // Get list of 'all' items.
+        if (action == copyAllAction) {
+            items = variablesTreeWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
+        }
+
+        // Populate the clipboard.
+        if (items.size() == 0) {
+            return;
+        }
+
+        QClipboard* clipboard = QGuiApplication::clipboard();
+
+        QString text;
+
+        for (int i=0; i<items.size(); i++) {
+
+            if (i != 0) {
+                text += '\n';
+            }
+
+            text += items[i]->text(1) + ":" + items[i]->text(2);
+        }
+
+        clipboard->setText(text, QClipboard::Clipboard);
+        clipboard->setText(text, QClipboard::Selection);
     }
 
-    // Get list of 'all' items.
-    if (action == copyAllAction) {
-        items = variablesTreeWidget->findItems(QString("*"), Qt::MatchWrap | Qt::MatchWildcard);
-    }
+    // Handle adding memory to visualize.
+    if (action == addMemoryVisualizerAction) {
 
-    // Populate the clipboard.
-    if (items.size() == 0) {
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(variable);
+        }
+
         return;
     }
 
-    QClipboard* clipboard = QGuiApplication::clipboard();
+    // Handle adding memory to visualize.
+    if (action == addMemoryAsteriskVisualizerAction) {
 
-    QString text;
-
-    for (int i=0; i<items.size(); i++) {
-
-        if (i != 0) {
-            text += '\n';
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(QString("*") + variable);
         }
 
-        text += items[i]->text(1) + ":" + items[i]->text(2);
+        return;
     }
 
-    clipboard->setText(text, QClipboard::Clipboard);
-    clipboard->setText(text, QClipboard::Selection);
+    // Handle adding memory to visualize.
+    if (action == addMemoryAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMemoryVisualize(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addArrayAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addArrayVisualize(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding struct to visualize.
+    if (action == addStructVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addStructAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addStructAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addStructVisualize(QString("&") + variable);
+        }
+
+        return;
+    }
 }
 

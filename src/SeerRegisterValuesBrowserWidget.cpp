@@ -1,29 +1,39 @@
 #include "SeerRegisterValuesBrowserWidget.h"
 #include "SeerRegisterEditValueDialog.h"
+#include "SeerRegisterProfileDialog.h"
+#include "SeerRegisterTreeWidgetItem.h"
 #include "SeerUtl.h"
 #include "QEditDelegate.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtCore/QSettings>
+#include <QtCore/QVector>
+#include <QtCore/QByteArray>
 #include <QtCore/QDebug>
 
+
 SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* parent) : QWidget(parent) {
+
+    _newProfileAction    = 0;
+    _deleteProfileAction = 0;
 
     // Construct the UI.
     setupUi(this);
 
     // Setup the widgets
     registersTreeWidget->setMouseTracking(true);
-    registersTreeWidget->setSortingEnabled(false);
+    registersTreeWidget->sortByColumn(0, Qt::AscendingOrder);
+    registersTreeWidget->setSortingEnabled(true);  // We can sort on columns.
     registersTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     registersTreeWidget->resizeColumnToContents(0); // number
     registersTreeWidget->resizeColumnToContents(1); // name
     registersTreeWidget->resizeColumnToContents(2); // value
     registersTreeWidget->resizeColumnToContents(3); // used
-    registersTreeWidget->setColumnHidden(0, true); // Hide the 'number' column.
     registersTreeWidget->setColumnHidden(3, true); // Hide the 'used' column.
     registersTreeWidget->clear();
 
@@ -33,6 +43,8 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registerFormatComboBox->addItem("Binary",  QVariant("t"));
     registerFormatComboBox->addItem("Decimal", QVariant("d"));
     registerFormatComboBox->addItem("Raw",     QVariant("r"));
+
+    registerProfileComboBox->addItem("allregisters");
 
     _needsRegisterNames = true;
 
@@ -44,11 +56,29 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     registersTreeWidget->setItemDelegateForColumn(2, editDelegate);
     registersTreeWidget->setItemDelegateForColumn(3, new QNoEditDelegate(this));
 
+    // Preference menu.
+    QMenu* menu = new QMenu();
+
+    _newProfileAction    = menu->addAction("New profile");
+    _modifyProfileAction = menu->addAction("Modify current profile");
+    _deleteProfileAction = menu->addAction("Delete current profile");
+
+    preferencesToolButton->setMenu(menu);
+    preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
+
     // Connect things.
-    QObject::connect(registersTreeWidget,    &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
-    QObject::connect(registersTreeWidget,    &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
-    QObject::connect(editDelegate,           &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
-    QObject::connect(registerFormatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
+    QObject::connect(registersTreeWidget,               &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
+    QObject::connect(registersTreeWidget,               &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
+    QObject::connect(editDelegate,                      &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
+    QObject::connect(registerFormatComboBox,            QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleFormatChanged);
+    QObject::connect(registersTreeWidget->header(),     &QHeaderView::sectionClicked,                              this, &SeerRegisterValuesBrowserWidget::handleColumnSelected);
+    QObject::connect(_newProfileAction,                 &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleNewProfile);
+    QObject::connect(_modifyProfileAction,              &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleModifyProfile);
+    QObject::connect(_deleteProfileAction,              &QAction::triggered,                                       this, &SeerRegisterValuesBrowserWidget::handleDeleteProfile);
+    QObject::connect(registerProfileComboBox,           QOverload<int>::of(&QComboBox::currentIndexChanged),       this, &SeerRegisterValuesBrowserWidget::handleProfileChanged);
+
+    // Restore settings.
+    readSettings();
 }
 
 SeerRegisterValuesBrowserWidget::~SeerRegisterValuesBrowserWidget () {
@@ -81,18 +111,18 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         QString frame_text = Seer::parseFirst(newtext, "register-names=", '[', ']', false);
 
-        //qDebug() << frame_text;
-
         QStringList name_list = Seer::parse(frame_text, "", '"', '"', false);
 
         int i = 0;
         for ( const auto& name_text : name_list  ) {
 
+            // XXX Commenting this out will get extra registers.
+            // XXX Are they valid?
             if (name_text == "") {
                 continue;
             }
 
-            QTreeWidgetItem* topItem = new QTreeWidgetItem;
+            QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
             topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
             topItem->setText(0, QString::number(i));
             topItem->setText(1, name_text);
@@ -105,6 +135,8 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
             i++;
         }
+
+        handleShowHideRegisters();
 
         _needsRegisterNames = false;
 
@@ -122,8 +154,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         // "^done,register-values=[{number=\"0\",value=\"0x4005e7\"},{number=\"1\",value=\"0x0\"},{number=\"2\",value=\"0x100\"},
         //                    {number=\"3\",value=\"0x7fffffffd548\"},{number=\"4\",value=\"0x7fffffffd538\"},{number=\"5\",value=\"0x1\"},...
         //                    {number=\"205\",value=\"0x0\"},{number=\"206\",value=\"0x0\"}]"
-
-        //qDebug() << text;
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -217,7 +247,7 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.
-    _needsRegisterNames = false;
+    _needsRegisterNames = true;
 
     // Get the format.
     QString fmt = registerFormatComboBox->currentData().toString();
@@ -356,6 +386,317 @@ void SeerRegisterValuesBrowserWidget::handleFormatChanged (int index) {
 
     // Refresh the register values.
     emit refreshRegisterValues(fmt);
+}
+
+void SeerRegisterValuesBrowserWidget::handleColumnSelected (int logicalIndex) {
+
+    Q_UNUSED(logicalIndex);
+
+    writeSettings();
+}
+
+void SeerRegisterValuesBrowserWidget::handleNewProfile () {
+
+    if (registersTreeWidget->topLevelItemCount() == 0) {
+        QMessageBox::warning(this, "Seer", "When creating a profile, Seer needs to be debugging a program.", QMessageBox::Ok);
+        return;
+    }
+
+    // Build a list of registers.
+    QStringList   registerNames;
+    QVector<bool> registerEnabled;
+
+    for (int i=0; i<registersTreeWidget->topLevelItemCount(); i++) {
+
+        QTreeWidgetItem* item = registersTreeWidget->topLevelItem(i);
+
+        registerNames.push_back(item->text(1));
+        registerEnabled.push_back(true);
+    }
+
+    // Bring up the register profile dialog.
+    SeerRegisterProfileDialog dlg(this);
+
+    dlg.setRegisters(registerNames, registerEnabled);
+
+    if (dlg.exec()) {
+
+        QString profileName = dlg.profileName();
+
+        if (profileName == "") {
+            return;
+        }
+
+        registerNames   = dlg.registerNames();
+        registerEnabled = dlg.registerEnabled();
+
+        registerProfileComboBox->addItem(profileName);
+        registerProfileComboBox->setCurrentText(profileName);
+
+        writeProfileSettings(profileName, registerNames, registerEnabled);
+        writeSettings();
+
+        // Use them.
+        _registerNames   = registerNames;
+        _registerEnabled = registerEnabled;
+
+        handleShowHideRegisters();
+    }
+}
+
+void SeerRegisterValuesBrowserWidget::handleModifyProfile () {
+
+    QString profileName = registerProfileComboBox->currentText();
+
+    if (profileName == "allregisters") {
+        QMessageBox::warning(this, "Seer", "The profile 'allregisters' is reserved.\n\nIt can't be modified.", QMessageBox::Ok);
+        return;
+    }
+
+    // Build a list of registers.
+    QStringList   registerNames   = _registerNames;
+    QVector<bool> registerEnabled = _registerEnabled;
+
+    // Bring up the register profile dialog.
+    SeerRegisterProfileDialog dlg(this);
+
+    dlg.setProfileName(profileName);
+    dlg.setRegisters(registerNames, registerEnabled);
+
+    if (dlg.exec()) {
+
+        // Get the (potenially new) profile name.
+        QString newProfileName = dlg.profileName();
+
+        if (newProfileName == "") {
+            return;
+        }
+
+        registerNames   = dlg.registerNames();
+        registerEnabled = dlg.registerEnabled();
+
+        // If it's a new name, add it to the list and switch to it.
+        if (newProfileName != profileName) {
+            registerProfileComboBox->addItem(newProfileName);
+            registerProfileComboBox->setCurrentText(newProfileName);
+        }
+
+        // Write out the setting changes.
+        writeProfileSettings(newProfileName, registerNames, registerEnabled);
+        writeSettings();
+
+        // Use them.
+        _registerNames   = registerNames;
+        _registerEnabled = registerEnabled;
+
+        handleShowHideRegisters();
+    }
+}
+
+void SeerRegisterValuesBrowserWidget::handleDeleteProfile () {
+
+    int index = registerProfileComboBox->currentIndex();
+
+    if (index < 0) {
+        return;
+    }
+
+    QString profileName = registerProfileComboBox->itemText(index);
+
+    if (profileName == "") {
+        return;
+    }
+
+    if (profileName == "allregisters") {
+        QMessageBox::warning(this, "Seer", "The profile 'allregisters' is reserved.\n\nIt can't be deleted.", QMessageBox::Ok);
+        return;
+    }
+
+    QMessageBox::StandardButton ans = QMessageBox::question(this, "Seer", "Delete profile '" + profileName + "'?");
+
+    if (ans != QMessageBox::Yes) {
+        return;
+    }
+
+    // Delete the profile from the settings.
+    deleteProfileSettings(profileName);
+
+    // Delete the profile from the list of profiles.
+    registerProfileComboBox->removeItem(index);
+
+    // Write the current settings.
+    writeSettings();
+
+    // Switch to the next profile in the list of profiles.
+    index = registerProfileComboBox->currentIndex();
+
+    if (index < 0) {
+        return;
+    }
+
+    handleProfileChanged (index);
+}
+
+void SeerRegisterValuesBrowserWidget::handleShowHideRegisters () {
+
+    // If the list is empty, show all.
+    if (_registerNames.count() == 0 || _registerEnabled.count() == 0) {
+
+        for (int i=0; i<registersTreeWidget->topLevelItemCount(); i++) {
+
+            QTreeWidgetItem* topItem = registersTreeWidget->topLevelItem(i);
+            topItem->setHidden(false);
+        }
+
+        return;
+    }
+
+    // There is a list. Hide all, then show which ones are enabled.
+    for (int i=0; i<registersTreeWidget->topLevelItemCount(); i++) {
+
+        QTreeWidgetItem* topItem = registersTreeWidget->topLevelItem(i);
+        topItem->setHidden(true);
+    }
+
+    for (int i=0; i<_registerNames.count(); i++) {
+
+        if (_registerEnabled[i] == false) {
+            continue;
+        }
+
+        QString registerName = _registerNames[i];
+
+        QList<QTreeWidgetItem*> matches = registersTreeWidget->findItems(registerName, Qt::MatchExactly, 1);
+
+        for (int i=0; i<matches.size(); i++) {
+            matches[i]->setHidden(false);
+        }
+    }
+}
+
+void SeerRegisterValuesBrowserWidget::handleProfileChanged (int index) {
+
+    // Get the profile.
+    QString profileName = registerProfileComboBox->itemText(index);
+
+    // Build a list of registers.
+    QStringList   registerNames;
+    QVector<bool> registerEnabled;
+
+    bool f = readProfileSettings(profileName, registerNames, registerEnabled);
+
+    if (f == false) {
+        return;
+    }
+
+    // Use them.
+    _registerNames   = registerNames;
+    _registerEnabled = registerEnabled;
+
+    handleShowHideRegisters();
+    writeSettings();
+}
+
+void SeerRegisterValuesBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    QStringList registerprofiles;
+
+    for (int i=0; i<registerProfileComboBox->count(); i++) {
+        if (registerProfileComboBox->itemText(i) == "allregisters") {
+            continue;
+        }
+        registerprofiles.push_back(registerProfileComboBox->itemText(i));
+    }
+
+    settings.beginGroup("registerwindow"); {
+        settings.setValue("sortcolumn",        registersTreeWidget->header()->sortIndicatorSection());
+        settings.setValue("sortorder",         registersTreeWidget->header()->sortIndicatorOrder());
+        settings.setValue("registerprofile",   registerProfileComboBox->currentText());
+        settings.setValue("registerprofiles",  registerprofiles);
+    } settings.endGroup();
+}
+
+void SeerRegisterValuesBrowserWidget::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("registerwindow"); {
+
+        int column = settings.value("sortcolumn", 0).toInt();
+        int order  = settings.value("sortorder",  Qt::AscendingOrder).toInt();
+
+        registersTreeWidget->header()->setSortIndicator(column, (Qt::SortOrder)order);
+
+        QString     registerProfileName = settings.value("registerprofile").toString();
+        QStringList registerProfiles    = settings.value("registerprofiles").toStringList();
+
+        registerProfileComboBox->addItems(registerProfiles);
+        registerProfileComboBox->setCurrentText(registerProfileName);
+
+    } settings.endGroup();
+}
+
+void SeerRegisterValuesBrowserWidget::writeProfileSettings (const QString& profileName, const QStringList& registerNames, const QVector<bool>& registerEnabled) {
+
+    QSettings   settings;
+    QStringList registerEnabledFlags;
+
+    for (int i=0; i<registerEnabled.count(); i++) {
+        registerEnabledFlags.append(registerEnabled[i] == true ? "T" : "F");
+    }
+
+    settings.beginGroup("registerprofile_" + profileName); {
+        settings.setValue("registernames",   registerNames);
+        settings.setValue("registerenabled", registerEnabledFlags);
+    } settings.endGroup();
+}
+
+bool SeerRegisterValuesBrowserWidget::readProfileSettings (const QString& profileName, QStringList& registerNames, QVector<bool>& registerEnabled) {
+
+    if (profileName == "" || profileName == "allregisters") {
+
+        registerNames.resize(0);
+        registerEnabled.resize(0);
+
+        return true;
+    }
+
+    QSettings settings;
+
+    settings.beginGroup("registerprofile_" + profileName); {
+
+        QVariant    registerNamesVariant   = settings.value("registernames");
+        QVariant    registerEnabledVariant = settings.value("registerenabled");
+        QStringList registerEnabledFlags;
+
+        // Not found? Return with error.
+        if (registerNamesVariant == QVariant() || registerEnabledVariant == QVariant()) {
+            return false;
+        }
+
+        // Okay, we found it. Populate the containters.
+        registerNames        = registerNamesVariant.toStringList();
+        registerEnabledFlags = registerEnabledVariant.toStringList();
+
+        registerEnabled.resize(0);
+        for (int i=0; i<registerEnabledFlags.count(); i++) {
+            registerEnabled.append(registerEnabledFlags[i] == "T" ? true : false);
+        }
+
+    } settings.endGroup();
+
+    return true;
+}
+
+void SeerRegisterValuesBrowserWidget::deleteProfileSettings (const QString& profileName) {
+
+    QSettings   settings;
+
+    settings.beginGroup("registerprofile_" + profileName); {
+        settings.remove(""); //removes the group, and all it keys
+    } settings.endGroup();
 }
 
 void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {

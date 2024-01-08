@@ -1,0 +1,18 @@
+{
+    "seerproject": {
+        "connectmode": {
+            "gdbserver": ":1234"
+        },
+        "executable": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver",
+        "postgdbcommands": [
+            "b main",
+            "continue",
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "symbolfile": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver_sym",
+        "workingdirectory": ""
+    }
+}

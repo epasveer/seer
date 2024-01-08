@@ -803,14 +803,20 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        executableWorkingDirectoryLineEdit->setEnabled(true);
+        executableWorkingDirectoryToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"attach\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"attach\"");
     }
 
     // ID == 2   CONNECT
     if (id == 2) {
+        executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        executableWorkingDirectoryLineEdit->setEnabled(true);
+        executableWorkingDirectoryToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }

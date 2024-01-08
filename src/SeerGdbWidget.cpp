@@ -239,8 +239,13 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerNames,                             this,                                                           &SeerGdbWidget::handleGdbDataListValues);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addVariableExpression,                                   this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::deleteVariableExpressions,                               this,                                                           &SeerGdbWidget::handleGdbDataDeleteExpressions);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMemoryVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addArrayVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addStructVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,                               this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
-
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMemoryVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addArrayVisualize,                                        this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addStructVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterNames,                                     this,                                                           &SeerGdbWidget::handleGdbRegisterListNames);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
@@ -982,6 +987,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             setNewExecutableFlag(false);
         }
 
+        // Set or reset some things.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
@@ -1150,15 +1156,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Has a executable name been provided?
-        if (executableName() != "") {
-
-            QMessageBox::warning(this, "Seer",
-                    QString("The executable name can't be provided for 'connect' mode."),
-                    QMessageBox::Ok);
-            break;
-        }
-
         // Delete the old gdb and console if there is a new executable
         if (newExecutableFlag() == true) {
             killGdb();
@@ -1236,7 +1233,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
         // Has a executable name been provided?
         if (executableName() != "") {
-
             QMessageBox::warning(this, "Seer",
                     QString("The executable name can't be provided for 'rr' mode."),
                     QMessageBox::Ok);
@@ -1858,6 +1854,8 @@ void SeerGdbWidget::handleGdbExecutableWorkingDirectory () {
         return;
     }
 
+    qDebug() << executableWorkingDirectory();
+
     if (executableWorkingDirectory() != "") {
         handleGdbCommand(QString("-environment-cd \"") + executableWorkingDirectory() + "\"");
     }
@@ -2247,6 +2245,10 @@ void SeerGdbWidget::handleGdbRegisterListValues (QString fmt) {
     if (fmt == "") {
         fmt = "N";
     }
+
+    // XXX Not sure what --skip-unavailable does.
+    // XXX Perhaps skips registers that can't get value for.
+    // XXX handleGdbCommand("-data-list-register-values --skip-unavailable " + fmt);
 
     handleGdbCommand("-data-list-register-values " + fmt);
 }

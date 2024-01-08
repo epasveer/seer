@@ -1,0 +1,60 @@
+
+Test program for AVR and simavr.
+
+    https://blog.oddbit.com/post/2019-01-22-debugging-attiny-code-pt-1/
+
+Both 'hellosimavr' and 'simavr' require a new version of the avr toolchain.
+OpenSUSE is too old. So grab a pre-built one and install it (tarball). This
+should be the first thing.
+
+    https://blog.zakkemble.net/avr-gcc-builds/
+
+The 'hellosimavr' test program is taken from:
+
+    git clone https://github.com/larsks/pipower
+
+    Go to 'tests/hellosimavr/sim' and type: make
+
+        erniep@gracie:(sim)$ pwd
+        /nas/erniep/Development/seer/tests/hellosimavr/sim
+
+        erniep@gracie:(sim)$ make
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -MM ../millis.c -o millis.dep
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -MM ../input.c -o input.dep
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -MM ../button.c -o button.dep
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -MM ../pipower.c -o pipower.dep
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -MM force_malloc.c -o force_malloc.dep
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -c force_malloc.c -o force_malloc.o
+        force_malloc.c: In function '_force_malloc':
+        force_malloc.c:10:5: warning: ignoring return value of 'malloc' declared with attribute 'warn_unused_result' [-Wunused-result]
+        10 |     malloc(0);
+           |     ^~~~~~~~~
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -c ../pipower.c -o pipower.o
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -c ../button.c -o button.o
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -c ../input.c -o input.o
+        avr-gcc -I.. -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -c ../millis.c -o millis.o
+        avr-gcc -DTIMER_BOOTWAIT=1000 -DTIMER_SHUTDOWN=1000 -DTIMER_POWEROFF=1000 -std=c99 -Wall -g -Og -DF_CPU=1000000 -mmcu=attiny85 --short-enums -o pipower.elf force_malloc.o pipower.o button.o input.o millis.o
+        rm -f pipower.hex
+        avr-objcopy -j .text -j .data -O ihex pipower.elf pipower.hex
+
+
+Install simavr, the AVR emulator for AVR microchips. It interfaces with avr-gdb, which
+Seer is happy with.
+
+    https://github.com/buserror/simavr
+
+
+Now run the tests.
+
+    In one terminal:
+
+    $ simavr -m attiny85 -f 1000000 pipower.elf  -g
+
+    In another:
+
+    $ seergdb --gdb-program /usr/bin/avr-gdb --connect :1234 --sym pipower.elf
+
+    You will need to set the initial breakpoint in main(), then "continue".
+
+
+

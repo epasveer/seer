@@ -812,27 +812,38 @@ void SeerMainWindow::handleShowMessage (QString message, int time) {
 
 void SeerMainWindow::handleText (const QString& text) {
 
-    if (text.startsWith("^error,msg=")) {
+    if (text.startsWith("^error,msg=") || text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         // ^error,msg="The program is not being run."
         // ^error,msg="ptrace: No such process."
+        // 3^error,msg="Undefined MI command: symbol-info-variables",code="undefined-command"
+        // 5^error,msg="No symbol "delta" in current context."
+        // 5^error,msg="A syntax error in expression, near `'."
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
         // Filter out less important errors.
-        if (newtext == "^error,msg=\"No registers.\"") {
+        if (newtext.contains("^error,msg=\"No registers.\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"Selected thread is running.\"") {
+        if (newtext.contains("^error,msg=\"Selected thread is running.\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"Cannot inspect Ada tasks when program is not running\"") {
+        if (newtext.contains("^error,msg=\"Cannot inspect Ada tasks when program is not running\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"The current thread has terminated\"") {
+        if (newtext.contains("^error,msg=\"The current thread has terminated\"")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"A syntax error in expression, near ")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"No symbol \"")) {
             return;
         }
 
