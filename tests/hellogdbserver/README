@@ -1,0 +1,11 @@
+
+Start gdbserver with executable that doesn't have symbols.
+
+    $ gdbserver localhost:1234 hellogdbserver
+
+Start seergdb, connecting to gdbserver and specifying a symbol file to load.
+
+    $ seergdb --connect localhost:1234 --sym hellogdbserver_sym
+
+Debug!
+

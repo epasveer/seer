@@ -819,6 +819,7 @@ void SeerMainWindow::handleText (const QString& text) {
         // 3^error,msg="Undefined MI command: symbol-info-variables",code="undefined-command"
         // 5^error,msg="No symbol "delta" in current context."
         // 5^error,msg="A syntax error in expression, near `'."
+        // 5^error,msg="Invalid character ';' in expression."
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -840,6 +841,10 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         if (newtext.contains("^error,msg=\"A syntax error in expression, near ")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"Invalid character ';' in expression.\"")) {
             return;
         }
 

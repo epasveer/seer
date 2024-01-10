@@ -885,6 +885,7 @@ void SeerGdbWidget::handleManualCommandExecute () {
 void SeerGdbWidget::handleGdbCommand (const QString& command) {
 
     qCDebug(LC) << "Command=" << command;
+    qDebug() << "Command=" << command;
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
         QMessageBox::warning(this, "Seer",
@@ -1156,11 +1157,24 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
+        bool loadPreviousBreakpoints = false;
+
+        if (isGdbRuning() == true) {
+            qDebug() << "Connect: gdb is running. Saving previous breakpoints.";
+            handleGdbCommand("info break");
+            handleGdbCommand("save breakpoints /tmp/breakpoints.seer");
+            ::sleep(5);
+            loadPreviousBreakpoints = true;
+        }
+
         // Delete the old gdb and console if there is a new executable
         if (newExecutableFlag() == true) {
             killGdb();
             disconnectConsole();
             deleteConsole();
+            qDebug() << "Connect: new executable";
+        }else{
+            qDebug() << "Connect: old executable";
         }
 
         // If gdb isn't running, start it.
@@ -1189,9 +1203,21 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
+
+            if (loadPreviousBreakpoints) {
+                qDebug() << "Connect: Loading previous breakpoints.";
+                handleGdbCommand("source -v /tmp/breakpoints.seer");
+                loadPreviousBreakpoints = false;
+            }
+
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
             setNewExecutableFlag(false);
+
+            qDebug() << "Connect: new executable";
+
+        }else{
+            qDebug() << "Connect: old executable";
         }
 
         // Set or reset some things.
