@@ -552,7 +552,7 @@
                <string>The process pid.</string>
               </property>
               <property name="inputMask">
-               <string>999999</string>
+               <string>9999999</string>
               </property>
               <property name="placeholderText">
                <string>pid</string>
