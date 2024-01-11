@@ -151,15 +151,16 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
 void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {
 
+    refresh();
+}
+
+void SeerStackArgumentsBrowserWidget::refresh () {
+
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
         return;
     }
 
-    refresh();
-}
-
-void SeerStackArgumentsBrowserWidget::refresh () {
     emit refreshStackArguments();
 }
 
