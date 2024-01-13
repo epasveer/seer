@@ -1854,8 +1854,6 @@ void SeerGdbWidget::handleGdbExecutableWorkingDirectory () {
         return;
     }
 
-    qDebug() << executableWorkingDirectory();
-
     if (executableWorkingDirectory() != "") {
         handleGdbCommand(QString("-environment-cd \"") + executableWorkingDirectory() + "\"");
     }
