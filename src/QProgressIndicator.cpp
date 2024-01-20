@@ -22,6 +22,8 @@ QProgressIndicator::QProgressIndicator(QWidget* parent) : QWidget(parent) {
     _timer = new QTimer();
 
     connect(_timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+
+    update();
 }
 
 QProgressIndicator::~QProgressIndicator() {
@@ -36,7 +38,8 @@ void QProgressIndicator::paintEvent(QPaintEvent* e) {
     Q_UNUSED(e)
 
     if (!_timer->isActive()) {
-        return;
+        _angle = 0;
+        _scale = 0.0f;
     }
 
     QPainter painter(this);
@@ -108,6 +111,8 @@ void QProgressIndicator::setType (const QString& type) {
     }else{
         setType(line_rotate);
     }
+
+    update();
 }
 
 QStringList QProgressIndicator::types () const {
