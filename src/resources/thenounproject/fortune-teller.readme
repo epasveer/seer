@@ -1,0 +1,18 @@
+
+The Seer icon is from:
+
+    https://thenounproject.com/icon/fortune-teller-3505303/
+    noun-fortune-teller-3505303.svg
+
+    https://creativecommons.org/licenses/by/3.0/
+
+Convert to png and resize.
+
+    mv noun-fortune-teller-3505303.svg fortune-teller.svg
+
+    convert -background transparent -resize   32x32 fortune-teller.svg ../seergdb_32x32.png
+    convert -background transparent -resize   64x64 fortune-teller.svg ../seergdb_64x64.png
+    convert -background transparent -resize 128x128 fortune-teller.svg ../seergdb_128x128.png
+    convert -background transparent -resize 256x256 fortune-teller.svg ../seergdb_256x256.png
+    convert -background transparent -resize 515x512 fortune-teller.svg ../seergdb_512x512.png
+

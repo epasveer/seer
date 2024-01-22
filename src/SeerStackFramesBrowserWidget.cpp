@@ -161,6 +161,12 @@ void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerStackFramesBrowserWidget::refresh () {
+
+    // Don't do any work if the widget is hidden.
+    if (isHidden()) {
+        return;
+    }
+
     emit refreshStackFrames();
 }
 

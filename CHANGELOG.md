@@ -3,6 +3,8 @@
 
 ## [2.4beta] - 2023-XX-XX
 * Prepare for the 2.4 release cycle.
+* Changed main icon to a more license friendly one.
+  All icons are now GPLv3, CC3.0, or CC4.0
 * Fixed string compares for breakpoint conditions (#184)
 * Added '--bs' command line option to specify a breakpoint at a source.cpp:lineno
 * Fixed long tooltips text by restricting them to 100 characters. (#189)

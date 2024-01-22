@@ -123,15 +123,16 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
 
 void SeerStackLocalsBrowserWidget::handleStoppingPointReached () {
 
+    refresh();
+}
+
+void SeerStackLocalsBrowserWidget::refresh () {
+
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
         return;
     }
 
-    refresh();
-}
-
-void SeerStackLocalsBrowserWidget::refresh () {
     emit refreshStackLocals();
 }
 
