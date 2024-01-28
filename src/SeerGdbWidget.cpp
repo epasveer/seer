@@ -885,7 +885,6 @@ void SeerGdbWidget::handleManualCommandExecute () {
 void SeerGdbWidget::handleGdbCommand (const QString& command) {
 
     qCDebug(LC) << "Command=" << command;
-    qDebug() << "Command=" << command;
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
         QMessageBox::warning(this, "Seer",
@@ -1161,9 +1160,8 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         if (isGdbRuning() == true) {
             qDebug() << "Connect: gdb is running. Saving previous breakpoints.";
-            handleGdbCommand("info break");
             handleGdbCommand("save breakpoints /tmp/breakpoints.seer");
-            ::sleep(5);
+            delay(1);
             loadPreviousBreakpoints = true;
         }
 
@@ -1172,9 +1170,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             killGdb();
             disconnectConsole();
             deleteConsole();
-            qDebug() << "Connect: new executable";
-        }else{
-            qDebug() << "Connect: old executable";
         }
 
         // If gdb isn't running, start it.
@@ -1213,11 +1208,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
             setNewExecutableFlag(false);
-
-            qDebug() << "Connect: new executable";
-
-        }else{
-            qDebug() << "Connect: old executable";
         }
 
         // Set or reset some things.
@@ -3618,6 +3608,15 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
                                        QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
                                        QMessageBox::Ok);
         }
+    }
+}
+
+void SeerGdbWidget::delay (int seconds) {
+
+    QTime dieTime = QTime::currentTime().addSecs(seconds);
+
+    while (QTime::currentTime() < dieTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
 

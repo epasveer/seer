@@ -64,11 +64,6 @@ bool SeerWatchpointsBrowserWidget::isEmpty() const {
     return (watchpointsTreeWidget->topLevelItemCount() == 0);
 }
 
-QStringList SeerWatchpointsBrowserWidget::breakpoints () const {
-
-    return QStringList();
-}
-
 void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.
@@ -391,7 +386,7 @@ void SeerWatchpointsBrowserWidget::handleAddToolButton () {
 void SeerWatchpointsBrowserWidget::handleDeleteToolButton () {
 
     // Get selected tree items.
-    QList<QTreeWidgetItem*> items =  watchpointsTreeWidget->selectedItems();
+    QList<QTreeWidgetItem*> items = watchpointsTreeWidget->selectedItems();
 
     // Build a string that is a list of watchpoints.
     QString watchpoints;

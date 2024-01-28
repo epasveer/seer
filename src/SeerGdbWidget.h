@@ -365,6 +365,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                disconnectConsole                   ();
         SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
+        void                                delay                               (int seconds);
 
         QString                             _gdbProgram;
         QString                             _gdbArguments;
