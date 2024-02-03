@@ -142,6 +142,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
+    QObject::connect(actionGdbDebug,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
     QObject::connect(actionGdbRun,                      &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
     QObject::connect(actionGdbStart,                    &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
     QObject::connect(actionGdbReattach,                 &QAction::triggered,                            this,           &SeerMainWindow::handleAttachExecutable);
@@ -393,6 +394,7 @@ QString SeerMainWindow::gdbArgumentsOverride () const {
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.
+    actionGdbDebug->setVisible(false);
     actionGdbRun->setVisible(false);
     actionGdbStart->setVisible(false);
     actionGdbReconnect->setVisible(false);
@@ -456,6 +458,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else if (launchMode == "none") {
+
+        actionGdbDebug->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);

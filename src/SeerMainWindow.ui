@@ -160,6 +160,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionGdbDebug"/>
    <addaction name="actionGdbRun"/>
    <addaction name="actionGdbStart"/>
    <addaction name="actionGdbReconnect"/>
@@ -193,13 +194,13 @@
     <string>Quit the  Seer debugger.</string>
    </property>
   </action>
-  <action name="actionGdbStart">
+  <action name="actionGdbDebug">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
-    <string>Start</string>
+    <string>Debug...</string>
    </property>
   </action>
   <action name="actionGdbRun">
@@ -209,6 +210,15 @@
    </property>
    <property name="text">
     <string>Run</string>
+   </property>
+  </action>
+  <action name="actionGdbStart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
    </property>
   </action>
   <action name="actionGdbNext">
