@@ -27,7 +27,7 @@ Requirements
    * Qt6 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
 
 * QT5
-   * For the time being, Seer can still be built with Qt5.
+   * **Seer no longer compiles with Qt5.** The 2.3 source tree is the last one that does.
    * Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 NEWS
