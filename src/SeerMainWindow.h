@@ -86,6 +86,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleRecordSettingsChanged         ();
         void                        handleChangeWindowTitle             (QString title);
         void                        handleHelpToolButtonClicked         ();
+        void                        handleTerminateExecutable           ();
         void                        handleRunExecutable                 ();
         void                        handleStartExecutable               ();
         void                        handleAttachExecutable              ();

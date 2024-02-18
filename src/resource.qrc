@@ -57,6 +57,7 @@
     <file>resources/RelaxLightIcons/data-information.svg</file>
     <file>resources/RelaxLightIcons/data-warning.svg</file>
     <file>resources/RelaxLightIcons/dialog-question.svg</file>
+    <file>resources/RelaxLightIcons/system-shutdown.svg</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/seergdb.hlp</file>
     <file>resources/help/StructVisualizer.md</file>

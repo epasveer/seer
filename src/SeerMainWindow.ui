@@ -160,6 +160,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionGdbTerminate"/>
    <addaction name="actionGdbDebug"/>
    <addaction name="actionGdbRun"/>
    <addaction name="actionGdbStart"/>
@@ -188,19 +189,34 @@
     <string>Quit</string>
    </property>
    <property name="toolTip">
-    <string>Quit</string>
+    <string>Quit out of Seer</string>
    </property>
    <property name="statusTip">
     <string>Quit the  Seer debugger.</string>
    </property>
   </action>
+  <action name="actionGdbTerminate">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Terminate</string>
+   </property>
+   <property name="toolTip">
+    <string>Terminate the current session</string>
+   </property>
+  </action>
   <action name="actionGdbDebug">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+     <normaloff>:/seer/resources/thenounproject/fortune-teller.svg</normaloff>:/seer/resources/thenounproject/fortune-teller.svg</iconset>
    </property>
    <property name="text">
-    <string>Debug...</string>
+    <string>Debug</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a new session</string>
    </property>
   </action>
   <action name="actionGdbRun">
@@ -229,6 +245,9 @@
    <property name="text">
     <string>Next</string>
    </property>
+   <property name="toolTip">
+    <string>Execute the next statement (step over functions)</string>
+   </property>
   </action>
   <action name="actionGdbStep">
    <property name="icon">
@@ -237,6 +256,9 @@
    </property>
    <property name="text">
     <string>Step</string>
+   </property>
+   <property name="toolTip">
+    <string>Execute the next statement (step into functions)</string>
    </property>
   </action>
   <action name="actionGdbFinish">
@@ -247,6 +269,9 @@
    <property name="text">
     <string>Finish</string>
    </property>
+   <property name="toolTip">
+    <string>Finish the current function</string>
+   </property>
   </action>
   <action name="actionGdbContinue">
    <property name="icon">
@@ -255,6 +280,9 @@
    </property>
    <property name="text">
     <string>Continue</string>
+   </property>
+   <property name="toolTip">
+    <string>Continue executing the program</string>
    </property>
   </action>
   <action name="actionFileDebug">
@@ -647,7 +675,7 @@
     <string>Nexti</string>
    </property>
    <property name="toolTip">
-    <string>Nexti</string>
+    <string>Execute the next instruction (step over functions)</string>
    </property>
   </action>
   <action name="actionGdbStepi">
@@ -659,7 +687,7 @@
     <string>Stepi</string>
    </property>
    <property name="toolTip">
-    <string>Stepi</string>
+    <string>Execute the next instruction (step into functions)</string>
    </property>
   </action>
   <action name="actionVisualizers">

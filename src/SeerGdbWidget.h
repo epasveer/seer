@@ -222,6 +222,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbRRExecutable               ();
         void                                handleGdbCoreFileExecutable         ();
+        void                                handleGdbTerminateExecutable        ();
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
         void                                handleGdbRunToAddress               (QString address);
@@ -344,8 +345,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
 
+        void                                handleSessionTerminated             ();
+
     signals:
         void                                stoppingPointReached                ();
+        void                                sessionTerminated                   ();
         void                                changeWindowTitle                   (QString title);
         void                                assemblyConfigChanged               ();
         void                                recordSettingsChanged               ();
@@ -381,6 +385,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbEnablePrettyPrinting;
         QString                             _gdbRecordMode;
         QString                             _gdbRecordDirection;
+        bool                                _gdbLoadPreviousBreakpoints;
         QString                             _dprintfStyle;
         QString                             _dprintfFunction;
         QString                             _dprintfChannel;

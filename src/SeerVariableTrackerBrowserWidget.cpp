@@ -214,6 +214,17 @@ void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    variablesTreeWidget->clear();
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerVariableTrackerBrowserWidget::refresh () {
     emit refreshVariableTrackerNames();
     emit refreshVariableTrackerValues();

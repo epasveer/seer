@@ -5,10 +5,7 @@ sized .png files. "Toli" is the copyright owner, as mentioned below. Seer uses i
     https://thenounproject.com/icon/fortune-teller-3505303/                                 https://thenounproject.com/tolicon/                                 thenounproject/fortune-teller.svg   CC3.0
                                                                                                                                                                 seergdb_*.png
 
-
 Some icons are used from "IconsIcons" and "TheNounProject" and are licensed under "CreativeCommons" CC3.0 and CC4.0 licenses.
-terms of the NetBeans License Agreement.
-
 
     https://icon-icons.com/icon/GDB/132365                                                  https://icon-icons.com/users/AmQJzv5e8DpITUWIRmGPz/icon-sets/       icons-icons/gdb.png                 CC4.0
     https://icon-icons.com/icon/keyboard/122169                                             https://icon-icons.com/users/z1gHIAw5WHSQk4RJ0exyV/icon-sets/       icons-icons/keyboard.png            CC4.0
@@ -33,7 +30,7 @@ terms of the NetBeans License Agreement.
 
 
 Some icons are used from the RelaxLightIcons set. Licensed under the GPL-3.0+ license.
-L4ki https://github.com/L4ki
+https://github.com/L4ki/Breeze-openSUSE-Icons
 
     RelaxLightIcons/debug-execute-from-cursor.svg
     RelaxLightIcons/debug-execute-to-cursor.svg
@@ -62,4 +59,5 @@ L4ki https://github.com/L4ki
     RelaxLightIcons/list-remove.svg
     RelaxLightIcons/tools-media-optical-burn-image.svg
     RelaxLightIcons/view-refresh.svg
+    RelaxLightIcons/system-shutdown.svg
 

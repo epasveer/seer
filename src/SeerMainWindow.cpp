@@ -143,6 +143,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
     QObject::connect(actionGdbDebug,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
     QObject::connect(actionGdbRun,                      &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
     QObject::connect(actionGdbStart,                    &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
     QObject::connect(actionGdbReattach,                 &QAction::triggered,                            this,           &SeerMainWindow::handleAttachExecutable);
@@ -394,6 +395,7 @@ QString SeerMainWindow::gdbArgumentsOverride () const {
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.
+    actionGdbTerminate->setVisible(true);
     actionGdbDebug->setVisible(false);
     actionGdbRun->setVisible(false);
     actionGdbStart->setVisible(false);
@@ -744,6 +746,24 @@ void SeerMainWindow::handleHelpAbout () {
     SeerAboutDialog dlg(this);
 
     dlg.exec();
+}
+
+void SeerMainWindow::handleTerminateExecutable () {
+
+    qDebug() << "Terminate executable";
+
+    gdbWidget->handleGdbTerminateExecutable();
+
+    /*
+    if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable();
+
+    }else{
+
+        gdbWidget->handleGdbRunExecutable("none");
+    }
+    */
 }
 
 void SeerMainWindow::handleRunExecutable () {
