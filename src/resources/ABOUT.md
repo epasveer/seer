@@ -41,6 +41,14 @@ The main Seer icon and other icons.
 
 &nbsp;  
 &nbsp;  
+
+| Styles/Themes                                                                                                                          | Creator                                                                                                                     | License                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+|Style <a href="https://github.com/ColinDuquesnoy/QDarkStyleSheet"                                       title="">QDarkStyleSheet</a>    |  Created by <a href="https://github.com/ColinDuquesnoy"                               title="">Colin Duquesnoy</a>          | (License <a href="https://opensource.org/license/MIT"                    title="">MIT)</a>    |
+|                                                                                                                                        |                                                                                                                             | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
+
+&nbsp;  
+&nbsp;  
   
 Credits to kdbg, gede, gdbgui, nemiver, and many other projects for ideas and examples.  
   
