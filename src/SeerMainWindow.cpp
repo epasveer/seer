@@ -58,6 +58,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     _styleMenuActionGroup->setEnabled(true);
     _styleMenuActionGroup->setVisible(true);
 
+    QAction* lightStyleAction = menuStyles->addAction("light");
+    lightStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(lightStyleAction);
+
+    QAction* darkStyleAction = menuStyles->addAction("dark");
+    darkStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(darkStyleAction);
+
     QStringList styles = QStyleFactory::keys();
 
     for (int i = 0; i < styles.size(); i++) {
@@ -467,6 +475,36 @@ const QString& SeerMainWindow::executableBreakMode () const {
     return gdbWidget->executableBreakMode();
 }
 
+void SeerMainWindow::setStyleName (const QString& name) {
+
+    // Check for Dark/Light style from Seer's resource tree.
+    if (name == "dark" || name == "light") {
+
+        QFile s(":qdarkstyle/" + name + "/" + name + "style.qss");
+        if (s.exists() == false) {
+            qDebug() << "Stylesheet '" + name + "' doesn't exist!";
+            return;
+        }
+
+        s.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&s);
+        qApp->setStyleSheet(ts.readAll());
+
+        _styleName = name;
+
+    // Otherwise, a system installed one or Qt internal one.
+    }else{
+
+        QApplication::setStyle(name);
+
+        _styleName = name;
+    }
+}
+
+const QString& SeerMainWindow::styleName () {
+    return _styleName;
+}
+
 void SeerMainWindow::handleFileDebug () {
 
     SeerDebugDialog dlg(this);
@@ -779,7 +817,7 @@ void SeerMainWindow::handleStyleMenuChanged () {
         return;
     }
 
-    QApplication::setStyle(action->text());
+    setStyleName(action->text());
 }
 
 void SeerMainWindow::handleShowMessage (QString message, int time) {
@@ -1218,8 +1256,7 @@ void SeerMainWindow::writeConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("mainwindow"); {
-        QStyle* currentStyle = QApplication::style();
-        settings.setValue("qtstyle", currentStyle->objectName());
+        settings.setValue("qtstyle", styleName());
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
@@ -1299,7 +1336,7 @@ void SeerMainWindow::readConfigSettings () {
 
     settings.beginGroup("mainwindow"); {
         if (settings.contains("qtstyle")) {
-            QApplication::setStyle(settings.value("qtstyle").toString());
+            setStyleName(settings.value("qtstyle").toString());
         }
     } settings.endGroup();
 

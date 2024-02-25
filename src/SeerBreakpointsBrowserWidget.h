@@ -14,6 +14,7 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
        ~SeerBreakpointsBrowserWidget ();
 
         bool                isEmpty                     () const;
+        QStringList         breakpoints                 () const;
 
     public slots:
         void                handleText                  (const QString& text);

@@ -64,6 +64,9 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableLaunchMode                () const;
         const QString&              executableBreakMode                 () const;
 
+        void                        setStyleName                        (const QString& name);
+        const QString&              styleName                           ();
+
     private slots:
         void                        handleFileDebug                     ();
         void                        handleFileArguments                 ();
@@ -104,6 +107,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
     private:
         QActionGroup*               _styleMenuActionGroup;
+        QString                     _styleName;
         QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;

@@ -237,9 +237,9 @@ set(SOURCE_FILES
     )
 
 if(${QTVERSION} STREQUAL "QT6")
-    qt6_add_resources(SOURCE_FILES resource.qrc)
+    qt6_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 elseif(${QTVERSION} STREQUAL "QT5")
-    qt5_add_resources(SOURCE_FILES resource.qrc)
+    qt5_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 endif()
 
 # Set non-Debug build as GUI application.

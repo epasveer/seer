@@ -60,6 +60,11 @@ bool SeerBreakpointsBrowserWidget::isEmpty() const {
     return (breakpointsTreeWidget->topLevelItemCount() == 0);
 }
 
+QStringList SeerBreakpointsBrowserWidget::breakpoints () const {
+
+    return QStringList();
+}
+
 void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.
