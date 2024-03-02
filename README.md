@@ -11,6 +11,7 @@ GitHub project page.
 
 Installation
 ============
+ 
 Seer can be installed either from a package manager or from source.
 > [!NOTE]
 >  Make sure the requirements are met before installing.
@@ -35,7 +36,6 @@ Requirements
    * **Seer no longer compiles with Qt5.** The 2.3 source tree is the last one that does.
    * Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
-
 Install from package
 ---------
 Available through the following package managers:
@@ -46,12 +46,11 @@ Available through the following package managers:
 
 Install from source
 ---------
-Go to the Wiki to see how to build Seer. Seer can be built with Qt6. As well, for the time being, it can still be built with Qt5.
-
+Seer can be built with Qt6 (Recommended) by following the instructions below.
 https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
-</br>
-https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
+It can still be built with Qt5, for the time being.
+https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 
 NEWS
