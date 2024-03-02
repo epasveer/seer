@@ -27,6 +27,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QProcess>
 
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
@@ -45,6 +46,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     setEditorFont(font);
     setEditorTabSize(4);
+    setExternalEditorCommand("");
 
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
@@ -1062,6 +1064,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* enableAction;
     QAction* disableAction;
     QAction* runToLineAction;
+    QAction* openExternalEditor;
     QAction* addVariableLoggerExpressionAction;
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
@@ -1091,6 +1094,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
 
         createBreakpointAction->setEnabled(false);
         createPrintpointAction->setEnabled(false);
@@ -1098,6 +1102,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
         runToLineAction->setEnabled(true);
+        openExternalEditor->setEnabled(true);
 
     }else{
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
@@ -1106,6 +1111,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
 
         createBreakpointAction->setEnabled(true);
         createPrintpointAction->setEnabled(true);
@@ -1113,6 +1119,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
         runToLineAction->setEnabled(true);
+        openExternalEditor->setEnabled(true);
     }
 
     addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
@@ -1141,6 +1148,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     menu.addAction(enableAction);
     menu.addAction(disableAction);
     menu.addAction(runToLineAction);
+    menu.addAction(openExternalEditor);
 
     QMenu loggerMenu("Add variable to Logger");
     loggerMenu.addAction(addVariableLoggerExpressionAction);
@@ -1303,6 +1311,45 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the runToLine signal.
         emit runToLine(fullname(), lineno);
+
+        return;
+    }
+
+    // Handle open code editor at a line number.
+    if (action == openExternalEditor) {
+
+        // External editor examples:
+        //  $ export SEERGDB_CustomCodeEditor='geany "%{file}":%{line}'
+        //  $ export SEERGDB_CustomCodeEditor='kate --line %{line} "%{file}"'
+        //  $ export SEERGDB_CustomCodeEditor='gedit "%{file}" +%{line}'
+        //  $ export SEERGDB_CustomCodeEditor='konsole -e vim "%{file}" +%{line}'
+        //  QString codeEditorCmd = []() { const char* pc = std::getenv("SEERGDB_CustomCodeEditor"); if(pc) return pc; return ""; } ();
+        QString codeEditorCmd = externalEditorCommand();
+
+        if (codeEditorCmd == "") {
+            QMessageBox::critical(this, "Error!",  "External editor not set.\n\nSee the Editor Config page to set the editor to use.");
+            return;
+        }
+
+        // Mark cursor as busy.
+        QApplication::setOverrideCursor(Qt::BusyCursor);
+
+        codeEditorCmd.replace("%{file}", fullname());
+        codeEditorCmd.replace("%{line}", QString::number(lineno));
+
+        QProcess* process = new QProcess(this);
+        process->startCommand(codeEditorCmd);
+
+        bool f = process->waitForStarted(5000);
+
+        // Set the cursor back.
+        QApplication::restoreOverrideCursor();
+
+        if (f == false) {
+            QMessageBox::critical(this, "Error!",  "Launching external editor failed.\n\nCommand: '" + codeEditorCmd + "'");
+            qDebug().nospace() << "Launching external editor failed. Command: '" << codeEditorCmd << "'";
+            qDebug().nospace() << "Error: '" << process->error() << "'";
+        }
 
         return;
     }
@@ -1660,6 +1707,16 @@ void SeerEditorWidgetSourceArea::setEditorTabSize (int spaces) {
 int SeerEditorWidgetSourceArea::editorTabSize () const {
 
     return _sourceTabSize;
+}
+
+void SeerEditorWidgetSourceArea::setExternalEditorCommand (const QString& externalEditorCommand) {
+
+    _externalEditorCommand = externalEditorCommand;
+}
+
+const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
+
+    return _externalEditorCommand;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {

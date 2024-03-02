@@ -83,6 +83,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setEditorHighlighterEnabled                     (bool flag);
         bool                                editorHighlighterEnabled                        () const;
 
+        void                                setExternalEditorCommand                        (const QString& externalEditorCommand);
+        QString                             externalEditorCommand                           () const;
+
         // Source settings.
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;

@@ -166,12 +166,23 @@ bool SeerEditorConfigPage::highlighterEnabled () const {
     return editorWidget->sourceArea()->highlighterEnabled();
 }
 
+void SeerEditorConfigPage::setExternalEditorCommand (const QString& externalEditorCommand) {
+
+    externalEditorCommandLineEdit->setText(externalEditorCommand);
+}
+
+QString SeerEditorConfigPage::externalEditorCommand () const {
+
+    return externalEditorCommandLineEdit->text();
+}
+
 void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
     setEditorTabSize(4);
     setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
     setHighlighterEnabled(true);
+    setExternalEditorCommand("");
 }
 
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
