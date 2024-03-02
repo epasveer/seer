@@ -46,10 +46,12 @@ Available through the following package managers:
 
 Install from source
 ---------
-Seer can be built with Qt6 (Recommended) by following the instructions below.
+(Recommended) Seer can be built with Qt6 by following the instructions below.
+
 https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
 
-It can still be built with Qt5, for the time being.
+It can still be built with Qt5, for the time being by following the instructions below.
+
 https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 
