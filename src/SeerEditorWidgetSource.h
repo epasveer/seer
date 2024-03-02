@@ -96,6 +96,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         const QFont&                                editorFont                          () const;
         void                                        setEditorTabSize                    (int spaces);
         int                                         editorTabSize                       () const;
+        void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
+        const QString&                              externalEditorCommand               ();
 
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
@@ -168,6 +170,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         bool                                        _sourceHighlighterEnabled;
 
         int                                         _sourceTabSize;
+        QString                                     _externalEditorCommand;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {
