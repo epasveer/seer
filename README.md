@@ -38,7 +38,7 @@ Requirements
 
 Install from package
 ---------
-Available throught the following package managers:
+Available through the following package managers:
 * pamac (Manjaro)
 `pamac install seer`
 
