@@ -13,7 +13,7 @@ Installation
 ============
 Seer can be installed either from a package manager or from source.
 > [!NOTE]
->  sure the requirements are met before installing.
+>  Make sure the requirements are met before installing.
 
 Requirements
 ---------
