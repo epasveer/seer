@@ -36,6 +36,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacerWidget->setStyleSheet("background-color:transparent"); // Need this for QToolBar StyleSheets to work.
     toolBar->addWidget(spacerWidget);
 
     _progressIndicator = new SeerProgressIndicator(this);
