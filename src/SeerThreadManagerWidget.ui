@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>914</width>
-    <height>536</height>
+    <width>398</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,12 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="schedulerLockingLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>50</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Scheduler locking:</string>
      </property>
@@ -58,6 +64,12 @@
    </item>
    <item row="2" column="1">
     <widget class="QLabel" name="scheduleMultipleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>50</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="toolTip">
       <string/>
      </property>
@@ -75,6 +87,12 @@
    </item>
    <item row="2" column="3">
     <widget class="QLabel" name="forkFollowsLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+       <horstretch>50</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string>Fork follows:</string>
      </property>
@@ -85,9 +103,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Ignored</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>564</width>
+       <width>0</width>
        <height>20</height>
       </size>
      </property>
@@ -164,9 +185,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Ignored</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>564</width>
+       <width>0</width>
        <height>20</height>
       </size>
      </property>

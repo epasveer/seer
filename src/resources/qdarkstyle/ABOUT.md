@@ -13,4 +13,9 @@ And its license is here:
 
     Copyright (c) 2013-2019 Colin Duquesnoy
 
+QComboBox menus, with this style, look weird. There's a large "space" to the left of the menu text. It isn't
+resolved in the official QDarkStyleSheet project. This link shows a fix for the QComboBox entry in the
+"dark" and "light" css files. So I've applied it to my copy of the stylesheet.
+
+    https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/308#issuecomment-1661775924
 

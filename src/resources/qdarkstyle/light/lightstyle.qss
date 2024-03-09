@@ -1272,20 +1272,6 @@ QComboBox:on {
   selection-background-color: #9FCBFF;
 }
 
-QComboBox::indicator {
-  border: none;
-  border-radius: 0;
-  background-color: transparent;
-  selection-background-color: transparent;
-  color: transparent;
-  selection-color: transparent;
-  /* Needed to remove indicator - fix #132 */
-}
-
-QComboBox::indicator:alternate {
-  background: #FAFAFA;
-}
-
 QComboBox::item {
   /* Remove to fix #282, #285 and MR #288*/
   /*&:checked {
