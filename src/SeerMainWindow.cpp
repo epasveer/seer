@@ -36,6 +36,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacerWidget->setStyleSheet("background-color:transparent"); // Need this for QToolBar StyleSheets to work.
     toolBar->addWidget(spacerWidget);
 
     _progressIndicator = new SeerProgressIndicator(this);
@@ -57,6 +58,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     _styleMenuActionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
     _styleMenuActionGroup->setEnabled(true);
     _styleMenuActionGroup->setVisible(true);
+
+    QAction* lightStyleAction = menuStyles->addAction("light");
+    lightStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(lightStyleAction);
+
+    QAction* darkStyleAction = menuStyles->addAction("dark");
+    darkStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(darkStyleAction);
 
     QStringList styles = QStyleFactory::keys();
 
@@ -484,6 +493,36 @@ const QString& SeerMainWindow::executableBreakMode () const {
     return gdbWidget->executableBreakMode();
 }
 
+void SeerMainWindow::setStyleName (const QString& name) {
+
+    // Check for Dark/Light style from Seer's resource tree.
+    if (name == "dark" || name == "light") {
+
+        QFile s(":qdarkstyle/" + name + "/" + name + "style.qss");
+        if (s.exists() == false) {
+            qDebug() << "Stylesheet '" + name + "' doesn't exist!";
+            return;
+        }
+
+        s.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&s);
+        qApp->setStyleSheet(ts.readAll());
+
+        _styleName = name;
+
+    // Otherwise, a system installed one or Qt internal one.
+    }else{
+
+        QApplication::setStyle(name);
+
+        _styleName = name;
+    }
+}
+
+const QString& SeerMainWindow::styleName () {
+    return _styleName;
+}
+
 void SeerMainWindow::handleFileDebug () {
 
     SeerDebugDialog dlg(this);
@@ -652,6 +691,8 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setExternalEditorCommand(gdbWidget->editorManager()->editorExternalEditorCommand());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSourceIgnoreFilePatterns(gdbWidget->sourceIgnoreFilePatterns());
     dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
@@ -692,6 +733,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
+    gdbWidget->editorManager()->setEditorExternalEditorCommand(dlg.externalEditorCommand());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setSourceIgnoreFilePatterns(dlg.sourceIgnoreFilePatterns());
     gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
@@ -826,7 +868,7 @@ void SeerMainWindow::handleStyleMenuChanged () {
         return;
     }
 
-    QApplication::setStyle(action->text());
+    setStyleName(action->text());
 }
 
 void SeerMainWindow::handleShowMessage (QString message, int time) {
@@ -1273,8 +1315,7 @@ void SeerMainWindow::writeConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("mainwindow"); {
-        QStyle* currentStyle = QApplication::style();
-        settings.setValue("qtstyle", currentStyle->objectName());
+        settings.setValue("qtstyle", styleName());
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
@@ -1303,6 +1344,7 @@ void SeerMainWindow::writeConfigSettings () {
 
         settings.setValue("font",    gdbWidget->editorManager()->editorFont().toString());
         settings.setValue("tabsize", gdbWidget->editorManager()->editorTabSize());
+        settings.setValue("externaleditorcommand", gdbWidget->editorManager()->editorExternalEditorCommand());
 
         settings.beginGroup("highlighter"); {
 
@@ -1322,8 +1364,8 @@ void SeerMainWindow::writeConfigSettings () {
             }
 
             settings.setValue("suffixes", highlighter.sourceSuffixes());
-
         } settings.endGroup();
+
     } settings.endGroup();
 
     settings.beginGroup("manualgdbcommands"); {
@@ -1354,7 +1396,7 @@ void SeerMainWindow::readConfigSettings () {
 
     settings.beginGroup("mainwindow"); {
         if (settings.contains("qtstyle")) {
-            QApplication::setStyle(settings.value("qtstyle").toString());
+            setStyleName(settings.value("qtstyle").toString());
         }
     } settings.endGroup();
 
@@ -1391,6 +1433,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->editorManager()->setEditorFont(f);
 
         gdbWidget->editorManager()->setEditorTabSize(settings.value("tabsize", 4).toInt());
+        gdbWidget->editorManager()->setEditorExternalEditorCommand(settings.value("externaleditorcommand").toString());
 
         settings.beginGroup("highlighter"); {
 

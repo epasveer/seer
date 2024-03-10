@@ -27,7 +27,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: 6.*
+        version: 6.2.4
         install-deps: 'true'
         modules: 'qtcharts'
 
@@ -84,6 +84,7 @@ jobs:
 
     - name: Install build dependencies
       run: |
+        sudo apt-get update
         sudo apt-get -y install devscripts build-essential dpkg-dev equivs
         sudo mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
 

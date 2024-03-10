@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
 
     QCoreApplication::setApplicationName("seergdb");
     QCoreApplication::setOrganizationName("seergdb");
-    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2023");
+    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2024");
 
     //
     // Parse arguments.

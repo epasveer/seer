@@ -26,6 +26,9 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setHighlighterEnabled           (bool flag);
         bool                                highlighterEnabled              () const;
 
+        void                                setExternalEditorCommand        (const QString& externalEditorCommand);
+        QString                             externalEditorCommand           () const;
+
         void                                reset                           ();
 
     protected slots:
