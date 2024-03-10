@@ -12,6 +12,7 @@
 #include <QtGui/QHelpEvent>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGuiApplication>
+#include <QtGui/QHelpEvent>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
 #include <QAction>
@@ -25,6 +26,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QProcess>
+
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
@@ -35,12 +39,14 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _selectedExpressionId       = Seer::createID();
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
 
     setEditorFont(font);
     setEditorTabSize(4);
+    setExternalEditorCommand("");
 
     setReadOnly(true);
     setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
@@ -456,9 +462,9 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
         return;
     }
 
-    _selectedExpressionCursor = textCursor();
-    _selectedExpressionValue  = "";
-    _selectedExpressionId     = Seer::createID();
+    _selectedExpressionCursor   = textCursor();
+    _selectedExpressionPosition = event->pos();
+    _selectedExpressionValue    = "";
 
     // Look for a keyboard modifier to prepend a '*', '&', or '*&'.
     Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
@@ -476,8 +482,7 @@ void SeerEditorWidgetSourceArea::mouseReleaseEvent (QMouseEvent* event) {
         _selectedExpressionName = textCursor().selectedText();
     }
 
-    emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
-    emit addVariableLoggerExpression(_selectedExpressionName);                       // For the variable logger.
+    emit addVariableLoggerExpression(_selectedExpressionName); // For the variable logger.
 }
 
 bool SeerEditorWidgetSourceArea::event(QEvent* event) {
@@ -485,22 +490,61 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
     // Handle the ToolTip event.
     if (event->type() == QEvent::ToolTip) {
 
-        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+        while (1) { // Create a region of the code that does one pass.
 
-        // Massage the event location to account for the linenumber and breakpoint widgets.
-        QPoint pos = QPoint(helpEvent->pos().x() - _lineNumberArea->width() - _breakPointArea->width(), helpEvent->pos().y());
+            // Convert the event to a Help event.
+            QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
 
-        // Create a cursor at the position so we can get the text underneath at the cursor.
-        QTextCursor cursor = cursorForPosition(pos);
-        cursor.select(QTextCursor::WordUnderCursor);
+            // Massage the event location to account for the linenumber and breakpoint widgets.
+            QPoint pos = QPoint(helpEvent->pos().x() - _lineNumberArea->width() - _breakPointArea->width(), helpEvent->pos().y());
 
-        // If the text isn't empty, display a took tip.
-        if (cursor.selectedText().isEmpty() == false && cursor.selectedText() == _selectedExpressionCursor.selectedText()) {
-            QToolTip::showText(helpEvent->globalPos(), _selectedExpressionValue);
+            // Create a cursor at the position so we can get the text underneath at the cursor.
+            QTextCursor cursor = cursorForPosition(pos);
+            cursor.select(QTextCursor::WordUnderCursor);
 
-        // Otherwise, hide any old one.
-        }else{
-            QToolTip::hideText();
+            // If the hover text is empty, do nothing. Reset things. Exit this function.
+            QString word = cursor.selectedText();
+
+            //qDebug() << "Hover text=" << word;
+
+            if (word.isEmpty() == true) {
+
+                QToolTip::hideText();
+
+                _selectedExpressionCursor   = QTextCursor();
+                _selectedExpressionPosition = QPoint();
+                _selectedExpressionName     = "";
+                _selectedExpressionValue    = "";
+
+                break;
+            }
+
+            // Is our cursor the same as the previous.
+            if (cursor == _selectedExpressionCursor) {
+
+                // Same word as before? Display the tooltip value.
+                if (word == _selectedExpressionName) {
+
+                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
+
+                // Otherwise, hide any old one.
+                }else{
+                    QToolTip::hideText();
+                }
+
+            // Otherwise it's a different spot. Create a new request to get the variable's value.
+            }else{
+                QToolTip::hideText();
+
+                _selectedExpressionCursor   = cursor;
+                _selectedExpressionPosition = helpEvent->pos();
+                _selectedExpressionName     = word;
+                _selectedExpressionValue    = "";
+
+                emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
+            }
+
+            break;
         }
 
         return true;
@@ -1020,6 +1064,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* enableAction;
     QAction* disableAction;
     QAction* runToLineAction;
+    QAction* openExternalEditor;
     QAction* addVariableLoggerExpressionAction;
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
@@ -1049,6 +1094,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
 
         createBreakpointAction->setEnabled(false);
         createPrintpointAction->setEnabled(false);
@@ -1056,6 +1102,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
         runToLineAction->setEnabled(true);
+        openExternalEditor->setEnabled(true);
 
     }else{
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
@@ -1064,6 +1111,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
         runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
 
         createBreakpointAction->setEnabled(true);
         createPrintpointAction->setEnabled(true);
@@ -1071,6 +1119,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
         runToLineAction->setEnabled(true);
+        openExternalEditor->setEnabled(true);
     }
 
     addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
@@ -1099,6 +1148,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     menu.addAction(enableAction);
     menu.addAction(disableAction);
     menu.addAction(runToLineAction);
+    menu.addAction(openExternalEditor);
 
     QMenu loggerMenu("Add variable to Logger");
     loggerMenu.addAction(addVariableLoggerExpressionAction);
@@ -1261,6 +1311,45 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the runToLine signal.
         emit runToLine(fullname(), lineno);
+
+        return;
+    }
+
+    // Handle open code editor at a line number.
+    if (action == openExternalEditor) {
+
+        // External editor examples:
+        //  $ export SEERGDB_CustomCodeEditor='geany "%{file}":%{line}'
+        //  $ export SEERGDB_CustomCodeEditor='kate --line %{line} "%{file}"'
+        //  $ export SEERGDB_CustomCodeEditor='gedit "%{file}" +%{line}'
+        //  $ export SEERGDB_CustomCodeEditor='konsole -e vim "%{file}" +%{line}'
+        //  QString codeEditorCmd = []() { const char* pc = std::getenv("SEERGDB_CustomCodeEditor"); if(pc) return pc; return ""; } ();
+        QString codeEditorCmd = externalEditorCommand();
+
+        if (codeEditorCmd == "") {
+            QMessageBox::critical(this, "Error!",  "External editor not set.\n\nSee the Editor Config page to set the editor to use.");
+            return;
+        }
+
+        // Mark cursor as busy.
+        QApplication::setOverrideCursor(Qt::BusyCursor);
+
+        codeEditorCmd.replace("%{file}", fullname());
+        codeEditorCmd.replace("%{line}", QString::number(lineno));
+
+        QProcess* process = new QProcess(this);
+        process->startCommand(codeEditorCmd);
+
+        bool f = process->waitForStarted(5000);
+
+        // Set the cursor back.
+        QApplication::restoreOverrideCursor();
+
+        if (f == false) {
+            QMessageBox::critical(this, "Error!",  "Launching external editor failed.\n\nCommand: '" + codeEditorCmd + "'");
+            qDebug().nospace() << "Launching external editor failed. Command: '" << codeEditorCmd << "'";
+            qDebug().nospace() << "Error: '" << process->error() << "'";
+        }
 
         return;
     }
@@ -1534,10 +1623,10 @@ void SeerEditorWidgetSourceArea::setQuickRunToLine (QMouseEvent* event) {
 
 void SeerEditorWidgetSourceArea::clearExpression() {
 
-    _selectedExpressionId     = 0;
-    _selectedExpressionCursor = QTextCursor();
-    _selectedExpressionName   = "";
-    _selectedExpressionValue  = "";
+    _selectedExpressionCursor   = QTextCursor();
+    _selectedExpressionPosition = QPoint();
+    _selectedExpressionName     = "";
+    _selectedExpressionValue    = "";
 }
 
 void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -1620,6 +1709,16 @@ int SeerEditorWidgetSourceArea::editorTabSize () const {
     return _sourceTabSize;
 }
 
+void SeerEditorWidgetSourceArea::setExternalEditorCommand (const QString& externalEditorCommand) {
+
+    _externalEditorCommand = externalEditorCommand;
+}
+
+const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
+
+    return _externalEditorCommand;
+}
+
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -1677,6 +1776,11 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
 
             //qDebug() << _selectedExpressionValue;
+
+            // Refresh the tooltip event.
+            QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
+
+            QCoreApplication::postEvent(this, event);
         }
 
         return;
@@ -1693,6 +1797,11 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false));
 
             //qDebug() << _selectedExpressionValue;
+
+            // Refresh the tooltip event.
+            QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
+
+            QCoreApplication::postEvent(this, event);
         }
 
         return;

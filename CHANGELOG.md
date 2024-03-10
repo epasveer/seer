@@ -1,8 +1,21 @@
 
 # Seer Change Log
 
-## [2.3beta] - 2023-XX-XX
-* Perpare for the 2.3 release cycle.
+## [2.4beta] - 2023-XX-XX
+* Prepare for the 2.4 release cycle.
+* Changed main icon to a more license friendly one.
+  All icons are now GPLv3, CC3.0, or CC4.0
+* Fixed string compares for breakpoint conditions (#184)
+* Added '--bs' command line option to specify a breakpoint at a source.cpp:lineno
+* Fixed long tooltips text by restricting them to 100 characters. (#189)
+  The text in the various viewing dialogs is still the full length.
+  The 100 limit probably needs to be configurable.
+* Added register profiles to show only interesting/relevant registers.
+* Added UTF-8,16,32 support in the Memory Visualizer.
+* Added an internal "dark" and "light" theme via the View->Style menu.
+* Added option to open the current source file in an external editor.
+
+## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
 * Add --gdb-program and --gdb-arguments to command line to override settings from Seer's config.
 * Fixed a rare bug with blank lines from gdb causing a segv in GdbMonitor.
@@ -10,6 +23,13 @@
 * Add option to reload source file if it changes.
 * Tighten up the layout by removing some needless whitespace.
 * Move gdb messages to a tab in the breakpoints window.
+    - Options to raise on every message, never, or important messages.
+* Add C++ level (11 or 17) depending on qt5 or qt6 compile.
+* Fixed up column resizing for the Variable logger (#173)
+* Use monspace font, where it makes sense (#175)
+* Allow copy to clipboard (#176)
+* Fixed hovering a variable name and value (#179)
+* Add nested struct viewing in "locals", "arguments", "logger", and "tracker" tabs. (#180)
 
 ## [2.2] - 2023-09-07
 * Fixed infinite loop when starting with RR mode.

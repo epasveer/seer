@@ -46,7 +46,10 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
         enum CharMode {
             UnknownCharMode = 0,
             AsciiCharMode   = 1,
-            EbcdicCharMode  = 2
+            Utf8Mode        = 2,
+            Utf16Mode       = 3,
+            Utf32Mode       = 4,
+            EbcdicCharMode  = 5
         };
 
         enum MagicNumbers {

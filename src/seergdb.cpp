@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
 
     QCoreApplication::setApplicationName("seergdb");
     QCoreApplication::setOrganizationName("seergdb");
-    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2023");
+    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2024");
 
     //
     // Parse arguments.
@@ -87,6 +87,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption configOption(QStringList() << "config");
     parser.addOption(configOption);
 
+    QCommandLineOption workingdirOption(QStringList() << "cwd" << "working-dir", "", "workingdirectory");
+    parser.addOption(workingdirOption);
+
     QCommandLineOption symbolfileOption(QStringList() << "sym" << "symbol-file", "", "symbolfile");
     parser.addOption(symbolfileOption);
 
@@ -95,6 +98,9 @@ int main (int argc, char* argv[]) {
 
     QCommandLineOption breakfunctionOption(QStringList() << "bf" << "break-function", "", "breakpointfunction");
     parser.addOption(breakfunctionOption);
+
+    QCommandLineOption breaksourceOption(QStringList() << "bs" << "break-source", "", "breakpointsource");
+    parser.addOption(breaksourceOption);
 
     QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
     parser.addOption(showAssemblyTabOption);
@@ -152,9 +158,11 @@ int main (int argc, char* argv[]) {
     int     executablePid = -1;
     QString executableConnectHostPort;
     QString executableRRTraceDirectory;
+    QString executableWorkingDirectory;
     QString executableSymbolFilename;
     QString executableBreakpointsFilename;
     QString executableBreakpointFunctionName;
+    QString executableBreakpointSourceFilenameAndLineno;
     QString executableShowAssemblyTab;
     QString executableStartAddressRandomize;
     QString executableNonStopMode;
@@ -173,6 +181,10 @@ int main (int argc, char* argv[]) {
         breakMode  = "inmain";
     }
 
+    if (parser.isSet(workingdirOption)) {
+        executableWorkingDirectory = parser.value(workingdirOption);
+    }
+
     if (parser.isSet(symbolfileOption)) {
         executableSymbolFilename = parser.value(symbolfileOption);
     }
@@ -184,6 +196,11 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(breakfunctionOption)) {
         executableBreakpointFunctionName = parser.value(breakfunctionOption);
         breakMode  = "infunction";
+    }
+
+    if (parser.isSet(breaksourceOption)) {
+        executableBreakpointSourceFilenameAndLineno = parser.value(breaksourceOption);
+        breakMode  = "insource";
     }
 
     if (parser.isSet(showAssemblyTabOption)) {
@@ -257,6 +274,7 @@ int main (int argc, char* argv[]) {
 
     seer.setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     seer.setExecutableName(executableName);
+    seer.setExecutableWorkingDirectory(executableWorkingDirectory);
     seer.setExecutableSymbolName(executableSymbolFilename);
     seer.setExecutableArguments(positionalArguments);
 
@@ -266,6 +284,10 @@ int main (int argc, char* argv[]) {
 
     if (executableBreakpointFunctionName != "") {
         seer.setExecutableBreakpointFunctionName(executableBreakpointFunctionName);
+    }
+
+    if (executableBreakpointSourceFilenameAndLineno != "") {
+        seer.setExecutableBreakpointSourceName(executableBreakpointSourceFilenameAndLineno);
     }
 
     if (executableShowAssemblyTab != "") {
@@ -316,6 +338,7 @@ int main (int argc, char* argv[]) {
     }
 
     qDebug() << "EXECUTABLENAME"    << executableName;
+    qDebug() << "WORKINGDIRECTORY"  << executableWorkingDirectory;
     qDebug() << "SYMBOLNAME"        << executableSymbolFilename;
     qDebug() << "PID"               << executablePid;
     qDebug() << "CONNECTHOST"       << executableConnectHostPort;

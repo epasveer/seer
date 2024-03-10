@@ -239,8 +239,13 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerNames,                             this,                                                           &SeerGdbWidget::handleGdbDataListValues);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addVariableExpression,                                   this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::deleteVariableExpressions,                               this,                                                           &SeerGdbWidget::handleGdbDataDeleteExpressions);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMemoryVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addArrayVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addStructVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,                               this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
-
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMemoryVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addArrayVisualize,                                        this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addStructVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterNames,                                     this,                                                           &SeerGdbWidget::handleGdbRegisterListNames);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
@@ -433,6 +438,14 @@ void SeerGdbWidget::setExecutableBreakpointFunctionName (const QString& nameorad
 
 const QString& SeerGdbWidget::executableBreakpointFunctionName () const {
     return _executableBreakpointFunctionName;
+}
+
+void SeerGdbWidget::setExecutableBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+    _executableBreakpointSourceName = sourceFilenameAndLineno;
+}
+
+const QString& SeerGdbWidget::executableBreakpointSourceName () const {
+    return _executableBreakpointSourceName;
 }
 
 void SeerGdbWidget::setExecutablePid (int pid) {
@@ -895,7 +908,7 @@ void SeerGdbWidget::handleGdbExit () {
 
 void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
-    qCDebug(LC) << "Starting 'gdb run/start'.";
+    qCDebug(LC) << "Starting 'gdb run/start':" << breakMode;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
@@ -974,6 +987,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             setNewExecutableFlag(false);
         }
 
+        // Set or reset some things.
         handleGdbExecutableWorkingDirectory();  // Set the program's working directory before running.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
@@ -999,14 +1013,18 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         // Set the program's arguments before running.
         handleGdbExecutableArguments();
 
-        // Set a temporary breakpoint for start up.
+        // Set a breakpoint for start up if "infunction" or "insource".
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
             if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
-                handleGdbBreakpointInsert("-t *" + executableBreakpointFunctionName());
+                handleGdbBreakpointInsert("*" + executableBreakpointFunctionName());
             }else{
-                handleGdbBreakpointInsert("-t -f --function " + executableBreakpointFunctionName());
+                handleGdbBreakpointInsert("-f --function " + executableBreakpointFunctionName());
             }
+        }
+
+        if (_executableBreakMode == "insource" && executableBreakpointSourceName() != "") {
+            handleGdbBreakpointInsert(executableBreakpointSourceName());
         }
 
         // Run any 'post' commands after program is loaded.
@@ -1138,15 +1156,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Has a executable name been provided?
-        if (executableName() != "") {
-
-            QMessageBox::warning(this, "Seer",
-                    QString("The executable name can't be provided for 'connect' mode."),
-                    QMessageBox::Ok);
-            break;
-        }
-
         // Delete the old gdb and console if there is a new executable
         if (newExecutableFlag() == true) {
             killGdb();
@@ -1224,7 +1233,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
 
         // Has a executable name been provided?
         if (executableName() != "") {
-
             QMessageBox::warning(this, "Seer",
                     QString("The executable name can't be provided for 'rr' mode."),
                     QMessageBox::Ok);
@@ -1983,7 +1991,9 @@ void SeerGdbWidget::handleGdbBreakpointCondition (QString breakpoint, QString co
         return;
     }
 
-    handleGdbCommand("-break-condition " + breakpoint + " " + condition);
+    QString str = condition.replace('"', "\\\""); // Quote " characters.
+
+    handleGdbCommand("-break-condition " + breakpoint + " \"" + condition + "\"");
     handleGdbGenericpointList();
 }
 
@@ -2233,6 +2243,10 @@ void SeerGdbWidget::handleGdbRegisterListValues (QString fmt) {
     if (fmt == "") {
         fmt = "N";
     }
+
+    // XXX Not sure what --skip-unavailable does.
+    // XXX Perhaps skips registers that can't get value for.
+    // XXX handleGdbCommand("-data-list-register-values --skip-unavailable " + fmt);
 
     handleGdbCommand("-data-list-register-values " + fmt);
 }
@@ -3058,8 +3072,8 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
 
-    qDebug() << "Raw command     : " << rawcommand;
-    qDebug() << "Expanded command: " << expandedcommand;
+    //qDebug() << "Raw command     : " << rawcommand;
+    //qDebug() << "Expanded command: " << expandedcommand;
 
     if (ok == false) {
 
@@ -3077,8 +3091,8 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
 
-    qDebug() << "Raw arguments     : " << rawarguments;
-    qDebug() << "Expanded arguments: " << expandedarguments;
+    //qDebug() << "Raw arguments     : " << rawarguments;
+    //qDebug() << "Expanded arguments: " << expandedarguments;
 
     if (ok == false) {
 
@@ -3102,7 +3116,7 @@ bool SeerGdbWidget::startGdb () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    qDebug() << _gdbProcess->state();
+    //qDebug() << _gdbProcess->state();
 
     return true;
 }
@@ -3133,8 +3147,8 @@ bool SeerGdbWidget::startGdbRR () {
 
     QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
 
-    qDebug() << "Expanded command: "   << command;
-    qDebug() << "Expanded arguments: " << arguments;
+    //qDebug() << "Expanded command: "   << command;
+    //qDebug() << "Expanded arguments: " << arguments;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(command);
@@ -3149,7 +3163,7 @@ bool SeerGdbWidget::startGdbRR () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    qDebug() << _gdbProcess->state();
+    //qDebug() << _gdbProcess->state();
 
     return true;
 }

@@ -9,7 +9,7 @@
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "2.3beta"
+#define SEER_VERSION "2.4beta"
 
 namespace Seer {
 
@@ -17,28 +17,39 @@ namespace Seer {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
-    QString filterEscapes (const QString& str, bool handleCR) {
+    QString filterEscapes (const QString& str) {
 
-        QString tmp = str;
+        // Remove one level of '\'.
+        // value="\"'Treasure' by Lucillius\\n\\n\\tbut theirs.\\n\""
 
-        tmp.replace("\\r",  "\r");
-        tmp.replace("\\t",  "\t");
-        tmp.replace("\\\"", "\"");
+        QString tmp;
+        bool    escaped = false;
 
-        if (handleCR) {
-            tmp.replace("\\n",  "\n");
+        for (int i=0; i<str.length(); i++) {
+            if (str[i] == '\\') {
+                if (escaped == false) {
+                    escaped = true;
+                    continue;
+                }else{
+                    escaped = false;
+                    tmp.append(str[i]);
+                }
+            }else{
+                escaped = false;
+                tmp.append(str[i]);
+            }
         }
 
         return tmp;
     }
 
-    QStringList filterEscapes (const QStringList& strings, bool handleCR) {
+    QStringList filterEscapes (const QStringList& strings) {
 
         QStringList list;
 
         // For a list of strings, quote certain characters.
         for (int i=0; i<strings.size(); i++) {
-            list.append(Seer::filterEscapes(strings[i], handleCR));
+            list.append(Seer::filterEscapes(strings[i]));
         }
 
         // Return the new list.
@@ -293,6 +304,102 @@ namespace Seer {
         return list;
     }
 
+    QStringList parseCommaList (const QString& str) {
+
+        //
+        // number="2",type="breakpoint",disp="keep",enabled="y",addr="0x00000000004016cd",func="main(int, char**)",file="hellofibonacci.cpp",fullname="/nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp",line="34",thread-groups=["i1"],cond="$_streq(s.c_str(), "21")",times="0",original-location="hellofibonacci.cpp:34"
+        //
+        // returns...
+        //
+        // number="2"
+        // type="breakpoint"
+        // disp="keep"
+        // enabled="y"
+        // addr="0x00000000004016cd"
+        // func="main(int char**)"
+        // file="hellofibonacci.cpp"
+        // fullname="/nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp"
+        // line="34"
+        // thread-groups=["i1"]
+        // cond="$_streq(s.c_str() "21")"
+        // times="0"
+        // original-location="hellofibonacci.cpp:34"
+        //
+
+        QStringList list;
+        int         index        = 0;
+        int         state        = 0;
+        int         start        = 0;
+        int         end          = 0;
+        bool        inquotes     = false;
+        int         bracketlevel = 0;
+
+        while (index < str.length()) {
+
+            // Handle start of field.
+            if (state == 0) {     // Start of field.
+                start = index;
+                end   = index;
+                state = 1; // Look for end of field (a command or eol).
+
+                continue;
+            }
+
+            // Handle end of field.
+            if (state == 1) {
+
+                // Handle """
+                if (str[index] == '"') {
+                    if (inquotes == false) {
+                        inquotes = true;
+                    }else{
+                        inquotes = false;
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle ","
+                if (str[index] == ',') {
+                    if (inquotes) {
+                        index++; continue;
+                    }
+
+                    // Extract field, only if the bracket level is at zero.
+                    // Otherwise, continue.
+                    if (bracketlevel == 0) {
+                        end = index;
+
+                        QString field = str.mid(start, end-start);
+
+                        list.append(field.trimmed());
+
+                        state = 0; // Look for the next field.
+                    }
+
+                    index++; continue;
+                }
+
+                // Handle any other character.
+                index++; continue;
+            }
+
+            qDebug() << "Bad state!";
+            index++; continue;
+        }
+
+        // Handle last field, if any.
+        if (state == 1) {
+            end = index;
+
+            QString field = str.mid(start, end-start);
+
+            list.append(field.trimmed());
+        }
+
+        return list;
+    }
+
     QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
 
         // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
@@ -398,11 +505,24 @@ namespace Seer {
         return list;
     }
 
+    QMap<QString,QString> createKeyValueMap (const QStringList& list, QChar separator) {
+
+        QMap<QString,QString> map;
+
+        for (const auto& i : list) {
+            QStringPair pair = parseNameValue(i, separator);
+
+            map[pair.first] = pair.second;
+        }
+
+        return map;
+    }
+
     //
     //
     //
 
-    QStringPair parseNameValue  (const QString& str, QChar separator) {
+    QStringPair parseNameValue (const QString& str, QChar separator) {
 
         // name = "Pasveer, Ernie"
         //
@@ -586,6 +706,44 @@ namespace Seer {
         }
 
         return false;
+    }
+
+
+
+    QString elideText (const QString& str, Qt::TextElideMode mode, int length) {
+
+        QString leftElide("... ");
+        QString middleElide(" ... ");
+        QString rightElide(" ...");
+
+        // The string is fine. Just return it.
+        if (str.length() <= length) {
+            return str;
+        }
+
+        // The string is too long but don't add elide.
+        if (mode == Qt::ElideNone) {
+            return str.left(length);
+        }
+
+        // The string is too long. Add elilde on the left.
+        if (mode == Qt::ElideLeft) {
+            return leftElide + str.right(length);
+        }
+
+        // The string is too long. Add elilde on the right.
+        if (mode == Qt::ElideRight) {
+            return str.left(length) + rightElide;
+        }
+
+        // The string is too long. Add elilde in the middle.
+        if (mode == Qt::ElideRight) {
+            int halve = length / 2;
+            return str.left(halve) + middleElide + str.right(halve);
+        }
+
+        // Bad mode. Just return the string.
+        return str;
     }
 
     //

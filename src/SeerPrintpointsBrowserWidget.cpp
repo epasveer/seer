@@ -59,6 +59,11 @@ bool SeerPrintpointsBrowserWidget::isEmpty() const {
     return (printpointsTreeWidget->topLevelItemCount() == 0);
 }
 
+QStringList SeerPrintpointsBrowserWidget::breakpoints () const {
+
+    return QStringList();
+}
+
 void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.

@@ -1,0 +1,61 @@
+digraph pipower_states {
+    STATE_START [style=filled color=green];
+    STATE_POWERWAIT0;
+    STATE_POWERWAIT1;
+    STATE_POWERON;
+    STATE_BOOTWAIT0;
+    STATE_BOOTWAIT1;
+    STATE_BOOT;
+    STATE_SHUTDOWN0;
+    STATE_SHUTDOWN1;
+    STATE_POWEROFF0;
+    STATE_POWEROFF1;
+    STATE_POWEROFF2;
+    STATE_IDLE0;
+    STATE_IDLE1;
+    STATE_IDLE2;
+    STATE_UNMANAGED0;
+    STATE_UNMANAGED1;
+    STATE_UNMANAGED2;
+
+    # The following is true but needlessly complicates the graph.
+    #STATE_POWERWAIT0->STATE_POWEROFF2 [label="Long press"];
+    #STATE_POWERWAIT1->STATE_POWEROFF2 [label="Long press"];
+    #STATE_POWERON->STATE_POWEROFF2 [label="Long press"];
+    #STATE_BOOTWAIT0->STATE_POWEROFF2 [label="Long press"];
+    #STATE_BOOTWAIT1->STATE_POWEROFF2 [label="Long press"];
+    #STATE_BOOT->STATE_POWEROFF2 [label="Long press"];
+    #STATE_SHUTDOWN0->STATE_POWEROFF2 [label="Long press"];
+    #STATE_SHUTDOWN1->STATE_POWEROFF2 [label="Long press"];
+    #STATE_POWEROFF0->STATE_POWEROFF2 [label="Long press"];
+    #STATE_POWEROFF1->STATE_POWEROFF2 [label="Long press"];
+    #STATE_IDLE0->STATE_POWEROFF2 [label="Long press"];
+    #STATE_IDLE1->STATE_POWEROFF2 [label="Long press"];
+
+    STATE_START->STATE_POWERWAIT0 [label="USB is high"];
+    STATE_START->STATE_POWEROFF2 [label="USB is low"]
+    STATE_POWERWAIT0->STATE_POWERWAIT1;
+    STATE_POWERWAIT1->STATE_POWERON [label="Timer expired"];
+    STATE_POWERWAIT1->STATE_POWEROFF2 [label="USB is low"]
+    STATE_POWERON->STATE_BOOTWAIT0;
+    STATE_BOOTWAIT0->STATE_BOOTWAIT1;
+    STATE_BOOTWAIT1->STATE_POWEROFF2 [label="Timer expired"];
+    STATE_BOOTWAIT1->STATE_BOOT [label="BOOT is low"];
+    STATE_BOOT->STATE_SHUTDOWN0 [label="Short press"];
+    STATE_BOOT->STATE_POWEROFF0 [label="BOOT is high"];
+    STATE_SHUTDOWN0->STATE_SHUTDOWN1;
+    STATE_SHUTDOWN1->STATE_POWEROFF0 [label="Timer expired or BOOT is high"];
+    STATE_POWEROFF0->STATE_POWEROFF1;
+    STATE_POWEROFF1->STATE_POWEROFF2 [label="Timer expired"];
+    STATE_POWEROFF1->STATE_BOOT [label="BOOT is low"]
+    STATE_POWEROFF2->STATE_IDLE0;
+    STATE_IDLE0->STATE_IDLE1 [label="Pin change interrupt"];
+    STATE_IDLE1->STATE_IDLE2;
+    STATE_IDLE2->STATE_IDLE0 [label="Timer expired"];
+    STATE_IDLE2->STATE_POWERON [label="Short press or USB went high"];
+    STATE_IDLE2->STATE_UNMANAGED0 [label="Long press"];
+    STATE_UNMANAGED0->STATE_UNMANAGED1 [label="Pin change interrupt"];
+    STATE_UNMANAGED1->STATE_UNMANAGED2;
+    STATE_UNMANAGED2->STATE_POWEROFF2 [label="Long press"];
+    STATE_UNMANAGED2->STATE_UNMANAGED0 [label="Timer expired"];
+}

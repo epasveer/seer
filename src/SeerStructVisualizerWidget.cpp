@@ -88,7 +88,7 @@ void SeerStructVisualizerWidget::handleText (const QString& text) {
     if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         QString id_text    = text.section('^', 0,0);
-        QString value_text = Seer::parseFirst(text,       "value=", '"', '"', false);
+        QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
         if (id_text.toInt() == _variableId) {
 

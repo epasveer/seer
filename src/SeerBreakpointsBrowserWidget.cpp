@@ -60,6 +60,11 @@ bool SeerBreakpointsBrowserWidget::isEmpty() const {
     return (breakpointsTreeWidget->topLevelItemCount() == 0);
 }
 
+QStringList SeerBreakpointsBrowserWidget::breakpoints () const {
+
+    return QStringList();
+}
+
 void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
     // Don't do any work if the widget is hidden.
@@ -106,32 +111,44 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
         // }
         //
 
+        //qDebug().noquote() << bkpt_list;
+
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
-        QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
-
-        //qDebug() << body_text;
+        QString body_text = Seer::parseFirst(text, "body=", '[', ']', false);
 
         if (body_text != "") {
 
             QStringList bkpt_list = Seer::parse(newtext, "bkpt=", '{', '}', false);
 
             for ( const auto& bkpt_text : bkpt_list  ) {
-                QString number_text            = Seer::parseFirst(bkpt_text, "number=",            '"', '"', false);
-                QString type_text              = Seer::parseFirst(bkpt_text, "type=",              '"', '"', false);
-                QString disp_text              = Seer::parseFirst(bkpt_text, "disp=",              '"', '"', false);
-                QString enabled_text           = Seer::parseFirst(bkpt_text, "enabled=",           '"', '"', false);
-                QString addr_text              = Seer::parseFirst(bkpt_text, "addr=",              '"', '"', false);
-                QString func_text              = Seer::parseFirst(bkpt_text, "func=",              '"', '"', false);
-                QString file_text              = Seer::parseFirst(bkpt_text, "file=",              '"', '"', false);
-                QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
-                QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
-                QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
-                QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
-                QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
-                QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
-                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
-                QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
+
+                //
+                // A different way (better?) of parsing the table output
+                //
+                // Divide test into a list, delimited by a ','.
+                // Then morph that list into a map, delimited by a '='.
+                // Remove bookends.
+                //
+                QStringList items = Seer::parseCommaList(bkpt_text);
+
+                QMap<QString,QString> keyValueMap = Seer::createKeyValueMap(items, '=');
+
+                QString number_text            = Seer::filterBookends(keyValueMap["number"],            '"', '"');
+                QString type_text              = Seer::filterBookends(keyValueMap["type"],              '"', '"');
+                QString disp_text              = Seer::filterBookends(keyValueMap["disp"],              '"', '"');
+                QString enabled_text           = Seer::filterBookends(keyValueMap["enabled"],           '"', '"');
+                QString addr_text              = Seer::filterBookends(keyValueMap["addr"],              '"', '"');
+                QString func_text              = Seer::filterBookends(keyValueMap["func"],              '"', '"');
+                QString file_text              = Seer::filterBookends(keyValueMap["file"],              '"', '"');
+                QString fullname_text          = Seer::filterBookends(keyValueMap["fullname"],          '"', '"');
+                QString line_text              = Seer::filterBookends(keyValueMap["line"],              '"', '"');
+                QString thread_groups_text     = Seer::filterBookends(keyValueMap["thread-groups"],     '[', ']');
+                QString cond_text              = Seer::filterBookends(keyValueMap["cond"],              '"', '"');
+                QString times_text             = Seer::filterBookends(keyValueMap["times"],             '"', '"');
+                QString ignore_text            = Seer::filterBookends(keyValueMap["ignore"],            '"', '"');
+                QString script_text            = Seer::filterBookends(keyValueMap["script"],            '{', '}');
+                QString original_location_text = Seer::filterBookends(keyValueMap["original-location"], '"', '"');
 
                 // Only look for 'breakpoint' type break points.
                 if (type_text != "breakpoint") {
@@ -334,7 +351,7 @@ void SeerBreakpointsBrowserWidget::handleConditionToolButton () {
 
     // Get the condition text.
     bool ok;
-    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this breakpoint.\nA blank condition will remove an existing one.", QLineEdit::Normal, items.front()->text(10), &ok);
+    QString condition = QInputDialog::getText(this, "Seer", "Enter the condition for this breakpoint.\nA blank condition will remove an existing one.\n\nif:", QLineEdit::Normal, items.front()->text(10), &ok);
 
     if (ok == false) {
         return;

@@ -24,3 +24,8 @@ MacOS may need help finding the cmake config file for Qt6.
 
     % cmake -DCMAKE_PREFIX_PATH=/usr/local/opt/qt6/ -DCMAKE_BUILD_TYPE=Release ..
 
+Checkout the Seer wiki for more build info.
+
+    https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
+    https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
+

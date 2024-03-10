@@ -21,6 +21,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     // Set up the UI.
     setupUi(this);
 
+    buttonBox->button(QDialogButtonBox::Ok)->setText("Launch");
+
     // Setup the widgets
     setExecutableName("");
     setExecutableSymbolName("");
@@ -158,9 +160,13 @@ void SeerDebugDialog::setBreakpointMode (const QString& mode) {
     }else if (mode == "infunction") {
         breakpointInFunctionRadioButton->setChecked(true);
         return;
+    }else if (mode == "insource") {
+        breakpointAtSourceRadioButton->setChecked(true);
+        return;
     }
 
-    noBreakpointRadioButton->setChecked(true);
+    // Default of "inmain".
+    breakpointInMainRadioButton->setChecked(true);
 }
 
 QString SeerDebugDialog::breakpointMode () const {
@@ -171,17 +177,37 @@ QString SeerDebugDialog::breakpointMode () const {
         return "inmain";
     }else if (breakpointInFunctionRadioButton->isChecked()) {
         return "infunction";
+    }else if (breakpointAtSourceRadioButton->isChecked()) {
+        return "insource";
     }
 
-    return "none";
+    return "inmain";
 }
 
 void SeerDebugDialog::setBreakpointFunctionName (const QString& nameoraddress) {
+
     breakpointInFunctionLineEdit->setText(nameoraddress);
+
+    if (nameoraddress != "") {
+        breakpointInFunctionRadioButton->setChecked(true);
+    }
 }
 
 QString SeerDebugDialog::breakpointFunctionName () const {
     return breakpointInFunctionLineEdit->text();
+}
+
+void SeerDebugDialog::setBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+
+    breakpointAtSourceLineEdit->setText(sourceFilenameAndLineno);
+
+    if (sourceFilenameAndLineno != "") {
+        breakpointAtSourceRadioButton->setChecked(true);
+    }
+}
+
+QString SeerDebugDialog::breakpointSourceName () const {
+    return breakpointAtSourceLineEdit->text();
 }
 
 void SeerDebugDialog::setShowAssemblyTab (bool flag) {
@@ -777,14 +803,20 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        executableWorkingDirectoryLineEdit->setEnabled(true);
+        executableWorkingDirectoryToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"attach\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"attach\"");
     }
 
     // ID == 2   CONNECT
     if (id == 2) {
+        executableNameLineEdit->setEnabled(true);
+        executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        executableWorkingDirectoryLineEdit->setEnabled(true);
+        executableWorkingDirectoryToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }

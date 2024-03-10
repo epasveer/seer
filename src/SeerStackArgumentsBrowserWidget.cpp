@@ -4,6 +4,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
+#include <QtGui/QFontDatabase>
 #include <QAction>
 #include <QtCore/QDebug>
 
@@ -19,11 +20,14 @@ SeerStackArgumentsBrowserWidget::SeerStackArgumentsBrowserWidget (QWidget* paren
     argumentsTreeWidget->resizeColumnToContents(0); // level
     argumentsTreeWidget->resizeColumnToContents(1); // Name
     argumentsTreeWidget->resizeColumnToContents(2); // Value
-
+    argumentsTreeWidget->resizeColumnToContents(3); // used
+    argumentsTreeWidget->setColumnHidden(3, true);  // Hide the 'used' column.
     argumentsTreeWidget->clear();
 
     // Connect things.
     QObject::connect(argumentsTreeWidget, &QTreeWidget::customContextMenuRequested,    this,  &SeerStackArgumentsBrowserWidget::handleContextMenu);
+    QObject::connect(argumentsTreeWidget, &QTreeWidget::itemCollapsed,                 this,  &SeerStackArgumentsBrowserWidget::handleItemCollapsed);
+    QObject::connect(argumentsTreeWidget, &QTreeWidget::itemExpanded,                  this,  &SeerStackArgumentsBrowserWidget::handleItemExpanded);
     QObject::connect(argumentsTreeWidget, &QTreeWidget::itemEntered,                   this,  &SeerStackArgumentsBrowserWidget::handleItemEntered);
 }
 
@@ -41,9 +45,7 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,stack-args=[") && text.endsWith("]")) {
 
-        argumentsTreeWidget->clear();
-
-        //qDebug() << text;
+        //argumentsTreeWidget->clear();
 
         // ^done,stack-args=[
         //     frame={level="0",args=[
@@ -60,25 +62,39 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
 
         QStringList frame_list = Seer::parse(text, "frame=", '{', '}', false);
 
-        //qDebug() << frame_list.count() << frame_list;
+        // Mark each entry initially as "unused".
+        // Later, some will be marked as "reused" or "new". Then the "unused" ones will
+        // be deleted.
+        QTreeWidgetItemIterator it(argumentsTreeWidget);
+        while (*it) {
+            (*it)->setText(3, "unused");
+            ++it;
+        }
 
         for ( const auto& frame_text : frame_list  ) {
-
-            //qDebug() << frame_text;
 
             QString level_text = Seer::parseFirst(frame_text, "level=", '"', '"', false);
             QString args_text  = Seer::parseFirst(frame_text, "args=",  '[', ']', false);
 
-            //qDebug() << level_text;
-            //qDebug() << args_text;
-
             QStringList namevalue_list  = Seer::parse(args_text, "",  '{', '}', false);
 
-            // Add the level to the tree.
-            QTreeWidgetItem* topItem = new QTreeWidgetItem;
-            topItem->setText(0, level_text);
+            QList<QTreeWidgetItem*> matches = argumentsTreeWidget->findItems(level_text, Qt::MatchExactly, 0);
 
-            argumentsTreeWidget->addTopLevelItem(topItem);
+            QTreeWidgetItem* topItem = 0;
+
+            // Use an existing level.
+            if (matches.count() > 0) {
+                topItem = matches[0];
+                topItem->setText(3, "reused");
+
+            // Add the new level to the tree.
+            }else{
+                topItem = new QTreeWidgetItem;
+                topItem->setText(0, level_text);
+                topItem->setText(3, "new");
+
+                argumentsTreeWidget->addTopLevelItem(topItem);
+            }
 
             // Get the argument names and values for the level.
             for ( const auto& namevalue_text : namevalue_list  ) {
@@ -86,15 +102,36 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
                 QString name_text  = Seer::parseFirst(namevalue_text, "name=",  '"', '"', false);
                 QString value_text = Seer::parseFirst(namevalue_text, "value=", '"', '"', false);
 
-                QTreeWidgetItem* item = new QTreeWidgetItem;
-                item->setText(1, name_text); // Set the name and value. Don't set the level.
-                item->setText(2, Seer::filterEscapes(value_text));
-
-                topItem->addChild(item);
+                // Populate the tree.
+                handleItemCreate(topItem, "", name_text, value_text);
             }
 
             // Expand all items for the level.
             argumentsTreeWidget->expandItem(topItem);
+        }
+
+        // At this point, there are some new entries, some reused entries, and some unused ones.
+        // Delete the unused ones. They are obsolete.
+        // Don't use qDeleteAll() here. It doesn't work as expected for items that are "found".
+        // Instead, get a list of matches and delete them from the bottom up.
+        QList<QTreeWidgetItem*> matches = argumentsTreeWidget->findItems("unused", Qt::MatchExactly|Qt::MatchRecursive, 3);
+
+        while (matches.isEmpty() == false) {
+            foreach (QTreeWidgetItem* item, matches) {
+                if (item->childCount() == 0) {
+                    QTreeWidgetItem* parent = item->parent();
+                    if (parent) {
+                        parent->removeChild(item);
+                    }
+
+                    bool f = matches.removeOne(item);
+                    Q_ASSERT(f != false);
+
+                    delete item;
+
+                    break;
+                }
+            }
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
@@ -107,21 +144,23 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
     argumentsTreeWidget->resizeColumnToContents(0);
     argumentsTreeWidget->resizeColumnToContents(1);
     argumentsTreeWidget->resizeColumnToContents(2);
+    argumentsTreeWidget->resizeColumnToContents(3);
 
     QApplication::restoreOverrideCursor();
 }
 
 void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {
 
+    refresh();
+}
+
+void SeerStackArgumentsBrowserWidget::refresh () {
+
     // Don't do any work if the widget is hidden.
     if (isHidden()) {
         return;
     }
 
-    refresh();
-}
-
-void SeerStackArgumentsBrowserWidget::refresh () {
     emit refreshStackArguments();
 }
 
@@ -219,8 +258,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << "addVariableLoggerExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(item->text(1));
@@ -231,8 +268,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskExpressionAction) {
-
-        //qDebug() << "addVariableLoggerAsteriskExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -245,8 +280,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(QString("&") + item->text(1));
@@ -258,8 +291,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableLoggerExpression(QString("*&") + item->text(1));
@@ -270,8 +301,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
-
-        //qDebug() << "addVariableTrackerExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -285,8 +314,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableTrackerExpression(QString("*") + item->text(1));
@@ -298,8 +325,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerAmpersandExpressionAction) {
-
-        //qDebug() << "addVariableTrackerAmpersandExpression" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -313,8 +338,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableTrackerExpression(QString("*&") + item->text(1));
@@ -327,8 +350,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
-        //qDebug() << "addMemoryVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addMemoryVisualize(item->text(1));
@@ -339,8 +360,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding memory to visualize.
     if (action == addMemoryAsteriskVisualizerAction) {
-
-        //qDebug() << "addMemoryAsteriskVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -353,8 +372,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding memory to visualize.
     if (action == addMemoryAmpersandVisualizerAction) {
 
-        //qDebug() << "addMemoryAmpersandVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addMemoryVisualize(QString("&") + item->text(1));
@@ -365,8 +382,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addArrayVisualizerAction) {
-
-        //qDebug() << "addArrayVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -379,8 +394,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addArrayAsteriskVisualizerAction) {
 
-        //qDebug() << "addArrayAsteriskVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addArrayVisualize(QString("*") + item->text(1));
@@ -391,8 +404,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addArrayAmpersandVisualizerAction) {
-
-        //qDebug() << "addArrayAmpersandVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -405,8 +416,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding struct to visualize.
     if (action == addStructVisualizerAction) {
 
-        //qDebug() << "addStructVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addStructVisualize(item->text(1));
@@ -417,8 +426,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Handle adding array to visualize.
     if (action == addStructAsteriskVisualizerAction) {
-
-        //qDebug() << "addStructAsteriskVisualizer" << item->text(1);
 
         // Emit the signals.
         if (item->text(1) != "") {
@@ -431,8 +438,6 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Handle adding array to visualize.
     if (action == addStructAmpersandVisualizerAction) {
 
-        //qDebug() << "addStructAmpersandVisualizer" << item->text(1);
-
         // Emit the signals.
         if (item->text(1) != "") {
             emit addStructVisualize(QString("&") + item->text(1));
@@ -442,11 +447,29 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 }
 
+void SeerStackArgumentsBrowserWidget::handleItemExpanded (QTreeWidgetItem* item) {
+
+    Q_UNUSED(item);
+
+    argumentsTreeWidget->resizeColumnToContents(0);
+    argumentsTreeWidget->resizeColumnToContents(1);
+    argumentsTreeWidget->resizeColumnToContents(2);
+    argumentsTreeWidget->resizeColumnToContents(3);
+}
+
+void SeerStackArgumentsBrowserWidget::handleItemCollapsed (QTreeWidgetItem* item) {
+
+    Q_UNUSED(item);
+
+    argumentsTreeWidget->resizeColumnToContents(0);
+    argumentsTreeWidget->resizeColumnToContents(1);
+    argumentsTreeWidget->resizeColumnToContents(2);
+    argumentsTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
-
-    //qDebug() << item->text(0) << column;
 
     if (item->text(0) != "") {
         for (int i=0; i<argumentsTreeWidget->columnCount(); i++) { // The "level" item does not have a tooltip.
@@ -456,11 +479,131 @@ void SeerStackArgumentsBrowserWidget::handleItemEntered (QTreeWidgetItem* item, 
     }else{
         QTreeWidgetItem* parent = item->parent(); // Get parent item, which is the level.
 
-        item->setToolTip(0, parent->text(0) + " : " + item->text(1) + " : " + item->text(2));
+        item->setToolTip(0, parent->text(0) + " : " + item->text(1) + " : " + Seer::elideText(item->text(2), Qt::ElideRight, 100));
 
         for (int i=1; i<argumentsTreeWidget->columnCount(); i++) { // Copy tooltip to the other columns.
             item->setToolTip(i, item->toolTip(0));
         }
+    }
+}
+
+void SeerStackArgumentsBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& level_text, const QString& name_text, const QString& value_text) {
+
+    // Instead of creating a new tree each time, we will reuse existing items, if they are there.
+    // This allows the expanded items to remain expanded. We start by looking for matches that
+    // may already be there. If there are matches, the code will reuse it.  If not, a new item
+    // is created by the code. Note, when searching, we only look at the current level. Not any
+    // children.
+    QList<QTreeWidgetItem*> matches;
+
+    if (parentItem == 0) {
+        Q_ASSERT(parentItem != NULL);
+        return;
+    }else{
+        for (int i=0; i<parentItem->childCount(); i++) {
+            if (parentItem->child(i)->text(1) == name_text) {
+                matches.append(parentItem->child(i));
+            }
+        }
+    }
+
+    // Parse bookmarks.
+    QString capture0; // With const address.
+    QString capture1; // Without.
+
+    QRegularExpression withaddress_re("^@0[xX][0-9a-fA-F]+: \\{(.*?)\\}$");
+    QRegularExpressionMatch withaddress_match = withaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+    if (withaddress_match.hasMatch()) {
+        capture0 = withaddress_match.captured(0);
+        capture1 = withaddress_match.captured(1);
+
+    }else{
+        QRegularExpression noaddress_re("^\\{(.*?)\\}$");
+        QRegularExpressionMatch noaddress_match   = noaddress_re.match(value_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+        if (noaddress_match.hasMatch()) {
+            capture0 = noaddress_match.captured(0);
+            capture1 = noaddress_match.captured(1);
+        }
+    }
+
+    // Add the complex entry to the tree. Reuse, if possible.
+    if (capture0 != "" && capture1 != "") {
+
+        // Remove bookends
+        QString text = capture1;
+
+        QTreeWidgetItem* item = 0;
+
+        // Use the privously created item. Or create a new one.
+        if (matches.size() > 0) {
+            item = matches[0];
+            item->setText(3, "reused");
+
+        }else{
+            item = new QTreeWidgetItem;
+            item->setText(3, "new");
+
+            // If we're dealing with a top-level item, attach it to the tree.
+            // Otherwise, attach it to the parent.
+            if (parentItem) {
+                parentItem->addChild(item);
+            }else{
+                argumentsTreeWidget->addTopLevelItem(item);
+            }
+        }
+
+        // Set the flatvalue text.
+        item->setText(0, level_text);
+        item->setText(1, name_text);
+        item->setText(2, Seer::filterEscapes(text));
+        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
+        // Convert to a list of name/value pairs.
+        QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
+
+        // Go through each pair and add the name and its value to the tree.
+        for (const auto& nv : nv_pairs) {
+
+            QStringPair pair = Seer::parseNameValue(nv, '=');
+
+            handleItemCreate(item, level_text, pair.first, pair.second);
+        }
+
+    // Add the simple entry to the tree. Reuse, if possible.
+    }else{
+        QTreeWidgetItem* item = 0;
+
+        // Use the privously created item. Or create a new one.
+        if (matches.size() > 0) {
+            item = matches[0];
+            item->setText(3, "reused");
+
+        }else{
+            item = new QTreeWidgetItem;
+            item->setText(3, "new");
+
+            // If we're dealing with a top-level item, attach it to the tree.
+            // Otherwise, attach it to the parent.
+            if (parentItem) {
+                parentItem->addChild(item);
+            }else{
+                argumentsTreeWidget->addTopLevelItem(item);
+            }
+        }
+
+        // Simple entries don't have children. Delete them.
+        QList<QTreeWidgetItem*> children = item->takeChildren();
+        if (matches.size() > 0) {
+            qDeleteAll(children);
+        }
+
+        // Populate the item.
+        item->setText(0, level_text);
+        item->setText(1, name_text);
+        item->setText(2, Seer::filterEscapes(value_text));
+        item->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
     }
 }
 

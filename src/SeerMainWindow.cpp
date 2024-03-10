@@ -36,6 +36,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
     spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    spacerWidget->setStyleSheet("background-color:transparent"); // Need this for QToolBar StyleSheets to work.
     toolBar->addWidget(spacerWidget);
 
     _progressIndicator = new SeerProgressIndicator(this);
@@ -57,6 +58,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     _styleMenuActionGroup->setExclusionPolicy(QActionGroup::ExclusionPolicy::Exclusive);
     _styleMenuActionGroup->setEnabled(true);
     _styleMenuActionGroup->setVisible(true);
+
+    QAction* lightStyleAction = menuStyles->addAction("light");
+    lightStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(lightStyleAction);
+
+    QAction* darkStyleAction = menuStyles->addAction("dark");
+    darkStyleAction->setCheckable(true);
+    _styleMenuActionGroup->addAction(darkStyleAction);
 
     QStringList styles = QStyleFactory::keys();
 
@@ -284,6 +293,14 @@ const QString& SeerMainWindow::executableBreakpointFunctionName () const {
     return gdbWidget->executableBreakpointFunctionName();
 }
 
+void  SeerMainWindow::setExecutableBreakpointSourceName (const QString& sourceFilenameAndLineno) {
+    gdbWidget->setExecutableBreakpointSourceName(sourceFilenameAndLineno);
+}
+
+const QString& SeerMainWindow::executableBreakpointSourceName () const {
+    return gdbWidget->executableBreakpointSourceName();
+}
+
 void SeerMainWindow::setExecutableShowAssemblyTab (bool flag) {
     gdbWidget->setAssemblyShowAssemblyTabOnStartup(flag);
 }
@@ -459,6 +476,36 @@ const QString& SeerMainWindow::executableBreakMode () const {
     return gdbWidget->executableBreakMode();
 }
 
+void SeerMainWindow::setStyleName (const QString& name) {
+
+    // Check for Dark/Light style from Seer's resource tree.
+    if (name == "dark" || name == "light") {
+
+        QFile s(":qdarkstyle/" + name + "/" + name + "style.qss");
+        if (s.exists() == false) {
+            qDebug() << "Stylesheet '" + name + "' doesn't exist!";
+            return;
+        }
+
+        s.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&s);
+        qApp->setStyleSheet(ts.readAll());
+
+        _styleName = name;
+
+    // Otherwise, a system installed one or Qt internal one.
+    }else{
+
+        QApplication::setStyle(name);
+
+        _styleName = name;
+    }
+}
+
+const QString& SeerMainWindow::styleName () {
+    return _styleName;
+}
+
 void SeerMainWindow::handleFileDebug () {
 
     SeerDebugDialog dlg(this);
@@ -467,8 +514,11 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setExecutableSymbolName(executableSymbolName());
     dlg.setExecutableWorkingDirectory(executableWorkingDirectory());
     dlg.setExecutableArguments(executableArguments());
+    dlg.setLaunchMode(executableLaunchMode());
+    dlg.setBreakpointMode(executableBreakMode());
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
+    dlg.setBreakpointSourceName(executableBreakpointSourceName());
     dlg.setShowAssemblyTab(executableShowAssemblyTab());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
@@ -476,8 +526,6 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setConnectHostPort(executableConnectHostPort());
     dlg.setRRTraceDirectory(executableRRTraceDirectory());
     dlg.setCoreFilename(executableCoreFilename());
-    dlg.setLaunchMode(executableLaunchMode());
-    dlg.setBreakpointMode(executableBreakMode());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
     dlg.setProjectFilename(projectFilename());
@@ -503,6 +551,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableArguments(dlg.executableArguments());
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
+    setExecutableBreakpointSourceName(dlg.breakpointSourceName());
     setExecutableShowAssemblyTab(dlg.showAssemblyTab());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
@@ -625,6 +674,8 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setExternalEditorCommand(gdbWidget->editorManager()->editorExternalEditorCommand());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSourceIgnoreFilePatterns(gdbWidget->sourceIgnoreFilePatterns());
     dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
@@ -665,6 +716,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
+    gdbWidget->editorManager()->setEditorExternalEditorCommand(dlg.externalEditorCommand());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setSourceIgnoreFilePatterns(dlg.sourceIgnoreFilePatterns());
     gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
@@ -742,14 +794,21 @@ void SeerMainWindow::handleStartExecutable () {
     }else{
 
         QString breakfunction = gdbWidget->executableBreakpointFunctionName();
+        QString breaksource   = gdbWidget->executableBreakpointSourceName();
 
-        // No break function, attempt to stop in "main".
-        if (breakfunction == "") {
-            gdbWidget->handleGdbRunExecutable("inmain");
+        // Stop in function?
+        if (breakfunction != "") {
 
-            // Otherwise, attempt to stop in the function.
-        }else{
             gdbWidget->handleGdbRunExecutable("infunction");
+
+        // Stop at source:line?
+        }else if (breaksource != "") {
+
+            gdbWidget->handleGdbRunExecutable("insource");
+
+        // Otherwise, attempt to stop in "main".
+        }else{
+            gdbWidget->handleGdbRunExecutable("inmain");
         }
     }
 }
@@ -762,7 +821,7 @@ void SeerMainWindow::handleStyleMenuChanged () {
         return;
     }
 
-    QApplication::setStyle(action->text());
+    setStyleName(action->text());
 }
 
 void SeerMainWindow::handleShowMessage (QString message, int time) {
@@ -772,27 +831,38 @@ void SeerMainWindow::handleShowMessage (QString message, int time) {
 
 void SeerMainWindow::handleText (const QString& text) {
 
-    if (text.startsWith("^error,msg=")) {
+    if (text.startsWith("^error,msg=") || text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
         // ^error,msg="The program is not being run."
         // ^error,msg="ptrace: No such process."
+        // 3^error,msg="Undefined MI command: symbol-info-variables",code="undefined-command"
+        // 5^error,msg="No symbol "delta" in current context."
+        // 5^error,msg="A syntax error in expression, near `'."
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
         // Filter out less important errors.
-        if (newtext == "^error,msg=\"No registers.\"") {
+        if (newtext.contains("^error,msg=\"No registers.\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"Selected thread is running.\"") {
+        if (newtext.contains("^error,msg=\"Selected thread is running.\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"Cannot inspect Ada tasks when program is not running\"") {
+        if (newtext.contains("^error,msg=\"Cannot inspect Ada tasks when program is not running\"")) {
             return;
         }
 
-        if (newtext == "^error,msg=\"The current thread has terminated\"") {
+        if (newtext.contains("^error,msg=\"The current thread has terminated\"")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"A syntax error in expression, near ")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"No symbol \"")) {
             return;
         }
 
@@ -1190,8 +1260,7 @@ void SeerMainWindow::writeConfigSettings () {
     QSettings settings;
 
     settings.beginGroup("mainwindow"); {
-        QStyle* currentStyle = QApplication::style();
-        settings.setValue("qtstyle", currentStyle->objectName());
+        settings.setValue("qtstyle", styleName());
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
@@ -1220,6 +1289,7 @@ void SeerMainWindow::writeConfigSettings () {
 
         settings.setValue("font",    gdbWidget->editorManager()->editorFont().toString());
         settings.setValue("tabsize", gdbWidget->editorManager()->editorTabSize());
+        settings.setValue("externaleditorcommand", gdbWidget->editorManager()->editorExternalEditorCommand());
 
         settings.beginGroup("highlighter"); {
 
@@ -1239,8 +1309,8 @@ void SeerMainWindow::writeConfigSettings () {
             }
 
             settings.setValue("suffixes", highlighter.sourceSuffixes());
-
         } settings.endGroup();
+
     } settings.endGroup();
 
     settings.beginGroup("manualgdbcommands"); {
@@ -1271,7 +1341,7 @@ void SeerMainWindow::readConfigSettings () {
 
     settings.beginGroup("mainwindow"); {
         if (settings.contains("qtstyle")) {
-            QApplication::setStyle(settings.value("qtstyle").toString());
+            setStyleName(settings.value("qtstyle").toString());
         }
     } settings.endGroup();
 
@@ -1308,6 +1378,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->editorManager()->setEditorFont(f);
 
         gdbWidget->editorManager()->setEditorTabSize(settings.value("tabsize", 4).toInt());
+        gdbWidget->editorManager()->setEditorExternalEditorCommand(settings.value("externaleditorcommand").toString());
 
         settings.beginGroup("highlighter"); {
 

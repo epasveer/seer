@@ -9,12 +9,18 @@ Please report any bugs or desired features to my email or create a [task](https:
 GitHub project page.
 
 
-Requirements
+Installation
 ============
+ 
+Seer can be installed either from a package manager or from source.
+> [!NOTE]
+>  Make sure the requirements are met before installing.
 
+Requirements
+---------
 * Linux
 * C++17
-* gdb with "mi" interpreter
+* gdb with "mi" interpreter (check by running: `gdb --interpreter=mi`)
 * CMake (3.10 or newer)
 * QT6
    * When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
@@ -27,8 +33,27 @@ Requirements
    * Qt6 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
 
 * QT5
-   * For the time being, Seer can still be built with Qt5.
+   * **Seer no longer compiles with Qt5.** The 2.3 source tree is the last one that does.
    * Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
+
+Install from package
+---------
+Available through the following package managers:
+
+### Pamac (Manjaro)
+
+    pamac install seer
+
+Install from source
+---------
+(Recommended) Seer can be built with Qt6 by following the instructions below.
+
+https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
+
+It can still be built with Qt5, for the time being by following the instructions below.
+
+https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
+
 
 NEWS
 ====
@@ -202,16 +227,6 @@ methods for debugging a program. So Seer naturally does too.
 Go to the Wiki to see all the ways to run Seer.
 
 https://github.com/epasveer/seer/wiki/Starting-Seer
-
-
-Building Seer
-=============
-
-Go to the Wiki to see how to build Seer. Seer can be built with Qt6. As well, for the time being, it can still be built with Qt5.
-
-https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
-</br>
-https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 Support/Contact
 ===============

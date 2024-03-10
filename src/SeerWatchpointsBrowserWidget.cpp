@@ -6,6 +6,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QInputDialog>
+#include <QtGui/QFontDatabase>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
@@ -61,6 +62,11 @@ SeerWatchpointsBrowserWidget::~SeerWatchpointsBrowserWidget () {
 bool SeerWatchpointsBrowserWidget::isEmpty() const {
 
     return (watchpointsTreeWidget->topLevelItemCount() == 0);
+}
+
+QStringList SeerWatchpointsBrowserWidget::breakpoints () const {
+
+    return QStringList();
 }
 
 void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
@@ -181,6 +187,9 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                     topItem->setText(15, ignore_text);
                     topItem->setText(16, script_text);
                     topItem->setText(17, "new");
+
+                    topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                    topItem->setFont(3, QFontDatabase::systemFont(QFontDatabase::FixedFont));
 
                     for (int i=0; i<topItem->columnCount(); i++) {
                         topItem->setTextAlignment(i, Qt::AlignLeft|Qt::AlignTop);

@@ -33,6 +33,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableBreakpointsFilename       () const;
         void                        setExecutableBreakpointFunctionName (const QString& nameoraddress);
         const QString&              executableBreakpointFunctionName    () const;
+        void                        setExecutableBreakpointSourceName   (const QString& sourceFilenameAndLineno);
+        const QString&              executableBreakpointSourceName      () const;
         void                        setExecutableShowAssemblyTab        (bool flag);
         bool                        executableShowAssemblyTab           () const;
         void                        setExecutableRandomizeStartAddress  (bool flag);
@@ -61,6 +63,9 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        launchExecutable                    (const QString& launchMode, const QString& breakMode);
         const QString&              executableLaunchMode                () const;
         const QString&              executableBreakMode                 () const;
+
+        void                        setStyleName                        (const QString& name);
+        const QString&              styleName                           ();
 
     private slots:
         void                        handleFileDebug                     ();
@@ -102,6 +107,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
     private:
         QActionGroup*               _styleMenuActionGroup;
+        QString                     _styleName;
         QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;

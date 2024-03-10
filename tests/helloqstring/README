@@ -1,0 +1,11 @@
+
+Qt5/6 pretty printers from the KDE project.
+
+    https://raw.githubusercontent.com/KDE/kdevelop/master/plugins/gdb/printers/qt.py
+
+
+How to add a PP to gdb.
+
+    https://undo.io/resources/gdb-watchpoint/here-quick-way-pretty-print-structures-gdb/
+
+

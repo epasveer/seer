@@ -17,7 +17,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QTreeWidget" name="argumentsTreeWidget">
      <property name="columnCount">
-      <number>3</number>
+      <number>4</number>
      </property>
      <column>
       <property name="text">
@@ -32,6 +32,11 @@
      <column>
       <property name="text">
        <string>Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Used</string>
       </property>
      </column>
     </widget>

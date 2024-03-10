@@ -23,11 +23,19 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                handleDeleteToolButton              ();
         void                handleDeleteAllToolButton           ();
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
+        void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleItemCollapsed                 (QTreeWidgetItem* item);
+        void                handleContextMenu                   (const QPoint& pos);
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
+        void                addMemoryVisualize                  (QString expression);
+        void                addArrayVisualize                   (QString expression);
+        void                addStructVisualize                  (QString expression);
 
     protected:
+        void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& id_text, const QString& timestamp_text, const QString& name_text, const QString& value_text);
+
     private:
         QSet<int>           _ids;
 

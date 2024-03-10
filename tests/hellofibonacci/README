@@ -1,0 +1,11 @@
+
+A good program to test the "break if condition is met".
+
+See problem report:
+
+    https://github.com/epasveer/seer/issues/184
+
+Use this breakpoint file when running Seer:
+
+    $ seergdb -s --break-load breakpoints.seer hellofibonacci 255
+

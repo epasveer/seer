@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(seergdb VERSION 2.3.0 LANGUAGES CXX)
+project(seergdb VERSION 2.4.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 
@@ -32,12 +32,21 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+
 elseif(${QTVERSION} STREQUAL "QT5")
     find_package(Qt5 COMPONENTS REQUIRED Core)
     find_package(Qt5 COMPONENTS REQUIRED Gui)
     find_package(Qt5 COMPONENTS REQUIRED Widgets)
     find_package(Qt5 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt5 COMPONENTS REQUIRED Charts)
+
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
 set(HEADER_FILES
@@ -81,6 +90,8 @@ set(HEADER_FILES
     SeerImageVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
+    SeerRegisterProfileDialog.h
+    SeerRegisterTreeWidgetItem.h
     SeerRunStatusIndicator.h
     SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
@@ -115,6 +126,7 @@ set(HEADER_FILES
     SeerHelpPageDialog.h
     SeerProgressIndicator.h
     SeerMessagesDialog.h
+    SeerAssemblyPreferenceDialog.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -172,6 +184,8 @@ set(SOURCE_FILES
     SeerImageVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
+    SeerRegisterProfileDialog.cpp
+    SeerRegisterTreeWidgetItem.cpp
     SeerRunStatusIndicator.cpp
     SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
@@ -206,6 +220,7 @@ set(SOURCE_FILES
     SeerHelpPageDialog.cpp
     SeerProgressIndicator.cpp
     SeerMessagesDialog.cpp
+    SeerAssemblyPreferenceDialog.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
@@ -222,9 +237,9 @@ set(SOURCE_FILES
     )
 
 if(${QTVERSION} STREQUAL "QT6")
-    qt6_add_resources(SOURCE_FILES resource.qrc)
+    qt6_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 elseif(${QTVERSION} STREQUAL "QT5")
-    qt5_add_resources(SOURCE_FILES resource.qrc)
+    qt5_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 endif()
 
 # Set non-Debug build as GUI application.

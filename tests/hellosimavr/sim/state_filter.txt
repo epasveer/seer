@@ -1,0 +1,17 @@
+# This is a filter for gtkwave so that state information is displayed
+# by name rather than numerically.
+00 START
+01 POWERWAIT0
+02 POWERWAIT1
+03 POWERON
+04 BOOTWAIT0
+05 BOOTWAIT1
+06 BOOT
+07 SHUTDOWN0
+08 SHUTDOWN1
+09 POWEROFF0
+0A POWEROFF1
+0B POWEROFF2
+0C IDLE0
+0D IDLE1
+0E IDLE2

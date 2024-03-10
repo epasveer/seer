@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
-    <height>668</height>
+    <width>788</width>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SeerEditorWidgetAssemblyForm</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="SeerEditorWidgetAssemblyArea" name="assemblyWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -24,8 +24,8 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="pcLabel">
        <property name="text">
@@ -104,9 +104,23 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QToolButton" name="preferencesToolButton">
+       <property name="toolTip">
+        <string>Preferences</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</iconset>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="QWidget" name="searchBarWidget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="leftMargin">

@@ -39,7 +39,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/HighContrast/list-remove.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
        </property>
       </widget>
      </item>
@@ -53,7 +53,7 @@
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/HighContrast/edit-delete.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
        </property>
       </widget>
      </item>
@@ -64,11 +64,6 @@
      <property name="columnCount">
       <number>4</number>
      </property>
-     <column>
-      <property name="text">
-       <string>ID</string>
-      </property>
-     </column>
      <column>
       <property name="text">
        <string>Timestamp</string>
@@ -82,6 +77,11 @@
      <column>
       <property name="text">
        <string>Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>ID</string>
       </property>
      </column>
     </widget>

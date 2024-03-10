@@ -1,17 +1,18 @@
 #include "SeerEditorWidgetAssembly.h"
+#include "SeerAssemblyPreferenceDialog.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QTextBlock>
 #include <QtGui/QFont>
 #include <QtGui/QIcon>
-#include <QtGui/QRadialGradient>
+#include <QtGui/QAction>
+#include <QtGui/QTextCursor>
+#include <QtGui/QPalette>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
-#include <QAction>
-#include <QtGui/QTextCursor>
-#include <QtGui/QPalette>
+#include <QtCore/QSettings>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
@@ -36,14 +37,22 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
 
     setKeySettings(SeerKeySettings::populate());
 
-    _pcId    = Seer::createID();
-    _spId    = Seer::createID();
-    _flagsId = Seer::createID();
+    _pcId      = Seer::createID();
+    _spId      = Seer::createID();
+    _flagsId   = Seer::createID();
 
     // Clear PC, SP, and FLAGS.
     pcLineEdit->clear();
     spLineEdit->clear();
     flagsLineEdit->clear();
+
+    // Preference menu.
+    QMenu* menu = new QMenu();
+
+    _editPreferencesAction = menu->addAction("Assembly preferences");
+
+    preferencesToolButton->setMenu(menu);
+    preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
@@ -64,11 +73,19 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
 
-    // Set defaults/
+    QObject::connect(_editPreferencesAction,            &QAction::triggered,                            this,  &SeerEditorWidgetAssembly::handleEditPreferences);
+
+    // Set defaults.
     setShowAddressColumn(true);
     setShowOffsetColumn(false);
     setShowOpcodeColumn(false);
     setShowSourceLines(false);
+
+    setRegiserNamePC("$pc");
+    setRegiserNameSP("$sp");
+    setRegiserNameFLAGS("$ps");
+
+    readSettings();
 }
 
 SeerEditorWidgetAssembly::~SeerEditorWidgetAssembly () {
@@ -109,6 +126,21 @@ bool SeerEditorWidgetAssembly::showSourceLines () const {
     return showSourceCheckBox->isChecked();
 }
 
+QString SeerEditorWidgetAssembly::regiserNamePC () const {
+
+    return _pcName;
+}
+
+QString SeerEditorWidgetAssembly::regiserNameFLAGS () const {
+
+    return _flagsName;
+}
+
+QString SeerEditorWidgetAssembly::regiserNameSP () const {
+
+    return _spName;
+}
+
 void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) {
 
     _keySettings = settings;
@@ -137,18 +169,38 @@ void SeerEditorWidgetAssembly::reloadAssembly () {
 
     assemblyArea()->setAddress(addr, true);
 
+    pcLineEdit->clear();
+    spLineEdit->clear();
+    flagsLineEdit->clear();
+
     // Get the PC, SP, and FLAGS
-    emit evaluateVariableExpression(_pcId,    "$pc");
-    emit evaluateVariableExpression(_spId,    "$sp");
-    emit evaluateVariableExpression(_flagsId, "$ps");
+    if (regiserNamePC() != "") {
+        emit evaluateVariableExpression(_pcId, regiserNamePC());
+    }
+    if (regiserNameSP() != "") {
+        emit evaluateVariableExpression(_spId, regiserNameSP());
+    }
+    if (regiserNameFLAGS() != "") {
+        emit evaluateVariableExpression(_flagsId, regiserNameFLAGS());
+    }
 }
 
 void SeerEditorWidgetAssembly::reloadRegisters () {
 
+    pcLineEdit->clear();
+    spLineEdit->clear();
+    flagsLineEdit->clear();
+
     // Get the PC, SP, and FLAGS
-    emit evaluateVariableExpression(_pcId,    "$pc");
-    emit evaluateVariableExpression(_spId,    "$sp");
-    emit evaluateVariableExpression(_flagsId, "$ps");
+    if (regiserNamePC() != "") {
+        emit evaluateVariableExpression(_pcId, regiserNamePC());
+    }
+    if (regiserNameSP() != "") {
+        emit evaluateVariableExpression(_spId, regiserNameSP());
+    }
+    if (regiserNameFLAGS() != "") {
+        emit evaluateVariableExpression(_flagsId, regiserNameFLAGS());
+    }
 }
 
 void SeerEditorWidgetAssembly::showSearchBar (bool flag) {
@@ -194,6 +246,21 @@ void SeerEditorWidgetAssembly::setShowSourceLines (bool flag) {
     handleShowSourceLines();
 }
 
+void SeerEditorWidgetAssembly::setRegiserNamePC (const QString& name) {
+
+    _pcName = name;
+}
+
+void SeerEditorWidgetAssembly::setRegiserNameFLAGS (const QString& name) {
+
+    _flagsName = name;
+}
+
+void SeerEditorWidgetAssembly::setRegiserNameSP (const QString& name) {
+
+    _spName = name;
+}
+
 void SeerEditorWidgetAssembly::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -225,9 +292,15 @@ void SeerEditorWidgetAssembly::handleText (const QString& text) {
         }
 
         // Get the PC, SP, and FLAGS
-        emit evaluateVariableExpression(_pcId,    "$pc");
-        emit evaluateVariableExpression(_spId,    "$sp");
-        emit evaluateVariableExpression(_flagsId, "$ps");
+        if (regiserNamePC() != "") {
+            emit evaluateVariableExpression(_pcId, regiserNamePC());
+        }
+        if (regiserNameSP() != "") {
+            emit evaluateVariableExpression(_spId, regiserNameSP());
+        }
+        if (regiserNameFLAGS() != "") {
+            emit evaluateVariableExpression(_flagsId, regiserNameFLAGS());
+        }
 
         return;
 
@@ -366,5 +439,64 @@ void SeerEditorWidgetAssembly::handleShowOpcodeColumn () {
 void SeerEditorWidgetAssembly::handleShowSourceLines () {
 
     assemblyArea()->enableSourceLines(showSourceLines());
+}
+
+void SeerEditorWidgetAssembly::handleEditPreferences () {
+
+    // Bring up the register profile dialog.
+    SeerAssemblyPreferenceDialog dlg(this);
+
+    dlg.setRegiserNamePC(regiserNamePC());
+    dlg.setRegiserNameFLAGS(regiserNameFLAGS());
+    dlg.setRegiserNameSP(regiserNameSP());
+    dlg.setShowAssemblyAddress(showAddressColumn());
+    dlg.setShowAssemblyOffset(showOffsetColumn());
+    dlg.setShowAssemblyOpcode(showOpcodeColumn());
+    dlg.setShowAssemblySource(showSourceLines());
+
+    if (dlg.exec()) {
+
+        setRegiserNamePC(dlg.regiserNamePC());
+        setRegiserNameFLAGS(dlg.regiserNameFLAGS());
+        setRegiserNameSP(dlg.regiserNameSP());
+        setShowAddressColumn(dlg.showAssemblyAddress());
+        setShowOffsetColumn(dlg.showAssemblyOffset());
+        setShowOpcodeColumn(dlg.showAssemblyOpcode());
+        setShowSourceLines(dlg.showAssemblySource());
+
+        reloadRegisters();
+
+        writeSettings();
+    }
+}
+
+void SeerEditorWidgetAssembly::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("assembly"); {
+        settings.setValue("assemblyregisternamepc",      regiserNamePC());
+        settings.setValue("assemblyregisternameflags",   regiserNameFLAGS());
+        settings.setValue("assemblyregisternamesp",      regiserNameSP());
+        settings.setValue("assemblyshowaddresscolumn",   showAddressColumn());
+        settings.setValue("assemblyshowoffsetcolumn",    showOffsetColumn());
+        settings.setValue("assemblyshowopcodecolumn",    showOpcodeColumn());
+        settings.setValue("assemblyshowsourcelines",     showSourceLines());
+    } settings.endGroup();
+}
+
+void SeerEditorWidgetAssembly::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("assembly"); {
+        setRegiserNamePC     (settings.value("assemblyregisternamepc",    "$pc").toString());
+        setRegiserNameFLAGS  (settings.value("assemblyregisternameflags", "$ps").toString());
+        setRegiserNameSP     (settings.value("assemblyregisternamesp",    "$sp").toString());
+        setShowAddressColumn (settings.value("assemblyshowaddresscolumn", true).toBool());
+        setShowOffsetColumn  (settings.value("assemblyshowoffsetcolumn",  false).toBool());
+        setShowOpcodeColumn  (settings.value("assemblyshowopcodecolumn",  false).toBool());
+        setShowSourceLines   (settings.value("assemblyshowsourcelines",   false).toBool());
+    } settings.endGroup();
 }
 

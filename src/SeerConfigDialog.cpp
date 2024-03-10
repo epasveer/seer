@@ -300,6 +300,16 @@ bool SeerConfigDialog::editorHighlighterEnabled () const {
     return _editorConfigPage->highlighterEnabled();
 }
 
+void SeerConfigDialog::setExternalEditorCommand (const QString& externalEditorCommand) {
+
+    _editorConfigPage->setExternalEditorCommand(externalEditorCommand);
+}
+
+QString SeerConfigDialog::externalEditorCommand () const {
+
+    return _editorConfigPage->externalEditorCommand();
+}
+
 void SeerConfigDialog::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     _sourceConfigPage->setAlternateDirectories(alternateDirectories);
