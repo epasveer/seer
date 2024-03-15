@@ -3091,8 +3091,8 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
 
-    //qDebug() << "Raw arguments     : " << rawarguments;
-    //qDebug() << "Expanded arguments: " << expandedarguments;
+    qDebug() << "Raw arguments     : " << rawarguments;
+    qDebug() << "Expanded arguments: " << expandedarguments;
 
     if (ok == false) {
 
@@ -3101,7 +3101,10 @@ bool SeerGdbWidget::startGdb () {
         return false;
     }
 
-    QStringList args = expandedarguments.split(' ', Qt::SkipEmptyParts);
+    // Split string into words, handling "double quoted" words.
+    QStringList args = Seer::split(expandedarguments);
+
+    //qDebug() << args;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(expandedcommand);
@@ -3145,7 +3148,8 @@ bool SeerGdbWidget::startGdbRR () {
         arguments += " -- " + rrGdbArguments();
     }
 
-    QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
+    // Split string into words, handling "double quoted" words.
+    QStringList args = Seer::split(expandedarguments);
 
     //qDebug() << "Expanded command: "   << command;
     //qDebug() << "Expanded arguments: " << arguments;
