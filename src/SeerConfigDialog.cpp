@@ -507,8 +507,6 @@ QString SeerConfigDialog::rrGdbArguments () const {
 
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
-    //qDebug() << current << previous;
-
     if (!current) {
         current = previous;
     }

@@ -3101,7 +3101,10 @@ bool SeerGdbWidget::startGdb () {
         return false;
     }
 
-    QStringList args = expandedarguments.split(' ', Qt::SkipEmptyParts);
+    // Split string into words, handling "double quoted" words.
+    QStringList args = Seer::split(expandedarguments);
+
+    //qDebug() << args;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(expandedcommand);
@@ -3139,13 +3142,14 @@ bool SeerGdbWidget::startGdbRR () {
 
     // Set the gdb program name to use.
     QString command   = rrProgram();
-    QString arguments = "replay --interpreter=mi --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
+    QString arguments = rrArguments() + " --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
 
     if (rrGdbArguments() != "") {
         arguments += " -- " + rrGdbArguments();
     }
 
-    QStringList args = arguments.split(' ', Qt::SkipEmptyParts);
+    // Split string into words, handling "double quoted" words.
+    QStringList args = Seer::split(arguments);
 
     //qDebug() << "Expanded command: "   << command;
     //qDebug() << "Expanded arguments: " << arguments;
