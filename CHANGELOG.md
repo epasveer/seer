@@ -1,8 +1,7 @@
 
 # Seer Change Log
 
-## [2.4beta] - 2023-XX-XX
-* Prepare for the 2.4 release cycle.
+## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
   All icons are now GPLv3, CC3.0, or CC4.0
 * Fixed string compares for breakpoint conditions (#184)
@@ -14,6 +13,8 @@
 * Added UTF-8,16,32 support in the Memory Visualizer.
 * Added an internal "dark" and "light" theme via the View->Style menu.
 * Added option to open the current source file in an external editor.
+* Fixed saving of RR parameters in config dialog.
+* Sped up some visualization views.
 
 ## [2.3] - 2023-11-19
 * In the margins of the source windows, allow CTRL+DoubleClick to do a quick RunToLine or RunToAddress.
