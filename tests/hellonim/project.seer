@@ -1,0 +1,25 @@
+{
+    "seerproject": {
+        "executable": "hellonim",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            "skip -gfile lib/system.nim",
+            "skip -gfile lib/system/*.nim"
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}
