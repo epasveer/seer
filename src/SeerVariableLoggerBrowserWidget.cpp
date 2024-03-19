@@ -135,6 +135,17 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
     // Resize columns done later in handleText().
 }
 
+void SeerVariableLoggerBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    variablesTreeWidget->clear();
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
 
     if (expression != "") {

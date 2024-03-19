@@ -244,6 +244,20 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
     emit refreshRegisterValues(fmt);
 }
 
+void SeerRegisterValuesBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    registersTreeWidget->clear();
+
+    registersTreeWidget->resizeColumnToContents(0);
+    registersTreeWidget->resizeColumnToContents(1);
+    registersTreeWidget->resizeColumnToContents(2);
+    registersTreeWidget->resizeColumnToContents(3);
+
+    // Force new names for the next time.
+    _needsRegisterNames = true;
+}
+
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.
@@ -692,7 +706,7 @@ bool SeerRegisterValuesBrowserWidget::readProfileSettings (const QString& profil
 
 void SeerRegisterValuesBrowserWidget::deleteProfileSettings (const QString& profileName) {
 
-    QSettings   settings;
+    QSettings settings;
 
     settings.beginGroup("registerprofile_" + profileName); {
         settings.remove(""); //removes the group, and all it keys
