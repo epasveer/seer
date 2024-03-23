@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [2.5beta] - 2024-XX-XX
+* Starting the 2.5 development cycle.
+
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
   All icons are now GPLv3, CC3.0, or CC4.0
