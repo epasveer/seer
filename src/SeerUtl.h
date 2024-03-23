@@ -28,6 +28,7 @@ namespace Seer {
     QString                     varObjParent        (const QString& str);
     bool                        matchesWildcard     (const QStringList& regexpatterns, const QString& string);
     QString                     elideText           (const QString& str, Qt::TextElideMode mode, int length);
+    QStringList                 split               (const QString& str);
 
     int                         createID            ();
 

@@ -2,14 +2,16 @@
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
-#include <QRegularExpression>
+#include <QtCore/QRegularExpression>
+#include <QtCore/QRegularExpressionMatch>
+
 #include <mutex>
 
 //
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "2.4beta"
+#define SEER_VERSION "2.5.beta"
 
 namespace Seer {
 
@@ -744,6 +746,34 @@ namespace Seer {
 
         // Bad mode. Just return the string.
         return str;
+    }
+
+    // Split a string on words. Double "quoted strings"
+    // act as one word.
+    QStringList split (const QString& str) {
+
+        QRegularExpression re("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+        QStringList        list;
+
+        QRegularExpressionMatchIterator i = re.globalMatch(str);
+        while (i.hasNext()) {
+            QRegularExpressionMatch match = i.next();
+
+            QString word;
+            if (match.captured(2) != "") {
+                word = match.captured(2);
+            }else if (match.captured(1) != "") {
+                word = match.captured(1);
+            }else if (match.captured(0) != "") {
+                word = match.captured(0);
+            }
+
+            if (word != "") {
+                list << word;
+            }
+        }
+
+        return list;
     }
 
     //

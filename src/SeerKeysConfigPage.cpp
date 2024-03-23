@@ -12,7 +12,7 @@ SeerKeysConfigPage::SeerKeysConfigPage(QWidget* parent) : QWidget(parent) {
     // Connect things.
 
     // Setup the widgets
-    setKeySettings(SeerKeySettings::populate());
+    reset();
 }
 
 SeerKeysConfigPage::~SeerKeysConfigPage() {
@@ -56,14 +56,6 @@ void SeerKeysConfigPage::setKeySettings (const SeerKeySettings& settings) {
 SeerKeySettings SeerKeysConfigPage::keySettings() const {
 
     SeerKeySettings settings;
-
-    if (keysTableWidget->rowCount() == 0) {
-        return settings;
-    }
-
-    if (keysTableWidget->columnCount() == 2) {
-        return settings;
-    }
 
     for (int r=0; r<keysTableWidget->rowCount(); r++) {
 

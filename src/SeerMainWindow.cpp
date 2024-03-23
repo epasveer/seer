@@ -709,6 +709,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setAssemblyDisassemblyMode(gdbWidget->assemblyDisassemblyMode(), gdbWidget->assemblyDisassemblyBytes());
     dlg.setKeySettings(keySettings());
+    dlg.setRRProgram(gdbWidget->rrProgram());
+    dlg.setRRArguments(gdbWidget->rrArguments());
+    dlg.setRRGdbArguments(gdbWidget->rrGdbArguments());
 
     int ret = dlg.exec();
 
@@ -1413,7 +1416,7 @@ void SeerMainWindow::readConfigSettings () {
     settings.beginGroup("rr"); {
         gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
         gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
-        gdbWidget->setRRArguments(settings.value("gdbarguments", "").toString());
+        gdbWidget->setRRGdbArguments(settings.value("gdbarguments", "").toString());
     } settings.endGroup();
 
     settings.beginGroup("printpoints"); {
