@@ -46,6 +46,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbMonitor                         = 0;
     _gdbProcess                         = 0;
     _consoleWidget                      = 0;
+    _consoleMode                        = "normal";
+    _consoleScrollLines                 = 1000;
     _breakpointsBrowserWidget           = 0;
     _watchpointsBrowserWidget           = 0;
     _catchpointsBrowserWidget           = 0;
@@ -63,7 +65,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
     _gdbLoadPreviousBreakpoints         = false;
-    _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
 
@@ -3308,18 +3309,16 @@ void SeerGdbWidget::disconnectConsole () {
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
+    _consoleMode = mode;
+
     if (_consoleWidget != 0) {
-        _consoleWidget->setMode(mode);
+        _consoleWidget->setMode(_consoleMode);
     }
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    if (_consoleWidget != 0) {
-        return _consoleWidget->mode();
-    }
-
-    return "normal";
+    return _consoleMode;
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {
