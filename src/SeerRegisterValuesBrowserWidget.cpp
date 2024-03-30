@@ -11,6 +11,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtGui/QAction>
 #include <QtCore/QSettings>
 #include <QtCore/QVector>
 #include <QtCore/QByteArray>
@@ -286,11 +287,15 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Get the item at the cursor.
     QTreeWidgetItem* item = registersTreeWidget->itemAt(pos);
 
+    if (item == 0) {
+        return;
+    }
+
     // Construct the menu.
-    QMenu*   menu          = new QMenu("Options", this);
-    QAction* editAction    = menu->addAction("Edit selected");
-    QAction* copyAction    = menu->addAction("Copy selected");
-    QAction* copyAllAction = menu->addAction("Copy all");
+    QMenu menu("Options", this);
+    QAction* editAction    = menu.addAction("Edit selected");
+    QAction* copyAction    = menu.addAction("Copy selected");
+    QAction* copyAllAction = menu.addAction("Copy all");
 
     // If no selected item, disable 'selected' copy but allow 'all'.
     if (item == 0) {
@@ -299,7 +304,7 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu->exec(registersTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(registersTreeWidget->viewport()->mapToGlobal(pos));
 
     if (action == 0) {
         return;

@@ -489,7 +489,7 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu.exec(variablesTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(variablesTreeWidget->viewport()->mapToGlobal(pos));
 
     if (action == 0) {
         return;

@@ -14,6 +14,7 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
 
     public slots:
         void                handleText                  (const QString& text);
+        void                handleContextMenu           (const QPoint& pos);
         void                refresh                     ();
 
     protected slots:
@@ -24,6 +25,7 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
     signals:
         void                refreshFunctionList         (int id, const QString& functionRegex);
         void                selectedFile                (QString file, QString fullname, int lineno);
+        void                insertBreakpoint            (QString breakpoint);
 
     protected:
     private:
