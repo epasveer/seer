@@ -11,6 +11,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtGui/QAction>
 #include <QtCore/QSettings>
 #include <QtCore/QVector>
 #include <QtCore/QByteArray>
@@ -244,6 +245,20 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
     emit refreshRegisterValues(fmt);
 }
 
+void SeerRegisterValuesBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    registersTreeWidget->clear();
+
+    registersTreeWidget->resizeColumnToContents(0);
+    registersTreeWidget->resizeColumnToContents(1);
+    registersTreeWidget->resizeColumnToContents(2);
+    registersTreeWidget->resizeColumnToContents(3);
+
+    // Force new names for the next time.
+    _needsRegisterNames = true;
+}
+
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.
@@ -272,11 +287,15 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Get the item at the cursor.
     QTreeWidgetItem* item = registersTreeWidget->itemAt(pos);
 
+    if (item == 0) {
+        return;
+    }
+
     // Construct the menu.
-    QMenu*   menu          = new QMenu("Options", this);
-    QAction* editAction    = menu->addAction("Edit selected");
-    QAction* copyAction    = menu->addAction("Copy selected");
-    QAction* copyAllAction = menu->addAction("Copy all");
+    QMenu menu("Options", this);
+    QAction* editAction    = menu.addAction("Edit selected");
+    QAction* copyAction    = menu.addAction("Copy selected");
+    QAction* copyAllAction = menu.addAction("Copy all");
 
     // If no selected item, disable 'selected' copy but allow 'all'.
     if (item == 0) {
@@ -285,7 +304,7 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu->exec(registersTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(registersTreeWidget->viewport()->mapToGlobal(pos));
 
     if (action == 0) {
         return;
@@ -692,7 +711,7 @@ bool SeerRegisterValuesBrowserWidget::readProfileSettings (const QString& profil
 
 void SeerRegisterValuesBrowserWidget::deleteProfileSettings (const QString& profileName) {
 
-    QSettings   settings;
+    QSettings settings;
 
     settings.beginGroup("registerprofile_" + profileName); {
         settings.remove(""); //removes the group, and all it keys

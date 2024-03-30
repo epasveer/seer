@@ -4,7 +4,8 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QApplication>
-#include <QtCore/QFileInfo>
+#include <QtWidgets/QMenu>
+#include <QtGui/QAction>
 #include <QtCore/Qt>
 #include <QtCore/QMap>
 #include <QtCore/QDebug>
@@ -20,6 +21,7 @@ SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget
     // Setup the widgets
     functionSearchLineEdit->setPlaceholderText("Search regex...");
     functionSearchLineEdit->setClearButtonEnabled(true);
+    functionTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     functionTreeWidget->setMouseTracking(true);
   //functionTreeWidget->resizeColumnToContents(0);
     functionTreeWidget->resizeColumnToContents(1);
@@ -31,9 +33,10 @@ SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget
     functionTreeWidget->setSortingEnabled(false);
 
     // Connect things.
-    QObject::connect(functionTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerFunctionBrowserWidget::handleItemDoubleClicked);
-    QObject::connect(functionTreeWidget,      &QTreeWidget::itemEntered,          this,  &SeerFunctionBrowserWidget::handleItemEntered);
-    QObject::connect(functionSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerFunctionBrowserWidget::handleSearchLineEdit);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::customContextMenuRequested,    this,  &SeerFunctionBrowserWidget::handleContextMenu);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::itemDoubleClicked,             this,  &SeerFunctionBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::itemEntered,                   this,  &SeerFunctionBrowserWidget::handleItemEntered);
+    QObject::connect(functionSearchLineEdit,  &QLineEdit::returnPressed,                   this,  &SeerFunctionBrowserWidget::handleSearchLineEdit);
 }
 
 SeerFunctionBrowserWidget::~SeerFunctionBrowserWidget () {
@@ -168,6 +171,44 @@ void SeerFunctionBrowserWidget::handleSearchLineEdit () {
 
     if (functionSearchLineEdit->text() != "") {
         emit refreshFunctionList(_id, functionSearchLineEdit->text());
+    }
+}
+
+void SeerFunctionBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    // Get the item at the cursor.
+    QTreeWidgetItem* item = functionTreeWidget->itemAt(pos);
+
+    if (item == 0) {
+        return;
+    }
+
+    // Construct the menu.
+    QMenu menu ("Options", this);
+    QAction* openAction               = menu.addAction(QString("Open '%1'").arg(item->text(1)));
+    QAction* breakpointSourceAction   = menu.addAction(QString("Create breakpoint on '%1:%2'").arg(item->text(1)).arg(item->text(2)));
+    QAction* breakpointFunctionAction = menu.addAction(QString("Create breakpoint in '%1'").arg(item->text(0)));
+
+    // Execute the menu. Return if nothing.
+    QAction* action = menu.exec(functionTreeWidget->viewport()->mapToGlobal(pos));
+
+    if (action == 0) {
+        return;
+    }
+
+    if (action == openAction) {
+        emit selectedFile(item->text(1), item->text(3), item->text(2).toInt());
+        return;
+    }
+
+    if (action == breakpointSourceAction) {
+        emit insertBreakpoint(QString("--source %1 --line %2").arg(item->text(3)).arg(item->text(2)));
+        return;
+    }
+
+    if (action == breakpointFunctionAction) {
+        emit insertBreakpoint(QString("--function \"%1\"").arg(item->text(0)));
+        return;
     }
 }
 

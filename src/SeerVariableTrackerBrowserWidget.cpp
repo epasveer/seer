@@ -214,6 +214,17 @@ void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    variablesTreeWidget->clear();
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerVariableTrackerBrowserWidget::refresh () {
     emit refreshVariableTrackerNames();
     emit refreshVariableTrackerValues();
@@ -478,7 +489,7 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu.exec(variablesTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(variablesTreeWidget->viewport()->mapToGlobal(pos));
 
     if (action == 0) {
         return;

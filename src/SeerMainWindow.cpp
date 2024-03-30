@@ -151,8 +151,12 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
+    QObject::connect(actionGdbDebug,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
     QObject::connect(actionGdbRun,                      &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
     QObject::connect(actionGdbStart,                    &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
+    QObject::connect(actionGdbReattach,                 &QAction::triggered,                            this,           &SeerMainWindow::handleAttachExecutable);
+    QObject::connect(actionGdbReconnect,                &QAction::triggered,                            this,           &SeerMainWindow::handleConnectExecutable);
     QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,                       this,           &SeerMainWindow::handleStyleMenuChanged);
     QObject::connect(actionGdbContinue,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                     &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
@@ -400,8 +404,12 @@ QString SeerMainWindow::gdbArgumentsOverride () const {
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.
-    actionGdbRun->setVisible(true);
-    actionGdbStart->setVisible(true);
+    actionGdbTerminate->setVisible(true);
+    actionGdbDebug->setVisible(false);
+    actionGdbRun->setVisible(false);
+    actionGdbStart->setVisible(false);
+    actionGdbReconnect->setVisible(false);
+    actionGdbReattach->setVisible(false);
     actionGdbContinue->setVisible(true);
     actionGdbNext->setVisible(true);
     actionGdbNexti->setVisible(true);
@@ -411,34 +419,41 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
     if (launchMode == "run") {
 
+        actionGdbRun->setVisible(true);
+        actionGdbStart->setVisible(true);
+
         gdbWidget->handleGdbRunExecutable(breakMode);
 
     }else if (launchMode == "start") {
+
+        actionGdbRun->setVisible(true);
+        actionGdbStart->setVisible(true);
 
         gdbWidget->handleGdbRunExecutable(breakMode);
 
     }else if (launchMode == "attach") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
+        actionGdbReattach->setVisible(true);
 
         gdbWidget->handleGdbAttachExecutable();
 
     }else if (launchMode == "connect") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
+        actionGdbReconnect->setVisible(true);
 
         gdbWidget->handleGdbConnectExecutable();
 
     }else if (launchMode == "rr") {
 
+        actionGdbRun->setVisible(true);
+        actionGdbStart->setVisible(true);
+
         gdbWidget->handleGdbRRExecutable();
 
     }else if (launchMode == "corefile") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
+        // Run/Start are already disabled.
+        // Disable the rest.
         actionGdbContinue->setVisible(false);
         actionGdbNext->setVisible(false);
         actionGdbNexti->setVisible(false);
@@ -454,6 +469,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else if (launchMode == "none") {
+
+        actionGdbDebug->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
@@ -776,6 +793,24 @@ void SeerMainWindow::handleHelpAbout () {
     dlg.exec();
 }
 
+void SeerMainWindow::handleTerminateExecutable () {
+
+    qDebug() << "Terminate executable";
+
+    gdbWidget->handleGdbTerminateExecutable();
+
+    /*
+    if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable();
+
+    }else{
+
+        gdbWidget->handleGdbRunExecutable("none");
+    }
+    */
+}
+
 void SeerMainWindow::handleRunExecutable () {
 
     if (gdbWidget->executableLaunchMode() == "rr") {
@@ -816,6 +851,18 @@ void SeerMainWindow::handleStartExecutable () {
     }
 }
 
+void SeerMainWindow::handleAttachExecutable () {
+
+    gdbWidget->setNewExecutableFlag(false);
+    gdbWidget->handleGdbAttachExecutable();
+}
+
+void SeerMainWindow::handleConnectExecutable () {
+
+    gdbWidget->setNewExecutableFlag(true);
+    gdbWidget->handleGdbConnectExecutable();
+}
+
 void SeerMainWindow::handleStyleMenuChanged () {
 
     QAction* action = _styleMenuActionGroup->checkedAction();
@@ -841,6 +888,7 @@ void SeerMainWindow::handleText (const QString& text) {
         // 3^error,msg="Undefined MI command: symbol-info-variables",code="undefined-command"
         // 5^error,msg="No symbol "delta" in current context."
         // 5^error,msg="A syntax error in expression, near `'."
+        // 5^error,msg="Invalid character ';' in expression."
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 
@@ -862,6 +910,10 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         if (newtext.contains("^error,msg=\"A syntax error in expression, near ")) {
+            return;
+        }
+
+        if (newtext.contains("^error,msg=\"Invalid character ';' in expression.\"")) {
             return;
         }
 
@@ -996,6 +1048,9 @@ void SeerMainWindow::handleText (const QString& text) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
 
+    }else if (text.startsWith("^connected")) {
+        //^connected
+        return;
 
     }else if (text.startsWith("*stopped")) {
 
