@@ -30,11 +30,6 @@ void SeerGdbLogWidget::processText (const QString& text) {
             str.chop(1);
         }
 
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
-
     // Remove leading "&"
     // &"p name
     // "
@@ -51,12 +46,6 @@ void SeerGdbLogWidget::processText (const QString& text) {
         if (str.back() == '"') {
             str.chop(1);
         }
-
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
-
 
     // Remove leading "@"
     // @"memcheck monitor commands:
@@ -75,12 +64,6 @@ void SeerGdbLogWidget::processText (const QString& text) {
             str.chop(1);
         }
 
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
-
-
     // Use string as it is.
     }else{
         str = text;
@@ -88,11 +71,12 @@ void SeerGdbLogWidget::processText (const QString& text) {
 
     // Filter out \n and \t.
     // Should probably do something better and expand them.
-    str.replace("\\t", "");
-    str.replace("\\n", "");
+    str.replace("\\t",  "\t");
+    str.replace("\\n",  "\n");
+    str.replace("\\\"", "\"");
 
     // Write the string to the log.
-    textEdit->append(str);
+    textEdit->insertPlainText(str);
 
     // If there is breakpoint message (via a manual command), ask
     // for the breakpoint list to be refreshed.
