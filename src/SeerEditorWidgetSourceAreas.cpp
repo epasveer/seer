@@ -54,8 +54,10 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
+    _breakPointArea->setMouseTracking(true);
     _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
     _miniMapPixmap  = 0;
+
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
@@ -1621,6 +1623,32 @@ void SeerEditorWidgetSourceArea::setQuickRunToLine (QMouseEvent* event) {
     return;
 }
 
+void SeerEditorWidgetSourceArea::showBreakpointToolTip (QMouseEvent* event) {
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(event->pos());
+
+    int lineno = cursor.blockNumber()+1;
+
+    // If there is a breakpoint on the line, ask for its information.
+    if (hasBreakpointLine(lineno)) {
+
+        qDebug() << "Found breakpoint #" << breakpointLineToNumber(lineno) << "on line #" << lineno;
+
+        /*
+        // Toggle the breakpoint.
+        // Enable if disabled. Disable if enabled.
+        if (breakpointLineEnabled(lineno) == false) {
+            // Emit the enable breakpoint signal.
+            emit enableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }else{
+            // Emit the disable breakpoint signal.
+            emit deleteBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }
+        */
+    }
+}
+
 void SeerEditorWidgetSourceArea::clearExpression() {
 
     _selectedExpressionCursor   = QTextCursor();
@@ -1934,7 +1962,7 @@ void SeerEditorWidgetSourceBreakPointArea::mouseDoubleClickEvent (QMouseEvent* e
 
 void SeerEditorWidgetSourceBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
 
-    QWidget::mouseMoveEvent(event);
+    _editorWidget->showBreakpointToolTip(event);
 }
 
 void SeerEditorWidgetSourceBreakPointArea::mousePressEvent (QMouseEvent* event) {
