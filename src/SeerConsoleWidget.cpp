@@ -45,8 +45,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     textEdit->setLineWrapMode(QPlainTextEdit::NoWrap); // No wrap
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
-    _cursor = QTextCursor(textEdit->document());
-
     // Create psuedo terminal for console.
     createConsole();
     connectConsole();
@@ -76,44 +74,15 @@ const QString& SeerConsoleWidget::ttyDeviceName () const {
 
 void SeerConsoleWidget::handleText (const char* buffer, int count) {
 
-    // parse off lines
-    const char* start = buffer;
-
-    while (count > 0) {
-
-        int len = 0;
-
-        while (count > 0 && start[len] != '\n' && start[len] != '\r') {
-            --count;
-            ++len;
-        }
-
-        if (len > 0) {
-            QString str = QString::fromLatin1(start, len);
-            // replace text in the last line
-            // this selection is non-empty only after a '\r' that was not
-            // followed by a '\n'
-            _cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, len);
-            _cursor.insertText(str);
-            start += len;
-            len = 0;
-        }
-
-        if (count > 0 && *start == '\r') {
-            ++start;
-            --count;
-            _cursor.movePosition(QTextCursor::StartOfLine);
-        }
-
-        if (count > 0 && *start == '\n') {
-            ++start;
-            --count;
-            _cursor.movePosition(QTextCursor::End);
-            _cursor.insertText(QString('\n'));
-        }
-
-        textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
+    if (count < 1) {
+        return;
     }
+
+    QString str = QString::fromLatin1(buffer, count);
+
+    textEdit->insertAnsiText(str);
+
+    return;
 }
 
 void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
@@ -127,7 +96,6 @@ void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
 
 void SeerConsoleWidget::handleClearButton () {
     textEdit->clear();
-    _cursor.movePosition(QTextCursor::End);
 }
 
 void SeerConsoleWidget::handlePrintButton () {

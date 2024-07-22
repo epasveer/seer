@@ -47,7 +47,6 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
 
     private:
         QString             _mode;
-        QTextCursor         _cursor;
         QString             _ttyDeviceName;
         int                 _ptsFD;
         QSocketNotifier*    _ptsListener;

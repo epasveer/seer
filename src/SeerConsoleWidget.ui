@@ -62,7 +62,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="6">
-    <widget class="QPlainTextEdit" name="textEdit">
+    <widget class="QAnsiTextEdit" name="textEdit">
      <property name="lineWrapMode">
       <enum>QPlainTextEdit::NoWrap</enum>
      </property>
@@ -128,6 +128,11 @@
    <class>QHistoryLineEdit</class>
    <extends>QLineEdit</extends>
    <header location="global">QHistoryLineEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QAnsiTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">QAnsiTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>
