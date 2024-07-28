@@ -380,8 +380,6 @@ void QAnsiTextEdit::insertAnsiText (const QString& text) {
     // Print each sub text object. Each one has its own text format.
     for (const QAnsiTextEditFormattedText& ftext : ftexts) {
 
-        dumpCharFormat(ftext.text, ftext.format);
-
         QTextCharFormat format = ftext.format;
 
         setCurrentCharFormat(format);
