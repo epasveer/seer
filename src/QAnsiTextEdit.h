@@ -42,7 +42,7 @@ class QAnsiTextEdit : public QPlainTextEdit {
         explicit QAnsiTextEdit(const QString& text, QWidget* parent = 0);
        ~QAnsiTextEdit();
 
-    private:
+    public:
         void            dumpCharFormat          (QString string, QTextCharFormat format);
 
     public slots:

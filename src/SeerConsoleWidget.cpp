@@ -34,15 +34,22 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     setWindowTitle("Seer Console");
     setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
-    QFont font;
-    font.setFamily("monospace");
-    font.setFixedPitch(true);
-    font.setStyleHint(QFont::TypeWriter);
-
     textEdit->setReadOnly(true);
     textEdit->setTextInteractionFlags(textEdit->textInteractionFlags() | Qt::TextSelectableByKeyboard); // Show cursor
-    textEdit->setFont(font);
     textEdit->setLineWrapMode(QPlainTextEdit::NoWrap); // No wrap
+
+    // Default font.
+    QFont font;
+    font.setFamily("monospace");
+    font.setStyleHint(QFont::Monospace);
+    font.setFixedPitch(true);
+
+    // Set the widget's font.
+    QTextCharFormat format = textEdit->currentCharFormat();
+    format.setFont(font);
+    textEdit->setCurrentCharFormat(format);
+    textEdit->setFont(font);
+
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
     // Create psuedo terminal for console.
@@ -153,17 +160,22 @@ void SeerConsoleWidget::handleSaveButton () {
 
 void SeerConsoleWidget::handleFontButton () {
 
+    // Get current format for the font name.
     bool ok;
 
-    QFont font = QFontDialog::getFont(&ok, textEdit->font(), this, "Seer - Select Console Font", QFontDialog::DontUseNativeDialog|QFontDialog::MonospacedFonts);
+    QFont font = QFontDialog::getFont(&ok, textEdit->font().toString(), this, "Seer - Select Console Font", QFontDialog::DontUseNativeDialog|QFontDialog::MonospacedFonts);
 
     if (ok == false) {
         return;
     }
 
+    // Set the widget's font.
+    QTextCharFormat format = textEdit->currentCharFormat();
+    format.setFont(font);
+    textEdit->setCurrentCharFormat(format);
     textEdit->setFont(font);
 
-    writeSettings();
+    writeFontSettings();
 }
 
 void SeerConsoleWidget::handleWrapTextCheckBox () {
@@ -372,16 +384,22 @@ QString SeerConsoleWidget::mode () const {
     return _mode;
 }
 
-void SeerConsoleWidget::writeSettings() {
+void SeerConsoleWidget::writeFontSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("font", textEdit->font().toString());
+    }settings.endGroup();
+}
+
+void SeerConsoleWidget::writeSizeSettings() {
 
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
         settings.setValue("size", size());
-        settings.setValue("font", textEdit->font().toString());
     }settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerConsoleWidget::readSettings() {
@@ -393,22 +411,28 @@ void SeerConsoleWidget::readSettings() {
 
         QFont f;
         if (settings.contains("font")) {
+
             f.fromString(settings.value("font").toString());
+
         }else{
             f = QFont("monospace", 10);
         }
 
+        // Get current format for the font name.
+        QTextCharFormat format = textEdit->currentCharFormat();
+
+        format.setFont(f);
+
+        textEdit->setCurrentCharFormat(format);
         textEdit->setFont(f);
 
     } settings.endGroup();
-
-    //qDebug() << size();
 }
 
 void SeerConsoleWidget::resizeEvent (QResizeEvent* event) {
 
     // Write window settings.
-    writeSettings();
+    writeSizeSettings();
 
     QWidget::resizeEvent(event);
 }

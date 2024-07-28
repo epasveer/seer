@@ -173,7 +173,10 @@ QList<QAnsiTextEditFormattedText> QAnsiTextEditEscapeCodeHandler::parseText (con
                     switch (code) {
                         case ResetFormat:
                             //qDebug() << "ResetFormat called";
-                            charFormat = QTextCharFormat();
+                            charFormat.setFontWeight(QFont::Normal);
+                            charFormat.setFontUnderline(false);
+                            charFormat.setForeground(input.format.foreground());
+                            charFormat.setBackground(input.format.background());
                             setFormatScope(charFormat);
                             endFormatScope();
                             break;
@@ -302,7 +305,8 @@ QAnsiTextEdit::~QAnsiTextEdit () {
 
 void QAnsiTextEdit::dumpCharFormat (QString string, QTextCharFormat format) {
 
-    qDebug() << "dumpCharFormat" << string << "Color" << format.foreground().color();
+    qDebug() << "dumpCharFormat" << string << "Font"       << format.font().toString();
+    qDebug() << "dumpCharFormat" << string << "Color"      << format.foreground().color();
     qDebug() << "dumpCharFormat" << string << "FontWeight" << format.fontWeight();
     qDebug() << "dumpCharFormat" << string << "UnderLined" << format.fontUnderline();
     qDebug() << "";
@@ -313,63 +317,78 @@ void QAnsiTextEdit::setAnsiText (const QString& text) {
     // Reset the text edit
     clear();
 
-    // Create the default text object;
-    QAnsiTextEditFormattedText ftext;
-    ftext.text   = text;
-    ftext.format = currentCharFormat(); // Use cleared format.
-
-    // Parse it. A list of sub text objects is created.
-    QList<QAnsiTextEditFormattedText> ftexts = _escapeCodeHandler.parseText(ftext);
-
-    // Print each sub text object. Each one has its own text format.
-    for (const QAnsiTextEditFormattedText& ftext : ftexts) {
-
-        //dumpCharFormat(ftext.text, ftext.format);
-
-        QTextCursor cursor = textCursor();
-        cursor.setCharFormat(ftext.format);
-        cursor.insertText(ftext.text);
-        setTextCursor(cursor);
-    }
+    // Use append method.
+    appendAnsiText(text);
 }
 
 void QAnsiTextEdit::appendAnsiText (const QString& text) {
 
+    //
+    // Use the 'append' method for the first sub text, then
+    // the 'insert' method for every sub text after that.
+    //
+
+    // Save current TextCharFormat
+    QTextCharFormat saveFormat = currentCharFormat();
+
     // Create the default text object;
     QAnsiTextEditFormattedText ftext;
     ftext.text   = text;
-    // XXX ftext.format = currentCharFormat();
-    ftext.format = _escapeCodeHandler.formatScope();
+    ftext.format = currentCharFormat();
 
     // Parse it. A list of sub text objects is created.
     QList<QAnsiTextEditFormattedText> ftexts = _escapeCodeHandler.parseText(ftext);
 
     // Print each sub text object. Each one has its own text format.
+    bool first = true;
+
     for (const QAnsiTextEditFormattedText& ftext : ftexts) {
-        QTextCursor cursor = textCursor();
-        cursor.setCharFormat(ftext.format);
-        cursor.insertText(ftext.text);
-        setTextCursor(cursor);
+
+        QTextCharFormat format = ftext.format;
+
+        setCurrentCharFormat(format);
+
+        if (first) {
+            appendPlainText(ftext.text);
+            first = false;
+        }else{
+            insertPlainText(ftext.text);
+        }
     }
+
+    // Restore current TextCharFormat
+    setCurrentCharFormat(saveFormat);
 }
 
 void QAnsiTextEdit::insertAnsiText (const QString& text) {
 
+    //
+    // Use the 'insert' method for every sub text.
+    //
+
+    // Save current TextCharFormat
+    QTextCharFormat saveFormat = currentCharFormat();
+
     // Create the default text object;
     QAnsiTextEditFormattedText ftext;
     ftext.text   = text;
-    // XXX ftext.format = currentCharFormat();
-    ftext.format = _escapeCodeHandler.formatScope();
+    ftext.format = currentCharFormat();
 
     // Parse it. A list of sub text objects is created.
     QList<QAnsiTextEditFormattedText> ftexts = _escapeCodeHandler.parseText(ftext);
 
     // Print each sub text object. Each one has its own text format.
     for (const QAnsiTextEditFormattedText& ftext : ftexts) {
-        QTextCursor cursor = textCursor();
-        cursor.setCharFormat(ftext.format);
-        cursor.insertText(ftext.text);
-        setTextCursor(cursor);
+
+        dumpCharFormat(ftext.text, ftext.format);
+
+        QTextCharFormat format = ftext.format;
+
+        setCurrentCharFormat(format);
+        insertPlainText(ftext.text);
     }
+
+    // Restore current TextCharFormat
+    setCurrentCharFormat(saveFormat);
 }
 
