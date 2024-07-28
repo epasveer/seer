@@ -2816,7 +2816,7 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the GDB program.\n\n") +
-                                    QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
+                                   QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
                                    QString("Error status=%1)").arg(errorStatus),
                                    QMessageBox::Ok);
     }

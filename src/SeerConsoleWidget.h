@@ -41,13 +41,13 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleText                  (const char* buffer, int count);
         void                createConsole               ();
         void                deleteConsole               ();
-        void                writeSettings               ();
+        void                writeFontSettings           ();
+        void                writeSizeSettings           ();
         void                readSettings                ();
         void                resizeEvent                 (QResizeEvent* event);
 
     private:
         QString             _mode;
-        QTextCursor         _cursor;
         QString             _ttyDeviceName;
         int                 _ptsFD;
         QSocketNotifier*    _ptsListener;
