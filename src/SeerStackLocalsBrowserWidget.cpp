@@ -5,8 +5,8 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
+#include <QtGui/QAction>
 #include <QtCore/QRegularExpressionMatch>
-#include <QAction>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 

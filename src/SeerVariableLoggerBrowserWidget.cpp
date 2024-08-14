@@ -135,6 +135,17 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
     // Resize columns done later in handleText().
 }
 
+void SeerVariableLoggerBrowserWidget::handleSessionTerminated () {
+
+    // This recreates the tree.
+    variablesTreeWidget->clear();
+
+    variablesTreeWidget->resizeColumnToContents(0);
+    variablesTreeWidget->resizeColumnToContents(1);
+    variablesTreeWidget->resizeColumnToContents(2);
+    variablesTreeWidget->resizeColumnToContents(3);
+}
+
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
 
     if (expression != "") {
@@ -339,7 +350,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 
     // Execute the menu. Return if nothing.
-    QAction* action = menu.exec(variablesTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(variablesTreeWidget->viewport()->mapToGlobal(pos));
 
     if (action == 0) {
         return;
