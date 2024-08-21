@@ -129,9 +129,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
     QObject::connect(actionViewAssembly,                &QAction::triggered,                            this,           &SeerMainWindow::handleViewAssembly);
-    QObject::connect(actionConsoleNormal,               &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleNormal);
-    QObject::connect(actionConsoleHidden,               &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleHidden);
-    QObject::connect(actionConsoleMinimized,            &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleMinimized);
+    QObject::connect(actionConsoleAttached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleAttached);
+    QObject::connect(actionConsoleDetached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetached);
+    QObject::connect(actionConsoleDetachedMinimized,    &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetachedMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                            this,           &SeerMainWindow::handleHelpAbout);
 
     QObject::connect(actionControlRun,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
@@ -638,19 +638,19 @@ void SeerMainWindow::handleViewAssemblyShown (bool shown) {
     }
 }
 
-void SeerMainWindow::handleViewConsoleNormal () {
+void SeerMainWindow::handleViewConsoleAttached () {
 
-    gdbWidget->setConsoleMode("normal");
+    gdbWidget->setConsoleMode("attached");
 }
 
-void SeerMainWindow::handleViewConsoleHidden () {
+void SeerMainWindow::handleViewConsoleDetached () {
 
-    gdbWidget->setConsoleMode("hidden");
+    gdbWidget->setConsoleMode("detached");
 }
 
-void SeerMainWindow::handleViewConsoleMinimized () {
+void SeerMainWindow::handleViewConsoleDetachedMinimized () {
 
-    gdbWidget->setConsoleMode("minimized");
+    gdbWidget->setConsoleMode("detachedminimized");
 }
 
 void SeerMainWindow::handleSettingsConfiguration () {

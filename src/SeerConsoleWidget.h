@@ -28,6 +28,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
     public slots:
         void                handleChangeWindowTitle     (QString title);
 
+    signals:
+        void                modeChanged                 (QString mode);
+
     protected slots:
         void                handleClearButton           ();
         void                handlePrintButton           ();
@@ -41,6 +44,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleText                  (const char* buffer, int count);
         void                createConsole               ();
         void                deleteConsole               ();
+        void                writeSettings               ();
         void                writeFontSettings           ();
         void                writeSizeSettings           ();
         void                readSettings                ();

@@ -24,7 +24,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ttyDeviceName = "";
     _ptsFD         = -1;
     _ptsListener   = 0;
-    _mode          = "normal";
+    _mode          = "attached";
 
     // Set up UI.
     setupUi(this);
@@ -55,8 +55,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     // Create psuedo terminal for console.
     createConsole();
     connectConsole();
-
-    setMode("normal");
 
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
@@ -346,42 +344,52 @@ void SeerConsoleWidget::setMode (const QString& mode) {
 
     //qDebug() << mode;
 
-    if (mode == "normal") {
+    if (mode == "attached") {
 
         _mode = mode;
 
-        show();
         setWindowState(Qt::WindowNoState);
 
-    }else if (mode == "minimized") {
+    }else if (mode == "detached") {
 
         _mode = mode;
 
-        show();
+        setWindowState(Qt::WindowNoState);
+
+    }else if (mode == "detachedminimized") {
+
+        _mode = mode;
+
         setWindowState(Qt::WindowMinimized);
-
-    }else if (mode == "hidden") {
-
-        _mode = mode;
-
-        hide();
 
     }else if (mode == "") {
 
-        _mode = "normal";
+        _mode = "attached";
 
-        show();
         setWindowState(Qt::WindowNoState);
     }
+
+    writeSettings();
+
+    emit modeChanged(_mode);
 }
 
 QString SeerConsoleWidget::mode () const {
 
     if (_mode == "") {
-        return "normal";
+        return "attached";
     }
 
     return _mode;
+}
+
+void SeerConsoleWidget::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("mode", mode());
+    }settings.endGroup();
 }
 
 void SeerConsoleWidget::writeFontSettings() {
@@ -407,6 +415,7 @@ void SeerConsoleWidget::readSettings() {
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
+        setMode(settings.value("mode", "attached").toString());
         resize(settings.value("size", QSize(800, 600)).toSize());
 
         QFont f;

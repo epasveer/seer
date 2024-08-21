@@ -57,9 +57,9 @@
       <iconset resource="resource.qrc">
        <normaloff>:/seer/resources/icons-icons/console.png</normaloff>:/seer/resources/icons-icons/console.png</iconset>
      </property>
-     <addaction name="actionConsoleNormal"/>
-     <addaction name="actionConsoleMinimized"/>
-     <addaction name="actionConsoleHidden"/>
+     <addaction name="actionConsoleAttached"/>
+     <addaction name="actionConsoleDetached"/>
+     <addaction name="actionConsoleDetachedMinimized"/>
     </widget>
     <widget class="QMenu" name="menuStyles">
      <property name="title">
@@ -452,40 +452,49 @@
     <string>Save the configurations so future Seer sessions will use them.</string>
    </property>
   </action>
-  <action name="actionConsoleNormal">
+  <action name="actionConsoleAttached">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/attach.png</normaloff>:/seer/resources/icons-icons/attach.png</iconset>
+   </property>
+   <property name="text">
+    <string>Attached</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the console window in Seer's tabs.</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the console window in Seer's tabs.</string>
+   </property>
+  </action>
+  <action name="actionConsoleDetached">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/icons-icons/maximize.png</normaloff>:/seer/resources/icons-icons/maximize.png</iconset>
    </property>
    <property name="text">
-    <string>Normal</string>
+    <string>Detached</string>
+   </property>
+   <property name="toolTip">
+    <string>Detach the console into it's own window.</string>
    </property>
    <property name="statusTip">
-    <string>Show the console window.</string>
+    <string>Detach the console into it's own window.</string>
    </property>
   </action>
-  <action name="actionConsoleHidden">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/icons-icons/hide.png</normaloff>:/seer/resources/icons-icons/hide.png</iconset>
-   </property>
-   <property name="text">
-    <string>Hidden</string>
-   </property>
-   <property name="statusTip">
-    <string>Hide the console window.</string>
-   </property>
-  </action>
-  <action name="actionConsoleMinimized">
+  <action name="actionConsoleDetachedMinimized">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/icons-icons/minimize.png</normaloff>:/seer/resources/icons-icons/minimize.png</iconset>
    </property>
    <property name="text">
-    <string>Minimized</string>
+    <string>Detached Minimized</string>
+   </property>
+   <property name="toolTip">
+    <string>Detach the console into it's own minimaize window.</string>
    </property>
    <property name="statusTip">
-    <string>Minimize the console window.</string>
+    <string>Detach the console into it's own minimaize window.</string>
    </property>
   </action>
   <action name="actionControlNexti">
