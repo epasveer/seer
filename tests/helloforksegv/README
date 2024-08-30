@@ -1,0 +1,9 @@
+From a discussion here. Can Seer stop at the right process (after a fork) when a SEGV happens.
+
+    https://www.reddit.com/r/C_Programming/comments/1f1ahcp/is_there_a_way_to_debug_a_multiprocess_program/
+
+Some resources.
+
+    https://moss.cs.iit.edu/cs351/gdb-inferiors.html
+    https://sourceware.org/gdb/current/onlinedocs/gdb.html/Inferiors-Connections-and-Programs.html#Inferiors-Connections-and-Programs
+
