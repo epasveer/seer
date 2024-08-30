@@ -1,6 +1,6 @@
 {
     "seerproject": {
-        "executable": "/nas/erniep/Development/seer/tests/helloasm/helloasm_stabs",
+        "executable": "/nas/erniep/Development/seer/tests/helloasm/helloasm",
         "postgdbcommands": [
             ""
         ],
@@ -10,7 +10,7 @@
         "runmode": {
             "arguments": "",
             "breakinfunction": true,
-            "breakinfunctionname": "0x08048080",
+            "breakinfunctionname": "_start",
             "breakinmain": false,
             "breakpointsfile": "",
             "nobreak": false,
