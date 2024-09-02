@@ -1,3 +1,2 @@
 helloasm
-helloasm_stabs.o
-helloasm_stabs
+helloasm.o
