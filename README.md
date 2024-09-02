@@ -44,6 +44,10 @@ Available through the following package managers:
 
     pamac install seer
 
+### zypper (openSUSE Tumbleweed)
+
+    zypper install seergdb
+
 Install from source
 ---------
 (Recommended) Seer can be built with Qt6 by following the instructions below.
