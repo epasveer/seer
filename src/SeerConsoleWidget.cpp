@@ -110,9 +110,14 @@ void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
     }
 }
 
-void SeerConsoleWidget::handleTabDetached (int tabIndex) {
-    qDebug() << tabIndex;
+void SeerConsoleWidget::handleTabDetached (QWidget* widget) {
 
+    if (widget != (QWidget*)this) {
+        return;
+    }
+
+    // Resize the detached console with the size from
+    // the settings.
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
@@ -120,8 +125,9 @@ void SeerConsoleWidget::handleTabDetached (int tabIndex) {
     } settings.endGroup();
 }
 
-void SeerConsoleWidget::handleTabReattached (int tabIndex) {
-    qDebug() << tabIndex;
+void SeerConsoleWidget::handleTabReattached (QWidget* widget) {
+    // Do nothing for now.
+    Q_UNUSED(widget);
 }
 
 void SeerConsoleWidget::handleClearButton () {
@@ -226,11 +232,11 @@ void SeerConsoleWidget::handleStdoutCheckBox () {
     // If stdout is not valid, don't set it.
     if (fcntl(STDOUT_FILENO, F_GETFD) == -1) {
 
-        QMessageBox::critical(this, tr("Error"), tr("stdout is not valid."));
+        QMessageBox::critical(this, tr("Error"), tr("stdout file descriptor is not valid.\nDisabling writing to stdout."));
 
-        stdoutCheckBox->setChecked(false);
         enableStdout(false);
         writeSettings();
+        return;
     }
 
     // All good to write to stdout

@@ -3229,10 +3229,11 @@ void SeerGdbWidget::createConsole () {
         // Connect window title changes.
         QObject::connect(this, &SeerGdbWidget::changeWindowTitle, _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
 
-        _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
+        // The console needs to know when it's detached or reattached.
+        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabDetached),   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
+        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabReattached), _consoleWidget, &SeerConsoleWidget::handleTabReattached);
 
-        QObject::connect(logsTabWidget, &QDetachTabWidget::tabDetached,   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
-        QObject::connect(logsTabWidget, &QDetachTabWidget::tabReattached, _consoleWidget, &SeerConsoleWidget::handleTabReattached);
+        _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
 
         writeLogsSettings();
 
