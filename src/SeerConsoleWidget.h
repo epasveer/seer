@@ -22,8 +22,10 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
 
-        void                setMode                     (const QString& mode);
+        void                setMode                     (const QString& mode, bool saveSettings=true);
         QString             mode                        () const;
+        void                enableStdout                (bool flag, bool saveSettings=true);
+        bool                isStdoutEnabled             () const;
 
     public slots:
         void                handleChangeWindowTitle     (QString title);
@@ -37,6 +39,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleSaveButton            ();
         void                handleFontButton            ();
         void                handleWrapTextCheckBox      ();
+        void                handleStdoutCheckBox        ();
         void                handleStdinLineEdit         ();
         void                handleConsoleOutput         (int socketfd);
 
@@ -55,5 +58,6 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         QString             _ttyDeviceName;
         int                 _ptsFD;
         QSocketNotifier*    _ptsListener;
+        bool                _enableStdout;
 };
 

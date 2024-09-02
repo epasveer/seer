@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
@@ -25,6 +26,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ptsFD         = -1;
     _ptsListener   = 0;
     _mode          = "attached";
+    _enableStdout  = false;
 
     // Set up UI.
     setupUi(this);
@@ -62,6 +64,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleSaveButton);
     QObject::connect(fontButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleFontButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleWrapTextCheckBox);
+    QObject::connect(stdoutCheckBox,    &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleStdoutCheckBox);
     QObject::connect(stdinLineEdit,     &QLineEdit::returnPressed,  this,  &SeerConsoleWidget::handleStdinLineEdit);
 
     // Restore window settings.
@@ -83,9 +86,16 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
         return;
     }
 
+     // Write text to stdout on terminal that started Seer..
+    if (isStdoutEnabled()) {
+        write (STDOUT_FILENO, buffer, count);
+    }
+
+    // Write text to Ansi widget.
     QString str = QString::fromLatin1(buffer, count);
 
     textEdit->insertAnsiText(str);
+    textEdit->ensureCursorVisible();
 
     return;
 }
@@ -183,6 +193,30 @@ void SeerConsoleWidget::handleWrapTextCheckBox () {
     }else{
         textEdit->setLineWrapMode(QPlainTextEdit::WidgetWidth);  // Wrap at end of widget
     }
+}
+
+void SeerConsoleWidget::handleStdoutCheckBox () {
+
+    // Don't write text to the terminal's stdout.
+    if (stdoutCheckBox->checkState() == Qt::Unchecked) {
+        enableStdout(false);
+        writeSettings();
+        return;
+    }
+
+    // If stdout is not valid, don't set it.
+    if (fcntl(STDOUT_FILENO, F_GETFD) == -1) {
+
+        QMessageBox::critical(this, tr("Error"), tr("stdout is not valid."));
+
+        stdoutCheckBox->setChecked(false);
+        enableStdout(false);
+        writeSettings();
+    }
+
+    // All good to write to stdout
+    enableStdout(true);
+    writeSettings();
 }
 
 void SeerConsoleWidget::handleStdinLineEdit () {
@@ -340,7 +374,7 @@ int SeerConsoleWidget::scrollLines () const {
     return textEdit->maximumBlockCount();
 }
 
-void SeerConsoleWidget::setMode (const QString& mode) {
+void SeerConsoleWidget::setMode (const QString& mode, bool saveSettings) {
 
     //qDebug() << mode;
 
@@ -369,7 +403,9 @@ void SeerConsoleWidget::setMode (const QString& mode) {
         setWindowState(Qt::WindowNoState);
     }
 
-    writeSettings();
+    if (saveSettings) {
+        writeSettings();
+    }
 
     emit modeChanged(_mode);
 }
@@ -383,12 +419,28 @@ QString SeerConsoleWidget::mode () const {
     return _mode;
 }
 
+void SeerConsoleWidget::enableStdout (bool flag, bool saveSettings) {
+
+    _enableStdout = flag;
+
+    stdoutCheckBox->setChecked(_enableStdout);
+
+    if (saveSettings) {
+        writeSettings();
+    }
+}
+
+bool SeerConsoleWidget::isStdoutEnabled () const {
+    return _enableStdout;
+}
+
 void SeerConsoleWidget::writeSettings() {
 
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
         settings.setValue("mode", mode());
+        settings.setValue("stdout", isStdoutEnabled());
     }settings.endGroup();
 }
 
@@ -415,8 +467,10 @@ void SeerConsoleWidget::readSettings() {
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
-        setMode(settings.value("mode", "attached").toString());
+
+        setMode(settings.value("mode", "attached").toString(), false);
         resize(settings.value("size", QSize(800, 600)).toSize());
+        enableStdout(settings.value("stdout", false).toBool(), false);
 
         QFont f;
         if (settings.contains("font")) {
