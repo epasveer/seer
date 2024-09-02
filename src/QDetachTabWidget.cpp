@@ -76,6 +76,7 @@ void QDetachTabWidget::detachTab (int tabIndex, Qt::WindowState windowState) {
 
     // Notify listeners the tab was detached.
     emit tabDetached(tabIndex);
+    emit tabDetached(w);
 }
 
 void QDetachTabWidget::reattachTab (int tabIndex, Qt::WindowState windowState) {
@@ -109,11 +110,15 @@ void QDetachTabWidget::reattachTab (int tabIndex, Qt::WindowState windowState) {
     // Insert the real tab in the same position.
     insertTab(tabIndex, it->_widget, it->_title);
 
+    // Save the real tab's widget before we delete the entry.
+    w = it->_widget;
+
     // Delete the entry from the tab cache.
     _tabInfo.erase(it);
 
     // Notify listeners the tab was reattached.
     emit tabReattached(tabIndex);
+    emit tabReattached(w);
 }
 
 void QDetachTabWidget::closeEvent (QCloseEvent* e) {

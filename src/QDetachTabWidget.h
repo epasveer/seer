@@ -29,7 +29,9 @@ class QDetachTabWidget : public QTabWidget {
 
     signals:
         void                                tabDetached              (int tabIndex);
+        void                                tabDetached              (QWidget* widget);
         void                                tabReattached            (int tabIndex);
+        void                                tabReattached            (QWidget* widget);
 
     protected:
         void                                closeEvent               (QCloseEvent* e);
