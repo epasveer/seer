@@ -31,6 +31,8 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
 
     public slots:
         void                handleChangeWindowTitle     (QString title);
+        void                handleTabDetached           (int tabIndex);
+        void                handleTabReattached         (int tabIndex);
 
     signals:
         void                modeChanged                 (QString mode);

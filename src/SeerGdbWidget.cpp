@@ -3231,6 +3231,9 @@ void SeerGdbWidget::createConsole () {
 
         _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
 
+        QObject::connect(logsTabWidget, &QDetachTabWidget::tabDetached,   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
+        QObject::connect(logsTabWidget, &QDetachTabWidget::tabReattached, _consoleWidget, &SeerConsoleWidget::handleTabReattached);
+
         writeLogsSettings();
 
         handleConsoleModeChanged(_consoleWidget->mode());

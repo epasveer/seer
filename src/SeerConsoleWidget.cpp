@@ -110,6 +110,20 @@ void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
     }
 }
 
+void SeerConsoleWidget::handleTabDetached (int tabIndex) {
+    qDebug() << tabIndex;
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+}
+
+void SeerConsoleWidget::handleTabReattached (int tabIndex) {
+    qDebug() << tabIndex;
+}
+
 void SeerConsoleWidget::handleClearButton () {
     textEdit->clear();
 }
@@ -473,6 +487,15 @@ void SeerConsoleWidget::writeFontSettings() {
 }
 
 void SeerConsoleWidget::writeSizeSettings() {
+
+    // If there's a parent, don't save the size.
+    // This means the console is attached in the
+    // tab bar and its size has been shrunk. We
+    // only want to save resizes if the console
+    // has been detached, ie: no parent.
+    if (parent() != 0) {
+        return;
+    }
 
     QSettings settings;
 
