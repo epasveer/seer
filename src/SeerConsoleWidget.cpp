@@ -27,6 +27,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ptsListener   = 0;
     _mode          = "attached";
     _enableStdout  = false;
+    _enableWrap    = false;
 
     // Set up UI.
     setupUi(this);
@@ -190,9 +191,13 @@ void SeerConsoleWidget::handleWrapTextCheckBox () {
 
     if (wrapTextCheckBox->checkState() == Qt::Unchecked) {
         textEdit->setLineWrapMode(QPlainTextEdit::NoWrap);       // No wrap
+        _enableWrap = false;
     }else{
         textEdit->setLineWrapMode(QPlainTextEdit::WidgetWidth);  // Wrap at end of widget
+        _enableWrap = true;
     }
+
+    writeSettings();
 }
 
 void SeerConsoleWidget::handleStdoutCheckBox () {
@@ -374,7 +379,7 @@ int SeerConsoleWidget::scrollLines () const {
     return textEdit->maximumBlockCount();
 }
 
-void SeerConsoleWidget::setMode (const QString& mode, bool saveSettings) {
+void SeerConsoleWidget::setMode (const QString& mode) {
 
     //qDebug() << mode;
 
@@ -403,9 +408,7 @@ void SeerConsoleWidget::setMode (const QString& mode, bool saveSettings) {
         setWindowState(Qt::WindowNoState);
     }
 
-    if (saveSettings) {
-        writeSettings();
-    }
+    writeModeSettings();
 
     emit modeChanged(_mode);
 }
@@ -419,19 +422,26 @@ QString SeerConsoleWidget::mode () const {
     return _mode;
 }
 
-void SeerConsoleWidget::enableStdout (bool flag, bool saveSettings) {
+void SeerConsoleWidget::enableStdout (bool flag) {
 
     _enableStdout = flag;
 
     stdoutCheckBox->setChecked(_enableStdout);
-
-    if (saveSettings) {
-        writeSettings();
-    }
 }
 
 bool SeerConsoleWidget::isStdoutEnabled () const {
     return _enableStdout;
+}
+
+void SeerConsoleWidget::enableWrap (bool flag) {
+
+    _enableWrap = flag;
+
+    wrapTextCheckBox->setChecked(_enableWrap);
+}
+
+bool SeerConsoleWidget::isWrapEnabled () const {
+    return _enableWrap;
 }
 
 void SeerConsoleWidget::writeSettings() {
@@ -439,8 +449,17 @@ void SeerConsoleWidget::writeSettings() {
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
-        settings.setValue("mode", mode());
         settings.setValue("stdout", isStdoutEnabled());
+        settings.setValue("wrap",   isWrapEnabled());
+    }settings.endGroup();
+}
+
+void SeerConsoleWidget::writeModeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("mode", mode());
     }settings.endGroup();
 }
 
@@ -468,9 +487,10 @@ void SeerConsoleWidget::readSettings() {
 
     settings.beginGroup("consolewindow"); {
 
-        setMode(settings.value("mode", "attached").toString(), false);
+        setMode(settings.value("mode", "attached").toString());
         resize(settings.value("size", QSize(800, 600)).toSize());
-        enableStdout(settings.value("stdout", false).toBool(), false);
+        enableStdout(settings.value("stdout", false).toBool());
+        enableWrap(settings.value("wrap", false).toBool());
 
         QFont f;
         if (settings.contains("font")) {
