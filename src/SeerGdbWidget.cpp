@@ -2822,22 +2822,31 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     }
 }
 
-void SeerGdbWidget::handleConsoleModeChanged (QString mode) {
-
-    qDebug() << "XXX: " << mode;
+void SeerGdbWidget::handleConsoleModeChanged () {
 
     if (_consoleIndex < 0) {
         return;
     }
 
-    qDebug() << "YYY: " << mode;
+    if (_consoleWidget == nullptr) {
+        return;
+    }
 
-    if (mode == "detached") {
-        logsTabWidget->detachTab(_consoleIndex, Qt::WindowNoState);
-    }else if (mode == "detachedminimized") {
-        logsTabWidget->detachTab(_consoleIndex, Qt::WindowMinimized);
-    }else if (mode == "attached") {
-        logsTabWidget->reattachTab(_consoleIndex, Qt::WindowNoState);
+    if (_consoleMode == "detached") {
+        logsTabWidget->detachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
+        _consoleWidget->raise();
+        _consoleWidget->resetSize();
+    }else if (_consoleMode == "detachedminimized") {
+        logsTabWidget->detachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowMinimized);
+        _consoleWidget->resetSize();
+    }else if (_consoleMode == "attached") {
+        logsTabWidget->reattachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
+    }else{
+        logsTabWidget->reattachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
     }
 }
 
@@ -3221,11 +3230,6 @@ void SeerGdbWidget::createConsole () {
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
 
-        QObject::connect(_consoleWidget, &SeerConsoleWidget::modeChanged, this, &SeerGdbWidget::handleConsoleModeChanged);
-
-        setConsoleMode(consoleMode());
-        setConsoleScrollLines(consoleScrollLines());
-
         // Connect window title changes.
         QObject::connect(this, &SeerGdbWidget::changeWindowTitle, _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
 
@@ -3235,9 +3239,10 @@ void SeerGdbWidget::createConsole () {
 
         _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
 
-        writeLogsSettings();
+        setConsoleMode(consoleMode());
+        setConsoleScrollLines(consoleScrollLines());
 
-        handleConsoleModeChanged(_consoleWidget->mode());
+        writeLogsSettings();
     }
 }
 
@@ -3276,20 +3281,14 @@ void SeerGdbWidget::disconnectConsole () {
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
-    qDebug() << "XXX: " << mode;
+    _consoleMode = mode;
 
-    if (_consoleWidget != 0) {
-        _consoleWidget->setMode(mode);
-    }
+    handleConsoleModeChanged();
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    if (_consoleWidget != 0) {
-        return _consoleWidget->mode();
-    }
-
-    return "attached";
+    return _consoleMode;
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {

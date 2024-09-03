@@ -25,7 +25,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ttyDeviceName = "";
     _ptsFD         = -1;
     _ptsListener   = 0;
-    _mode          = "attached";
     _enableStdout  = false;
     _enableWrap    = false;
 
@@ -399,49 +398,6 @@ int SeerConsoleWidget::scrollLines () const {
     return textEdit->maximumBlockCount();
 }
 
-void SeerConsoleWidget::setMode (const QString& mode) {
-
-    //qDebug() << mode;
-
-    if (mode == "attached") {
-
-        _mode = mode;
-
-        setWindowState(Qt::WindowNoState);
-
-    }else if (mode == "detached") {
-
-        _mode = mode;
-
-        setWindowState(Qt::WindowNoState);
-
-    }else if (mode == "detachedminimized") {
-
-        _mode = mode;
-
-        setWindowState(Qt::WindowMinimized);
-
-    }else if (mode == "") {
-
-        _mode = "attached";
-
-        setWindowState(Qt::WindowNoState);
-    }
-
-    writeModeSettings();
-
-    emit modeChanged(_mode);
-}
-
-QString SeerConsoleWidget::mode () const {
-
-    if (_mode == "") {
-        return "attached";
-    }
-
-    return _mode;
-}
-
 void SeerConsoleWidget::enableStdout (bool flag) {
 
     _enableStdout = flag;
@@ -464,6 +420,24 @@ bool SeerConsoleWidget::isWrapEnabled () const {
     return _enableWrap;
 }
 
+void SeerConsoleWidget::resetSize () {
+
+    // If there's a parent, don't reset the size.
+    // This means the console is attached in the
+    // tab bar and its size has been shrunk. We
+    // only want to resize if the console
+    // has been detached, ie: no parent.
+    if (parent() != 0) {
+        return;
+    }
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+}
+
 void SeerConsoleWidget::writeSettings() {
 
     QSettings settings;
@@ -471,15 +445,6 @@ void SeerConsoleWidget::writeSettings() {
     settings.beginGroup("consolewindow"); {
         settings.setValue("stdout", isStdoutEnabled());
         settings.setValue("wrap",   isWrapEnabled());
-    }settings.endGroup();
-}
-
-void SeerConsoleWidget::writeModeSettings() {
-
-    QSettings settings;
-
-    settings.beginGroup("consolewindow"); {
-        settings.setValue("mode", mode());
     }settings.endGroup();
 }
 
@@ -516,7 +481,6 @@ void SeerConsoleWidget::readSettings() {
 
     settings.beginGroup("consolewindow"); {
 
-        setMode(settings.value("mode", "attached").toString());
         resize(settings.value("size", QSize(800, 600)).toSize());
         enableStdout(settings.value("stdout", false).toBool());
         enableWrap(settings.value("wrap", false).toBool());

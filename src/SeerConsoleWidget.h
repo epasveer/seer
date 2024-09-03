@@ -22,20 +22,17 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
 
-        void                setMode                     (const QString& mode);
-        QString             mode                        () const;
         void                enableStdout                (bool flag);
         bool                isStdoutEnabled             () const;
         void                enableWrap                  (bool flag);
         bool                isWrapEnabled               () const;
 
+        void                resetSize                   ();
+
     public slots:
         void                handleChangeWindowTitle     (QString title);
         void                handleTabDetached           (QWidget* widget);
         void                handleTabReattached         (QWidget* widget);
-
-    signals:
-        void                modeChanged                 (QString mode);
 
     protected slots:
         void                handleClearButton           ();
@@ -52,14 +49,12 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                createConsole               ();
         void                deleteConsole               ();
         void                writeSettings               ();
-        void                writeModeSettings           ();
         void                writeFontSettings           ();
         void                writeSizeSettings           ();
         void                readSettings                ();
         void                resizeEvent                 (QResizeEvent* event);
 
     private:
-        QString             _mode;
         QString             _ttyDeviceName;
         int                 _ptsFD;
         QSocketNotifier*    _ptsListener;
