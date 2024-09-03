@@ -22,10 +22,11 @@ class QDetachTabWidget : public QTabWidget {
         QDetachTabWidget(QWidget* parent = 0);
 
         bool                                isDetached               (int tabIndex) const;
+        QWidget*                            tabWidget                (int tabIndex) const;
 
     public slots:
-        void                                detachTab                (int tabIndex, Qt::WindowState windowState=Qt::WindowNoState);
-        void                                reattachTab              (int tabIndex, Qt::WindowState windowState=Qt::WindowNoState);
+        void                                detachTab                (int tabIndex);
+        void                                reattachTab              (int tabIndex);
 
     signals:
         void                                tabDetached              (int tabIndex);
