@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
@@ -24,7 +25,8 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     _ttyDeviceName = "";
     _ptsFD         = -1;
     _ptsListener   = 0;
-    _mode          = "normal";
+    _enableStdout  = false;
+    _enableWrap    = false;
 
     // Set up UI.
     setupUi(this);
@@ -56,14 +58,13 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     createConsole();
     connectConsole();
 
-    setMode("normal");
-
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
     QObject::connect(printButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handlePrintButton);
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleSaveButton);
     QObject::connect(fontButton,        &QPushButton::clicked,      this,  &SeerConsoleWidget::handleFontButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleWrapTextCheckBox);
+    QObject::connect(stdoutCheckBox,    &QCheckBox::clicked,        this,  &SeerConsoleWidget::handleStdoutCheckBox);
     QObject::connect(stdinLineEdit,     &QLineEdit::returnPressed,  this,  &SeerConsoleWidget::handleStdinLineEdit);
 
     // Restore window settings.
@@ -85,9 +86,16 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
         return;
     }
 
+     // Write text to stdout on terminal that started Seer..
+    if (isStdoutEnabled()) {
+        write (STDOUT_FILENO, buffer, count);
+    }
+
+    // Write text to Ansi widget.
     QString str = QString::fromLatin1(buffer, count);
 
     textEdit->insertAnsiText(str);
+    textEdit->ensureCursorVisible();
 
     return;
 }
@@ -99,6 +107,26 @@ void SeerConsoleWidget::handleChangeWindowTitle (QString title) {
     }else{
         setWindowTitle("Seer Console - '" + title + "'");
     }
+}
+
+void SeerConsoleWidget::handleTabDetached (QWidget* widget) {
+
+    if (widget != (QWidget*)this) {
+        return;
+    }
+
+    // Resize the detached console with the size from
+    // the settings.
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+}
+
+void SeerConsoleWidget::handleTabReattached (QWidget* widget) {
+    // Do nothing for now.
+    Q_UNUSED(widget);
 }
 
 void SeerConsoleWidget::handleClearButton () {
@@ -182,9 +210,37 @@ void SeerConsoleWidget::handleWrapTextCheckBox () {
 
     if (wrapTextCheckBox->checkState() == Qt::Unchecked) {
         textEdit->setLineWrapMode(QPlainTextEdit::NoWrap);       // No wrap
+        _enableWrap = false;
     }else{
         textEdit->setLineWrapMode(QPlainTextEdit::WidgetWidth);  // Wrap at end of widget
+        _enableWrap = true;
     }
+
+    writeSettings();
+}
+
+void SeerConsoleWidget::handleStdoutCheckBox () {
+
+    // Don't write text to the terminal's stdout.
+    if (stdoutCheckBox->checkState() == Qt::Unchecked) {
+        enableStdout(false);
+        writeSettings();
+        return;
+    }
+
+    // If stdout is not valid, don't set it.
+    if (fcntl(STDOUT_FILENO, F_GETFD) == -1) {
+
+        QMessageBox::critical(this, tr("Error"), tr("stdout file descriptor is not valid.\nDisabling writing to stdout."));
+
+        enableStdout(false);
+        writeSettings();
+        return;
+    }
+
+    // All good to write to stdout
+    enableStdout(true);
+    writeSettings();
 }
 
 void SeerConsoleWidget::handleStdinLineEdit () {
@@ -342,46 +398,54 @@ int SeerConsoleWidget::scrollLines () const {
     return textEdit->maximumBlockCount();
 }
 
-void SeerConsoleWidget::setMode (const QString& mode) {
+void SeerConsoleWidget::enableStdout (bool flag) {
 
-    //qDebug() << mode;
+    _enableStdout = flag;
 
-    if (mode == "normal") {
-
-        _mode = mode;
-
-        show();
-        setWindowState(Qt::WindowNoState);
-
-    }else if (mode == "minimized") {
-
-        _mode = mode;
-
-        show();
-        setWindowState(Qt::WindowMinimized);
-
-    }else if (mode == "hidden") {
-
-        _mode = mode;
-
-        hide();
-
-    }else if (mode == "") {
-
-        _mode = "normal";
-
-        show();
-        setWindowState(Qt::WindowNoState);
-    }
+    stdoutCheckBox->setChecked(_enableStdout);
 }
 
-QString SeerConsoleWidget::mode () const {
+bool SeerConsoleWidget::isStdoutEnabled () const {
+    return _enableStdout;
+}
 
-    if (_mode == "") {
-        return "normal";
+void SeerConsoleWidget::enableWrap (bool flag) {
+
+    _enableWrap = flag;
+
+    wrapTextCheckBox->setChecked(_enableWrap);
+}
+
+bool SeerConsoleWidget::isWrapEnabled () const {
+    return _enableWrap;
+}
+
+void SeerConsoleWidget::resetSize () {
+
+    // If there's a parent, don't reset the size.
+    // This means the console is attached in the
+    // tab bar and its size has been shrunk. We
+    // only want to resize if the console
+    // has been detached, ie: no parent.
+    if (parent() != 0) {
+        return;
     }
 
-    return _mode;
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+}
+
+void SeerConsoleWidget::writeSettings() {
+
+    QSettings settings;
+
+    settings.beginGroup("consolewindow"); {
+        settings.setValue("stdout", isStdoutEnabled());
+        settings.setValue("wrap",   isWrapEnabled());
+    }settings.endGroup();
 }
 
 void SeerConsoleWidget::writeFontSettings() {
@@ -395,6 +459,15 @@ void SeerConsoleWidget::writeFontSettings() {
 
 void SeerConsoleWidget::writeSizeSettings() {
 
+    // If there's a parent, don't save the size.
+    // This means the console is attached in the
+    // tab bar and its size has been shrunk. We
+    // only want to save resizes if the console
+    // has been detached, ie: no parent.
+    if (parent() != 0) {
+        return;
+    }
+
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
@@ -407,7 +480,10 @@ void SeerConsoleWidget::readSettings() {
     QSettings settings;
 
     settings.beginGroup("consolewindow"); {
+
         resize(settings.value("size", QSize(800, 600)).toSize());
+        enableStdout(settings.value("stdout", false).toBool());
+        enableWrap(settings.value("wrap", false).toBool());
 
         QFont f;
         if (settings.contains("font")) {

@@ -14,67 +14,7 @@
    <string>Seer Console</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="3">
-    <widget class="QPushButton" name="printButton">
-     <property name="toolTip">
-      <string>Print the log output.</string>
-     </property>
-     <property name="statusTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="clearButton">
-     <property name="toolTip">
-      <string>Clear the log output.</string>
-     </property>
-     <property name="statusTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QCheckBox" name="wrapTextCheckBox">
-     <property name="toolTip">
-      <string>Wrap long lines to the next line.</string>
-     </property>
-     <property name="statusTip">
-      <string/>
-     </property>
-     <property name="text">
-      <string>Wrap</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="6">
-    <widget class="QAnsiTextEdit" name="textEdit">
-     <property name="lineWrapMode">
-      <enum>QPlainTextEdit::NoWrap</enum>
-     </property>
-     <property name="readOnly">
-      <bool>false</bool>
-     </property>
-     <property name="placeholderText">
-      <string>[program output text]</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
+   <item row="1" column="5">
     <widget class="QPushButton" name="saveButton">
      <property name="toolTip">
       <string>Save the log output to a file.</string>
@@ -91,17 +31,50 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
-    <widget class="QPushButton" name="fontButton">
+   <item row="1" column="3">
+    <widget class="QPushButton" name="clearButton">
      <property name="toolTip">
-      <string>Select the log output font.</string>
+      <string>Clear the log output.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
-       <normaloff>:/seer/resources/icons-icons/font.png</normaloff>:/seer/resources/icons-icons/font.png</iconset>
+       <normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-clear.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="7">
+    <widget class="QAnsiTextEdit" name="textEdit">
+     <property name="lineWrapMode">
+      <enum>QPlainTextEdit::NoWrap</enum>
+     </property>
+     <property name="readOnly">
+      <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>[program output text]</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QPushButton" name="printButton">
+     <property name="toolTip">
+      <string>Print the log output.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
      </property>
     </widget>
    </item>
@@ -118,6 +91,43 @@
      </property>
      <property name="clearButtonEnabled">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QCheckBox" name="wrapTextCheckBox">
+     <property name="toolTip">
+      <string>Wrap long lines to the next line.</string>
+     </property>
+     <property name="statusTip">
+      <string/>
+     </property>
+     <property name="text">
+      <string>Wrap</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="6">
+    <widget class="QPushButton" name="fontButton">
+     <property name="toolTip">
+      <string>Select the log output font.</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/icons-icons/font.png</normaloff>:/seer/resources/icons-icons/font.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QCheckBox" name="stdoutCheckBox">
+     <property name="toolTip">
+      <string>Send output to stdout as well.</string>
+     </property>
+     <property name="text">
+      <string>stdout</string>
      </property>
     </widget>
    </item>
