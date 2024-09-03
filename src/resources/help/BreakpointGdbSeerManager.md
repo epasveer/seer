@@ -83,6 +83,16 @@ Any output from the GDB program is output to this logger. This is any regualar G
 
 Any output from the Seer program is ouput to this logger. Mostly, this is the result of any GDB/mi command, whether the GDB/mi command is manually entered or entered by Seer. Normally this logger is disabled.
 
+### Console output
+
+Any output from the program being debugged is output to this logger. Basically, the program's stdout. The stdout can also be echoed
+to the terminal that started Seer.
+
+This logging tab can be started attached along side the other loggers. Or detached as a normal window. Or detached as a minimized
+window. See Seer's config dialog or View->Console menu option. Be sure to save the config changes.
+
+If the program being debugged is asking for stdin input, it can be entered in the "stding input text" field.
+
 ### Save and load breakpoints
 
 There are two buttons to save or load the various types of breakpoints to/from a file. The breakpoint file can be specified in the Debug dialog or on the command line:
