@@ -17,33 +17,33 @@ SeerSeerConfigPage::~SeerSeerConfigPage() {
 
 void SeerSeerConfigPage::setConsoleMode (const QString& mode) {
 
-    if (mode == "normal") {
-        normalRadioButton->setChecked(true);
+    if (mode == "attached") {
+        attachedRadioButton->setChecked(true);
 
-    }else if (mode == "minimized") {
-        minimizedRadioButton->setChecked(true);
+    }else if (mode == "detached") {
+        detachedRadioButton->setChecked(true);
 
-    }else if (mode == "hidden") {
-        hiddenRadioButton->setChecked(true);
+    }else if (mode == "detachedminimized") {
+        detachedMinimizedRadioButton->setChecked(true);
 
     }else{
-        normalRadioButton->setChecked(true);
+        attachedRadioButton->setChecked(true);
     }
 }
 
 QString SeerSeerConfigPage::consoleMode () const {
 
-    if (normalRadioButton->isChecked()) {
-        return "normal";
+    if (attachedRadioButton->isChecked()) {
+        return "attached";
 
-    }else if (minimizedRadioButton->isChecked()) {
-        return "minimized";
+    }else if (detachedRadioButton->isChecked()) {
+        return "detached";
 
-    }else if (hiddenRadioButton->isChecked()) {
-        return "hidden";
+    }else if (detachedMinimizedRadioButton->isChecked()) {
+        return "detachedminimized";
 
     }else{
-        return "normal";
+        return "attached";
     }
 }
 
@@ -89,7 +89,7 @@ bool SeerSeerConfigPage::clearManualCommandHistory () const {
 
 void SeerSeerConfigPage::reset () {
 
-    setConsoleMode("normal");
+    setConsoleMode("attached");
     setConsoleScrollLines(1000);
     setRememberWindowSizes(true);
     setRememberManualCommandCount(10);

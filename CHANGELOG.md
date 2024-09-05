@@ -3,6 +3,11 @@
 
 ## [2.5beta] - 2024-XX-XX
 * Starting the 2.5 development cycle.
+* Console now supports a subset of ANSI color codes.
+* Console can be started in these modes:
+    - Detached
+    - Detached and minimized
+    - Attached in Seer's tab view (with gdb logs and seer logs).
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
