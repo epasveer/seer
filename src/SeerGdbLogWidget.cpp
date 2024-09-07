@@ -15,65 +15,33 @@ void SeerGdbLogWidget::processText (const QString& text) {
     QString str;
 
     // Remove leading "~"
-    // ~"For help, type "help".
-    // "
-    if (text.front() == '~') {
-        str = text.mid(1);
-
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
-
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
-
     // Remove leading "&"
-    // &"p name
-    // "
-    } else if (text.front() == '&') {
-
-        str = text.mid(1);
-
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
-
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
-
     // Remove leading "@"
-    // @"memcheck monitor commands:
-    // "
-    } else if (text.front() == '@') {
+    switch (text.front().unicode()) {
+        case QChar('~').unicode():
+        case QChar('&').unicode():
+        case QChar('@').unicode():
 
-        str = text.mid(1);
+            str = text.mid(1);
 
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
+            // Remove leading """
+            if (str.front() == '"') {
+                str = str.mid(1);
+            }
 
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
+            // Remove trailing """
+            if (str.back() == '"') {
+                str.chop(1);
+            }
 
-    // Use string as it is.
-    }else{
-        str = text;
+            break;
+
+        default:
+            str = text;
     }
 
-    // Filter out \n and \t.
-    // Should probably do something better and expand them.
-    str.replace("\\t",  "\t");
-    str.replace("\\n",  "\n");
-    str.replace("\\\"", "\"");
+    // https://github.com/epasveer/seer/issues/238
+    str = Seer::unescape(str);
 
     // Write the string to the log.
     textEdit->insertPlainText(str);
