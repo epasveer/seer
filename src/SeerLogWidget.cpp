@@ -54,10 +54,12 @@ void SeerLogWidget::setLogEnabled (bool flag) {
 
 void SeerLogWidget::moveToEnd () {
 
+    /* XXX
     // Move to the end and then to the beginning of that line.
     QTextCursor cursor = textEdit->textCursor();
     textEdit->moveCursor(QTextCursor::End,          QTextCursor::MoveAnchor);
     textEdit->moveCursor(QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
+    */
 
     textEdit->verticalScrollBar()->setValue(textEdit->verticalScrollBar()->maximum());
 }

@@ -37,7 +37,7 @@ int main (int argc, char** argv) {
     Person me;
     Location where;
 
-    me.name                   = "Pasveer, Ernie";
+    me.name                   = "Pasveer,\tErnie";
     me.age                    = 60;
     me.salary                 = 0.25;
     me.location.city          = "Houston";
