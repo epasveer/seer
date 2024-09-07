@@ -15,84 +15,36 @@ void SeerGdbLogWidget::processText (const QString& text) {
     QString str;
 
     // Remove leading "~"
-    // ~"For help, type "help".
-    // "
-    if (text.front() == '~') {
-        str = text.mid(1);
-
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
-
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
-
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
-
     // Remove leading "&"
-    // &"p name
-    // "
-    } else if (text.front() == '&') {
-
-        str = text.mid(1);
-
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
-
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
-
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
-
-
     // Remove leading "@"
-    // @"memcheck monitor commands:
-    // "
-    } else if (text.front() == '@') {
+    switch (text.front().unicode()) {
+        case QChar('~').unicode():
+        case QChar('&').unicode():
+        case QChar('@').unicode():
 
-        str = text.mid(1);
+            str = text.mid(1);
 
-        // Remove leading """
-        if (str.front() == '"') {
-            str = str.mid(1);
-        }
+            // Remove leading """
+            if (str.front() == '"') {
+                str = str.mid(1);
+            }
 
-        // Remove trailing """
-        if (str.back() == '"') {
-            str.chop(1);
-        }
+            // Remove trailing """
+            if (str.back() == '"') {
+                str.chop(1);
+            }
 
-        // Remove trailing "\n"
-        if (str.back() == '\n') {
-            str.chop(1);
-        }
+            break;
 
-
-    // Use string as it is.
-    }else{
-        str = text;
+        default:
+            str = text;
     }
 
-    // Filter out \n and \t.
-    // Should probably do something better and expand them.
-    str.replace("\\t", "");
-    str.replace("\\n", "");
+    // https://github.com/epasveer/seer/issues/238
+    str = Seer::unescape(str);
 
     // Write the string to the log.
-    textEdit->append(str);
+    textEdit->insertPlainText(str);
 
     // If there is breakpoint message (via a manual command), ask
     // for the breakpoint list to be refreshed.
