@@ -191,6 +191,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::deleteBreakpoints,                                                this,                                                           &SeerGdbWidget::handleGdbBreakpointDelete);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::enableBreakpoints,                                                this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::disableBreakpoints,                                               this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::infoBreakpoint,                                                   this,                                                           &SeerGdbWidget::handleGdbBreakpointInfo);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::runToLine,                                                        this,                                                           &SeerGdbWidget::handleGdbRunToLine);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::runToAddress,                                                     this,                                                           &SeerGdbWidget::handleGdbRunToAddress);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addVariableLoggerExpression,                                      variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::addVariableExpression);
@@ -1973,6 +1974,17 @@ void SeerGdbWidget::handleGdbBreakpointDisable (QString breakpoints) {
 
     handleGdbCommand("-break-disable " + breakpoints);
     handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbBreakpointInfo (int breakpointid, QString breakpoint) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    QString str = QString("%1-break-list %2").arg(breakpointid).arg(breakpoint);
+
+    handleGdbCommand(str);
 }
 
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
