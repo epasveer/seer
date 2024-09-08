@@ -22,10 +22,6 @@ void SeerTildeLogWidget::processText (const QString& text) {
 
     str = Seer::filterEscapes(str);
 
-    if (str.back() == '\n') { // Remove trailing "\n"
-        str.chop(1);
-    }
-
-    textEdit->append(str);
+    textEdit->insertPlainText(str);
 }
 

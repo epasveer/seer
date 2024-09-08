@@ -110,7 +110,7 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
 
 void SeerCppSourceHighlighter::highlightBlock (const QString& text) {
 
-    for (const HighlightingRule& rule : qAsConst(_highlightingRules)) {
+    for (const HighlightingRule& rule : std::as_const(_highlightingRules)) {
 
         QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
 

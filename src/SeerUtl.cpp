@@ -920,5 +920,96 @@ namespace Seer {
         // All good.
         return true;
     }
+
+    QString unescape (const QString& str) {
+
+        QString result;
+        bool    quoted = false;
+
+        // Maybe reserve `str.length()` bytes in result, so that it will not allocate during `push_back()`
+        result.reserve(str.length());
+
+        // Loop through each character in 'str'. Look for a '\'.
+        for (int i=0; i<str.length(); i++) {
+
+            // Found a '\'.
+            if (str[i] == QChar('\\')) {
+                // Can we look at the following character?
+                if (i+1 >= str.length()) {
+                    // Nope, just add it.
+                    result.push_back(str[i]);
+                    break;
+                }
+
+                // If the following character is another '\', skip the first one.
+                // This removes one level of '\'.
+                if (str[i+1] == QChar('\\')) {
+                    continue;
+                }
+
+                // Treat the following character as an escaped character.
+                // Unescape it. (Is that even a word?)
+                switch(str[i+1].unicode()) {
+                    // We don't want to unescape things that are in double quotes.
+                    // So keep track of that. (Not the more fool proof implementation).
+                    case QChar('\"').unicode():
+                        result.push_back(QChar('\"'));
+                        if (quoted) {
+                            quoted = false;
+                        }else{
+                            quoted = true;
+                        }
+                        break;
+                    case QChar('n').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\n'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('\'').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\''));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('\\').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\\'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('t').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\t'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                        // and so on for \a, \b, \e, \f, \r, \t, \v
+                        // maybe handle octal, hexadecimal ASCII and Unicode forms, but probably in the more distant future
+                        // ...
+                    default:
+                        // unknown escape sequence — do not escape it — I think it is reasonable default
+                        result.push_back(QChar('\\'));
+                        result.push_back(str[i+1]);
+                        break;
+                }
+                i++;
+
+            // Normal character. Just add it.
+            }else{
+                result.push_back(str[i]);
+            }
+        }
+
+        return result;
+    }
 }
 

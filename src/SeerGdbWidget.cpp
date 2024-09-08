@@ -46,6 +46,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbMonitor                         = 0;
     _gdbProcess                         = 0;
     _consoleWidget                      = 0;
+    _consoleIndex                       = -1;
     _breakpointsBrowserWidget           = 0;
     _watchpointsBrowserWidget           = 0;
     _catchpointsBrowserWidget           = 0;
@@ -348,7 +349,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
     // Restore window settings.
-    setConsoleMode("normal");
     readSettings();
 }
 
@@ -2816,9 +2816,37 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     if (errorStatus == QProcess::FailedToStart) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the GDB program.\n\n") +
-                                    QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
+                                   QString("'%1 %2'").arg(_gdbProcess->program()).arg(_gdbProcess->arguments().join(' ')) + "\n\n" +
                                    QString("Error status=%1)").arg(errorStatus),
                                    QMessageBox::Ok);
+    }
+}
+
+void SeerGdbWidget::handleConsoleModeChanged () {
+
+    if (_consoleIndex < 0) {
+        return;
+    }
+
+    if (_consoleWidget == nullptr) {
+        return;
+    }
+
+    if (_consoleMode == "detached") {
+        logsTabWidget->detachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
+        _consoleWidget->raise();
+        _consoleWidget->resetSize();
+    }else if (_consoleMode == "detachedminimized") {
+        logsTabWidget->detachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowMinimized);
+        _consoleWidget->resetSize();
+    }else if (_consoleMode == "attached") {
+        logsTabWidget->reattachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
+    }else{
+        logsTabWidget->reattachTab(_consoleIndex);
+        _consoleWidget->setWindowState(Qt::WindowNoState);
     }
 }
 
@@ -2836,7 +2864,7 @@ void SeerGdbWidget::writeSettings () {
     } settings.endGroup();
 
     settings.beginGroup("consolewindow"); {
-        settings.setValue("start", consoleMode());
+        settings.setValue("mode", consoleMode());
         settings.setValue("scrolllines", consoleScrollLines());
     }settings.endGroup();
 
@@ -2929,7 +2957,7 @@ void SeerGdbWidget::readSettings () {
     } settings.endGroup();
 
     settings.beginGroup("consolewindow"); {
-        setConsoleMode(settings.value("start", "normal").toString());
+        setConsoleMode(settings.value("mode", "attached").toString());
         setConsoleScrollLines(settings.value("scrolllines", 1000).toInt());
     } settings.endGroup();
 
@@ -3202,11 +3230,19 @@ void SeerGdbWidget::createConsole () {
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
 
+        // Connect window title changes.
+        QObject::connect(this, &SeerGdbWidget::changeWindowTitle, _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
+
+        // The console needs to know when it's detached or reattached.
+        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabDetached),   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
+        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabReattached), _consoleWidget, &SeerConsoleWidget::handleTabReattached);
+
+        _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
+
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
 
-        // Connect window title changes.
-        QObject::connect(this, &SeerGdbWidget::changeWindowTitle,    _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
+        writeLogsSettings();
     }
 }
 
@@ -3218,8 +3254,14 @@ SeerConsoleWidget* SeerGdbWidget::console () {
 void SeerGdbWidget::deleteConsole () {
 
     if (_consoleWidget) {
+
+        if (_consoleIndex >= 0) {
+            logsTabWidget->removeTab(_consoleIndex);
+        }
+
         delete _consoleWidget;
         _consoleWidget = 0;
+        _consoleIndex  = -1;
     }
 }
 
@@ -3239,18 +3281,14 @@ void SeerGdbWidget::disconnectConsole () {
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
-    if (_consoleWidget != 0) {
-        _consoleWidget->setMode(mode);
-    }
+    _consoleMode = mode;
+
+    handleConsoleModeChanged();
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    if (_consoleWidget != 0) {
-        return _consoleWidget->mode();
-    }
-
-    return "normal";
+    return _consoleMode;
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {
