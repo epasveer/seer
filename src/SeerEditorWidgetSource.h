@@ -84,6 +84,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showContextMenu                     (const QPoint& pos, const QPointF& globalPos);
         void                                        setQuickBreakpoint                  (QMouseEvent* event);
         void                                        setQuickRunToLine                   (QMouseEvent* event);
+        void                                        showBreakpointToolTip               (QMouseEvent* event);
 
         void                                        clearExpression                     ();
 
@@ -105,6 +106,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        deleteBreakpoints                   (QString breakpoints);
         void                                        enableBreakpoints                   (QString breakpoints);
         void                                        disableBreakpoints                  (QString breakpoints);
+        void                                        infoBreakpoint                      (int breakpointid, QString breakpoint);
         void                                        refreshBreakpointsStackFrames       ();
         void                                        runToLine                           (QString fullname, int lineno);
         void                                        addVariableLoggerExpression         (QString expression);
@@ -123,6 +125,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        handleText                          (const QString& text);
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
+        void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
@@ -159,6 +162,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         int                                         _selectedExpressionId;
         QString                                     _selectedExpressionName;
         QString                                     _selectedExpressionValue;
+        QPoint                                      _selectedBreakpointPosition;
+        int                                         _selectedBreakpointId;
 
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;

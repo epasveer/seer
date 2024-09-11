@@ -275,6 +275,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbBreakpointDelete           (QString breakpoints);
         void                                handleGdbBreakpointEnable           (QString breakpoints);
         void                                handleGdbBreakpointDisable          (QString breakpoints);
+        void                                handleGdbBreakpointInfo             (int breakpointid, QString breakpoint);
         void                                handleGdbBreakpointInsert           (QString breakpoint);
         void                                handleGdbBreakpointCondition        (QString breakpoint, QString condition);
         void                                handleGdbBreakpointIgnore           (QString breakpoint, QString count);

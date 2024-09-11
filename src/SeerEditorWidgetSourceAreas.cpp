@@ -40,6 +40,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
     _selectedExpressionId       = Seer::createID();
+    _selectedBreakpointId       = Seer::createID();
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
@@ -54,8 +55,10 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
+    _breakPointArea->setMouseTracking(true);
     _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
     _miniMapPixmap  = 0;
+
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
@@ -505,8 +508,6 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
             // If the hover text is empty, do nothing. Reset things. Exit this function.
             QString word = cursor.selectedText();
 
-            //qDebug() << "Hover text=" << word;
-
             if (word.isEmpty() == true) {
 
                 QToolTip::hideText();
@@ -622,8 +623,6 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     // See findFile() to see the search paths and order.
     //
     QString filename = findFile(_file, _fullname, _alternateDirectory, _alternateDirectories);
-
-    //qDebug() << "Loading" << _file << "from" << filename;
 
     if (filename == "") {
         QMessageBox::critical(this, "Can't find source file.",  "Can't find : " + _file + "\nIts location may have changed.");
@@ -825,8 +824,6 @@ QString SeerEditorWidgetSourceArea::findFile (const QString& file, const QString
 
     while (iter.hasNext()) {
 
-        //qDebug() << iter.next();
-
         QString filename = iter.next() + "/" + file;
 
         if (QFileInfo::exists(filename) == true) {
@@ -839,8 +836,6 @@ QString SeerEditorWidgetSourceArea::findFile (const QString& file, const QString
 }
 
 void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
-
-    //qDebug() << lineno << file();
 
     // Clear current line selections.
     _currentLinesExtraSelections.clear();
@@ -874,8 +869,6 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
-    //qDebug() << lineno << file();
-
     // Scroll to the first line if we went before it.
     if (lineno < 1) {
         lineno = 1;
@@ -897,16 +890,12 @@ void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
 void SeerEditorWidgetSourceArea::clearCurrentLines () {
 
-    //qDebug() << file();
-
     _currentLinesExtraSelections.clear();
 
     refreshExtraSelections();
 }
 
 void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
-
-    //qDebug() << lineno << file();
 
     // Any line will be highlighted with a yellow line.
     // The 'yellow' color is for the current line of the most recent stack frame.
@@ -1242,8 +1231,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
-        //qDebug() << dlg.breakpointText();
-
         // Emit the create breakpoint signal.
         emit insertBreakpoint(dlg.breakpointText());
 
@@ -1263,8 +1250,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
-        //qDebug() << dlg.printpointText();
-
         // Emit the create breakpoint signal.
         emit insertPrintpoint(dlg.printpointText());
 
@@ -1273,8 +1258,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle deleting a breakpoint.
     if (action == deleteAction) {
-
-        //qDebug() << "deleteBreakpoints" << lineno;
 
         // Emit the delete breakpoint signal.
         emit deleteBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
@@ -1285,8 +1268,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle enabling a breakpoint.
     if (action == enableAction) {
 
-        //qDebug() << "enableBreakpoints" << lineno;
-
         // Emit the enable breakpoint signal.
         emit enableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
 
@@ -1296,8 +1277,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle disabling a breakpoint.
     if (action == disableAction) {
 
-        //qDebug() << "disableBreakpoints" << lineno;
-
         // Emit the disable breakpoint signal.
         emit disableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
 
@@ -1306,8 +1285,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle running to a line number.
     if (action == runToLineAction) {
-
-        //qDebug() << "runToLine" << lineno;
 
         // Emit the runToLine signal.
         emit runToLine(fullname(), lineno);
@@ -1357,8 +1334,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerExpressionAction) {
 
-        //qDebug() << "addVariableLoggerExpression" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addVariableLoggerExpression(textCursor().selectedText());
@@ -1369,8 +1344,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskExpressionAction) {
-
-        //qDebug() << "addVariableLoggerAsteriskExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1383,8 +1356,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAmpersandExpression" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addVariableLoggerExpression(QString("&") + textCursor().selectedText());
@@ -1396,8 +1367,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to log.
     if (action == addVariableLoggerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableLoggerAsteriskAmpersandExpression" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addVariableLoggerExpression(QString("*&") + textCursor().selectedText());
@@ -1408,8 +1377,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
-
-        //qDebug() << "addVariableTrackerExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1423,8 +1390,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskExpression" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addVariableTrackerExpression(QString("*") + textCursor().selectedText());
@@ -1436,8 +1401,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding a variable to track.
     if (action == addVariableTrackerAmpersandExpressionAction) {
-
-        //qDebug() << "addVariableTrackerAmpersandExpression" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1451,8 +1414,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding a variable to track.
     if (action == addVariableTrackerAsteriskAmpersandExpressionAction) {
 
-        //qDebug() << "addVariableTrackerAsteriskAmpersandExpression" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addVariableTrackerExpression(QString("*&") + textCursor().selectedText());
@@ -1465,8 +1426,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
-        //qDebug() << "addMemoryVisualizer" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addMemoryVisualize(textCursor().selectedText());
@@ -1477,8 +1436,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding memory to visualize.
     if (action == addMemoryAsteriskVisualizerAction) {
-
-        //qDebug() << "addMemoryAsteriskVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1491,8 +1448,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding memory to visualize.
     if (action == addMemoryAmpersandVisualizerAction) {
 
-        //qDebug() << "addMemoryAmpersandVisualizer" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addMemoryVisualize(QString("&") + textCursor().selectedText());
@@ -1503,8 +1458,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding array to visualize.
     if (action == addArrayVisualizerAction) {
-
-        //qDebug() << "addArrayVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1517,8 +1470,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding array to visualize.
     if (action == addArrayAsteriskVisualizerAction) {
 
-        //qDebug() << "addArrayAsteriskVisualizer" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addArrayVisualize(QString("*") + textCursor().selectedText());
@@ -1529,8 +1480,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding array to visualize.
     if (action == addArrayAmpersandVisualizerAction) {
-
-        //qDebug() << "addArrayAmpersandVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1543,8 +1492,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding struct to visualize.
     if (action == addStructVisualizerAction) {
 
-        //qDebug() << "addStructVisualizer" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addStructVisualize(textCursor().selectedText());
@@ -1556,8 +1503,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     // Handle adding struct to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
-        //qDebug() << "addStructAsteriskVisualizer" << lineno;
-
         // Emit the signals.
         if (textCursor().selectedText() != "") {
             emit addStructVisualize(QString("*") + textCursor().selectedText());
@@ -1568,8 +1513,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Handle adding struct to visualize.
     if (action == addStructAmpersandVisualizerAction) {
-
-        //qDebug() << "addStructAmpersandVisualizer" << lineno;
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
@@ -1613,12 +1556,30 @@ void SeerEditorWidgetSourceArea::setQuickRunToLine (QMouseEvent* event) {
 
     int lineno = cursor.blockNumber()+1;
 
-    //qDebug() << "runToLine" << lineno;
-
     // Emit the runToLine signal.
     emit runToLine(fullname(), lineno);
 
     return;
+}
+
+void SeerEditorWidgetSourceArea::showBreakpointToolTip (QMouseEvent* event) {
+
+    // Get the line number for the cursor position.
+    QTextCursor cursor = cursorForPosition(event->pos());
+
+    int lineno = cursor.blockNumber()+1;
+
+    // If there is a breakpoint on the line, ask for its information.
+    if (hasBreakpointLine(lineno)) {
+
+        _selectedBreakpointPosition = event->pos();
+
+        // Emit the info breakpoint signal.
+        emit infoBreakpoint(_selectedBreakpointId, QString("%1").arg(breakpointLineToNumber(lineno)));
+
+    }else{
+        _selectedBreakpointPosition = QPoint();
+    }
 }
 
 void SeerEditorWidgetSourceArea::clearExpression() {
@@ -1627,6 +1588,7 @@ void SeerEditorWidgetSourceArea::clearExpression() {
     _selectedExpressionPosition = QPoint();
     _selectedExpressionName     = "";
     _selectedExpressionValue    = "";
+    _selectedBreakpointPosition = QPoint();
 }
 
 void SeerEditorWidgetSourceArea::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -1751,9 +1713,6 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
         QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
 
-        //qDebug() << frame_text;
-        //qDebug() << fullname_text << file_text << line_text;
-
         // Read the file if it hasn't been read before or if we are reading a different file.
         if (fullname_text != fullname()) {
             open(fullname_text, QFileInfo(file_text).fileName());
@@ -1774,13 +1733,18 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         if (id_text.toInt() == _selectedExpressionId) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
+        }
 
-            //qDebug() << _selectedExpressionValue;
+        return;
 
-            // Refresh the tooltip event.
-            QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,BreakpointTable="))) {
 
-            QCoreApplication::postEvent(this, event);
+        // 11^done,BreakpointTable={...}
+
+        QString id_text = text.section('^', 0,0);
+
+        if (id_text.toInt() == _selectedBreakpointId && _selectedBreakpointPosition != QPoint()) {
+            handleBreakpointToolTip(_selectedBreakpointPosition, text);
         }
 
         return;
@@ -1796,12 +1760,14 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false));
 
-            //qDebug() << _selectedExpressionValue;
-
             // Refresh the tooltip event.
             QHelpEvent* event = new QHelpEvent(QEvent::ToolTip, _selectedExpressionPosition, this->mapToGlobal(_selectedExpressionPosition));
 
             QCoreApplication::postEvent(this, event);
+        }
+
+        if (id_text.toInt() == _selectedBreakpointId && _selectedBreakpointPosition != QPoint()) {
+            qDebug() << "XXX - Error displaying breakpoint info as a ToolTip";
         }
 
         return;
@@ -1810,8 +1776,6 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         // Ignore others.
         return;
     }
-
-    qDebug() << text;
 }
 
 void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
@@ -1848,6 +1812,60 @@ void SeerEditorWidgetSourceArea::handleWatchFileModified (const QString& path) {
     Q_UNUSED(path);
 
     emit showReloadBar(true);
+}
+
+void SeerEditorWidgetSourceArea::handleBreakpointToolTip (QPoint pos, const QString& text) {
+
+    // 11^7^done,BreakpointTable={...}
+    // 7^done,BreakpointTable={
+    //                          nr_rows="1",
+    //                          nr_cols="6",
+    //                          hdr=[],
+    //                          body=[
+    //                                 bkpt={
+    //                                        number="2",
+    //                                        type="breakpoint",
+    //                                        disp="keep",
+    //                                        enabled="y",
+    //                                        addr="0x0000000000400ccd",
+    //                                        func="main(int, char**)",
+    //                                        file="helloworld.cpp",
+    //                                        fullname="/nas/erniep/Development/seer/tests/helloworld/helloworld.cpp",
+    //                                        line="30",
+    //                                        thread-groups=["i1"],
+    //                                        times="1",
+    //                                        original-location="-source /nas/erniep/Development/seer/tests/helloworld/helloworld.cpp -line 30"
+    //                                      }
+    //                               ]
+    //                        }
+
+    QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+    QString tooltiptext;
+
+    //
+    // Parse 'body' text.
+    //
+    QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
+
+    if (body_text != "") {
+
+        QStringList bkpt_list = Seer::parse(body_text, "bkpt=", '{', '}', false);
+
+        // Construct the tooltip.
+        tooltiptext += "Breakpoint information\n\n";
+        for (const auto& bkpt_text : bkpt_list) {
+
+            QStringList item_list = Seer::parseCommaList(bkpt_text);
+
+            for (const auto& item_text : item_list) {
+                tooltiptext += item_text + "\n";
+            }
+
+            break; // Take the first breakpoint in case, somehow, more are returned.
+        }
+    }
+
+    QToolTip::showText(mapToGlobal(pos), tooltiptext);
 }
 
 //
@@ -1941,7 +1959,8 @@ void SeerEditorWidgetSourceBreakPointArea::mousePressEvent (QMouseEvent* event) 
 
     if (event->button() == Qt::RightButton) {
         _editorWidget->showContextMenu(event);
-
+    }else if (event->button() == Qt::LeftButton) {
+        _editorWidget->showBreakpointToolTip(event);
     }else{
         QWidget::mousePressEvent(event);
     }
