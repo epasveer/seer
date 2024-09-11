@@ -121,7 +121,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
             QStringList bkpt_list = Seer::parse(newtext, "bkpt=", '{', '}', false);
 
-            for ( const auto& bkpt_text : bkpt_list  ) {
+            for (const auto& bkpt_text : bkpt_list) {
 
                 //
                 // A different way (better?) of parsing the table output

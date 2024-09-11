@@ -9,6 +9,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QStyleFactory>
 #include <QtWidgets/QToolButton>
+#include <QtWidgets/QToolTip>
 #include <QtGui/QKeySequence>
 #include <QtGui/QPalette>
 #include <QtCore/QCoreApplication>

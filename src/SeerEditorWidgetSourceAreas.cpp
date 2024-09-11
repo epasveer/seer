@@ -1739,7 +1739,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,BreakpointTable="))) {
 
-        // 11^7^done,BreakpointTable={...}
+        // 11^done,BreakpointTable={...}
 
         QString id_text = text.section('^', 0,0);
 
@@ -1816,9 +1816,56 @@ void SeerEditorWidgetSourceArea::handleWatchFileModified (const QString& path) {
 
 void SeerEditorWidgetSourceArea::handleBreakpointToolTip (QPoint pos, const QString& text) {
 
-    QString str = text;
+    // 11^7^done,BreakpointTable={...}
+    // 7^done,BreakpointTable={
+    //                          nr_rows="1",
+    //                          nr_cols="6",
+    //                          hdr=[],
+    //                          body=[
+    //                                 bkpt={
+    //                                        number="2",
+    //                                        type="breakpoint",
+    //                                        disp="keep",
+    //                                        enabled="y",
+    //                                        addr="0x0000000000400ccd",
+    //                                        func="main(int, char**)",
+    //                                        file="helloworld.cpp",
+    //                                        fullname="/nas/erniep/Development/seer/tests/helloworld/helloworld.cpp",
+    //                                        line="30",
+    //                                        thread-groups=["i1"],
+    //                                        times="1",
+    //                                        original-location="-source /nas/erniep/Development/seer/tests/helloworld/helloworld.cpp -line 30"
+    //                                      }
+    //                               ]
+    //                        }
 
-    QToolTip::showText(mapToGlobal(pos), str);
+    QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
+    QString tooltiptext;
+
+    //
+    // Parse 'body' text.
+    //
+    QString body_text = Seer::parseFirst(newtext, "body=", '[', ']', false);
+
+    if (body_text != "") {
+
+        QStringList bkpt_list = Seer::parse(body_text, "bkpt=", '{', '}', false);
+
+        // Construct the tooltip.
+        tooltiptext += "Breakpoint information\n\n";
+        for (const auto& bkpt_text : bkpt_list) {
+
+            QStringList item_list = Seer::parseCommaList(bkpt_text);
+
+            for (const auto& item_text : item_list) {
+                tooltiptext += item_text + "\n";
+            }
+
+            break; // Take the first breakpoint in case, somehow, more are returned.
+        }
+    }
+
+    QToolTip::showText(mapToGlobal(pos), tooltiptext);
 }
 
 //

@@ -1982,7 +1982,7 @@ void SeerGdbWidget::handleGdbBreakpointInfo (int breakpointid, QString breakpoin
         return;
     }
 
-    QString str = QString("%1-break-list %2").arg(breakpointid).arg(breakpoint);
+    QString str = QString("%1-break-info %2").arg(breakpointid).arg(breakpoint);
 
     handleGdbCommand(str);
 }

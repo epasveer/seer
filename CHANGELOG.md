@@ -9,6 +9,8 @@
     - Detached and minimized
     - Attached in Seer's tab view (with gdb logs and seer logs).
 * Improved handling of \n \t and other escaped characters in gdb log window.
+* Show breakpoint info as a tooltip if the breakpoint icon is clicked with
+  LMB and held down.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
