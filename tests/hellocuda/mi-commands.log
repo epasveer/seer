@@ -1,0 +1,13 @@
+
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-devices", mi_cmd_cuda_info_devices);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-sms", mi_cmd_cuda_info_sms);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-warps", mi_cmd_cuda_info_warps);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-lanes", mi_cmd_cuda_info_lanes);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-kernels", mi_cmd_cuda_info_kernels);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-blocks", mi_cmd_cuda_info_blocks);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-threads", mi_cmd_cuda_info_threads);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-launch-trace", mi_cmd_cuda_info_launch_trace);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-info-contexts",  mi_cmd_cuda_info_contexts);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-focus-query", mi_cmd_cuda_focus_query);
+mi-cmds.c:  add_mi_cmd_mi ("cuda-focus-switch", mi_cmd_cuda_focus_switch);
+

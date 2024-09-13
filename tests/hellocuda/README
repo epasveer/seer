@@ -6,5 +6,5 @@ References:
 
 Use a different gdb program without changing Seer's config.
 
-    $ seergdb --gdb-program /usr/local/cuda-12.2/bin/cuda-gdb  program arg1 arg2 ...
+    $ seergdb --gdb-program /usr/local/cuda/bin/cuda-gdb  program arg1 arg2 ...
 

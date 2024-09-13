@@ -1,0 +1,31 @@
+^done,InfoCudaDevicesTable={
+                            nr_rows="0",nr_cols="11",
+                            hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},
+                                 {width="3",alignment="1",col_name="device",colhdr="Dev"},
+                                 {width="14",alignment="1",col_name="pci_bus",colhdr="PCI Bus/Dev ID"},
+                                 {width="4",alignment="1",col_name="name",colhdr="Name"},
+                                 {width="11",alignment="1",col_name="description",colhdr="Description"},
+                                 {width="7",alignment="1",col_name="sm_type",colhdr="SM Type"},
+                                 {width="3",alignment="1",col_name="num_sms",colhdr="SMs"},
+                                 {width="8",alignment="1",col_name="num_warps",colhdr="Warps/SM"},
+                                 {width="10",alignment="1",col_name="num_lanes",colhdr="Lanes/Warp"},
+                                 {width="13",alignment="1",col_name="num_regs",colhdr="Max Regs/Lane"},
+                                 {width="15",alignment="1",col_name="active_sms_mask",colhdr="Active SMs Mask"}
+                            ],
+                            body=[]}
+
+^done,InfoCudaSmsTable={nr_rows="0",nr_cols="3",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="2",alignment="1",col_name="sm",colhdr="SM"},{width="17",alignment="1",col_name="active_warps_mask",colhdr="Active Warps Mask"}],body=[]}
+^done,InfoCudaWarpsTable={nr_rows="0",nr_cols="8",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="2",alignment="1",col_name="warp",colhdr="Wp"},{width="17",alignment="1",col_name="active_lanes_mask",colhdr="Active Lanes Mask"},{width="20",alignment="1",col_name="divergent_lanes_mask",colhdr="Divergent Lanes Mask"},{width="9",alignment="1",col_name="active_physical_pc",colhdr="Active PC"},{width="6",alignment="1",col_name="kernel",colhdr="Kernel"},{width="8",alignment="1",col_name="blockIdx",colhdr="BlockIdx"},{width="22",alignment="1",col_name="threadIdx",colhdr="First Active ThreadIdx"}],body=[]}
+^done,InfoCudaLanesTable={nr_rows="0",nr_cols="6",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="2",alignment="1",col_name="lane",colhdr="Ln"},{width="5",alignment="0",col_name="state",colhdr="State"},{width="2",alignment="0",col_name="physical_pc",colhdr="PC"},{width="9",alignment="1",col_name="threadIdx",colhdr="ThreadIdx"},{width="9",alignment="0",col_name="exception",colhdr="Exception"}],body=[]}
+^done,InfoCudaKernelsTable={nr_rows="0",nr_cols="10",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="6",alignment="1",col_name="kernel",colhdr="Kernel"},{width="6",alignment="1",col_name="parent",colhdr="Parent"},{width="3",alignment="1",col_name="device",colhdr="Dev"},{width="4",alignment="1",col_name="grid",colhdr="Grid"},{width="6",alignment="1",col_name="status",colhdr="Status"},{width="8",alignment="1",col_name="sms_mask",colhdr="SMs Mask"},{width="7",alignment="1",col_name="gridDim",colhdr="GridDim"},{width="8",alignment="1",col_name="blockDim",colhdr="BlockDim"},{width="10",alignment="-1",col_name="invocation",colhdr="Invocation"}],body=[]}
+^done,CoalescedInfoCudaBlocksTable={nr_rows="0",nr_cols="6",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="6",alignment="1",col_name="kernel",colhdr="Kernel"},{width="8",alignment="1",col_name="from",colhdr="BlockIdx"},{width="11",alignment="1",col_name="to",colhdr="To BlockIdx"},{width="5",alignment="1",col_name="count",colhdr="Count"},{width="7",alignment="1",col_name="state",colhdr="State"}],body=[]}
+^done,CoalescedInfoCudaThreadsTable={nr_rows="0",nr_cols="10",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="6",alignment="1",col_name="kernel",colhdr="Kernel"},{width="8",alignment="1",col_name="from_blockIdx",colhdr="BlockIdx"},{width="9",alignment="1",col_name="from_threadIdx",colhdr="ThreadIdx"},{width="11",alignment="1",col_name="to_blockIdx",colhdr="To BlockIdx"},{width="12",alignment="1",col_name="to_threadIdx",colhdr="To ThreadIdx"},{width="5",alignment="1",col_name="count",colhdr="Count"},{width="2",alignment="1",col_name="virtual_pc",colhdr="PC"},{width="8",alignment="1",col_name="filename",colhdr="Filename"},{width="5",alignment="1",col_name="line",colhdr="Line"}],body=[]}
+^done,InfoCudaLaunchTraceTable={nr_rows="0",nr_cols="9",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="3",alignment="-1",col_name="level",colhdr="Lvl"},{width="6",alignment="1",col_name="kernel",colhdr="Kernel"},{width="3",alignment="1",col_name="device",colhdr="Dev"},{width="4",alignment="1",col_name="grid",colhdr="Grid"},{width="6",alignment="1",col_name="status",colhdr="Status"},{width="7",alignment="1",col_name="gridDim",colhdr="GridDim"},{width="8",alignment="1",col_name="blockDim",colhdr="BlockDim"},{width="10",alignment="-1",col_name="invocation",colhdr="Invocation"}],body=[]}
+6^error,msg="Invalid character ';' in expression."
+^error,msg="Undefined MI command: cuda-info-launch-contexts",code="undefined-command"
+^error,msg="Undefined MI command: cuda-info-launch-context",code="undefined-command"
+^done,InfoCudaContextsTable={nr_rows="0",nr_cols="4",hdr=[{width="1",alignment="1",col_name="current",colhdr=" "},{width="7",alignment="1",col_name="context",colhdr="Context"},{width="3",alignment="1",col_name="device",colhdr="Dev"},{width="5",alignment="1",col_name="state",colhdr="State"}],body=[]}
+^done,"Focus is not set on any active CUDA kernel.n"
+6^done,value="0x0"
+^error,msg="Invalid coordinates requested. CUDA focus unchanged."
+^done,BreakpointTable={nr_rows="0",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="10",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}],body=[]}
