@@ -102,16 +102,24 @@
       <widget class="SeerStackManagerWidget" name="stackManagerWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>50</horstretch>
-         <verstretch>50</verstretch>
+         <horstretch>33</horstretch>
+         <verstretch>33</verstretch>
         </sizepolicy>
        </property>
       </widget>
       <widget class="SeerThreadManagerWidget" name="threadManagerWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>50</horstretch>
-         <verstretch>50</verstretch>
+         <horstretch>33</horstretch>
+         <verstretch>33</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="SeerCudaManagerWidget" name="cudaManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>33</horstretch>
+         <verstretch>33</verstretch>
         </sizepolicy>
        </property>
       </widget>
@@ -143,6 +151,12 @@
    <class>SeerThreadManagerWidget</class>
    <extends>QWidget</extends>
    <header location="global">SeerThreadManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SeerCudaManagerWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">SeerCudaManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
