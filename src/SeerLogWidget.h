@@ -13,6 +13,8 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
        ~SeerLogWidget ();
 
         virtual void        processText                 (const QString& text);
+        virtual QString     logFilename                 () const;
+        virtual QString     logMessage                  () const;
 
         bool                isLogEnabled                () const;
         void                setLogEnabled               (bool flag);

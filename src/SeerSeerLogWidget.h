@@ -11,5 +11,7 @@ class SeerSeerLogWidget : public SeerLogWidget {
        ~SeerSeerLogWidget ();
 
         void                processText                 (const QString& text);
+        QString             logFilename                 () const;
+        QString             logMessage                  () const;
 };
 

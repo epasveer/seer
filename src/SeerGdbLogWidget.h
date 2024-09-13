@@ -11,6 +11,8 @@ class SeerGdbLogWidget : public SeerLogWidget {
        ~SeerGdbLogWidget ();
 
         void                processText                 (const QString& text);
+        QString             logFilename                 () const;
+        QString             logMessage                  () const;
 
     signals:
         void                refreshBreakpointsList      ();

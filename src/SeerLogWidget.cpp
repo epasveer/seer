@@ -42,6 +42,14 @@ void SeerLogWidget::processText (const QString& text) {
     textEdit->append(text);
 }
 
+QString SeerLogWidget::logFilename () const {
+    return QString("output.log");
+}
+
+QString SeerLogWidget::logMessage () const {
+    return QString("Seer log file");
+}
+
 bool SeerLogWidget::isLogEnabled () const {
 
     return enableCheckBox->isChecked();
@@ -104,12 +112,12 @@ void SeerLogWidget::handlePrintButton () {
 
 void SeerLogWidget::handleSaveButton () {
 
-    QFileDialog dialog(this, "Seer log file", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
+    QFileDialog dialog(this, logMessage(), "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
     dialog.setOptions(QFileDialog::DontUseNativeDialog);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("log");
-    dialog.selectFile("gdboutput.log");
+    dialog.selectFile(logFilename());
 
     if (dialog.exec() != QDialog::Accepted) {
         return;

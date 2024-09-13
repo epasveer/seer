@@ -150,12 +150,12 @@ void SeerConsoleWidget::handlePrintButton () {
 
 void SeerConsoleWidget::handleSaveButton () {
 
-    QFileDialog dialog(this, "Seer log file", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
+    QFileDialog dialog(this, "Seer console log file", "./", "Logs (*.log);;Text files (*.txt);;All files (*.*)");
     dialog.setOptions(QFileDialog::DontUseNativeDialog);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setDefaultSuffix("log");
-    dialog.selectFile("gdboutput.log");
+    dialog.selectFile("consoleoutput.log");
 
     if (dialog.exec() != QDialog::Accepted) {
         return;

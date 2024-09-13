@@ -50,3 +50,12 @@ void SeerSeerLogWidget::processText (const QString& text) {
     textEdit->append(str);
 }
 
+QString SeerSeerLogWidget::logFilename () const {
+    return QString("seeroutput.log");
+}
+
+QString SeerSeerLogWidget::logMessage () const {
+    return QString("Seer output log file");
+}
+
+

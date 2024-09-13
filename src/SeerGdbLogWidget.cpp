@@ -56,3 +56,11 @@ void SeerGdbLogWidget::processText (const QString& text) {
     }
 }
 
+QString SeerGdbLogWidget::logFilename () const {
+    return QString("gdboutput.log");
+}
+
+QString SeerGdbLogWidget::logMessage () const {
+    return QString("GDB output log file");
+}
+
