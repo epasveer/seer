@@ -110,6 +110,7 @@ set(HEADER_FILES
     SeerAdaExceptionsBrowserWidget.h
     SeerThreadManagerWidget.h
     SeerCudaManagerWidget.h
+    SeerCudaDevicesBrowserWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
     SeerUtl.h
@@ -206,6 +207,7 @@ set(SOURCE_FILES
     SeerAdaExceptionsBrowserWidget.cpp
     SeerThreadManagerWidget.cpp
     SeerCudaManagerWidget.cpp
+    SeerCudaDevicesBrowserWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
     SeerUtl.cpp

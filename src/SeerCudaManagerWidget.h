@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SeerCudaDevicesBrowserWidget.h"
+
 #include <QtWidgets/QWidget>
 
 #include "ui_SeerCudaManagerWidget.h"
@@ -11,6 +13,8 @@ class SeerCudaManagerWidget : public QWidget, protected Ui::SeerCudaManagerWidge
     public:
         explicit SeerCudaManagerWidget (QWidget* parent = 0);
        ~SeerCudaManagerWidget ();
+
+        SeerCudaDevicesBrowserWidget*                   cudaDevicesBrowserWidget            ();
 
     signals:
 
@@ -27,5 +31,6 @@ class SeerCudaManagerWidget : public QWidget, protected Ui::SeerCudaManagerWidge
         void                                            handleTabChanged                    (int index);
 
     private:
+        SeerCudaDevicesBrowserWidget*                   _cudaDevicesBrowserWidget;
 };
 

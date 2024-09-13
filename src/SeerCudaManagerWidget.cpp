@@ -20,6 +20,10 @@ SeerCudaManagerWidget::SeerCudaManagerWidget (QWidget* parent) : QWidget(parent)
     tabWidget->setMovable(true);
     tabWidget->setTabsClosable(false);
 
+    _cudaDevicesBrowserWidget = new SeerCudaDevicesBrowserWidget(this);
+
+    tabWidget->addTab(_cudaDevicesBrowserWidget,     "Devices");
+
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the cuda information.");
@@ -48,7 +52,13 @@ SeerCudaManagerWidget::SeerCudaManagerWidget (QWidget* parent) : QWidget(parent)
 SeerCudaManagerWidget::~SeerCudaManagerWidget () {
 }
 
+SeerCudaDevicesBrowserWidget* SeerCudaManagerWidget::cudaDevicesBrowserWidget () {
+    return _cudaDevicesBrowserWidget;
+}
+
 void SeerCudaManagerWidget::handleRefreshToolButtonClicked () {
+
+    cudaDevicesBrowserWidget()->refresh();
 }
 
 void SeerCudaManagerWidget::handleHelpToolButtonClicked () {

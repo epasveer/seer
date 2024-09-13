@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerCudaDevicesBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerCudaDevicesBrowserWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>794</width>
+    <height>528</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTreeWidget" name="cudaDevicesTreeWidget">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="columnCount">
+      <number>11</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Current</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Device</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>PCI Bus/Dev ID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Description</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>SM Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>SMs</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Warps/SM</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Lanes/Warp</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Max Regs/Lane</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string> Active SMs Mask</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>
