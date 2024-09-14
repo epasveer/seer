@@ -44,7 +44,7 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.startsWith("^done,tasks={")) {
+    if (text.startsWith("^done,InfoCudaDevicesTable={")) {
 
         // -cuda-info-devices
 
@@ -64,14 +64,11 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
         //                     ],
         //                     body=[]}
 
-        //qDebug() << text;
-
         cudaDevicesTreeWidget->clear();
 
-        /* XXX Implement parsing code.
         QString body_text = Seer::parseFirst(text, "body=", '[', ']', false);
 
-        //qDebug() << threads_text;
+        qDebug() << "XXX: Here! Not sure of the parsing!";
 
         if (body_text != "") {
 
@@ -79,27 +76,33 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
 
             for ( const auto& task_text : tasks_list ) {
 
-                QString current_text  = Seer::parseFirst(task_text, "current=",   '"', '"', false);
-                QString id_text       = Seer::parseFirst(task_text, "id=",        '"', '"', false);
-                QString taskid_text   = Seer::parseFirst(task_text, "task-id=",   '"', '"', false);
-                QString threadid_text = Seer::parseFirst(task_text, "thread-id=", '"', '"', false);
-                QString parentid_text = Seer::parseFirst(task_text, "parent-id=", '"', '"', false);
-                QString priority_text = Seer::parseFirst(task_text, "priority=",  '"', '"', false);
-                QString state_text    = Seer::parseFirst(task_text, "state=",     '"', '"', false);
-                QString name_text     = Seer::parseFirst(task_text, "name=",      '"', '"', false);
+                QString current_text         = Seer::parseFirst(task_text, "current=",         '"', '"', false);
+                QString device_text          = Seer::parseFirst(task_text, "device=",          '"', '"', false);
+                QString pci_bus_text         = Seer::parseFirst(task_text, "pci_bus=",         '"', '"', false);
+                QString name_text            = Seer::parseFirst(task_text, "name=",            '"', '"', false);
+                QString description_text     = Seer::parseFirst(task_text, "description=",     '"', '"', false);
+                QString sm_type_text         = Seer::parseFirst(task_text, "sm_type=",         '"', '"', false);
+                QString num_sms_text         = Seer::parseFirst(task_text, "num_sms=",         '"', '"', false);
+                QString num_warps_text       = Seer::parseFirst(task_text, "num_warps=",       '"', '"', false);
+                QString num_lanes_text       = Seer::parseFirst(task_text, "num_lanes=",       '"', '"', false);
+                QString num_regs_text        = Seer::parseFirst(task_text, "num_regs=",        '"', '"', false);
+                QString active_sms_mask_text = Seer::parseFirst(task_text, "active_sms_mask=", '"', '"', false);
 
                 // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
                 item->setText(0, current_text);
-                item->setText(1, id_text);
-                item->setText(2, taskid_text);
-                item->setText(3, threadid_text);
-                item->setText(4, parentid_text);
-                item->setText(5, priority_text);
-                item->setText(6, state_text);
-                item->setText(7, name_text);
+                item->setText(1, device_text);
+                item->setText(2, pci_bus_text);
+                item->setText(3, name_text);
+                item->setText(4, description_text);
+                item->setText(5, sm_type_text);
+                item->setText(6, num_sms_text);
+                item->setText(7, num_warps_text);
+                item->setText(7, num_lanes_text);
+                item->setText(7, num_regs_text);
+                item->setText(7, active_sms_mask_text);
 
-                // Add the frame to the tree.
+                // Add the device to the tree.
                 cudaDevicesTreeWidget->addTopLevelItem(item);
             }
         }
@@ -111,7 +114,6 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
         if (matches.size() > 0) {
             cudaDevicesTreeWidget->setCurrentItem(matches.first());
         }
-        */
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
         cudaDevicesTreeWidget->clear();

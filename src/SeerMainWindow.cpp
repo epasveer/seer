@@ -970,6 +970,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,ada-exceptions={") && text.endsWith("}")) {
         return;
 
+    }else if (text.startsWith("^done,InfoCudaDevicesTable={") && text.endsWith("}")) {
+        return;
+
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done"))) {
         return;
 

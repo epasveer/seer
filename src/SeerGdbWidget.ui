@@ -107,7 +107,7 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="SeerThreadManagerWidget" name="threadManagerWidget" native="true">
+      <widget class="SeerCudaManagerWidget" name="cudaManagerWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>33</horstretch>
@@ -115,7 +115,7 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="SeerCudaManagerWidget" name="cudaManagerWidget" native="true">
+      <widget class="SeerThreadManagerWidget" name="threadManagerWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>33</horstretch>
