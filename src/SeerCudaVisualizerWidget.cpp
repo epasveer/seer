@@ -1,4 +1,4 @@
-#include "SeerCudaManagerWidget.h"
+#include "SeerCudaVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
@@ -9,7 +9,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
-SeerCudaManagerWidget::SeerCudaManagerWidget (QWidget* parent) : QWidget(parent) {
+SeerCudaVisualizerWidget::SeerCudaVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
 
@@ -22,7 +22,7 @@ SeerCudaManagerWidget::SeerCudaManagerWidget (QWidget* parent) : QWidget(parent)
 
     _cudaDevicesBrowserWidget = new SeerCudaDevicesBrowserWidget(this);
 
-    tabWidget->addTab(_cudaDevicesBrowserWidget,     "Devices");
+    tabWidget->addTab(_cudaDevicesBrowserWidget, "Devices");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -43,25 +43,26 @@ SeerCudaManagerWidget::SeerCudaManagerWidget (QWidget* parent) : QWidget(parent)
     readSettings();
 
     // Connect things.
-    QObject::connect(refreshToolButton,    &QToolButton::clicked,              this,  &SeerCudaManagerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(helpToolButton,       &QToolButton::clicked,              this,  &SeerCudaManagerWidget::handleHelpToolButtonClicked);
-    QObject::connect(tabWidget->tabBar(),  &QTabBar::tabMoved,                 this,  &SeerCudaManagerWidget::handleTabMoved);
-    QObject::connect(tabWidget->tabBar(),  &QTabBar::currentChanged,           this,  &SeerCudaManagerWidget::handleTabChanged);
+    QObject::connect(refreshToolButton,          &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,             &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget->tabBar(),        &QTabBar::tabMoved,                                    this,  &SeerCudaVisualizerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),        &QTabBar::currentChanged,                              this,  &SeerCudaVisualizerWidget::handleTabChanged);
+    QObject::connect(_cudaDevicesBrowserWidget,  &SeerCudaDevicesBrowserWidget::refreshCudaDevices,     this,  &SeerCudaVisualizerWidget::handleRefreshCudaDevices);
 }
 
-SeerCudaManagerWidget::~SeerCudaManagerWidget () {
+SeerCudaVisualizerWidget::~SeerCudaVisualizerWidget () {
 }
 
-SeerCudaDevicesBrowserWidget* SeerCudaManagerWidget::cudaDevicesBrowserWidget () {
+SeerCudaDevicesBrowserWidget* SeerCudaVisualizerWidget::cudaDevicesBrowserWidget () {
     return _cudaDevicesBrowserWidget;
 }
 
-void SeerCudaManagerWidget::handleRefreshToolButtonClicked () {
+void SeerCudaVisualizerWidget::handleRefreshToolButtonClicked () {
 
     cudaDevicesBrowserWidget()->refresh();
 }
 
-void SeerCudaManagerWidget::handleHelpToolButtonClicked () {
+void SeerCudaVisualizerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/CudaInfoBrowser.md");
@@ -69,7 +70,7 @@ void SeerCudaManagerWidget::handleHelpToolButtonClicked () {
     help->raise();
 }
 
-void SeerCudaManagerWidget::handleTabMoved (int from, int to) {
+void SeerCudaVisualizerWidget::handleTabMoved (int from, int to) {
 
     Q_UNUSED(from);
     Q_UNUSED(to);
@@ -77,14 +78,29 @@ void SeerCudaManagerWidget::handleTabMoved (int from, int to) {
     writeSettings();
 }
 
-void SeerCudaManagerWidget::handleTabChanged (int index) {
+void SeerCudaVisualizerWidget::handleTabChanged (int index) {
 
     Q_UNUSED(index);
 
     writeSettings();
 }
 
-void SeerCudaManagerWidget::writeSettings () {
+void SeerCudaVisualizerWidget::handleRefreshCudaDevices () {
+
+    emit refreshCudaDevices();
+}
+
+void SeerCudaVisualizerWidget::handleText (const QString& text) {
+
+    _cudaDevicesBrowserWidget->handleText(text);
+}
+
+void SeerCudaVisualizerWidget::handleStoppingPointReached () {
+
+    _cudaDevicesBrowserWidget->handleStoppingPointReached();
+}
+
+void SeerCudaVisualizerWidget::writeSettings () {
 
     // Write tab order to settings.
     QStringList tabs;
@@ -100,13 +116,14 @@ void SeerCudaManagerWidget::writeSettings () {
 
     QSettings settings;
 
-    settings.beginGroup("cudamanagerwindow"); {
+    settings.beginGroup("cudavisualizerwindow"); {
         settings.setValue("taborder", tabs.join(','));
         settings.setValue("tabcurrent", current);
+        settings.setValue("size", size());
     } settings.endGroup();
 }
 
-void SeerCudaManagerWidget::readSettings () {
+void SeerCudaVisualizerWidget::readSettings () {
 
     // Can't move things?
     if (tabWidget->tabBar()->isMovable() == false) {
@@ -118,9 +135,10 @@ void SeerCudaManagerWidget::readSettings () {
     QStringList tabs;
     QString     current;
 
-    settings.beginGroup("cudamanagerwindow"); {
+    settings.beginGroup("cudavisualizerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
         current = settings.value("tabcurrent").toString();
+        resize(settings.value("size", QSize(800, 400)).toSize());
     } settings.endGroup();
 
     //qDebug() << "Tabs"    << tabs;
@@ -156,4 +174,12 @@ void SeerCudaManagerWidget::readSettings () {
         tabWidget->setCurrentIndex(0);
     }
 }
+
+void SeerCudaVisualizerWidget::resizeEvent (QResizeEvent* event) {
+
+    writeSettings();
+
+    QWidget::resizeEvent(event);
+}
+
 

@@ -106,6 +106,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* visualizerVarAction    = menuVisualizer->addAction("Struct");
     QAction* visualizerStructAction = menuVisualizer->addAction("Basic Struct");
     QAction* visualizerImageAction  = menuVisualizer->addAction("Image");
+    QAction* visualizerCudaAction   = menuVisualizer->addAction("Cuda");
 
     actionVisualizers->setMenu(menuVisualizer);
 
@@ -129,6 +130,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewVarVisualizer);
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
+    QObject::connect(actionViewCudaVisualizer,          &QAction::triggered,                            this,           &SeerMainWindow::handleViewCudaVisualizer);
     QObject::connect(actionViewAssembly,                &QAction::triggered,                            this,           &SeerMainWindow::handleViewAssembly);
     QObject::connect(actionConsoleAttached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleAttached);
     QObject::connect(actionConsoleDetached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetached);
@@ -179,6 +181,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(visualizerVarAction,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
+    QObject::connect(visualizerCudaAction,              &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbCudaVisualizer);
 
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
@@ -611,6 +614,11 @@ void SeerMainWindow::handleViewVarVisualizer () {
 void SeerMainWindow::handleViewImageVisualizer () {
 
     gdbWidget->handleGdbImageVisualizer();
+}
+
+void SeerMainWindow::handleViewCudaVisualizer () {
+
+    gdbWidget->handleGdbCudaVisualizer();
 }
 
 void SeerMainWindow::handleViewAssembly () {

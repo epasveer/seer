@@ -88,6 +88,7 @@ set(HEADER_FILES
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
     SeerImageVisualizerWidget.h
+    SeerCudaVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
@@ -109,7 +110,6 @@ set(HEADER_FILES
     SeerAdaTasksBrowserWidget.h
     SeerAdaExceptionsBrowserWidget.h
     SeerThreadManagerWidget.h
-    SeerCudaManagerWidget.h
     SeerCudaDevicesBrowserWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
@@ -185,6 +185,7 @@ set(SOURCE_FILES
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
     SeerImageVisualizerWidget.cpp
+    SeerCudaVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp
@@ -206,7 +207,6 @@ set(SOURCE_FILES
     SeerAdaTasksBrowserWidget.cpp
     SeerAdaExceptionsBrowserWidget.cpp
     SeerThreadManagerWidget.cpp
-    SeerCudaManagerWidget.cpp
     SeerCudaDevicesBrowserWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
