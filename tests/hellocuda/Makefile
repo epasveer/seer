@@ -2,10 +2,10 @@
 all: hellocudasimple hellocudabitreverse
 
 hellocudasimple: hellocudasimple.cu
-	/usr/local/cuda/bin/nvcc -g -G hellocudasimple.cu -o hellocudasimple
+	/usr/local/cuda-11.4/bin/nvcc -g -G hellocudasimple.cu -o hellocudasimple
 
 hellocudabitreverse: hellocudabitreverse.cu
-	/usr/local/cuda/bin/nvcc -g -G hellocudabitreverse.cu -o hellocudabitreverse
+	/usr/local/cuda-11.4/bin/nvcc -g -G hellocudabitreverse.cu -o hellocudabitreverse
 
 .PHONY: clean
 clean:

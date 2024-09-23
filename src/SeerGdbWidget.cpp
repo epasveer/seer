@@ -335,6 +335,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget,                                             &SeerStackManagerWidget::handleStoppingPointReached);
+
     QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
@@ -2708,6 +2709,7 @@ void SeerGdbWidget::handleGdbCudaVisualizer () {
     // Connect things.
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                    w,    &SeerCudaVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                     w,    &SeerCudaVisualizerWidget::handleText);
+    QObject::connect(this,         &SeerGdbWidget::stoppingPointReached,             w,    &SeerCudaVisualizerWidget::handleStoppingPointReached);
     QObject::connect(w,            &SeerCudaVisualizerWidget::refreshCudaDevices,    this, &SeerGdbWidget::handleGdbCudaListDevices);
 }
 

@@ -43,11 +43,11 @@ SeerCudaVisualizerWidget::SeerCudaVisualizerWidget (QWidget* parent) : QWidget(p
     readSettings();
 
     // Connect things.
-    QObject::connect(refreshToolButton,          &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(helpToolButton,             &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleHelpToolButtonClicked);
-    QObject::connect(tabWidget->tabBar(),        &QTabBar::tabMoved,                                    this,  &SeerCudaVisualizerWidget::handleTabMoved);
-    QObject::connect(tabWidget->tabBar(),        &QTabBar::currentChanged,                              this,  &SeerCudaVisualizerWidget::handleTabChanged);
-    QObject::connect(_cudaDevicesBrowserWidget,  &SeerCudaDevicesBrowserWidget::refreshCudaDevices,     this,  &SeerCudaVisualizerWidget::handleRefreshCudaDevices);
+    QObject::connect(refreshToolButton,           &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,              &QToolButton::clicked,                                 this,  &SeerCudaVisualizerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget->tabBar(),         &QTabBar::tabMoved,                                    this,  &SeerCudaVisualizerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),         &QTabBar::currentChanged,                              this,  &SeerCudaVisualizerWidget::handleTabChanged);
+    QObject::connect(cudaDevicesBrowserWidget(),  &SeerCudaDevicesBrowserWidget::refreshCudaDevices,     this,  &SeerCudaVisualizerWidget::handleRefreshCudaDevices);
 }
 
 SeerCudaVisualizerWidget::~SeerCudaVisualizerWidget () {
@@ -58,6 +58,8 @@ SeerCudaDevicesBrowserWidget* SeerCudaVisualizerWidget::cudaDevicesBrowserWidget
 }
 
 void SeerCudaVisualizerWidget::handleRefreshToolButtonClicked () {
+
+    qDebug() << "Calling 'refresh' on each CUDA widget";
 
     cudaDevicesBrowserWidget()->refresh();
 }
@@ -87,17 +89,23 @@ void SeerCudaVisualizerWidget::handleTabChanged (int index) {
 
 void SeerCudaVisualizerWidget::handleRefreshCudaDevices () {
 
+    qDebug() << "Forward 'refreshCudaDevices' signal";
+
     emit refreshCudaDevices();
 }
 
 void SeerCudaVisualizerWidget::handleText (const QString& text) {
 
-    _cudaDevicesBrowserWidget->handleText(text);
+    qDebug() << "Calling 'handleText' on each CUDA widget";
+
+    cudaDevicesBrowserWidget()->handleText(text);
 }
 
 void SeerCudaVisualizerWidget::handleStoppingPointReached () {
 
-    _cudaDevicesBrowserWidget->handleStoppingPointReached();
+    qDebug() << "Calling 'handleStoppingPointReached' on each CUDA widget";
+
+    cudaDevicesBrowserWidget()->handleStoppingPointReached();
 }
 
 void SeerCudaVisualizerWidget::writeSettings () {

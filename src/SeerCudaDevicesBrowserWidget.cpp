@@ -62,7 +62,20 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
         //                          {width="13",alignment="1",col_name="num_regs",colhdr="Max Regs/Lane"},
         //                          {width="15",alignment="1",col_name="active_sms_mask",colhdr="Active SMs Mask"}
         //                     ],
-        //                     body=[]}
+        //                     body=[
+        //                      InfoCudaDevicesRow={
+        //                          current=" ",
+        //                          device="0",
+        //                          pci_bus="01:00.0",
+        //                          name="Quadro M1000M",
+        //                          description="GM107GL-A",
+        //                          sm_type="sm_50",
+        //                          num_sms="4",
+        //                          num_warps="64",
+        //                          num_lanes="32",
+        //                          num_regs="256",
+        //                          active_sms_mask="0x00000000000000000000000000000000"
+        //                      }]}
 
         cudaDevicesTreeWidget->clear();
 
@@ -90,17 +103,17 @@ void SeerCudaDevicesBrowserWidget::handleText (const QString& text) {
 
                 // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
-                item->setText(0, current_text);
-                item->setText(1, device_text);
-                item->setText(2, pci_bus_text);
-                item->setText(3, name_text);
-                item->setText(4, description_text);
-                item->setText(5, sm_type_text);
-                item->setText(6, num_sms_text);
-                item->setText(7, num_warps_text);
-                item->setText(7, num_lanes_text);
-                item->setText(7, num_regs_text);
-                item->setText(7, active_sms_mask_text);
+                item->setText(0,  current_text);
+                item->setText(1,  device_text);
+                item->setText(2,  pci_bus_text);
+                item->setText(3,  name_text);
+                item->setText(4,  description_text);
+                item->setText(5,  sm_type_text);
+                item->setText(6,  num_sms_text);
+                item->setText(7,  num_warps_text);
+                item->setText(8,  num_lanes_text);
+                item->setText(9,  num_regs_text);
+                item->setText(10, active_sms_mask_text);
 
                 // Add the device to the tree.
                 cudaDevicesTreeWidget->addTopLevelItem(item);
