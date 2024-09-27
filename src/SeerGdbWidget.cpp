@@ -164,6 +164,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackDumpBrowserWidget(),                   &SeerStackDumpBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget,                                             &SeerStackManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
@@ -235,6 +236,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addArrayVisualize,                                           this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addStructVisualize,                                          this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::refreshVariableTrackerValues,                                this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
+    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackDump,                                              this,                                                           &SeerGdbWidget::handleGdbStackDump);
+    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackPointer,                                           this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(stackManagerWidget,                                        &SeerStackManagerWidget::refreshThreadFrames,                                               this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
 
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerValues,                            this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
@@ -324,6 +327,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackDumpBrowserWidget(),                   &SeerStackDumpBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       threadManagerWidget->threadIdsBrowserWidget(),                  &SeerThreadIdsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       threadManagerWidget->adaTasksBrowserWidget(),                   &SeerAdaTasksBrowserWidget::handleStoppingPointReached);
@@ -1935,6 +1939,15 @@ void SeerGdbWidget::handleGdbStackListArguments () {
     }
 
     handleGdbCommand("-stack-list-arguments --all-values");
+}
+
+void SeerGdbWidget::handleGdbStackDump () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-data-read-memory-bytes -o 16 $sp 32");
 }
 
 void SeerGdbWidget::handleGdbGenericpointList () {

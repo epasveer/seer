@@ -21,10 +21,12 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     _stackFramesBrowserWidget    = new SeerStackFramesBrowserWidget(this);
     _stackArgumentsBrowserWidget = new SeerStackArgumentsBrowserWidget(this);
     _stackLocalsBrowserWidget    = new SeerStackLocalsBrowserWidget(this);
+    _stackDumpBrowserWidget      = new SeerStackDumpBrowserWidget(this);
 
     tabWidget->addTab(_stackFramesBrowserWidget,    "Frames");
     tabWidget->addTab(_stackArgumentsBrowserWidget, "Arguments");
     tabWidget->addTab(_stackLocalsBrowserWidget,    "Locals");
+    tabWidget->addTab(_stackDumpBrowserWidget,      "Stack");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -66,11 +68,16 @@ SeerStackLocalsBrowserWidget* SeerStackManagerWidget::stackLocalsBrowserWidget (
     return _stackLocalsBrowserWidget;
 }
 
+SeerStackDumpBrowserWidget* SeerStackManagerWidget::stackDumpBrowserWidget () {
+    return _stackDumpBrowserWidget;
+}
+
 void SeerStackManagerWidget::handleRefreshToolButtonClicked () {
 
     stackFramesBrowserWidget()->refresh();
     stackArgumentsBrowserWidget()->refresh();
     stackLocalsBrowserWidget()->refresh();
+    stackDumpBrowserWidget()->refresh();
 
     refresh();
 }
@@ -198,6 +205,7 @@ void SeerStackManagerWidget::handleText (const QString& text) {
         stackFramesBrowserWidget()->refresh();
         stackArgumentsBrowserWidget()->refresh();
         stackLocalsBrowserWidget()->refresh();
+        stackDumpBrowserWidget()->refresh();
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 

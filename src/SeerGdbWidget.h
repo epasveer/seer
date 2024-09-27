@@ -271,6 +271,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbStackSelectFrame           (int frameno);
         void                                handleGdbStackListLocals            ();
         void                                handleGdbStackListArguments         ();
+        void                                handleGdbStackDump                  ();
         void                                handleGdbGenericpointList           ();
         void                                handleGdbBreakpointDelete           (QString breakpoints);
         void                                handleGdbBreakpointEnable           (QString breakpoints);

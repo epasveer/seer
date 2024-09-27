@@ -102,6 +102,7 @@ set(HEADER_FILES
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
     SeerStackLocalsBrowserWidget.h
+    SeerStackDumpBrowserWidget.h
     SeerStackManagerWidget.h
     SeerThreadFramesBrowserWidget.h
     SeerThreadIdsBrowserWidget.h
@@ -197,6 +198,7 @@ set(SOURCE_FILES
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
     SeerStackLocalsBrowserWidget.cpp
+    SeerStackDumpBrowserWidget.cpp
     SeerStackManagerWidget.cpp
     SeerThreadFramesBrowserWidget.cpp
     SeerThreadIdsBrowserWidget.cpp
