@@ -236,8 +236,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addArrayVisualize,                                           this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addStructVisualize,                                          this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::refreshVariableTrackerValues,                                this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
-    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackDump,                                              this,                                                           &SeerGdbWidget::handleGdbStackDump);
     QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackPointer,                                           this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackDump,                                              this,                                                           QOverload<int,QString,int,int>::of(&SeerGdbWidget::handleGdbMemoryEvaluateExpression));
+    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::addMemoryVisualize,                                            this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
     QObject::connect(stackManagerWidget,                                        &SeerStackManagerWidget::refreshThreadFrames,                                               this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
 
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerValues,                            this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
@@ -1941,15 +1942,6 @@ void SeerGdbWidget::handleGdbStackListArguments () {
     handleGdbCommand("-stack-list-arguments --all-values");
 }
 
-void SeerGdbWidget::handleGdbStackDump () {
-
-    if (executableLaunchMode() == "") {
-        return;
-    }
-
-    handleGdbCommand("-data-read-memory-bytes -o 16 $sp 32");
-}
-
 void SeerGdbWidget::handleGdbGenericpointList () {
 
     if (executableLaunchMode() == "") {
@@ -2507,7 +2499,7 @@ void SeerGdbWidget::handleGdbMemoryAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                           w,    &SeerMemoryVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerMemoryVisualizerWidget::handleText);
     QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateVariableExpression, this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
-    QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateMemoryExpression,   this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+    QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateMemoryExpression,   this, QOverload<int,QString,int>::of(&SeerGdbWidget::handleGdbMemoryEvaluateExpression));
     QObject::connect(w,            &SeerMemoryVisualizerWidget::evaluateAsmExpression,      this, &SeerGdbWidget::handleGdbAsmEvaluateExpression);
 
     // Tell the visualizer what variable to use.
@@ -2593,7 +2585,7 @@ void SeerGdbWidget::handleGdbImageAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                           w,    &SeerImageVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                            w,    &SeerImageVisualizerWidget::handleText);
     QObject::connect(w,            &SeerImageVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
-    QObject::connect(w,            &SeerImageVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbMemoryEvaluateExpression);
+    QObject::connect(w,            &SeerImageVisualizerWidget::evaluateMemoryExpression,    this, QOverload<int,QString,int>::of(&SeerGdbWidget::handleGdbMemoryEvaluateExpression));
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);
@@ -2606,6 +2598,15 @@ void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString
     }
 
     handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes " + address + " " + QString::number(count));
+}
+
+void SeerGdbWidget::handleGdbMemoryEvaluateExpression (int expressionid, QString address, int offset, int count) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString::number(expressionid) + "-data-read-memory-bytes -o " + QString::number(offset) + " " + address + " " + QString::number(count));
 }
 
 void SeerGdbWidget::handleGdbAsmEvaluateExpression (int expressionid, QString address, int count, int mode) {

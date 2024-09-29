@@ -18,15 +18,20 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
         void                refresh                     ();
 
     protected slots:
+        void                handleFormatComboBox        (const QString& text);
+        void                handleVisualizerToolButton  ();
 
     signals:
-        void                refreshStackPointer         (int expressionid, QString expression);
-        void                refreshStackDump            ();
+        void                refreshStackPointer         (int id, QString expression);
+        void                refreshStackDump            (int id, QString address, int offset, int count);
+        void                addMemoryVisualize          (QString expression);
 
     protected:
         void                showEvent                   (QShowEvent* event);
 
     private:
+        void                _populateTable              (QString address, QString contents);
         int                 _spExpressionId;
+        int                 _dumpExpressionId;
 };
 
