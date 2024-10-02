@@ -1104,7 +1104,7 @@ namespace Seer {
                 break;
             }
 
-            double   real = *(float*)(bytes.data()+from);
+            double   real = *(double*)(bytes.data()+from);
             QString  val  = QString("%1").arg(real);
 
             if (i != 0) {

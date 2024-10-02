@@ -1,8 +1,10 @@
 #include "SeerStackDumpBrowserWidget.h"
+#include "SeerStackDumpSettingsDialog.h"
 #include "SeerUtl.h"
-#include <QtGui/QFontDatabase>
 #include <QtWidgets/QTableWidget>
 #include <QtWidgets/QApplication>
+#include <QtGui/QFontDatabase>
+#include <QtCore/QSettings>
 #include <QtCore/QVector>
 #include <QtCore/QDebug>
 
@@ -21,17 +23,60 @@ SeerStackDumpBrowserWidget::SeerStackDumpBrowserWidget (QWidget* parent) : QWidg
     stackTableWidget->resizeColumnToContents(1); // 2 byte value
     stackTableWidget->resizeColumnToContents(2); // 4 byte value
     stackTableWidget->resizeColumnToContents(3); // 8 byte value
-    stackTableWidget->resizeColumnToContents(4); // 8 byte ascii
+    stackTableWidget->resizeColumnToContents(4); // N byte ascii
     stackTableWidget->resizeRowsToContents();
 
     stackTableWidget->clearContents();
 
     // Connect things.
-    QObject::connect(formatComboBox,       &QComboBox::currentTextChanged,    this,  &SeerStackDumpBrowserWidget::handleFormatComboBox);
-    QObject::connect(visualizerToolButton, &QToolButton::clicked,             this,  &SeerStackDumpBrowserWidget::handleVisualizerToolButton);
+    QObject::connect(formatComboBox,         &QComboBox::currentTextChanged,    this,  &SeerStackDumpBrowserWidget::handleFormatComboBox);
+    QObject::connect(visualizerToolButton,   &QToolButton::clicked,             this,  &SeerStackDumpBrowserWidget::handleVisualizerToolButton);
+    QObject::connect(preferencesToolButton,  &QToolButton::clicked,             this,  &SeerStackDumpBrowserWidget::handlePreferencesToolButton);
+
+    setStackPointerExpression("$sp");
+    setBytesBeforeSP(32);
+    setBytesAfterSP(32);
+    setAsciiBytes(8);
+
+    // Restore settings.
+    readSettings();
 }
 
 SeerStackDumpBrowserWidget::~SeerStackDumpBrowserWidget () {
+}
+
+void SeerStackDumpBrowserWidget::setStackPointerExpression (const QString& expression) {
+    _stackPointerExpression = expression;
+
+    spExpressionLabel->setText(_stackPointerExpression);
+}
+
+QString SeerStackDumpBrowserWidget::stackPointerExpression () const {
+    return _stackPointerExpression;
+}
+
+void SeerStackDumpBrowserWidget::setBytesBeforeSP (int nbytes) {
+    _bytesBeforeSP = nbytes;
+}
+
+int SeerStackDumpBrowserWidget::bytesBeforeSP () const {
+    return _bytesBeforeSP;
+}
+
+void SeerStackDumpBrowserWidget::setBytesAfterSP (int nbytes) {
+    _bytesAfterSP = nbytes;
+}
+
+int SeerStackDumpBrowserWidget::bytesAfterSP () const {
+    return _bytesAfterSP;
+}
+
+void SeerStackDumpBrowserWidget::setAsciiBytes (int nbytes) {
+    _asciiBytes = nbytes;
+}
+
+int SeerStackDumpBrowserWidget::asciiBytes () const {
+    return _asciiBytes;
 }
 
 void SeerStackDumpBrowserWidget::handleText (const QString& text) {
@@ -126,6 +171,33 @@ void SeerStackDumpBrowserWidget::handleVisualizerToolButton () {
     emit addMemoryVisualize(addressLineEdit->text());
 }
 
+void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
+
+    // Bring up the register edit dialog.
+    SeerStackDumpSettingsDialog dlg(this);
+    dlg.setStackPointerExpression(stackPointerExpression());
+    dlg.setBytesBeforeSP(bytesBeforeSP());
+    dlg.setBytesAfterSP(bytesAfterSP());
+    dlg.setAsciiBytes(asciiBytes());
+
+    //dlg.set(item->text(1), item->text(2));
+
+    int ret = dlg.exec();
+
+    if (ret == 0) {
+        return;
+    }
+
+    setStackPointerExpression(dlg.stackPointerExpression());
+    setBytesBeforeSP(dlg.bytesBeforeSP());
+    setBytesAfterSP(dlg.bytesAfterSP());
+    setAsciiBytes(dlg.asciiBytes());
+
+    writeSettings();
+
+    refresh();
+}
+
 void SeerStackDumpBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.
@@ -133,7 +205,7 @@ void SeerStackDumpBrowserWidget::refresh () {
         return;
     }
 
-    emit refreshStackPointer(_spExpressionId, "$sp");
+    emit refreshStackPointer(_spExpressionId, stackPointerExpression());
 }
 
 void SeerStackDumpBrowserWidget::showEvent (QShowEvent* event) {
@@ -262,10 +334,10 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         stackTableWidget->setItem(r,3,item);
     }
 
-    // Fill in the 8byte ascii column.
+    // Fill in the Nbyte ascii column.
     for (int i=0,r=0; i < bytes.size(); i+=2,r++) {
 
-        QString str = Seer::ucharToAscii(bytes, i, 8);
+        QString str = Seer::ucharToAscii(bytes, i, asciiBytes());
 
         QTableWidgetItem* item = new QTableWidgetItem;
         item->setText(str);
@@ -273,5 +345,31 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
 
         stackTableWidget->setItem(r,4,item);
     }
+}
+
+void SeerStackDumpBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("stackdumpwindow"); {
+        settings.setValue("stackpointerexpression", stackPointerExpression());
+        settings.setValue("bytesbeforesp",          bytesBeforeSP());
+        settings.setValue("bytesaftersp",           bytesAfterSP());
+        settings.setValue("asciibytes",             asciiBytes());
+    } settings.endGroup();
+}
+
+void SeerStackDumpBrowserWidget::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("stackdumpwindow"); {
+
+        setStackPointerExpression(settings.value("stackpointerexpression", "$sp").toString());
+        setBytesBeforeSP(settings.value("bytesbeforesp", 32).toInt());
+        setBytesAfterSP(settings.value("bytesaftersp", 32).toInt());
+        setAsciiBytes(settings.value("asciibytes", 8).toInt());
+
+    } settings.endGroup();
 }
 

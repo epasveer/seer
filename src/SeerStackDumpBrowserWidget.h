@@ -12,6 +12,18 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
         explicit SeerStackDumpBrowserWidget (QWidget* parent = 0);
        ~SeerStackDumpBrowserWidget ();
 
+        void                setStackPointerExpression   (const QString& expression);
+        QString             stackPointerExpression      () const;
+
+        void                setBytesBeforeSP            (int nbytes);
+        int                 bytesBeforeSP               () const;
+
+        void                setBytesAfterSP             (int nbytes);
+        int                 bytesAfterSP                () const;
+
+        void                setAsciiBytes               (int nbytes);
+        int                 asciiBytes                  () const;
+
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
@@ -20,6 +32,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
     protected slots:
         void                handleFormatComboBox        (const QString& text);
         void                handleVisualizerToolButton  ();
+        void                handlePreferencesToolButton ();
 
     signals:
         void                refreshStackPointer         (int id, QString expression);
@@ -28,10 +41,16 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
 
     protected:
         void                showEvent                   (QShowEvent* event);
+        void                readSettings                ();
+        void                writeSettings               ();
 
     private:
         void                _populateTable              (QString address, QString contents);
         int                 _spExpressionId;
         int                 _dumpExpressionId;
+        QString             _stackPointerExpression;
+        int                 _bytesBeforeSP;
+        int                 _bytesAfterSP;
+        int                 _asciiBytes;
 };
 

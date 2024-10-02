@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label_1">
+      <widget class="QLabel" name="spExpressionLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -46,7 +46,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="spFormatLabel">
        <property name="text">
         <string>Format</string>
        </property>
@@ -102,6 +102,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="preferencesToolButton">
+       <property name="toolTip">
+        <string>Preferences</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -121,6 +135,9 @@
    </item>
    <item row="1" column="0">
     <widget class="QTableWidget" name="stackTableWidget">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
      <property name="showGrid">
       <bool>true</bool>
      </property>
