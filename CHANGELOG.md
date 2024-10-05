@@ -11,6 +11,7 @@
 * Improved handling of \n \t and other escaped characters in gdb log window.
 * Show breakpoint info as a tooltip if the breakpoint icon is clicked with
   LMB and held down.
+* Show stack as a hex dump, with options to view as short, int, long, ascii, ...
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.

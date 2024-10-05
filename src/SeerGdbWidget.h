@@ -321,6 +321,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbVarAddExpression           (QString expression);
         void                                handleGdbImageAddExpression         (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int offset, int count);
         void                                handleGdbAsmEvaluateExpression      (int expressionid, QString address, int count, int mode);
         void                                handleGdbArrayEvaluateExpression    (int expressionid, QString address, int count);
         void                                handleGdbGetAssembly                (QString address);
