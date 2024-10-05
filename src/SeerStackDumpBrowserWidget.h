@@ -33,6 +33,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
         void                handleFormatComboBox        (const QString& text);
         void                handleVisualizerToolButton  ();
         void                handlePreferencesToolButton ();
+        void                handleCellDoubleClicked     (int row, int col);
 
     signals:
         void                refreshStackPointer         (int id, QString expression);

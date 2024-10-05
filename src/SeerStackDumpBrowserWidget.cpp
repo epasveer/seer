@@ -7,6 +7,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QVector>
 #include <QtCore/QDebug>
+#include <cmath>
 
 SeerStackDumpBrowserWidget::SeerStackDumpBrowserWidget (QWidget* parent) : QWidget(parent) {
 
@@ -32,10 +33,11 @@ SeerStackDumpBrowserWidget::SeerStackDumpBrowserWidget (QWidget* parent) : QWidg
     QObject::connect(formatComboBox,         &QComboBox::currentTextChanged,    this,  &SeerStackDumpBrowserWidget::handleFormatComboBox);
     QObject::connect(visualizerToolButton,   &QToolButton::clicked,             this,  &SeerStackDumpBrowserWidget::handleVisualizerToolButton);
     QObject::connect(preferencesToolButton,  &QToolButton::clicked,             this,  &SeerStackDumpBrowserWidget::handlePreferencesToolButton);
+    QObject::connect(stackTableWidget,       &QTableWidget::cellDoubleClicked,  this,  &SeerStackDumpBrowserWidget::handleCellDoubleClicked);
 
     setStackPointerExpression("$sp");
-    setBytesBeforeSP(32);
-    setBytesAfterSP(32);
+    setBytesBeforeSP(16);
+    setBytesAfterSP(16);
     setAsciiBytes(8);
 
     // Restore settings.
@@ -56,7 +58,7 @@ QString SeerStackDumpBrowserWidget::stackPointerExpression () const {
 }
 
 void SeerStackDumpBrowserWidget::setBytesBeforeSP (int nbytes) {
-    _bytesBeforeSP = nbytes;
+    _bytesBeforeSP = ceil(nbytes / 8.0) * 8; // Round to 8.
 }
 
 int SeerStackDumpBrowserWidget::bytesBeforeSP () const {
@@ -64,7 +66,7 @@ int SeerStackDumpBrowserWidget::bytesBeforeSP () const {
 }
 
 void SeerStackDumpBrowserWidget::setBytesAfterSP (int nbytes) {
-    _bytesAfterSP = nbytes;
+    _bytesAfterSP = ceil(nbytes / 8.0) * 8; // Round to 8.
 }
 
 int SeerStackDumpBrowserWidget::bytesAfterSP () const {
@@ -111,7 +113,7 @@ void SeerStackDumpBrowserWidget::handleText (const QString& text) {
 
             addressLineEdit->setText(value_text);
 
-            emit refreshStackDump(_dumpExpressionId, value_text, 0, 64);
+            emit refreshStackDump(_dumpExpressionId, value_text, -bytesBeforeSP(), bytesBeforeSP()+bytesAfterSP()+2);
 
         }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
 
@@ -198,6 +200,25 @@ void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
     refresh();
 }
 
+void SeerStackDumpBrowserWidget::handleCellDoubleClicked (int row, int col) {
+
+    Q_UNUSED(col);
+
+    QTableWidgetItem* item = stackTableWidget->item(row, 0);
+
+    if (item == 0) {
+        return;
+    }
+
+    QString address = item->text();
+
+    if (address.mid(0,2) != "0x") {
+        address.insert(0,"0x");
+    }
+
+    emit addMemoryVisualize(address);
+}
+
 void SeerStackDumpBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.
@@ -253,6 +274,8 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
     stackTableWidget->clearContents();
     stackTableWidget->setRowCount(nrows);
 
+    int spRow = -1;
+
     // Fill in the address column.
     for (int i=0,r=0; i < contents.length()/2; i+=2,pos64+=2,r++) {
         QString str = QString::number(pos64, 16);
@@ -260,6 +283,11 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         QTableWidgetItem* item = new QTableWidgetItem;
         item->setText(str);
         item->setFont(fixedFont);
+
+        if (addressLineEdit->text().contains(str)) {
+            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            spRow = r;
+        }
 
         stackTableWidget->setItem(r,0,item);
     }
@@ -282,6 +310,10 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         QTableWidgetItem* item = new QTableWidgetItem;
         item->setText(str);
         item->setFont(fixedFont);
+
+        if (r == spRow) {
+            item->setBackground(QBrush(QColor(Qt::lightGray)));
+        }
 
         stackTableWidget->setItem(r,1,item);
     }
@@ -307,6 +339,10 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setText(str);
         item->setFont(fixedFont);
 
+        if (r == spRow) {
+            item->setBackground(QBrush(QColor(Qt::lightGray)));
+        }
+
         stackTableWidget->setItem(r,2,item);
     }
 
@@ -331,6 +367,10 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setText(str);
         item->setFont(fixedFont);
 
+        if (r == spRow) {
+            item->setBackground(QBrush(QColor(Qt::lightGray)));
+        }
+
         stackTableWidget->setItem(r,3,item);
     }
 
@@ -342,6 +382,10 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         QTableWidgetItem* item = new QTableWidgetItem;
         item->setText(str);
         item->setFont(fixedFont);
+
+        if (r == spRow) {
+            item->setBackground(QBrush(QColor(Qt::lightGray)));
+        }
 
         stackTableWidget->setItem(r,4,item);
     }

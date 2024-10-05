@@ -15,8 +15,8 @@ SeerStackDumpSettingsDialog::SeerStackDumpSettingsDialog (QWidget* parent) : QDi
 
     // Setup the widgets
     setStackPointerExpression("$sp");
-    setBytesBeforeSP(0);
-    setBytesAfterSP(32);
+    setBytesBeforeSP(16);
+    setBytesAfterSP(16);
     setAsciiBytes(8);
 
     // Connect things.
