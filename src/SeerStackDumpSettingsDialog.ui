@@ -37,13 +37,39 @@
       </widget>
      </item>
      <item row="0" column="3">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Highlight color</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QColorButton" name="spHighLightColorButton" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Select color to highlight SP row.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
       <spacer name="horizontalSpacer_1">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>226</width>
+         <width>218</width>
          <height>20</height>
         </size>
        </property>
@@ -72,14 +98,14 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2" colspan="2">
+     <item row="1" column="2" colspan="4">
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>291</width>
+         <width>448</width>
          <height>20</height>
         </size>
        </property>
@@ -108,14 +134,14 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2" colspan="2">
+     <item row="2" column="2" colspan="4">
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>291</width>
+         <width>448</width>
          <height>20</height>
         </size>
        </property>
@@ -144,20 +170,20 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="2" colspan="2">
+     <item row="3" column="2" colspan="4">
       <spacer name="horizontalSpacer_4">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>291</width>
+         <width>448</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="4" column="0" colspan="4">
+     <item row="4" column="0" colspan="6">
       <widget class="QTextBrowser" name="textBrowser">
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -170,6 +196,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The stack pointer (SP) points to where in the stack memory the program is currently at. The settings here control how the memory around the SP is displayed.&lt;br /&gt;&lt;br /&gt;GDB has the virtual variable called &amp;quot;$sp&amp;quot;, which contains the SP address. It is typical to use this as the SP expression. Some might prefer &amp;quot;$ss*16+$sp&amp;quot;, which is for X86 real mode. Either way, enter a gdb expression that results in an address. In most cases, $sp is enough.&lt;br /&gt;&lt;br /&gt;Seer can show N bytes before and N bytes after the SP, thus forming a window of bytes. N is rounded up to the next count of 8.&lt;br /&gt;&lt;br /&gt;The bytes are shown as 2, 4, and 8 byte version of: hex, octal, int, uint, and float values.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Also, Seer will attempt to show the bytes as Ascii characters. The number of Ascii characters to show can be set.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double clicking on a row will bring up a separate Memory Visualizer for that address.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;Highlight color is used to highlight the row that contains $SP. Double click on it to bring up a color chooser.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
@@ -188,6 +216,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QColorButton</class>
+   <extends>QWidget</extends>
+   <header>QColorButton.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QDialog>
+#include <QtGui/QColor>
 #include <QtCore/QString>
 
 #include "ui_SeerStackDumpSettingsDialog.h"
@@ -15,6 +16,9 @@ class SeerStackDumpSettingsDialog : public QDialog, protected Ui::SeerStackDumpS
 
         void                        setStackPointerExpression   (const QString& expression);
         QString                     stackPointerExpression      () const;
+
+        void                        setStackPointerColor        (const QColor& color);
+        QColor                      stackPointerColor           () const;
 
         void                        setBytesBeforeSP            (int nbytes);
         int                         bytesBeforeSP               () const;

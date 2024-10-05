@@ -36,6 +36,7 @@ SeerStackDumpBrowserWidget::SeerStackDumpBrowserWidget (QWidget* parent) : QWidg
     QObject::connect(stackTableWidget,       &QTableWidget::cellDoubleClicked,  this,  &SeerStackDumpBrowserWidget::handleCellDoubleClicked);
 
     setStackPointerExpression("$sp");
+    setStackPointerColor(QColor("lightGray"));
     setBytesBeforeSP(16);
     setBytesAfterSP(16);
     setAsciiBytes(8);
@@ -79,6 +80,14 @@ void SeerStackDumpBrowserWidget::setAsciiBytes (int nbytes) {
 
 int SeerStackDumpBrowserWidget::asciiBytes () const {
     return _asciiBytes;
+}
+
+void SeerStackDumpBrowserWidget::setStackPointerColor (const QColor& color) {
+    _stackPointerColor = color;
+}
+
+QColor SeerStackDumpBrowserWidget::stackPointerColor () const {
+    return _stackPointerColor;
 }
 
 void SeerStackDumpBrowserWidget::handleText (const QString& text) {
@@ -178,6 +187,7 @@ void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
     // Bring up the register edit dialog.
     SeerStackDumpSettingsDialog dlg(this);
     dlg.setStackPointerExpression(stackPointerExpression());
+    dlg.setStackPointerColor(stackPointerColor());
     dlg.setBytesBeforeSP(bytesBeforeSP());
     dlg.setBytesAfterSP(bytesAfterSP());
     dlg.setAsciiBytes(asciiBytes());
@@ -191,6 +201,7 @@ void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
     }
 
     setStackPointerExpression(dlg.stackPointerExpression());
+    setStackPointerColor(dlg.stackPointerColor());
     setBytesBeforeSP(dlg.bytesBeforeSP());
     setBytesAfterSP(dlg.bytesAfterSP());
     setAsciiBytes(dlg.asciiBytes());
@@ -285,7 +296,7 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setFont(fixedFont);
 
         if (addressLineEdit->text().contains(str)) {
-            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            item->setBackground(QBrush(stackPointerColor()));
             spRow = r;
         }
 
@@ -312,7 +323,7 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setFont(fixedFont);
 
         if (r == spRow) {
-            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            item->setBackground(QBrush(stackPointerColor()));
         }
 
         stackTableWidget->setItem(r,1,item);
@@ -340,7 +351,7 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setFont(fixedFont);
 
         if (r == spRow) {
-            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            item->setBackground(QBrush(stackPointerColor()));
         }
 
         stackTableWidget->setItem(r,2,item);
@@ -368,7 +379,7 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setFont(fixedFont);
 
         if (r == spRow) {
-            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            item->setBackground(QBrush(stackPointerColor()));
         }
 
         stackTableWidget->setItem(r,3,item);
@@ -384,7 +395,7 @@ void SeerStackDumpBrowserWidget::_populateTable (QString address, QString conten
         item->setFont(fixedFont);
 
         if (r == spRow) {
-            item->setBackground(QBrush(QColor(Qt::lightGray)));
+            item->setBackground(QBrush(stackPointerColor()));
         }
 
         stackTableWidget->setItem(r,4,item);
@@ -397,6 +408,7 @@ void SeerStackDumpBrowserWidget::writeSettings () {
 
     settings.beginGroup("stackdumpwindow"); {
         settings.setValue("stackpointerexpression", stackPointerExpression());
+        settings.setValue("stackpointercolor",      stackPointerColor());
         settings.setValue("bytesbeforesp",          bytesBeforeSP());
         settings.setValue("bytesaftersp",           bytesAfterSP());
         settings.setValue("asciibytes",             asciiBytes());
@@ -410,6 +422,12 @@ void SeerStackDumpBrowserWidget::readSettings () {
     settings.beginGroup("stackdumpwindow"); {
 
         setStackPointerExpression(settings.value("stackpointerexpression", "$sp").toString());
+
+        QVariant variant = settings.value("stackpointercolor", "lightGray");
+        QColor   color   = variant.value<QColor>();
+
+        setStackPointerColor(color);
+
         setBytesBeforeSP(settings.value("bytesbeforesp", 32).toInt());
         setBytesAfterSP(settings.value("bytesaftersp", 32).toInt());
         setAsciiBytes(settings.value("asciibytes", 8).toInt());

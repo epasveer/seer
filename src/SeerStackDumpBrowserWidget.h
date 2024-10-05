@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <QtGui/QColor>
 #include <QtCore/QString>
 #include "ui_SeerStackDumpBrowserWidget.h"
 
@@ -23,6 +24,9 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
 
         void                setAsciiBytes               (int nbytes);
         int                 asciiBytes                  () const;
+
+        void                setStackPointerColor        (const QColor& color);
+        QColor              stackPointerColor           () const;
 
     public slots:
         void                handleText                  (const QString& text);
@@ -53,5 +57,6 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
         int                 _bytesBeforeSP;
         int                 _bytesAfterSP;
         int                 _asciiBytes;
+        QColor              _stackPointerColor;
 };
 

@@ -15,6 +15,7 @@ SeerStackDumpSettingsDialog::SeerStackDumpSettingsDialog (QWidget* parent) : QDi
 
     // Setup the widgets
     setStackPointerExpression("$sp");
+    setStackPointerColor(QColor("lightGray"));
     setBytesBeforeSP(16);
     setBytesAfterSP(16);
     setAsciiBytes(8);
@@ -27,6 +28,14 @@ SeerStackDumpSettingsDialog::~SeerStackDumpSettingsDialog () {
 
 void SeerStackDumpSettingsDialog::setStackPointerExpression (const QString& expression) {
     spExpressionLineEdit->setText(expression);
+}
+
+void SeerStackDumpSettingsDialog::setStackPointerColor (const QColor& color) {
+    spHighLightColorButton->setColor(color);
+}
+
+QColor SeerStackDumpSettingsDialog::stackPointerColor () const {
+    return spHighLightColorButton->color();
 }
 
 QString SeerStackDumpSettingsDialog::stackPointerExpression () const {
