@@ -133,6 +133,7 @@ set(HEADER_FILES
     QProcessInfoWidget.h
     QProgressIndicator.h
     QColorButton.h
+    QColorSwatch.h
     QDetachTabWidget.h
     QZoomChartView.h
     QZoomChart.h
@@ -230,6 +231,7 @@ set(SOURCE_FILES
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
     QColorButton.cpp
+    QColorSwatch.cpp
     QDetachTabWidget.cpp
     QZoomChartView.cpp
     QZoomChart.cpp

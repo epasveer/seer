@@ -4,14 +4,21 @@
 #include <QtGui/QPainter>
 #include <QtCore/QDebug>
 
-QColorButton::QColorButton(QWidget* parent) : QWidget(parent) {
+QColorButton::QColorButton(QWidget* parent) : QFrame(parent) {
 
-    _color = palette().color(QPalette::Window);
+    // Construct the UI.
+    setupUi(this);
+
+    setColor(palette().color(QPalette::Window));
 }
 
-QColorButton::QColorButton(const QColor& color, QWidget* parent) : QWidget(parent) {
+QColorButton::QColorButton(const QColor& color, QWidget* parent) : QFrame(parent) {
 
-    _color = color;
+    // Construct the UI.
+    setupUi(this);
+
+    // Create color swatch
+    setColor(color);
 }
 
 QColorButton::~QColorButton() {
@@ -29,31 +36,17 @@ void QColorButton::mouseDoubleClickEvent (QMouseEvent* e) {
     }
 }
 
-void QColorButton::paintEvent(QPaintEvent* e) {
-
-    Q_UNUSED(e)
-
-    // Draw the color to the widget.
-    QPainter painter(this);
-
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(color());
-    painter.drawRect(rect());
-}
-
-const QColor& QColorButton::color () {
+QColor QColorButton::color () const {
 
     // Return the current color.
-    return _color;
+    return colorSwatch->color();
 }
 
 void QColorButton::setColor (const QColor& color) {
 
     // Save the new color.
-    _color = color;
-
-    // Force it to be redrawn.
-    update();
+    colorSwatch->setColor(color);
+    colorSwatch->update();
 
     // Notify others that are listening.
     emit colorChanged();
