@@ -13,6 +13,9 @@ SeerStackDumpSettingsDialog::SeerStackDumpSettingsDialog (QWidget* parent) : QDi
     // Set up the UI.
     setupUi(this);
 
+    spHighLightColorButton->setFrameStyle(QFrame::Box|QFrame::Plain);
+    spHighLightColorButton->setLineWidth(1);
+
     // Setup the widgets
     setStackPointerExpression("$sp");
     setStackPointerColor(QColor("lightGray"));
