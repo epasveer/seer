@@ -51,6 +51,15 @@ Selecting a diffent frame in the Frames tab will show the locals for that frame.
       Arg          The function argument number, if any. May appear in the Arguements tab.
       Value        Value of the variable.
 ```
+### Stack
+This tab shows a window of bytes around the current stack pointer (SP). The window has a start address and an end address, incrementing by
+2 bytes. The address of the SP is somewhere between them, depending on your settings.
+
+The bytes are shown as 2, 4, and 8 byte groupings. Each grouping can be represented as: hex, octal, int, uint, and float.
+
+The line that contains the SP is highlighted. Any line can be double-clicked to bring up a separate Memory Visualizer for the
+address for that line.
+
 ### Refresh
 The refresh button refreshes the currently exposed tab.
 

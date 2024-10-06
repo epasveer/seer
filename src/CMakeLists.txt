@@ -103,6 +103,8 @@ set(HEADER_FILES
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
     SeerStackLocalsBrowserWidget.h
+    SeerStackDumpBrowserWidget.h
+    SeerStackDumpSettingsDialog.h
     SeerStackManagerWidget.h
     SeerThreadFramesBrowserWidget.h
     SeerThreadIdsBrowserWidget.h
@@ -133,6 +135,7 @@ set(HEADER_FILES
     QProcessInfoWidget.h
     QProgressIndicator.h
     QColorButton.h
+    QColorSwatch.h
     QDetachTabWidget.h
     QZoomChartView.h
     QZoomChart.h
@@ -200,6 +203,8 @@ set(SOURCE_FILES
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
     SeerStackLocalsBrowserWidget.cpp
+    SeerStackDumpBrowserWidget.cpp
+    SeerStackDumpSettingsDialog.cpp
     SeerStackManagerWidget.cpp
     SeerThreadFramesBrowserWidget.cpp
     SeerThreadIdsBrowserWidget.cpp
@@ -230,6 +235,7 @@ set(SOURCE_FILES
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
     QColorButton.cpp
+    QColorSwatch.cpp
     QDetachTabWidget.cpp
     QZoomChartView.cpp
     QZoomChart.cpp
