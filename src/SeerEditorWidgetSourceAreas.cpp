@@ -1767,7 +1767,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         }
 
         if (id_text.toInt() == _selectedBreakpointId && _selectedBreakpointPosition != QPoint()) {
-            qDebug() << "XXX - Error displaying breakpoint info as a ToolTip";
+            qDebug() << "Error displaying breakpoint info as a ToolTip";
         }
 
         return;

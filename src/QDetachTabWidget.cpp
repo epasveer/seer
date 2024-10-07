@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QtGui/QCursor>
 #include <QtGui/QIcon>
+#include <QtCore/QTimer>
 #include <QtCore/QDebug>
 
 QDetachTabWidget::QDetachTabWidget(QWidget* parent) : QTabWidget(parent) {
@@ -42,7 +43,7 @@ QWidget* QDetachTabWidget::tabWidget (int tabIndex) const {
     return _tabInfo[tabIndex]._widget;
 }
 
-void QDetachTabWidget::detachTab (int tabIndex) {
+void QDetachTabWidget::detachTab (int tabIndex, bool minimized) {
 
     // Get the tab the user selected.
     QWidget* w = widget(tabIndex);
@@ -77,7 +78,12 @@ void QDetachTabWidget::detachTab (int tabIndex) {
     w->setWindowFlags(flags);
     w->setWindowTitle(tabinfo._title);
     w->setWindowIcon(windowIcon());
-    w->showMinimized();
+
+    if (minimized) {
+        w->showMinimized();
+    }else{
+        w->showNormal();
+    }
 
     // Connect the placeholder's 'reattach' signal to the slot.
     QObject::connect(placeholder, &QDetachTabWidgetPlaceholder::reattach,   this, &QDetachTabWidget::handleTabClosedRequested);
@@ -153,16 +159,19 @@ void QDetachTabWidget::handleShowContextMenu (const QPoint& point) {
     // Create the menu.
     QMenu menu("Window Action", this);
 
-    QAction* detachAction   = menu.addAction(tr("Detach"));
-    QAction* reattachAction = menu.addAction(tr("Reattach"));
+    QAction* detachAction          = menu.addAction(tr("Detach"));
+    QAction* detachMinimizedAction = menu.addAction(tr("Detach Minimized"));
+    QAction* reattachAction        = menu.addAction(tr("Reattach"));
 
     // Enable/disable depending if it was already detached.
     QWidget* w = widget(tabIndex);
     if (w->objectName() == "QDetachTabWidgetPlaceholder") {
         detachAction->setEnabled(false);
+        detachMinimizedAction->setEnabled(false);
         reattachAction->setEnabled(true);
     }else{
         detachAction->setEnabled(true);
+        detachMinimizedAction->setEnabled(true);
         reattachAction->setEnabled(false);
     }
 
@@ -175,7 +184,19 @@ void QDetachTabWidget::handleShowContextMenu (const QPoint& point) {
     if (action == detachAction) {
 
         // Detach the tab.
-        detachTab(tabIndex);
+        detachTab(tabIndex, false);
+
+        // Set the tabwidget to the placeholder tab.
+        setCurrentIndex(tabIndex);
+    }
+
+    //
+    // Handle detaching a tab.
+    //
+    if (action == detachMinimizedAction) {
+
+        // Detach the tab.
+        detachTab(tabIndex, true);
 
         // Set the tabwidget to the placeholder tab.
         setCurrentIndex(tabIndex);
