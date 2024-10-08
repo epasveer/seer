@@ -34,7 +34,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Console");
-    setWindowFlags(Qt::Window | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint);
 
     textEdit->setReadOnly(true);
     textEdit->setTextInteractionFlags(textEdit->textInteractionFlags() | Qt::TextSelectableByKeyboard); // Show cursor

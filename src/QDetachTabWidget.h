@@ -25,7 +25,7 @@ class QDetachTabWidget : public QTabWidget {
         QWidget*                            tabWidget                (int tabIndex) const;
 
     public slots:
-        void                                detachTab                (int tabIndex);
+        void                                detachTab                (int tabIndex, bool minimized=false);
         void                                reattachTab              (int tabIndex);
 
     signals:

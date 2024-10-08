@@ -2886,20 +2886,16 @@ void SeerGdbWidget::handleConsoleModeChanged () {
     }
 
     if (_consoleMode == "detached") {
-        logsTabWidget->detachTab(_consoleIndex);
-        _consoleWidget->setWindowState(Qt::WindowNoState);
+        logsTabWidget->detachTab(_consoleIndex, false);
         _consoleWidget->raise();
         _consoleWidget->resetSize();
     }else if (_consoleMode == "detachedminimized") {
-        logsTabWidget->detachTab(_consoleIndex);
-        _consoleWidget->setWindowState(Qt::WindowMinimized);
+        logsTabWidget->detachTab(_consoleIndex, true);
         _consoleWidget->resetSize();
     }else if (_consoleMode == "attached") {
         logsTabWidget->reattachTab(_consoleIndex);
-        _consoleWidget->setWindowState(Qt::WindowNoState);
     }else{
         logsTabWidget->reattachTab(_consoleIndex);
-        _consoleWidget->setWindowState(Qt::WindowNoState);
     }
 }
 
