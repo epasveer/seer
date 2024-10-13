@@ -102,13 +102,13 @@ int main (int argc, char* argv[]) {
     QCommandLineOption breaksourceOption(QStringList() << "bs" << "break-source", "", "breakpointsource");
     parser.addOption(breaksourceOption);
 
-    QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
+    QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab", "", "showassemblytab");
     parser.addOption(showAssemblyTabOption);
 
-    QCommandLineOption startAddressRandomizeOption(QStringList() << "sar" << "start-address-randomize");
+    QCommandLineOption startAddressRandomizeOption(QStringList() << "sar" << "start-address-randomize", "", "startaddressrandomize");
     parser.addOption(startAddressRandomizeOption);
 
-    QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode");
+    QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode", "", "nonstopmode");
     parser.addOption(nonStopModeOption);
 
     QCommandLineOption gdbProgramOption(QStringList() << "gdb-program", "", "gdbprogram");
