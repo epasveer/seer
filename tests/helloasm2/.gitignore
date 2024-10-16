@@ -1,0 +1,4 @@
+square_test
+square_test.o
+isolated_square.o
+*.seer
