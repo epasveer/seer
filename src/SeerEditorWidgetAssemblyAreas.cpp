@@ -999,7 +999,8 @@ bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     }
 
     // Stop if no valid lineno.
-    if (lineno < 1) {
+    if (ok == false || lineno < 1) {
+        //qDebug() << "address is not in current assembly: '" << address << "'";
         return false;
     }
 
@@ -1628,7 +1629,14 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         _asm_insns_text = text;
 
         updateTextArea(); // This function does all the work on _asm_insns_text.
+
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        QString error_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+        QMessageBox::warning(this, "Warning.", error_text);
     }
+
 }
 
 void SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged () {
