@@ -366,7 +366,9 @@ void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {
 
     searchLineNumberLineEdit->clear();
 
-    assemblyArea()->scrollToLine(address);
+    // Will emit the load signal, if 'address' is not already loaded.
+    assemblyArea()->setAddress(address);
+    assemblyArea()->setCurrentLine(address);
 }
 
 void SeerEditorWidgetAssembly::handleSearchTextLineEdit () {

@@ -656,6 +656,17 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             assemblyWidget->handleText(text);
         }
 
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        // Get the AssemblyWidget.
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
+        }
+
+
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
         //qDebug() << text;
