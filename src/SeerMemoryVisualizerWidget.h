@@ -15,6 +15,8 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         QString             variableName                        () const;
         void                setVariableAddress                  (const QString& address);
         QString             variableAddress                     () const;
+        void                setMemoryLength                     (const QString& length);
+        QString             memoryLength                        () const;
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
@@ -28,6 +30,7 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         void                handleRefreshButton                 ();
         void                handleHelpButton                    ();
         void                handleVariableNameLineEdit          ();
+        void                handleMemoryLengthLineEdit          ();
         void                handleMemoryDisplayFormatComboBox   (int index);
         void                handleCharDisplayFormatComboBox     (int index);
         void                handleColumnCountSpinBox            (int value);
@@ -42,6 +45,7 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
     private:
         int                 _variableId;
         int                 _memoryId;
+        int                 _memoryLengthId;
         int                 _asmId;
 };
 

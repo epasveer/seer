@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QHistoryLineEdit" name="variableNameLineEdit">
+      <widget class="SeerHistoryLineEdit" name="variableNameLineEdit">
        <property name="toolTip">
         <string>Variable expression resulting in an address.</string>
        </property>
@@ -43,7 +43,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QHistoryLineEdit" name="memoryLengthLineEdit">
+      <widget class="SeerHistoryLineEdit" name="memoryLengthLineEdit">
        <property name="toolTip">
         <string>Number of bytes to display.</string>
        </property>
@@ -269,9 +269,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QHistoryLineEdit</class>
+   <class>SeerHistoryLineEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">QHistoryLineEdit.h</header>
+   <header location="global">SeerHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -15,9 +15,10 @@
 SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _variableId = Seer::createID(); // Create two id's for queries.
-    _memoryId   = Seer::createID();
-    _asmId      = Seer::createID();
+    _variableId     = Seer::createID(); // Create id's for queries.
+    _memoryId       = Seer::createID();
+    _memoryLengthId = Seer::createID();
+    _asmId          = Seer::createID();
 
     // Set up UI.
     setupUi(this);
@@ -27,7 +28,6 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setWindowTitle("Seer Memory Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
-    memoryLengthLineEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("\\s*([1-9]\\d*\\s*)+"), this));
     columnCountSpinBox->setValue(memoryHexEditor->bytesPerLine());
 
     if (memoryHexEditor->memoryMode() == SeerHexWidget::HexMemoryMode) {
@@ -57,15 +57,17 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     }
 
     // Connect things.
-    QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleRefreshButton);
-    QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleHelpButton);
-    QObject::connect(memoryLengthLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerMemoryVisualizerWidget::handleRefreshButton);
-    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerMemoryVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(memoryDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerMemoryVisualizerWidget::handleMemoryDisplayFormatComboBox);
-    QObject::connect(charDisplayFormatComboBox,     QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerMemoryVisualizerWidget::handleCharDisplayFormatComboBox);
-    QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,  &SeerMemoryVisualizerWidget::handleColumnCountSpinBox);
-    QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handlePrintButton);
-    QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerMemoryVisualizerWidget::handleSaveButton);
+    QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handleHelpButton);
+    QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,                    &SeerMemoryVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,                    &SeerMemoryVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(memoryLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,                    &SeerMemoryVisualizerWidget::handleRefreshButton);
+    QObject::connect(memoryLengthLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,                    &SeerMemoryVisualizerWidget::handleMemoryLengthLineEdit);
+    QObject::connect(memoryDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,                    &SeerMemoryVisualizerWidget::handleMemoryDisplayFormatComboBox);
+    QObject::connect(charDisplayFormatComboBox,     QOverload<int>::of(&QComboBox::currentIndexChanged),       this,                    &SeerMemoryVisualizerWidget::handleCharDisplayFormatComboBox);
+    QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,                    &SeerMemoryVisualizerWidget::handleColumnCountSpinBox);
+    QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handlePrintButton);
+    QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handleSaveButton);
 
     // Restore window settings.
     readSettings();
@@ -149,6 +151,16 @@ QString SeerMemoryVisualizerWidget::variableAddress () const {
     return variableAddressLineEdit->text();
 }
 
+void SeerMemoryVisualizerWidget::setMemoryLength (const QString& length) {
+
+    memoryLengthLineEdit->setText(length);
+}
+
+QString SeerMemoryVisualizerWidget::memoryLength () const {
+
+    return memoryLengthLineEdit->text();
+}
+
 void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
@@ -189,6 +201,15 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
             // Set the variable address.
             setVariableAddress(address);
+
+        }else if (id_text.toInt() == _memoryLengthId) {
+
+            // Set the memory length.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setMemoryLength(value_text);
+
+            handleRefreshButton();
         }
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
@@ -247,6 +268,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _variableId) {
             variableAddressLineEdit->setText( Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false)) );
+            variableAddressLineEdit->setFocus();
         }
 
         if (id_text.toInt() == _memoryId) {
@@ -256,6 +278,16 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             if (msg_text != "") {
                 QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
             }
+        }
+
+        if (id_text.toInt() == _memoryLengthId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            memoryLengthLineEdit->setText("");
+            memoryLengthLineEdit->setFocus();
         }
 
     // At a stopping point, refresh.
@@ -292,6 +324,10 @@ void SeerMemoryVisualizerWidget::handleRefreshButton () {
         nbytes = memoryLengthLineEdit->text().toInt();
     }
 
+    if (nbytes < 1) {
+        return;
+    }
+
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), nbytes);
     emit evaluateAsmExpression(_asmId,       variableAddressLineEdit->text(), nbytes, 2);
 }
@@ -307,6 +343,15 @@ void SeerMemoryVisualizerWidget::handleHelpButton () {
 void SeerMemoryVisualizerWidget::handleVariableNameLineEdit () {
 
     setVariableName (variableNameLineEdit->text());
+}
+
+void SeerMemoryVisualizerWidget::handleMemoryLengthLineEdit () {
+
+    if (memoryLengthLineEdit->text() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_memoryLengthId, memoryLengthLineEdit->text());
 }
 
 void SeerMemoryVisualizerWidget::handleMemoryDisplayFormatComboBox (int index) {
