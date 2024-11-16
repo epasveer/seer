@@ -15,6 +15,10 @@ class SeerImageVisualizerWidget : public QWidget, protected Ui::SeerImageVisuali
         QString             variableName                        () const;
         void                setVariableAddress                  (const QString& address);
         QString             variableAddress                     () const;
+        void                setImageWidth                       (const QString& width);
+        QString             imageWidth                          () const;
+        void                setImageHeight                      (const QString& height);
+        QString             imageHeight                         () const;
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
@@ -27,6 +31,8 @@ class SeerImageVisualizerWidget : public QWidget, protected Ui::SeerImageVisuali
         void                handleRefreshButton                 ();
         void                handleHelpButton                    ();
         void                handleVariableNameLineEdit          ();
+        void                handleWidthLineEdit                 ();
+        void                handleHeightLineEdit                ();
         void                handleFormatComboBox                (int index);
         void                handlePrintButton                   ();
         void                handleSaveButton                    ();
@@ -40,6 +46,8 @@ class SeerImageVisualizerWidget : public QWidget, protected Ui::SeerImageVisuali
     private:
         int                 _variableId;
         int                 _memoryId;
+        int                 _imageWidthId;
+        int                 _imageHeightId;
 
         QString             _formatName;
         QImage::Format      _format;

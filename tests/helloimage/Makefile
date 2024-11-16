@@ -2,7 +2,7 @@
 all: helloimage
 
 helloimage: helloimage.cpp
-	g++ -std=c++17 -g -I/usr/include/qt5 -o helloimage helloimage.cpp -L/usr/lib64 -lQt5Core -lQt5Gui
+	g++-13 -std=c++17 -g -I/usr/include/qt6 -o helloimage helloimage.cpp -L/usr/lib64 -lQt6Core -lQt6Gui
 
 .PHONY: clean
 clean:
