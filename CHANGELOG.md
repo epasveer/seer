@@ -14,6 +14,7 @@
 * Show stack as a hex dump, with options to view as short, int, long, ascii, ...
 * The "go to address" in the Assembly view now works if address it outside
   current assembly view.
+* Fixed regression when setting/saving the editor font setting.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.

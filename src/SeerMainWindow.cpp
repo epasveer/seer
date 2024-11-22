@@ -717,6 +717,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setDprintfStyle(dlg.dprintfStyle());
     gdbWidget->setDprintfFunction(dlg.dprintfFunction());
     gdbWidget->setDprintfChannel(dlg.dprintfChannel());
+    gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
