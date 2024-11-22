@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="5">
-      <widget class="QHistoryLineEdit" name="aArrayStrideLineEdit">
+      <widget class="SeerHistoryLineEdit" name="aArrayStrideLineEdit">
        <property name="toolTip">
         <string>Element stride between values. (default=1)</string>
        </property>
@@ -80,7 +80,7 @@
       </widget>
      </item>
      <item row="1" column="5">
-      <widget class="QHistoryLineEdit" name="bArrayStrideLineEdit">
+      <widget class="SeerHistoryLineEdit" name="bArrayStrideLineEdit">
        <property name="toolTip">
         <string>Element stride between values. (default=1)</string>
        </property>
@@ -96,7 +96,7 @@
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QHistoryLineEdit" name="bArrayLengthLineEdit">
+      <widget class="SeerHistoryLineEdit" name="bArrayLengthLineEdit">
        <property name="toolTip">
         <string>Total number of elements in array.</string>
        </property>
@@ -112,7 +112,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QHistoryLineEdit" name="bVariableNameLineEdit">
+      <widget class="SeerHistoryLineEdit" name="bVariableNameLineEdit">
        <property name="toolTip">
         <string>Variable name or expression.</string>
        </property>
@@ -139,7 +139,7 @@
       </widget>
      </item>
      <item row="0" column="4">
-      <widget class="QHistoryLineEdit" name="aArrayOffsetLineEdit">
+      <widget class="SeerHistoryLineEdit" name="aArrayOffsetLineEdit">
        <property name="toolTip">
         <string>Element offset into array. (default=0)</string>
        </property>
@@ -158,7 +158,7 @@
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QHistoryLineEdit" name="aArrayLengthLineEdit">
+      <widget class="SeerHistoryLineEdit" name="aArrayLengthLineEdit">
        <property name="toolTip">
         <string>Total number of elements in array.</string>
        </property>
@@ -221,7 +221,7 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QHistoryLineEdit" name="aVariableAddressLineEdit">
+      <widget class="QLineEdit" name="aVariableAddressLineEdit">
        <property name="toolTip">
         <string>Variable address.</string>
        </property>
@@ -237,7 +237,7 @@
       </widget>
      </item>
      <item row="1" column="4">
-      <widget class="QHistoryLineEdit" name="bArrayOffsetLineEdit">
+      <widget class="SeerHistoryLineEdit" name="bArrayOffsetLineEdit">
        <property name="toolTip">
         <string>Element offset into array. (default=0)</string>
        </property>
@@ -256,7 +256,7 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QHistoryLineEdit" name="bVariableAddressLineEdit">
+      <widget class="QLineEdit" name="bVariableAddressLineEdit">
        <property name="toolTip">
         <string>Variable address.</string>
        </property>
@@ -286,7 +286,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QHistoryLineEdit" name="aVariableNameLineEdit">
+      <widget class="SeerHistoryLineEdit" name="aVariableNameLineEdit">
        <property name="toolTip">
         <string>Variable name or expression.</string>
        </property>
@@ -377,7 +377,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QHistoryLineEdit" name="titleLineEdit">
+          <widget class="SeerHistoryLineEdit" name="titleLineEdit">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -514,9 +514,9 @@
    <header location="global">QZoomChartView.h</header>
   </customwidget>
   <customwidget>
-   <class>QHistoryLineEdit</class>
+   <class>SeerHistoryLineEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">QHistoryLineEdit.h</header>
+   <header location="global">SeerHistoryLineEdit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

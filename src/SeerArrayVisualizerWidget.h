@@ -35,6 +35,12 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handleHelpButton                    ();
         void                handleaVariableNameLineEdit         ();
         void                handlebVariableNameLineEdit         ();
+        void                handleaElementLengthLineEdit        ();
+        void                handlebElementLengthLineEdit        ();
+        void                handleaElementOffsetLineEdit        ();
+        void                handlebElementOffsetLineEdit        ();
+        void                handleaElementStrideLineEdit        ();
+        void                handlebElementStrideLineEdit        ();
         void                handleaArrayDisplayFormatComboBox   (int index);
         void                handlebArrayDisplayFormatComboBox   (int index);
         void                handleaAxisComboBox                 (int index);
@@ -62,5 +68,9 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         int                 _bVariableId;
         int                 _aMemoryId;
         int                 _bMemoryId;
+        int                 _aOffsetId;
+        int                 _bOffsetId;
+        int                 _aStrideId;
+        int                 _bStrideId;
 };
 

@@ -20,11 +20,15 @@
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _aVariableId = Seer::createID(); // Create two id's for queries.
+    _aVariableId = Seer::createID(); // Create id's for A queries.
     _aMemoryId   = Seer::createID();
+    _aOffsetId   = Seer::createID();
+    _aStrideId   = Seer::createID();
 
-    _bVariableId = Seer::createID(); // Create two id's for queries.
+    _bVariableId = Seer::createID(); // Create id's for B queries.
     _bMemoryId   = Seer::createID();
+    _bOffsetId   = Seer::createID();
+    _bStrideId   = Seer::createID();
 
     _aSeries     = 0;
     _bSeries     = 0;
@@ -73,14 +77,16 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(aRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
     QObject::connect(bRefreshToolButton,            &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleHelpButton);
-    QObject::connect(aArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayLengthLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayOffsetLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
-    QObject::connect(bArrayStrideLineEdit,          &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
-    QObject::connect(bVariableNameLineEdit,         &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
+    QObject::connect(aVariableNameLineEdit,         &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
+    QObject::connect(aVariableNameLineEdit,         &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
+    QObject::connect(bVariableNameLineEdit,         &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
+    QObject::connect(bVariableNameLineEdit,         &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
+    QObject::connect(aArrayLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aArrayOffsetLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayOffsetLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
+    QObject::connect(aArrayStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
     QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
     QObject::connect(bArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox);
     QObject::connect(aAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaAxisComboBox);
@@ -553,6 +559,25 @@ void SeerArrayVisualizerWidget::handlebVariableNameLineEdit () {
 
     setBVariableName (bVariableNameLineEdit->text());
 }
+
+void SeerArrayVisualizerWidget::handleaElementLengthLineEdit () {
+}
+
+void SeerArrayVisualizerWidget::handlebElementLengthLineEdit () {
+}
+
+void SeerArrayVisualizerWidget::handleaElementOffsetLineEdit () {
+}
+
+void SeerArrayVisualizerWidget::handlebElementOffsetLineEdit () {
+}
+
+void SeerArrayVisualizerWidget::handleaElementStrideLineEdit () {
+}
+
+void SeerArrayVisualizerWidget::handlebElementStrideLineEdit () {
+}
+
 
 void SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox (int index) {
 
