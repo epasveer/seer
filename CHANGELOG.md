@@ -14,8 +14,12 @@
 * Show stack as a hex dump, with options to view as short, int, long, ascii, ...
 * The "go to address" in the Assembly view now works if address it outside
   current assembly view.
-* MemoryVisualizer. Dump size now takes a gdb expression. So it can be a value,
-  mathimatical expression, or the return value of 'function()'.
+* Visualizers can take a gdb expression for input fields for
+  length/size of something. The visualizers are:
+    - ArrayVisualizer
+    - ImageVisualizer
+    - MemoryVisualizer
+* Fixed regression when setting/saving the editor font setting.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
