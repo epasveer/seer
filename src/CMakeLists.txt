@@ -129,6 +129,7 @@ set(HEADER_FILES
     SeerProgressIndicator.h
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
+    SeerHistoryLineEdit.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -227,6 +228,7 @@ set(SOURCE_FILES
     SeerProgressIndicator.cpp
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
+    SeerHistoryLineEdit.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp

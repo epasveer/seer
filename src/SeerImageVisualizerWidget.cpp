@@ -13,13 +13,15 @@
 SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _variableId = Seer::createID(); // Create two id's for queries.
-    _memoryId   = Seer::createID();
-    _formatName = "";
-    _format     = QImage::Format_Invalid;
-    _width      = 0;
-    _height     = 0;
-    _bytes      = 0;
+    _variableId    = Seer::createID(); // Create two id's for queries.
+    _memoryId      = Seer::createID();
+    _imageWidthId  = Seer::createID();
+    _imageHeightId = Seer::createID();
+    _formatName    = "";
+    _format        = QImage::Format_Invalid;
+    _width         = 0;
+    _height        = 0;
+    _bytes         = 0;
 
     // Set up UI.
     setupUi(this);
@@ -29,15 +31,15 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     setWindowTitle("Seer Image Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
-    widthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    heightLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleRefreshButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleHelpButton);
-    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                                 this,  &SeerImageVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(widthLineEdit,                 &QLineEdit::returnPressed,                                 this,  &SeerImageVisualizerWidget::handleRefreshButton);
-    QObject::connect(heightLineEdit,                &QLineEdit::returnPressed,                                 this,  &SeerImageVisualizerWidget::handleRefreshButton);
+    QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,  &SeerImageVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,  &SeerImageVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(widthLineEdit,                 &SeerHistoryLineEdit::returnPressed,                       this,  &SeerImageVisualizerWidget::handleRefreshButton);
+    QObject::connect(widthLineEdit,                 &SeerHistoryLineEdit::editingFinished,                     this,  &SeerImageVisualizerWidget::handleWidthLineEdit);
+    QObject::connect(heightLineEdit,                &SeerHistoryLineEdit::returnPressed,                       this,  &SeerImageVisualizerWidget::handleRefreshButton);
+    QObject::connect(heightLineEdit,                &SeerHistoryLineEdit::editingFinished,                     this,  &SeerImageVisualizerWidget::handleHeightLineEdit);
     QObject::connect(formatComboBox,                QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerImageVisualizerWidget::handleFormatComboBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleSaveButton);
@@ -124,6 +126,26 @@ QString SeerImageVisualizerWidget::variableAddress () const {
     return variableAddressLineEdit->text();
 }
 
+void SeerImageVisualizerWidget::setImageWidth (const QString& width) {
+
+    widthLineEdit->setText(width);
+}
+
+QString SeerImageVisualizerWidget::imageWidth () const {
+
+    return widthLineEdit->text();
+}
+
+void SeerImageVisualizerWidget::setImageHeight (const QString& height) {
+
+    heightLineEdit->setText(height);
+}
+
+QString SeerImageVisualizerWidget::imageHeight () const {
+
+    return heightLineEdit->text();
+}
+
 void SeerImageVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
@@ -142,6 +164,24 @@ void SeerImageVisualizerWidget::handleText (const QString& text) {
             QStringList words = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false)).split(' ', Qt::SkipEmptyParts);
 
             setVariableAddress(words.first());
+
+        }else if (id_text.toInt() == _imageWidthId) {
+
+            // Set the image width.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setImageWidth(value_text);
+
+            handleRefreshButton();
+
+        }else if (id_text.toInt() == _imageHeightId) {
+
+            // Set the image height.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setImageHeight(value_text);
+
+            handleRefreshButton();
         }
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
@@ -299,6 +339,24 @@ void SeerImageVisualizerWidget::handleHelpButton () {
 void SeerImageVisualizerWidget::handleVariableNameLineEdit () {
 
     setVariableName (variableNameLineEdit->text());
+}
+
+void SeerImageVisualizerWidget::handleWidthLineEdit () {
+
+    if (widthLineEdit->text() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_imageWidthId, widthLineEdit->text());
+}
+
+void SeerImageVisualizerWidget::handleHeightLineEdit () {
+
+    if (heightLineEdit->text() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_imageHeightId, heightLineEdit->text());
 }
 
 void SeerImageVisualizerWidget::handleFormatComboBox (int index) {

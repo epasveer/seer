@@ -5,6 +5,44 @@
 #include <QtGui/QImageReader>
 #include <QtCore/QDebug>
 
+class LocalImage {
+    public:
+        LocalImage ();
+        LocalImage (const QImage& image);
+
+        void            setImage    (const QImage& image);
+        const uchar*    bits        () const;
+        int             width       () const;
+        int             height      () const;
+
+    private:
+        QImage _image;
+};
+
+LocalImage::LocalImage() {
+}
+
+LocalImage::LocalImage(const QImage& image) {
+    setImage(image);
+};
+
+void LocalImage::setImage (const QImage& image) {
+    _image = image;
+};
+
+const uchar* LocalImage::bits() const {
+    return _image.bits();
+};
+
+int LocalImage::width() const {
+    return _image.width();
+}
+
+int LocalImage::height() const {
+    return _image.height();
+}
+
+
 int main (int argc, char** argv) {
 
     std::cout << "Hello, Image!" << std::endl;
@@ -31,6 +69,10 @@ int main (int argc, char** argv) {
     const uchar* bits      = image.bits();
     const uchar* bits_rgb  = image_rgb.bits();
     const uchar* bits_rgba = image_rgba.bits();
+
+    LocalImage img(image);
+    qInfo() << img.width();
+    qInfo() << img.height();
 
     return 0;
 }
