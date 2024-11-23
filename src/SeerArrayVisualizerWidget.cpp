@@ -22,11 +22,13 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     // Init variables.
     _aVariableId = Seer::createID(); // Create id's for A queries.
     _aMemoryId   = Seer::createID();
+    _aLengthId   = Seer::createID();
     _aOffsetId   = Seer::createID();
     _aStrideId   = Seer::createID();
 
     _bVariableId = Seer::createID(); // Create id's for B queries.
     _bMemoryId   = Seer::createID();
+    _bLengthId   = Seer::createID();
     _bOffsetId   = Seer::createID();
     _bStrideId   = Seer::createID();
 
@@ -40,13 +42,6 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
     setWindowTitle("Seer Array Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
-
-    aArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    bArrayLengthLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    aArrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
-    bArrayOffsetLineEdit->setValidator(new QIntValidator(0, 9999999, this));
-    aArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
-    bArrayStrideLineEdit->setValidator(new QIntValidator(1, 9999999, this));
 
     arrayTableWidget->setAAxis(aAxisComboBox->currentText());
     arrayTableWidget->setBAxis(bAxisComboBox->currentText());
@@ -79,22 +74,30 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerArrayVisualizerWidget::handleHelpButton);
     QObject::connect(aVariableNameLineEdit,         &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
     QObject::connect(aVariableNameLineEdit,         &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleaVariableNameLineEdit);
+    QObject::connect(aArrayLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(aArrayLengthLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleaElementLengthLineEdit);
+    QObject::connect(aArrayOffsetLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(aArrayOffsetLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleaElementOffsetLineEdit);
+    QObject::connect(aArrayStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(aArrayStrideLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleaElementStrideLineEdit);
+    QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
+    QObject::connect(aAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaAxisComboBox);
+
     QObject::connect(bVariableNameLineEdit,         &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
     QObject::connect(bVariableNameLineEdit,         &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handlebVariableNameLineEdit);
-    QObject::connect(aArrayLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
     QObject::connect(bArrayLengthLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayOffsetLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayLengthLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handlebElementLengthLineEdit);
     QObject::connect(bArrayOffsetLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleaRefreshButton);
+    QObject::connect(bArrayOffsetLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handlebElementOffsetLineEdit);
     QObject::connect(bArrayStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handlebRefreshButton);
-    QObject::connect(aArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox);
+    QObject::connect(bArrayStrideLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handlebElementStrideLineEdit);
     QObject::connect(bArrayDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox);
-    QObject::connect(aAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handleaAxisComboBox);
     QObject::connect(bAxisComboBox,                 QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerArrayVisualizerWidget::handlebAxisComboBox);
 
     QObject::connect(arrayTableWidget,              &SeerArrayWidget::dataChanged,                             this,            &SeerArrayVisualizerWidget::handleDataChanged);
     QObject::connect(splitter,                      &QSplitter::splitterMoved,                                 this,            &SeerArrayVisualizerWidget::handleSplitterMoved);
-    QObject::connect(titleLineEdit,                 &QLineEdit::returnPressed,                                 this,            &SeerArrayVisualizerWidget::handleTitleLineEdit);
+    QObject::connect(titleLineEdit,                 &SeerHistoryLineEdit::returnPressed,                       this,            &SeerArrayVisualizerWidget::handleTitleLineEdit);
+    QObject::connect(titleLineEdit,                 &SeerHistoryLineEdit::editingFinished,                     this,            &SeerArrayVisualizerWidget::handleTitleLineEdit);
     QObject::connect(pointsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handlePointsCheckBox);
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handleLabelsCheckBox);
     QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
@@ -199,6 +202,32 @@ QString SeerArrayVisualizerWidget::aVariableAddress () const {
     return aVariableAddressLineEdit->text();
 }
 
+void SeerArrayVisualizerWidget::setAVariableLength (const QString& length) {
+    aArrayLengthLineEdit->setText(length);
+}
+
+QString SeerArrayVisualizerWidget::aVariableLength () const {
+    return aArrayLengthLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setAVariableOffset (const QString& offset) {
+    aArrayOffsetLineEdit->setText(offset);
+}
+
+QString SeerArrayVisualizerWidget::aVariableOffset () const {
+    return aArrayOffsetLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setAVariableStride (const QString& stride) {
+    aArrayStrideLineEdit->setText(stride);
+}
+
+QString SeerArrayVisualizerWidget::aVariableStride () const {
+    return aArrayStrideLineEdit->text();
+}
+
+
+
 void SeerArrayVisualizerWidget::setBVariableName (const QString& name) {
 
     setWindowTitle("Seer Array Visualizer - '" + name + "'");
@@ -291,6 +320,30 @@ QString SeerArrayVisualizerWidget::bVariableAddress () const {
     return bVariableAddressLineEdit->text();
 }
 
+void SeerArrayVisualizerWidget::setBVariableLength (const QString& length) {
+    bArrayLengthLineEdit->setText(length);
+}
+
+QString SeerArrayVisualizerWidget::bVariableLength () const {
+    return bArrayLengthLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setBVariableOffset (const QString& offset) {
+    bArrayOffsetLineEdit->setText(offset);
+}
+
+QString SeerArrayVisualizerWidget::bVariableOffset () const {
+    return bArrayOffsetLineEdit->text();
+}
+
+void SeerArrayVisualizerWidget::setBVariableStride (const QString& stride) {
+    bArrayStrideLineEdit->setText(stride);
+}
+
+QString SeerArrayVisualizerWidget::bVariableStride () const {
+    return bArrayStrideLineEdit->text();
+}
+
 void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
     //qDebug() << text;
@@ -331,6 +384,36 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             setAVariableAddress(address);
         }
 
+        if (id_text.toInt() == _aLengthId) {
+
+            // Set the memory length.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setAVariableLength(value_text);
+
+            handleaRefreshButton();
+        }
+
+        if (id_text.toInt() == _aOffsetId) {
+
+            // Set the memory offset.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setAVariableOffset(value_text);
+
+            handleaRefreshButton();
+        }
+
+        if (id_text.toInt() == _aStrideId) {
+
+            // Set the memory stride.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setAVariableStride(value_text);
+
+            handleaRefreshButton();
+        }
+
         if (id_text.toInt() == _bVariableId) {
 
             QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
@@ -358,6 +441,36 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
             // Set the variable address.
             setBVariableAddress(address);
+        }
+
+        if (id_text.toInt() == _bLengthId) {
+
+            // Set the memory length.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setBVariableLength(value_text);
+
+            handlebRefreshButton();
+        }
+
+        if (id_text.toInt() == _bOffsetId) {
+
+            // Set the memory offset.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setBVariableOffset(value_text);
+
+            handlebRefreshButton();
+        }
+
+        if (id_text.toInt() == _bStrideId) {
+
+            // Set the memory stride.
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+
+            setBVariableStride(value_text);
+
+            handlebRefreshButton();
         }
 
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
@@ -482,6 +595,36 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             }
         }
 
+        if (id_text.toInt() == _aLengthId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            aArrayLengthLineEdit->setText("");
+            aArrayLengthLineEdit->setFocus();
+        }
+
+        if (id_text.toInt() == _aOffsetId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            aArrayOffsetLineEdit->setText("");
+            aArrayOffsetLineEdit->setFocus();
+        }
+
+        if (id_text.toInt() == _aStrideId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            aArrayStrideLineEdit->setText("");
+            aArrayStrideLineEdit->setFocus();
+        }
+
         if (id_text.toInt() == _bVariableId) {
             bVariableAddressLineEdit->setText( Seer::filterEscapes(Seer::parseFirst(text, "msg=", '"', '"', false)) );
         }
@@ -493,6 +636,36 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             if (msg_text != "") {
                 QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
             }
+        }
+
+        if (id_text.toInt() == _bLengthId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            bArrayLengthLineEdit->setText("");
+            bArrayLengthLineEdit->setFocus();
+        }
+
+        if (id_text.toInt() == _bOffsetId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            bArrayOffsetLineEdit->setText("");
+            bArrayOffsetLineEdit->setFocus();
+        }
+
+        if (id_text.toInt() == _bStrideId) {
+            // Display the error message.
+            QString msg_text = Seer::parseFirst(text, "msg=", false);
+
+            QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
+
+            bArrayStrideLineEdit->setText("");
+            bArrayStrideLineEdit->setFocus();
         }
 
     }else{
@@ -561,23 +734,58 @@ void SeerArrayVisualizerWidget::handlebVariableNameLineEdit () {
 }
 
 void SeerArrayVisualizerWidget::handleaElementLengthLineEdit () {
-}
 
-void SeerArrayVisualizerWidget::handlebElementLengthLineEdit () {
+    if (aVariableLength() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_aLengthId, aVariableLength());
 }
 
 void SeerArrayVisualizerWidget::handleaElementOffsetLineEdit () {
-}
 
-void SeerArrayVisualizerWidget::handlebElementOffsetLineEdit () {
+    if (aVariableOffset() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_aOffsetId, aVariableOffset());
 }
 
 void SeerArrayVisualizerWidget::handleaElementStrideLineEdit () {
+
+    if (aVariableStride() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_aStrideId, aVariableStride());
+}
+
+void SeerArrayVisualizerWidget::handlebElementLengthLineEdit () {
+
+    if (bVariableLength() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_bLengthId, bVariableLength());
+}
+
+void SeerArrayVisualizerWidget::handlebElementOffsetLineEdit () {
+
+    if (bVariableOffset() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_bOffsetId, bVariableOffset());
 }
 
 void SeerArrayVisualizerWidget::handlebElementStrideLineEdit () {
-}
 
+    if (bVariableStride() == "") {
+        return;
+    }
+
+    emit evaluateVariableExpression(_bStrideId, bVariableStride());
+}
 
 void SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox (int index) {
 
@@ -610,6 +818,8 @@ void SeerArrayVisualizerWidget::handleaArrayDisplayFormatComboBox (int index) {
     }else{
         // Do nothing.
     }
+
+    handleaRefreshButton();
 }
 
 void SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox (int index) {
@@ -643,6 +853,8 @@ void SeerArrayVisualizerWidget::handlebArrayDisplayFormatComboBox (int index) {
     }else{
         // Do nothing.
     }
+
+    handlebRefreshButton();
 }
 
 void SeerArrayVisualizerWidget::handleaAxisComboBox (int index) {

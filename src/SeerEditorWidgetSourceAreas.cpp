@@ -1077,37 +1077,37 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
+        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
         createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
         deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
         openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
 
+        runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
         createPrintpointAction->setEnabled(false);
         deleteAction->setEnabled(true);
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
-        runToLineAction->setEnabled(true);
         openExternalEditor->setEnabled(true);
 
     }else{
+        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
         createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
         deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on line %1").arg(lineno), this);
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
         openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
 
+        runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
         createPrintpointAction->setEnabled(true);
         deleteAction->setEnabled(false);
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
-        runToLineAction->setEnabled(true);
         openExternalEditor->setEnabled(true);
     }
 
@@ -1131,12 +1131,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
+    menu.addAction(runToLineAction);
     menu.addAction(createBreakpointAction);
     menu.addAction(createPrintpointAction);
     menu.addAction(deleteAction);
     menu.addAction(enableAction);
     menu.addAction(disableAction);
-    menu.addAction(runToLineAction);
     menu.addAction(openExternalEditor);
 
     QMenu loggerMenu("Add variable to Logger");
@@ -1218,6 +1218,15 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
+    // Handle running to a line number.
+    if (action == runToLineAction) {
+
+        // Emit the runToLine signal.
+        emit runToLine(fullname(), lineno);
+
+        return;
+    }
+
     // Handle creating a new breakpoint.
     if (action == createBreakpointAction) {
 
@@ -1279,15 +1288,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the disable breakpoint signal.
         emit disableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
-
-        return;
-    }
-
-    // Handle running to a line number.
-    if (action == runToLineAction) {
-
-        // Emit the runToLine signal.
-        emit runToLine(fullname(), lineno);
 
         return;
     }

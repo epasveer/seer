@@ -16,11 +16,23 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         QString             aVariableName                        () const;
         void                setAVariableAddress                  (const QString& address);
         QString             aVariableAddress                     () const;
+        void                setAVariableLength                   (const QString& length);
+        QString             aVariableLength                      () const;
+        void                setAVariableOffset                   (const QString& offset);
+        QString             aVariableOffset                      () const;
+        void                setAVariableStride                   (const QString& stride);
+        QString             aVariableStride                      () const;
 
         void                setBVariableName                     (const QString& name);
         QString             bVariableName                        () const;
         void                setBVariableAddress                  (const QString& address);
         QString             bVariableAddress                     () const;
+        void                setBVariableLength                   (const QString& length);
+        QString             bVariableLength                      () const;
+        void                setBVariableOffset                   (const QString& offset);
+        QString             bVariableOffset                      () const;
+        void                setBVariableStride                   (const QString& stride);
+        QString             bVariableStride                      () const;
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
@@ -67,10 +79,12 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         int                 _aVariableId;
         int                 _bVariableId;
         int                 _aMemoryId;
-        int                 _bMemoryId;
+        int                 _aLengthId;
         int                 _aOffsetId;
-        int                 _bOffsetId;
         int                 _aStrideId;
+        int                 _bMemoryId;
+        int                 _bLengthId;
+        int                 _bOffsetId;
         int                 _bStrideId;
 };
 
