@@ -17,7 +17,10 @@
 #include <QtCore/QSettings>
 #include <QtCore/QProcess>
 #include <QtCore/QRegularExpression>
+#include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QFileInfoList>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -968,6 +971,8 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             }else{
                 handleGdbCommand("-gdb-set non-stop off");
             }
+
+            handleGdbSourceScripts();
         }
 
         // Set dprint parameters.
@@ -1103,6 +1108,8 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
+
+            handleGdbSourceScripts();
         }
 
         // Set dprint parameters.
@@ -1177,6 +1184,8 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            handleGdbSourceScripts();
         }
 
         // Set dprint parameters.
@@ -1389,6 +1398,8 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
+
+            handleGdbSourceScripts();
         }
 
         // Set dprint parameters.
@@ -3224,7 +3235,7 @@ bool SeerGdbWidget::startGdbRR () {
 
 void SeerGdbWidget::killGdb () {
 
-    // Don't do anything, if already running.
+    // Don't do anything, if isn't running.
     if (isGdbRuning() == false) {
         return;
     }
@@ -3529,6 +3540,44 @@ void SeerGdbWidget::handleGdbForkFollowMode (QString mode) {
     }else{
         qWarning() << "Invalid 'ForkFollowMode' of '" << mode << "'";
     }
+}
+
+void SeerGdbWidget::handleGdbSourceScripts () {
+
+    // Don't do anything, if isn't running.
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    // Get setting's config path.
+    QSettings settings;
+
+    QString configFile = settings.fileName();
+
+    if (configFile == "") {
+        return;
+    }
+
+    QFileInfo configFileInfo(configFile);
+
+    QString configDirectory = configFileInfo.absolutePath();
+
+    // Get a list of files in the "scripts" folder.
+    QString scriptsDirectory = configDirectory + "/scripts";
+
+    QDir dir(scriptsDirectory);
+    QStringList scripts = dir.entryList(QDir::Files, QDir::Name);
+
+    // Source each one.
+    qDebug() << "Sourcing scripts from:" << scriptsDirectory;
+    for (const QString& script : scripts) {
+        QString command = "source " + scriptsDirectory + "/" + script;
+
+        qDebug() << command;
+
+        handleGdbCommand(command);
+    }
+    qDebug() << "Done.";
 }
 
 QString SeerGdbWidget::assemblySymbolDemagling () const {
