@@ -22,6 +22,7 @@
 * Fixed regression when setting/saving the editor font setting.
 * Fixed bug when the Basic Struct visualizer display simple variable
   types (non-structs).
+* Source all files in ~/.config/seergdb/scripts/ on startup.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
