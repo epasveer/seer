@@ -132,9 +132,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSourceAlternateDirectories       (const QStringList& alternateDirectories);
         const QStringList&                  sourceAlternateDirectories          () const;
 
-        void                                setSourceIgnoreDirectories          (const QStringList& ignoreDirectories);
-        const QStringList&                  sourceIgnoreDirectories             () const;
-
         void                                setSourceMiscFilePatterns           (const QStringList& filePatterns);
         const QStringList&                  sourceMiscFilePatterns              () const;
 
