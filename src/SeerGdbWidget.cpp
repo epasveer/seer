@@ -2919,12 +2919,12 @@ void SeerGdbWidget::writeSettings () {
         }
     } settings.endArray();
 
-    settings.beginWriteArray("sourceignoredirectories"); {
-        QStringList directories = sourceIgnoreDirectories();
+    settings.beginWriteArray("sourceignorefilepatters"); {
+        QStringList patterns = sourceIgnoreFilePatterns();
 
-        for (int i = 0; i < directories.size(); ++i) {
+        for (int i = 0; i < patterns.size(); ++i) {
             settings.setArrayIndex(i);
-            settings.setValue("directory", directories[i]);
+            settings.setValue("pattern", patterns[i]);
         }
     } settings.endArray();
 
@@ -3018,16 +3018,16 @@ void SeerGdbWidget::readSettings () {
         setSourceAlternateDirectories(directories);
     } settings.endArray();
 
-    size = settings.beginReadArray("sourceignoredirectories"); {
-        QStringList directories;
+    size = settings.beginReadArray("sourceignorefilepatters"); {
+        QStringList patterns;
 
         for (int i = 0; i < size; ++i) {
             settings.setArrayIndex(i);
 
-            directories << settings.value("directory").toString();
+            patterns << settings.value("pattern").toString();
         }
 
-        setSourceIgnoreDirectories(directories);
+        setSourceIgnoreFilePatterns(patterns);
     } settings.endArray();
 
     if (settings.childGroups().contains("sourcemiscfilepatterns")) {
@@ -3403,18 +3403,6 @@ const QStringList& SeerGdbWidget::sourceAlternateDirectories() const {
 void SeerGdbWidget::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     editorManager()->setEditorAlternateDirectories(alternateDirectories);
-}
-
-const QStringList& SeerGdbWidget::sourceIgnoreDirectories() const {
-
-    return editorManager()->editorIgnoreDirectories();
-}
-
-void SeerGdbWidget::setSourceIgnoreDirectories (const QStringList& ignoreDirectories) {
-
-    editorManager()->setEditorIgnoreDirectories(ignoreDirectories);
-
-    sourceLibraryManagerWidget->sourceBrowserWidget()->setIgnoreFilePatterns(ignoreDirectories);
 }
 
 void SeerGdbWidget::setSourceMiscFilePatterns (const QStringList& filePatterns) {
