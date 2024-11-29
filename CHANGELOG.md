@@ -24,6 +24,7 @@
   types (non-structs).
 * Source all files in ~/.config/seergdb/scripts/ on startup.
 * Fixed regression handling ignoring of system header files.
+* Fixed regression when adding commands to a breakpoint.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
