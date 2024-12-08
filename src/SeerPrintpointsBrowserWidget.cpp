@@ -127,7 +127,7 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                 QString file_text              = Seer::parseFirst(bkpt_text, "file=",              '"', '"', false);
                 QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
                 QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
-                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '[', ']', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
                 QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
@@ -139,7 +139,9 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                     continue;
                 }
 
-                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
+                // Remove '"' bookends and then remove one level of escapes.
+                script_text = Seer::filterBookends (script_text, '"', '"');
+                script_text = Seer::filterEscapes(script_text);
 
                 // Add the level to the tree.
                 QTreeWidgetItem* topItem = new QTreeWidgetItem;

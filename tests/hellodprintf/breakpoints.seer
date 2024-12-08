@@ -1,3 +1,2 @@
-dprintf -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 17,"Iteration %d Factorial %d\n",n,nfact
-break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 24
-dprintf -source hellodprintf_fortran.f -line 11,"Iteration %d Factorial %d\n",n,nfact
+dprintf -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 44,"n=%d count=%d\n",n,count
+break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 53

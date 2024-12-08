@@ -72,7 +72,7 @@
      </column>
      <column>
       <property name="text">
-       <string>DPrintf</string>
+       <string>Command</string>
       </property>
      </column>
      <column>
