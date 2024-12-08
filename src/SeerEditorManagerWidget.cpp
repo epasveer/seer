@@ -416,6 +416,7 @@ const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
+    // Update the current line.
     if (text.startsWith("*stopped")) {
 
         //qDebug() << ":stopped:" << text;
@@ -489,6 +490,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
         return;
 
+    // Refresh the breakpoints for all opened files.
     }else if (text.startsWith("^done,BreakpointTable={") && text.endsWith("}")) {
 
         //
@@ -558,6 +560,35 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             }
         }
 
+    // Send the info for an individual breakpoint to all opened files.
+    // Each opened file can accept it (or reject it) to display the
+    // info as a ToolTip.
+    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,BreakpointTable={")) && text.endsWith("}")) {
+
+        //
+        // See SeerBreakpointsBrowserWidget.cpp
+        //
+        // 7^done,BreakpointTable={
+        //    ...
+        // }
+        //
+
+        // Loop through each opened file and forward the text.
+        SeerEditorManagerEntries::iterator i = beginEntry();
+        SeerEditorManagerEntries::iterator e = endEntry();
+
+        while (i != e) {
+            i->widget->sourceArea()->handleText(text);
+            i++;
+        }
+
+        // Forward the text to the assembly widget, if there is one.
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+        }
+
     }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
 
         //qDebug() << ":stack:" << text;
@@ -624,6 +655,17 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             assemblyWidget->assemblyArea()->handleText(text);
             assemblyWidget->handleText(text);
         }
+
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        // Get the AssemblyWidget.
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
+        }
+
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
@@ -828,6 +870,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::infoBreakpoint,                this, &SeerEditorManagerWidget::handleInfoBreakpoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshBreakpointsStackFrames, this, &SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
@@ -888,6 +931,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::infoBreakpoint,                this, &SeerEditorManagerWidget::handleInfoBreakpoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshBreakpointsStackFrames, this, &SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::runToLine,                     this, &SeerEditorManagerWidget::handleRunToLine);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableLoggerExpression,   this, &SeerEditorManagerWidget::handleAddVariableLoggerExpression);
@@ -1131,15 +1175,11 @@ void SeerEditorManagerWidget::handleAddAlternateDirectory (QString path) {
 
 void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
 
-    //qDebug() << breakpoint;
-
     // rethrow
     emit insertBreakpoint (breakpoint);
 }
 
 void SeerEditorManagerWidget::handleInsertPrintpoint (QString printpoint) {
-
-    //qDebug() << printpoint;
 
     // rethrow
     emit insertPrintpoint (printpoint);
@@ -1147,15 +1187,11 @@ void SeerEditorManagerWidget::handleInsertPrintpoint (QString printpoint) {
 
 void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {
 
-    //qDebug() << breakpoints;
-
     // rethrow
     emit deleteBreakpoints (breakpoints);
 }
 
 void SeerEditorManagerWidget::handleEnableBreakpoints (QString breakpoints) {
-
-    //qDebug() << breakpoints;
 
     // rethrow
     emit enableBreakpoints (breakpoints);
@@ -1163,10 +1199,14 @@ void SeerEditorManagerWidget::handleEnableBreakpoints (QString breakpoints) {
 
 void SeerEditorManagerWidget::handleDisableBreakpoints (QString breakpoints) {
 
-    //qDebug() << breakpoints;
-
     // rethrow
     emit disableBreakpoints (breakpoints);
+}
+
+void SeerEditorManagerWidget::handleInfoBreakpoint (int breakpointid, QString breakpoint) {
+
+    // rethrow
+    emit infoBreakpoint (breakpointid, breakpoint);
 }
 
 void SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames () {
@@ -1180,15 +1220,11 @@ void SeerEditorManagerWidget::handleRefreshBreakpointsStackFrames () {
 
 void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 
-    //qDebug() << fullname << lineno;
-
     // rethrow
     emit runToLine (fullname, lineno);
 }
 
 void SeerEditorManagerWidget::handleRunToAddress (QString address) {
-
-    //qDebug() << address;
 
     // rethrow
     emit runToAddress (address);
@@ -1196,15 +1232,11 @@ void SeerEditorManagerWidget::handleRunToAddress (QString address) {
 
 void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {
 
-    //qDebug() << expression;
-
     // rethrow
     emit addVariableLoggerExpression (expression);
 }
 
 void SeerEditorManagerWidget::handleAddVariableTrackerExpression (QString expression) {
-
-    //qDebug() << expression;
 
     // rethrow
     emit addVariableTrackerExpression (expression);
@@ -1212,15 +1244,11 @@ void SeerEditorManagerWidget::handleAddVariableTrackerExpression (QString expres
 
 void SeerEditorManagerWidget::handleRefreshVariableTrackerValues () {
 
-    //qDebug();
-
     // rethrow
     emit refreshVariableTrackerValues ();
 }
 
 void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {
-
-    //qDebug();
 
     // rethrow
     emit evaluateVariableExpression (expressionid, expression);
@@ -1228,15 +1256,11 @@ void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid
 
 void SeerEditorManagerWidget::handleAddMemoryVisualizer (QString expression) {
 
-    //qDebug() << expression;
-
     // rethrow
     emit addMemoryVisualize (expression);
 }
 
 void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
-
-    //qDebug() << expression;
 
     // rethrow
     emit addArrayVisualize (expression);
@@ -1244,15 +1268,11 @@ void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
 void SeerEditorManagerWidget::handleAddStructVisualizer (QString expression) {
 
-    //qDebug() << expression;
-
     // rethrow
     emit addStructVisualize (expression);
 }
 
 void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
-
-    //qDebug() << address;
 
     // rethrow
     emit requestAssembly (address);
@@ -1263,8 +1283,6 @@ void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
 }
 
 void SeerEditorManagerWidget::handleRequestSourceAndAssembly (QString address) {
-
-    //qDebug() << address;
 
     // rethrow
     emit requestSourceAndAssembly (address);

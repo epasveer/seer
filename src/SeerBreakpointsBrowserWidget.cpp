@@ -121,7 +121,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
 
             QStringList bkpt_list = Seer::parse(newtext, "bkpt=", '{', '}', false);
 
-            for ( const auto& bkpt_text : bkpt_list  ) {
+            for (const auto& bkpt_text : bkpt_list) {
 
                 //
                 // A different way (better?) of parsing the table output
@@ -130,7 +130,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 // Then morph that list into a map, delimited by a '='.
                 // Remove bookends.
                 //
-                QStringList items = Seer::parseCommaList(bkpt_text);
+                QStringList items = Seer::parseCommaList(bkpt_text, '[', ']');
 
                 QMap<QString,QString> keyValueMap = Seer::createKeyValueMap(items, '=');
 
@@ -147,7 +147,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 QString cond_text              = Seer::filterBookends(keyValueMap["cond"],              '"', '"');
                 QString times_text             = Seer::filterBookends(keyValueMap["times"],             '"', '"');
                 QString ignore_text            = Seer::filterBookends(keyValueMap["ignore"],            '"', '"');
-                QString script_text            = Seer::filterBookends(keyValueMap["script"],            '{', '}');
+                QString script_text            = Seer::filterBookends(keyValueMap["script"],            '[', ']');
                 QString original_location_text = Seer::filterBookends(keyValueMap["original-location"], '"', '"');
 
                 // Only look for 'breakpoint' type break points.

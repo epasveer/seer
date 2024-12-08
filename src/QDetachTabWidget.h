@@ -1,5 +1,6 @@
 #pragma once
 #include <QtWidgets/QTabWidget>
+#include <QtWidgets/QPushButton>
 #include <QtCore/QString>
 #include <QtCore/QList>
 
@@ -20,6 +21,19 @@ class QDetachTabWidget : public QTabWidget {
     public:
         QDetachTabWidget(QWidget* parent = 0);
 
+        bool                                isDetached               (int tabIndex) const;
+        QWidget*                            tabWidget                (int tabIndex) const;
+
+    public slots:
+        void                                detachTab                (int tabIndex, bool minimized=false);
+        void                                reattachTab              (int tabIndex);
+
+    signals:
+        void                                tabDetached              (int tabIndex);
+        void                                tabDetached              (QWidget* widget);
+        void                                tabReattached            (int tabIndex);
+        void                                tabReattached            (QWidget* widget);
+
     protected:
         void                                closeEvent               (QCloseEvent* e);
 
@@ -32,5 +46,23 @@ class QDetachTabWidget : public QTabWidget {
         QList<QDetachTabInfo>::iterator     findPlaceholderWidget    (QWidget* widget);
 
         QList<QDetachTabInfo>               _tabInfo;
+};
+
+class QDetachTabWidgetPlaceholder : public QWidget {
+
+    Q_OBJECT
+
+    public:
+        QDetachTabWidgetPlaceholder(int tabIndex, QWidget* parent = 0);
+
+    signals:
+        void                                reattach                 (int tabIndex);
+
+    protected slots:
+        void                                handlePushButtonClicked  ();
+
+    private:
+        QPushButton*                        _reattachPushButton;
+        int                                 _tabIndex;
 };
 

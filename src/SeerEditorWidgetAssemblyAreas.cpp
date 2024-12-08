@@ -999,7 +999,8 @@ bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     }
 
     // Stop if no valid lineno.
-    if (lineno < 1) {
+    if (ok == false || lineno < 1) {
+        //qDebug() << "address is not in current assembly: '" << address << "'";
         return false;
     }
 
@@ -1245,11 +1246,11 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     QString address = _lineAddressMap[lineno];
 
     // Create the menu actions.
+    QAction* runToAddressAction;
     QAction* createBreakpointAction;
     QAction* deleteAction;
     QAction* enableAction;
     QAction* disableAction;
-    QAction* runToAddressAction;
     QAction* addMemoryAddressVisualizerAction;
     QAction* addArrayAddressVisualizerAction;
     QAction* addStructAddressVisualizerAction;
@@ -1259,30 +1260,30 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         int breakno = breakpointAddressToNumber(address);
 
+        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
         deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
 
+        runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
         deleteAction->setEnabled(true);
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
-        runToAddressAction->setEnabled(true);
 
     }else{
+        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
         createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
         deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on address %1").arg(address), this);
         enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on address %1").arg(address), this);
         disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on address %1").arg(address), this);
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
 
+        runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
         deleteAction->setEnabled(false);
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
-        runToAddressAction->setEnabled(true);
     }
 
     addMemoryAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
@@ -1291,11 +1292,11 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
+    menu.addAction(runToAddressAction);
     menu.addAction(createBreakpointAction);
     menu.addAction(deleteAction);
     menu.addAction(enableAction);
     menu.addAction(disableAction);
-    menu.addAction(runToAddressAction);
 
     QMenu memoryVisualizerMenu("Add address to a Memory Visualizer");
     memoryVisualizerMenu.addAction(addMemoryAddressVisualizerAction);
@@ -1325,6 +1326,15 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     // Do nothing.
     if (action == 0) {
+        return;
+    }
+
+    // Handle running to an address.
+    if (action == runToAddressAction) {
+
+        // Emit the runToLine signal.
+        emit runToAddress(address);
+
         return;
     }
 
@@ -1369,15 +1379,6 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the disable breakpoint signal.
         emit disableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
-
-        return;
-    }
-
-    // Handle running to an address.
-    if (action == runToAddressAction) {
-
-        // Emit the runToLine signal.
-        emit runToAddress(address);
 
         return;
     }
@@ -1628,7 +1629,14 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         _asm_insns_text = text;
 
         updateTextArea(); // This function does all the work on _asm_insns_text.
+
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        QString error_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+        QMessageBox::warning(this, "Warning.", error_text);
     }
+
 }
 
 void SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged () {

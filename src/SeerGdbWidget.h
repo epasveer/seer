@@ -132,9 +132,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setSourceAlternateDirectories       (const QStringList& alternateDirectories);
         const QStringList&                  sourceAlternateDirectories          () const;
 
-        void                                setSourceIgnoreDirectories          (const QStringList& ignoreDirectories);
-        const QStringList&                  sourceIgnoreDirectories             () const;
-
         void                                setSourceMiscFilePatterns           (const QStringList& filePatterns);
         const QStringList&                  sourceMiscFilePatterns              () const;
 
@@ -275,6 +272,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbBreakpointDelete           (QString breakpoints);
         void                                handleGdbBreakpointEnable           (QString breakpoints);
         void                                handleGdbBreakpointDisable          (QString breakpoints);
+        void                                handleGdbBreakpointInfo             (int breakpointid, QString breakpoint);
         void                                handleGdbBreakpointInsert           (QString breakpoint);
         void                                handleGdbBreakpointCondition        (QString breakpoint, QString condition);
         void                                handleGdbBreakpointIgnore           (QString breakpoint, QString count);
@@ -320,6 +318,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbVarAddExpression           (QString expression);
         void                                handleGdbImageAddExpression         (QString expression);
         void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int count);
+        void                                handleGdbMemoryEvaluateExpression   (int expressionid, QString address, int offset, int count);
         void                                handleGdbAsmEvaluateExpression      (int expressionid, QString address, int count, int mode);
         void                                handleGdbArrayEvaluateExpression    (int expressionid, QString address, int count);
         void                                handleGdbGetAssembly                (QString address);
@@ -340,9 +339,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbSchedulerLockingMode       (QString mode);
         void                                handleGdbScheduleMultipleMode       (QString mode);
         void                                handleGdbForkFollowMode             (QString mode);
+        void                                handleGdbSourceScripts              ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
+
+        void                                handleConsoleModeChanged            ();
 
     signals:
         void                                stoppingPointReached                ();
@@ -409,6 +411,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         int                                 _currentFrame;
 
         SeerConsoleWidget*                  _consoleWidget;
+        int                                 _consoleIndex;
         QString                             _consoleMode;
         int                                 _consoleScrollLines;
         int                                 _rememberManualCommandCount;

@@ -1,15 +1,15 @@
 
 Steps to compile an asm program.
 
-    % nasm -f elf -F stabs helloasm.asm -o helloasm_stabs.o
-    % ld -m elf_i386 helloasm_stabs.o -o helloasm_stabs
-    % seergdb -s --sat yes --bf _start helloasm_stabs
+    % nasm -f elf -F stabs helloasm.asm -o helloasm.o
+    % ld -m elf_i386 helloasm.o -o helloasm
+    % seergdb -s --sat yes --bf _start helloasm
 
 Find address to set start breakpoint.
 
-    % objdump -f helloasm_stabs
+    % objdump -f helloasm
 
-    helloasm_stabs:     file format elf32-i386
+    helloasm:     file format elf32-i386
     architecture: i386, flags 0x00000112:
     EXEC_P, HAS_SYMS, D_PAGED
     start address 0x08048080

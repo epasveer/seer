@@ -1,0 +1,18 @@
+Examples are from here:
+
+    https://zig-by-example.com/
+
+Run Seer like this. The break-function is the name of the program and ".main".
+
+    $ /usr/local/bin/seergdb -s --bf=hello-world.main ./hello-world
+
+Set the "Source" file configurations in Seer's config page.
+
+    o Add "*.zig" for valid source files.
+    o Add "/usr/lib/zig/" for "misc" files.
+
+Zig resources:
+
+    https://github.com/ziglang/zig
+    https://github.com/zigcc/awesome-zig
+

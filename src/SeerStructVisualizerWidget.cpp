@@ -103,8 +103,10 @@ void SeerStructVisualizerWidget::handleText (const QString& text) {
             // Populate the tree.
             handleItemCreate(topItem, value_text);
 
-            // For now, always expand everything.
-            variableTreeWidget->expandAll();
+            // Expand everything if there are children.
+            if (topItem->childCount() > 0) {
+                variableTreeWidget->expandAll();
+            }
         }
 
 

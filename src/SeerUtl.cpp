@@ -874,6 +874,250 @@ namespace Seer {
         return ucharToAsciiTable[byte];
     }
 
+    QString ucharToHex (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        str.reserve(count*2+4);
+
+        for (int i=from; i<from+count; i++) {
+            if (i >= bytes.size()) {
+                break;
+            }
+
+            quint8  decimal = bytes[i];
+            QString hex     = QString("%1").arg(decimal, 2, 16, QLatin1Char('0'));
+
+            str += hex;
+        }
+
+        return str;
+    }
+
+    QString ucharToOctal (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        str.reserve(count*3+4);
+
+        for (int i=from; i<from+count; i++) {
+            if (i >= bytes.size()) {
+                break;
+            }
+
+            quint8  decimal = bytes[i];
+            QString octal   = QString("%1").arg(decimal, 3, 8, QLatin1Char('0'));
+
+            str += octal;
+        }
+
+        return str;
+    }
+
+    QString ucharToAscii (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        str.reserve(count);
+
+        for (int i=from; i<from+count; i++) {
+            if (i >= bytes.size()) {
+                break;
+            }
+
+            quint8  decimal = bytes[i];
+            QString ascii   = QChar(Seer::ucharToAscii(decimal));
+
+            str += ascii;
+        }
+
+        return str;
+    }
+
+    QString ucharToUShort (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+1 >= bytes.size()) {
+                break;
+            }
+
+            quint16 decimal = *(quint16*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(quint16);
+        }
+
+        return str;
+    }
+
+    QString ucharToShort (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+1 >= bytes.size()) {
+                break;
+            }
+
+            qint16  decimal = *(qint16*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(qint16);
+        }
+
+        return str;
+    }
+
+    QString ucharToUInt (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+3 >= bytes.size()) {
+                break;
+            }
+
+            quint32 decimal = *(quint32*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(quint32);
+        }
+
+        return str;
+    }
+
+    QString ucharToInt (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+3 >= bytes.size()) {
+                break;
+            }
+
+            qint32  decimal = *(qint32*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(qint32);
+        }
+
+        return str;
+    }
+
+    QString ucharToULong (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+7 >= bytes.size()) {
+                break;
+            }
+
+            quint64 decimal = *(quint64*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(quint64);
+        }
+
+        return str;
+    }
+
+    QString ucharToLong (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+7 >= bytes.size()) {
+                break;
+            }
+
+            qint64  decimal = *(qint64*)(bytes.data()+from);
+            QString val     = QString("%1").arg(decimal);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(qint64);
+        }
+
+        return str;
+    }
+
+    QString ucharToFloat (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+3 >= bytes.size()) {
+                break;
+            }
+
+            float    real = *(float*)(bytes.data()+from);
+            QString  val  = QString("%1").arg(real);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(float);
+        }
+
+        return str;
+    }
+
+    QString ucharToDouble (const QVector<quint8>& bytes, int from, int count) {
+
+        QString str;
+
+        for (int i=0; i<count; i++) {
+            if (from+7 >= bytes.size()) {
+                break;
+            }
+
+            double   real = *(double*)(bytes.data()+from);
+            QString  val  = QString("%1").arg(real);
+
+            if (i != 0) {
+                str += " ";
+            }
+
+            str  += val;
+            from += sizeof(double);
+        }
+
+        return str;
+    }
+
     int typeBytes (const QString& type) {
 
         if (type == "int8" || type == "uint8") {
@@ -919,6 +1163,97 @@ namespace Seer {
 
         // All good.
         return true;
+    }
+
+    QString unescape (const QString& str) {
+
+        QString result;
+        bool    quoted = false;
+
+        // Maybe reserve `str.length()` bytes in result, so that it will not allocate during `push_back()`
+        result.reserve(str.length());
+
+        // Loop through each character in 'str'. Look for a '\'.
+        for (int i=0; i<str.length(); i++) {
+
+            // Found a '\'.
+            if (str[i] == QChar('\\')) {
+                // Can we look at the following character?
+                if (i+1 >= str.length()) {
+                    // Nope, just add it.
+                    result.push_back(str[i]);
+                    break;
+                }
+
+                // If the following character is another '\', skip the first one.
+                // This removes one level of '\'.
+                if (str[i+1] == QChar('\\')) {
+                    continue;
+                }
+
+                // Treat the following character as an escaped character.
+                // Unescape it. (Is that even a word?)
+                switch(str[i+1].unicode()) {
+                    // We don't want to unescape things that are in double quotes.
+                    // So keep track of that. (Not the more fool proof implementation).
+                    case QChar('\"').unicode():
+                        result.push_back(QChar('\"'));
+                        if (quoted) {
+                            quoted = false;
+                        }else{
+                            quoted = true;
+                        }
+                        break;
+                    case QChar('n').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\n'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('\'').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\''));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('\\').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\\'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                    case QChar('t').unicode():
+                        if (quoted == false) {
+                            result.push_back(QChar('\t'));
+                        }else{
+                            result.push_back(QChar('\\'));
+                            result.push_back(str[i+1]);
+                        }
+                        break;
+                        // and so on for \a, \b, \e, \f, \r, \t, \v
+                        // maybe handle octal, hexadecimal ASCII and Unicode forms, but probably in the more distant future
+                        // ...
+                    default:
+                        // unknown escape sequence — do not escape it — I think it is reasonable default
+                        result.push_back(QChar('\\'));
+                        result.push_back(str[i+1]);
+                        break;
+                }
+                i++;
+
+            // Normal character. Just add it.
+            }else{
+                result.push_back(str[i]);
+            }
+        }
+
+        return result;
     }
 }
 

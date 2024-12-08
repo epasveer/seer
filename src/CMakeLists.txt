@@ -102,6 +102,8 @@ set(HEADER_FILES
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
     SeerStackLocalsBrowserWidget.h
+    SeerStackDumpBrowserWidget.h
+    SeerStackDumpSettingsDialog.h
     SeerStackManagerWidget.h
     SeerThreadFramesBrowserWidget.h
     SeerThreadIdsBrowserWidget.h
@@ -127,10 +129,12 @@ set(HEADER_FILES
     SeerProgressIndicator.h
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
+    SeerHistoryLineEdit.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
     QColorButton.h
+    QColorSwatch.h
     QDetachTabWidget.h
     QZoomChartView.h
     QZoomChart.h
@@ -141,6 +145,7 @@ set(HEADER_FILES
     QEditDelegate.h
     QHContainerWidget.h
     QImageViewer.h
+    QAnsiTextEdit.h
     )
 
 set(SOURCE_FILES
@@ -196,6 +201,8 @@ set(SOURCE_FILES
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
     SeerStackLocalsBrowserWidget.cpp
+    SeerStackDumpBrowserWidget.cpp
+    SeerStackDumpSettingsDialog.cpp
     SeerStackManagerWidget.cpp
     SeerThreadFramesBrowserWidget.cpp
     SeerThreadIdsBrowserWidget.cpp
@@ -221,10 +228,12 @@ set(SOURCE_FILES
     SeerProgressIndicator.cpp
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
+    SeerHistoryLineEdit.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
     QColorButton.cpp
+    QColorSwatch.cpp
     QDetachTabWidget.cpp
     QZoomChartView.cpp
     QZoomChart.cpp
@@ -234,6 +243,7 @@ set(SOURCE_FILES
     QEditDelegate.cpp
     QHContainerWidget.cpp
     QImageViewer.cpp
+    QAnsiTextEdit.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")

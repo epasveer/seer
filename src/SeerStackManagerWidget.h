@@ -3,6 +3,7 @@
 #include "SeerStackFramesBrowserWidget.h"
 #include "SeerStackArgumentsBrowserWidget.h"
 #include "SeerStackLocalsBrowserWidget.h"
+#include "SeerStackDumpBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -19,6 +20,7 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
         SeerStackFramesBrowserWidget*                   stackFramesBrowserWidget            ();
         SeerStackArgumentsBrowserWidget*                stackArgumentsBrowserWidget         ();
         SeerStackLocalsBrowserWidget*                   stackLocalsBrowserWidget            ();
+        SeerStackDumpBrowserWidget*                     stackDumpBrowserWidget              ();
 
     signals:
         void                                            refreshThreadFrames                 ();
@@ -42,5 +44,6 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
         SeerStackFramesBrowserWidget*                   _stackFramesBrowserWidget;
         SeerStackArgumentsBrowserWidget*                _stackArgumentsBrowserWidget;
         SeerStackLocalsBrowserWidget*                   _stackLocalsBrowserWidget;
+        SeerStackDumpBrowserWidget*                     _stackDumpBrowserWidget;
 };
 

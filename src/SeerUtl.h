@@ -29,11 +29,23 @@ namespace Seer {
     bool                        matchesWildcard     (const QStringList& regexpatterns, const QString& string);
     QString                     elideText           (const QString& str, Qt::TextElideMode mode, int length);
     QStringList                 split               (const QString& str);
+    QString                     unescape            (const QString& str);
 
     int                         createID            ();
 
     unsigned char               ebcdicToAscii       (unsigned char byte);
     unsigned char               ucharToAscii        (unsigned char byte);
+    QString                     ucharToHex          (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToOctal        (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToAscii        (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToUShort       (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToShort        (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToUInt         (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToInt          (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToULong        (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToLong         (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToFloat        (const QVector<quint8>& bytes, int from, int count);
+    QString                     ucharToDouble       (const QVector<quint8>& bytes, int from, int count);
 
     int                         typeBytes           (const QString& type);
 

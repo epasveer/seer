@@ -3,6 +3,28 @@
 
 ## [2.5beta] - 2024-XX-XX
 * Starting the 2.5 development cycle.
+* Console now supports a subset of ANSI color codes.
+* Console can be started in these modes:
+    - Detached
+    - Detached and minimized
+    - Attached in Seer's tab view (with gdb logs and seer logs).
+* Improved handling of \n \t and other escaped characters in gdb log window.
+* Show breakpoint info as a tooltip if the breakpoint icon is clicked with
+  LMB and held down.
+* Show stack as a hex dump, with options to view as short, int, long, ascii, ...
+* The "go to address" in the Assembly view now works if address it outside
+  current assembly view.
+* Visualizers can take a gdb expression for input fields for
+  length/size of something. The visualizers are:
+    - ArrayVisualizer
+    - ImageVisualizer
+    - MemoryVisualizer
+* Fixed regression when setting/saving the editor font setting.
+* Fixed bug when the Basic Struct visualizer display simple variable
+  types (non-structs).
+* Source all files in ~/.config/seergdb/scripts/ on startup.
+* Fixed regression handling ignoring of system header files.
+* Fixed regression when adding commands to a breakpoint.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.

@@ -102,13 +102,13 @@ int main (int argc, char* argv[]) {
     QCommandLineOption breaksourceOption(QStringList() << "bs" << "break-source", "", "breakpointsource");
     parser.addOption(breaksourceOption);
 
-    QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab");
+    QCommandLineOption showAssemblyTabOption(QStringList() << "sat" << "show-assembly-tab", "", "showassemblytab");
     parser.addOption(showAssemblyTabOption);
 
-    QCommandLineOption startAddressRandomizeOption(QStringList() << "sar" << "start-address-randomize");
+    QCommandLineOption startAddressRandomizeOption(QStringList() << "sar" << "start-address-randomize", "", "startaddressrandomize");
     parser.addOption(startAddressRandomizeOption);
 
-    QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode");
+    QCommandLineOption nonStopModeOption(QStringList() << "nsm" << "non-stop-mode", "", "nonstopmode");
     parser.addOption(nonStopModeOption);
 
     QCommandLineOption gdbProgramOption(QStringList() << "gdb-program", "", "gdbprogram");
@@ -117,8 +117,8 @@ int main (int argc, char* argv[]) {
     QCommandLineOption gdbArgumentsOption(QStringList() << "gdb-arguments", "", "gdbarguments");
     parser.addOption(gdbArgumentsOption);
 
-    QCommandLineOption xxdebugOption(QStringList() << "xxx");
-    parser.addOption(xxdebugOption);
+    QCommandLineOption xxxdebugOption(QStringList() << "xxx");
+    parser.addOption(xxxdebugOption);
 
     QCommandLineOption helpOption(QStringList() << "h" << "help");
     parser.addOption(helpOption);
@@ -134,12 +134,15 @@ int main (int argc, char* argv[]) {
         seerhelp();
     }
 
-    if (parser.isSet(xxdebugOption)) {
+    if (parser.isSet(xxxdebugOption)) {
         QLoggingCategory::setFilterRules("*.debug=false\n"
                                          "*.info=false\n"
                                          "*.warning=false\n"
                                          "*.critical=true\n"
                                          "default.debug=true");
+
+        QSettings settings;
+        qDebug() << "SETTINGS"    << settings.fileName();
     }
 
     // Get the positional arguments. (The ones at the end of the line - executable name and its arguments.

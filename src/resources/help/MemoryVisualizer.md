@@ -54,6 +54,11 @@ It can also be one of gdb' special variables. Like the program counter. Enter it
 ### Number of bytes entry field
 
 The default number of bytes to display is 256. Fewer or more than this number can be entered.
+This can take a gdb expression.
+
+* A value.  '100'
+* An expression.  '100+50'
+* The result of a function in the program.  'myarraysize()'
 
 ### Display format.
 
