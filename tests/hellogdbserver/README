@@ -1,0 +1,26 @@
+This test shows how to debug a program by launching
+the program using gdbserver and having Seer attach to
+the gdbserver.
+
+In one window, launch the program using gdbserver.
+
+    $ gdbserver :1234 hellogdbserver
+
+In another window, lauch Seer.
+
+    $ seergdb --project project.seer
+
+The project file has the info that Seer needs.
+
+    - Program name
+    - Debug filename
+    - gdbserver port
+
+
+To exit propery, enter this command in Seer's gdb input field.
+
+    monitor exit
+
+It tells the gdbserver to shutdown. If you don't, the gdbsver
+process will need to be kill with "kill -9".
+
