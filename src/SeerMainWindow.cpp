@@ -834,19 +834,13 @@ void SeerMainWindow::handleSettingsConfiguration () {
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
-
-    int result = QMessageBox::warning(this, "Seer - Settings",
-                                      QString("Write the configuration settings?"),
-                                      QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-    if (result == QMessageBox::Cancel) {
-        return;
-    }
-
     writeConfigSettings();
     gdbWidget->writeSettings();
 
-    QMessageBox::information(this, "Seer", "Saved.");
+    QMessageBox m(QMessageBox::Information, "Seer", "Configuration saved!");
+    m.setStandardButtons(QMessageBox::NoButton);
+    QTimer::singleShot(1000, &m, SLOT(hide()));
+    m.exec();
 }
 
 void SeerMainWindow::handleHelpAbout () {
