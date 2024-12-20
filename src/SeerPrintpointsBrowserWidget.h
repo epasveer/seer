@@ -29,6 +29,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         void                handleDisableToolButton     ();
         void                handleConditionToolButton   ();
         void                handleIgnoreToolButton      ();
+        void                handleCommandToolButton     ();
 
     signals:
         void                refreshPrintpointsList      ();
@@ -37,6 +38,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         void                disablePrintpoints          (QString printpoints);
         void                addBreakpointCondition      (QString printpoint, QString condition);
         void                addBreakpointIgnore         (QString printpoint, QString count);
+        void                addBreakpointCommand        (QString breakpoint, QString command);
         void                insertPrintpoint            (QString printpoint);
         void                selectedFile                (QString file, QString fullname, int lineno);
 

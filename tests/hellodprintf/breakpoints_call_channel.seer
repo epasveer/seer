@@ -1,0 +1,3 @@
+break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf_call_channel.cpp -line 9
+break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf_call_channel.cpp -line 23
+dprintf -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf_call_channel.cpp -line 18,"C: n=%d count=%d\n",n,count

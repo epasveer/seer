@@ -327,6 +327,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::insertPrintpoint,                                            this,                                                           &SeerGdbWidget::handleGdbPrintpointInsert);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleStoppingPointReached);
@@ -2032,6 +2033,18 @@ void SeerGdbWidget::handleGdbBreakpointIgnore (QString breakpoint, QString count
     }
 
     handleGdbCommand("-break-after " + breakpoint + " " + count);
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbBreakpointCommand (QString breakpoint, QString command) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    qDebug().noquote() << "XXX: " << breakpoint << command;
+
+    handleGdbCommand("-break-commands " + breakpoint + " \"" + command + "\"");
     handleGdbGenericpointList();
 }
 

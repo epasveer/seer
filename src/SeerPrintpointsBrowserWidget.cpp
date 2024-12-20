@@ -49,6 +49,7 @@ SeerPrintpointsBrowserWidget::SeerPrintpointsBrowserWidget (QWidget* parent) : Q
     QObject::connect(disablePrintpointsToolButton,  &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleDisableToolButton);
     QObject::connect(conditionBreakpointToolButton, &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleConditionToolButton);
     QObject::connect(ignoreBreakpointToolButton,    &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleIgnoreToolButton);
+    QObject::connect(commandBreakpointToolButton,   &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleCommandToolButton);
 }
 
 SeerPrintpointsBrowserWidget::~SeerPrintpointsBrowserWidget () {
@@ -376,6 +377,35 @@ void SeerPrintpointsBrowserWidget::handleIgnoreToolButton () {
 
     // Send the signal.
     emit addBreakpointIgnore(printpoint, QString::number(count));
+}
+
+void SeerPrintpointsBrowserWidget::handleCommandToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = printpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one printpoint when editing the command.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    QString command = QInputDialog::getText(this, "Seer", "Enter the command to execute for this printpoint.", QLineEdit::Normal, items.front()->text(9), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected breakpoint number.
+    QString breakpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCommand(breakpoint, command);
 }
 
 void SeerPrintpointsBrowserWidget::showEvent (QShowEvent* event) {

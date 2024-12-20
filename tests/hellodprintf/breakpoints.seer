@@ -1,2 +1,0 @@
-dprintf -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 44,"n=%d count=%d\n",n,count
-break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf.cpp -line 53

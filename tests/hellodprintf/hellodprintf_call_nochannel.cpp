@@ -22,10 +22,6 @@ extern "C" {
     }
 }
 
-extern "C" {
-    void fortranfunction_ (int* count);
-}
-
 int main (int argc, char** argv) {
 
     const char* filename = "logfile.txt";
@@ -45,8 +41,6 @@ int main (int argc, char** argv) {
         // printing the value of n and its factorial
         std::cout << std::setw(12)  << n << std::setw(14) << nfact << std::endl;
     }
-
-    fortranfunction_(&count);
 
     fclose(logfile);
 
