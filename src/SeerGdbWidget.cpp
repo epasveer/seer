@@ -1770,7 +1770,9 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
 
     //qDebug() << id << functionRegex;
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
     handleGdbCommand(QString("%1-symbol-info-functions --name %2").arg(id).arg(functionRegex));
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbExecutableTypes (int id, const QString& typeRegex) {
