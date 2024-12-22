@@ -292,7 +292,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbPrintpointDelete           (QString breakpoints);
         void                                handleGdbPrintpointEnable           (QString breakpoints);
         void                                handleGdbPrintpointDisable          (QString breakpoints);
-        void                                handleGdbPrintpointInsert           (QString printpoint);
+        void                                handleGdbPrintpointInsert           (QString type, QString function, QString channel, QString parameters);
         void                                handleGdbThreadListFrames           ();
         void                                handleGdbThreadListIds              ();
         void                                handleGdbThreadListGroups           ();

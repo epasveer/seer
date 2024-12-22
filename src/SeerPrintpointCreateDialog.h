@@ -52,9 +52,18 @@ class SeerPrintpointCreateDialog : public QDialog, protected Ui::SeerPrintpointC
         QString         format                      () const;
         QString         arguments                   () const;
 
-        QString         printpointText              () const;
+        QString         dprintfType                 () const;
+        QString         dprintfFunction             () const;
+        QString         dprintfChannel              () const;
+
+        void            setDPrintfType              (const QString& text);
+        void            setDPrintfFunction          (const QString& text);
+        void            setDPrintfChannel           (const QString& text);
+
+        QString         printpointParameters        () const;
 
     public slots:
+        void            handleDprintfTypeChanged    ();
 
     private:
 };

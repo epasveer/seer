@@ -39,7 +39,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         void                addBreakpointCondition      (QString printpoint, QString condition);
         void                addBreakpointIgnore         (QString printpoint, QString count);
         void                addBreakpointCommand        (QString breakpoint, QString command);
-        void                insertPrintpoint            (QString printpoint);
+        void                insertPrintpoint            (QString type, QString function, QString channel, QString parameters);
         void                selectedFile                (QString file, QString fullname, int lineno);
 
     protected:

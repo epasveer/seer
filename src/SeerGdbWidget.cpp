@@ -2201,13 +2201,17 @@ void SeerGdbWidget::handleGdbPrintpointDisable (QString printpoints) {
     handleGdbGenericpointList();
 }
 
-void SeerGdbWidget::handleGdbPrintpointInsert (QString printpoint) {
+void SeerGdbWidget::handleGdbPrintpointInsert (QString type, QString function, QString channel, QString parameters) {
 
     if (executableLaunchMode() == "") {
         return;
     }
 
-    handleGdbCommand("-dprintf-insert " + printpoint);
+    handleGdbCommand("-gdb-set dprintf-style "    + type);
+    handleGdbCommand("-gdb-set dprintf-function " + function);
+    handleGdbCommand("-gdb-set dprintf-channel "  + channel);
+
+    handleGdbCommand("-dprintf-insert " + parameters);
     handleGdbGenericpointList();
 }
 

@@ -61,15 +61,6 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbEnablePrettyPrinting                      (bool flag);
         bool                                gdbEnablePrettyPrinting                         () const;
 
-        void                                setDprintfStyle                                 (const QString& style);
-        QString                             dprintfStyle                                    () const;
-
-        void                                setDprintfFunction                              (const QString& function);
-        QString                             dprintfFunction                                 () const;
-
-        void                                setDprintfChannel                               (const QString& channel);
-        QString                             dprintfChannel                                  () const;
-
         // Editor settings.
         void                                setEditorFont                                   (const QFont& font);
         const QFont&                        editorFont                                      () const;

@@ -1179,10 +1179,10 @@ void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
     emit insertBreakpoint (breakpoint);
 }
 
-void SeerEditorManagerWidget::handleInsertPrintpoint (QString printpoint) {
+void SeerEditorManagerWidget::handleInsertPrintpoint (QString type, QString function, QString channel, QString parameters) {
 
     // rethrow
-    emit insertPrintpoint (printpoint);
+    emit insertPrintpoint (type, function, channel, parameters);
 }
 
 void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {

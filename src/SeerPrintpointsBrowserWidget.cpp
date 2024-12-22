@@ -231,15 +231,18 @@ void SeerPrintpointsBrowserWidget::handleAddToolButton () {
     }
 
     // Build a printpoint specification.
-    QString printpointParameters = dlg.printpointText();
+    QString type       = dlg.dprintfType();
+    QString function   = dlg.dprintfFunction();
+    QString channel    = dlg.dprintfChannel();
+    QString parameters = dlg.printpointParameters();
 
     // If nothing, just return.
-    if (printpointParameters == "") {
+    if (parameters == "" || type == "") {
         return;
     }
 
     // Otherwise send the command to create the printpoint.
-    emit insertPrintpoint(printpointParameters);
+    emit insertPrintpoint(type, function, channel, parameters);
 }
 
 void SeerPrintpointsBrowserWidget::handleDeleteToolButton () {

@@ -9,8 +9,7 @@ SeerGdbConfigPage::SeerGdbConfigPage(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Connect things.
-    QObject::connect(gdbProgramToolButton, &QToolButton::clicked,                                  this, &SeerGdbConfigPage::handleGdbProgramToolButton);
-    QObject::connect(styleButtonGroup,     QOverload<int>::of(&QButtonGroup::idClicked),           this, &SeerGdbConfigPage::handleDprintfButtonGroup);
+    QObject::connect(gdbProgramToolButton, &QToolButton::clicked,      this, &SeerGdbConfigPage::handleGdbProgramToolButton);
 
     // Setup the defaults.
     reset();
@@ -89,53 +88,6 @@ void SeerGdbConfigPage::setGdbEnablePrettyPrinting (bool flag) {
     gdbEnablePrettyPrintingCheckBox->setChecked(flag);
 }
 
-QString SeerGdbConfigPage::dprintfStyle () const {
-
-    if (styleGdbRadioButton->isChecked()) {
-        return "gdb";
-    }else if (styleCallRadioButton->isChecked()) {
-        return "call";
-    }else if (styleAgentRadioButton->isChecked()) {
-        return "agent";
-    }else{
-        return "";
-    }
-}
-
-QString SeerGdbConfigPage::dprintfFunction () const {
-
-    return functionLineEdit->text();
-}
-
-QString SeerGdbConfigPage::dprintfChannel () const {
-
-    return channelLineEdit->text();
-}
-
-void SeerGdbConfigPage::setDprintfStyle (const QString& style) {
-
-    if (style == "gdb") {
-        styleGdbRadioButton->setChecked(true);
-    }else if (style == "call") {
-        styleCallRadioButton->setChecked(true);
-    }else if (style == "agent") {
-        styleAgentRadioButton->setChecked(true);
-    }else{
-    }
-
-    handleDprintfButtonGroup();
-}
-
-void SeerGdbConfigPage::setDprintfFunction (const QString& function) {
-
-    functionLineEdit->setText(function);
-}
-
-void SeerGdbConfigPage::setDprintfChannel (const QString& channel) {
-
-    channelLineEdit->setText(channel);
-}
-
 void SeerGdbConfigPage::reset () {
 
     setGdbProgram("/usr/bin/gdb");
@@ -145,10 +97,6 @@ void SeerGdbConfigPage::reset () {
     setGdbHandleTerminatingException(true);
     setGdbRandomizeStartAddress(false);
     setGdbEnablePrettyPrinting(true);
-
-    setDprintfStyle("gdb");
-    setDprintfFunction("printf");
-    setDprintfChannel("");
 }
 
 void SeerGdbConfigPage::handleGdbProgramToolButton () {
@@ -157,17 +105,6 @@ void SeerGdbConfigPage::handleGdbProgramToolButton () {
 
     if (program != "") {
         setGdbProgram(program);
-    }
-}
-
-void SeerGdbConfigPage::handleDprintfButtonGroup () {
-
-    functionLineEdit->setEnabled(false);
-    channelLineEdit->setEnabled(false);
-
-    if (styleCallRadioButton->isChecked()) {
-        functionLineEdit->setEnabled(true);
-        channelLineEdit->setEnabled(true);
     }
 }
 

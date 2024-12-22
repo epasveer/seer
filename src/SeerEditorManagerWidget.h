@@ -71,7 +71,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
         void                                            handleOpenAddress                   (const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
-        void                                            handleInsertPrintpoint              (QString printpoint);
+        void                                            handleInsertPrintpoint              (QString type, QString function, QString channel, QString parameters);
         void                                            handleDeleteBreakpoints             (QString breakpoints);
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
@@ -101,7 +101,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            refreshBreakpointsList              ();
         void                                            refreshStackFrames                  ();
         void                                            insertBreakpoint                    (QString breakpoint);
-        void                                            insertPrintpoint                    (QString printpoint);
+        void                                            insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
         void                                            deleteBreakpoints                   (QString breakpoints);
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);
