@@ -666,36 +666,6 @@ QString SeerGdbWidget::gdbRecordDirection () const {
     return _gdbRecordDirection;
 }
 
-void SeerGdbWidget::setDprintfStyle (const QString& style) {
-
-    _dprintfStyle = style;
-}
-
-QString SeerGdbWidget::dprintfStyle () const {
-
-    return _dprintfStyle;
-}
-
-void SeerGdbWidget::setDprintfFunction (const QString& function) {
-
-    _dprintfFunction = function;
-}
-
-QString SeerGdbWidget::dprintfFunction () const {
-
-    return _dprintfFunction;
-}
-
-void SeerGdbWidget::setDprintfChannel (const QString& channel) {
-
-    _dprintfChannel = channel;
-}
-
-QString SeerGdbWidget::dprintfChannel () const {
-
-    return _dprintfChannel;
-}
-
 SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
 
     return editorManagerWidget;
@@ -976,9 +946,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             handleGdbSourceScripts();
         }
 
-        // Set dprint parameters.
-        resetDprintf();
-
         // Create a new console.
         // Set the program's tty device for stdin and stdout.
         createConsole();
@@ -1113,9 +1080,6 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbSourceScripts();
         }
 
-        // Set dprint parameters.
-        resetDprintf();
-
         // No console for 'attach' mode.
         setExecutableLaunchMode("attach");
         setGdbRecordMode("");
@@ -1188,9 +1152,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
             handleGdbSourceScripts();
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // No console for 'connect' mode.
         setExecutableLaunchMode("connect");
@@ -1286,9 +1247,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
                 break;
             }
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // Set the launch mode.
         setExecutableLaunchMode("rr");
@@ -1402,9 +1360,6 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
             handleGdbSourceScripts();
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // No console for 'core' mode.
         setExecutableLaunchMode("corefile");
@@ -3111,17 +3066,6 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("seeroutputlog"); {
         setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
     } settings.endGroup();
-}
-
-void SeerGdbWidget::resetDprintf () {
-
-    if (isGdbRuning() == false) {
-        return;
-    }
-
-    handleGdbCommand("-gdb-set dprintf-style "    + dprintfStyle());
-    handleGdbCommand("-gdb-set dprintf-function " + dprintfFunction());
-    handleGdbCommand("-gdb-set dprintf-channel "  + dprintfChannel());
 }
 
 bool SeerGdbWidget::isGdbRuning () const {

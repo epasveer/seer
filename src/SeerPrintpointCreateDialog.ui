@@ -333,8 +333,8 @@
          <string>...</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>resources/RelaxLightIcons/help-about.svg</normaloff>resources/RelaxLightIcons/help-about.svg</iconset>
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
         </property>
        </widget>
       </item>
@@ -410,7 +410,9 @@
   <tabstop>dprintfFunctionLineEdit</tabstop>
   <tabstop>dprintfChannelLineEdit</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

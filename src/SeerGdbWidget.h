@@ -107,15 +107,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbRecordDirection               (const QString& direction);
         QString                             gdbRecordDirection                  () const;
 
-        void                                setDprintfStyle                     (const QString& style);
-        QString                             dprintfStyle                        () const;
-
-        void                                setDprintfFunction                  (const QString& function);
-        QString                             dprintfFunction                     () const;
-
-        void                                setDprintfChannel                   (const QString& channel);
-        QString                             dprintfChannel                      () const;
-
         void                                setConsoleMode                      (const QString& mode);
         QString                             consoleMode                         () const;
 
@@ -201,9 +192,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // Settings
         void                                writeSettings                       ();
         void                                readSettings                        ();
-
-        // Printpoints
-        void                                resetDprintf                        ();
 
     public slots:
         void                                handleLogsTabMoved                  (int from, int to);
@@ -383,9 +371,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbEnablePrettyPrinting;
         QString                             _gdbRecordMode;
         QString                             _gdbRecordDirection;
-        QString                             _dprintfStyle;
-        QString                             _dprintfFunction;
-        QString                             _dprintfChannel;
         bool                                _assemblyShowAssemblyTabOnStartup;
         QString                             _assemblyDisassemblyFlavor;
         QString                             _assemblySymbolDemangling;
