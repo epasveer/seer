@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>473</height>
+    <width>607</width>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,9 +106,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="printpointTypeGroupBox">
+    <widget class="QGroupBox" name="printpointConditionsGroupBox">
      <property name="title">
-      <string>Printpoint Type</string>
+      <string>Printpoint Conditions</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
@@ -260,6 +260,122 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="printPointGroupBox">
+     <property name="title">
+      <string>Printpoint Type</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="typeLabel">
+        <property name="text">
+         <string>Type</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="typeGdbRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output goes the Gdb Ouput tab.</string>
+        </property>
+        <property name="text">
+         <string>gdb</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QRadioButton" name="typeCallRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output goes to the Seer Console.</string>
+        </property>
+        <property name="text">
+         <string>call</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QRadioButton" name="typeAgentRadioButton">
+        <property name="toolTip">
+         <string>Printpoint output is handled by the gdbserver.</string>
+        </property>
+        <property name="text">
+         <string>agent</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>561</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="5">
+       <widget class="QToolButton" name="typeHelpToolButton">
+        <property name="toolTip">
+         <string>Help about Printpoints.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="dprintfFunctionLabel">
+        <property name="text">
+         <string>Function</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="5">
+       <widget class="QLineEdit" name="dprintfFunctionLineEdit">
+        <property name="toolTip">
+         <string>The name of a function in your program to use.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="dprintfChannelLabel">
+        <property name="text">
+         <string>Channel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="5">
+       <widget class="QLineEdit" name="dprintfChannelLineEdit">
+        <property name="toolTip">
+         <string>The channel variable, if required by the function.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -271,7 +387,32 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <tabstops>
+  <tabstop>filenameLineEdit</tabstop>
+  <tabstop>lineNumberLineEdit</tabstop>
+  <tabstop>functionLineEdit</tabstop>
+  <tabstop>labelLineEdit</tabstop>
+  <tabstop>temporaryCheckBox</tabstop>
+  <tabstop>conditionalCheckBox</tabstop>
+  <tabstop>conditionalLineEdit</tabstop>
+  <tabstop>pendingCheckBox</tabstop>
+  <tabstop>ignoreCountCheckBox</tabstop>
+  <tabstop>ignoreCountLineEdit</tabstop>
+  <tabstop>disabledCheckBox</tabstop>
+  <tabstop>threadIdCheckBox</tabstop>
+  <tabstop>threadIdLineEdit</tabstop>
+  <tabstop>formatLineEdit</tabstop>
+  <tabstop>argumentsLineEdit</tabstop>
+  <tabstop>typeGdbRadioButton</tabstop>
+  <tabstop>typeCallRadioButton</tabstop>
+  <tabstop>typeAgentRadioButton</tabstop>
+  <tabstop>typeHelpToolButton</tabstop>
+  <tabstop>dprintfFunctionLineEdit</tabstop>
+  <tabstop>dprintfChannelLineEdit</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
@@ -306,4 +447,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="typeButtonGroup"/>
+ </buttongroups>
 </ui>

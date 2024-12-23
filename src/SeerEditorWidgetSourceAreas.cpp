@@ -1259,8 +1259,19 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
+        // Build a printpoint specification.
+        QString type       = dlg.dprintfType();
+        QString function   = dlg.dprintfFunction();
+        QString channel    = dlg.dprintfChannel();
+        QString parameters = dlg.printpointParameters();
+
+        // If nothing, just return.
+        if (parameters == "" || type == "") {
+            return;
+        }
+
         // Emit the create breakpoint signal.
-        emit insertPrintpoint(dlg.printpointText());
+        emit insertPrintpoint(type, function, channel, parameters);
 
         return;
     }

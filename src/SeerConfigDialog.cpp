@@ -230,36 +230,6 @@ bool SeerConfigDialog::gdbEnablePrettyPrinting () const {
     return _gdbConfigPage->gdbEnablePrettyPrinting();
 }
 
-void SeerConfigDialog::setDprintfStyle (const QString& style) {
-
-    _gdbConfigPage->setDprintfStyle(style);
-}
-
-QString SeerConfigDialog::dprintfStyle () const {
-
-    return _gdbConfigPage->dprintfStyle();
-}
-
-void SeerConfigDialog::setDprintfFunction (const QString& function) {
-
-    _gdbConfigPage->setDprintfFunction(function);
-}
-
-QString SeerConfigDialog::dprintfFunction () const {
-
-    return _gdbConfigPage->dprintfFunction();
-}
-
-void SeerConfigDialog::setDprintfChannel (const QString& channel) {
-
-    _gdbConfigPage->setDprintfChannel(channel);
-}
-
-QString SeerConfigDialog::dprintfChannel () const {
-
-    return _gdbConfigPage->dprintfChannel();
-}
-
 void SeerConfigDialog::setEditorFont (const QFont& font) {
 
     _editorConfigPage->setEditorFont(font);

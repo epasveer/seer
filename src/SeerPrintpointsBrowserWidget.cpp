@@ -49,6 +49,7 @@ SeerPrintpointsBrowserWidget::SeerPrintpointsBrowserWidget (QWidget* parent) : Q
     QObject::connect(disablePrintpointsToolButton,  &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleDisableToolButton);
     QObject::connect(conditionBreakpointToolButton, &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleConditionToolButton);
     QObject::connect(ignoreBreakpointToolButton,    &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleIgnoreToolButton);
+    QObject::connect(commandBreakpointToolButton,   &QToolButton::clicked,              this,  &SeerPrintpointsBrowserWidget::handleCommandToolButton);
 }
 
 SeerPrintpointsBrowserWidget::~SeerPrintpointsBrowserWidget () {
@@ -127,7 +128,7 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                 QString file_text              = Seer::parseFirst(bkpt_text, "file=",              '"', '"', false);
                 QString fullname_text          = Seer::parseFirst(bkpt_text, "fullname=",          '"', '"', false);
                 QString line_text              = Seer::parseFirst(bkpt_text, "line=",              '"', '"', false);
-                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '[', ']', false);
                 QString thread_groups_text     = Seer::parseFirst(bkpt_text, "thread-groups=",     '[', ']', false);
                 QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
@@ -139,7 +140,9 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                     continue;
                 }
 
-                script_text = Seer::filterBookends(Seer::parseCommaList(script_text, '{', '}'), '"', '"').join('\n');
+                // Remove '"' bookends and then remove one level of escapes.
+                script_text = Seer::filterBookends (script_text, '"', '"');
+                script_text = Seer::filterEscapes(script_text);
 
                 // Add the level to the tree.
                 QTreeWidgetItem* topItem = new QTreeWidgetItem;
@@ -228,15 +231,18 @@ void SeerPrintpointsBrowserWidget::handleAddToolButton () {
     }
 
     // Build a printpoint specification.
-    QString printpointParameters = dlg.printpointText();
+    QString type       = dlg.dprintfType();
+    QString function   = dlg.dprintfFunction();
+    QString channel    = dlg.dprintfChannel();
+    QString parameters = dlg.printpointParameters();
 
     // If nothing, just return.
-    if (printpointParameters == "") {
+    if (parameters == "" || type == "") {
         return;
     }
 
     // Otherwise send the command to create the printpoint.
-    emit insertPrintpoint(printpointParameters);
+    emit insertPrintpoint(type, function, channel, parameters);
 }
 
 void SeerPrintpointsBrowserWidget::handleDeleteToolButton () {
@@ -374,6 +380,35 @@ void SeerPrintpointsBrowserWidget::handleIgnoreToolButton () {
 
     // Send the signal.
     emit addBreakpointIgnore(printpoint, QString::number(count));
+}
+
+void SeerPrintpointsBrowserWidget::handleCommandToolButton () {
+
+    // Get selected tree items. Only allow one.
+    QList<QTreeWidgetItem*> items = printpointsTreeWidget->selectedItems();
+
+    if (items.count() == 0) {
+        return;
+    }
+
+    if (items.count() > 1) {
+        QMessageBox::warning(this, "Seer", "Select only one printpoint when editing the command.", QMessageBox::Ok);
+        return;
+    }
+
+    // Get the ignore text.
+    bool ok;
+    QString command = QInputDialog::getText(this, "Seer", "Enter the command to execute for this printpoint.", QLineEdit::Normal, items.front()->text(9), &ok);
+
+    if (ok == false) {
+        return;
+    }
+
+    // Get the selected breakpoint number.
+    QString breakpoint = items.front()->text(0);
+
+    // Send the signal.
+    emit addBreakpointCommand(breakpoint, command);
 }
 
 void SeerPrintpointsBrowserWidget::showEvent (QShowEvent* event) {

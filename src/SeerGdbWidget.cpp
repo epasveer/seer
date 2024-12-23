@@ -327,6 +327,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::insertPrintpoint,                                            this,                                                           &SeerGdbWidget::handleGdbPrintpointInsert);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleStoppingPointReached);
@@ -665,36 +666,6 @@ QString SeerGdbWidget::gdbRecordDirection () const {
     return _gdbRecordDirection;
 }
 
-void SeerGdbWidget::setDprintfStyle (const QString& style) {
-
-    _dprintfStyle = style;
-}
-
-QString SeerGdbWidget::dprintfStyle () const {
-
-    return _dprintfStyle;
-}
-
-void SeerGdbWidget::setDprintfFunction (const QString& function) {
-
-    _dprintfFunction = function;
-}
-
-QString SeerGdbWidget::dprintfFunction () const {
-
-    return _dprintfFunction;
-}
-
-void SeerGdbWidget::setDprintfChannel (const QString& channel) {
-
-    _dprintfChannel = channel;
-}
-
-QString SeerGdbWidget::dprintfChannel () const {
-
-    return _dprintfChannel;
-}
-
 SeerEditorManagerWidget* SeerGdbWidget::editorManager () {
 
     return editorManagerWidget;
@@ -975,9 +946,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             handleGdbSourceScripts();
         }
 
-        // Set dprint parameters.
-        resetDprintf();
-
         // Create a new console.
         // Set the program's tty device for stdin and stdout.
         createConsole();
@@ -1112,9 +1080,6 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbSourceScripts();
         }
 
-        // Set dprint parameters.
-        resetDprintf();
-
         // No console for 'attach' mode.
         setExecutableLaunchMode("attach");
         setGdbRecordMode("");
@@ -1187,9 +1152,6 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
             handleGdbSourceScripts();
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // No console for 'connect' mode.
         setExecutableLaunchMode("connect");
@@ -1285,9 +1247,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
                 break;
             }
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // Set the launch mode.
         setExecutableLaunchMode("rr");
@@ -1401,9 +1360,6 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
             handleGdbSourceScripts();
         }
-
-        // Set dprint parameters.
-        resetDprintf();
 
         // No console for 'core' mode.
         setExecutableLaunchMode("corefile");
@@ -1769,7 +1725,9 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
 
     //qDebug() << id << functionRegex;
 
+    QApplication::setOverrideCursor(Qt::BusyCursor);
     handleGdbCommand(QString("%1-symbol-info-functions --name %2").arg(id).arg(functionRegex));
+    QApplication::restoreOverrideCursor();
 }
 
 void SeerGdbWidget::handleGdbExecutableTypes (int id, const QString& typeRegex) {
@@ -2035,6 +1993,18 @@ void SeerGdbWidget::handleGdbBreakpointIgnore (QString breakpoint, QString count
     handleGdbGenericpointList();
 }
 
+void SeerGdbWidget::handleGdbBreakpointCommand (QString breakpoint, QString command) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    qDebug().noquote() << "XXX: " << breakpoint << command;
+
+    handleGdbCommand("-break-commands " + breakpoint + " \"" + command + "\"");
+    handleGdbGenericpointList();
+}
+
 void SeerGdbWidget::handleGdbBreakpointCommands (QString breakpoint, QStringList commands) {
 
     if (executableLaunchMode() == "") {
@@ -2186,13 +2156,17 @@ void SeerGdbWidget::handleGdbPrintpointDisable (QString printpoints) {
     handleGdbGenericpointList();
 }
 
-void SeerGdbWidget::handleGdbPrintpointInsert (QString printpoint) {
+void SeerGdbWidget::handleGdbPrintpointInsert (QString type, QString function, QString channel, QString parameters) {
 
     if (executableLaunchMode() == "") {
         return;
     }
 
-    handleGdbCommand("-dprintf-insert " + printpoint);
+    handleGdbCommand("-gdb-set dprintf-style "    + type);
+    handleGdbCommand("-gdb-set dprintf-function " + function);
+    handleGdbCommand("-gdb-set dprintf-channel "  + channel);
+
+    handleGdbCommand("-dprintf-insert " + parameters);
     handleGdbGenericpointList();
 }
 
@@ -3092,17 +3066,6 @@ void SeerGdbWidget::readSettings () {
     settings.beginGroup("seeroutputlog"); {
         setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
     } settings.endGroup();
-}
-
-void SeerGdbWidget::resetDprintf () {
-
-    if (isGdbRuning() == false) {
-        return;
-    }
-
-    handleGdbCommand("-gdb-set dprintf-style "    + dprintfStyle());
-    handleGdbCommand("-gdb-set dprintf-function " + dprintfFunction());
-    handleGdbCommand("-gdb-set dprintf-channel "  + dprintfChannel());
 }
 
 bool SeerGdbWidget::isGdbRuning () const {

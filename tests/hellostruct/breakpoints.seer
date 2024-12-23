@@ -1,0 +1,8 @@
+watch argc
+disable $bpnum
+rwatch argc
+  ignore $bpnum 3
+awatch argc
+  commands
+    print argc
+  end

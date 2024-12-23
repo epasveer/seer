@@ -1,0 +1,5 @@
+tvariable $trace_timestamp
+trace /nas/erniep/Development/seer/tests/helloworld/helloworld.cpp:19
+  commands
+    collect i, argc, argv[i]
+  end
