@@ -1,4 +1,5 @@
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerHelpPageDialog.h"
 #include <QtCore/QDebug>
 
 SeerPrintpointCreateDialog::SeerPrintpointCreateDialog (QWidget* parent) : QDialog(parent) {
@@ -35,6 +36,7 @@ SeerPrintpointCreateDialog::SeerPrintpointCreateDialog (QWidget* parent) : QDial
     QObject::connect(ignoreCountCheckBox, &QCheckBox::clicked,              ignoreCountLineEdit,  &QLineEdit::setEnabled);
     QObject::connect(threadIdCheckBox,    &QCheckBox::clicked,              threadIdLineEdit,     &QLineEdit::setEnabled);
     QObject::connect(typeButtonGroup,     &QButtonGroup::buttonClicked,     this,                 &SeerPrintpointCreateDialog::handleDprintfTypeChanged);
+    QObject::connect(typeHelpToolButton,  &QToolButton::clicked,            this,                 &SeerPrintpointCreateDialog::handleHelpToolButtonClicked);
 }
 
 SeerPrintpointCreateDialog::~SeerPrintpointCreateDialog () {
@@ -306,5 +308,13 @@ QString SeerPrintpointCreateDialog::printpointParameters () const {
 
 void SeerPrintpointCreateDialog::handleDprintfTypeChanged () {
     setDPrintfType(dprintfType());
+}
+
+void SeerPrintpointCreateDialog::handleHelpToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/Printpoints.md");
+    help->show();
+    help->raise();
 }
 

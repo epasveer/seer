@@ -65,6 +65,9 @@ class SeerPrintpointCreateDialog : public QDialog, protected Ui::SeerPrintpointC
     public slots:
         void            handleDprintfTypeChanged    ();
 
+    private slots:
+        void            handleHelpToolButtonClicked ();
+
     private:
 };
 
