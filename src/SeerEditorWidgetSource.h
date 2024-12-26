@@ -132,6 +132,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        contextMenuEvent                    (QContextMenuEvent* event);
         void                                        mouseReleaseEvent                   (QMouseEvent* event);
         bool                                        event                               (QEvent* event);
+        void                                        showExpressionTooltip               ();
+        void                                        hideExpressionTooltip               ();
 
     private slots:
         void                                        refreshExtraSelections              ();
