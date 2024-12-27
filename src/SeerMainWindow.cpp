@@ -885,6 +885,26 @@ void SeerMainWindow::handleText (const QString& text) {
             return;
         }
 
+        if (msg_text.startsWith("\"A syntax error in expression, near")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Invalid character ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"No symbol ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Problem parsing arguments: data-evaluate-expression")) {
+            return;
+        }
+
+        if (msg_text == "\"Attempt to use a type name as an expression\"") {
+            return;
+        }
+
         gdbWidget->addMessage(Seer::filterEscapes(msg_text), QMessageBox::Warning);
 
         return;

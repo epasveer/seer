@@ -27,6 +27,8 @@
 * Fixed regression when adding commands to a breakpoint.
 * Refactored/improved Printpoints. Added 'help' to the
   Printpoint create dialog.
+* Fixed regression when display variable value when hovering over
+  the text in the editor window.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.
