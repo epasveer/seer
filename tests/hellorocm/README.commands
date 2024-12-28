@@ -1,0 +1,13 @@
+    $ hipcc simple.cpp -g -O0 -o simple
+    $ ./simple 
+
+
+    $ roc-obj-ls simple
+    $ rocm-smi --showdriverversion
+    $ /opt/rocm/bin/rocminfo | grep gfx
+    $ sudo /opt/rocm/bin/rocminfo --support
+
+    $ export HIP_ENABLE_DEFERRED_LOADING=0
+    $ export AMD_LOG_LEVEL=3
+    $ /usr/local/bin/seergdb --gdb-program=/usr/bin/rocgdb -s ./simple
+
