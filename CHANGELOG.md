@@ -1,8 +1,7 @@
 
 # Seer Change Log
 
-## [2.5beta] - 2024-XX-XX
-* Starting the 2.5 development cycle.
+## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
 * Console can be started in these modes:
     - Detached
