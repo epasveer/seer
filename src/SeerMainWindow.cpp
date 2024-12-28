@@ -668,9 +668,6 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
-    dlg.setDprintfStyle(gdbWidget->dprintfStyle());
-    dlg.setDprintfFunction(gdbWidget->dprintfFunction());
-    dlg.setDprintfChannel(gdbWidget->dprintfChannel());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
@@ -714,9 +711,6 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
-    gdbWidget->setDprintfStyle(dlg.dprintfStyle());
-    gdbWidget->setDprintfFunction(dlg.dprintfFunction());
-    gdbWidget->setDprintfChannel(dlg.dprintfChannel());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
@@ -747,9 +741,6 @@ void SeerMainWindow::handleSettingsConfiguration () {
     if (clearManualCommandHistory) {
         gdbWidget->clearManualCommandHistory();
     }
-
-    // Reset the dprintf, in case it was changed.
-    gdbWidget->resetDprintf();
 
     // Set the key shortcuts.
     setKeySettings(dlg.keySettings());
@@ -891,6 +882,26 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         if (msg_text == "\"No symbol \"disassembly\" in current context.\"") {
+            return;
+        }
+
+        if (msg_text.startsWith("\"A syntax error in expression, near")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Invalid character ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"No symbol ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Problem parsing arguments: data-evaluate-expression")) {
+            return;
+        }
+
+        if (msg_text == "\"Attempt to use a type name as an expression\"") {
             return;
         }
 
@@ -1284,12 +1295,6 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("gdbarguments",               gdbWidget->rrGdbArguments());
     } settings.endGroup();
 
-    settings.beginGroup("printpoints"); {
-        settings.setValue("style",    gdbWidget->dprintfStyle());
-        settings.setValue("function", gdbWidget->dprintfFunction());
-        settings.setValue("channel",  gdbWidget->dprintfChannel());
-    } settings.endGroup();
-
     settings.beginGroup("editor"); {
 
         settings.setValue("font",    gdbWidget->editorManager()->editorFont().toString());
@@ -1364,12 +1369,6 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
         gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
         gdbWidget->setRRGdbArguments(settings.value("gdbarguments", "").toString());
-    } settings.endGroup();
-
-    settings.beginGroup("printpoints"); {
-        gdbWidget->setDprintfStyle(settings.value("style", "gdb").toString());
-        gdbWidget->setDprintfFunction(settings.value("function", "printf").toString());
-        gdbWidget->setDprintfChannel(settings.value("channel", "").toString());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {

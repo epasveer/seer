@@ -102,7 +102,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
-        void                                        insertPrintpoint                    (QString printpoint);
+        void                                        insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
         void                                        deleteBreakpoints                   (QString breakpoints);
         void                                        enableBreakpoints                   (QString breakpoints);
         void                                        disableBreakpoints                  (QString breakpoints);
@@ -132,6 +132,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        contextMenuEvent                    (QContextMenuEvent* event);
         void                                        mouseReleaseEvent                   (QMouseEvent* event);
         bool                                        event                               (QEvent* event);
+        void                                        showExpressionTooltip               ();
+        void                                        hideExpressionTooltip               ();
 
     private slots:
         void                                        refreshExtraSelections              ();

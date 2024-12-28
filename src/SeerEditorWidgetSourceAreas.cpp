@@ -509,14 +509,7 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
             QString word = cursor.selectedText();
 
             if (word.isEmpty() == true) {
-
-                QToolTip::hideText();
-
-                _selectedExpressionCursor   = QTextCursor();
-                _selectedExpressionPosition = QPoint();
-                _selectedExpressionName     = "";
-                _selectedExpressionValue    = "";
-
+                hideExpressionTooltip();
                 break;
             }
 
@@ -526,19 +519,30 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
                 // Same word as before? Display the tooltip value.
                 if (word == _selectedExpressionName) {
 
-                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
+                    // If the tooltip is already visible, refreshen it with
+                    // the same value, possibly at a new postion.
+                    if (QToolTip::isVisible()) {
+                        _selectedExpressionPosition = helpEvent->globalPos();
+
+                        showExpressionTooltip();
+
+                    // If not already visible, refreshen its value.
+                    }else{
+                        emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
+                    }
 
                 // Otherwise, hide any old one.
                 }else{
-                    QToolTip::hideText();
+                    hideExpressionTooltip();
                 }
 
             // Otherwise it's a different spot. Create a new request to get the variable's value.
             }else{
-                QToolTip::hideText();
+
+                hideExpressionTooltip();
 
                 _selectedExpressionCursor   = cursor;
-                _selectedExpressionPosition = helpEvent->pos();
+                _selectedExpressionPosition = helpEvent->globalPos();
                 _selectedExpressionName     = word;
                 _selectedExpressionValue    = "";
 
@@ -553,6 +557,24 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
 
     // Pass any others to the base class.
     return QPlainTextEdit::event(event);
+}
+
+void SeerEditorWidgetSourceArea::showExpressionTooltip () {
+
+    // qDebug() << "Tooltip:" << _selectedExpressionPosition << _selectedExpressionName << _selectedExpressionValue;
+
+    QToolTip::hideText();
+    QToolTip::showText(_selectedExpressionPosition, _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
+}
+
+void SeerEditorWidgetSourceArea::hideExpressionTooltip () {
+
+    QToolTip::hideText();
+
+    _selectedExpressionCursor   = QTextCursor();
+    _selectedExpressionPosition = QPoint();
+    _selectedExpressionName     = "";
+    _selectedExpressionValue    = "";
 }
 
 void SeerEditorWidgetSourceArea::refreshExtraSelections () {
@@ -1259,8 +1281,19 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
+        // Build a printpoint specification.
+        QString type       = dlg.dprintfType();
+        QString function   = dlg.dprintfFunction();
+        QString channel    = dlg.dprintfChannel();
+        QString parameters = dlg.printpointParameters();
+
+        // If nothing, just return.
+        if (parameters == "" || type == "") {
+            return;
+        }
+
         // Emit the create breakpoint signal.
-        emit insertPrintpoint(dlg.printpointText());
+        emit insertPrintpoint(type, function, channel, parameters);
 
         return;
     }
@@ -1733,6 +1766,8 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         if (id_text.toInt() == _selectedExpressionId) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
+
+            showExpressionTooltip();
         }
 
         return;

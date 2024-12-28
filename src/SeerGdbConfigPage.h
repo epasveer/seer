@@ -28,18 +28,9 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         void                    setGdbRandomizeStartAddress                     (bool flag);
         void                    setGdbEnablePrettyPrinting                      (bool flag);
 
-        QString                 dprintfStyle                                    () const;
-        QString                 dprintfFunction                                 () const;
-        QString                 dprintfChannel                                  () const;
-
-        void                    setDprintfStyle                                 (const QString& style);
-        void                    setDprintfFunction                              (const QString& function);
-        void                    setDprintfChannel                               (const QString& channel);
-
         void                    reset                                           ();
 
     protected slots:
         void                    handleGdbProgramToolButton                      ();
-        void                    handleDprintfButtonGroup                        ();
 };
 
