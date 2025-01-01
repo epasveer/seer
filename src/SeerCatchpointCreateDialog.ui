@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>297</height>
+    <width>538</width>
+    <height>302</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -178,6 +178,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>throwRadioButton</tabstop>
+  <tabstop>loadRadioButton</tabstop>
+  <tabstop>adaAssertRadioButton</tabstop>
+  <tabstop>rethrowRadioButton</tabstop>
+  <tabstop>unloadRadioButton</tabstop>
+  <tabstop>adaExceptionRadioButton</tabstop>
+  <tabstop>catchRadioButton</tabstop>
+  <tabstop>adaHandlersRadioButton</tabstop>
+  <tabstop>temporaryCheckBox</tabstop>
+  <tabstop>disabledCheckBox</tabstop>
+  <tabstop>nameLineEdit</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

@@ -13,6 +13,8 @@ SeerCatchpointCreateDialog::SeerCatchpointCreateDialog (QWidget* parent) : QDial
     setTemporaryEnabled(false);
     setDisabledEnabled(false);
 
+    throwRadioButton->setFocus();
+
     // Connect things.
 }
 

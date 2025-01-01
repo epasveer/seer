@@ -31,6 +31,8 @@ SeerPrintpointCreateDialog::SeerPrintpointCreateDialog (QWidget* parent) : QDial
     setDPrintfFunction ("");
     setDPrintfChannel ("");
 
+    filenameLineEdit->setFocus();
+
     // Connect things.
     QObject::connect(conditionalCheckBox, &QCheckBox::clicked,              conditionalLineEdit,  &QLineEdit::setEnabled);
     QObject::connect(ignoreCountCheckBox, &QCheckBox::clicked,              ignoreCountLineEdit,  &QLineEdit::setEnabled);
