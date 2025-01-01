@@ -17,6 +17,8 @@ SeerWatchpointCreateDialog::SeerWatchpointCreateDialog (QWidget* parent) : QDial
     setReadWriteAccessEnabled(false);
     setWriteAccessEnabled(true);
 
+    expressionLineEdit->setFocus();
+
     // Connect things.
 }
 
