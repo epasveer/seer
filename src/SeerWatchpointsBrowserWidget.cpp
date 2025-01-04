@@ -150,7 +150,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                 QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
                 QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
-                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '[', ']', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
                 // Only look for 'watchpoint' type break points.
