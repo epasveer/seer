@@ -3,6 +3,7 @@
 
 ## [2.6beta] - 2025-XX-XX
 * Starting version 2.6 development cycle.
+* Fixed regression when adding commands to a watchpoint.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
