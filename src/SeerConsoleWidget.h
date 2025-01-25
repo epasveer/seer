@@ -15,9 +15,12 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         explicit SeerConsoleWidget (QWidget* parent = 0);
        ~SeerConsoleWidget ();
 
-        const QString&      ttyDeviceName               () const;
+        void                createConsole               ();
+        void                deleteConsole               ();
         void                connectConsole              ();
         void                disconnectConsole           ();
+        bool                isConsoleConnected          () const;
+        const QString&      ttyDeviceName               () const;
 
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
@@ -46,8 +49,6 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
 
     protected:
         void                handleText                  (const char* buffer, int count);
-        void                createConsole               ();
-        void                deleteConsole               ();
         void                writeSettings               ();
         void                writeFontSettings           ();
         void                writeSizeSettings           ();

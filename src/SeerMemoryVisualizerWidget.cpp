@@ -83,15 +83,16 @@ void SeerMemoryVisualizerWidget::setVariableName (const QString& name) {
     variableNameLineEdit->setText(name);
     setVariableAddress("");
 
-    if (variableNameLineEdit->text() == "") {
-        return;
-    }
-
     // Clear old contents.
     QByteArray array;
 
     memoryHexEditor->setData(new SeerHexWidget::DataStorageArray(array));
     memoryAsmEditor->setData("");
+
+    // Do nothing if there's no variable name.
+    if (variableNameLineEdit->text() == "") {
+        return;
+    }
 
     // Send signal to get variable address.
     emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
@@ -165,8 +166,6 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    //qDebug() << text;
-
     if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
         // 11^done,value="1"
@@ -221,8 +220,6 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _memoryId) {
 
-            //qDebug() << text;
-
             QString memory_text = Seer::parseFirst(text, "memory=", '[', ']', false);
 
             QStringList range_list = Seer::parse(memory_text, "", '{', '}', false);
@@ -275,9 +272,11 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             // Display the error message.
             QString msg_text = Seer::parseFirst(text, "msg=", false);
 
+            /* XXX
             if (msg_text != "") {
                 QMessageBox::warning(this, "Error.", Seer::filterEscapes(msg_text));
             }
+            */
         }
 
         if (id_text.toInt() == _memoryLengthId) {
@@ -296,6 +295,11 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
         if (autoRefreshCheckBox->isChecked()) {
             handleRefreshButton();
         }
+
+    // End of program. Clear everything as it will be out of date.
+    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+        setVariableName("");
+        setMemoryLength("");
 
     }else{
         // Ignore anything else.
