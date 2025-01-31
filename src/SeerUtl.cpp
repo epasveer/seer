@@ -4,6 +4,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QRegularExpressionMatch>
+#include <QtCore/QByteArray>
 
 #include <mutex>
 
@@ -710,7 +711,9 @@ namespace Seer {
         return false;
     }
 
-
+    bool hasWildcards (const QString& str) {
+        return (str.indexOf('*') >= 0) || (str.indexOf('?') >= 0);
+    }
 
     QString elideText (const QString& str, Qt::TextElideMode mode, int length) {
 

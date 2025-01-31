@@ -27,6 +27,7 @@ namespace Seer {
     QStringList                 quoteChars          (const QStringList& strings, const QString& chars);
     QString                     varObjParent        (const QString& str);
     bool                        matchesWildcard     (const QStringList& regexpatterns, const QString& string);
+    bool                        hasWildcards        (const QString& str);
     QString                     elideText           (const QString& str, Qt::TextElideMode mode, int length);
     QStringList                 split               (const QString& str);
     QString                     unescape            (const QString& str);

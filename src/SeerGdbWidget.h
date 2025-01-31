@@ -414,5 +414,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         QVector<int>                        _dataExpressionId;
         QVector<QString>                    _dataExpressionName;
+
+        QStringList                         _ignoreFilePatterns;
 };
 
