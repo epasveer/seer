@@ -70,6 +70,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
 
+    setIsQuitting(false);
     setNewExecutableFlag(true);
 
     setupUi(this);
@@ -140,6 +141,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore tab ordering.
     readLogsSettings();
+
+    // Handle the app's 'quit' event, in case we want to do things before exiting.
+    QObject::connect(QCoreApplication::instance(),                              &QCoreApplication::aboutToQuit,                                                             this,                                                           &SeerGdbWidget::handleAboutToQuit);
 
     // Connect things.
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
@@ -363,6 +367,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
+
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -693,12 +698,22 @@ void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
     Q_UNUSED(from);
     Q_UNUSED(to);
 
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
+
     writeLogsSettings();
 }
 
 void SeerGdbWidget::handleLogsTabChanged (int index) {
 
     Q_UNUSED(index);
+
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
 
     writeLogsSettings();
 }
@@ -725,8 +740,8 @@ void SeerGdbWidget::writeLogsSettings () {
 
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
 
-    qDebug() << "Tabs"    << tabs;
-    qDebug() << "Current" << current;
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
 
     QSettings settings;
 
@@ -2001,8 +2016,6 @@ void SeerGdbWidget::handleGdbBreakpointCommand (QString breakpoint, QString comm
         return;
     }
 
-    qDebug().noquote() << "XXX: " << breakpoint << command;
-
     handleGdbCommand("-break-commands " + breakpoint + " \"" + command + "\"");
     handleGdbGenericpointList();
 }
@@ -2859,6 +2872,12 @@ void SeerGdbWidget::handleConsoleModeChanged () {
     }
 }
 
+void SeerGdbWidget::handleAboutToQuit () {
+
+    // Detect if we're exiting Seer.
+    setIsQuitting(true);
+}
+
 void SeerGdbWidget::writeSettings () {
 
     //qDebug() << "Write Settings";
@@ -3070,6 +3089,14 @@ void SeerGdbWidget::readSettings () {
     } settings.endGroup();
 }
 
+bool SeerGdbWidget::isQuitting () const {
+    return _isQuitting;
+}
+
+void SeerGdbWidget::setIsQuitting (bool f) {
+    _isQuitting = f;
+}
+
 bool SeerGdbWidget::isGdbRuning () const {
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
@@ -3237,8 +3264,6 @@ void SeerGdbWidget::createConsole () {
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
-
-        writeLogsSettings();
     }
 }
 

@@ -359,7 +359,7 @@ void SeerConsoleWidget::deleteConsole () {
 void SeerConsoleWidget::connectConsole () {
 
     if (isConsoleConnected()) {
-        qDebug() << "Console is already connected!";
+        //qDebug() << "Console is already connected!";
         return;
     }
 
@@ -376,7 +376,7 @@ void SeerConsoleWidget::connectConsole () {
 void SeerConsoleWidget::disconnectConsole () {
 
     if (isConsoleConnected() == false) {
-        qDebug() << "Console is already disconnected!";
+        //qDebug() << "Console is already disconnected!";
         return;
     }
 

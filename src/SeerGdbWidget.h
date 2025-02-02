@@ -334,6 +334,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
 
         void                                handleConsoleModeChanged            ();
+        void                                handleAboutToQuit                   ();
 
     signals:
         void                                stoppingPointReached                ();
@@ -346,6 +347,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                readLogsSettings                    ();
 
     private:
+        bool                                isQuitting                          () const;
+        void                                setIsQuitting                       (bool f);
+
         bool                                isGdbRuning                         () const;
         bool                                startGdb                            ();
         bool                                startGdbRR                          ();
@@ -357,6 +361,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
 
+        bool                                _isQuitting;
         QString                             _gdbProgram;
         QString                             _gdbArguments;
         QString                             _gdbProgramOverride;
