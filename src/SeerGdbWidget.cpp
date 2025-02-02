@@ -100,6 +100,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
+    // Create the console.
+    createConsole();
+
     // Create editor options bar.
     QToolButton* breakpointsLoadToolButton = new QToolButton(logsTabWidget);
     breakpointsLoadToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
@@ -722,8 +725,8 @@ void SeerGdbWidget::writeLogsSettings () {
 
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
 
-    //qDebug() << "Tabs"    << tabs;
-    //qDebug() << "Current" << current;
+    qDebug() << "Tabs"    << tabs;
+    qDebug() << "Current" << current;
 
     QSettings settings;
 
@@ -916,11 +919,10 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
         _executableBreakMode = breakMode;
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
@@ -931,6 +933,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            // Connect to the console.
+            connectConsole();
 
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
@@ -1057,14 +1062,14 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
 
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -1134,14 +1139,14 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -1228,13 +1233,10 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
-        // Delete the old gdb and console if there is a new executable
-        // Create a new console.
+        // Disconnect from the console and delete the old gdb, then reconnect.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
-            createConsole();
+            killGdb();
             connectConsole();
         }
 
@@ -1338,14 +1340,14 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         QApplication::setOverrideCursor(Qt::BusyCursor);
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb. No need to reconnect.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -3220,8 +3222,6 @@ void SeerGdbWidget::killGdb () {
 }
 
 void SeerGdbWidget::createConsole () {
-
-    deleteConsole(); // Delete old console, if any.
 
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);

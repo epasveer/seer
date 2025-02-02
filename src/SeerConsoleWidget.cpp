@@ -53,9 +53,8 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
-    // Create psuedo terminal for console.
+    // Create psuedo terminal for console. Don't connect to it yet.
     createConsole();
-    connectConsole();
 
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
@@ -71,12 +70,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 }
 
 SeerConsoleWidget::~SeerConsoleWidget () {
-    disconnectConsole();
-    deleteConsole();
-}
-
-const QString& SeerConsoleWidget::ttyDeviceName () const {
-    return _ttyDeviceName;
+    deleteConsole(); // Will disconnect console first befor deleting.
 }
 
 void SeerConsoleWidget::handleText (const char* buffer, int count) {
@@ -246,10 +240,6 @@ void SeerConsoleWidget::handleStdinLineEdit () {
 
     QString str = stdinLineEdit->text();
 
-    if (str == "") {
-        return;
-    }
-
     stdinLineEdit->clear();
 
     str += '\n';
@@ -353,11 +343,28 @@ void SeerConsoleWidget::createConsole () {
     setScrollLines(0);
 }
 
-void SeerConsoleWidget::connectConsole () {
+void SeerConsoleWidget::deleteConsole () {
 
     disconnectConsole();
 
+    _ttyDeviceName = "";
+
     if (_ptsFD < 0) {
+        return;
+    }
+
+    ::close(_ptsFD); _ptsFD = -1;
+}
+
+void SeerConsoleWidget::connectConsole () {
+
+    if (isConsoleConnected()) {
+        qDebug() << "Console is already connected!";
+        return;
+    }
+
+    if (_ptsFD < 0) {
+        qDebug() << "Can't connect Console. No _ptsFD!";
         return;
     }
 
@@ -368,23 +375,27 @@ void SeerConsoleWidget::connectConsole () {
 
 void SeerConsoleWidget::disconnectConsole () {
 
-    if (_ptsListener) {
-
-        QObject::disconnect(_ptsListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleConsoleOutput);
-
-        delete _ptsListener; _ptsListener = 0;
-    }
-}
-
-void SeerConsoleWidget::deleteConsole () {
-
-    if (_ptsFD < 0) {
+    if (isConsoleConnected() == false) {
+        qDebug() << "Console is already disconnected!";
         return;
     }
 
-    _ttyDeviceName = "";
+    QObject::disconnect(_ptsListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleConsoleOutput);
 
-    ::close(_ptsFD); _ptsFD = -1;
+    delete _ptsListener; _ptsListener = 0;
+}
+
+bool SeerConsoleWidget::isConsoleConnected () const {
+
+    if (_ptsListener != nullptr) {
+        return true;
+    }
+
+    return false;
+}
+
+const QString& SeerConsoleWidget::ttyDeviceName () const {
+    return _ttyDeviceName;
 }
 
 void SeerConsoleWidget::setScrollLines (int count) {

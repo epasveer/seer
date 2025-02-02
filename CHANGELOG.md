@@ -4,6 +4,7 @@
 ## [2.6beta] - 2025-XX-XX
 * Starting version 2.6 development cycle.
 * Fixed regression when adding commands to a watchpoint.
+* Create console once per Seer session. Instead of constant create/destroy.
 * Fixed regression when ignoring files to be opened in the
   EditorManager.
 
