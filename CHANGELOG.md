@@ -7,6 +7,8 @@
 * Create console once per Seer session. Instead of constant create/destroy.
 * Fixed regression when ignoring files to be opened in the
   EditorManager.
+* Fixed regression when order of message tabs not being preserved between
+  sessions.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.

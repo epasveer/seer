@@ -1005,10 +1005,13 @@ void SeerMainWindow::handleText (const QString& text) {
 
         return;
 
+    }else if (text == "^connected") {
+        //^connected
+        return;
+
     }else if (text.startsWith("^connected,frame=")) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
-
 
     }else if (text.startsWith("*stopped")) {
 

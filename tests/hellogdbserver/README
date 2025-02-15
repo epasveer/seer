@@ -1,0 +1,18 @@
+Notes for debugging hellogdbserver with Seer.
+
+In one terminal, start gdbserver.
+
+    $ gdbserver :1234 hellogdbserver
+
+In another terminal, start Seer with the project file.
+
+    $ /usr/local/bin/seergdb -xxx -s --project project.seer
+
+
+When exiting Seer, make sure to enter this command into the
+gdb command field. Otherwise, the gdbserver process will hang
+and you will need to 'kill -9' the gdbserver process.
+
+    (gdb) monitor exit
+
+

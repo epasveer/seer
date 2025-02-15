@@ -70,6 +70,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
 
+    setIsQuitting(false);
     setNewExecutableFlag(true);
 
     setupUi(this);
@@ -140,6 +141,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore tab ordering.
     readLogsSettings();
+
+    // Handle the app's 'quit' event, in case we want to do things before exiting.
+    QObject::connect(QCoreApplication::instance(),                              &QCoreApplication::aboutToQuit,                                                             this,                                                           &SeerGdbWidget::handleAboutToQuit);
 
     // Connect things.
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
@@ -363,6 +367,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
+
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -688,10 +693,21 @@ void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messag
     _messagesBrowserWidget->addMessage(message, messageType);
 }
 
-void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
+void SeerGdbWidget::handleLogsTabMoved (int to, int from) {
 
     Q_UNUSED(from);
     Q_UNUSED(to);
+
+    // Keep track of console tab if it moved.
+    if (_consoleIndex == from) {
+        qDebug() << "Console tab index changed from" << from << "to" << to;
+        _consoleIndex = to;
+    }
+
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
 
     writeLogsSettings();
 }
@@ -699,6 +715,11 @@ void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
 void SeerGdbWidget::handleLogsTabChanged (int index) {
 
     Q_UNUSED(index);
+
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
 
     writeLogsSettings();
 }
@@ -725,8 +746,8 @@ void SeerGdbWidget::writeLogsSettings () {
 
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
 
-    qDebug() << "Tabs"    << tabs;
-    qDebug() << "Current" << current;
+    //qDebug() << "Tabs"    << tabs;
+    //qDebug() << "Current" << current;
 
     QSettings settings;
 
@@ -772,6 +793,19 @@ void SeerGdbWidget::readLogsSettings () {
         if (tb != -1) {
             logsTabWidget->tabBar()->moveTab(tb, i);
         }
+    }
+
+    // Find the console tab index.
+    _consoleIndex = -1;
+    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
+        if (logsTabWidget->tabBar()->tabText(i) == "Console output") {
+            _consoleIndex = i;
+            break;
+        }
+    }
+
+    if (_consoleIndex < 0) {
+        qDebug() << "The console tab index is not in the settings.";
     }
 
     // Make a tab current.
@@ -1085,9 +1119,10 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'attach' mode.
+        // No console for 'attach' mode but make sure it's reattached.
         setExecutableLaunchMode("attach");
         setGdbRecordMode("");
+        reattachConsole();
 
         // Load ithe executable, if needed.
         if (newExecutableFlag() == true) {
@@ -1158,10 +1193,11 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'connect' mode.
+        // No console for 'connect' mode but make sure it's reattached.
         setExecutableLaunchMode("connect");
         setGdbRecordMode("");
         setExecutablePid(0);
+        reattachConsole();
 
         // Connect to the remote gdbserver.
         handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
@@ -1363,10 +1399,11 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'core' mode.
+        // No console for 'core' mode but make sure it's reattached.
         setExecutableLaunchMode("corefile");
         setGdbRecordMode("");
         setExecutablePid(0);
+        reattachConsole();
 
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
@@ -2000,8 +2037,6 @@ void SeerGdbWidget::handleGdbBreakpointCommand (QString breakpoint, QString comm
     if (executableLaunchMode() == "") {
         return;
     }
-
-    qDebug().noquote() << "XXX: " << breakpoint << command;
 
     handleGdbCommand("-break-commands " + breakpoint + " \"" + command + "\"");
     handleGdbGenericpointList();
@@ -2859,6 +2894,12 @@ void SeerGdbWidget::handleConsoleModeChanged () {
     }
 }
 
+void SeerGdbWidget::handleAboutToQuit () {
+
+    // Detect if we're exiting Seer.
+    setIsQuitting(true);
+}
+
 void SeerGdbWidget::writeSettings () {
 
     //qDebug() << "Write Settings";
@@ -3070,6 +3111,14 @@ void SeerGdbWidget::readSettings () {
     } settings.endGroup();
 }
 
+bool SeerGdbWidget::isQuitting () const {
+    return _isQuitting;
+}
+
+void SeerGdbWidget::setIsQuitting (bool f) {
+    _isQuitting = f;
+}
+
 bool SeerGdbWidget::isGdbRuning () const {
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
@@ -3237,8 +3286,6 @@ void SeerGdbWidget::createConsole () {
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
-
-        writeLogsSettings();
     }
 }
 
@@ -3273,6 +3320,21 @@ void SeerGdbWidget::disconnectConsole () {
     if (_consoleWidget) {
         _consoleWidget->disconnectConsole();
     }
+}
+
+void SeerGdbWidget::reattachConsole () {
+
+     if (_consoleIndex < 0) {
+        return;
+    }
+
+    if (_consoleWidget == nullptr) {
+        return;
+    }
+
+    _consoleMode = "attached";
+
+    logsTabWidget->reattachTab(_consoleIndex);
 }
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {

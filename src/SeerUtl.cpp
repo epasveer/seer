@@ -6,6 +6,13 @@
 #include <QtCore/QRegularExpressionMatch>
 #include <QtCore/QByteArray>
 
+// Comment out for now. I don't want to include boost because
+// that would impact people try to compile Seer. Qt6 offer
+// a 'stacktrace' function. OpenSuse may be slow in adoption.
+// For now, comment it out and use when needed.
+// #include <boost/stacktrace.hpp>
+
+#include <iostream>
 #include <mutex>
 
 //
@@ -1257,6 +1264,12 @@ namespace Seer {
         }
 
         return result;
+    }
+
+    void printStackTrace () {
+        // Capture and print the stack trace using Boost.Stacktrace.
+        // See comments at top.
+        // std::cout << "Stack trace:\n" << boost::stacktrace::stacktrace() << std::endl;
     }
 }
 
