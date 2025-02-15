@@ -1,0 +1,26 @@
+{
+    "seerproject": {
+        "executable": "helloskip",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            "skip -fu \"std::vector<int, std::allocator<int> >::back()\"",
+            "skip -fu \"std::unique_ptr<int, std::default_delete<int> >::operator*() const\"",
+            "info skip"
+        ],
+        "runmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": false,
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/helloskip/breakpoints.seer",
+            "nobreak": true,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}
