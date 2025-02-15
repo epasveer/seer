@@ -194,7 +194,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                readSettings                        ();
 
     public slots:
-        void                                handleLogsTabMoved                  (int from, int to);
+        void                                handleLogsTabMoved                  (int to, int from);
         void                                handleLogsTabChanged                (int index);
         void                                handleRaiseMessageTab               ();
 
@@ -358,6 +358,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                deleteConsole                       ();
         void                                connectConsole                      ();
         void                                disconnectConsole                   ();
+        void                                reattachConsole                     ();
         SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
 
