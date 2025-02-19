@@ -1,0 +1,48 @@
+
+Online doc for writing mi commands in python.
+
+    https://sourceware.org/gdb/current/onlinedocs/gdb.html/GDB_002fMI-Commands-In-Python.html#GDB_002fMI-Commands-In-Python
+    https://sourceware.org/gdb/current/onlinedocs/gdb.html/Basic-Python.html#Basic-Python
+
+The following code snippet shows how some trivial MI commands can be implemented in Python:
+
+    class MISkip(gdb.MICommand):
+        """Run the 'skip' command."""
+
+        def __init__(self, name, mode):
+            self._mode = mode
+            super(MISkip, self).__init__(name)
+
+        def invoke(self, argv):
+            if self._mode == 'dict':
+                return { 'dict': { 'argv' : argv } }
+            elif self._mode == 'list':
+                return { 'list': gdb.execute ("info skip", to_string=True) }
+            else:
+                return { 'string': ", ".join(argv) }
+
+
+MISkip("-skip-list", "list")
+
+The last line instantiate the class, creating one new GDB/MI commands -skip-list.
+Each time a subclass of gdb.MICommand is instantiated, the new command is automatically registered with GDB.
+
+Source the py file at the gdb prompt.
+
+    (gdb) source MISkip.py
+
+    Depending on how the Python code is read into GDB, you may need to import the gdb module explicitly.
+
+The following example shows a GDB session in which the above commands have been added:
+
+    (gdb)
+    -skip-list
+    ^done,list="Num   Enb Glob File                 RE Functionn1     y      n <none>                n std::vector<int, std::allocator<int> >::back()n2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() constn"
+
+Run Seer this way:
+
+    $ /usr/local/bin/seergdb --project=project.seer
+
+[ ] The return string has 'n' characters but I think they should be '\n'
+[ ] Handle the parsing of the return string and return a python table.
+
