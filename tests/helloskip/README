@@ -39,10 +39,14 @@ The following example shows a GDB session in which the above commands have been 
     -skip-list
     ^done,list="Num   Enb Glob File                 RE Functionn1     y      n <none>                n std::vector<int, std::allocator<int> >::back()n2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() constn"
 
+    ^done,list="Num   Enb Glob File                 RE Functionn
+                1     y      n <none>                n std::vector<int, std::allocator<int> >::back()n
+                2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() constn"
+
 Run Seer this way:
 
     $ /usr/local/bin/seergdb --project=project.seer
 
-[ ] The return string has 'n' characters but I think they should be '\n'
+[ ] The return string has 'n' characters but I think they should be '\n'.  Seer parsing bug with escaped '\n'????
 [ ] Handle the parsing of the return string and return a python table.
 
