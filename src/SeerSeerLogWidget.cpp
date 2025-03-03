@@ -43,10 +43,11 @@ void SeerSeerLogWidget::processText (const QString& text) {
         return;
     }
 
+    // Don't call this. It removes extra '\' characters. Probably not needed for the Seer log.
     // Filter escape characters.
-    QString str = Seer::filterEscapes(text);
+    // QString str = Seer::filterEscapes(text);
 
     // Write the string to the log.
-    textEdit->append(str);
+    textEdit->append(text);
 }
 
