@@ -1,7 +1,8 @@
 {
     "seerproject": {
         "connectmode": {
-            "gdbserver": ":1234"
+            "gdbserver": ":1234",
+            "targettype": "extended-remote"
         },
         "executable": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver",
         "postgdbcommands": [

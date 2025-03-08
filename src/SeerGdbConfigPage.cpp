@@ -53,6 +53,11 @@ bool SeerGdbConfigPage::gdbEnablePrettyPrinting () const {
     return gdbEnablePrettyPrintingCheckBox->isChecked();
 }
 
+QString SeerGdbConfigPage::gdbRemoteTargetType () const {
+
+    return gdbRemoteTargetTypeCombo->currentText();
+}
+
 void SeerGdbConfigPage::setGdbProgram (const QString& program) {
 
     gdbProgramLineEdit->setText(program);
@@ -86,6 +91,11 @@ void SeerGdbConfigPage::setGdbRandomizeStartAddress (bool flag) {
 void SeerGdbConfigPage::setGdbEnablePrettyPrinting (bool flag) {
 
     gdbEnablePrettyPrintingCheckBox->setChecked(flag);
+}
+
+void SeerGdbConfigPage::setGdbRemoteTargetType (const QString& type) {
+
+    gdbRemoteTargetTypeCombo->setCurrentText(type);
 }
 
 void SeerGdbConfigPage::reset () {

@@ -64,6 +64,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
     _gdbEnablePrettyPrinting            = true;
+    _gdbRemoteTargetType                = "extended-remote";
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
     _consoleScrollLines                 = 1000;
@@ -646,6 +647,16 @@ bool SeerGdbWidget::gdbEnablePrettyPrinting () const {
     return _gdbEnablePrettyPrinting;
 }
 
+void SeerGdbWidget::setGdbRemoteTargetType (const QString& type) {
+
+    _gdbRemoteTargetType = type;
+}
+
+QString SeerGdbWidget::gdbRemoteTargetType () const {
+
+    return _gdbRemoteTargetType;
+}
+
 void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
 
     _gdbRecordMode = mode;
@@ -1199,12 +1210,16 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         setExecutablePid(0);
         reattachConsole();
 
-        // Connect to the remote gdbserver.
-        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
-
-        // Load ithe executable, if needed.
+        // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+        }
+
+        // Connect to the remote gdbserver using the proper remote type.
+        handleGdbCommand(QString("-target-select %1 %2").arg(gdbRemoteTargetType()).arg(executableConnectHostPort()));
+
+        // Load the executable, if needed.
+        if (newExecutableFlag() == true) {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.

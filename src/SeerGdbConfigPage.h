@@ -19,6 +19,8 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         bool                    gdbHandleTerminatingException                   () const;
         bool                    gdbRandomizeStartAddress                        () const;
         bool                    gdbEnablePrettyPrinting                         () const;
+        QString                 gdbRemoteTargetType                             () const;
+
 
         void                    setGdbProgram                                   (const QString& program);
         void                    setGdbArguments                                 (const QString& arguments);
@@ -27,6 +29,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         void                    setGdbHandleTerminatingException                (bool flag);
         void                    setGdbRandomizeStartAddress                     (bool flag);
         void                    setGdbEnablePrettyPrinting                      (bool flag);
+        void                    setGdbRemoteTargetType                          (const QString& type);
 
         void                    reset                                           ();
 
