@@ -230,6 +230,16 @@ bool SeerConfigDialog::gdbEnablePrettyPrinting () const {
     return _gdbConfigPage->gdbEnablePrettyPrinting();
 }
 
+void SeerConfigDialog::setGdbRemoteTargetType (const QString& type) {
+
+    _gdbConfigPage->setGdbRemoteTargetType(type);
+}
+
+QString SeerConfigDialog::gdbRemoteTargetType () const {
+
+    return _gdbConfigPage->gdbRemoteTargetType();
+}
+
 void SeerConfigDialog::setEditorFont (const QFont& font) {
 
     _editorConfigPage->setEditorFont(font);

@@ -101,6 +101,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbEnablePrettyPrinting          (bool flag);
         bool                                gdbEnablePrettyPrinting             () const;
 
+        void                                setGdbRemoteTargetType              (const QString& type);
+        QString                             gdbRemoteTargetType                 () const;
+
         void                                setGdbRecordMode                    (const QString& mode);
         QString                             gdbRecordMode                       () const;
 
@@ -377,6 +380,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbEnablePrettyPrinting;
         QString                             _gdbRecordMode;
         QString                             _gdbRecordDirection;
+        QString                             _gdbRemoteTargetType;
         bool                                _assemblyShowAssemblyTabOnStartup;
         QString                             _assemblyDisassemblyFlavor;
         QString                             _assemblySymbolDemangling;
