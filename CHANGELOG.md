@@ -9,6 +9,8 @@
   EditorManager.
 * Fixed regression when order of message tabs not being preserved between
   sessions.
+* Connect mode to a gdb server now supports 'remote' and 'extended-remote'.
+* Connect mode's 'pre' commands are executed before the 'target connect'.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
