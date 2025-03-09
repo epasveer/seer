@@ -11,7 +11,9 @@
             ""
         ],
         "pregdbcommands": [
-            ""
+            "set debug remote 1",
+            "set remotelogfile /tmp/gdb-remote-log.txt",
+            "set debug timestamp"
         ],
         "symbolfile": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver_sym",
         "workingdirectory": ""

@@ -16,11 +16,14 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
 
         bool                isLogEnabled                () const;
         void                setLogEnabled               (bool flag);
+        bool                isTimeStampEnabled          () const;
+        void                setTimeStampEnabled         (bool flag);
         void                moveToEnd                   ();
         void                setPlaceholderText          (const QString& text);
 
     signals:
         void                logEnabledChanged           (bool flag);
+        void                logTimeStampChanged         (bool flag);
 
     public slots:
         void                handleText                  (const QString& text);
@@ -28,6 +31,7 @@ class SeerLogWidget : public QWidget, protected Ui::SeerLogWidgetForm {
         void                handlePrintButton           ();
         void                handleSaveButton            ();
         void                handleWrapTextCheckBox      ();
+        void                handleTimeStampCheckBox     ();
         void                handleEnableCheckBox        ();
 
     protected:

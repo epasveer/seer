@@ -361,6 +361,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
     QObject::connect(_gdbOutputLog,                                             &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
     QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
+    QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logTimeStampChanged,                                                        this,                                                           &SeerGdbWidget::handleLogOuputChanged);
 
     QObject::connect(breakpointsLoadToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
@@ -3003,10 +3004,12 @@ void SeerGdbWidget::writeSettings () {
 
     settings.beginGroup("gdboutputlog"); {
         settings.setValue("enabled", isGdbOutputLogEnabled());
+        settings.setValue("timestamp", isGdbOutputLogTimeStampEnabled());
     } settings.endGroup();
 
     settings.beginGroup("seeroutputlog"); {
         settings.setValue("enabled", isSeerOutputLogEnabled());
+        settings.setValue("timestamp", isSeerOutputLogTimeStampEnabled());
     } settings.endGroup();
 }
 
@@ -3119,10 +3122,12 @@ void SeerGdbWidget::readSettings () {
 
     settings.beginGroup("gdboutputlog"); {
         setGdbOutputLogEnabled(settings.value("enabled", true).toBool());
+        setGdbOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
 
     settings.beginGroup("seeroutputlog"); {
         setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
+        setSeerOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
 }
 
@@ -3684,7 +3689,6 @@ int SeerGdbWidget::assemblyDisassemblyBytes () const {
     return _assemblyDisassemblyBytes;
 }
 
-
 void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {
 
     _gdbOutputLog->setLogEnabled(flag);
@@ -3695,6 +3699,16 @@ bool SeerGdbWidget::isGdbOutputLogEnabled () const {
     return _gdbOutputLog->isLogEnabled();
 }
 
+void SeerGdbWidget::setGdbOutputLogTimeStampEnabled (bool flag) {
+
+    _gdbOutputLog->setTimeStampEnabled(flag);
+}
+
+bool SeerGdbWidget::isGdbOutputLogTimeStampEnabled () const {
+
+    return _gdbOutputLog->isTimeStampEnabled();
+}
+
 void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
 
     _seerOutputLog->setLogEnabled(flag);
@@ -3703,6 +3717,16 @@ void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
 bool SeerGdbWidget::isSeerOutputLogEnabled () const {
 
     return _seerOutputLog->isLogEnabled();
+}
+
+void SeerGdbWidget::setSeerOutputLogTimeStampEnabled (bool flag) {
+
+    _seerOutputLog->setTimeStampEnabled(flag);
+}
+
+bool SeerGdbWidget::isSeerOutputLogTimeStampEnabled () const {
+
+    return _seerOutputLog->isTimeStampEnabled();
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {
