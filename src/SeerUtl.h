@@ -27,12 +27,11 @@ namespace Seer {
     QStringList                 quoteChars          (const QStringList& strings, const QString& chars);
     QString                     varObjParent        (const QString& str);
     bool                        matchesWildcard     (const QStringList& regexpatterns, const QString& string);
+    bool                        hasWildcards        (const QString& str);
     QString                     elideText           (const QString& str, Qt::TextElideMode mode, int length);
     QStringList                 split               (const QString& str);
     QString                     unescape            (const QString& str);
-
     int                         createID            ();
-
     unsigned char               ebcdicToAscii       (unsigned char byte);
     unsigned char               ucharToAscii        (unsigned char byte);
     QString                     ucharToHex          (const QVector<quint8>& bytes, int from, int count);
@@ -46,9 +45,8 @@ namespace Seer {
     QString                     ucharToLong         (const QVector<quint8>& bytes, int from, int count);
     QString                     ucharToFloat        (const QVector<quint8>& bytes, int from, int count);
     QString                     ucharToDouble       (const QVector<quint8>& bytes, int from, int count);
-
     int                         typeBytes           (const QString& type);
-
     bool                        readFile            (const QString& filename, QStringList& lines);
+    void                        printStackTrace     ();
 }
 

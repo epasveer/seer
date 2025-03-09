@@ -64,12 +64,14 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
     _gdbEnablePrettyPrinting            = true;
+    _gdbRemoteTargetType                = "extended-remote";
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
     _consoleScrollLines                 = 1000;
     _rememberManualCommandCount         = 10;
     _currentFrame                       = -1;
 
+    setIsQuitting(false);
     setNewExecutableFlag(true);
 
     setupUi(this);
@@ -99,6 +101,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
+
+    // Create the console.
+    createConsole();
 
     // Create editor options bar.
     QToolButton* breakpointsLoadToolButton = new QToolButton(logsTabWidget);
@@ -137,6 +142,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore tab ordering.
     readLogsSettings();
+
+    // Handle the app's 'quit' event, in case we want to do things before exiting.
+    QObject::connect(QCoreApplication::instance(),                              &QCoreApplication::aboutToQuit,                                                             this,                                                           &SeerGdbWidget::handleAboutToQuit);
 
     // Connect things.
     QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
@@ -360,6 +368,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
+
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -638,6 +647,16 @@ bool SeerGdbWidget::gdbEnablePrettyPrinting () const {
     return _gdbEnablePrettyPrinting;
 }
 
+void SeerGdbWidget::setGdbRemoteTargetType (const QString& type) {
+
+    _gdbRemoteTargetType = type;
+}
+
+QString SeerGdbWidget::gdbRemoteTargetType () const {
+
+    return _gdbRemoteTargetType;
+}
+
 void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
 
     _gdbRecordMode = mode;
@@ -685,10 +704,21 @@ void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messag
     _messagesBrowserWidget->addMessage(message, messageType);
 }
 
-void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
+void SeerGdbWidget::handleLogsTabMoved (int to, int from) {
 
     Q_UNUSED(from);
     Q_UNUSED(to);
+
+    // Keep track of console tab if it moved.
+    if (_consoleIndex == from) {
+        qDebug() << "Console tab index changed from" << from << "to" << to;
+        _consoleIndex = to;
+    }
+
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
 
     writeLogsSettings();
 }
@@ -696,6 +726,11 @@ void SeerGdbWidget::handleLogsTabMoved (int from, int to) {
 void SeerGdbWidget::handleLogsTabChanged (int index) {
 
     Q_UNUSED(index);
+
+    // Don't handle anything here if Seer is exiting.
+    if (isQuitting()) {
+        return;
+    }
 
     writeLogsSettings();
 }
@@ -769,6 +804,19 @@ void SeerGdbWidget::readLogsSettings () {
         if (tb != -1) {
             logsTabWidget->tabBar()->moveTab(tb, i);
         }
+    }
+
+    // Find the console tab index.
+    _consoleIndex = -1;
+    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
+        if (logsTabWidget->tabBar()->tabText(i) == "Console output") {
+            _consoleIndex = i;
+            break;
+        }
+    }
+
+    if (_consoleIndex < 0) {
+        qDebug() << "The console tab index is not in the settings.";
     }
 
     // Make a tab current.
@@ -916,11 +964,10 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
         _executableBreakMode = breakMode;
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
@@ -931,6 +978,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            // Connect to the console.
+            connectConsole();
 
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
@@ -1057,14 +1107,14 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         }
 
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -1080,9 +1130,10 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'attach' mode.
+        // No console for 'attach' mode but make sure it's reattached.
         setExecutableLaunchMode("attach");
         setGdbRecordMode("");
+        reattachConsole();
 
         // Load ithe executable, if needed.
         if (newExecutableFlag() == true) {
@@ -1134,14 +1185,14 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -1153,17 +1204,22 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'connect' mode.
+        // No console for 'connect' mode but make sure it's reattached.
         setExecutableLaunchMode("connect");
         setGdbRecordMode("");
         setExecutablePid(0);
+        reattachConsole();
 
-        // Connect to the remote gdbserver.
-        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
-
-        // Load ithe executable, if needed.
+        // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+        }
+
+        // Connect to the remote gdbserver using the proper remote type.
+        handleGdbCommand(QString("-target-select %1 %2").arg(gdbRemoteTargetType()).arg(executableConnectHostPort()));
+
+        // Load the executable, if needed.
+        if (newExecutableFlag() == true) {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -1228,13 +1284,10 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
-        // Delete the old gdb and console if there is a new executable
-        // Create a new console.
+        // Disconnect from the console and delete the old gdb, then reconnect.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
-            createConsole();
+            killGdb();
             connectConsole();
         }
 
@@ -1338,14 +1391,14 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         QApplication::setOverrideCursor(Qt::BusyCursor);
 
-        // Delete the old gdb and console if there is a new executable
+        // Disconnect from the console and delete the old gdb. No need to reconnect.
         if (newExecutableFlag() == true) {
-            killGdb();
             disconnectConsole();
-            deleteConsole();
+            killGdb();
         }
 
         // If gdb isn't running, start it.
+        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
             bool f = startGdb();
@@ -1361,10 +1414,11 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             handleGdbSourceScripts();
         }
 
-        // No console for 'core' mode.
+        // No console for 'core' mode but make sure it's reattached.
         setExecutableLaunchMode("corefile");
         setGdbRecordMode("");
         setExecutablePid(0);
+        reattachConsole();
 
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
@@ -1998,8 +2052,6 @@ void SeerGdbWidget::handleGdbBreakpointCommand (QString breakpoint, QString comm
     if (executableLaunchMode() == "") {
         return;
     }
-
-    qDebug().noquote() << "XXX: " << breakpoint << command;
 
     handleGdbCommand("-break-commands " + breakpoint + " \"" + command + "\"");
     handleGdbGenericpointList();
@@ -2857,6 +2909,12 @@ void SeerGdbWidget::handleConsoleModeChanged () {
     }
 }
 
+void SeerGdbWidget::handleAboutToQuit () {
+
+    // Detect if we're exiting Seer.
+    setIsQuitting(true);
+}
+
 void SeerGdbWidget::writeSettings () {
 
     //qDebug() << "Write Settings";
@@ -3068,6 +3126,14 @@ void SeerGdbWidget::readSettings () {
     } settings.endGroup();
 }
 
+bool SeerGdbWidget::isQuitting () const {
+    return _isQuitting;
+}
+
+void SeerGdbWidget::setIsQuitting (bool f) {
+    _isQuitting = f;
+}
+
 bool SeerGdbWidget::isGdbRuning () const {
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
@@ -3221,8 +3287,6 @@ void SeerGdbWidget::killGdb () {
 
 void SeerGdbWidget::createConsole () {
 
-    deleteConsole(); // Delete old console, if any.
-
     if (_consoleWidget == 0) {
         _consoleWidget = new SeerConsoleWidget(0);
 
@@ -3237,8 +3301,6 @@ void SeerGdbWidget::createConsole () {
 
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
-
-        writeLogsSettings();
     }
 }
 
@@ -3273,6 +3335,21 @@ void SeerGdbWidget::disconnectConsole () {
     if (_consoleWidget) {
         _consoleWidget->disconnectConsole();
     }
+}
+
+void SeerGdbWidget::reattachConsole () {
+
+     if (_consoleIndex < 0) {
+        return;
+    }
+
+    if (_consoleWidget == nullptr) {
+        return;
+    }
+
+    _consoleMode = "attached";
+
+    logsTabWidget->reattachTab(_consoleIndex);
 }
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
@@ -3400,12 +3477,15 @@ const QStringList& SeerGdbWidget::sourceHeaderFilePatterns () const {
 
 void SeerGdbWidget::setSourceIgnoreFilePatterns (const QStringList& filePatterns) {
 
-    sourceLibraryManagerWidget->sourceBrowserWidget()->setIgnoreFilePatterns(filePatterns);
+    _ignoreFilePatterns = filePatterns;
+
+    sourceLibraryManagerWidget->sourceBrowserWidget()->setIgnoreFilePatterns(sourceIgnoreFilePatterns());
+    editorManager()->setEditorIgnoreDirectories(sourceIgnoreFilePatterns());
 }
 
 const QStringList& SeerGdbWidget::sourceIgnoreFilePatterns () const {
 
-    return sourceLibraryManagerWidget->sourceBrowserWidget()->ignoreFilePatterns();
+    return _ignoreFilePatterns;
 }
 
 void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {

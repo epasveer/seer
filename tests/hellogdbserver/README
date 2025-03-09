@@ -6,9 +6,9 @@ In one window, launch the program using gdbserver.
 
     $ gdbserver :1234 hellogdbserver
 
-In another window, lauch Seer.
+In another terminal, start Seer with the project file.
 
-    $ seergdb --project project.seer
+    $ /usr/local/bin/seergdb -xxx -s --project project.seer
 
 The project file has the info that Seer needs.
 
@@ -17,9 +17,11 @@ The project file has the info that Seer needs.
     - gdbserver port
 
 
-To exit propery, enter this command in Seer's gdb input field.
+When exiting Seer, make sure to enter this command into the
+gdb command field. Otherwise, the gdbserver process will hang
+and you will need to 'kill -9' the gdbserver process.
 
-    monitor exit
+    (gdb) monitor exit
 
 It tells the gdbserver to shutdown. If you don't, the gdbsver
 process will need to be kill with "kill -9".

@@ -342,6 +342,14 @@ const QString& SeerMainWindow::executableConnectHostPort () const {
     return gdbWidget->executableConnectHostPort();
 }
 
+void SeerMainWindow::setExecutableConnectRemoteTargetType (const QString& type) {
+    gdbWidget->setGdbRemoteTargetType(type);
+}
+
+QString SeerMainWindow::executableConnectRemoteTargetType () const {
+    return gdbWidget->gdbRemoteTargetType();
+}
+
 void SeerMainWindow::setExecutableRRTraceDirectory (const QString& executableRRTraceDirectory) {
     gdbWidget->setExecutableRRTraceDirectory(executableRRTraceDirectory);
 }
@@ -525,6 +533,7 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableConnectHostPort());
+    dlg.setConnectRemoteTargetType(executableConnectRemoteTargetType());
     dlg.setRRTraceDirectory(executableRRTraceDirectory());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
@@ -558,6 +567,7 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
     setExecutableConnectHostPort(dlg.connectHostPort());
+    setExecutableConnectRemoteTargetType(dlg.connectRemoteTargetType());
     setExecutableRRTraceDirectory(dlg.rrTraceDirectory());
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
@@ -668,6 +678,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
+    dlg.setGdbRemoteTargetType(gdbWidget->gdbRemoteTargetType());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
@@ -711,6 +722,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
+    gdbWidget->setGdbRemoteTargetType(dlg.gdbRemoteTargetType());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
@@ -1005,10 +1017,13 @@ void SeerMainWindow::handleText (const QString& text) {
 
         return;
 
+    }else if (text == "^connected") {
+        //^connected
+        return;
+
     }else if (text.startsWith("^connected,frame=")) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
-
 
     }else if (text.startsWith("*stopped")) {
 
@@ -1287,6 +1302,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
         settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
         settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
+        settings.setValue("remotetargettype",           gdbWidget->gdbRemoteTargetType());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
@@ -1363,6 +1379,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
         gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());
+        gdbWidget->setGdbRemoteTargetType(settings.value("remotetargettype", "extended-remote").toString());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>806</width>
-    <height>1040</height>
+    <width>619</width>
+    <height>845</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -593,94 +593,136 @@
          <attribute name="title">
           <string>Connect</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0" colspan="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Connect to a gdbserver (or similar) session.</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>248</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QToolButton" name="helpConnectToolButton">
-                <property name="toolTip">
-                 <string>Help for Connect launch method.</string>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="resource.qrc">
-                  <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
-                </property>
-               </widget>
-              </item>
-             </layout>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Connect to a gdbserver (or similar) session.</string>
+              </property>
+             </widget>
             </item>
-            <item row="2" column="1">
-             <spacer name="verticalSpacer">
+            <item>
+             <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
-                <height>40</height>
+                <width>248</width>
+                <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="1" column="0" colspan="2">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QLabel" name="connectProgramHostPortLabel">
-                <property name="text">
-                 <string>Gdbserver</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>100</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="toolTip">
-                 <string>How to access the gdbserver.</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="placeholderText">
-                 <string>host:port or /dev/serialport</string>
-                </property>
-                <property name="clearButtonEnabled">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
+            <item>
+             <widget class="QToolButton" name="helpConnectToolButton">
+              <property name="toolTip">
+               <string>Help for Connect launch method.</string>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset resource="resource.qrc">
+                <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+              </property>
+             </widget>
             </item>
            </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <widget class="QLabel" name="connectProgramHostPortLabel">
+              <property name="text">
+               <string>Gdbserver</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="2">
+             <widget class="QLineEdit" name="connectProgramHostPortLineEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>100</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>How to access the gdbserver.</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="placeholderText">
+               <string>host:port or /dev/serialport</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="connectRemoteTargetTypeLabel">
+              <property name="text">
+               <string>Remote target type</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="connectRemoteTargetTypeCombo">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Select the type of remote target connection.</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>remote</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>extended-remote</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>468</width>
+                <height>17</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>151</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -977,7 +1019,6 @@
   <tabstop>attachProgramPidLineEdit</tabstop>
   <tabstop>attachProgramPidToolButton</tabstop>
   <tabstop>helpConnectToolButton</tabstop>
-  <tabstop>connectProgramHostPortLineEdit</tabstop>
   <tabstop>helpRRToolButton</tabstop>
   <tabstop>rrTraceDirectoryLineEdit</tabstop>
   <tabstop>rrLoadTraceDirectoryToolButton</tabstop>
