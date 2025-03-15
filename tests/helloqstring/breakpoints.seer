@@ -1,5 +1,7 @@
 break -source /nas/erniep/Development/seer/tests/helloqstring/helloqstring.cpp -line 16
   commands
     print str
+    cont
   end
 break -source /nas/erniep/Development/seer/tests/helloqstring/helloqstring.cpp -line 7
+break -source /nas/erniep/Development/seer/tests/helloqstring/helloqstring.cpp -line 19

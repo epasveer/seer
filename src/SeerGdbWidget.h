@@ -92,6 +92,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbNonStopMode                   (bool flag);
         bool                                gdbNonStopMode                      () const;
 
+        void                                setGdbServerDebug                   (bool flag);
+        bool                                gdbServerDebug                      () const;
+
         void                                setGdbHandleTerminatingException    (bool flag);
         bool                                gdbHandleTerminatingException       () const;
 
@@ -172,8 +175,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbOutputLogEnabled              (bool flag);
         bool                                isGdbOutputLogEnabled               () const;
 
+        void                                setGdbOutputLogTimeStampEnabled     (bool flag);
+        bool                                isGdbOutputLogTimeStampEnabled      () const;
+
         void                                setSeerOutputLogEnabled             (bool flag);
         bool                                isSeerOutputLogEnabled              () const;
+
+        void                                setSeerOutputLogTimeStampEnabled    (bool flag);
+        bool                                isSeerOutputLogTimeStampEnabled     () const;
 
         // RR settings.
         void                                setRRProgram                        (const QString& program);
@@ -375,6 +384,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbRRGdbArguments;
         bool                                _gdbASyncMode;
         bool                                _gdbNonStopMode;
+        bool                                _gdbServerDebug;
         bool                                _gdbHandleTerminatingException;
         bool                                _gdbRandomizeStartAddress;
         bool                                _gdbEnablePrettyPrinting;

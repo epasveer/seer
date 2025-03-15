@@ -129,6 +129,19 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="enableCheckBox">
+         <property name="toolTip">
+          <string>Enable/Disable output to this log.</string>
+         </property>
+         <property name="text">
+          <string>Enable</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="wrapTextCheckBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -148,15 +161,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="enableCheckBox">
+        <widget class="QCheckBox" name="timeStampCheckBox">
          <property name="toolTip">
-          <string>Enable/Disable output to this log.</string>
+          <string>Add a timestamp to each line.</string>
          </property>
          <property name="text">
-          <string>Enable</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+          <string>TStamp</string>
          </property>
         </widget>
        </item>
