@@ -92,6 +92,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbNonStopMode                   (bool flag);
         bool                                gdbNonStopMode                      () const;
 
+        void                                setGdbServerDebug                   (bool flag);
+        bool                                gdbServerDebug                      () const;
+
         void                                setGdbHandleTerminatingException    (bool flag);
         bool                                gdbHandleTerminatingException       () const;
 
@@ -381,6 +384,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbRRGdbArguments;
         bool                                _gdbASyncMode;
         bool                                _gdbNonStopMode;
+        bool                                _gdbServerDebug;
         bool                                _gdbHandleTerminatingException;
         bool                                _gdbRandomizeStartAddress;
         bool                                _gdbEnablePrettyPrinting;

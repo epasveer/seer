@@ -47,6 +47,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableConnectHostPort               () const;
         void                        setExecutableConnectRemoteTargetType    (const QString& type);
         QString                     executableConnectRemoteTargetType       () const;
+        void                        setExecutableConnectGdbserverDebug      (bool enable);
+        bool                        executableConnectGdbserverDebug         () const;
         void                        setExecutableRRTraceDirectory           (const QString& executableRRTraceDirectory);
         const QString&              executableRRTraceDirectory              () const;
         void                        setExecutableCoreFilename               (const QString& executableCoreFilename);

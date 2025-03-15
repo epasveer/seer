@@ -59,6 +59,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _gdbNonStopMode                     = false;
+    _gdbServerDebug                     = false;
     _assemblyShowAssemblyTabOnStartup   = false;
     _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
@@ -616,6 +617,16 @@ void SeerGdbWidget::setGdbNonStopMode (bool flag) {
 bool SeerGdbWidget::gdbNonStopMode () const {
 
     return _gdbNonStopMode;
+}
+
+void SeerGdbWidget::setGdbServerDebug (bool flag) {
+
+    _gdbServerDebug = flag;
+}
+
+bool SeerGdbWidget::gdbServerDebug () const {
+
+    return _gdbServerDebug;
 }
 
 void SeerGdbWidget::setGdbHandleTerminatingException (bool flag) {
@@ -1213,6 +1224,11 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
+            if (gdbServerDebug()) {
+                handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
+            }else{
+                handleGdbCommand("-gdb-set debug remote 0");
+            }
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
         }
 

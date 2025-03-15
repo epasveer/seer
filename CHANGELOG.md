@@ -12,6 +12,8 @@
 * Connect mode to a gdb server now supports 'remote' and 'extended-remote'.
 * Connect mode's 'pre' commands are executed before the 'target connect'.
 * Optionally add a timestamp to the Seer and Gdb log widgets.
+* Add 'gdbserver debug' checkbox to Connect launch tab. For showing
+  gdb and gdbserver communication debug information in gdb tab.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.

@@ -56,6 +56,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 connectHostPort                                 () const;
         void                    setConnectRemoteTargetType                      (const QString& type);
         QString                 connectRemoteTargetType                         () const;
+        void                    setConnectGdbserverDebug                        (bool enable);
+        bool                    connectGdbserverDebug                           () const;
 
 
         // Connectect to a RR server. "rr".

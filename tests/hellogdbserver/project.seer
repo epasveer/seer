@@ -2,6 +2,7 @@
     "seerproject": {
         "connectmode": {
             "gdbserver": ":1234",
+            "gdbserverdebug": true,
             "targettype": "extended-remote"
         },
         "executable": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver",
@@ -11,9 +12,7 @@
             ""
         ],
         "pregdbcommands": [
-            "set debug remote 1",
-            "set remotelogfile /tmp/gdb-remote-log.txt",
-            "set debug timestamp"
+            ""
         ],
         "symbolfile": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver_sym",
         "workingdirectory": ""
