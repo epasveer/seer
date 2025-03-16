@@ -13,6 +13,10 @@ In this mode, Seer needs:
 * Optional executable file if the remote gdbserver/gdbstub hasn't loaded one
 * Optional symbol file if the executable doesn't have debug information
 * How to look for the gdbserver (machine and port)
+* Remote target type when connecting to the gdbserver.
+  * 'extended-remote' (default)
+  * 'remote' (sometimes required if gdbserver doesn't support all commands)
+* Optional enabling of gdb and gdbserver debug communication (set debug remote 1). See the gdb tab for output.
 * Optional gdb commands to execute before and after Seer connects to the gdbserver
 
 ### What can you do?

@@ -54,6 +54,11 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         // Connectect to a GDB server. "connect".
         void                    setConnectHostPort                              (const QString& connectHostPort);
         QString                 connectHostPort                                 () const;
+        void                    setConnectRemoteTargetType                      (const QString& type);
+        QString                 connectRemoteTargetType                         () const;
+        void                    setConnectGdbserverDebug                        (bool enable);
+        bool                    connectGdbserverDebug                           () const;
+
 
         // Connectect to a RR server. "rr".
         void                    setRRTraceDirectory                             (const QString& rrTraceDirectory);

@@ -59,11 +59,13 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _gdbNonStopMode                     = false;
+    _gdbServerDebug                     = false;
     _assemblyShowAssemblyTabOnStartup   = false;
     _assemblyDisassemblyFlavor          = "att";
     _gdbHandleTerminatingException      = true;
     _gdbRandomizeStartAddress           = false;
     _gdbEnablePrettyPrinting            = true;
+    _gdbRemoteTargetType                = "extended-remote";
     _gdbRecordMode                      = "";
     _gdbRecordDirection                 = "";
     _consoleScrollLines                 = 1000;
@@ -360,6 +362,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
     QObject::connect(_gdbOutputLog,                                             &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
     QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
+    QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logTimeStampChanged,                                                        this,                                                           &SeerGdbWidget::handleLogOuputChanged);
 
     QObject::connect(breakpointsLoadToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
@@ -616,6 +619,16 @@ bool SeerGdbWidget::gdbNonStopMode () const {
     return _gdbNonStopMode;
 }
 
+void SeerGdbWidget::setGdbServerDebug (bool flag) {
+
+    _gdbServerDebug = flag;
+}
+
+bool SeerGdbWidget::gdbServerDebug () const {
+
+    return _gdbServerDebug;
+}
+
 void SeerGdbWidget::setGdbHandleTerminatingException (bool flag) {
 
     _gdbHandleTerminatingException = flag;
@@ -644,6 +657,16 @@ void SeerGdbWidget::setGdbEnablePrettyPrinting (bool flag) {
 bool SeerGdbWidget::gdbEnablePrettyPrinting () const {
 
     return _gdbEnablePrettyPrinting;
+}
+
+void SeerGdbWidget::setGdbRemoteTargetType (const QString& type) {
+
+    _gdbRemoteTargetType = type;
+}
+
+QString SeerGdbWidget::gdbRemoteTargetType () const {
+
+    return _gdbRemoteTargetType;
 }
 
 void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
@@ -1199,12 +1222,21 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         setExecutablePid(0);
         reattachConsole();
 
-        // Connect to the remote gdbserver.
-        handleGdbCommand(QString("-target-select extended-remote %1").arg(executableConnectHostPort()));
-
-        // Load ithe executable, if needed.
+        // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
+            if (gdbServerDebug()) {
+                handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
+            }else{
+                handleGdbCommand("-gdb-set debug remote 0");
+            }
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+        }
+
+        // Connect to the remote gdbserver using the proper remote type.
+        handleGdbCommand(QString("-target-select %1 %2").arg(gdbRemoteTargetType()).arg(executableConnectHostPort()));
+
+        // Load the executable, if needed.
+        if (newExecutableFlag() == true) {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -2988,10 +3020,12 @@ void SeerGdbWidget::writeSettings () {
 
     settings.beginGroup("gdboutputlog"); {
         settings.setValue("enabled", isGdbOutputLogEnabled());
+        settings.setValue("timestamp", isGdbOutputLogTimeStampEnabled());
     } settings.endGroup();
 
     settings.beginGroup("seeroutputlog"); {
         settings.setValue("enabled", isSeerOutputLogEnabled());
+        settings.setValue("timestamp", isSeerOutputLogTimeStampEnabled());
     } settings.endGroup();
 }
 
@@ -3104,10 +3138,12 @@ void SeerGdbWidget::readSettings () {
 
     settings.beginGroup("gdboutputlog"); {
         setGdbOutputLogEnabled(settings.value("enabled", true).toBool());
+        setGdbOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
 
     settings.beginGroup("seeroutputlog"); {
         setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
+        setSeerOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
 }
 
@@ -3669,7 +3705,6 @@ int SeerGdbWidget::assemblyDisassemblyBytes () const {
     return _assemblyDisassemblyBytes;
 }
 
-
 void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {
 
     _gdbOutputLog->setLogEnabled(flag);
@@ -3680,6 +3715,16 @@ bool SeerGdbWidget::isGdbOutputLogEnabled () const {
     return _gdbOutputLog->isLogEnabled();
 }
 
+void SeerGdbWidget::setGdbOutputLogTimeStampEnabled (bool flag) {
+
+    _gdbOutputLog->setTimeStampEnabled(flag);
+}
+
+bool SeerGdbWidget::isGdbOutputLogTimeStampEnabled () const {
+
+    return _gdbOutputLog->isTimeStampEnabled();
+}
+
 void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
 
     _seerOutputLog->setLogEnabled(flag);
@@ -3688,6 +3733,16 @@ void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
 bool SeerGdbWidget::isSeerOutputLogEnabled () const {
 
     return _seerOutputLog->isLogEnabled();
+}
+
+void SeerGdbWidget::setSeerOutputLogTimeStampEnabled (bool flag) {
+
+    _seerOutputLog->setTimeStampEnabled(flag);
+}
+
+bool SeerGdbWidget::isSeerOutputLogTimeStampEnabled () const {
+
+    return _seerOutputLog->isTimeStampEnabled();
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {

@@ -279,6 +279,22 @@ QString SeerDebugDialog::connectHostPort () const {
     return connectProgramHostPortLineEdit->text();
 }
 
+void SeerDebugDialog::setConnectRemoteTargetType (const QString& type) {
+    connectRemoteTargetTypeCombo->setCurrentText(type);
+}
+
+QString SeerDebugDialog::connectRemoteTargetType () const {
+    return connectRemoteTargetTypeCombo->currentText();
+}
+
+void SeerDebugDialog::setConnectGdbserverDebug (bool enable) {
+    connectGdbserverDebugCheckBox->setChecked(enable);
+}
+
+bool SeerDebugDialog::connectGdbserverDebug () const {
+    return connectGdbserverDebugCheckBox->isChecked();
+}
+
 void SeerDebugDialog::setRRTraceDirectory (const QString& rrTraceDirectory) {
     rrTraceDirectoryLineEdit->setText(rrTraceDirectory);
 }
@@ -611,6 +627,14 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
         connectProgramHostPortLineEdit->setText(connectModeJson["gdbserver"].toString());
 
+        if (connectModeJson.contains("targettype")) {
+            connectRemoteTargetTypeCombo->setCurrentText(connectModeJson["targettype"].toString());
+        }
+
+        if (connectModeJson.contains("gdbserverdebug")) {
+            connectGdbserverDebugCheckBox->setChecked(connectModeJson["gdbserverdebug"].toBool());
+        }
+
         setLaunchMode("connect");
     }
 
@@ -723,6 +747,8 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         QJsonObject modeJson;
 
         modeJson["gdbserver"]          = connectProgramHostPortLineEdit->text();
+        modeJson["targettype"]         = connectRemoteTargetTypeCombo->currentText();
+        modeJson["gdbserverdebug"]     = connectGdbserverDebugCheckBox->isChecked();
 
         seerProjectJson["connectmode"] = modeJson;
     }
