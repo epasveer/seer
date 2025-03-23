@@ -628,14 +628,13 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     setDocumentTitle(_fullname);
 
-    // If the filename is null, don't do anything.
-    if (_fullname == "") {
-        return;
-    }
-
-    // If the file is null, don't do anything.
-    if (_file == "") {
-        qDebug() << "'file' is null. Skipping.";
+    // If the filename or file is null, it's a placeholder
+    // widget. Show the Seer icon!
+    if (_fullname == "" || _file == "") {
+        setStyleSheet("QPlainTextEdit {"
+            "background: url(:/seer/resources/seergdb_512x512.png) center no-repeat;"
+            "border: none;"
+            "}");
         return;
     }
 
