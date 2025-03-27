@@ -44,8 +44,8 @@ void SeerSeerLogWidget::processText (const QString& text) {
         return;
     }
 
-    // Filter escape characters.
-    QString str = Seer::filterEscapes(text);
+    // No filtering.
+    QString str = text;
 
     if (isTimeStampEnabled()) {
         str = QString("[") + QTime::currentTime().toString("hh:mm:ss.zz") + QString("] ") + str;

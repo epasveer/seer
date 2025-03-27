@@ -7,15 +7,16 @@
         "pregdbcommands": [
             "skip -fu \"std::vector<int, std::allocator<int> >::back()\"",
             "skip -fu \"std::unique_ptr<int, std::default_delete<int> >::operator*() const\"",
-            "info skip"
+            "info skip",
+            "source MISkip.py"
         ],
-        "runmode": {
+        "startmode": {
             "arguments": "",
             "breakinfunction": false,
             "breakinfunctionname": "",
-            "breakinmain": false,
+            "breakinmain": true,
             "breakpointsfile": "/nas/erniep/Development/seer/tests/helloskip/breakpoints.seer",
-            "nobreak": true,
+            "nobreak": false,
             "nonstopmode": false,
             "randomizestartaddress": false,
             "showassemblytab": false

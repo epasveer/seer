@@ -41,11 +41,20 @@ The following example shows a GDB session in which the above commands have been 
 
     (gdb)
     -skip-list
-    ^done,list="Num   Enb Glob File                 RE Functionn1     y      n <none>                n std::vector<int, std::allocator<int> >::back()n2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() constn"
+    ^done,list="Num   Enb Glob File                 RE Function\n1     y      n <none>                n std::vector<int, std::allocator<int> >::back()\n2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() const\n"
 
-    ^done,list="Num   Enb Glob File                 RE Functionn
-                1     y      n <none>                n std::vector<int, std::allocator<int> >::back()n
-                2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() constn"
+    ^done,list="Num   Enb Glob File                 RE Function\n
+                1     y      n <none>                n std::vector<int, std::allocator<int> >::back()\n
+                2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() const\n"
+
+    ['helloskipxxxxxxxxxxxxxxxxxxxxxxx.cpp']
+    info skip
+    Num   Enb Glob File                 RE Function
+    1     y      n <none>                n std::vector<int, std::allocator<int> >::back()
+    2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() const
+    3     y      n helloskip.cpp         n <none>
+    4     y      n helloskipxxxxxxxxxxxxxxxxxxxxxxx.cpp  n <none>
+
 
 Run Seer this way:
 
@@ -53,4 +62,18 @@ Run Seer this way:
 
 [ ] The return string has 'n' characters but I think they should be '\n'.  Seer parsing bug with escaped '\n'????
 [ ] Handle the parsing of the return string and return a python table.
+
+Use this to see if '-info-skip' or any other skip command is know.
+
+    -info-gdb-mi-command skip-list
+    -info-gdb-mi-command skip-delete
+    -info-gdb-mi-command skip-enable
+    -info-gdb-mi-command skip-...
+
+The '-skip-list'
+
+    ^done,skips=[
+                 {number="1",enabled="y",glob="n",file="<none>",re="n",function="std::vector<int, std::allocator<int> >::back()"},
+                 {number="2",enabled="y",glob="n",file="<none>",re="n",function="<none>"}
+                ]
 

@@ -23,6 +23,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     _staticBrowserWidget        = new SeerStaticBrowserWidget(this);
     _libraryBrowserWidget       = new SeerLibraryBrowserWidget(this);
     _adaExceptionsBrowserWidget = new SeerAdaExceptionsBrowserWidget(this);
+    _skipBrowserWidget          = new SeerSkipBrowserWidget(this);
 
     tabWidget->addTab(_sourceBrowserWidget,         "Source");
     tabWidget->addTab(_functionBrowserWidget,       "Functions");
@@ -30,6 +31,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     tabWidget->addTab(_staticBrowserWidget,         "Statics");
     tabWidget->addTab(_libraryBrowserWidget,        "Libraries");
     tabWidget->addTab(_adaExceptionsBrowserWidget,  "AdaExceptions");
+    tabWidget->addTab(_skipBrowserWidget,           "Skips");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -83,6 +85,10 @@ SeerAdaExceptionsBrowserWidget* SeerSourceSymbolLibraryManagerWidget::adaExcepti
     return _adaExceptionsBrowserWidget;
 }
 
+SeerSkipBrowserWidget* SeerSourceSymbolLibraryManagerWidget::skipBrowserWidget () {
+    return _skipBrowserWidget;
+}
+
 void SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked () {
 
     sourceBrowserWidget()->refresh();
@@ -91,6 +97,7 @@ void SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked () {
     staticBrowserWidget()->refresh();
     libraryBrowserWidget()->refresh();
     adaExceptionsBrowserWidget()->refresh();
+    skipBrowserWidget()->refresh();
 }
 
 void SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked () {
