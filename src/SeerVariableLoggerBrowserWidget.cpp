@@ -169,7 +169,7 @@ void SeerVariableLoggerBrowserWidget::handleDeleteToolButton () {
     QList<QTreeWidgetItem*> items = variablesTreeWidget->selectedItems();
 
     // Remove them.
-    for(int i=0; i<items.size(); i++){
+    for (int i=0; i<items.size(); i++) {
         delete items[i];
     }
 

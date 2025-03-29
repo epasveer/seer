@@ -17,11 +17,17 @@ class SeerSkipBrowserWidget : public QWidget, protected Ui::SeerSkipBrowserWidge
         void                refresh                     ();
 
     protected slots:
+        void                handleDeleteToolButton      ();
+        void                handleEnableToolButton      ();
+        void                handleDisableToolButton     ();
 
     signals:
+        void                refreshSkipList             ();
+        void                deleteSkips                 (const QString& skips);
+        void                enableSkips                 (const QString& skips);
+        void                disableSkips                (const QString& skips);
 
     protected:
     private:
-        int                 _id;
 };
 
