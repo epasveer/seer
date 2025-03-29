@@ -2,34 +2,18 @@ import re
 
 class MISkip(gdb.MICommand):
     """
-    Run the "skip" command.
+    Run the 'skip' command.
 
-    https://sourceware.org/gdb/current/onlinedocs/gdb.html/Skipping-Over-Functions-and-Files.html
+    -skip-list               List all skips, including the id for each skip.
+    -skip-delete             Delete a list of skip id's.
+    -skip-enable             Enable a list of skip id's.
+    -skip-disable            Disable a list of skip id's.
+    -skip-create-file        Functions in file will be skipped over when stepping.
+    -skip-create-gfile       Functions in files matching file-glob-pattern will be skipped over when stepping.
+    -skip-create-function    Functions named by linespec or the function containing the line named by linespec will be skipped over when stepping.
+    -skip-create-rfunction   Functions whose name matches regexp will be skipped over when stepping.
 
-    ^done,stack=[frame={level="0",addr="0x00000000004008e5",func="foo",file="helloskip.cpp",fullname="/nas/erniep/Development/seer/tests/helloskip/helloskip.cpp",line="8",arch="i386:x86-64"},
-                 frame={level="1",addr="0x0000000000400994",func="main",file="helloskip.cpp",fullname="/nas/erniep/Development/seer/tests/helloskip/helloskip.cpp",line="17",arch="i386:x86-64"}]
-
-    //          +--------1---------2---------3---------4-----------------------------------------------------------------
-    //          1--------0---------0---------0---------0-----------------------------------------------------------------
-    ^done,list="Num   Enb Glob File                 RE Function
-                1     y      n <none>                n std::vector<int, std::allocator<int> >::back()
-                2     y      n <none>                n std::unique_ptr<int, std::default_delete<int> >::operator*() const"
-
-    ^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$
-
-    def extract_second_column_to_end(text):
-    match = re.search(r"^[^\\s]+\\s+(.*)$", text)
-    if match:
-        return match.group(1)
-    return None
-
-    Here is the output!
-
-    ^done,skips=[
-                  {number="1",enable="n",glob="n",file="<none>",re="n",function="std::vector<int, std::allocator<int> >::back()"},
-                  {number="2",enable="n",glob="n",file="<none>",re="n",function="std::unique_ptr<int, std::default_delete<int> >::operator*() const"}
-                ]
-
+    See: https://sourceware.org/gdb/current/onlinedocs/gdb.html/Skipping-Over-Functions-and-Files.html
     """
 
     def __init__(self, name, mode):
@@ -65,10 +49,10 @@ class MISkip(gdb.MICommand):
             return { "skips": skipentries}
 
         elif self._mode == "delete":
-            return gdb.execute ("skip delete " + " ".join(argv), to_string=True)
+            gdb.execute ("skip delete " + " ".join(argv), to_string=True)
             return None
-        elif self._mode == "enablex":
-            result = gdb.execute ("skip enable " + " ".join(argv), to_string=True)
+        elif self._mode == "enable":
+            gdb.execute ("skip enable " + " ".join(argv), to_string=True)
             return None
         elif self._mode == "disable":
             gdb.execute ("skip disable " + " ".join(argv), to_string=True)
