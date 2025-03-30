@@ -99,6 +99,7 @@ set(HEADER_FILES
     SeerTypeBrowserWidget.h
     SeerStaticBrowserWidget.h
     SeerSkipBrowserWidget.h
+    SeerSkipCreateDialog.h
     SeerSourceSymbolLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
@@ -199,6 +200,7 @@ set(SOURCE_FILES
     SeerTypeBrowserWidget.cpp
     SeerStaticBrowserWidget.cpp
     SeerSkipBrowserWidget.cpp
+    SeerSkipCreateDialog.cpp
     SeerSourceSymbolLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp

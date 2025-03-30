@@ -91,23 +91,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <widget class="QToolButton" name="skipHelpToolButton">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>Help on skips.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="0">

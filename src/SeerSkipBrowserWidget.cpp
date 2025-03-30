@@ -1,12 +1,8 @@
 #include "SeerSkipBrowserWidget.h"
+#include "SeerSkipCreateDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QApplication>
-#include <QtCore/QFileInfo>
-#include <QtCore/Qt>
-#include <QtCore/QMap>
 #include <QtCore/QDebug>
 
 SeerSkipBrowserWidget::SeerSkipBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -26,6 +22,7 @@ SeerSkipBrowserWidget::SeerSkipBrowserWidget (QWidget* parent) : QWidget(parent)
     skipTreeWidget->setSortingEnabled(false);
 
     // Connect things.
+    QObject::connect(skipAddToolButton,     &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleAddToolButton);
     QObject::connect(skipDeleteToolButton,  &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleDeleteToolButton);
     QObject::connect(skipEnableToolButton,  &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleEnableToolButton);
     QObject::connect(skipDisableToolButton, &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleDisableToolButton);
@@ -87,6 +84,28 @@ void SeerSkipBrowserWidget::handleText (const QString& text) {
     skipTreeWidget->resizeColumnToContents(5);
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerSkipBrowserWidget::handleAddToolButton () {
+
+    // Create the dialog.
+    SeerSkipCreateDialog dialog(this);
+
+    // Execute it.
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    // Get result.
+    QString mode       = dialog.skipMode();
+    QString parameters = dialog.skipParameters();
+
+    if (mode == "" || parameters == "") {
+        return;
+    }
+
+    // Send the 'add skip' command.
+    emit addSkip(mode, parameters);
 }
 
 void SeerSkipBrowserWidget::handleDeleteToolButton () {

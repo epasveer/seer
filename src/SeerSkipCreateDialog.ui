@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerSkipCreateDialogForm</class>
+ <widget class="QDialog" name="SeerSkipCreateDialogForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>471</width>
+    <height>253</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Create a Skip</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Specify Skip details.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>348</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="helpToolButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="fileRadioButton">
+       <property name="text">
+        <string>Filename</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">modeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="fileLineEdit">
+       <property name="placeholderText">
+        <string>file</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="fileGlobRadioButton">
+       <property name="text">
+        <string>Filename (glob)</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">modeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="fileGlobLineEdit">
+       <property name="placeholderText">
+        <string>file-glob-pattern</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="functionRadioButton">
+       <property name="text">
+        <string>Function </string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">modeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="functionLineEdit">
+       <property name="placeholderText">
+        <string>linespec</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QRadioButton" name="functionRegexRadioButton">
+       <property name="text">
+        <string>Function (regex)</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">modeButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="functionRegexLineEdit">
+       <property name="placeholderText">
+        <string>regex</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>fileRadioButton</tabstop>
+  <tabstop>fileGlobRadioButton</tabstop>
+  <tabstop>functionRadioButton</tabstop>
+  <tabstop>functionRegexRadioButton</tabstop>
+  <tabstop>fileLineEdit</tabstop>
+  <tabstop>fileGlobLineEdit</tabstop>
+  <tabstop>functionLineEdit</tabstop>
+  <tabstop>functionRegexLineEdit</tabstop>
+  <tabstop>helpToolButton</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SeerSkipCreateDialogForm</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SeerSkipCreateDialogForm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <buttongroups>
+  <buttongroup name="modeButtonGroup"/>
+ </buttongroups>
+</ui>

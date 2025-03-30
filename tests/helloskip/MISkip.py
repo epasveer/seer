@@ -8,6 +8,7 @@ class MISkip(gdb.MICommand):
     -skip-delete             Delete a list of skip id's.
     -skip-enable             Enable a list of skip id's.
     -skip-disable            Disable a list of skip id's.
+    -skip-create             Functions described in manual syntax will be skipped over when stepping.
     -skip-create-file        Functions in file will be skipped over when stepping.
     -skip-create-gfile       Functions in files matching file-glob-pattern will be skipped over when stepping.
     -skip-create-function    Functions named by linespec or the function containing the line named by linespec will be skipped over when stepping.
@@ -36,6 +37,8 @@ class MISkip(gdb.MICommand):
                 if columns:
                     if (columns.group(1) == "Num"):
                         continue
+                    if (columns.group(1) == "Not"):
+                        continue
                     skipmeta = {}
                     skipmeta["number"]   = columns.group(1)
                     skipmeta["enable"]   = columns.group(2)
@@ -57,17 +60,20 @@ class MISkip(gdb.MICommand):
         elif self._mode == "disable":
             gdb.execute ("skip disable " + " ".join(argv), to_string=True)
             return None
+        elif self._mode == "create":
+            gdb.execute ("skip \"" + " ".join(argv) + "\"", to_string=True)
+            return None
         elif self._mode == "createfile":
-            gdb.execute ("skip -file " + " ".join(argv), to_string=True)
+            gdb.execute ("skip -file \"" + " ".join(argv) + "\"", to_string=True)
             return None
         elif self._mode == "creategfile":
-            gdb.execute ("skip -gfile " + " ".join(argv), to_string=True)
+            gdb.execute ("skip -gfile \"" + " ".join(argv) + "\"", to_string=True)
             return None
         elif self._mode == "createfunction":
-            gdb.execute ("skip -function " + " ".join(argv), to_string=True)
+            gdb.execute ("skip -function \"" + " ".join(argv) + "\"", to_string=True)
             return None
         elif self._mode == "createrfunction":
-            gdb.execute ("skip -ffunction " + " ".join(argv), to_string=True)
+            gdb.execute ("skip -ffunction \"" + " ".join(argv) + "\"", to_string=True)
             return None
         else:
             raise gdb.GdbError("skips: Invalid parameter: %s" % self._mode)
@@ -76,6 +82,7 @@ MISkip("-skip-list",             "list")
 MISkip("-skip-delete",           "delete")
 MISkip("-skip-enable",           "enable")
 MISkip("-skip-disable",          "disable")
+MISkip("-skip-create",           "create")
 MISkip("-skip-create-file",      "createfile")
 MISkip("-skip-create-gfile",     "creategfile")
 MISkip("-skip-create-function",  "createfunction")

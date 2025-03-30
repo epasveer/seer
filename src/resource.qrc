@@ -78,6 +78,7 @@
     <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/Printpoints.md</file>
+    <file>resources/help/Skips.md</file>
   </qresource>
 </RCC>
 

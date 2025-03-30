@@ -231,6 +231,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::refreshAdaExceptions,                                      this,                                                           &SeerGdbWidget::handleGdbAdaListExceptions);
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::insertCatchpoint,                                          this,                                                           &SeerGdbWidget::handleGdbCatchpointInsert);
     QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::refreshSkipList,                                                    this,                                                           &SeerGdbWidget::handleGdbListSkips);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::addSkip,                                                            this,                                                           &SeerGdbWidget::handleGdbAddSkip);
     QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::deleteSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbDeleteSkips);
     QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::enableSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbEnableSkips);
     QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::disableSkips,                                                       this,                                                           &SeerGdbWidget::handleGdbDisableSkips);
@@ -2308,6 +2309,27 @@ void SeerGdbWidget::handleGdbListSkips () {
     }
 
     handleGdbCommand("-skip-list");
+}
+
+void SeerGdbWidget::handleGdbAddSkip (QString skipmode, QString skipparameters) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (skipmode == "file") {
+        handleGdbCommand("-skip-create-file " + skipparameters);
+    }else if (skipmode == "gfile") {
+        handleGdbCommand("-skip-create-gfile " + skipparameters);
+    }else if (skipmode == "function") {
+        handleGdbCommand("-skip-create-function " + skipparameters);
+    }else if (skipmode == "rfunction") {
+        handleGdbCommand("-skip-create-rfunction " + skipparameters);
+    }else{
+        return;
+    }
+
+    handleGdbListSkips();
 }
 
 void SeerGdbWidget::handleGdbDeleteSkips (QString skipids) {
