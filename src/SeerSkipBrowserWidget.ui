@@ -14,6 +14,46 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QTreeWidget" name="skipTreeWidget">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <property name="columnCount">
+      <number>6</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Num</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Enb</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Glob</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>File</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>RE</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Function</string>
+      </property>
+     </column>
+    </widget>
+   </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -91,47 +131,35 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QToolButton" name="skipSaveToolButton">
+       <property name="toolTip">
+        <string>Save skips.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="skipLoadToolButton">
+       <property name="toolTip">
+        <string>Load skips.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item row="1" column="0">
-    <widget class="QTreeWidget" name="skipTreeWidget">
-     <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
-     </property>
-     <property name="columnCount">
-      <number>6</number>
-     </property>
-     <column>
-      <property name="text">
-       <string>Num</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Enb</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Glob</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>File</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>RE</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Function</string>
-      </property>
-     </column>
-    </widget>
    </item>
   </layout>
  </widget>

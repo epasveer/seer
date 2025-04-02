@@ -3,6 +3,8 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
+#include <QtWidgets/QMessageBox>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerSkipBrowserWidget::SeerSkipBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -26,6 +28,8 @@ SeerSkipBrowserWidget::SeerSkipBrowserWidget (QWidget* parent) : QWidget(parent)
     QObject::connect(skipDeleteToolButton,  &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleDeleteToolButton);
     QObject::connect(skipEnableToolButton,  &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleEnableToolButton);
     QObject::connect(skipDisableToolButton, &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleDisableToolButton);
+    QObject::connect(skipSaveToolButton,    &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleSaveToolButton);
+    QObject::connect(skipLoadToolButton,    &QToolButton::clicked,      this, &SeerSkipBrowserWidget::handleLoadToolButton);
 }
 
 SeerSkipBrowserWidget::~SeerSkipBrowserWidget () {
@@ -123,8 +127,6 @@ void SeerSkipBrowserWidget::handleDeleteToolButton () {
         ids += items[i]->text(0);
     }
 
-    if (ids == "") return;
-
     // Send the list of ID's to delete.
     emit deleteSkips(ids);
 }
@@ -143,8 +145,6 @@ void SeerSkipBrowserWidget::handleEnableToolButton () {
         }
         ids += items[i]->text(0);
     }
-
-    if (ids == "") return;
 
     // Send the list of ID's to enable.
     emit enableSkips(ids);
@@ -165,10 +165,96 @@ void SeerSkipBrowserWidget::handleDisableToolButton () {
         ids += items[i]->text(0);
     }
 
-    if (ids == "") return;
-
     // Send the list of ID's to disable.
     emit disableSkips(ids);
+}
+
+void SeerSkipBrowserWidget::handleSaveToolButton () {
+
+    int result = QMessageBox::warning(this, "Seer",
+            QString("Save the skips in the view?\n\nPreviously saved skips will be deleted first."),
+            QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+    if (result == QMessageBox::Cancel) return;
+
+    QSettings settings;
+
+    settings.beginWriteArray("gdbskips"); {
+        int i=0;
+        QTreeWidgetItemIterator it(skipTreeWidget);
+        while (*it) {
+            settings.setArrayIndex(i);
+            settings.setValue("number",   (*it)->text(0));
+            settings.setValue("enable",   (*it)->text(1));
+            settings.setValue("glob",     (*it)->text(2));
+            settings.setValue("file",     (*it)->text(3));
+            settings.setValue("re",       (*it)->text(4));
+            settings.setValue("function", (*it)->text(5));
+            ++i;
+            ++it;
+        }
+    } settings.endArray();
+}
+
+void SeerSkipBrowserWidget::handleLoadToolButton () {
+
+    int result = QMessageBox::warning(this, "Seer",
+            QString("Load the previously saved skips from settings?\n\nThe existing skips in the view will be deleted first."),
+            QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+    if (result == QMessageBox::Cancel) return;
+
+    QSettings settings;
+
+    if (settings.childGroups().contains("gdbskips")) {
+
+        emit deleteSkips(""); // Tell gdb to delete all skips. This will update the view.
+
+        int size = settings.beginReadArray("gdbskips");
+
+        for (int i = 0; i < size; ++i) {
+
+            settings.setArrayIndex(i);
+
+            QString number   = settings.value("number").toString();
+            QString enable   = settings.value("enable").toString();
+            QString glob     = settings.value("glob").toString();
+            QString file     = settings.value("file").toString();
+            QString re       = settings.value("re").toString();
+            QString function = settings.value("function").toString();
+
+            QString mode;
+            QString parameters;
+
+            // Work on file mode.
+            if (file != "<none>") {
+                if (glob == "y") {
+                    parameters = file;
+                    mode       = "gfile";
+                }else if (glob == "n") {
+                    parameters = file;
+                    mode       = "file";
+                }
+
+            // Work on function mode.
+            } else if (function != "<none>") {
+                if (re == "y") {
+                    parameters = function;
+                    mode       = "rfunction";
+                }else if (re == "n") {
+                    parameters = function;
+                    mode       = "function";
+                }else{
+                    continue;
+                }
+            }
+
+            if (mode == "" || parameters == "") continue;
+
+            emit addSkip(mode, parameters);
+
+        } settings.endArray();
+    }
 }
 
 void SeerSkipBrowserWidget::refresh () {

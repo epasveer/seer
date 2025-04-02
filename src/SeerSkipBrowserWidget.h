@@ -21,6 +21,8 @@ class SeerSkipBrowserWidget : public QWidget, protected Ui::SeerSkipBrowserWidge
         void                handleDeleteToolButton      ();
         void                handleEnableToolButton      ();
         void                handleDisableToolButton     ();
+        void                handleSaveToolButton        ();
+        void                handleLoadToolButton        ();
 
     signals:
         void                refreshSkipList             ();

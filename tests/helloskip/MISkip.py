@@ -73,7 +73,7 @@ class MISkip(gdb.MICommand):
             gdb.execute ("skip -function \"" + " ".join(argv) + "\"", to_string=True)
             return None
         elif self._mode == "createrfunction":
-            gdb.execute ("skip -ffunction \"" + " ".join(argv) + "\"", to_string=True)
+            gdb.execute ("skip -rfunction \"" + " ".join(argv) + "\"", to_string=True)
             return None
         else:
             raise gdb.GdbError("skips: Invalid parameter: %s" % self._mode)
