@@ -1011,6 +1011,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 handleGdbCommand("-gdb-set non-stop off");
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1145,6 +1146,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1219,6 +1221,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
                 break;
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1434,6 +1437,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -3661,6 +3665,58 @@ void SeerGdbWidget::handleGdbForkFollowMode (QString mode) {
     }else{
         qWarning() << "Invalid 'ForkFollowMode' of '" << mode << "'";
     }
+}
+
+void SeerGdbWidget::handleGdbLoadMICommands () {
+
+    // Don't do anything, if isn't running.
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    // Path the MI files in the resources.
+    QString miPath = ":/seer/resources/mi-python/"; // Resource file path
+
+    QDir miDirectory(miPath);
+
+    if (!miDirectory.exists()) {
+        qDebug() << "Directory does not exist:" << miPath;
+        return;
+    }
+
+    // Get list of MI files.
+    QFileInfoList miList = miDirectory.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries);
+
+    // Print the list.
+    qDebug() << "Sourcing scripts from:" << miPath;
+    foreach (QFileInfo miInfo, miList) {
+
+        // Open the source file from resources.
+        QFile miFile(miInfo.absoluteFilePath());
+        if (!miFile.exists()) {
+            qDebug() << "Resource file" << miInfo << "does not exist!";
+            continue;
+        }
+
+        // Destination file path in /tmp.
+        QString destinationPath = "/tmp/" + miInfo.fileName();
+
+        // Copy to temp. Don't check return status. I don't think it works
+        // if the source is in Resources.
+        miFile.copy(destinationPath);
+
+        // Source it.
+        if (QFile::exists(destinationPath) == false) {
+            continue;
+        }
+
+        qDebug() << "source " + miInfo.absoluteFilePath();
+
+        QString command = "source " + destinationPath;
+
+        handleGdbCommand(command);
+    }
+    qDebug() << "Done.";
 }
 
 void SeerGdbWidget::handleGdbSourceScripts () {

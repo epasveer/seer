@@ -79,6 +79,8 @@
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/Printpoints.md</file>
     <file>resources/help/Skips.md</file>
+    <file>resources/mi-python/MIEcho.py</file>
+    <file>resources/mi-python/MISkip.py</file>
   </qresource>
 </RCC>
 
