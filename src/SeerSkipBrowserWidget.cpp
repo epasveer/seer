@@ -198,11 +198,14 @@ void SeerSkipBrowserWidget::handleSaveToolButton () {
 
 void SeerSkipBrowserWidget::handleLoadToolButton () {
 
-    int result = QMessageBox::warning(this, "Seer",
-            QString("Load the previously saved skips from settings?\n\nThe existing skips in the view will be deleted first."),
-            QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+    // Warn only if there are existing skips in the view.
+    if (skipTreeWidget->topLevelItemCount() > 0) {
+        int result = QMessageBox::warning(this, "Seer",
+                QString("Load the previously saved skips from settings?\n\nThe existing skips in the view will be deleted first."),
+                QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
 
-    if (result == QMessageBox::Cancel) return;
+        if (result == QMessageBox::Cancel) return;
+    }
 
     QSettings settings;
 
