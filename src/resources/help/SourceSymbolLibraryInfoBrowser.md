@@ -12,6 +12,7 @@ Seer presents this information in three tabs:
 * Statics
 * Libraries
 * Ada exceptions
+* Skips
 
 ### Source
 
@@ -108,10 +109,30 @@ This information is shown for each exception:
 There is a button to quickly create a catchpoint for a selected exception. Once created, Seer will
 stop the program when the exception is raised.
 
+### Skip commands
+
+This browser manages the gdb skip commands you might have set up. A skip will bypass entering a function
+when the 'step' command is used. Skips can be described in various ways - filename, function name, and with
+glob wildcarding or regex. See the 'gdb skip' reference below.
+
+This information is shown for each exception:
+```
+      Column            Description
+      ----------        -------------------------------------------------
+      Number            The skip's interal number.
+      Enable            Is the skip enabled?
+      Glob              Is the skip a file glob wildcard?
+      File              The name of the file. Can be <none> if the skip is a function.
+      RE                Is the skip a function regex?
+      Function          The name of the function. Can be <none> if the skip is a file.
+```
+Skips can be: added, deleted, enabled, or disabled. As well, they can be saved to Seer's settings or loaded.
+
 ### References
 
 Consult these references
 
 1. [Link](https://en.wikipedia.org/wiki/Regular_expression) Regular expressions.
 2. [Link](https://en.wikipedia.org/wiki/Glob_(programming)) Unix wildcards.
+3. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Skipping-Over-Functions-and-Files.html) GDB Skip command.
 

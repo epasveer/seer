@@ -299,6 +299,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbThreadSelectId             (int threadid);
         void                                handleGdbAdaListTasks               ();
         void                                handleGdbAdaListExceptions          ();
+        void                                handleGdbListSkips                  ();
+        void                                handleGdbAddSkip                    (QString skipmode, QString skipparameters);
+        void                                handleGdbDeleteSkips                (QString skipids);
+        void                                handleGdbEnableSkips                (QString skipids);
+        void                                handleGdbDisableSkips               (QString skipids);
         void                                handleGdbRegisterListNames          ();
         void                                handleGdbRegisterListValues         (QString fmt);
         void                                handleGdbRegisterSetValue           (QString fmt, QString name, QString value);
@@ -340,6 +345,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbSchedulerLockingMode       (QString mode);
         void                                handleGdbScheduleMultipleMode       (QString mode);
         void                                handleGdbForkFollowMode             (QString mode);
+        void                                handleGdbLoadMICommands             ();
         void                                handleGdbSourceScripts              ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);

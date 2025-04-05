@@ -204,15 +204,12 @@ void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
 
 void SeerEditorConfigPage::handleFontChanged (const QFont& font) {
 
-    // Create a font database.
-    QFontDatabase fontDatabase;
-
     // Clear the font size list.
     QStringList sizes;
     fontSizeComboBox->clear();
 
     // Populate the font size list from the given font.
-    foreach (int points, fontDatabase.smoothSizes(font.family(), font.styleName())) {
+    foreach (int points, QFontDatabase::smoothSizes(font.family(), font.styleName())) {
         sizes.append(QString::number(points));
     }
 

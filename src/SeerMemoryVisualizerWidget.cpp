@@ -408,12 +408,11 @@ void SeerMemoryVisualizerWidget::handlePrintButton () {
 
     QPrinter printer;
 
-    QPrintDialog* dlg = new QPrintDialog(&printer, this);
+    QPrintDialog dialog(&printer, this);
 
-    if (dlg->exec() != QDialog::Accepted) {
+    if (dialog.exec() != QDialog::Accepted) {
         return;
     }
-
 
     // Make a copy so we can temporarily add a header.
     QTextDocument* clone = 0;

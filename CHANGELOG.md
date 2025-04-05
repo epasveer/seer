@@ -14,6 +14,7 @@
 * Optionally add a timestamp to the Seer and Gdb log widgets.
 * Add 'gdbserver debug' checkbox to Connect launch tab. For showing
   gdb and gdbserver communication debug information in gdb tab.
+* Manage gdb skip commands via a new Skip Browser.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.

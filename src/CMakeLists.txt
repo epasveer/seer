@@ -98,6 +98,8 @@ set(HEADER_FILES
     SeerFunctionBrowserWidget.h
     SeerTypeBrowserWidget.h
     SeerStaticBrowserWidget.h
+    SeerSkipBrowserWidget.h
+    SeerSkipCreateDialog.h
     SeerSourceSymbolLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
@@ -197,6 +199,8 @@ set(SOURCE_FILES
     SeerFunctionBrowserWidget.cpp
     SeerTypeBrowserWidget.cpp
     SeerStaticBrowserWidget.cpp
+    SeerSkipBrowserWidget.cpp
+    SeerSkipCreateDialog.cpp
     SeerSourceSymbolLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
@@ -266,7 +270,7 @@ if(UNIX AND NOT APPLE)
     add_compile_options(-Wall -Wextra -Wunused-result -pedantic)   # -Werror -Wdeprecated-copy
 endif()
 
-add_definitions(-DQT_DEPRECATED_WARNINGS)
+add_definitions(-DQT_DISABLE_DEPRECATED_UP_TO=0x060300)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 

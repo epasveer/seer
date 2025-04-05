@@ -173,6 +173,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->staticBrowserWidget(),              &SeerStaticBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->libraryBrowserWidget(),             &SeerLibraryBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),       &SeerAdaExceptionsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->skipBrowserWidget(),                &SeerSkipBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleText);
@@ -229,6 +230,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->libraryBrowserWidget(),        &SeerLibraryBrowserWidget::refreshLibraryList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableLibraries);
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::refreshAdaExceptions,                                      this,                                                           &SeerGdbWidget::handleGdbAdaListExceptions);
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::insertCatchpoint,                                          this,                                                           &SeerGdbWidget::handleGdbCatchpointInsert);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::refreshSkipList,                                                    this,                                                           &SeerGdbWidget::handleGdbListSkips);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::addSkip,                                                            this,                                                           &SeerGdbWidget::handleGdbAddSkip);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::deleteSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbDeleteSkips);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::enableSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbEnableSkips);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::disableSkips,                                                       this,                                                           &SeerGdbWidget::handleGdbDisableSkips);
 
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::refreshStackFrames,                                          this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedFrame,                                               this,                                                           &SeerGdbWidget::handleGdbStackSelectFrame);
@@ -1005,6 +1011,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 handleGdbCommand("-gdb-set non-stop off");
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1139,6 +1146,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1213,6 +1221,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
                 break;
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -1428,6 +1437,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
             }
 
+            handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
 
@@ -2294,6 +2304,69 @@ void SeerGdbWidget::handleGdbAdaListExceptions () {
     }
 
     handleGdbCommand("-info-ada-exceptions");
+}
+
+void SeerGdbWidget::handleGdbListSkips () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-skip-list");
+}
+
+void SeerGdbWidget::handleGdbAddSkip (QString skipmode, QString skipparameters) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (skipmode == "file") {
+        handleGdbCommand("-skip-create-file " + skipparameters);
+    }else if (skipmode == "gfile") {
+        handleGdbCommand("-skip-create-gfile " + skipparameters);
+    }else if (skipmode == "function") {
+        handleGdbCommand("-skip-create-function " + skipparameters);
+    }else if (skipmode == "rfunction") {
+        handleGdbCommand("-skip-create-rfunction " + skipparameters);
+    }else{
+        return;
+    }
+
+    handleGdbListSkips();
+}
+
+void SeerGdbWidget::handleGdbDeleteSkips (QString skipids) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-skip-delete " + skipids);
+
+    handleGdbListSkips();
+}
+
+void SeerGdbWidget::handleGdbEnableSkips (QString skipids) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-skip-enable " + skipids);
+
+    handleGdbListSkips();
+}
+
+void SeerGdbWidget::handleGdbDisableSkips (QString skipids) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-skip-disable " + skipids);
+
+    handleGdbListSkips();
 }
 
 void SeerGdbWidget::handleGdbRegisterListNames () {
@@ -3592,6 +3665,58 @@ void SeerGdbWidget::handleGdbForkFollowMode (QString mode) {
     }else{
         qWarning() << "Invalid 'ForkFollowMode' of '" << mode << "'";
     }
+}
+
+void SeerGdbWidget::handleGdbLoadMICommands () {
+
+    // Don't do anything, if isn't running.
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    // Path the MI files in the resources.
+    QString miPath = ":/seer/resources/mi-python/"; // Resource file path
+
+    QDir miDirectory(miPath);
+
+    if (!miDirectory.exists()) {
+        qDebug() << "Directory does not exist:" << miPath;
+        return;
+    }
+
+    // Get list of MI files.
+    QFileInfoList miList = miDirectory.entryInfoList(QDir::NoDotAndDotDot | QDir::AllEntries);
+
+    // Print the list.
+    qDebug() << "Sourcing scripts from:" << miPath;
+    foreach (QFileInfo miInfo, miList) {
+
+        // Open the source file from resources.
+        QFile miFile(miInfo.absoluteFilePath());
+        if (!miFile.exists()) {
+            qDebug() << "Resource file" << miInfo << "does not exist!";
+            continue;
+        }
+
+        // Destination file path in /tmp.
+        QString destinationPath = "/tmp/" + miInfo.fileName();
+
+        // Copy to temp. Don't check return status. I don't think it works
+        // if the source is in Resources.
+        miFile.copy(destinationPath);
+
+        // Source it.
+        if (QFile::exists(destinationPath) == false) {
+            continue;
+        }
+
+        qDebug() << "source " + miInfo.absoluteFilePath();
+
+        QString command = "source " + destinationPath;
+
+        handleGdbCommand(command);
+    }
+    qDebug() << "Done.";
 }
 
 void SeerGdbWidget::handleGdbSourceScripts () {
