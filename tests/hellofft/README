@@ -1,0 +1,34 @@
+
+After -exec-kill
+
+    ^done
+    ^running
+    *running,thread-id="all"
+    ^done,thread-ids={thread-id="1"},current-thread-id="1",number-of-threads="1"
+    ^done,threads=[{id="1",target-id="Thread 0x7ffff7eb0b80 (LWP 9413)",name="hellofft",state="running",core="6"}],current-thread-id="1"
+    ^error,msg="Selected thread is running."
+    =thread-exited,id="1",group-id="i1"
+    =thread-group-exited,id="i1"
+    ^done
+    ^done,thread-ids={},number-of-threads="0"
+    ^done,threads=[]
+    ^error,msg="No registers."
+
+Exiting normally
+
+    =thread-exited,id="1",group-id="i1"
+    =thread-group-exited,id="i1",exit-code="0"
+    *stopped,reason="exited-normally"
+    ^done,thread-ids={},number-of-threads="0"
+    ^done,threads=[]
+    ^error,msg="No registers."
+    ^done,thread-ids={},number-of-threads="0"
+    ^done,threads=[]
+    ^done,threads=[]
+    ^error,msg="No registers."
+    ^error,msg="No registers."
+    ^done,thread-ids={},number-of-threads="0"
+    ^done,threads=[]
+    ^error,msg="No registers."
+    ^error,msg="No registers."
+
