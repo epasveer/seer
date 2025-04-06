@@ -53,10 +53,18 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
 
     }else if (text.startsWith("*stopped")) {
 
+        //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         setRunStatus(SeerRunStatusIndicator::Stopped);
 
-        //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
-        return;
+    }else if (text.startsWith("=thread-exited")) {
+
+        //=thread-exited,id="1",group-id="i1"
+        setRunStatus(SeerRunStatusIndicator::Stopped);
+
+    }else if (text.startsWith("=thread-group-exited")) {
+
+        //=thread-group-exited,id="i1"
+        setRunStatus(SeerRunStatusIndicator::Stopped);
 
     }else{
         // All other text is ignored by this widget.

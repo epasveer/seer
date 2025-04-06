@@ -81,6 +81,7 @@
     <file>resources/help/Skips.md</file>
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>
+    <file>resources/mi-python/MIKill.py</file>
   </qresource>
 </RCC>
 

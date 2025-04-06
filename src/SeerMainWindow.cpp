@@ -181,6 +181,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
 
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicator::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   this,           &SeerMainWindow::handleText);
