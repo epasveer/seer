@@ -135,6 +135,13 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     f.setFontItalic(false);
     f.setForeground(QColor("#000000"));
     f.setBackground(QColor("#c0c0c0"));
+    cppSettings.add("Calling Line", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#000000"));
+    f.setBackground(QColor("#c0c0c0"));
     cppSettings.add("Match", f);
 
     f = QTextCharFormat();
@@ -217,6 +224,13 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
     f.setForeground(QColor("#c7fa54"));
     f.setBackground(QColor("#8ea82f"));
     cppSettings.add("Current Line", f);
+
+    f = QTextCharFormat();
+    f.setFontWeight(QFont::Normal);
+    f.setFontItalic(false);
+    f.setForeground(QColor("#c7fa54"));
+    f.setBackground(QColor("#737373"));
+    cppSettings.add("Calling Line", f);
 
     f = QTextCharFormat();
     f.setFontWeight(QFont::Normal);

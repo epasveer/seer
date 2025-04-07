@@ -633,7 +633,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 SeerEditorManagerEntries::iterator e = endEntry();
 
                 if (i != e) {
-                    i->widget->sourceArea()->addCurrentLine(line_text.toInt());
+                    i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
                 }
             }
         }
