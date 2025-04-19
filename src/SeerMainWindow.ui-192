@@ -57,9 +57,9 @@
       <iconset resource="resource.qrc">
        <normaloff>:/seer/resources/icons-icons/console.png</normaloff>:/seer/resources/icons-icons/console.png</iconset>
      </property>
-     <addaction name="actionConsoleAttached"/>
-     <addaction name="actionConsoleDetached"/>
-     <addaction name="actionConsoleDetachedMinimized"/>
+     <addaction name="actionConsoleNormal"/>
+     <addaction name="actionConsoleMinimized"/>
+     <addaction name="actionConsoleHidden"/>
     </widget>
     <widget class="QMenu" name="menuStyles">
      <property name="title">
@@ -124,8 +124,8 @@
      <addaction name="actionControlRecordForward"/>
      <addaction name="actionControlRecordReverse"/>
     </widget>
-    <addaction name="actionControlRestart"/>
-    <addaction name="actionControlTerminate"/>
+    <addaction name="actionControlRun"/>
+    <addaction name="actionControlStart"/>
     <addaction name="actionControlContinue"/>
     <addaction name="actionControlNext"/>
     <addaction name="actionControlStep"/>
@@ -160,10 +160,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionGdbLaunch"/>
    <addaction name="actionGdbTerminate"/>
-   <addaction name="actionGdbRestart"/>
-   <addaction name="separator"/>
+   <addaction name="actionGdbDebug"/>
+   <addaction name="actionGdbRun"/>
+   <addaction name="actionGdbStart"/>
+   <addaction name="actionGdbReconnect"/>
+   <addaction name="actionGdbReattach"/>
    <addaction name="actionGdbContinue"/>
    <addaction name="actionGdbNext"/>
    <addaction name="actionGdbStep"/>
@@ -187,19 +189,52 @@
     <string>Quit</string>
    </property>
    <property name="toolTip">
-    <string>Quit</string>
+    <string>Quit out of Seer</string>
    </property>
    <property name="statusTip">
     <string>Quit the  Seer debugger.</string>
    </property>
   </action>
-  <action name="actionGdbRestart">
+  <action name="actionGdbTerminate">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
    </property>
    <property name="text">
-    <string></string>
+    <string>Terminate</string>
+   </property>
+   <property name="toolTip">
+    <string>Terminate the current session</string>
+   </property>
+  </action>
+  <action name="actionGdbDebug">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/fortune-teller.svg</normaloff>:/seer/resources/thenounproject/fortune-teller.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Debug</string>
+   </property>
+   <property name="toolTip">
+    <string>Launch a new session</string>
+   </property>
+  </action>
+  <action name="actionGdbRun">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Run</string>
+   </property>
+  </action>
+  <action name="actionGdbStart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
    </property>
   </action>
   <action name="actionGdbNext">
@@ -210,6 +245,9 @@
    <property name="text">
     <string>Next</string>
    </property>
+   <property name="toolTip">
+    <string>Execute the next statement (step over functions)</string>
+   </property>
   </action>
   <action name="actionGdbStep">
    <property name="icon">
@@ -218,6 +256,9 @@
    </property>
    <property name="text">
     <string>Step</string>
+   </property>
+   <property name="toolTip">
+    <string>Execute the next statement (step into functions)</string>
    </property>
   </action>
   <action name="actionGdbFinish">
@@ -228,6 +269,9 @@
    <property name="text">
     <string>Finish</string>
    </property>
+   <property name="toolTip">
+    <string>Finish the current function</string>
+   </property>
   </action>
   <action name="actionGdbContinue">
    <property name="icon">
@@ -237,11 +281,14 @@
    <property name="text">
     <string>Continue</string>
    </property>
+   <property name="toolTip">
+    <string>Continue executing the program</string>
+   </property>
   </action>
   <action name="actionFileDebug">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/fortune-teller.svg</normaloff>:/seer/resources/thenounproject/fortune-teller.svg</iconset>
+     <normaloff>:/seer/resources/icons-icons/debug.png</normaloff>:/seer/resources/icons-icons/debug.png</iconset>
    </property>
    <property name="text">
     <string>Debug...</string>
@@ -316,16 +363,34 @@
     <string>Launch a blank Array Visualizer.</string>
    </property>
   </action>
-  <action name="actionControlRestart">
+  <action name="actionControlRun">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
-    <string></string>
+    <string>Run</string>
+   </property>
+   <property name="toolTip">
+    <string>Run</string>
    </property>
    <property name="statusTip">
     <string>Start the program in GDB. Honor breakpoints, if any.</string>
+   </property>
+  </action>
+  <action name="actionControlStart">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start</string>
+   </property>
+   <property name="statusTip">
+    <string>Start the program in GDB. Stop in main().</string>
    </property>
   </action>
   <action name="actionControlContinue">
@@ -427,49 +492,40 @@
     <string>Save the configurations so future Seer sessions will use them.</string>
    </property>
   </action>
-  <action name="actionConsoleAttached">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/icons-icons/attach.png</normaloff>:/seer/resources/icons-icons/attach.png</iconset>
-   </property>
-   <property name="text">
-    <string>Attached</string>
-   </property>
-   <property name="toolTip">
-    <string>Show the console window in Seer's tabs.</string>
-   </property>
-   <property name="statusTip">
-    <string>Show the console window in Seer's tabs.</string>
-   </property>
-  </action>
-  <action name="actionConsoleDetached">
+  <action name="actionConsoleNormal">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/icons-icons/maximize.png</normaloff>:/seer/resources/icons-icons/maximize.png</iconset>
    </property>
    <property name="text">
-    <string>Detached</string>
-   </property>
-   <property name="toolTip">
-    <string>Detach the console into it's own window.</string>
+    <string>Normal</string>
    </property>
    <property name="statusTip">
-    <string>Detach the console into it's own window.</string>
+    <string>Show the console window.</string>
    </property>
   </action>
-  <action name="actionConsoleDetachedMinimized">
+  <action name="actionConsoleHidden">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/hide.png</normaloff>:/seer/resources/icons-icons/hide.png</iconset>
+   </property>
+   <property name="text">
+    <string>Hidden</string>
+   </property>
+   <property name="statusTip">
+    <string>Hide the console window.</string>
+   </property>
+  </action>
+  <action name="actionConsoleMinimized">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/seer/resources/icons-icons/minimize.png</normaloff>:/seer/resources/icons-icons/minimize.png</iconset>
    </property>
    <property name="text">
-    <string>Detached Minimized</string>
-   </property>
-   <property name="toolTip">
-    <string>Detach the console into it's own minimaize window.</string>
+    <string>Minimized</string>
    </property>
    <property name="statusTip">
-    <string>Detach the console into it's own minimaize window.</string>
+    <string>Minimize the console window.</string>
    </property>
   </action>
   <action name="actionControlNexti">
@@ -619,7 +675,7 @@
     <string>Nexti</string>
    </property>
    <property name="toolTip">
-    <string>Nexti</string>
+    <string>Execute the next instruction (step over functions)</string>
    </property>
   </action>
   <action name="actionGdbStepi">
@@ -631,7 +687,7 @@
     <string>Stepi</string>
    </property>
    <property name="toolTip">
-    <string>Stepi</string>
+    <string>Execute the next instruction (step into functions)</string>
    </property>
   </action>
   <action name="actionVisualizers">
@@ -663,52 +719,28 @@
     <string>View the program's execution messages.</string>
    </property>
   </action>
-  <action name="actionGdbTerminate">
+  <action name="actionGdbReconnect">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Reconnect</string>
    </property>
    <property name="toolTip">
-    <string/>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <string>Reconnect to a previously connected server.</string>
    </property>
   </action>
-  <action name="actionGdbLaunch">
+  <action name="actionGdbReattach">
    <property name="icon">
     <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/thenounproject/fortune-teller.svg</normaloff>:/seer/resources/thenounproject/fortune-teller.svg</iconset>
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-run.svg</iconset>
    </property>
    <property name="text">
-    <string>Debug</string>
+    <string>Reattach</string>
    </property>
    <property name="toolTip">
-    <string>Launch a debugging session.</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionControlTerminate">
-   <property name="icon">
-    <iconset resource="resource.qrc">
-     <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="toolTip">
-    <string/>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <string>Reattach to a previosly attached pid.</string>
    </property>
   </action>
  </widget>

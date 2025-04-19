@@ -68,7 +68,7 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
 
     }else{
         // All other text is ignored by this widget.
-        qDebug() << text;
+        // qDebug() << text;
     }
 }
 
