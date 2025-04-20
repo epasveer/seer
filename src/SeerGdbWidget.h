@@ -361,6 +361,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
 
         void                                handleConsoleModeChanged            ();
+        void                                handleConsoleNewTextAdded           ();
+        void                                handleConsoleNewTextViewed          ();
         void                                handleAboutToQuit                   ();
 
     signals:

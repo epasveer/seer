@@ -90,6 +90,11 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
     textEdit->insertAnsiText(str);
     textEdit->ensureCursorVisible();
 
+    // Send signal of new text if this widget is not visable.
+    if (isVisible() == false) {
+        emit newTextAdded();
+    }
+
     return;
 }
 
@@ -521,5 +526,14 @@ void SeerConsoleWidget::resizeEvent (QResizeEvent* event) {
     writeSizeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerConsoleWidget::showEvent (QShowEvent* event) {
+
+    // Handle the event as normal.
+    QWidget::showEvent(event);
+
+    // Announce we are now visable.
+    emit newTextViewed();
 }
 

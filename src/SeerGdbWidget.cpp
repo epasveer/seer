@@ -780,7 +780,6 @@ void SeerGdbWidget::handleLogsTabMoved (int to, int from) {
 
     // Keep track of console tab if it moved.
     if (_consoleIndex == from) {
-        qDebug() << "Console tab index changed from" << from << "to" << to;
         _consoleIndex = to;
     }
 
@@ -821,10 +820,11 @@ void SeerGdbWidget::writeLogsSettings () {
     QStringList tabs;
 
     for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        tabs.append(logsTabWidget->tabBar()->tabText(i));
+        tabs.append(logsTabWidget->tabBar()->tabText(i).remove('*')); // Remove '*' from each tab name.
     }
 
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
+    current = current.remove('*');
 
     //qDebug() << "Tabs"    << tabs;
     //qDebug() << "Current" << current;
@@ -864,7 +864,7 @@ void SeerGdbWidget::readLogsSettings () {
         int     tb  = -1;
 
         for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
-            if (logsTabWidget->tabBar()->tabText(j) == tab) {
+            if (logsTabWidget->tabBar()->tabText(j).remove('*') == tab) {
                 tb = j;
                 break;
             }
@@ -878,7 +878,7 @@ void SeerGdbWidget::readLogsSettings () {
     // Find the console tab index.
     _consoleIndex = -1;
     for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        if (logsTabWidget->tabBar()->tabText(i) == "Console output") {
+        if (logsTabWidget->tabBar()->tabText(i).remove('*') == "Console output") {
             _consoleIndex = i;
             break;
         }
@@ -891,7 +891,7 @@ void SeerGdbWidget::readLogsSettings () {
     // Make a tab current.
     if (current != "") {
         for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-            if (logsTabWidget->tabBar()->tabText(i) == current) {
+            if (logsTabWidget->tabBar()->tabText(i).remove('*') == current) {
                 logsTabWidget->setCurrentIndex(i);
                 break;
             }
@@ -3504,8 +3504,25 @@ void SeerGdbWidget::createConsole () {
 
         _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
 
+        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextAdded,  this, &SeerGdbWidget::handleConsoleNewTextAdded);
+        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextViewed, this, &SeerGdbWidget::handleConsoleNewTextViewed);
+
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
+    }
+}
+
+void SeerGdbWidget::handleConsoleNewTextAdded () {
+
+    if (_consoleIndex >= 0) {
+        logsTabWidget->setTabText(_consoleIndex, "Console output*");
+    }
+}
+
+void SeerGdbWidget::handleConsoleNewTextViewed () {
+
+    if (_consoleIndex >= 0) {
+        logsTabWidget->setTabText(_consoleIndex, "Console output");
     }
 }
 

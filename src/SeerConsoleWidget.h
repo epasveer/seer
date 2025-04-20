@@ -3,6 +3,7 @@
 #include <QtWidgets/QWidget>
 #include <QtGui/QTextCursor>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QShowEvent>
 #include <QtCore/QString>
 #include <QtCore/QSocketNotifier>
 #include "ui_SeerConsoleWidget.h"
@@ -32,6 +33,10 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
 
         void                resetSize                   ();
 
+    signals:
+        void                newTextAdded                ();
+        void                newTextViewed               ();
+
     public slots:
         void                handleChangeWindowTitle     (QString title);
         void                handleTabDetached           (QWidget* widget);
@@ -54,6 +59,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                writeSizeSettings           ();
         void                readSettings                ();
         void                resizeEvent                 (QResizeEvent* event);
+        void                showEvent                   (QShowEvent*   event);
 
     private:
         QString             _ttyDeviceName;
