@@ -352,6 +352,12 @@ void SeerWatchpointsBrowserWidget::handleStoppingPointReached () {
     emit refreshWatchpointsList();
 }
 
+void SeerWatchpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    watchpointsTreeWidget->clear();
+}
+
 void SeerWatchpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

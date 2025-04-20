@@ -214,6 +214,12 @@ void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    variablesTreeWidget->clear();
+}
+
 void SeerVariableTrackerBrowserWidget::refresh () {
     emit refreshVariableTrackerNames();
     emit refreshVariableTrackerValues();

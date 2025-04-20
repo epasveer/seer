@@ -14,6 +14,7 @@ class SeerThreadGroupsBrowserWidget : public QWidget, protected Ui::SeerThreadGr
 
     public slots:
         void                handleText                      (const QString& text);
+        void                handleSessionTerminated         ();
         void                refresh                         ();
 
     protected slots:

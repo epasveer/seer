@@ -31,6 +31,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
         void                refresh                     ();
 
     protected slots:

@@ -154,6 +154,12 @@ void SeerStackArgumentsBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerStackArgumentsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    argumentsTreeWidget->clear();
+}
+
 void SeerStackArgumentsBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.

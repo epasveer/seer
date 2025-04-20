@@ -19,6 +19,7 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
 
     private slots:
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);

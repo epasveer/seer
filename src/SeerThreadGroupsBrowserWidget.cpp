@@ -116,6 +116,12 @@ void SeerThreadGroupsBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerThreadGroupsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    groupTreeWidget->clear();
+}
+
 void SeerThreadGroupsBrowserWidget::refresh () {
 
     emit refreshThreadIds();

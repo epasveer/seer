@@ -15,6 +15,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
     public slots:
         void                handleText                      (const QString& text);
         void                handleStoppingPointReached      ();
+        void                handleSessionTerminated         ();
         void                refresh                         ();
         void                refreshValues                   ();
 

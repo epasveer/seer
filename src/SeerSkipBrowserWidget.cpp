@@ -90,6 +90,12 @@ void SeerSkipBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerSkipBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    skipTreeWidget->clear();
+}
+
 void SeerSkipBrowserWidget::handleAddToolButton () {
 
     // Create the dialog.

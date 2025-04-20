@@ -93,23 +93,13 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,files=[") && text.endsWith("]")) {
 
-        // Delete previous files.
-        foreach (auto i, _sourceFilesItems->takeChildren()) {
-            delete i;
-        }
-
-        foreach (auto i, _headerFilesItems->takeChildren()) {
-            delete i;
-        }
-
-        foreach (auto i, _miscFilesItems->takeChildren()) {
-            delete i;
-        }
-
         // ^done,files=[
         //     {file=\"../sysdeps/x86_64/start.S\",fullname=\"/home/abuild/rpmbuild/BUILD/glibc-2.26/csu/../sysdeps/x86_64/start.S\"},
         //     {file=\"helloworld.cpp\",fullname=\"/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp\"}
         // ]
+
+        // Delete previous files.
+        deleteChildItems();
 
         QString files_text     = Seer::parseFirst(text, "files=", '[', ']', false);
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
@@ -168,6 +158,12 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
     sourceSearchLineEdit->clear();
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerSourceBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous files.
+    deleteChildItems();
 }
 
 void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
@@ -275,5 +271,21 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
 
 void SeerSourceBrowserWidget::refresh () {
     emit refreshSourceList();
+}
+
+void SeerSourceBrowserWidget::deleteChildItems () {
+
+    // Delete child items. Leave top-level 'Source', 'Header', and 'Misc'.
+    foreach (auto i, _sourceFilesItems->takeChildren()) {
+        delete i;
+    }
+
+    foreach (auto i, _headerFilesItems->takeChildren()) {
+        delete i;
+    }
+
+    foreach (auto i, _miscFilesItems->takeChildren()) {
+        delete i;
+    }
 }
 

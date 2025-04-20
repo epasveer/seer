@@ -206,6 +206,12 @@ void SeerPrintpointsBrowserWidget::handleStoppingPointReached () {
     emit refreshPrintpointsList();
 }
 
+void SeerPrintpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    printpointsTreeWidget->clear();
+}
+
 void SeerPrintpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

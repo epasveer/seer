@@ -113,6 +113,12 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerVariableLoggerBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    variablesTreeWidget->clear();
+}
+
 void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {
 
     QString id_text = QString::number(expressionid);

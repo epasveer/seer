@@ -22,6 +22,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
     public slots:
         void                        handleText                              (const QString& text);
         void                        handleStoppingPointReached              ();
+        void                        handleSessionTerminated                 ();
         void                        refresh                                 ();
 
     protected slots:

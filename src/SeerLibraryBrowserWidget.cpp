@@ -98,6 +98,12 @@ void SeerLibraryBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerLibraryBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    libraryTreeWidget->clear();
+}
+
 void SeerLibraryBrowserWidget::handleSearchLineEdit (const QString& text) {
 
     // Set everything to a normal font. If there is no search text, unhide everything.

@@ -118,6 +118,12 @@ void SeerTypeBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerTypeBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    typeTreeWidget->clear();
+}
+
 void SeerTypeBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

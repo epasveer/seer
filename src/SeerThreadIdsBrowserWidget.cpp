@@ -103,6 +103,12 @@ void SeerThreadIdsBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerThreadIdsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    idsTreeWidget->clear();
+}
+
 void SeerThreadIdsBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
