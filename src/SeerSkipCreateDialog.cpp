@@ -33,12 +33,16 @@ void SeerSkipCreateDialog::handleModeButtonGroup () {
     QAbstractButton* button = modeButtonGroup->checkedButton();
     if (button == dynamic_cast<QAbstractButton*>(fileRadioButton)) {
         fileLineEdit->setEnabled(true);
+        fileLineEdit->setFocus();
     } else if (button == dynamic_cast<QAbstractButton*>(fileGlobRadioButton)) {
         fileGlobLineEdit->setEnabled(true);
+        fileGlobLineEdit->setFocus();
     } else if (button == dynamic_cast<QAbstractButton*>(functionRadioButton)) {
         functionLineEdit->setEnabled(true);
+        functionLineEdit->setFocus();
     } else if (button == dynamic_cast<QAbstractButton*>(functionRegexRadioButton)) {
         functionRegexLineEdit->setEnabled(true);
+        functionRegexLineEdit->setFocus();
     }
 }
 
