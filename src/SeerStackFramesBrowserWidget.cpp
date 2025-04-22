@@ -162,8 +162,10 @@ void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
 
 void SeerStackFramesBrowserWidget::handleSessionTerminated () {
 
-    // Delete previous contents.
+    // Delete previous contents and remembered state.
     stackTreeWidget->clear();
+
+    _previousStackFrameText = "";
 }
 
 void SeerStackFramesBrowserWidget::refresh () {
