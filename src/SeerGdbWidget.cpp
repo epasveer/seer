@@ -820,11 +820,10 @@ void SeerGdbWidget::writeLogsSettings () {
     QStringList tabs;
 
     for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        tabs.append(logsTabWidget->tabBar()->tabText(i).remove('*')); // Remove '*' from each tab name.
+        tabs.append(logsTabWidget->tabBar()->tabText(i));
     }
 
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
-    current = current.remove('*');
 
     //qDebug() << "Tabs"    << tabs;
     //qDebug() << "Current" << current;
@@ -864,7 +863,7 @@ void SeerGdbWidget::readLogsSettings () {
         int     tb  = -1;
 
         for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
-            if (logsTabWidget->tabBar()->tabText(j).remove('*') == tab) {
+            if (logsTabWidget->tabBar()->tabText(j) == tab) {
                 tb = j;
                 break;
             }
@@ -878,7 +877,7 @@ void SeerGdbWidget::readLogsSettings () {
     // Find the console tab index.
     _consoleIndex = -1;
     for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        if (logsTabWidget->tabBar()->tabText(i).remove('*') == "Console output") {
+        if (logsTabWidget->tabBar()->tabText(i) == "Console output") {
             _consoleIndex = i;
             break;
         }
@@ -891,7 +890,7 @@ void SeerGdbWidget::readLogsSettings () {
     // Make a tab current.
     if (current != "") {
         for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-            if (logsTabWidget->tabBar()->tabText(i).remove('*') == current) {
+            if (logsTabWidget->tabBar()->tabText(i) == current) {
                 logsTabWidget->setCurrentIndex(i);
                 break;
             }
@@ -3515,14 +3514,14 @@ void SeerGdbWidget::createConsole () {
 void SeerGdbWidget::handleConsoleNewTextAdded () {
 
     if (_consoleIndex >= 0) {
-        logsTabWidget->setTabText(_consoleIndex, "Console output*");
+        logsTabWidget->setTabIcon(_consoleIndex, QIcon(":/seer/resources/RelaxLightIcons/data-information.svg"));
     }
 }
 
 void SeerGdbWidget::handleConsoleNewTextViewed () {
 
     if (_consoleIndex >= 0) {
-        logsTabWidget->setTabText(_consoleIndex, "Console output");
+        logsTabWidget->setTabIcon(_consoleIndex, QIcon());
     }
 }
 
