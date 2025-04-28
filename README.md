@@ -21,7 +21,7 @@ Requirements
 * Linux
 * C++17
 * gdb with "mi" interpreter (check by running: `gdb --interpreter=mi`)
-* CMake (3.1.0 or newer)
+* CMake (3.5.0 or newer)
 * QT6
    * When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
       * Core
