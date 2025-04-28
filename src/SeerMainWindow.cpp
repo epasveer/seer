@@ -426,6 +426,9 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionGdbStep->setVisible(true);
     actionGdbStepi->setVisible(true);
     actionGdbFinish->setVisible(true);
+    actionInterruptProcess->setVisible(true);
+    actionRecordProcess->setVisible(true);
+    actionRecordDirection->setVisible(true);
 
     actionGdbRestart->setVisible(false);
     actionGdbTerminate->setVisible(false);
@@ -433,6 +436,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
     actionControlRestart->setVisible(false);
     actionControlTerminate->setVisible(false);
+    actionControlInterrupt->setVisible(true);
 
     if (launchMode == "run") {
 
@@ -462,6 +466,10 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbStep->setVisible(false);
         actionGdbStepi->setVisible(false);
         actionGdbFinish->setVisible(false);
+
+        actionInterruptProcess->setVisible(false);
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
 
         gdbWidget->handleGdbCoreFileExecutable();
 
@@ -800,17 +808,6 @@ void SeerMainWindow::handleHelpAbout () {
 void SeerMainWindow::handleTerminateExecutable () {
 
     gdbWidget->handleGdbTerminateExecutable();
-
-    /* XXX
-    if (gdbWidget->executableLaunchMode() == "rr") {
-
-        gdbWidget->handleGdbRRExecutable();
-
-    }else{
-
-        gdbWidget->handleGdbRunExecutable("none");
-    }
-    */
 }
 
 void SeerMainWindow::handleRestartExecutable () {
@@ -819,11 +816,7 @@ void SeerMainWindow::handleRestartExecutable () {
         gdbWidget->restoreLaunchMode();
     }
 
-    if (gdbWidget->executableLaunchMode() == "rr") {
-
-        gdbWidget->handleGdbRRExecutable();
-
-    }else{
+    if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start") {
 
         QString breakfunction = gdbWidget->executableBreakpointFunctionName();
         QString breaksource   = gdbWidget->executableBreakpointSourceName();
@@ -843,8 +836,24 @@ void SeerMainWindow::handleRestartExecutable () {
             gdbWidget->handleGdbRunExecutable("inmain");
         }
 
-        // XXX What about 'none'???
-        // gdbWidget->handleGdbRunExecutable("none");
+    }else if (gdbWidget->executableLaunchMode() == "attach") {
+
+        gdbWidget->handleGdbAttachExecutable();
+
+    }else if (gdbWidget->executableLaunchMode() == "connect") {
+
+        gdbWidget->handleGdbConnectExecutable();
+
+    }else if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable();
+
+    }else if (gdbWidget->executableLaunchMode() == "corefile") {
+
+        gdbWidget->handleGdbCoreFileExecutable();
+
+    }else{
+        qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
     }
 }
 
@@ -1259,9 +1268,10 @@ void SeerMainWindow::handleText (const QString& text) {
             // Don't bother showing this.
             // Attaching to a pid will generate an unknown *stopped message that is useless.
 
-            //qDebug() << "Text=" << text;
+            // qDebug() << "Text=" << text;
+            // qDebug() << "Reason=" << reason_text;
 
-            gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
+            // gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
         }
 
         return;

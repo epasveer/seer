@@ -2,7 +2,7 @@
     "seerproject": {
         "executable": "hellofft",
         "postgdbcommands": [
-            ""
+            "b 126"
         ],
         "pregdbcommands": [
             ""

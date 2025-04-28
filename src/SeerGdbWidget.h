@@ -227,7 +227,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbConnectExecutable          ();
         void                                handleGdbRRExecutable               ();
         void                                handleGdbCoreFileExecutable         ();
-        void                                handleGdbTerminateExecutable        ();
+        void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
         void                                handleGdbRunToAddress               (QString address);
@@ -272,7 +272,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbExecutableLoadBreakpoints  ();
         void                                handleGdbExecutablePreCommands      ();
         void                                handleGdbExecutablePostCommands     ();
-        void                                handleGdbTtyDeviceName              ();
+        void                                handleGdbTerminalDeviceName         ();
         void                                handleGdbStackListFrames            ();
         void                                handleGdbStackSelectFrame           (int frameno);
         void                                handleGdbStackListLocals            ();
@@ -386,11 +386,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
-        void                                connectConsole                      ();
-        void                                disconnectConsole                   ();
         void                                reattachConsole                     ();
         SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
+        void                                delay                               (int seconds);
 
         bool                                _isQuitting;
         QString                             _gdbProgram;

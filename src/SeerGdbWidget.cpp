@@ -21,6 +21,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QFileInfoList>
+#include <QtCore/QThread>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -922,6 +923,10 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         setExecutablePid(pid_text.toLong());
 
+    }else if (text.startsWith("=thread-group-exited,")) {
+        // XXX
+        handleGdbTerminateExecutable(false);
+
     }else{
         // All other text is ignored by this widget.
     }
@@ -1018,18 +1023,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
-
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
         _executableBreakMode = breakMode;
 
         // Always say a new executable.
@@ -1038,7 +1031,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
 
         // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1050,9 +1043,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
-
-            // Connect to the console.
-            connectConsole();
 
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
@@ -1069,22 +1059,25 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             handleGdbSourceScripts();
         }
 
-        // Create a new console.
         // Set the program's tty device for stdin and stdout.
-        createConsole();
-        handleGdbTtyDeviceName();
-        connectConsole();
+        console()->createTerminal();
+        console()->connectTerminal();
+        handleGdbTerminalDeviceName();
 
         setExecutableLaunchMode("run");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            qDebug() << "RUN/START: Loading previous breakpoints.";
+            handleGdbCommand("source -v /tmp/breakpoints.seer");
 
             setNewExecutableFlag(false);
         }
@@ -1170,22 +1163,15 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1209,15 +1195,19 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
         // No console for 'attach' mode but make sure it's reattached.
         setExecutableLaunchMode("attach");
+        saveLaunchMode();
         setGdbRecordMode("");
         reattachConsole();
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            qDebug() << "ATTACH: Loading previous breakpoints.";
+            handleGdbCommand("source -v /tmp/breakpoints.seer");
 
             setNewExecutableFlag(false);
         }
@@ -1265,9 +1255,15 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Disconnect from the console and delete the old gdb if there is a new executable.
+        _executableBreakMode = "";
+
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
+
+        // Disconnect from the terminal and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1287,6 +1283,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         // No console for 'connect' mode but make sure it's reattached.
         setExecutableLaunchMode("connect");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
         reattachConsole();
@@ -1309,6 +1306,9 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            qDebug() << "CONNECT: Loading previous breakpoints.";
+            handleGdbCommand("source -v /tmp/breakpoints.seer");
 
             setNewExecutableFlag(false);
         }
@@ -1361,23 +1361,16 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb, then reconnect.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
-            connectConsole();
         }
 
         // If gdb isn't running, start it.
@@ -1390,18 +1383,29 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
+        // Set the program's tty device for stdin and stdout.
+        console()->createTerminal();
+        console()->connectTerminal();
+        handleGdbTerminalDeviceName();
+
         // Set the launch mode.
         setExecutableLaunchMode("rr");
+        saveLaunchMode();
         setGdbRecordMode("rr");
         setExecutablePid(0);
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         // For RR, this will start it.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            qDebug() << "RR: Loading previous breakpoints.";
+            handleGdbCommand("source -v /tmp/breakpoints.seer");
+
+            setNewExecutableFlag(false);
         }
 
         // Set or reset some things.
@@ -1435,9 +1439,6 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
-        // We are no longer a new executable.
-        setNewExecutableFlag(false);
-
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
 
@@ -1469,23 +1470,15 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
-        QApplication::setOverrideCursor(Qt::BusyCursor);
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb. No need to reconnect.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1509,6 +1502,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         // No console for 'core' mode but make sure it's reattached.
         setExecutableLaunchMode("corefile");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
         reattachConsole();
@@ -1550,32 +1544,33 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     qCDebug(LC) << "Finishing 'gdb corefile'.";
 }
 
-void SeerGdbWidget::handleGdbTerminateExecutable () {
+void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
 
     while (1) {
 
         // Do you really want to restart?
         if (isGdbRuning() == true) {
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("Terminate current session?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+            if (confirm) {
+                int result = QMessageBox::warning(this, "Seer",
+                        QString("Terminate current session?"),
+                        QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
 
-            if (result == QMessageBox::Cancel) {
-                break;
+                if (result == QMessageBox::Cancel) {
+                    break;
+                }
             }
 
-            handleGdbCommand("-exec-kill");
+            qDebug() << "TERMINATE: gdb is running. Saving previous breakpoints.";
+            handleGdbCommand("save breakpoints /tmp/breakpoints.seer");
+            delay(1);
 
-            // XXX
             // Give the gdb and 'exit' command.
             // This should handle detaching from an attached pid.
-            {
-                // Kill the gdb.
-                saveLaunchMode();
-                killGdb();
-            }
-            // XXX
+            handleGdbCommand("-exec-kill");
+
+            // Kill the gdb.
+            killGdb();
 
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
@@ -2049,11 +2044,11 @@ void SeerGdbWidget::handleGdbExecutablePostCommands () {
     }
 }
 
-void SeerGdbWidget::handleGdbTtyDeviceName () {
+void SeerGdbWidget::handleGdbTerminalDeviceName () {
 
-    if (_consoleWidget->ttyDeviceName() != "") {
+    if (_consoleWidget->terminalDeviceName() != "") {
 
-        handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->ttyDeviceName());
+        handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->terminalDeviceName());
 
     }else{
         qWarning() << "Can't set TTY name because the name is blank.";
@@ -3436,7 +3431,7 @@ bool SeerGdbWidget::startGdbRR () {
 
     // Set the gdb program name to use.
     QString command   = rrProgram();
-    QString arguments = rrArguments() + " --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
+    QString arguments = rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory();
 
     if (rrGdbArguments() != "") {
         arguments += " -- " + rrGdbArguments();
@@ -3541,20 +3536,6 @@ void SeerGdbWidget::deleteConsole () {
         delete _consoleWidget;
         _consoleWidget = 0;
         _consoleIndex  = -1;
-    }
-}
-
-void SeerGdbWidget::connectConsole () {
-
-    if (_consoleWidget) {
-        _consoleWidget->connectConsole();
-    }
-}
-
-void SeerGdbWidget::disconnectConsole () {
-
-    if (_consoleWidget) {
-        _consoleWidget->disconnectConsole();
     }
 }
 
@@ -4028,6 +4009,17 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
                                        QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
                                        QMessageBox::Ok);
         }
+    }
+}
+
+// Deleay N seconds by executing Qt's even loop a bunch of times.
+// This gives time for certain gdb commands to finish. Like saving the breakpoints before exit.
+void SeerGdbWidget::delay (int seconds) {
+
+    QTime dieTime = QTime::currentTime().addSecs(seconds);
+
+    while (QTime::currentTime() < dieTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
 
