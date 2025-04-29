@@ -21,6 +21,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QFileInfoList>
+#include <QtCore/QThread>
 #include <QtCore/QDebug>
 #include <QtGlobal>
 #include <unistd.h>
@@ -344,6 +345,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
+    QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
+
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget,                                             &SeerStackManagerWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleStoppingPointReached);
@@ -357,8 +361,29 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget,                                             &SeerStackManagerWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
+
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->functionBrowserWidget(),            &SeerFunctionBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->functionBrowserWidget(),            &SeerFunctionBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->staticBrowserWidget(),              &SeerStaticBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->libraryBrowserWidget(),             &SeerLibraryBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),       &SeerAdaExceptionsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->skipBrowserWidget(),                &SeerSkipBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackDumpBrowserWidget(),                   &SeerStackDumpBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->threadIdsBrowserWidget(),                  &SeerThreadIdsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->threadGroupsBrowserWidget(),               &SeerThreadGroupsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->adaTasksBrowserWidget(),                   &SeerAdaTasksBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleSessionTerminated);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
@@ -533,6 +558,33 @@ const QString& SeerGdbWidget::executableLaunchMode () const {
 
 const QString& SeerGdbWidget::executableBreakMode () const {
     return _executableBreakMode;
+}
+
+void SeerGdbWidget::saveLaunchMode() {
+    _executableLaunchModeBackup = _executableLaunchMode;
+    _executableBreakModeBackup  = _executableBreakMode;
+}
+
+void SeerGdbWidget::restoreLaunchMode() {
+    _executableLaunchMode = _executableLaunchModeBackup;
+    _executableBreakMode  = _executableBreakModeBackup;
+}
+
+bool SeerGdbWidget::hasBackupLaunchMode () const {
+    if (_executableLaunchModeBackup == "") {
+        return false;
+    }
+
+    return true;
+}
+
+void SeerGdbWidget::clearBackupLaunchMode () {
+    _executableLaunchModeBackup = "";
+    _executableBreakModeBackup  = "";
+}
+
+const QString& SeerGdbWidget::backupLaunchMode () const {
+    return _executableLaunchModeBackup;
 }
 
 void SeerGdbWidget::setGdbProgram (const QString& program) {
@@ -729,7 +781,6 @@ void SeerGdbWidget::handleLogsTabMoved (int to, int from) {
 
     // Keep track of console tab if it moved.
     if (_consoleIndex == from) {
-        qDebug() << "Console tab index changed from" << from << "to" << to;
         _consoleIndex = to;
     }
 
@@ -872,6 +923,10 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         setExecutablePid(pid_text.toLong());
 
+    }else if (text.startsWith("=thread-group-exited,")) {
+
+        handleGdbTerminateExecutable(false);
+
     }else{
         // All other text is ignored by this widget.
     }
@@ -952,7 +1007,7 @@ void SeerGdbWidget::handleGdbExit () {
     handleGdbCommand("-gdb-exit");
 }
 
-void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
+void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb run/start':" << breakMode;
 
@@ -968,23 +1023,15 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
-
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
         _executableBreakMode = breakMode;
+
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -996,9 +1043,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
-
-            // Connect to the console.
-            connectConsole();
 
             if (gdbAsyncMode()) {
                 handleGdbCommand("-gdb-set mi-async on"); // Turn on async mode so the 'interrupt' can happen.
@@ -1015,22 +1059,26 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             handleGdbSourceScripts();
         }
 
-        // Create a new console.
         // Set the program's tty device for stdin and stdout.
-        createConsole();
-        handleGdbTtyDeviceName();
-        connectConsole();
+        console()->createTerminal();
+        console()->connectTerminal();
+        handleGdbTerminalDeviceName();
 
         setExecutableLaunchMode("run");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1088,6 +1136,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
 
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
+
         break;
     }
 
@@ -1096,7 +1147,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     qCDebug(LC) << "Finishing 'gdb run/start'.";
 }
 
-void SeerGdbWidget::handleGdbAttachExecutable () {
+void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb attach'.";
 
@@ -1113,22 +1164,15 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1152,15 +1196,20 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
 
         // No console for 'attach' mode but make sure it's reattached.
         setExecutableLaunchMode("attach");
+        saveLaunchMode();
         setGdbRecordMode("");
         reattachConsole();
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1189,6 +1238,9 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
 
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
+
         break;
     }
 
@@ -1197,7 +1249,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     qCDebug(LC) << "Finishing 'gdb attach'.";
 }
 
-void SeerGdbWidget::handleGdbConnectExecutable () {
+void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb connect'.";
 
@@ -1205,9 +1257,15 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
     while (1) {
 
-        // Disconnect from the console and delete the old gdb if there is a new executable.
+        _executableBreakMode = "";
+
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
+
+        // Disconnect from the terminal and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1227,6 +1285,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
 
         // No console for 'connect' mode but make sure it's reattached.
         setExecutableLaunchMode("connect");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
         reattachConsole();
@@ -1249,6 +1308,10 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1274,6 +1337,9 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableConnectHostPort()).arg(QGuiApplication::applicationPid()));
 
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
+
         break;
     }
 
@@ -1282,7 +1348,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     qCDebug(LC) << "Finishing 'gdb connect'.";
 }
 
-void SeerGdbWidget::handleGdbRRExecutable () {
+void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb direct rr'.";
 
@@ -1298,23 +1364,16 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb, then reconnect.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
-            connectConsole();
         }
 
         // If gdb isn't running, start it.
@@ -1327,18 +1386,30 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
+        // Set the program's tty device for stdin and stdout.
+        console()->createTerminal();
+        console()->connectTerminal();
+        handleGdbTerminalDeviceName();
+
         // Set the launch mode.
         setExecutableLaunchMode("rr");
+        saveLaunchMode();
         setGdbRecordMode("rr");
         setExecutablePid(0);
 
-        // Load ithe executable, if needed.
+        // Load the executable, if needed.
         // For RR, this will start it.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
+
+            setNewExecutableFlag(false);
         }
 
         // Set or reset some things.
@@ -1372,11 +1443,11 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             }
         }
 
-        // We are no longer a new executable.
-        setNewExecutableFlag(false);
-
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
+
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
 
         break;
     }
@@ -1403,23 +1474,15 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             break;
         }
 
-        // Do you really want to restart?
-        if (isGdbRuning() == true) {
+        _executableBreakMode = "";
 
-            int result = QMessageBox::warning(this, "Seer",
-                    QString("The executable is already running.\n\nAre you sure to restart it?"),
-                    QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-            if (result == QMessageBox::Cancel) {
-                break;
-            }
-        }
-
-        QApplication::setOverrideCursor(Qt::BusyCursor);
+        // Always say a new executable.
+        // This causes a new gdb each time. The same console, though.
+        setNewExecutableFlag(true);
 
         // Disconnect from the console and delete the old gdb. No need to reconnect.
         if (newExecutableFlag() == true) {
-            disconnectConsole();
+            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1443,6 +1506,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         // No console for 'core' mode but make sure it's reattached.
         setExecutableLaunchMode("corefile");
+        saveLaunchMode();
         setGdbRecordMode("");
         setExecutablePid(0);
         reattachConsole();
@@ -1473,6 +1537,9 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableName()).arg(QGuiApplication::applicationPid()));
 
+        // Notify the state of the GdbWidget has changed.
+        emit stateChanged();
+
         break;
     }
 
@@ -1481,8 +1548,53 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
     qCDebug(LC) << "Finishing 'gdb corefile'.";
 }
 
+void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
+
+    while (1) {
+
+        // Do you really want to restart?
+        if (isGdbRuning() == true) {
+
+            if (confirm) {
+                int result = QMessageBox::warning(this, "Seer",
+                        QString("Terminate current session?"),
+                        QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+
+                if (result == QMessageBox::Cancel) {
+                    break;
+                }
+            }
+
+            handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+            delay(1);
+
+            // Give the gdb and 'exit' command.
+            // This should handle detaching from an attached pid.
+            handleGdbCommand("-exec-kill");
+
+            // Kill the gdb.
+            killGdb();
+
+            // Print a message.
+            addMessage("Program terminated.", QMessageBox::Warning);
+
+            // Alert listeners the session has been terminated.
+            emit sessionTerminated();
+
+            // Notify the state of the GdbWidget has changed.
+            emit stateChanged();
+        }
+
+        break;
+    }
+}
+
 void SeerGdbWidget::handleGdbShutdown () {
 
+    // Remove session breakpoint file, if any.
+    QFile::remove(QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+
+    // Do nothing if there's not gdb running.
     if (isGdbRuning() == false) {
         return;
     }
@@ -1807,7 +1919,7 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
     //qDebug() << id << functionRegex;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
-    handleGdbCommand(QString("%1-symbol-info-functions --name %2").arg(id).arg(functionRegex));
+    handleGdbCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
     QApplication::restoreOverrideCursor();
 }
 
@@ -1939,11 +2051,25 @@ void SeerGdbWidget::handleGdbExecutablePostCommands () {
     }
 }
 
-void SeerGdbWidget::handleGdbTtyDeviceName () {
+void SeerGdbWidget::handleGdbSessionLoadBreakpoints () {
 
-    if (_consoleWidget->ttyDeviceName() != "") {
+    handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+    handleGdbGenericpointList();
 
-        handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->ttyDeviceName());
+    delay(1);
+    QFile::remove(QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+}
+
+void SeerGdbWidget::handleGdbSessionSaveBreakpoints () {
+
+    handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+}
+
+void SeerGdbWidget::handleGdbTerminalDeviceName () {
+
+    if (_consoleWidget->terminalDeviceName() != "") {
+
+        handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->terminalDeviceName());
 
     }else{
         qWarning() << "Can't set TTY name because the name is blank.";
@@ -3326,7 +3452,7 @@ bool SeerGdbWidget::startGdbRR () {
 
     // Set the gdb program name to use.
     QString command   = rrProgram();
-    QString arguments = rrArguments() + " --tty " + _consoleWidget->ttyDeviceName() + " " + executableRRTraceDirectory();
+    QString arguments = rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory();
 
     if (rrGdbArguments() != "") {
         arguments += " -- " + rrGdbArguments();
@@ -3393,8 +3519,25 @@ void SeerGdbWidget::createConsole () {
 
         _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
 
+        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextAdded,  this, &SeerGdbWidget::handleConsoleNewTextAdded);
+        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextViewed, this, &SeerGdbWidget::handleConsoleNewTextViewed);
+
         setConsoleMode(consoleMode());
         setConsoleScrollLines(consoleScrollLines());
+    }
+}
+
+void SeerGdbWidget::handleConsoleNewTextAdded () {
+
+    if (_consoleIndex >= 0) {
+        logsTabWidget->setTabIcon(_consoleIndex, QIcon(":/seer/resources/RelaxLightIcons/data-information.svg"));
+    }
+}
+
+void SeerGdbWidget::handleConsoleNewTextViewed () {
+
+    if (_consoleIndex >= 0) {
+        logsTabWidget->setTabIcon(_consoleIndex, QIcon());
     }
 }
 
@@ -3414,20 +3557,6 @@ void SeerGdbWidget::deleteConsole () {
         delete _consoleWidget;
         _consoleWidget = 0;
         _consoleIndex  = -1;
-    }
-}
-
-void SeerGdbWidget::connectConsole () {
-
-    if (_consoleWidget) {
-        _consoleWidget->connectConsole();
-    }
-}
-
-void SeerGdbWidget::disconnectConsole () {
-
-    if (_consoleWidget) {
-        _consoleWidget->disconnectConsole();
     }
 }
 
@@ -3901,6 +4030,17 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
                                        QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(signal)).arg(executablePid()).arg(strerror(errno)),
                                        QMessageBox::Ok);
         }
+    }
+}
+
+// Deleay N seconds by executing Qt's even loop a bunch of times.
+// This gives time for certain gdb commands to finish. Like saving the breakpoints before exit.
+void SeerGdbWidget::delay (int seconds) {
+
+    QTime dieTime = QTime::currentTime().addSecs(seconds);
+
+    while (QTime::currentTime() < dieTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
 

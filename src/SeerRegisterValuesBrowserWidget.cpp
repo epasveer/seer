@@ -244,6 +244,14 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
     emit refreshRegisterValues(fmt);
 }
 
+void SeerRegisterValuesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    registersTreeWidget->clear();
+
+    _needsRegisterNames = true;
+}
+
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.

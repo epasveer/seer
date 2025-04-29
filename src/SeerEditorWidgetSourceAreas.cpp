@@ -872,11 +872,11 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
         _currentLinesExtraSelections.clear();
 
-        QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+        QTextCharFormat lineFormat = highlighterSettings().get("Current Line");
 
         QTextEdit::ExtraSelection selection;
-        selection.format.setForeground(currentLineFormat.foreground());
-        selection.format.setBackground(currentLineFormat.background());
+        selection.format.setForeground(lineFormat.foreground());
+        selection.format.setBackground(lineFormat.background());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -916,12 +916,17 @@ void SeerEditorWidgetSourceArea::clearCurrentLines () {
     refreshExtraSelections();
 }
 
-void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
+void SeerEditorWidgetSourceArea::addCurrentLine (int lineno, int level) {
 
     // Any line will be highlighted with a yellow line.
     // The 'yellow' color is for the current line of the most recent stack frame.
     // The 'grey' color is for older stack frames.
-    QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+    QTextCharFormat lineFormat;
+    if (level == 0) {
+        lineFormat = highlighterSettings().get("Current Line");
+    }else{
+        lineFormat = highlighterSettings().get("Calling Line");
+    }
 
     // Create a selection at the cursor.
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
@@ -930,8 +935,8 @@ void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
     cursor.setPosition(block.position());
 
     QTextEdit::ExtraSelection selection;
-    selection.format.setForeground(currentLineFormat.foreground());
-    selection.format.setBackground(currentLineFormat.background());
+    selection.format.setForeground(lineFormat.foreground());
+    selection.format.setBackground(lineFormat.background());
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = cursor;
     selection.cursor.clearSelection();

@@ -15,6 +15,7 @@ class SeerAdaTasksBrowserWidget : public QWidget, protected Ui::SeerAdaTasksBrow
     public slots:
         void                handleText                      (const QString& text);
         void                handleStoppingPointReached      ();
+        void                handleSessionTerminated         ();
         void                refresh                         ();
 
     protected slots:

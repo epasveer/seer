@@ -219,6 +219,12 @@ void SeerBreakpointsBrowserWidget::handleStoppingPointReached () {
     emit refreshBreakpointsList();
 }
 
+void SeerBreakpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    breakpointsTreeWidget->clear();
+}
+
 void SeerBreakpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

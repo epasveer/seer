@@ -64,7 +64,7 @@
      <item row="0" column="1">
       <widget class="QLineEdit" name="fileLineEdit">
        <property name="placeholderText">
-        <string>file</string>
+        <string>filename</string>
        </property>
       </widget>
      </item>
@@ -81,7 +81,7 @@
      <item row="1" column="1">
       <widget class="QLineEdit" name="fileGlobLineEdit">
        <property name="placeholderText">
-        <string>file-glob-pattern</string>
+        <string>filename glob-pattern</string>
        </property>
       </widget>
      </item>
@@ -98,7 +98,7 @@
      <item row="2" column="1">
       <widget class="QLineEdit" name="functionLineEdit">
        <property name="placeholderText">
-        <string>linespec</string>
+        <string>function name</string>
        </property>
       </widget>
      </item>
@@ -115,7 +115,7 @@
      <item row="3" column="1">
       <widget class="QLineEdit" name="functionRegexLineEdit">
        <property name="placeholderText">
-        <string>regex</string>
+        <string>function regex</string>
        </property>
       </widget>
      </item>

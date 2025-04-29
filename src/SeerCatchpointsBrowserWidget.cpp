@@ -255,6 +255,12 @@ void SeerCatchpointsBrowserWidget::handleStoppingPointReached () {
     emit refreshCatchpointsList();
 }
 
+void SeerCatchpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    catchpointsTreeWidget->clear();
+}
+
 void SeerCatchpointsBrowserWidget::handleRefreshToolButton () {
 
     emit refreshCatchpointsList();

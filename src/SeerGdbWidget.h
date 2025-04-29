@@ -205,6 +205,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                writeSettings                       ();
         void                                readSettings                        ();
 
+        // Gdb
+        bool                                isGdbRuning                         () const;
+        void                                restoreLaunchMode                   ();
+        void                                saveLaunchMode                      ();
+        bool                                hasBackupLaunchMode                 () const;
+        void                                clearBackupLaunchMode               ();
+        const QString&                      backupLaunchMode                    () const;
+
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
         void                                handleLogsTabChanged                (int index);
@@ -214,11 +222,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleManualCommandExecute          ();
         void                                handleGdbCommand                    (const QString& command);
         void                                handleGdbExit                       ();
-        void                                handleGdbRunExecutable              (const QString& breakMode);
-        void                                handleGdbAttachExecutable           ();
-        void                                handleGdbConnectExecutable          ();
-        void                                handleGdbRRExecutable               ();
+        void                                handleGdbRunExecutable              (const QString& breakMode, bool loadSessionBreakpoints);
+        void                                handleGdbAttachExecutable           (bool loadSessionBreakpoints);
+        void                                handleGdbConnectExecutable          (bool loadSessionBreakpoints);
+        void                                handleGdbRRExecutable               (bool loadSessionBreakpoints);
         void                                handleGdbCoreFileExecutable         ();
+        void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
         void                                handleGdbRunToAddress               (QString address);
@@ -263,7 +272,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbExecutableLoadBreakpoints  ();
         void                                handleGdbExecutablePreCommands      ();
         void                                handleGdbExecutablePostCommands     ();
-        void                                handleGdbTtyDeviceName              ();
+        void                                handleGdbSessionLoadBreakpoints     ();
+        void                                handleGdbSessionSaveBreakpoints     ();
+        void                                handleGdbTerminalDeviceName         ();
         void                                handleGdbStackListFrames            ();
         void                                handleGdbStackSelectFrame           (int frameno);
         void                                handleGdbStackListLocals            ();
@@ -352,13 +363,17 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
 
         void                                handleConsoleModeChanged            ();
+        void                                handleConsoleNewTextAdded           ();
+        void                                handleConsoleNewTextViewed          ();
         void                                handleAboutToQuit                   ();
 
     signals:
         void                                stoppingPointReached                ();
+        void                                sessionTerminated                   ();
         void                                changeWindowTitle                   (QString title);
         void                                assemblyConfigChanged               ();
         void                                recordSettingsChanged               ();
+        void                                stateChanged                        ();
 
     protected:
         void                                writeLogsSettings                   ();
@@ -368,17 +383,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                isQuitting                          () const;
         void                                setIsQuitting                       (bool f);
 
-        bool                                isGdbRuning                         () const;
         bool                                startGdb                            ();
         bool                                startGdbRR                          ();
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
-        void                                connectConsole                      ();
-        void                                disconnectConsole                   ();
         void                                reattachConsole                     ();
         SeerConsoleWidget*                  console                             ();
         void                                sendGdbInterrupt                    (int signal);
+        void                                delay                               (int seconds);
 
         bool                                _isQuitting;
         QString                             _gdbProgram;
@@ -417,6 +430,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;
+        QString                             _executableLaunchModeBackup;
+        QString                             _executableBreakModeBackup;
         QStringList                         _executablePreGdbCommands;
         QStringList                         _executablePostGdbCommands;
         bool                                _newExecutableFlag;

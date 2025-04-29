@@ -93,10 +93,11 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleRecordSettingsChanged             ();
         void                        handleChangeWindowTitle                 (QString title);
         void                        handleHelpToolButtonClicked             ();
-        void                        handleRunExecutable                     ();
-        void                        handleStartExecutable                   ();
+        void                        handleTerminateExecutable               ();
+        void                        handleRestartExecutable                 ();
         void                        handleStyleMenuChanged                  ();
         void                        handleShowMessage                       (QString message, int time);
+        void                        handleGdbStateChanged                   ();
 
     protected:
         void                        writeSettings                           ();

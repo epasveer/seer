@@ -19,6 +19,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
 
     private slots:
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);

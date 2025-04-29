@@ -117,6 +117,40 @@ void SeerFunctionBrowserWidget::handleText (const QString& text) {
             }
         }
 
+        // ----
+
+        // -symbol-info-functions
+        // ^done,symbols={
+        //          nondebug=[
+        //                      {address="0x0000555555554720",name="putchar@plt"},
+        //                      {address="0x00007ffff7c40031",name="putchar[cold]"},
+        //                      {address="0x00007ffff7c9561e",name="putchar"},
+        //                      {address="0x00007ffff7c9579e",name="putchar_unlocked"}
+        //                   ]
+        //               }
+
+        QString nondebug_text = Seer::parseFirst(text, "nondebug=", '[', ']', false);
+
+        QStringList nondebug_list = Seer::parse(nondebug_text, "", '{', '}', false);
+
+        for (const auto& nondebug_entry : nondebug_list) {
+
+            QString address_text = Seer::parseFirst(nondebug_entry, "address=", '"', '"', false);
+            QString name_text    = Seer::parseFirst(nondebug_entry, "name=",    '"', '"', false);
+
+            // Add the function to the tree.
+            QTreeWidgetItem* item = new QTreeWidgetItem;
+
+            QFont f0 = item->font(0);
+            f0.setBold(true);
+            item->setFont(0,f0);
+
+            item->setText(0, name_text);
+            item->setText(1, address_text);
+
+            functionTreeWidget->addTopLevelItem(item);
+        }
+
     }else{
         // Ignore others.
     }
@@ -131,6 +165,12 @@ void SeerFunctionBrowserWidget::handleText (const QString& text) {
     functionTreeWidget->setSortingEnabled(true);
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerFunctionBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    functionTreeWidget->clear();
 }
 
 void SeerFunctionBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {

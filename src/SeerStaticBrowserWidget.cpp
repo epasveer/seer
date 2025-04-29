@@ -137,6 +137,12 @@ void SeerStaticBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerStaticBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    staticTreeWidget->clear();
+}
+
 void SeerStaticBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

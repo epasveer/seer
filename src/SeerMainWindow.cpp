@@ -135,8 +135,8 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionConsoleDetachedMinimized,    &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetachedMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                            this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRun,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
-    QObject::connect(actionControlStart,                &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
+    QObject::connect(actionControlRestart,              &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
+    QObject::connect(actionControlTerminate,            &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
     QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
     QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStep);
@@ -152,8 +152,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbRun,                      &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
-    QObject::connect(actionGdbStart,                    &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
+    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
+    QObject::connect(actionGdbRestart,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
     QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,                       this,           &SeerMainWindow::handleStyleMenuChanged);
     QObject::connect(actionGdbContinue,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                     &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
@@ -189,9 +190,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::assemblyTabShown,     this,           &SeerMainWindow::handleViewAssemblyShown);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::recordSettingsChanged,          this,           &SeerMainWindow::handleRecordSettingsChanged);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::stateChanged,                   this,           &SeerMainWindow::handleGdbStateChanged);
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged,         this,           &SeerMainWindow::handleRunStatusChanged);
-    QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,                     gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
@@ -418,45 +420,46 @@ QString SeerMainWindow::gdbArgumentsOverride () const {
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.
-    actionGdbRun->setVisible(true);
-    actionGdbStart->setVisible(true);
     actionGdbContinue->setVisible(true);
     actionGdbNext->setVisible(true);
     actionGdbNexti->setVisible(true);
     actionGdbStep->setVisible(true);
     actionGdbStepi->setVisible(true);
     actionGdbFinish->setVisible(true);
+    actionInterruptProcess->setVisible(true);
+    actionRecordProcess->setVisible(true);
+    actionRecordDirection->setVisible(true);
+
+    actionGdbRestart->setVisible(false);
+    actionGdbTerminate->setVisible(false);
+    actionGdbLaunch->setVisible(false);
+
+    actionControlRestart->setVisible(false);
+    actionControlTerminate->setVisible(false);
+    actionControlInterrupt->setVisible(true);
 
     if (launchMode == "run") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "start") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "attach") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
-
-        gdbWidget->handleGdbAttachExecutable();
+        gdbWidget->handleGdbAttachExecutable(false);
 
     }else if (launchMode == "connect") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
-
-        gdbWidget->handleGdbConnectExecutable();
+        gdbWidget->handleGdbConnectExecutable(false);
 
     }else if (launchMode == "rr") {
 
-        gdbWidget->handleGdbRRExecutable();
+        gdbWidget->handleGdbRRExecutable(false);
 
     }else if (launchMode == "corefile") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
         actionGdbContinue->setVisible(false);
         actionGdbNext->setVisible(false);
         actionGdbNexti->setVisible(false);
@@ -464,25 +467,35 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbStepi->setVisible(false);
         actionGdbFinish->setVisible(false);
 
+        actionInterruptProcess->setVisible(false);
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
+
         gdbWidget->handleGdbCoreFileExecutable();
 
     }else if (launchMode == "project") {
+
+        actionGdbLaunch->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else if (launchMode == "none") {
 
+        actionGdbLaunch->setVisible(true);
+
         // If no mode, schedule the opening of the debug dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
 
     }else if (launchMode == "configdialog") {
 
+        actionGdbLaunch->setVisible(true);
+
         // Launch the config dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleSettingsConfiguration);
 
     }else{
-        qWarning() << "Bad launchMode:" << launchMode;
+        qDebug() << "UNKNOWN launch mode:" << launchMode;
     }
 }
 
@@ -792,25 +805,18 @@ void SeerMainWindow::handleHelpAbout () {
     dlg.exec();
 }
 
-void SeerMainWindow::handleRunExecutable () {
+void SeerMainWindow::handleTerminateExecutable () {
 
-    if (gdbWidget->executableLaunchMode() == "rr") {
-
-        gdbWidget->handleGdbRRExecutable();
-
-    }else{
-
-        gdbWidget->handleGdbRunExecutable("none");
-    }
+    gdbWidget->handleGdbTerminateExecutable();
 }
 
-void SeerMainWindow::handleStartExecutable () {
+void SeerMainWindow::handleRestartExecutable () {
 
-    if (gdbWidget->executableLaunchMode() == "rr") {
+    if (gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode()) {
+        gdbWidget->restoreLaunchMode();
+    }
 
-        gdbWidget->handleGdbRRExecutable();
-
-    }else{
+    if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start") {
 
         QString breakfunction = gdbWidget->executableBreakpointFunctionName();
         QString breaksource   = gdbWidget->executableBreakpointSourceName();
@@ -818,17 +824,36 @@ void SeerMainWindow::handleStartExecutable () {
         // Stop in function?
         if (breakfunction != "") {
 
-            gdbWidget->handleGdbRunExecutable("infunction");
+            gdbWidget->handleGdbRunExecutable("infunction", true);
 
         // Stop at source:line?
         }else if (breaksource != "") {
 
-            gdbWidget->handleGdbRunExecutable("insource");
+            gdbWidget->handleGdbRunExecutable("insource", true);
 
         // Otherwise, attempt to stop in "main".
         }else{
-            gdbWidget->handleGdbRunExecutable("inmain");
+            gdbWidget->handleGdbRunExecutable("inmain", true);
         }
+
+    }else if (gdbWidget->executableLaunchMode() == "attach") {
+
+        gdbWidget->handleGdbAttachExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "connect") {
+
+        gdbWidget->handleGdbConnectExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "corefile") {
+
+        gdbWidget->handleGdbCoreFileExecutable();
+
+    }else{
+        qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
     }
 }
 
@@ -846,6 +871,116 @@ void SeerMainWindow::handleStyleMenuChanged () {
 void SeerMainWindow::handleShowMessage (QString message, int time) {
 
     statusBar()->showMessage(message, time);
+}
+
+void SeerMainWindow::handleGdbStateChanged () {
+
+    // qDebug() << "MODE:" << gdbWidget->executableLaunchMode() << "GDBRUNNING:" << gdbWidget->isGdbRuning() << "HASBACKUPLAUNCH:" << gdbWidget->hasBackupLaunchMode();
+
+    //
+    // We are currently debugging a program. Allow for Terminate/Detach/Disconnect...
+    //
+    // mode: "run" gdbrunning: true hasbackuplaunch: false
+    // terminate: show  debug: hide  retart: hide
+    //
+    // mode: "run" gdbrunning: true hasbackuplaunch: true
+    // terminate: show  debug: hide  retart: hide
+    //
+    if (gdbWidget->executableLaunchMode() != "" && gdbWidget->isGdbRuning() == true) {
+
+        // Launch and Restart. Applies to all.
+        actionGdbLaunch->setVisible(false);
+        actionGdbRestart->setVisible(false);
+        actionControlRestart->setVisible(false);
+
+        // Run mode
+        if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start" ||
+            gdbWidget->executableLaunchMode() == "rr"  || gdbWidget->executableLaunchMode() == "corefile") {
+            // Terminate
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Terminate");
+            actionGdbTerminate->setToolTip("Terminate the current debugging session.");
+            actionControlTerminate->setVisible(true);
+            actionControlTerminate->setText("Terminate");
+            actionControlTerminate->setToolTip("Terminate the current debugging session.");
+
+        // Attach mode
+        }else if (gdbWidget->executableLaunchMode() == "attach") {
+            // Detach
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Detach");
+            actionGdbTerminate->setToolTip("Detach from the current debugging session.");
+            actionControlTerminate->setVisible(true);
+            actionControlTerminate->setText("Detach");
+            actionControlTerminate->setToolTip("Detach from the current debugging session.");
+
+        // Connect mode
+        }else if (gdbWidget->executableLaunchMode() == "connect") {
+            // Disconnect
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Disconnect");
+            actionGdbTerminate->setToolTip("Disconnect from the current debugging session.");
+            actionControlTerminate->setVisible(true);
+            actionControlTerminate->setText("Disconnect");
+            actionControlTerminate->setToolTip("Disconnect from the current debugging session.");
+
+        }else{
+            qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
+        }
+
+        return;
+    }
+
+    //
+    // We are debugging a program but gdb has been killed. Allow for Launch and for Restart/Reattach/Reconnect...
+    //
+    // mode: "" gdbrunning: false hasbackuplaunch: true
+    // terminate: hide  debug: show  retart: show
+    //
+    if (gdbWidget->executableLaunchMode() == "" && gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode() == true) {
+
+        // Allow a new debugging session.
+        actionGdbLaunch->setVisible(true);
+        actionGdbLaunch->setToolTip("Start a new debugging session.");
+
+        // Hide terminate. Applies to all.
+        actionGdbTerminate->setVisible(false);
+        actionControlTerminate->setVisible(false);
+
+        if (gdbWidget->backupLaunchMode() == "run" || gdbWidget->backupLaunchMode() == "start" ||
+            gdbWidget->backupLaunchMode() == "rr"  || gdbWidget->backupLaunchMode() == "corefile") {
+
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Restart");
+            actionGdbRestart->setToolTip("Restart the current debugging session.");
+            actionControlRestart->setVisible(true);
+            actionControlRestart->setText("Restart");
+            actionControlRestart->setToolTip("Restart the current debugging session.");
+
+        }else if (gdbWidget->backupLaunchMode() == "attach") {
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Reattach");
+            actionGdbRestart->setToolTip("Reattach the current debugging session.");
+            actionControlRestart->setVisible(true);
+            actionControlRestart->setText("Reattach");
+            actionControlRestart->setToolTip("Reattach the current debugging session.");
+
+        }else if (gdbWidget->backupLaunchMode() == "connect") {
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Reconnect");
+            actionGdbRestart->setToolTip("Reconnect the current debugging session.");
+            actionControlRestart->setVisible(true);
+            actionControlRestart->setText("Reconnect");
+            actionControlRestart->setToolTip("Reconnect the current debugging session.");
+
+        }else{
+            qDebug() << "UNKNOWN launch mode:" << gdbWidget->backupLaunchMode();
+        }
+
+        return;
+    }
+
+    qDebug() << "BAD STATE!";
 }
 
 void SeerMainWindow::handleText (const QString& text) {
@@ -1133,9 +1268,10 @@ void SeerMainWindow::handleText (const QString& text) {
             // Don't bother showing this.
             // Attaching to a pid will generate an unknown *stopped message that is useless.
 
-            //qDebug() << "Text=" << text;
+            // qDebug() << "Text=" << text;
+            // qDebug() << "Reason=" << reason_text;
 
-            gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
+            // gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
         }
 
         return;
@@ -1509,22 +1645,14 @@ const SeerKeySettings SeerMainWindow::keySettings () const {
 
 void SeerMainWindow::refreshShortCuts () {
 
-    if (_keySettings.has("Run")) {
+    // Dynamically change tool tip for 'Restart' depending on debug mode.
+    if (_keySettings.has("Restart")) {
 
-        SeerKeySetting setting = _keySettings.get("Run");
+        SeerKeySetting setting = _keySettings.get("Restart");
 
-        actionGdbRun->setToolTip(setting._description);
-        actionGdbRun->setText(setting._action + " (" + setting._sequence.toString() + ")");
-        actionControlRun->setShortcut(setting._sequence);
-    }
-
-    if (_keySettings.has("Start")) {
-
-        SeerKeySetting setting = _keySettings.get("Start");
-
-        actionGdbStart->setToolTip(setting._description);
-        actionGdbStart->setText(setting._action + " (" + setting._sequence.toString() + ")");
-        actionControlStart->setShortcut(setting._sequence);
+        actionGdbRestart->setToolTip(setting._description);
+        actionGdbRestart->setText(setting._action + " (" + setting._sequence.toString() + ")");
+        actionControlRestart->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Next")) {

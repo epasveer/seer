@@ -65,7 +65,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        scrollToLine                        (int lineno);
 
         void                                        clearCurrentLines                   ();
-        void                                        addCurrentLine                      (int lineno);
+        void                                        addCurrentLine                      (int lineno, int level);
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
 

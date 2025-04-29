@@ -200,6 +200,12 @@ void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerThreadFramesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    threadTreeWidget->clear();
+}
+
 void SeerThreadFramesBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.

@@ -14,6 +14,7 @@ class SeerAdaExceptionsBrowserWidget : public QWidget, protected Ui::SeerAdaExce
 
     public slots:
         void                handleText                              (const QString& text);
+        void                handleSessionTerminated                 ();
         void                refresh                                 ();
 
     protected slots:

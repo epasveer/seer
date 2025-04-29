@@ -126,6 +126,12 @@ void SeerStackLocalsBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerStackLocalsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    localsTreeWidget->clear();
+}
+
 void SeerStackLocalsBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.

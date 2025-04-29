@@ -15,6 +15,7 @@ class SeerStackLocalsBrowserWidget : public QWidget, protected Ui::SeerStackLoca
     public slots:
         void                handleText                          (const QString& text);
         void                handleStoppingPointReached          ();
+        void                handleSessionTerminated             ();
         void                refresh                             ();
 
     protected slots:

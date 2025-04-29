@@ -164,6 +164,12 @@ void SeerAdaTasksBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerAdaTasksBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    adaTaskTreeWidget->clear();
+}
+
 void SeerAdaTasksBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);

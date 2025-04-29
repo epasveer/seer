@@ -3,6 +3,7 @@
 #include <QtWidgets/QWidget>
 #include <QtGui/QTextCursor>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QShowEvent>
 #include <QtCore/QString>
 #include <QtCore/QSocketNotifier>
 #include "ui_SeerConsoleWidget.h"
@@ -15,12 +16,12 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         explicit SeerConsoleWidget (QWidget* parent = 0);
        ~SeerConsoleWidget ();
 
-        void                createConsole               ();
-        void                deleteConsole               ();
-        void                connectConsole              ();
-        void                disconnectConsole           ();
-        bool                isConsoleConnected          () const;
-        const QString&      ttyDeviceName               () const;
+        void                createTerminal              ();
+        void                deleteTerminal              ();
+        void                connectTerminal             ();
+        void                disconnectTerminal          ();
+        bool                isTerminalConnected         () const;
+        const QString&      terminalDeviceName          () const;
 
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
@@ -31,6 +32,10 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         bool                isWrapEnabled               () const;
 
         void                resetSize                   ();
+
+    signals:
+        void                newTextAdded                ();
+        void                newTextViewed               ();
 
     public slots:
         void                handleChangeWindowTitle     (QString title);
@@ -45,7 +50,7 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleWrapTextCheckBox      ();
         void                handleStdoutCheckBox        ();
         void                handleStdinLineEdit         ();
-        void                handleConsoleOutput         (int socketfd);
+        void                handleTerminalOutput        (int socketfd);
 
     protected:
         void                handleText                  (const char* buffer, int count);
@@ -54,11 +59,12 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                writeSizeSettings           ();
         void                readSettings                ();
         void                resizeEvent                 (QResizeEvent* event);
+        void                showEvent                   (QShowEvent*   event);
 
     private:
-        QString             _ttyDeviceName;
-        int                 _ptsFD;
-        QSocketNotifier*    _ptsListener;
+        QString             _terminalDeviceName;
+        int                 _ttyFD;
+        QSocketNotifier*    _ttyListener;
         bool                _enableStdout;
         bool                _enableWrap;
 };

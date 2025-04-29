@@ -87,6 +87,12 @@ void SeerAdaExceptionsBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerAdaExceptionsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    adaExceptionsTreeWidget->clear();
+}
+
 void SeerAdaExceptionsBrowserWidget::handleSearchLineEdit (const QString& text) {
 
     // Set everything to a normal font. If there is no search text, unhide everything.

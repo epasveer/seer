@@ -14,6 +14,7 @@ class SeerSkipBrowserWidget : public QWidget, protected Ui::SeerSkipBrowserWidge
 
     public slots:
         void                handleText                  (const QString& text);
+        void                handleSessionTerminated     ();
         void                refresh                     ();
 
     protected slots:

@@ -160,6 +160,14 @@ void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerStackFramesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents and remembered state.
+    stackTreeWidget->clear();
+
+    _previousStackFrameText = "";
+}
+
 void SeerStackFramesBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.

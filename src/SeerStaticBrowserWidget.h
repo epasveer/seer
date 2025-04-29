@@ -14,6 +14,7 @@ class SeerStaticBrowserWidget : public QWidget, protected Ui::SeerStaticBrowserW
 
     public slots:
         void                handleText                  (const QString& text);
+        void                handleSessionTerminated     ();
         void                refresh                     ();
 
     protected slots:

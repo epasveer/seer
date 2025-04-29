@@ -170,6 +170,12 @@ void SeerStackDumpBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerStackDumpBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    stackTableWidget->clearContents();
+}
+
 void SeerStackDumpBrowserWidget::handleFormatComboBox (const QString& text) {
 
     Q_UNUSED(text);
