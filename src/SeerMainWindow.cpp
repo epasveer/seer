@@ -440,23 +440,23 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
     if (launchMode == "run") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "start") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "attach") {
 
-        gdbWidget->handleGdbAttachExecutable();
+        gdbWidget->handleGdbAttachExecutable(false);
 
     }else if (launchMode == "connect") {
 
-        gdbWidget->handleGdbConnectExecutable();
+        gdbWidget->handleGdbConnectExecutable(false);
 
     }else if (launchMode == "rr") {
 
-        gdbWidget->handleGdbRRExecutable();
+        gdbWidget->handleGdbRRExecutable(false);
 
     }else if (launchMode == "corefile") {
 
@@ -495,7 +495,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         QTimer::singleShot(200, this, &SeerMainWindow::handleSettingsConfiguration);
 
     }else{
-        qWarning() << "Bad launchMode:" << launchMode;
+        qDebug() << "UNKNOWN launch mode:" << launchMode;
     }
 }
 
@@ -824,29 +824,29 @@ void SeerMainWindow::handleRestartExecutable () {
         // Stop in function?
         if (breakfunction != "") {
 
-            gdbWidget->handleGdbRunExecutable("infunction");
+            gdbWidget->handleGdbRunExecutable("infunction", true);
 
         // Stop at source:line?
         }else if (breaksource != "") {
 
-            gdbWidget->handleGdbRunExecutable("insource");
+            gdbWidget->handleGdbRunExecutable("insource", true);
 
         // Otherwise, attempt to stop in "main".
         }else{
-            gdbWidget->handleGdbRunExecutable("inmain");
+            gdbWidget->handleGdbRunExecutable("inmain", true);
         }
 
     }else if (gdbWidget->executableLaunchMode() == "attach") {
 
-        gdbWidget->handleGdbAttachExecutable();
+        gdbWidget->handleGdbAttachExecutable(true);
 
     }else if (gdbWidget->executableLaunchMode() == "connect") {
 
-        gdbWidget->handleGdbConnectExecutable();
+        gdbWidget->handleGdbConnectExecutable(true);
 
     }else if (gdbWidget->executableLaunchMode() == "rr") {
 
-        gdbWidget->handleGdbRRExecutable();
+        gdbWidget->handleGdbRRExecutable(true);
 
     }else if (gdbWidget->executableLaunchMode() == "corefile") {
 
@@ -1645,7 +1645,7 @@ const SeerKeySettings SeerMainWindow::keySettings () const {
 
 void SeerMainWindow::refreshShortCuts () {
 
-    // XXX Dynamically change tool tip for 'Restart' depending on debug mode.
+    // Dynamically change tool tip for 'Restart' depending on debug mode.
     if (_keySettings.has("Restart")) {
 
         SeerKeySetting setting = _keySettings.get("Restart");

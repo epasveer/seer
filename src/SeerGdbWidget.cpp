@@ -924,7 +924,7 @@ void SeerGdbWidget::handleText (const QString& text) {
         setExecutablePid(pid_text.toLong());
 
     }else if (text.startsWith("=thread-group-exited,")) {
-        // XXX
+
         handleGdbTerminateExecutable(false);
 
     }else{
@@ -1007,7 +1007,7 @@ void SeerGdbWidget::handleGdbExit () {
     handleGdbCommand("-gdb-exit");
 }
 
-void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
+void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb run/start':" << breakMode;
 
@@ -1076,8 +1076,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-            qDebug() << "RUN/START: Loading previous breakpoints.";
-            handleGdbCommand("source -v /tmp/breakpoints.seer");
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1146,7 +1147,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode) {
     qCDebug(LC) << "Finishing 'gdb run/start'.";
 }
 
-void SeerGdbWidget::handleGdbAttachExecutable () {
+void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb attach'.";
 
@@ -1206,8 +1207,9 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-            qDebug() << "ATTACH: Loading previous breakpoints.";
-            handleGdbCommand("source -v /tmp/breakpoints.seer");
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1247,7 +1249,7 @@ void SeerGdbWidget::handleGdbAttachExecutable () {
     qCDebug(LC) << "Finishing 'gdb attach'.";
 }
 
-void SeerGdbWidget::handleGdbConnectExecutable () {
+void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb connect'.";
 
@@ -1307,8 +1309,9 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-            qDebug() << "CONNECT: Loading previous breakpoints.";
-            handleGdbCommand("source -v /tmp/breakpoints.seer");
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1345,7 +1348,7 @@ void SeerGdbWidget::handleGdbConnectExecutable () {
     qCDebug(LC) << "Finishing 'gdb connect'.";
 }
 
-void SeerGdbWidget::handleGdbRRExecutable () {
+void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
     qCDebug(LC) << "Starting 'gdb direct rr'.";
 
@@ -1402,8 +1405,9 @@ void SeerGdbWidget::handleGdbRRExecutable () {
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
 
-            qDebug() << "RR: Loading previous breakpoints.";
-            handleGdbCommand("source -v /tmp/breakpoints.seer");
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
 
             setNewExecutableFlag(false);
         }
@@ -1561,8 +1565,7 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
                 }
             }
 
-            qDebug() << "TERMINATE: gdb is running. Saving previous breakpoints.";
-            handleGdbCommand("save breakpoints /tmp/breakpoints.seer");
+            handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
             delay(1);
 
             // Give the gdb and 'exit' command.
@@ -1588,6 +1591,10 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
 
 void SeerGdbWidget::handleGdbShutdown () {
 
+    // Remove session breakpoint file, if any.
+    QFile::remove(QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+
+    // Do nothing if there's not gdb running.
     if (isGdbRuning() == false) {
         return;
     }
@@ -2042,6 +2049,20 @@ void SeerGdbWidget::handleGdbExecutablePostCommands () {
     for (const auto& i : _executablePostGdbCommands) {
         handleGdbCommand(i);
     }
+}
+
+void SeerGdbWidget::handleGdbSessionLoadBreakpoints () {
+
+    handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+    handleGdbGenericpointList();
+
+    delay(1);
+    QFile::remove(QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+}
+
+void SeerGdbWidget::handleGdbSessionSaveBreakpoints () {
+
+    handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
 }
 
 void SeerGdbWidget::handleGdbTerminalDeviceName () {

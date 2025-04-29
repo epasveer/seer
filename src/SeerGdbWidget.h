@@ -222,10 +222,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleManualCommandExecute          ();
         void                                handleGdbCommand                    (const QString& command);
         void                                handleGdbExit                       ();
-        void                                handleGdbRunExecutable              (const QString& breakMode);
-        void                                handleGdbAttachExecutable           ();
-        void                                handleGdbConnectExecutable          ();
-        void                                handleGdbRRExecutable               ();
+        void                                handleGdbRunExecutable              (const QString& breakMode, bool loadSessionBreakpoints);
+        void                                handleGdbAttachExecutable           (bool loadSessionBreakpoints);
+        void                                handleGdbConnectExecutable          (bool loadSessionBreakpoints);
+        void                                handleGdbRRExecutable               (bool loadSessionBreakpoints);
         void                                handleGdbCoreFileExecutable         ();
         void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
@@ -272,6 +272,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbExecutableLoadBreakpoints  ();
         void                                handleGdbExecutablePreCommands      ();
         void                                handleGdbExecutablePostCommands     ();
+        void                                handleGdbSessionLoadBreakpoints     ();
+        void                                handleGdbSessionSaveBreakpoints     ();
         void                                handleGdbTerminalDeviceName         ();
         void                                handleGdbStackListFrames            ();
         void                                handleGdbStackSelectFrame           (int frameno);
