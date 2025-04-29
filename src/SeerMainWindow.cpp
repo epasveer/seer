@@ -875,7 +875,7 @@ void SeerMainWindow::handleShowMessage (QString message, int time) {
 
 void SeerMainWindow::handleGdbStateChanged () {
 
-    qDebug() << "MODE:" << gdbWidget->executableLaunchMode() << "GDBRUNNING:" << gdbWidget->isGdbRuning() << "HASBACKUPLAUNCH:" << gdbWidget->hasBackupLaunchMode();
+    // qDebug() << "MODE:" << gdbWidget->executableLaunchMode() << "GDBRUNNING:" << gdbWidget->isGdbRuning() << "HASBACKUPLAUNCH:" << gdbWidget->hasBackupLaunchMode();
 
     //
     // We are currently debugging a program. Allow for Terminate/Detach/Disconnect...
