@@ -1379,6 +1379,10 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         // If gdb isn't running, start it.
         if (isGdbRuning() == false) {
 
+            // Create and connect to the terminal.
+            console()->createTerminal();
+            console()->connectTerminal();
+
             bool f = startGdbRR();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1387,8 +1391,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         }
 
         // Set the program's tty device for stdin and stdout.
-        console()->createTerminal();
-        console()->connectTerminal();
         handleGdbTerminalDeviceName();
 
         // Set the launch mode.
@@ -3461,8 +3463,8 @@ bool SeerGdbWidget::startGdbRR () {
     // Split string into words, handling "double quoted" words.
     QStringList args = Seer::split(arguments);
 
-    //qDebug() << "Expanded command: "   << command;
-    //qDebug() << "Expanded arguments: " << arguments;
+    qDebug() << "Expanded command: "   << command;
+    qDebug() << "Expanded arguments: " << arguments;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(command);
