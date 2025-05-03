@@ -56,17 +56,28 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+#if QT_VERSION >= 0x060900
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+#else
     QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+#endif
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadAssembly);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadRegisters);
+#if QT_VERSION >= 0x060900
+    QObject::connect(showAddressCheckBox,               &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleShowAddressColumn);
+    QObject::connect(showOffsetCheckBox,                &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleShowOffsetColumn);
+    QObject::connect(showOpcodeCheckBox,                &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
+    QObject::connect(showSourceCheckBox,                &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleShowSourceLines);
+#else
     QObject::connect(showAddressCheckBox,               &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowAddressColumn);
     QObject::connect(showOffsetCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOffsetColumn);
     QObject::connect(showOpcodeCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
     QObject::connect(showSourceCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowSourceLines);
+#endif
     QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);

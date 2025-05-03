@@ -41,7 +41,11 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
 
     // Connect things.
     QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+#if QT_VERSION >= 0x060900
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::checkStateChanged,                          this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+#else
     QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                               this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+#endif
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
     QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                              this,  &SeerEditorWidgetSource::handleSearchLineNumberLineEdit);
