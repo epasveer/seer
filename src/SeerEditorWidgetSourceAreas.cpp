@@ -62,7 +62,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
-    enableMiniMapArea(false);  // Doesn't work yet. Need to work on the "mini" part.
+    enableMiniMapArea(true);  // Doesn't work yet. Need to work on the "mini" part.
 
     QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this, &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
@@ -343,7 +343,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
         QFont font("monospace");
         font.setStyleHint(QFont::Monospace);
-      //font.setPointSize(2);
+        font.setPointSizeF(2.0);
 
         QFontMetrics fm(font);
 
@@ -383,7 +383,8 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
             block = block.next();
             top    = bottom;
-            bottom = top + qRound(blockBoundingRect(block).height());
+          //bottom = top + qRound(blockBoundingRect(block).height());
+            bottom = top + painter.fontMetrics().height();
         }
     }
 
@@ -405,7 +406,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
     QFont font("monospace");
     font.setStyleHint(QFont::Monospace);
-  //font.setPointSize(2);
+    font.setPointSizeF(2.0);
 
     QTextCharFormat format = highlighterSettings().get("Margin");
 
@@ -426,8 +427,8 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
         block  = block.next();
         top    = bottom;
-        bottom = top + qRound(blockBoundingRect(block).height());
-      //bottom = top + painter.fontMetrics().height();
+      //bottom = top + qRound(blockBoundingRect(block).height());
+        bottom = top + painter.fontMetrics().height();
     }
 }
 
