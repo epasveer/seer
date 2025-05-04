@@ -12,7 +12,6 @@
 #include <QtGui/QHelpEvent>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGuiApplication>
-#include <QtGui/QHelpEvent>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
 #include <QAction>
@@ -29,7 +28,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 
-
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
     _fileWatcher                = 0;
@@ -39,6 +37,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _minimapFont                = QFont("monospace", 2, QFont::Monospace);
     _selectedExpressionId       = Seer::createID();
     _selectedBreakpointId       = Seer::createID();
 
@@ -57,7 +56,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
     _breakPointArea->setMouseTracking(true);
     _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
-    _miniMapPixmap  = 0;
 
 
     enableLineNumberArea(true);
@@ -334,102 +332,68 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
-    qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
-
-    if (_miniMapPixmap == 0) {
-
-        int pixmapWidth  = 0;
-        int pixmapHeight = 0;
-
-        QFont font("monospace");
-        font.setStyleHint(QFont::Monospace);
-        font.setPointSizeF(2.0);
-
-        QFontMetrics fm(font);
-
-        {
-            QTextBlock block = document()->begin();
-
-            while (block.isValid()) {
-
-                if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
-                    pixmapWidth = fm.horizontalAdvance(block.text());
-                }
-
-                pixmapHeight += fm.height();
-
-                block = block.next();
-            }
-        }
-
-        qDebug() << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
-
-        QTextCharFormat format = highlighterSettings().get("Margin");
-
-        _miniMapPixmap = new QPixmap(pixmapWidth, pixmapHeight);
-        _miniMapPixmap->fill(format.background().color());
-
-        QPainter painter(_miniMapPixmap);
-        painter.setPen(format.foreground().color());
-        painter.setFont(font);
-
-        QTextBlock block       = document()->begin();
-        int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-        int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-        while (block.isValid()) {
-
-            painter.drawText(0, top, block.text());
-
-            block = block.next();
-            top    = bottom;
-          //bottom = top + qRound(blockBoundingRect(block).height());
-            bottom = top + painter.fontMetrics().height();
-        }
-    }
-
+    // qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
 
     /*
-    QRectF target(10.0, 20.0, 80.0, 60.0);
-    QRectF source(0.0, 0.0, 70.0, 40.0);
-
-    QRect target(event->rect());
-    QRect source(event->rect());
-
-    QPainter painter(_miniMapPixmap);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    //painter.drawPixmap(target, *_miniMapPixmap, source);
-
     QPainter painter(_miniMapArea);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
+    painter.fillRect(rect(), Qt::lightGray);
+
+    QTextBlock block = document()->firstBlock();
+    int y = 0;
+    int lineHeight = minimapLineHeight();
+
+    while (block.isValid()) {
+        QRect r(0, y, width(), lineHeight);
+        painter.fillRect(r, Qt::darkGray);
+        y += lineHeight;
+        block = block.next();
+    }
+
+    // Viewport rectangle
+    double totalLines   = document()->blockCount();
+    double visibleLines = viewport()->height() / fontMetrics().height();
+    double topLine      = verticalScrollBar()->value();
+
+    int viewTop    = topLine * lineHeight;
+    int viewHeight = visibleLines * lineHeight;
+
+    QRect viewRect(0, viewTop, width(), viewHeight);
+
+    painter.fillRect(viewRect, QColor(255, 0, 0, 80));
     */
 
-    QFont font("monospace");
-    font.setStyleHint(QFont::Monospace);
-    font.setPointSizeF(2.0);
-
+    // Setup painter.
     QTextCharFormat format = highlighterSettings().get("Margin");
 
     QPainter painter(_miniMapArea);
     painter.fillRect(event->rect(), format.background().color());
     painter.setPen(format.foreground().color());
-    painter.setFont(font);
+    painter.setFont(minimapLineFont());
 
-    QTextBlock block       = firstVisibleBlock();
-    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int        bottom      = top + qRound(blockBoundingRect(block).height());
+    // Draw minimap text.
+    QTextBlock block = document()->firstBlock();
+    int y = 0;
+    int lineHeight = minimapLineHeight();
 
-    while (block.isValid() && top <= event->rect().bottom()) {
-
-        if (block.isVisible() && bottom >= event->rect().top()) {
-            painter.drawText(0, top, _miniMapArea->width(), painter.fontMetrics().height(), Qt::AlignLeft, block.text());
-        }
-
-        block  = block.next();
-        top    = bottom;
-      //bottom = top + qRound(blockBoundingRect(block).height());
-        bottom = top + painter.fontMetrics().height();
+    while (block.isValid()) {
+        QRect r(0, y, width(), lineHeight);
+        painter.drawText(0, y, _miniMapArea->width(), lineHeight, Qt::AlignLeft, block.text());
+        y += lineHeight;
+        block = block.next();
     }
+
+    // Draw viewport rectangle
+    double visibleLines = viewport()->height() / fontMetrics().height();
+    double topLine      = verticalScrollBar()->value();
+
+    int viewTop    = topLine      * lineHeight;
+    int viewHeight = visibleLines * lineHeight;
+
+    QRect viewRect(0, viewTop, width(), viewHeight);
+
+    painter.setPen(QPen(format.foreground().color(), 3, Qt::SolidLine));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawRect(viewRect);
 }
 
 void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
@@ -1719,6 +1683,18 @@ const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
     return _externalEditorCommand;
 }
 
+const QFont& SeerEditorWidgetSourceArea::minimapLineFont () const {
+
+    return _minimapFont;
+}
+
+int SeerEditorWidgetSourceArea::minimapLineHeight () const {
+
+    QFontMetrics fm(_minimapFont);
+
+    return fm.height();
+}
+
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -2029,37 +2005,31 @@ void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
 
 void SeerEditorWidgetSourceMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
     QWidget::mouseDoubleClickEvent(event);
 }
 
 void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+    int line = 1;
 
-    qDebug() << cursor.blockNumber()+1;
+    if (event->buttons() & Qt::LeftButton) {
+        line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
 
-    QWidget::mouseMoveEvent(event);
+        _editorWidget->scrollToLine(line);
+    }
 }
 
 void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+    int line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
 
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mousePressEvent(event);
+    _editorWidget->scrollToLine(line);
 }
 
 void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+    int line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
 
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseReleaseEvent(event);
+    _editorWidget->scrollToLine(line);
 }
 

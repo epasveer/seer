@@ -7,7 +7,6 @@
 #include <QtWidgets/QWidget>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
-#include <QtGui/QPixmap>
 #include <QtGui/QTextCursor>
 #include <QtCore/QSize>
 #include <QtCore/QRect>
@@ -100,6 +99,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
 
+        const QFont&                                minimapLineFont                     () const;
+        int                                         minimapLineHeight                   () const;
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
@@ -171,13 +173,15 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
         SeerEditorWidgetSourceMiniMapArea*          _miniMapArea;
 
-        QPixmap*                                    _miniMapPixmap;
         SeerCppSourceHighlighter*                   _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 
         int                                         _sourceTabSize;
         QString                                     _externalEditorCommand;
+
+        QFont                                       _minimapFont;
+        int                                         _minimapLineHeight;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {
@@ -238,6 +242,7 @@ class SeerEditorWidgetSourceMiniMapArea : public QWidget {
 
     private:
         SeerEditorWidgetSourceArea*                 _editorWidget;
+        int                                         _lineHeight;
 };
 
 #include "ui_SeerEditorWidgetSource.h"
