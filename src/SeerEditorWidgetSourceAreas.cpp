@@ -33,11 +33,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _fileWatcher                = 0;
     _enableLineNumberArea       = false;
     _enableBreakPointArea       = false;
-    _enableMiniMapArea          = false;
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
-    _minimapFont                = QFont("monospace", 2, QFont::Monospace);
     _selectedExpressionId       = Seer::createID();
     _selectedBreakpointId       = Seer::createID();
 
@@ -55,17 +53,14 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
     _breakPointArea->setMouseTracking(true);
-    _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
 
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
-    enableMiniMapArea(true);  // Doesn't work yet. Need to work on the "mini" part.
 
     QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this, &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
     setCurrentLine(0);
@@ -75,11 +70,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     // Forward the scroll events in the various areas to the text edit.
     SeerPlainTextWheelEventForwarder* lineNumberAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
-    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
-    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
     close();
@@ -105,22 +98,12 @@ bool SeerEditorWidgetSourceArea::breakPointAreaEnabled () const {
     return _enableBreakPointArea;
 }
 
-void SeerEditorWidgetSourceArea::enableMiniMapArea (bool flag) {
-    _enableMiniMapArea = flag;
-
-    updateMarginAreasWidth(0);
-}
-
-bool SeerEditorWidgetSourceArea::miniMapAreaEnabled () const {
-    return _enableMiniMapArea;
-}
-
 void SeerEditorWidgetSourceArea::updateMarginAreasWidth (int newBlockCount) {
 
     Q_UNUSED(newBlockCount);
 
     int leftMarginWidth  = lineNumberAreaWidth() + breakPointAreaWidth();
-    int rightMarginWidth = miniMapAreaWidth();
+    int rightMarginWidth = 0;
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
 }
@@ -155,17 +138,6 @@ int SeerEditorWidgetSourceArea::breakPointAreaWidth () {
     return space;
 }
 
-int SeerEditorWidgetSourceArea::miniMapAreaWidth () {
-
-    if (miniMapAreaEnabled() == false) {
-        return 0;
-    }
-
-    int space = 3 + 75;
-
-    return space;
-}
-
 void SeerEditorWidgetSourceArea::updateLineNumberArea (const QRect& rect, int dy) {
 
     if (lineNumberAreaEnabled() == false) {
@@ -193,23 +165,6 @@ void SeerEditorWidgetSourceArea::updateBreakPointArea (const QRect& rect, int dy
         _breakPointArea->scroll(0, dy);
     }else{
         _breakPointArea->update(0, rect.y(), _breakPointArea->width(), rect.height());
-    }
-
-    if (rect.contains(viewport()->rect())) {
-        updateMarginAreasWidth(0);
-    }
-}
-
-void SeerEditorWidgetSourceArea::updateMiniMapArea (const QRect& rect, int dy) {
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    if (dy) {
-        _miniMapArea->scroll(0, dy);
-    }else{
-        _miniMapArea->update(0, rect.y(), _miniMapArea->width(), rect.height());
     }
 
     if (rect.contains(viewport()->rect())) {
@@ -320,82 +275,6 @@ void SeerEditorWidgetSourceArea::breakPointAreaPaintEvent (QPaintEvent* event) {
     }
 }
 
-void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
-
-    //
-    // This doesn't work yet.
-    // There is nothing 'mini' about the view. Need to shrink the text somehow.
-    // Then add a 'focus' box that can be interacted with to scroll through the text.
-    //
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    // qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
-
-    /*
-    QPainter painter(_miniMapArea);
-    painter.fillRect(rect(), Qt::lightGray);
-
-    QTextBlock block = document()->firstBlock();
-    int y = 0;
-    int lineHeight = minimapLineHeight();
-
-    while (block.isValid()) {
-        QRect r(0, y, width(), lineHeight);
-        painter.fillRect(r, Qt::darkGray);
-        y += lineHeight;
-        block = block.next();
-    }
-
-    // Viewport rectangle
-    double totalLines   = document()->blockCount();
-    double visibleLines = viewport()->height() / fontMetrics().height();
-    double topLine      = verticalScrollBar()->value();
-
-    int viewTop    = topLine * lineHeight;
-    int viewHeight = visibleLines * lineHeight;
-
-    QRect viewRect(0, viewTop, width(), viewHeight);
-
-    painter.fillRect(viewRect, QColor(255, 0, 0, 80));
-    */
-
-    // Setup painter.
-    QTextCharFormat format = highlighterSettings().get("Margin");
-
-    QPainter painter(_miniMapArea);
-    painter.fillRect(event->rect(), format.background().color());
-    painter.setPen(format.foreground().color());
-    painter.setFont(minimapLineFont());
-
-    // Draw minimap text.
-    QTextBlock block = document()->firstBlock();
-    int y = 0;
-    int lineHeight = minimapLineHeight();
-
-    while (block.isValid()) {
-        QRect r(0, y, width(), lineHeight);
-        painter.drawText(0, y, _miniMapArea->width(), lineHeight, Qt::AlignLeft, block.text());
-        y += lineHeight;
-        block = block.next();
-    }
-
-    // Draw viewport rectangle
-    double visibleLines = viewport()->height() / fontMetrics().height();
-    double topLine      = verticalScrollBar()->value();
-
-    int viewTop    = topLine      * lineHeight;
-    int viewHeight = visibleLines * lineHeight;
-
-    QRect viewRect(0, viewTop, width(), viewHeight);
-
-    painter.setPen(QPen(format.foreground().color(), 3, Qt::SolidLine));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawRect(viewRect);
-}
-
 void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
 
     QPlainTextEdit::resizeEvent(e);
@@ -408,10 +287,6 @@ void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
 
     if (breakPointAreaEnabled()) {
         _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(), breakPointAreaWidth(), cr.height()));
-    }
-
-    if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
 }
 
@@ -1683,18 +1558,6 @@ const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
     return _externalEditorCommand;
 }
 
-const QFont& SeerEditorWidgetSourceArea::minimapLineFont () const {
-
-    return _minimapFont;
-}
-
-int SeerEditorWidgetSourceArea::minimapLineHeight () const {
-
-    QFontMetrics fm(_minimapFont);
-
-    return fm.height();
-}
-
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -1985,51 +1848,5 @@ void SeerEditorWidgetSourceBreakPointArea::mousePressEvent (QMouseEvent* event) 
 void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QWidget::mouseReleaseEvent(event);
-}
-
-//
-// MiniMap Area.
-//
-
-SeerEditorWidgetSourceMiniMapArea::SeerEditorWidgetSourceMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
-}
-
-QSize SeerEditorWidgetSourceMiniMapArea::sizeHint () const {
-    return QSize(_editorWidget->miniMapAreaWidth(), 0);
-}
-
-void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
-    _editorWidget->miniMapAreaPaintEvent(event);
-}
-
-void SeerEditorWidgetSourceMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
-
-    QWidget::mouseDoubleClickEvent(event);
-}
-
-void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
-
-    int line = 1;
-
-    if (event->buttons() & Qt::LeftButton) {
-        line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
-
-        _editorWidget->scrollToLine(line);
-    }
-}
-
-void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
-
-    int line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
-
-    _editorWidget->scrollToLine(line);
-}
-
-void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    int line = event->pos().y() / _editorWidget->minimapLineHeight() + 1;
-
-    _editorWidget->scrollToLine(line);
 }
 

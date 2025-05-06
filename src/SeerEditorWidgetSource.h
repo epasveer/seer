@@ -20,7 +20,6 @@
 
 class SeerEditorWidgetSourceLineNumberArea;
 class SeerEditorWidgetSourceBreakPointArea;
-class SeerEditorWidgetSourceMiniMapArea;
 
 class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
@@ -35,17 +34,11 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        enableBreakPointArea                (bool flag);
         bool                                        breakPointAreaEnabled               () const;
 
-        void                                        enableMiniMapArea                   (bool flag);
-        bool                                        miniMapAreaEnabled                  () const;
-
         void                                        lineNumberAreaPaintEvent            (QPaintEvent* event);
         int                                         lineNumberAreaWidth                 ();
 
         void                                        breakPointAreaPaintEvent            (QPaintEvent* event);
         int                                         breakPointAreaWidth                 ();
-
-        void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
-        int                                         miniMapAreaWidth                    ();
 
         bool                                        isOpen                              () const;
         void                                        open                                (const QString& fullname, const QString& file, const QString& alternateDirectory="");
@@ -99,9 +92,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
 
-        const QFont&                                minimapLineFont                     () const;
-        int                                         minimapLineHeight                   () const;
-
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
@@ -143,7 +133,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        updateMarginAreasWidth              (int newBlockCount);
         void                                        updateLineNumberArea                (const QRect& rect, int dy);
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
-        void                                        updateMiniMapArea                   (const QRect& rect, int dy);
 
     private:
         QString                                     _fullname;
@@ -154,7 +143,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
-        bool                                        _enableMiniMapArea;
         QVector<int>                                _breakpointsNumbers;
         QVector<int>                                _breakpointsLineNumbers;
         QVector<bool>                               _breakpointsEnableds;
@@ -171,7 +159,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
-        SeerEditorWidgetSourceMiniMapArea*          _miniMapArea;
 
         SeerCppSourceHighlighter*                   _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
@@ -179,9 +166,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         int                                         _sourceTabSize;
         QString                                     _externalEditorCommand;
-
-        QFont                                       _minimapFont;
-        int                                         _minimapLineHeight;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {
@@ -222,27 +206,6 @@ class SeerEditorWidgetSourceBreakPointArea : public QWidget {
 
     private:
         SeerEditorWidgetSourceArea*                 _editorWidget;
-};
-
-class SeerEditorWidgetSourceMiniMapArea : public QWidget {
-
-    Q_OBJECT
-
-    public:
-        SeerEditorWidgetSourceMiniMapArea (SeerEditorWidgetSourceArea* editorWidget);
-
-        QSize                                       sizeHint                            () const override;
-
-    protected:
-        void                                        paintEvent                          (QPaintEvent* event) override;
-        void                                        mouseDoubleClickEvent               (QMouseEvent* event) override;
-        void                                        mouseMoveEvent                      (QMouseEvent* event) override;
-        void                                        mousePressEvent                     (QMouseEvent* event) override;
-        void                                        mouseReleaseEvent                   (QMouseEvent* event) override;
-
-    private:
-        SeerEditorWidgetSourceArea*                 _editorWidget;
-        int                                         _lineHeight;
 };
 
 #include "ui_SeerEditorWidgetSource.h"
