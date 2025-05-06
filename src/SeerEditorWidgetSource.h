@@ -7,7 +7,6 @@
 #include <QtWidgets/QWidget>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QResizeEvent>
-#include <QtGui/QPixmap>
 #include <QtGui/QTextCursor>
 #include <QtCore/QSize>
 #include <QtCore/QRect>
@@ -21,7 +20,6 @@
 
 class SeerEditorWidgetSourceLineNumberArea;
 class SeerEditorWidgetSourceBreakPointArea;
-class SeerEditorWidgetSourceMiniMapArea;
 
 class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
@@ -36,17 +34,11 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        enableBreakPointArea                (bool flag);
         bool                                        breakPointAreaEnabled               () const;
 
-        void                                        enableMiniMapArea                   (bool flag);
-        bool                                        miniMapAreaEnabled                  () const;
-
         void                                        lineNumberAreaPaintEvent            (QPaintEvent* event);
         int                                         lineNumberAreaWidth                 ();
 
         void                                        breakPointAreaPaintEvent            (QPaintEvent* event);
         int                                         breakPointAreaWidth                 ();
-
-        void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
-        int                                         miniMapAreaWidth                    ();
 
         bool                                        isOpen                              () const;
         void                                        open                                (const QString& fullname, const QString& file, const QString& alternateDirectory="");
@@ -141,7 +133,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        updateMarginAreasWidth              (int newBlockCount);
         void                                        updateLineNumberArea                (const QRect& rect, int dy);
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
-        void                                        updateMiniMapArea                   (const QRect& rect, int dy);
 
     private:
         QString                                     _fullname;
@@ -152,7 +143,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         bool                                        _enableLineNumberArea;
         bool                                        _enableBreakPointArea;
-        bool                                        _enableMiniMapArea;
         QVector<int>                                _breakpointsNumbers;
         QVector<int>                                _breakpointsLineNumbers;
         QVector<bool>                               _breakpointsEnableds;
@@ -169,9 +159,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
-        SeerEditorWidgetSourceMiniMapArea*          _miniMapArea;
 
-        QPixmap*                                    _miniMapPixmap;
         SeerCppSourceHighlighter*                   _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
@@ -206,26 +194,6 @@ class SeerEditorWidgetSourceBreakPointArea : public QWidget {
 
     public:
         SeerEditorWidgetSourceBreakPointArea (SeerEditorWidgetSourceArea* editorWidget);
-
-        QSize                                       sizeHint                            () const override;
-
-    protected:
-        void                                        paintEvent                          (QPaintEvent* event) override;
-        void                                        mouseDoubleClickEvent               (QMouseEvent* event) override;
-        void                                        mouseMoveEvent                      (QMouseEvent* event) override;
-        void                                        mousePressEvent                     (QMouseEvent* event) override;
-        void                                        mouseReleaseEvent                   (QMouseEvent* event) override;
-
-    private:
-        SeerEditorWidgetSourceArea*                 _editorWidget;
-};
-
-class SeerEditorWidgetSourceMiniMapArea : public QWidget {
-
-    Q_OBJECT
-
-    public:
-        SeerEditorWidgetSourceMiniMapArea (SeerEditorWidgetSourceArea* editorWidget);
 
         QSize                                       sizeHint                            () const override;
 
