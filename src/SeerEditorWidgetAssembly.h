@@ -21,7 +21,6 @@ class SeerEditorWidgetAssemblyLineNumberArea;
 class SeerEditorWidgetAssemblyOffsetArea;
 class SeerEditorWidgetAssemblyBreakPointArea;
 class SeerEditorWidgetAssemblyOpcodeArea;
-class SeerEditorWidgetAssemblyMiniMapArea;
 
 class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
@@ -45,9 +44,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        enableSourceLines                   (bool flag);
         bool                                        sourceLinesEnabled                  () const;
 
-        void                                        enableMiniMapArea                   (bool flag);
-        bool                                        miniMapAreaEnabled                  () const;
-
         void                                        lineNumberAreaPaintEvent            (QPaintEvent* event);
         int                                         lineNumberAreaWidth                 ();
 
@@ -59,9 +55,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
         void                                        opcodeAreaPaintEvent                (QPaintEvent* event);
         int                                         opcodeAreaWidth                     ();
-
-        void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
-        int                                         miniMapAreaWidth                    ();
 
         void                                        setAddress                          (const QString& address, bool force=false);
         const QString&                              address                             () const;
@@ -132,7 +125,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        updateOffsetArea                    (const QRect& rect, int dy);
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
         void                                        updateOpcodeArea                    (const QRect& rect, int dy);
-        void                                        updateMiniMapArea                   (const QRect& rect, int dy);
 
     private:
         bool                                        _enableLineNumberArea;
@@ -140,7 +132,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        _enableBreakPointArea;
         bool                                        _enableOpcodeArea;
         bool                                        _enableSourceLines;
-        bool                                        _enableMiniMapArea;
         QVector<int>                                _breakpointsNumbers;
         QVector<QString>                            _breakpointsAddresses;
         QVector<bool>                               _breakpointsEnableds;
@@ -152,9 +143,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         SeerEditorWidgetAssemblyOffsetArea*         _offsetArea;
         SeerEditorWidgetAssemblyBreakPointArea*     _breakPointArea;
         SeerEditorWidgetAssemblyOpcodeArea*         _opcodeArea;
-        SeerEditorWidgetAssemblyMiniMapArea*        _miniMapArea;
 
-        QPixmap*                                    _miniMapPixmap;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 
@@ -242,26 +231,6 @@ class SeerEditorWidgetAssemblyOpcodeArea : public QWidget {
 
     public:
         SeerEditorWidgetAssemblyOpcodeArea (SeerEditorWidgetAssemblyArea* editorWidget);
-
-        QSize                                       sizeHint                            () const override;
-
-    protected:
-        void                                        paintEvent                          (QPaintEvent* event) override;
-        void                                        mouseDoubleClickEvent               (QMouseEvent* event) override;
-        void                                        mouseMoveEvent                      (QMouseEvent* event) override;
-        void                                        mousePressEvent                     (QMouseEvent* event) override;
-        void                                        mouseReleaseEvent                   (QMouseEvent* event) override;
-
-    private:
-        SeerEditorWidgetAssemblyArea*               _editorWidget;
-};
-
-class SeerEditorWidgetAssemblyMiniMapArea : public QWidget {
-
-    Q_OBJECT
-
-    public:
-        SeerEditorWidgetAssemblyMiniMapArea (SeerEditorWidgetAssemblyArea* editorWidget);
 
         QSize                                       sizeHint                            () const override;
 

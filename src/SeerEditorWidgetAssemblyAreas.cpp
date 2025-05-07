@@ -36,7 +36,6 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableOffsetArea     = false;
     _enableBreakPointArea = false;
     _enableOpcodeArea     = false;
-    _enableMiniMapArea    = false;
     _enableSourceLines    = false;
     _sourceTabSize        = 4;
 
@@ -58,14 +57,11 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _offsetArea     = new SeerEditorWidgetAssemblyOffsetArea(this);
     _breakPointArea = new SeerEditorWidgetAssemblyBreakPointArea(this);
     _opcodeArea     = new SeerEditorWidgetAssemblyOpcodeArea(this);
-    _miniMapArea    = new SeerEditorWidgetAssemblyMiniMapArea(this);
-    _miniMapPixmap  = 0;
 
     enableLineNumberArea(true);
     enableOffsetArea(true);
     enableBreakPointArea(true);
     enableOpcodeArea(true);
-    enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
     enableSourceLines(true);
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
@@ -73,7 +69,6 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOffsetArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOpcodeArea);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
     setCurrentLine("");
@@ -85,13 +80,11 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     SeerPlainTextWheelEventForwarder* offsetAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* opcodeAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
-    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _offsetArea->installEventFilter(offsetAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
     _opcodeArea->installEventFilter(opcodeAreaWheelForwarder);
-    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
     close();
@@ -157,18 +150,6 @@ void SeerEditorWidgetAssemblyArea::enableSourceLines (bool flag) {
 bool SeerEditorWidgetAssemblyArea::sourceLinesEnabled () const {
 
     return _enableSourceLines;
-}
-
-void SeerEditorWidgetAssemblyArea::enableMiniMapArea (bool flag) {
-
-    _enableMiniMapArea = flag;
-
-    updateMarginAreasWidth(0);
-}
-
-bool SeerEditorWidgetAssemblyArea::miniMapAreaEnabled () const {
-
-    return _enableMiniMapArea;
 }
 
 void SeerEditorWidgetAssemblyArea::updateTextArea () {
@@ -379,7 +360,7 @@ void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
     Q_UNUSED(newBlockCount);
 
     int leftMarginWidth  = lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth() + opcodeAreaWidth();
-    int rightMarginWidth = miniMapAreaWidth();
+    int rightMarginWidth = 0;
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
 }
@@ -467,17 +448,6 @@ int SeerEditorWidgetAssemblyArea::opcodeAreaWidth () {
     return space;
 }
 
-int SeerEditorWidgetAssemblyArea::miniMapAreaWidth () {
-
-    if (miniMapAreaEnabled() == false) {
-        return 0;
-    }
-
-    int space = 3 + 75;
-
-    return space;
-}
-
 void SeerEditorWidgetAssemblyArea::updateLineNumberArea (const QRect& rect, int dy) {
 
     if (lineNumberAreaEnabled() == false) {
@@ -539,23 +509,6 @@ void SeerEditorWidgetAssemblyArea::updateOpcodeArea (const QRect& rect, int dy) 
         _opcodeArea->scroll(0, dy);
     }else{
         _opcodeArea->update(0, rect.y(), _opcodeArea->width(), rect.height());
-    }
-
-    if (rect.contains(viewport()->rect())) {
-        updateMarginAreasWidth(0);
-    }
-}
-
-void SeerEditorWidgetAssemblyArea::updateMiniMapArea (const QRect& rect, int dy) {
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    if (dy) {
-        _miniMapArea->scroll(0, dy);
-    }else{
-        _miniMapArea->update(0, rect.y(), _miniMapArea->width(), rect.height());
     }
 
     if (rect.contains(viewport()->rect())) {
@@ -760,115 +713,6 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
     }
 }
 
-void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
-
-    //
-    // This doesn't work yet.
-    // There is nothing 'mini' about the view. Need to shrink the text somehow.
-    // Then add a 'focus' box that can be interacted with to scroll through the text.
-    //
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
-
-    if (_miniMapPixmap == 0) {
-
-        int pixmapWidth  = 0;
-        int pixmapHeight = 0;
-
-        QFont font("monospace");
-        font.setStyleHint(QFont::Monospace);
-      //font.setPointSize(2);
-
-        QFontMetrics fm(font);
-
-        {
-            QTextBlock block = document()->begin();
-
-            while (block.isValid()) {
-
-                if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
-                    pixmapWidth = fm.horizontalAdvance(block.text());
-                }
-
-                pixmapHeight += fm.height();
-
-                block = block.next();
-            }
-        }
-
-        qDebug() << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
-
-        QTextCharFormat format = highlighterSettings().get("Margin");
-
-        _miniMapPixmap = new QPixmap(pixmapWidth, pixmapHeight);
-        _miniMapPixmap->fill(format.background().color());
-
-        QPainter painter(_miniMapPixmap);
-        painter.setPen(format.foreground().color());
-        painter.setFont(font);
-
-        QTextBlock block       = document()->begin();
-        int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-        int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-        while (block.isValid()) {
-
-            painter.drawText(0, top, block.text());
-
-            block = block.next();
-            top    = bottom;
-            bottom = top + qRound(blockBoundingRect(block).height());
-        }
-    }
-
-
-    /*
-    QRectF target(10.0, 20.0, 80.0, 60.0);
-    QRectF source(0.0, 0.0, 70.0, 40.0);
-
-    QRect target(event->rect());
-    QRect source(event->rect());
-
-    QPainter painter(_miniMapPixmap);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    //painter.drawPixmap(target, *_miniMapPixmap, source);
-
-    QPainter painter(_miniMapArea);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    */
-
-    QFont font("monospace");
-    font.setStyleHint(QFont::Monospace);
-  //font.setPointSize(2);
-
-    QTextCharFormat format = highlighterSettings().get("Margin");
-
-    QPainter painter(_miniMapArea);
-    painter.fillRect(event->rect(), format.background().color());
-    painter.setPen(format.foreground().color());
-    painter.setFont(font);
-
-    QTextBlock block       = firstVisibleBlock();
-    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-    while (block.isValid() && top <= event->rect().bottom()) {
-
-        if (block.isVisible() && bottom >= event->rect().top()) {
-            painter.drawText(0, top, _miniMapArea->width(), painter.fontMetrics().height(), Qt::AlignLeft, block.text());
-        }
-
-        block  = block.next();
-        top    = bottom;
-        bottom = top + qRound(blockBoundingRect(block).height());
-      //bottom = top + painter.fontMetrics().height();
-    }
-}
-
 void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
 
     QPlainTextEdit::resizeEvent(e);
@@ -898,10 +742,6 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
         _opcodeArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), opcodeAreaWidth(), cr.height()));
 
         leftbias += opcodeAreaWidth();
-    }
-
-    if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
 }
 
@@ -1851,58 +1691,6 @@ void SeerEditorWidgetAssemblyOpcodeArea::mousePressEvent (QMouseEvent* event) {
 }
 
 void SeerEditorWidgetAssemblyOpcodeArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    QWidget::mouseReleaseEvent(event);
-}
-
-//
-// MiniMap Area
-//
-
-SeerEditorWidgetAssemblyMiniMapArea::SeerEditorWidgetAssemblyMiniMapArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
-}
-
-QSize SeerEditorWidgetAssemblyMiniMapArea::sizeHint () const {
-    return QSize(_editorWidget->miniMapAreaWidth(), 0);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::paintEvent (QPaintEvent* event) {
-    _editorWidget->miniMapAreaPaintEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseDoubleClickEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseMoveEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mousePressEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mousePressEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
 
     QWidget::mouseReleaseEvent(event);
 }
