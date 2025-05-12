@@ -36,7 +36,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setNonStopMode(false);
     setAttachPid(0);
     setConnectHostPort("");
-    setRRTraceDirectory("");
+    setRRHostPort("");
     setCoreFilename("");
     setProjectFilename("");
 
@@ -66,8 +66,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
     QObject::connect(executableWorkingDirectoryToolButton, &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableWorkingDirectoryToolButton);
     QObject::connect(loadBreakpointsFilenameToolButton,    &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
-    QObject::connect(rrLoadTraceDirectoryToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadRRTraceDirectoryToolButton);
-    QObject::connect(rrLoadBreakpointsFilenameToolButton,  &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadBreakpointsFilenameToolButton);
     QObject::connect(loadCoreFilenameToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleLoadCoreFilenameToolButton);
     QObject::connect(breakpointInFunctionLineEdit,         &QLineEdit::textChanged,             this, &SeerDebugDialog::handleBreakpointInFunctionLineEdit);
     QObject::connect(attachProgramPidToolButton,           &QToolButton::clicked,               this, &SeerDebugDialog::handleProgramPidToolButton);
@@ -130,6 +128,8 @@ QString SeerDebugDialog::executableWorkingDirectory () const {
     return "";
 }
 
+// Run/start
+
 void SeerDebugDialog::setExecutableArguments (const QString& executableArguments) {
     runProgramArgumentsLineEdit->setText(executableArguments);
 }
@@ -140,9 +140,8 @@ QString SeerDebugDialog::executableArguments () const {
 
 void SeerDebugDialog::setBreakpointsFilename (const QString& breakpointsFilename) {
 
-    // Try to keep these in sync. Arg!
+    // Load breakpoints.
     loadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
-    rrLoadBreakpointsFilenameLineEdit->setText(breakpointsFilename);
 }
 
 QString SeerDebugDialog::breakpointsFilename () const {
@@ -250,6 +249,8 @@ QStringList SeerDebugDialog::postGdbCommands () const {
     return postCommandsPlainTextEdit->toPlainText().split("\n");
 }
 
+// Core file
+
 void SeerDebugDialog::setCoreFilename (const QString& coreFilename) {
     loadCoreFilenameLineEdit->setText(coreFilename);
 }
@@ -257,6 +258,8 @@ void SeerDebugDialog::setCoreFilename (const QString& coreFilename) {
 QString SeerDebugDialog::coreFilename () const {
     return loadCoreFilenameLineEdit->text();
 }
+
+// Attach
 
 void SeerDebugDialog::setAttachPid (int pid) {
 
@@ -270,6 +273,8 @@ void SeerDebugDialog::setAttachPid (int pid) {
 int SeerDebugDialog::attachPid () const {
     return attachProgramPidLineEdit->text().toInt();
 }
+
+// Connect
 
 void SeerDebugDialog::setConnectHostPort (const QString& connectHostPort) {
     connectProgramHostPortLineEdit->setText(connectHostPort);
@@ -295,13 +300,33 @@ bool SeerDebugDialog::connectGdbserverDebug () const {
     return connectGdbserverDebugCheckBox->isChecked();
 }
 
-void SeerDebugDialog::setRRTraceDirectory (const QString& rrTraceDirectory) {
-    rrTraceDirectoryLineEdit->setText(rrTraceDirectory);
+// RR
+
+void SeerDebugDialog::setRRHostPort (const QString& connectHostPort) {
+    rrProgramHostPortLineEdit->setText(connectHostPort);
 }
 
-QString SeerDebugDialog::rrTraceDirectory () const {
-    return rrTraceDirectoryLineEdit->text();
+QString SeerDebugDialog::rrHostPort () const {
+    return rrProgramHostPortLineEdit->text();
 }
+
+void SeerDebugDialog::setRRRemoteTargetType (const QString& type) {
+    rrRemoteTargetTypeCombo->setCurrentText(type);
+}
+
+QString SeerDebugDialog::rrRemoteTargetType () const {
+    return rrRemoteTargetTypeCombo->currentText();
+}
+
+void SeerDebugDialog::setRRServerDebug (bool enable) {
+    rrGdbserverDebugCheckBox->setChecked(enable);
+}
+
+bool SeerDebugDialog::rrServerDebug () const {
+    return rrGdbserverDebugCheckBox->isChecked();
+}
+
+// Code
 
 void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
@@ -425,15 +450,6 @@ void SeerDebugDialog::handleExecutableWorkingDirectoryToolButton () {
 void SeerDebugDialog::handleBreakpointInFunctionLineEdit () {
 
     breakpointInFunctionRadioButton->setChecked(true);
-}
-
-void SeerDebugDialog::handleLoadRRTraceDirectoryToolButton () {
-
-    QString name = QFileDialog::getExistingDirectory(this, "Select a RR trace-directory to load.", rrTraceDirectory(), QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-    if (name != "") {
-        setRRTraceDirectory(name);
-    }
 }
 
 void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
@@ -563,7 +579,6 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
             runProgramArgumentsLineEdit->setText(runModeJson["arguments"].toString());
             loadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
-            rrLoadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
 
             if (runModeJson["nobreak"].toBool()) {
                 noBreakpointRadioButton->setChecked(true);
@@ -588,7 +603,6 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
             runProgramArgumentsLineEdit->setText(startModeJson["arguments"].toString());
             loadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
-            rrLoadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
 
             if (startModeJson["nobreak"].toBool()) {
                 noBreakpointRadioButton->setChecked(true);
@@ -641,9 +655,15 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Load RR project.
     if (rrModeJson.isEmpty() == false) {
 
-        rrTraceDirectoryLineEdit->setText(rrModeJson["tracedirectory"].toString());
-        loadBreakpointsFilenameLineEdit->setText(rrModeJson["breakpointsfile"].toString());
-        rrLoadBreakpointsFilenameLineEdit->setText(rrModeJson["breakpointsfile"].toString());
+        rrProgramHostPortLineEdit->setText(rrModeJson["rrserver"].toString());
+
+        if (connectModeJson.contains("targettype")) {
+            rrRemoteTargetTypeCombo->setCurrentText(connectModeJson["targettype"].toString());
+        }
+
+        if (connectModeJson.contains("rrserverdebug")) {
+            rrGdbserverDebugCheckBox->setChecked(connectModeJson["rrserverdebug"].toBool());
+        }
 
         setLaunchMode("rr");
     }
@@ -758,8 +778,8 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
 
         QJsonObject modeJson;
 
-        modeJson["tracedirectory"]     = rrTraceDirectoryLineEdit->text();
-        modeJson["breakpointsfile"]    = rrLoadBreakpointsFilenameLineEdit->text();
+        modeJson["rrserver"]           = rrProgramHostPortLineEdit->text();
+        modeJson["targettype"]         = rrRemoteTargetTypeCombo->currentText();
 
         seerProjectJson["rrmode"]      = modeJson;
     }

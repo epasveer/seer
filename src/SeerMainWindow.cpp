@@ -349,10 +349,6 @@ void SeerMainWindow::setExecutableConnectRemoteTargetType (const QString& type) 
     gdbWidget->setGdbRemoteTargetType(type);
 }
 
-QString SeerMainWindow::executableConnectRemoteTargetType () const {
-    return gdbWidget->gdbRemoteTargetType();
-}
-
 void SeerMainWindow::setExecutableConnectGdbserverDebug (bool enable) {
     gdbWidget->setGdbServerDebug(enable);
 }
@@ -361,12 +357,32 @@ bool SeerMainWindow::executableConnectGdbserverDebug () const {
     return gdbWidget->gdbServerDebug();
 }
 
-void SeerMainWindow::setExecutableRRTraceDirectory (const QString& executableRRTraceDirectory) {
-    gdbWidget->setExecutableRRTraceDirectory(executableRRTraceDirectory);
+QString SeerMainWindow::executableConnectRemoteTargetType () const {
+    return gdbWidget->gdbRemoteTargetType();
 }
 
-const QString& SeerMainWindow::executableRRTraceDirectory () const {
-    return gdbWidget->executableRRTraceDirectory();
+void SeerMainWindow::setExecutableRRHostPort (const QString& executableRRHostPort) {
+    gdbWidget->setExecutableRRHostPort(executableRRHostPort);
+}
+
+const QString& SeerMainWindow::executableRRHostPort () const {
+    return gdbWidget->executableRRHostPort();
+}
+
+void SeerMainWindow::setExecutableRRRemoteTargetType (const QString& type) {
+    gdbWidget->setGdbRemoteTargetType(type);
+}
+
+QString SeerMainWindow::executableRRRemoteTargetType () const {
+    return gdbWidget->gdbRemoteTargetType();
+}
+
+void SeerMainWindow::setExecutableRRServerDebug (bool enable) {
+    gdbWidget->setGdbServerDebug(enable);
+}
+
+bool SeerMainWindow::executableRRServerDebug () const {
+    return gdbWidget->gdbServerDebug();
 }
 
 void SeerMainWindow::setExecutableCoreFilename (const QString& executableCoreFilename) {
@@ -557,7 +573,9 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setConnectHostPort(executableConnectHostPort());
     dlg.setConnectRemoteTargetType(executableConnectRemoteTargetType());
     dlg.setConnectGdbserverDebug(executableConnectGdbserverDebug());
-    dlg.setRRTraceDirectory(executableRRTraceDirectory());
+    dlg.setRRHostPort(executableRRHostPort());
+    dlg.setRRRemoteTargetType(executableRRRemoteTargetType());
+    dlg.setRRServerDebug(executableRRServerDebug());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
@@ -592,7 +610,9 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableConnectHostPort(dlg.connectHostPort());
     setExecutableConnectRemoteTargetType(dlg.connectRemoteTargetType());
     setExecutableConnectGdbserverDebug(dlg.connectGdbserverDebug());
-    setExecutableRRTraceDirectory(dlg.rrTraceDirectory());
+    setExecutableRRHostPort(dlg.rrHostPort());
+    setExecutableRRRemoteTargetType(dlg.rrRemoteTargetType());
+    setExecutableRRServerDebug(dlg.rrServerDebug());
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());

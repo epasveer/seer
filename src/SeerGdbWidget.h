@@ -57,8 +57,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableConnectHostPort        (const QString& connectHostPort);
         const QString&                      executableConnectHostPort           () const;
 
-        void                                setExecutableRRTraceDirectory       (const QString& rrTraceDirectory);
-        const QString&                      executableRRTraceDirectory          () const;
+        void                                setExecutableRRHostPort             (const QString& connectHostPort);
+        const QString&                      executableRRHostPort                () const;
 
         void                                setExecutableCoreFilename           (const QString& coreFilename);
         const QString&                      executableCoreFilename              () const;
@@ -426,7 +426,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointSourceName;
         int                                 _executablePid;
         QString                             _executableConnectHostPort;
-        QString                             _executableRRTraceDirectory;
+        QString                             _executableRRHostPort;
         QString                             _executableCoreFilename;
         QString                             _executableLaunchMode;
         QString                             _executableBreakMode;

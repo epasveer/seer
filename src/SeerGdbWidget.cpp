@@ -43,7 +43,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableBreakpointsFilename      = "";
     _executableBreakpointFunctionName   = "";
     _executableConnectHostPort          = "";
-    _executableRRTraceDirectory         = "";
+    _executableRRHostPort               = "";
     _executableCoreFilename             = "";
     _executablePid                      = 0;
 
@@ -516,12 +516,12 @@ const QString& SeerGdbWidget::executableConnectHostPort () const {
     return _executableConnectHostPort;
 }
 
-void SeerGdbWidget::setExecutableRRTraceDirectory (const QString& rrTraceDirectory) {
-    _executableRRTraceDirectory = rrTraceDirectory;
+void SeerGdbWidget::setExecutableRRHostPort (const QString& rrHostPort) {
+    _executableRRHostPort = rrHostPort;
 }
 
-const QString& SeerGdbWidget::executableRRTraceDirectory () const {
-    return _executableRRTraceDirectory;
+const QString& SeerGdbWidget::executableRRHostPort () const {
+    return _executableRRHostPort;
 }
 
 void SeerGdbWidget::setExecutableCoreFilename (const QString& coreFilename) {
@@ -1380,29 +1380,64 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         if (isGdbRuning() == false) {
 
             // Create and connect to the terminal.
-            console()->createTerminal();
-            console()->connectTerminal();
+            // XXX console()->createTerminal();
+            // XXX console()->connectTerminal();
 
-            bool f = startGdbRR();
+            // XXX bool f = startGdbRR();
+            bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            handleGdbLoadMICommands();
+            handleGdbSourceScripts();
         }
 
+        /* XXX
         // Set the program's tty device for stdin and stdout.
         handleGdbTerminalDeviceName();
+        */
 
         // Set the launch mode.
         setExecutableLaunchMode("rr");
         saveLaunchMode();
         setGdbRecordMode("rr");
         setExecutablePid(0);
+        reattachConsole();
 
+        /* XXX
         // Load the executable, if needed.
         // For RR, this will start it.
         if (newExecutableFlag() == true) {
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutableName();              // Load the program into the gdb process.
+            handleGdbExecutableSources();           // Load the program source files.
+            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
+
+            if (loadSessionBreakpoints) {
+                handleGdbSessionLoadBreakpoints();
+            }
+
+            setNewExecutableFlag(false);
+        }
+        */
+
+        // Load any 'pre' commands.
+        if (newExecutableFlag() == true) {
+            if (gdbServerDebug()) {
+                handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
+            }else{
+                handleGdbCommand("-gdb-set debug remote 0");
+            }
+            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+        }
+
+        // Connect to the remote RR server using the proper remote type.
+        handleGdbCommand(QString("-target-select %1 %2").arg(gdbRemoteTargetType()).arg(executableRRHostPort()));
+
+        // Load the executable, if needed.
+        if (newExecutableFlag() == true) {
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -1436,6 +1471,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
+        /* XXX
         // Restart the executable if it was already running.
         if (newExecutableFlag() == false) {
             if (_executableBreakMode == "inmain") {
@@ -1444,9 +1480,10 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
                 handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
             }
         }
+        */
 
         // Set window titles with name of program.
-        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
+        emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
 
         // Notify the state of the GdbWidget has changed.
         emit stateChanged();
@@ -3438,6 +3475,7 @@ bool SeerGdbWidget::startGdb () {
 
 bool SeerGdbWidget::startGdbRR () {
 
+    /*
     // Don't do anything, if already running.
     if (isGdbRuning()) {
         qWarning() << "Already running";
@@ -3482,6 +3520,9 @@ bool SeerGdbWidget::startGdbRR () {
     //qDebug() << _gdbProcess->state();
 
     return true;
+    */
+
+    return false;
 }
 
 void SeerGdbWidget::killGdb () {
