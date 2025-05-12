@@ -2,6 +2,7 @@
 #include "SeerUtl.h"
 #include "QProcessInfo.h"
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QStyleFactory>
 #include <QtGui/QIcon>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
@@ -10,6 +11,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QObject>
 #include <QtCore/QDebug>
+#include <QtCore/QDirIterator>
 #include <iostream>
 
 static void seerhelp() {
@@ -117,8 +119,14 @@ int main (int argc, char* argv[]) {
     QCommandLineOption gdbArgumentsOption(QStringList() << "gdb-arguments", "", "gdbarguments");
     parser.addOption(gdbArgumentsOption);
 
-    QCommandLineOption xxxdebugOption(QStringList() << "xxx");
+    QCommandLineOption xxxdebugOption(QStringList() << "xxx-debug");
     parser.addOption(xxxdebugOption);
+
+    QCommandLineOption xxxresourcesOption(QStringList() << "xxx-resources");
+    parser.addOption(xxxresourcesOption);
+
+    QCommandLineOption xxxstylesOption(QStringList() << "xxx-styles");
+    parser.addOption(xxxstylesOption);
 
     QCommandLineOption helpOption(QStringList() << "h" << "help");
     parser.addOption(helpOption);
@@ -142,7 +150,25 @@ int main (int argc, char* argv[]) {
                                          "default.debug=true");
 
         QSettings settings;
-        qDebug() << "SETTINGS"    << settings.fileName();
+        qDebug() << "SETTINGS" << settings.fileName();
+    }
+
+    if (parser.isSet(xxxresourcesOption)) {
+        QTextStream(stdout) << "RESOURCES" << "\n";
+        QDirIterator it(":", QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            QTextStream(stdout) << "   " << it.next() << "\n";
+        }
+        QTextStream(stdout) << "ENDRESOURCES" << "\n";
+    }
+
+    if (parser.isSet(xxxstylesOption)) {
+        QTextStream(stdout) << "STYLES" << "\n";
+        QStringList styles = QStyleFactory::keys();
+        for (auto style : styles) {
+            QTextStream(stdout) << "   " << style << "\n";
+        }
+        QTextStream(stdout) << "ENDSTYLES" << "\n";
     }
 
     // Get the positional arguments. (The ones at the end of the line - executable name and its arguments.
