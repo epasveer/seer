@@ -455,24 +455,14 @@ SeerKeySettings SeerConfigDialog::keySettings () const {
     return _keysConfigPage->keySettings();
 }
 
-void SeerConfigDialog::setRRProgram (const QString& program) {
+void SeerConfigDialog::setRRGdbProgram (const QString& program) {
 
-    _rrConfigPage->setRRProgram(program);
+    _rrConfigPage->setGdbProgram(program);
 }
 
-QString SeerConfigDialog::rrProgram () const {
+QString SeerConfigDialog::rrGdbProgram () const {
 
-    return _rrConfigPage->rrProgram();
-}
-
-void SeerConfigDialog::setRRArguments (const QString& arguments) {
-
-    _rrConfigPage->setRRArguments(arguments);
-}
-
-QString SeerConfigDialog::rrArguments () const {
-
-    return _rrConfigPage->rrArguments();
+    return _rrConfigPage->gdbProgram();
 }
 
 void SeerConfigDialog::setRRGdbArguments (const QString& arguments) {

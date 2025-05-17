@@ -11,17 +11,12 @@ class SeerRRConfigPage : public QWidget, protected Ui::SeerRRConfigPage {
         explicit SeerRRConfigPage (QWidget* parent = 0);
        ~SeerRRConfigPage ();
 
-        QString                 rrProgram                                       () const;
-        QString                 rrArguments                                     () const;
+        QString                 gdbProgram                                      () const;
         QString                 gdbArguments                                    () const;
 
-        void                    setRRProgram                                    (const QString& program);
-        void                    setRRArguments                                  (const QString& arguments);
+        void                    setGdbProgram                                   (const QString& program);
         void                    setGdbArguments                                 (const QString& arguments);
 
         void                    reset                                           ();
-
-    protected slots:
-        void                    handleRRProgramToolButton                       ();
 };
 

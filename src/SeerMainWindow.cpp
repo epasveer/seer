@@ -745,8 +745,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setAssemblyRegisterFormat(gdbWidget->assemblyRegisterFormat());
     dlg.setAssemblyDisassemblyMode(gdbWidget->assemblyDisassemblyMode(), gdbWidget->assemblyDisassemblyBytes());
     dlg.setKeySettings(keySettings());
-    dlg.setRRProgram(gdbWidget->rrProgram());
-    dlg.setRRArguments(gdbWidget->rrArguments());
+    dlg.setRRGdbProgram(gdbWidget->rrGdbProgram());
     dlg.setRRGdbArguments(gdbWidget->rrGdbArguments());
 
     int ret = dlg.exec();
@@ -787,8 +786,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setAssemblyShowSourceLines(dlg.assemblyShowSourceLines());
     gdbWidget->setAssemblyRegisterFormat(dlg.assemblyRegisterFormat());
     gdbWidget->setAssemblyDisassemblyMode(dlg.assemblyDisassemblyMode(), dlg.assemblyDisassemblyBytes());
-    gdbWidget->setRRProgram(dlg.rrProgram());
-    gdbWidget->setRRArguments(dlg.rrArguments());
+    gdbWidget->setRRGdbProgram(dlg.rrGdbProgram());
     gdbWidget->setRRGdbArguments(dlg.rrGdbArguments());
 
     // Clear history, if we need to.
@@ -1476,9 +1474,8 @@ void SeerMainWindow::writeConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
-        settings.setValue("program",                    gdbWidget->rrProgram());
-        settings.setValue("arguments",                  gdbWidget->rrArguments());
-        settings.setValue("gdbarguments",               gdbWidget->rrGdbArguments());
+        settings.setValue("program",                    gdbWidget->rrGdbProgram());
+        settings.setValue("arguments",                  gdbWidget->rrGdbArguments());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {
@@ -1553,9 +1550,8 @@ void SeerMainWindow::readConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
-        gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
-        gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
-        gdbWidget->setRRGdbArguments(settings.value("gdbarguments", "").toString());
+        gdbWidget->setRRGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+        gdbWidget->setRRGdbArguments(settings.value("arguments", "--interpreter=mi -l 10000").toString());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {

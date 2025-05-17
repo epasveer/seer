@@ -185,11 +185,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                isSeerOutputLogTimeStampEnabled     () const;
 
         // RR settings.
-        void                                setRRProgram                        (const QString& program);
-        QString                             rrProgram                           () const;
-
-        void                                setRRArguments                      (const QString& arguments);
-        QString                             rrArguments                         () const;
+        void                                setRRGdbProgram                     (const QString& program);
+        QString                             rrGdbProgram                        () const;
 
         void                                setRRGdbArguments                   (const QString& arguments);
         QString                             rrGdbArguments                      () const;
@@ -398,9 +395,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbArguments;
         QString                             _gdbProgramOverride;
         QString                             _gdbArgumentsOverride;
-        QString                             _gdbRRProgram;
-        QString                             _gdbRRArguments;
-        QString                             _gdbRRGdbArguments;
+        QString                             _rrGdbProgram;
+        QString                             _rrGdbArguments;
         bool                                _gdbASyncMode;
         bool                                _gdbNonStopMode;
         bool                                _gdbServerDebug;

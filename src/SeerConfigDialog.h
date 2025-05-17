@@ -133,11 +133,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         SeerKeySettings                     keySettings                                     () const;
 
         // RR settings.
-        void                                setRRProgram                                    (const QString& program);
-        QString                             rrProgram                                       () const;
-
-        void                                setRRArguments                                  (const QString& arguments);
-        QString                             rrArguments                                     () const;
+        void                                setRRGdbProgram                                 (const QString& program);
+        QString                             rrGdbProgram                                    () const;
 
         void                                setRRGdbArguments                               (const QString& arguments);
         QString                             rrGdbArguments                                  () const;

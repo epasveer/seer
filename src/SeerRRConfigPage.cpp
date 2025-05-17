@@ -9,7 +9,6 @@ SeerRRConfigPage::SeerRRConfigPage(QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Connect things.
-    QObject::connect(rrProgramToolButton,  &QToolButton::clicked,           this, &SeerRRConfigPage::handleRRProgramToolButton);
 
     // Setup the defaults.
     reset();
@@ -18,14 +17,9 @@ SeerRRConfigPage::SeerRRConfigPage(QWidget* parent) : QWidget(parent) {
 SeerRRConfigPage::~SeerRRConfigPage() {
 }
 
-QString SeerRRConfigPage::rrProgram () const {
+QString SeerRRConfigPage::gdbProgram () const {
 
-    return rrProgramLineEdit->text();
-}
-
-QString SeerRRConfigPage::rrArguments () const {
-
-    return rrArgumentsLineEdit->text();
+    return gdbProgramLineEdit->text();
 }
 
 QString SeerRRConfigPage::gdbArguments () const {
@@ -33,14 +27,9 @@ QString SeerRRConfigPage::gdbArguments () const {
     return gdbArgumentsLineEdit->text();
 }
 
-void SeerRRConfigPage::setRRProgram (const QString& program) {
+void SeerRRConfigPage::setGdbProgram (const QString& program) {
 
-    rrProgramLineEdit->setText(program);
-}
-
-void SeerRRConfigPage::setRRArguments (const QString& arguments) {
-
-    rrArgumentsLineEdit->setText(arguments);
+    gdbProgramLineEdit->setText(program);
 }
 
 void SeerRRConfigPage::setGdbArguments (const QString& arguments) {
@@ -50,17 +39,7 @@ void SeerRRConfigPage::setGdbArguments (const QString& arguments) {
 
 void SeerRRConfigPage::reset () {
 
-    setRRProgram("/usr/bin/rr");
-    setRRArguments("replay --interpreter=mi");
-    setGdbArguments("");
-}
-
-void SeerRRConfigPage::handleRRProgramToolButton () {
-
-    QString program = QFileDialog::getOpenFileName(this, "Select a RR program to use.", rrProgram(), "", nullptr, QFileDialog::DontUseNativeDialog);
-
-    if (program != "") {
-        setRRProgram(program);
-    }
+    setGdbProgram("/usr/bin/gdb");
+    setGdbArguments("--interpreter=mi -l 10000");
 }
 

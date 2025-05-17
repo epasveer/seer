@@ -627,34 +627,24 @@ QString SeerGdbWidget::gdbArgumentsOverride () const {
     return _gdbArgumentsOverride;
 }
 
-void SeerGdbWidget::setRRProgram (const QString& program) {
+void SeerGdbWidget::setRRGdbProgram (const QString& program) {
 
-    _gdbRRProgram = program;
+    _rrGdbProgram = program;
 }
 
-QString SeerGdbWidget::rrProgram () const {
+QString SeerGdbWidget::rrGdbProgram () const {
 
-    return _gdbRRProgram;
-}
-
-void SeerGdbWidget::setRRArguments (const QString& arguments) {
-
-    _gdbRRArguments = arguments;
-}
-
-QString SeerGdbWidget::rrArguments () const {
-
-    return _gdbRRArguments;
+    return _rrGdbProgram;
 }
 
 void SeerGdbWidget::setRRGdbArguments (const QString& arguments) {
 
-    _gdbRRGdbArguments = arguments;
+    _rrGdbArguments = arguments;
 }
 
 QString SeerGdbWidget::rrGdbArguments () const {
 
-    return _gdbRRGdbArguments;
+    return _rrGdbArguments;
 }
 
 void SeerGdbWidget::setGdbAsyncMode (bool flag) {
@@ -1356,14 +1346,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
     while (1) {
 
-        // Has a executable name been provided?
-        if (executableName() != "") {
-            QMessageBox::warning(this, "Seer",
-                    QString("The executable name can't be provided for 'rr' mode."),
-                    QMessageBox::Ok);
-            break;
-        }
-
         _executableBreakMode = "";
 
         // Always say a new executable.
@@ -1380,11 +1362,10 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         if (isGdbRuning() == false) {
 
             // Create and connect to the terminal.
-            // XXX console()->createTerminal();
-            // XXX console()->connectTerminal();
+            console()->createTerminal();
+            console()->connectTerminal();
 
-            // XXX bool f = startGdbRR();
-            bool f = startGdb();
+            bool f = startGdbRR();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
@@ -1394,10 +1375,8 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
             handleGdbSourceScripts();
         }
 
-        /* XXX
         // Set the program's tty device for stdin and stdout.
         handleGdbTerminalDeviceName();
-        */
 
         // Set the launch mode.
         setExecutableLaunchMode("rr");
@@ -1405,23 +1384,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         setGdbRecordMode("rr");
         setExecutablePid(0);
         reattachConsole();
-
-        /* XXX
-        // Load the executable, if needed.
-        // For RR, this will start it.
-        if (newExecutableFlag() == true) {
-            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
-            handleGdbExecutableName();              // Load the program into the gdb process.
-            handleGdbExecutableSources();           // Load the program source files.
-            handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
-
-            if (loadSessionBreakpoints) {
-                handleGdbSessionLoadBreakpoints();
-            }
-
-            setNewExecutableFlag(false);
-        }
-        */
 
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
@@ -1470,17 +1432,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
-
-        /* XXX
-        // Restart the executable if it was already running.
-        if (newExecutableFlag() == false) {
-            if (_executableBreakMode == "inmain") {
-                handleGdbCommand("-exec-run --all --start"); // Stop in main
-            }else{
-                handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
-            }
-        }
-        */
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRHostPort()).arg(QGuiApplication::applicationPid()));
@@ -3421,9 +3372,6 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
 
-    //qDebug() << "Raw command     : " << rawcommand;
-    //qDebug() << "Expanded command: " << expandedcommand;
-
     if (ok == false) {
 
         QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(rawcommand));
@@ -3440,9 +3388,6 @@ bool SeerGdbWidget::startGdb () {
 
     QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
 
-    //qDebug() << "Raw arguments     : " << rawarguments;
-    //qDebug() << "Expanded arguments: " << expandedarguments;
-
     if (ok == false) {
 
         QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(rawarguments));
@@ -3450,10 +3395,12 @@ bool SeerGdbWidget::startGdb () {
         return false;
     }
 
+    // Debug.
+    qDebug() << "GDB:" << expandedcommand;
+    qDebug() << "GDB:" << expandedarguments;
+
     // Split string into words, handling "double quoted" words.
     QStringList args = Seer::split(expandedarguments);
-
-    //qDebug() << args;
 
     // Give the gdb process the program and the argument list.
     _gdbProcess->setProgram(expandedcommand);
@@ -3468,44 +3415,52 @@ bool SeerGdbWidget::startGdb () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    //qDebug() << _gdbProcess->state();
-
     return true;
 }
 
 bool SeerGdbWidget::startGdbRR () {
 
-    /*
     // Don't do anything, if already running.
     if (isGdbRuning()) {
         qWarning() << "Already running";
         return false;
     }
 
-    // Does the RR trace directory exist?
-    if (QFile::exists(executableRRTraceDirectory()) == false) {
-        QMessageBox::critical(this, "Seer",
-                                    QString("The RR trace-directory '" + executableRRTraceDirectory() + "' doesn't exist."),
-                                    QMessageBox::Ok);
+    // Set the gdb program name to use.
+    bool ok;
+
+    QString rawcommand = rrGdbProgram();
+
+    QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
+
+    if (ok == false) {
+
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(rawcommand));
+
         return false;
     }
 
-    // Set the gdb program name to use.
-    QString command   = rrProgram();
-    QString arguments = rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory();
+    // Build the gdb argument list.
+    QString rawarguments = rrGdbArguments() + " --tty " + _consoleWidget->terminalDeviceName();
 
-    if (rrGdbArguments() != "") {
-        arguments += " -- " + rrGdbArguments();
+    QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
+
+    if (ok == false) {
+
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(rawarguments));
+
+        return false;
     }
 
-    // Split string into words, handling "double quoted" words.
-    QStringList args = Seer::split(arguments);
+    // Debug.
+    qDebug() << "GDB:" << expandedcommand;
+    qDebug() << "GDB:" << expandedarguments;
 
-    qDebug() << "Expanded command: "   << command;
-    qDebug() << "Expanded arguments: " << arguments;
+    // Split string into words, handling "double quoted" words.
+    QStringList args = Seer::split(expandedarguments);
 
     // Give the gdb process the program and the argument list.
-    _gdbProcess->setProgram(command);
+    _gdbProcess->setProgram(expandedcommand);
     _gdbProcess->setArguments(args);
 
     // We need to set the C language, otherwise the MI interface is translated and our message
@@ -3517,12 +3472,7 @@ bool SeerGdbWidget::startGdbRR () {
     // Start the gdb process.
     _gdbProcess->start();
 
-    //qDebug() << _gdbProcess->state();
-
     return true;
-    */
-
-    return false;
 }
 
 void SeerGdbWidget::killGdb () {
