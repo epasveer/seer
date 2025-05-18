@@ -1,0 +1,25 @@
+{
+    "seerproject": {
+        "executable": "helloprettyprint",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            "# Comment the next line out to disable \"pretty printing\".",
+            "set pretty printer on"
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

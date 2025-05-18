@@ -1,0 +1,15 @@
+
+Seer has a problem with enabling 'pretty printing' and structs have have \n characters.
+
+    https://github.com/epasveer/seer/issues/313
+
+    (gdb) set print pretty on
+
+Without pretty print
+    10^done,value="{B = 1, C = 0, D = \"asd\", E = std::vector<bool> of length 1, capacity 64 = {true}}"
+    11^done,value="1"
+
+With pretty print
+    10^done,value="{\n  B = 1,\n  C = 0,\n  D = \"asd\",\n  E = std::vector<bool> of length 1, capacity 64 = {true}\n}"
+    11^done,value="1"
+
