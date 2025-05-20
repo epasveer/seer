@@ -29,6 +29,8 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleTabMoved                      (int from, int to);
         void                                            handleTabChanged                    (int index);
+        void                                            handleRaiseLoggerTab                ();
+        void                                            handleRaiseTrackerTab               ();
 
     private:
         SeerVariableTrackerBrowserWidget*               _variableTrackerBrowserWidget;
