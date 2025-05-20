@@ -43,31 +43,53 @@ SeerVariableTrackerBrowserWidget::~SeerVariableTrackerBrowserWidget () {
 
 void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
 
-    // Don't do any work if the widget is hidden.
-    if (isHidden()) {
-        return;
-    }
-
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.startsWith("^done,DataExpressionTable={") && text.endsWith("}")) {
+    while (1) {
+        if (text.startsWith("^done,DataExpressionTable={") && text.endsWith("}")) {
 
-        // "^done,DataExpressionTable={
-        //          entry={id=\"1\",expression=\"s\"},
-        //          entry={id=\"2\",expression=\"v\"},
-        //          entry={id=\"4\",expression=\"l\"},
-        //          entry={id=\"5\",expression=\"m\"}
-        //      }"
+            // "^done,DataExpressionTable={
+            //          entry={id=\"1\",expression=\"s\"},
+            //          entry={id=\"2\",expression=\"v\"},
+            //          entry={id=\"4\",expression=\"l\"},
+            //          entry={id=\"5\",expression=\"m\"}
+            //      }"
 
-        QString frame_text = Seer::parseFirst(text, "DataExpressionTable=", '{', '}', false);
+            QString frame_text = Seer::parseFirst(text, "DataExpressionTable=", '{', '}', false);
 
-        QStringList entries_list = Seer::parse(frame_text, "entry=", '{', '}', false);
+            QStringList entries_list = Seer::parse(frame_text, "entry=", '{', '}', false);
 
-        for (int i=0; i<entries_list.count(); i++) {
+            for (int i=0; i<entries_list.count(); i++) {
 
-            QString entry_text      = entries_list[i];
-            QString id_text         = Seer::parseFirst(entry_text, "id=",         '"', '"', false);
-            QString expression_text = Seer::parseFirst(entry_text, "expression=", '"', '"', false);
+                QString entry_text      = entries_list[i];
+                QString id_text         = Seer::parseFirst(entry_text, "id=",         '"', '"', false);
+                QString expression_text = Seer::parseFirst(entry_text, "expression=", '"', '"', false);
+
+                QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
+
+                if (matches.count() == 0) {
+
+                    QTreeWidgetItem* topItem = new QTreeWidgetItem;
+                    topItem->setText(0, expression_text);
+                    topItem->setText(1, "");
+                    topItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                    topItem->setText(2, id_text);
+                    topItem->setText(3, "new");
+
+                    variablesTreeWidget->addTopLevelItem(topItem);
+                }
+            }
+
+        }else if (text.startsWith("^done,DataExpressionAdded={") && text.endsWith("}")) {
+
+            // "^done,DataExpressionAdded={
+            //          id=\"5\",
+            //          expression=\"m\"
+            //      }"
+
+            QString frame_text      = Seer::parseFirst(text,       "DataExpressionAdded=", '{', '}', false);
+            QString id_text         = Seer::parseFirst(frame_text, "id=",                  '"', '"', false);
+            QString expression_text = Seer::parseFirst(frame_text, "expression=",          '"', '"', false);
 
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
 
@@ -81,125 +103,108 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 topItem->setText(3, "new");
 
                 variablesTreeWidget->addTopLevelItem(topItem);
+
+                refreshValues();
+
+                emit raiseTab();
             }
-        }
 
-    }else if (text.startsWith("^done,DataExpressionAdded={") && text.endsWith("}")) {
+        }else if (text.startsWith("^done,DataExpressionDeleted={") && text.endsWith("}")) {
 
-        // "^done,DataExpressionAdded={
-        //          id=\"5\",
-        //          expression=\"m\"
-        //      }"
+            // "^done,DataExpressionDeleted={
+            //          entry={id=\"1\",expression=\"s\"},
+            //          entry={id=\"3\",expression=\"vb\"}
+            //      }"
 
-        QString frame_text      = Seer::parseFirst(text,       "DataExpressionAdded=", '{', '}', false);
-        QString id_text         = Seer::parseFirst(frame_text, "id=",                  '"', '"', false);
-        QString expression_text = Seer::parseFirst(frame_text, "expression=",          '"', '"', false);
+            QString frame_text = Seer::parseFirst(text, "DataExpressionDeleted=", '{', '}', false);
 
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
+            QStringList entries_list = Seer::parse(frame_text, "entry=", '{', '}', false);
 
-        if (matches.count() == 0) {
+            for (int i=0; i<entries_list.count(); i++) {
 
-            QTreeWidgetItem* topItem = new QTreeWidgetItem;
-            topItem->setText(0, expression_text);
-            topItem->setText(1, "");
-            topItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-            topItem->setText(2, id_text);
-            topItem->setText(3, "new");
+                QString entry_text      = entries_list[i];
+                QString id_text         = Seer::parseFirst(entry_text, "id=",         '"', '"', false);
+                QString expression_text = Seer::parseFirst(entry_text, "expression=", '"', '"', false);
 
-            variablesTreeWidget->addTopLevelItem(topItem);
-        }
+                QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
 
-    }else if (text.startsWith("^done,DataExpressionDeleted={") && text.endsWith("}")) {
+                qDeleteAll(matches);
+            }
 
-        // "^done,DataExpressionDeleted={
-        //          entry={id=\"1\",expression=\"s\"},
-        //          entry={id=\"3\",expression=\"vb\"}
-        //      }"
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
-        QString frame_text = Seer::parseFirst(text, "DataExpressionDeleted=", '{', '}', false);
+            // "6^done,value=\"\\\"abc\\\"\""
 
-        QStringList entries_list = Seer::parse(frame_text, "entry=", '{', '}', false);
+            QString id_text    = text.section('^', 0,0);
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
-        for (int i=0; i<entries_list.count(); i++) {
-
-            QString entry_text      = entries_list[i];
-            QString id_text         = Seer::parseFirst(entry_text, "id=",         '"', '"', false);
-            QString expression_text = Seer::parseFirst(entry_text, "expression=", '"', '"', false);
-
+            // Find the ones that match our 'id'.
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
 
-            qDeleteAll(matches);
-        }
+            if (matches.count() == 1) {
 
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
+                Q_ASSERT(matches.count() == 1);
 
-        // "6^done,value=\"\\\"abc\\\"\""
+                // There should be only one.
+                QTreeWidgetItem* item = matches[0];
 
-        QString id_text    = text.section('^', 0,0);
-        QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+                // Mark each entry initially as "unused".
+                // Later, some will be marked as "reused" or "new". Then the "unused" ones will
+                // be deleted.
+                QTreeWidgetItemIterator itmark(item);
+                while (*itmark) {
+                    (*itmark)->setText(3, "unused");
+                    ++itmark;
+                }
 
-        // Find the ones that match our 'id'.
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
+                // Set the value.
+                handleItemCreate (item, value_text);
 
-        if (matches.count() == 1) {
+                emit raiseTab();
 
-            Q_ASSERT(matches.count() == 1);
-
-            // There should be only one.
-            QTreeWidgetItem* item = matches[0];
-
-            // Mark each entry initially as "unused".
-            // Later, some will be marked as "reused" or "new". Then the "unused" ones will
-            // be deleted.
-            QTreeWidgetItemIterator itmark(item);
-            while (*itmark) {
-                (*itmark)->setText(3, "unused");
-                ++itmark;
+                // At this point, there are some new entries, some reused entries, and some unused ones.
+                // For now, don't bother deleting 'unused' ones.
             }
 
-            // Set the value.
-            handleItemCreate (item, value_text);
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
 
-            // At this point, there are some new entries, some reused entries, and some unused ones.
-            // For now, don't bother deleting 'unused' ones.
+            // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
+
+            QString id_text  = text.section('^', 0,0);
+            QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+            // Find the ones that match our 'id'.
+            QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
+
+            if (matches.count() == 1) {
+
+                // There should be only one.
+                QTreeWidgetItem* item = matches[0];
+
+                // Remove any children.
+                QList<QTreeWidgetItem*> children = item->takeChildren();
+
+                qDeleteAll(children);
+
+                // Set the text with the error message.
+                item->setText(1, Seer::filterEscapes(msg_text));
+                item->setText(3, "used");
+            }
+
+        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+            variablesTreeWidget->clear();
+
+        }else{
+            // Ignore others.
         }
 
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
+        variablesTreeWidget->resizeColumnToContents(0);
+        variablesTreeWidget->resizeColumnToContents(1);
+        variablesTreeWidget->resizeColumnToContents(2);
+        variablesTreeWidget->resizeColumnToContents(3);
 
-        // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
-
-        QString id_text  = text.section('^', 0,0);
-        QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
-
-        // Find the ones that match our 'id'.
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
-
-        if (matches.count() == 1) {
-
-            // There should be only one.
-            QTreeWidgetItem* item = matches[0];
-
-            // Remove any children.
-            QList<QTreeWidgetItem*> children = item->takeChildren();
-
-            qDeleteAll(children);
-
-            // Set the text with the error message.
-            item->setText(1, Seer::filterEscapes(msg_text));
-            item->setText(3, "used");
-        }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        variablesTreeWidget->clear();
-
-    }else{
-        // Ignore others.
+        break;
     }
-
-    variablesTreeWidget->resizeColumnToContents(0);
-    variablesTreeWidget->resizeColumnToContents(1);
-    variablesTreeWidget->resizeColumnToContents(2);
-    variablesTreeWidget->resizeColumnToContents(3);
 
     QApplication::restoreOverrideCursor();
 }
