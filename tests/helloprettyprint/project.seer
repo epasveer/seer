@@ -2,18 +2,17 @@
     "seerproject": {
         "executable": "helloprettyprint",
         "postgdbcommands": [
-            ""
+            "set print pretty on"
         ],
         "pregdbcommands": [
-            "# Comment the next line out to disable \"pretty printing\".",
-            "set pretty printer on"
+            ""
         ],
         "startmode": {
             "arguments": "",
             "breakinfunction": false,
             "breakinfunctionname": "",
             "breakinmain": true,
-            "breakpointsfile": "",
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/helloprettyprint/breakpoints.seer",
             "nobreak": false,
             "nonstopmode": false,
             "randomizestartaddress": false,
