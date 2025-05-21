@@ -45,68 +45,75 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
+    while (1) {
+        if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
-        // "6^done,value=\"\\\"abc\\\"\""
+            // "6^done,value=\"\\\"abc\\\"\""
 
-        QString id_text    = text.section('^', 0,0);
-        QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+            QString id_text    = text.section('^', 0,0);
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
-        if (_ids.contains(id_text.toInt()) == false) {
-            QApplication::restoreOverrideCursor();
-            return;
-        }
-
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
-
-        if (matches.size() > 0) {
-
-            QTreeWidgetItem* match = matches[0];
-
-            Q_ASSERT(match->parent() == NULL);
-
-            QString timestamp_text = match->text(0);
-            QString name_text      = match->text(1);
-
-            // Populate the tree.
-            handleItemCreate(match, id_text, timestamp_text, name_text, value_text);
-        }
-
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
-
-        // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
-
-        QString id_text  = text.section('^', 0,0);
-        QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
-
-        if (_ids.contains(id_text.toInt()) == true) {
+            if (_ids.contains(id_text.toInt()) == false) {
+                break;
+            }
 
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
 
             if (matches.size() > 0) {
-                matches.first()->setText(1, ""); // Overwrite "name" with "" because it's not a valid "name".
-                matches.first()->setText(2, Seer::filterEscapes(msg_text));
+
+                QTreeWidgetItem* match = matches[0];
+
+                Q_ASSERT(match->parent() == NULL);
+
+                QString timestamp_text = match->text(0);
+                QString name_text      = match->text(1);
+
+                // Populate the tree.
+                handleItemCreate(match, id_text, timestamp_text, name_text, value_text);
+
+                emit raiseTab();
             }
+
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
+
+            // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
+
+            QString id_text  = text.section('^', 0,0);
+            QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+            if (_ids.contains(id_text.toInt()) == true) {
+
+                QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
+
+                if (matches.size() > 0) {
+                    matches.first()->setText(1, ""); // Overwrite "name" with "" because it's not a valid "name".
+                    matches.first()->setText(2, Seer::filterEscapes(msg_text));
+                }
+
+                emit raiseTab();
+            }
+
+        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+
+            variablesTreeWidget->clear();
+
+        }else{
+            // Ignore others.
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+        // Resize columns.
+        variablesTreeWidget->resizeColumnToContents(0);
+        variablesTreeWidget->resizeColumnToContents(1);
+        variablesTreeWidget->resizeColumnToContents(2);
+        variablesTreeWidget->resizeColumnToContents(3);
 
-        variablesTreeWidget->clear();
+        // Scroll to the bottom.
+        QTreeWidgetItem* lastItem = variablesTreeWidget->topLevelItem(variablesTreeWidget->topLevelItemCount()-1);
+        if (lastItem) {
+            variablesTreeWidget->scrollToItem(lastItem);
+        }
 
-    }else{
-        // Ignore others.
-    }
-
-    // Resize columns.
-    variablesTreeWidget->resizeColumnToContents(0);
-    variablesTreeWidget->resizeColumnToContents(1);
-    variablesTreeWidget->resizeColumnToContents(2);
-    variablesTreeWidget->resizeColumnToContents(3);
-
-    // Scroll to the bottom.
-    QTreeWidgetItem* lastItem = variablesTreeWidget->topLevelItem(variablesTreeWidget->topLevelItemCount()-1);
-    if (lastItem) {
-        variablesTreeWidget->scrollToItem(lastItem);
+        break;
     }
 
     // Set the cursor back.
