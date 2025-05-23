@@ -1,8 +1,1 @@
-watch argc
-disable $bpnum
-rwatch argc
-  ignore $bpnum 3
-awatch argc
-  commands
-    print argc
-  end
+break -source /nas/erniep/Development/seer/tests/hellostruct/hellostruct.cpp -line 55
