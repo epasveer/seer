@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-set(HAVE_FLAG_SEARCH_PATHS_FIRST 0)
-
 project(seergdb VERSION 2.6.0 LANGUAGES CXX)
-
-set(CMAKE_C_LINK_FLAGS "")
-set(CMAKE_CXX_LINK_FLAGS "") # If you are using C++
 
 set(PROJECT_NAME seergdb)
 
@@ -286,4 +281,11 @@ if(${QTVERSION} STREQUAL "QT6")
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
+
+# For MacOS
+foreach(flag_var CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_EXE_LINKER_FLAGS)
+  if(APPLE)
+    string(REPLACE "-Wl,-search_paths_first" "" ${flag_var} "${${flag_var}}")
+  endif()
+endforeach()
 
