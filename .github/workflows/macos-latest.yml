@@ -57,13 +57,13 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run: |
           cd src
-          cmake -B ${{github.workspace}}/src/build -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake -B ${{github.workspace}}/src/build -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
 
       - name: Build
         # Build your program with the given configuration
         run: |
           cd src
-          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel 4
+          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel 1
 
       - name: Tar
         run: |
