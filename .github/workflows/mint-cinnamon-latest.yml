@@ -21,17 +21,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Update Mint Cinnamon
+      run: |
+        sudo apt-get update
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: 6.*
         install-deps: 'true'
         modules: 'qtcharts'
-
-    - name: Update Mint Cinnamon
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake build-essential
 
     - name: Where Am I
       run: |
