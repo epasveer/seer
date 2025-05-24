@@ -1,4 +1,4 @@
-name: mint-latest Developement Build
+name: Debian Package Build
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update Mint
+    - name: Update Ubuntu
       run: |
         sudo apt-get update
 
@@ -54,27 +54,10 @@ jobs:
         cd src
         cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel `grep -c processor /proc/cpuinfo`
 
-    - name: Tar
-      run: |
-        cd src/build
-        cp ../../LICENSE .
-        cp ../../CHANGELOG.md .
-        tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
-
     - name: List Results
       run: |
         cd src
         ls -l build/
-
-    - name: Build Mint Developement Release
-      uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: "mint-latest"
-        prerelease: true
-        title: "Mint Development Release"
-        files: |
-          src/build/seergdb.tar.gz
 
   debian-pkg:
 
@@ -98,6 +81,6 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         automatic_release_tag: "debian-pkg-latest"
         prerelease: true
-        title: "Mint Package Release"
+        title: "Debian Package Release"
         files: |
           ../seergdb_*_amd64.deb
