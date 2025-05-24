@@ -4,6 +4,9 @@ set(HAVE_FLAG_SEARCH_PATHS_FIRST 0)
 
 project(seergdb VERSION 2.6.0 LANGUAGES CXX)
 
+set(CMAKE_C_LINK_FLAGS "")
+set(CMAKE_CXX_LINK_FLAGS "") # If you are using C++
+
 set(PROJECT_NAME seergdb)
 
 if(NOT DEFINED QTVERSION)
