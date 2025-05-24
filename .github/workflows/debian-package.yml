@@ -1,4 +1,4 @@
-name: Debian Package Build
+name: debian-latest Package Build
 
 on:
   workflow_dispatch:
