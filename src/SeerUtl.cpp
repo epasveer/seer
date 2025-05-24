@@ -21,13 +21,11 @@
 //
 #define SEER_VERSION "2.6beta"
 
-namespace Seer {
-
-    QString version () {
+    QString Seer::version () {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
-    QString filterEscapes (const QString& str) {
+    QString Seer::filterEscapes (const QString& str) {
 
         // Remove one level of '\'.
         // value="\"'Treasure' by Lucillius\\n\\n\\tbut theirs.\\n\""
@@ -53,7 +51,7 @@ namespace Seer {
         return tmp;
     }
 
-    QStringList filterEscapes (const QStringList& strings) {
+    QStringList Seer::filterEscapes (const QStringList& strings) {
 
         QStringList list;
 
@@ -66,7 +64,7 @@ namespace Seer {
         return list;
     }
 
-    QString expandTabs (const QString& str, int tabsize, bool morph) {
+    QString Seer::expandTabs (const QString& str, int tabsize, bool morph) {
 
         QString work = str;
 
@@ -101,7 +99,7 @@ namespace Seer {
         return result;
     }
 
-    QString expandEnv (const QString& str, bool* ok) {
+    QString Seer::expandEnv (const QString& str, bool* ok) {
 
         QRegularExpression env_re1("\\$\\{[A-Za-z0-9_]+\\}");      // ${PATH}
         QRegularExpression env_re2("\\$[a-zA-Z0-9_]+");            // $PATH
@@ -164,7 +162,7 @@ namespace Seer {
         return r;
     }
 
-    QStringList parse (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {
+    QStringList Seer::parse (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {
 
         //
         // str          = "^done,stack-args=[frame={level=\"0\",args=[{name=\"message\",value=\"\\\"Hello, World!\\\"\"}]},frame={level=\"1\",args=[{name=\"argc\",value=\"1\"},{name=\"argv\",value=\"0x7fffffffd5b8\"}]}]"
@@ -244,7 +242,7 @@ namespace Seer {
         return list;
     }
 
-    QString parseFirst (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {
+    QString Seer::parseFirst (const QString& str, const QString& search, QChar startBracket, QChar endBracket, bool includeSearchString) {
 
         QStringList list = Seer::parse(str, search, startBracket, endBracket, includeSearchString);
 
@@ -255,7 +253,7 @@ namespace Seer {
         return list.front();
     }
 
-    QString parseFirst (const QString& str, const QString& search, bool includeSearchString) {
+    QString Seer::parseFirst (const QString& str, const QString& search, bool includeSearchString) {
 
         QString match;
 
@@ -279,7 +277,7 @@ namespace Seer {
     }
 
 
-    bool hasBookends (const QString& str, QChar startBracket, QChar endBracket) {
+    bool Seer::hasBookends (const QString& str, QChar startBracket, QChar endBracket) {
 
         if (str.startsWith(startBracket) && str.endsWith(endBracket)) {
             return true;
@@ -289,7 +287,7 @@ namespace Seer {
     }
 
 
-    QString filterBookends (const QString& str, QChar startBracket, QChar endBracket) {
+    QString Seer::filterBookends (const QString& str, QChar startBracket, QChar endBracket) {
 
         // If the string starts with and ends with the bracket characters, then return
         // the text between the brackets.
@@ -301,7 +299,7 @@ namespace Seer {
         return str;
     }
 
-    QStringList filterBookends (const QStringList& strings, QChar startBracket, QChar endBracket) {
+    QStringList Seer::filterBookends (const QStringList& strings, QChar startBracket, QChar endBracket) {
 
         QStringList list;
 
@@ -314,7 +312,7 @@ namespace Seer {
         return list;
     }
 
-    QStringList parseCommaList (const QString& str) {
+    QStringList Seer::parseCommaList (const QString& str) {
 
         //
         // number="2",type="breakpoint",disp="keep",enabled="y",addr="0x00000000004016cd",func="main(int, char**)",file="hellofibonacci.cpp",fullname="/nas/erniep/Development/seer/tests/hellofibonacci/hellofibonacci.cpp",line="34",thread-groups=["i1"],cond="$_streq(s.c_str(), "21")",times="0",original-location="hellofibonacci.cpp:34"
@@ -410,7 +408,7 @@ namespace Seer {
         return list;
     }
 
-    QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
+    QStringList Seer::parseCommaList (const QString& str, QChar startBracket, QChar endBracket) {
 
         // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
         //
@@ -515,7 +513,7 @@ namespace Seer {
         return list;
     }
 
-    QMap<QString,QString> createKeyValueMap (const QStringList& list, QChar separator) {
+    QMap<QString,QString> Seer::createKeyValueMap (const QStringList& list, QChar separator) {
 
         QMap<QString,QString> map;
 
@@ -532,7 +530,7 @@ namespace Seer {
     //
     //
 
-    QStringPair parseNameValue (const QString& str, QChar separator) {
+    QStringPair Seer::parseNameValue (const QString& str, QChar separator) {
 
         // name = "Pasveer, Ernie"
         //
@@ -613,7 +611,7 @@ namespace Seer {
     //
     //       "hello"  =>  \"hello\"
     //
-    QString quoteChars (const QString& str, const QString& chars) {
+    QString Seer::quoteChars (const QString& str, const QString& chars) {
 
         QString string;
 
@@ -632,7 +630,7 @@ namespace Seer {
         return string;
     }
 
-    QStringList quoteChars (const QStringList& strings, const QString& chars) {
+    QStringList Seer::quoteChars (const QStringList& strings, const QString& chars) {
 
         QStringList list;
 
@@ -650,7 +648,7 @@ namespace Seer {
     //
     //
 
-    QString varObjParent (const QString& str) {
+    QString Seer::varObjParent (const QString& str) {
 
         //
         // input:  "seer4.public.location"
@@ -676,7 +674,7 @@ namespace Seer {
     //
     //
 
-    bool matchesWildcard (const QStringList& patterns, const QString& string) {
+    bool Seer::matchesWildcard (const QStringList& patterns, const QString& string) {
 
         foreach (auto pattern, patterns) {
 
@@ -718,11 +716,11 @@ namespace Seer {
         return false;
     }
 
-    bool hasWildcards (const QString& str) {
+    bool Seer::hasWildcards (const QString& str) {
         return (str.indexOf('*') >= 0) || (str.indexOf('?') >= 0);
     }
 
-    QString elideText (const QString& str, Qt::TextElideMode mode, int length) {
+    QString Seer::elideText (const QString& str, Qt::TextElideMode mode, int length) {
 
         QString leftElide("... ");
         QString middleElide(" ... ");
@@ -760,7 +758,7 @@ namespace Seer {
 
     // Split a string on words. Double "quoted strings"
     // act as one word.
-    QStringList split (const QString& str) {
+    QStringList Seer::split (const QString& str) {
 
         QRegularExpression re("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
         QStringList        list;
@@ -793,7 +791,7 @@ namespace Seer {
     static int        Next_ID = 1;
     static std::mutex ID_mutex;
 
-    int createID () {
+    int Seer::createID () {
 
          std::lock_guard<std::mutex> guard(ID_mutex);
 
@@ -804,7 +802,7 @@ namespace Seer {
          return id;
     }
 
-    unsigned char ebcdicToAscii (unsigned char byte) {
+    unsigned char Seer::ebcdicToAscii (unsigned char byte) {
 
         static const unsigned char ebcdicToAsciiTable[256] = {
              46,  46,  46,  46,  46,  46,  46,  46, // 0
@@ -844,7 +842,7 @@ namespace Seer {
         return ebcdicToAsciiTable[byte];
     }
 
-    unsigned char ucharToAscii (unsigned char byte) {
+    unsigned char Seer::ucharToAscii (unsigned char byte) {
 
         static const unsigned char ucharToAsciiTable[256] = {
              46,  46,  46,  46,  46,  46,  46,  46, // 0
@@ -884,7 +882,7 @@ namespace Seer {
         return ucharToAsciiTable[byte];
     }
 
-    QString ucharToHex (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToHex (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -904,7 +902,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToOctal (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToOctal (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -924,7 +922,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToAscii (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToAscii (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -944,7 +942,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToUShort (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToUShort (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -967,7 +965,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToShort (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToShort (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -990,7 +988,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToUInt (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToUInt (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1013,7 +1011,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToInt (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToInt (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1036,7 +1034,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToULong (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToULong (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1059,7 +1057,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToLong (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToLong (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1082,7 +1080,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToFloat (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToFloat (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1105,7 +1103,7 @@ namespace Seer {
         return str;
     }
 
-    QString ucharToDouble (const QVector<quint8>& bytes, int from, int count) {
+    QString Seer::ucharToDouble (const QVector<quint8>& bytes, int from, int count) {
 
         QString str;
 
@@ -1128,7 +1126,7 @@ namespace Seer {
         return str;
     }
 
-    int typeBytes (const QString& type) {
+    int Seer::typeBytes (const QString& type) {
 
         if (type == "int8" || type == "uint8") {
             return 1;
@@ -1148,7 +1146,7 @@ namespace Seer {
         }
     }
 
-    bool readFile (const QString& filename, QStringList& lines) {
+    bool Seer::readFile (const QString& filename, QStringList& lines) {
 
         // Empty the list
         lines = QStringList();
@@ -1175,7 +1173,7 @@ namespace Seer {
         return true;
     }
 
-    QString unescape (const QString& str) {
+    QString Seer::unescape (const QString& str) {
 
         QString result;
         bool    quoted = false;
@@ -1266,10 +1264,9 @@ namespace Seer {
         return result;
     }
 
-    void printStackTrace () {
+    void Seer::printStackTrace () {
         // Capture and print the stack trace using Boost.Stacktrace.
         // See comments at top.
         // std::cout << "Stack trace:\n" << boost::stacktrace::stacktrace() << std::endl;
     }
-}
 
