@@ -115,7 +115,6 @@ set(HEADER_FILES
     SeerThreadManagerWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
-    SeerUtl.h
     SeerVariableLoggerBrowserWidget.h
     SeerVariableManagerWidget.h
     SeerVariableTrackerBrowserWidget.h
@@ -132,6 +131,7 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
+    SeerUtl.h
     QProcessInfo.h
     QProcessInfoWidget.h
     QProgressIndicator.h
@@ -216,7 +216,6 @@ set(SOURCE_FILES
     SeerThreadManagerWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
-    SeerUtl.cpp
     SeerVariableLoggerBrowserWidget.cpp
     SeerVariableManagerWidget.cpp
     SeerVariableTrackerBrowserWidget.cpp
@@ -233,6 +232,7 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
+    SeerUtl.cpp
     QProcessInfo.cpp
     QProcessInfoWidget.cpp
     QProgressIndicator.cpp
