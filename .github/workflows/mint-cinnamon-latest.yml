@@ -1,4 +1,4 @@
-name: mint-cinnamon Developement Build
+name: mint-latest Developement Build
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update Mint Cinnamon
+    - name: Update Mint
       run: |
         sudo apt-get update
 
@@ -66,13 +66,38 @@ jobs:
         cd src
         ls -l build/
 
-    - name: Build Mint Cinnamon Developement Release
+    - name: Build Mint Developement Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: "mint-cinnamon"
+        automatic_release_tag: "mint-latest"
         prerelease: true
-        title: "Mint Cinnamon Development Release"
+        title: "Mint Development Release"
         files: |
           src/build/seergdb.tar.gz
 
+  debian-pkg:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install devscripts build-essential dpkg-dev equivs
+        sudo mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
+
+    - name: Build Debian package
+      run:  dpkg-buildpackage --unsigned-source --unsigned-changes
+
+    - name: Upload debian package Release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        automatic_release_tag: "debian-pkg-latest"
+        prerelease: true
+        title: "Mint Package Release"
+        files: |
+          ../seergdb_*_amd64.deb
