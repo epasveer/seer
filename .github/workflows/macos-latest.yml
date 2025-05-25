@@ -73,8 +73,8 @@ jobs:
           cd src
           ls -l
           ls -lR build/
-          ls -lR build_seerutl/
-          nm -A -C build/CMakeFiles/seergdb.dir/SeerUtl.cpp.o |& grep " T "
+          ls -l    build/CMakeFiles/seergdb.dir/SeerUtl.cpp.o
+          nm -A -C build/CMakeFiles/seergdb.dir/SeerUtl.cpp.o
 
       - name: Tar
         run: |
