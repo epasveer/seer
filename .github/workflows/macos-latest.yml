@@ -18,8 +18,6 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: macos-latest
 
-    continue-on-error: true
-
     steps:
       - uses: actions/checkout@v3
 
@@ -60,12 +58,14 @@ jobs:
         run: |
           cd src
           cmake -B ${{github.workspace}}/src/build -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+        continue-on-error: true
 
       - name: Build
         # Build your program with the given configuration
         run: |
           cd src
           cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel 1
+        continue-on-error: true
 
       - name: List Objs
         # Build your program with the given configuration
