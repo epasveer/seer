@@ -72,7 +72,8 @@ jobs:
         run: |
           cd src
           ls -l
-          ls -l CMakeFiles/seergdb.dir/
+          ls -lR build/
+          ls -lR build_seerutl/
 
       - name: Tar
         run: |
