@@ -282,10 +282,3 @@ elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
 
-# For MacOS
-foreach(flag_var CMAKE_SHARED_LINKER_FLAGS CMAKE_MODULE_LINKER_FLAGS CMAKE_EXE_LINKER_FLAGS)
-  if(APPLE)
-    string(REPLACE "-Wl,-search_paths_first" "" ${flag_var} "${${flag_var}}")
-  endif()
-endforeach()
-
