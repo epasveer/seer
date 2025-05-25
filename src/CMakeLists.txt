@@ -51,6 +51,23 @@ endif()
 
 set(HEADER_FILES
     GdbMonitor.h
+    QProcessInfo.h
+    QProcessInfoWidget.h
+    QProgressIndicator.h
+    QColorButton.h
+    QColorSwatch.h
+    QDetachTabWidget.h
+    QZoomChartView.h
+    QZoomChart.h
+    QClearLineEdit.h
+    QIndexTreeWidget.h
+    QStringPair.h
+    QHistoryLineEdit.h
+    QEditDelegate.h
+    QHContainerWidget.h
+    QImageViewer.h
+    QAnsiTextEdit.h
+    SeerUtl.h
     SeerArgumentsDialog.h
     SeerBreakpointCreateDialog.h
     SeerMessagesBrowserWidget.h
@@ -131,28 +148,26 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
-    SeerUtl.h
-    QProcessInfo.h
-    QProcessInfoWidget.h
-    QProgressIndicator.h
-    QColorButton.h
-    QColorSwatch.h
-    QDetachTabWidget.h
-    QZoomChartView.h
-    QZoomChart.h
-    QClearLineEdit.h
-    QIndexTreeWidget.h
-    QStringPair.h
-    QHistoryLineEdit.h
-    QEditDelegate.h
-    QHContainerWidget.h
-    QImageViewer.h
-    QAnsiTextEdit.h
     )
 
 set(SOURCE_FILES
-    seergdb.cpp
     GdbMonitor.cpp
+    QProcessInfo.cpp
+    QProcessInfoWidget.cpp
+    QProgressIndicator.cpp
+    QColorButton.cpp
+    QColorSwatch.cpp
+    QDetachTabWidget.cpp
+    QZoomChartView.cpp
+    QZoomChart.cpp
+    QClearLineEdit.cpp
+    QIndexTreeWidget.cpp
+    QHistoryLineEdit.cpp
+    QEditDelegate.cpp
+    QHContainerWidget.cpp
+    QImageViewer.cpp
+    QAnsiTextEdit.cpp
+    SeerUtl.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
     SeerMessagesBrowserWidget.cpp
@@ -232,22 +247,7 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
-    SeerUtl.cpp
-    QProcessInfo.cpp
-    QProcessInfoWidget.cpp
-    QProgressIndicator.cpp
-    QColorButton.cpp
-    QColorSwatch.cpp
-    QDetachTabWidget.cpp
-    QZoomChartView.cpp
-    QZoomChart.cpp
-    QClearLineEdit.cpp
-    QIndexTreeWidget.cpp
-    QHistoryLineEdit.cpp
-    QEditDelegate.cpp
-    QHContainerWidget.cpp
-    QImageViewer.cpp
-    QAnsiTextEdit.cpp
+    seergdb.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")
