@@ -33,6 +33,7 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                addMemoryVisualize                  (QString expression);
         void                addArrayVisualize                   (QString expression);
         void                addStructVisualize                  (QString expression);
+        void                raiseTab                            ();
 
     protected:
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& id_text, const QString& timestamp_text, const QString& name_text, const QString& value_text);

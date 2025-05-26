@@ -36,6 +36,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                addMemoryVisualize              (QString expression);
         void                addArrayVisualize               (QString expression);
         void                addStructVisualize              (QString expression);
+        void                raiseTab                        ();
 
     protected:
         void                handleItemCreate                (QTreeWidgetItem* item,       const QString& value_text);

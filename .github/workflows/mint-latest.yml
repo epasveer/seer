@@ -1,4 +1,4 @@
-name: debian-bullseye Developement Build
+name: mint-latest Developement Build
 
 on:
   workflow_dispatch:
@@ -16,22 +16,21 @@ jobs:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: debian-bullseye
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
 
+    - name: Update Mint
+      run: |
+        sudo apt-get update
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: 6.*
+        version: 6.4.2
         install-deps: 'true'
         modules: 'qtcharts'
-
-    - name: Update debian
-      run: |
-        sudo apt-get update
-        sudo apt list --installed |  grep mesa
 
     - name: Where Am I
       run: |
@@ -67,13 +66,13 @@ jobs:
         cd src
         ls -l build/
 
-    - name: Build Ubuntu Developement Release
+    - name: Build Mint Developement Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: "debian-bullseye"
+        automatic_release_tag: "mint-latest"
         prerelease: true
-        title: "Ubuntu Development Release"
+        title: "Mint Development Release"
         files: |
           src/build/seergdb.tar.gz
 

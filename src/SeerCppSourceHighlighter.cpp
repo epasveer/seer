@@ -94,7 +94,7 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     _highlightingRules.append(rule);
 
     // Set function format and expression.
-    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\()"));
+    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\s*\\()"));
     rule.format = _functionFormat;
     _highlightingRules.append(rule);
 

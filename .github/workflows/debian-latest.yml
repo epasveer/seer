@@ -1,4 +1,4 @@
-name: ubuntu-latest Developement Build
+name: debian-latest Developement Build
 
 on:
   workflow_dispatch:
@@ -16,21 +16,22 @@ jobs:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ubuntu-latest
+    runs-on: debian-latest
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update Ubuntu
-      run: |
-        sudo apt-get update
-
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: 6.6
+        version: 6.*
         install-deps: 'true'
         modules: 'qtcharts'
+
+    - name: Update debian
+      run: |
+        sudo apt-get update
+        sudo apt list --installed |  grep mesa
 
     - name: Where Am I
       run: |
@@ -66,38 +67,13 @@ jobs:
         cd src
         ls -l build/
 
-    - name: Build Ubuntu Developement Release
+    - name: Build Debian Developement Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: "ubuntu-latest"
+        automatic_release_tag: "debian-latest"
         prerelease: true
-        title: "Ubuntu Development Release"
+        title: "Debian Development Release"
         files: |
           src/build/seergdb.tar.gz
 
-  debian-pkg:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install devscripts build-essential dpkg-dev equivs
-        sudo mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
-
-    - name: Build Debian package
-      run:  dpkg-buildpackage --unsigned-source --unsigned-changes
-
-    - name: Upload debian package Release
-      uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        automatic_release_tag: "debian-pkg-latest"
-        prerelease: true
-        title: "Debian Package Release"
-        files: |
-          ../seergdb_*_amd64.deb

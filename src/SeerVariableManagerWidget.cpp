@@ -44,10 +44,12 @@ SeerVariableManagerWidget::SeerVariableManagerWidget (QWidget* parent) : QWidget
     readSettings();
 
     // Connect things.
-    QObject::connect(refreshToolButton,     &QToolButton::clicked,     this,  &SeerVariableManagerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(helpToolButton,        &QToolButton::clicked,     this,  &SeerVariableManagerWidget::handleHelpToolButtonClicked);
-    QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,        this,  &SeerVariableManagerWidget::handleTabMoved);
-    QObject::connect(tabWidget->tabBar(),   &QTabBar::currentChanged,  this,  &SeerVariableManagerWidget::handleTabChanged);
+    QObject::connect(refreshToolButton,             &QToolButton::clicked,                          this,  &SeerVariableManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                          this,  &SeerVariableManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget->tabBar(),           &QTabBar::tabMoved,                             this,  &SeerVariableManagerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),           &QTabBar::currentChanged,                       this,  &SeerVariableManagerWidget::handleTabChanged);
+    QObject::connect(_variableLoggerBrowserWidget,  &SeerVariableLoggerBrowserWidget::raiseTab,     this,  &SeerVariableManagerWidget::handleRaiseLoggerTab);
+    QObject::connect(_variableTrackerBrowserWidget, &SeerVariableTrackerBrowserWidget::raiseTab,    this,  &SeerVariableManagerWidget::handleRaiseTrackerTab);
 }
 
 SeerVariableManagerWidget::~SeerVariableManagerWidget () {
@@ -92,6 +94,28 @@ void SeerVariableManagerWidget::handleTabChanged (int index) {
     Q_UNUSED(index);
 
     writeSettings();
+}
+
+void SeerVariableManagerWidget::handleRaiseLoggerTab () {
+
+    int idx = tabWidget->indexOf(_variableLoggerBrowserWidget);
+
+    if (idx < 0) {
+        return;
+    }
+
+    tabWidget->setCurrentIndex(idx);
+}
+
+void SeerVariableManagerWidget::handleRaiseTrackerTab () {
+
+    int idx = tabWidget->indexOf(_variableTrackerBrowserWidget);
+
+    if (idx < 0) {
+        return;
+    }
+
+    tabWidget->setCurrentIndex(idx);
 }
 
 void SeerVariableManagerWidget::writeSettings () {

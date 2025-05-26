@@ -17,6 +17,8 @@
 * Manage gdb skip commands via a new Skip Browser.
 * Revamp the "run/start" buttons on the menu bar to be a predominate
   "terminate" that switches to a "restart".
+* Fixed bug when adding variable to tracker. Sometimes would not refresh value.
+* Raise Logger or Tracker tab when new variable is added.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
