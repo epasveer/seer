@@ -9,6 +9,7 @@ Record a RR session.
     Or...
 
     $ rr record -n --output-trace-dir=/path/to/rr/trace-directory  hellorr arg1 arg2
+    $ rr record -n --output-trace-dir=rr-recordings  hellorr arg1 arg2
 
 
 Replay the RR session in Seer.
@@ -24,7 +25,7 @@ I've deprecated this in favor of running 'rr replay' directly.
 
     Replay the RR session in gdb.
 
-        $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
+        $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr-recordings
 
         $ rr replay
 
@@ -33,10 +34,11 @@ I've deprecated this in favor of running 'rr replay' directly.
         https://github.com/rr-debugger/rr/wiki/Using-rr-in-an-IDE
 
         $ export _RR_TRACE_DIR=/nas/erniep/Development/seer/tests/hellorr/rr
-
         $ rr replay -s 50505 -k
 
-        $ rr replay -s 50505 -k
+        Or...
+
+        $ rr replay -s 50505 -k rr-recordings
         Launch gdb with
         gdb '-l' '10000' '-ex' 'set sysroot /' '-ex' 'target extended-remote 127.0.0.1:50505' /nas/erniep/Development/seer/tests/hellorr/hellorr
 
