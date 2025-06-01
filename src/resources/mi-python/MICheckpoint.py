@@ -41,8 +41,8 @@ class MICheckpoint(gdb.MICommand):
                     checkpointmeta["id"]        = columns.group(2)
                     checkpointmeta["state"]     = columns.group(1)
                     checkpointmeta["process"]   = columns.group(3)
-                    checkpointmeta["file"]      = columns.group(4)
-                    checkpointmeta["line"]      = columns.group(5)
+                    checkpointmeta["file"]      = re.sub("^file ", "", columns.group(4))
+                    checkpointmeta["line"]      = re.sub("^line ", "", columns.group(5))
 
                     checkpointentries.append(checkpointmeta)
 
@@ -64,7 +64,7 @@ class MICheckpoint(gdb.MICommand):
             gdb.execute ("checkpoint " + " ".join(argv), to_string=True)
             return None
         elif self._mode == "select":
-            gdb.execute ("select " + " ".join(argv), to_string=True)
+            gdb.execute ("restart " + " ".join(argv), to_string=True)
             return None
         elif self._mode == "delete":
             gdb.execute ("delete checkpoint " + " ".join(argv), to_string=True)

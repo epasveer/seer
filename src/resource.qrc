@@ -83,6 +83,7 @@
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>
     <file>resources/mi-python/MIKill.py</file>
+    <file>resources/mi-python/MICheckpoint.py</file>
   </qresource>
 </RCC>
 
