@@ -1143,6 +1143,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,skips=[") && text.endsWith("]")) {
         return;
 
+    }else if (text.startsWith("^done,checkpoints=[") && text.endsWith("]")) {
+        return;
+
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done"))) {
         return;
 

@@ -89,6 +89,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
     _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
     _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
+    _checkpointsBrowserWidget = new SeerCheckpointsBrowserWidget(this);
 
     _gdbOutputLog             = new SeerGdbLogWidget(this);
     _seerOutputLog            = new SeerSeerLogWidget(this);
@@ -100,6 +101,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
     logsTabWidget->addTab(_catchpointsBrowserWidget, "Catchpoints");
     logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
+    logsTabWidget->addTab(_checkpointsBrowserWidget, "Checkpoints");
     logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
@@ -184,6 +186,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleText);
@@ -231,11 +234,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->libraryBrowserWidget(),        &SeerLibraryBrowserWidget::refreshLibraryList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableLibraries);
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::refreshAdaExceptions,                                      this,                                                           &SeerGdbWidget::handleGdbAdaListExceptions);
     QObject::connect(sourceLibraryManagerWidget->adaExceptionsBrowserWidget(),  &SeerAdaExceptionsBrowserWidget::insertCatchpoint,                                          this,                                                           &SeerGdbWidget::handleGdbCatchpointInsert);
-    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::refreshSkipList,                                                    this,                                                           &SeerGdbWidget::handleGdbListSkips);
-    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::addSkip,                                                            this,                                                           &SeerGdbWidget::handleGdbAddSkip);
-    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::deleteSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbDeleteSkips);
-    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::enableSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbEnableSkips);
-    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::disableSkips,                                                       this,                                                           &SeerGdbWidget::handleGdbDisableSkips);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::refreshSkipList,                                                    this,                                                           &SeerGdbWidget::handleGdbSkipList);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::addSkip,                                                            this,                                                           &SeerGdbWidget::handleGdbSkipAdd);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::deleteSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbSkipDelete);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::enableSkips,                                                        this,                                                           &SeerGdbWidget::handleGdbSkipEnable);
+    QObject::connect(sourceLibraryManagerWidget->skipBrowserWidget(),           &SeerSkipBrowserWidget::disableSkips,                                                       this,                                                           &SeerGdbWidget::handleGdbSkipDisable);
 
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::refreshStackFrames,                                          this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedFrame,                                               this,                                                           &SeerGdbWidget::handleGdbStackSelectFrame);
@@ -345,6 +348,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
     QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
+    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::refreshCheckpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbCheckpointList);
+    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::insertCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointInsert);
+    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::selectCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointSelect);
+    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::deleteCheckpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCheckpointDelete);
+
     QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
 
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       stackManagerWidget,                                             &SeerStackManagerWidget::handleStoppingPointReached);
@@ -361,6 +369,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
 
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->functionBrowserWidget(),            &SeerFunctionBrowserWidget::handleSessionTerminated);
@@ -384,6 +393,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleSessionTerminated);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
@@ -2432,7 +2442,7 @@ void SeerGdbWidget::handleGdbAdaListExceptions () {
     handleGdbCommand("-info-ada-exceptions");
 }
 
-void SeerGdbWidget::handleGdbListSkips () {
+void SeerGdbWidget::handleGdbSkipList () {
 
     if (executableLaunchMode() == "") {
         return;
@@ -2441,7 +2451,7 @@ void SeerGdbWidget::handleGdbListSkips () {
     handleGdbCommand("-skip-list");
 }
 
-void SeerGdbWidget::handleGdbAddSkip (QString skipmode, QString skipparameters) {
+void SeerGdbWidget::handleGdbSkipAdd (QString skipmode, QString skipparameters) {
 
     if (executableLaunchMode() == "") {
         return;
@@ -2459,10 +2469,10 @@ void SeerGdbWidget::handleGdbAddSkip (QString skipmode, QString skipparameters) 
         return;
     }
 
-    handleGdbListSkips();
+    handleGdbSkipList();
 }
 
-void SeerGdbWidget::handleGdbDeleteSkips (QString skipids) {
+void SeerGdbWidget::handleGdbSkipDelete (QString skipids) {
 
     if (executableLaunchMode() == "") {
         return;
@@ -2470,10 +2480,10 @@ void SeerGdbWidget::handleGdbDeleteSkips (QString skipids) {
 
     handleGdbCommand("-skip-delete " + skipids);
 
-    handleGdbListSkips();
+    handleGdbSkipList();
 }
 
-void SeerGdbWidget::handleGdbEnableSkips (QString skipids) {
+void SeerGdbWidget::handleGdbSkipEnable (QString skipids) {
 
     if (executableLaunchMode() == "") {
         return;
@@ -2481,10 +2491,10 @@ void SeerGdbWidget::handleGdbEnableSkips (QString skipids) {
 
     handleGdbCommand("-skip-enable " + skipids);
 
-    handleGdbListSkips();
+    handleGdbSkipList();
 }
 
-void SeerGdbWidget::handleGdbDisableSkips (QString skipids) {
+void SeerGdbWidget::handleGdbSkipDisable (QString skipids) {
 
     if (executableLaunchMode() == "") {
         return;
@@ -2492,7 +2502,52 @@ void SeerGdbWidget::handleGdbDisableSkips (QString skipids) {
 
     handleGdbCommand("-skip-disable " + skipids);
 
-    handleGdbListSkips();
+    handleGdbSkipList();
+}
+
+void SeerGdbWidget::handleGdbCheckpointList () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-checkpoint-list");
+}
+
+void SeerGdbWidget::handleGdbCheckpointInsert () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-checkpoint-create");
+    handleGdbCommand("-checkpoint-list");
+}
+
+void SeerGdbWidget::handleGdbCheckpointSelect (QString id) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-checkpoint-select " + id);
+
+    emit stoppingPointReached();
+}
+
+void SeerGdbWidget::handleGdbCheckpointDelete (QString ids) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    QStringList list = ids.split(" ");
+
+    for (auto id : list) {
+        handleGdbCommand("-checkpoint-delete " + id);
+    }
+
+    handleGdbCommand("-checkpoint-list");
 }
 
 void SeerGdbWidget::handleGdbRegisterListNames () {
@@ -3823,19 +3878,32 @@ void SeerGdbWidget::handleGdbLoadMICommands () {
         // Open the source file from resources.
         QFile miFile(miInfo.absoluteFilePath());
         if (!miFile.exists()) {
-            qDebug() << "Resource file" << miInfo << "does not exist!";
+            qDebug().nospace().noquote() << "Resource file '" << miInfo << "' does not exist!";
             continue;
         }
 
         // Destination file path in /tmp.
         QString destinationPath = "/tmp/" + miInfo.fileName();
 
-        // Copy to temp. Don't check return status. I don't think it works
-        // if the source is in Resources.
-        miFile.copy(destinationPath);
+        // Delete possible old temp version, if it exists.
+        if (QFile::exists(destinationPath)) {
+            bool f = QFile::remove(destinationPath);
+            if (f == false) {
+                qDebug().nospace().noquote() << "Old temp Resource file '" << destinationPath << "' can not be deleted!";
+                continue;
+            }
+        }
+
+        // Copy to temp.
+        bool f = miFile.copy(destinationPath);
+        if (f == false) {
+            qDebug().nospace().noquote() << "Resource file '" << miInfo << "' can not be copied to '" << destinationPath << "'!";
+            continue;
+        }
 
         // Source it.
         if (QFile::exists(destinationPath) == false) {
+            qDebug().nospace().noquote() << "Temp Resource file '" << destinationPath << "' does not exist!";
             continue;
         }
 
