@@ -98,7 +98,7 @@
     </property>
     <widget class="QMenu" name="menuRecord">
      <property name="toolTip">
-      <string>Set Gdb Record mode.</string>
+      <string>Set Record mode.</string>
      </property>
      <property name="title">
       <string>Record</string>
@@ -112,7 +112,7 @@
     </widget>
     <widget class="QMenu" name="menuDirection">
      <property name="toolTip">
-      <string>Set Gdb Playback direction.</string>
+      <string>Set Playback direction.</string>
      </property>
      <property name="title">
       <string>Direction</string>
@@ -529,7 +529,7 @@
     <string>Stop</string>
    </property>
    <property name="toolTip">
-    <string>Stop Gdb Record mode.</string>
+    <string>Stop Record mode.</string>
    </property>
   </action>
   <action name="actionControlRecordReverse">
@@ -556,7 +556,7 @@
     <string>Record</string>
    </property>
    <property name="toolTip">
-    <string>Toggle Gdb Record mode.</string>
+    <string>Toggle Record mode.</string>
    </property>
   </action>
   <action name="actionControlRecordStart">
@@ -568,7 +568,7 @@
     <string>Start</string>
    </property>
    <property name="toolTip">
-    <string>Start Gdb Record mode.</string>
+    <string>Start Record mode.</string>
    </property>
   </action>
   <action name="actionControlRecordForward">
@@ -595,7 +595,7 @@
     <string>Direction</string>
    </property>
    <property name="toolTip">
-    <string>Toggle Gdb Playback direction.</string>
+    <string>Toggle Playback direction.</string>
    </property>
   </action>
   <action name="actionViewImageVisualizer">
