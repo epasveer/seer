@@ -191,9 +191,6 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 item->setText(3, "used");
             }
 
-        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-            variablesTreeWidget->clear();
-
         }else{
             // Ignore others.
         }

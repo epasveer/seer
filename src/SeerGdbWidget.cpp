@@ -381,6 +381,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget,                                             &SeerStackManagerWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackFramesBrowserWidget(),                 &SeerStackFramesBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackLocalsBrowserWidget(),                 &SeerStackLocalsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleSessionTerminated);
@@ -411,7 +412,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
-
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -1146,9 +1146,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
 
         // Run the executable.
         if (_executableBreakMode == "inmain") {
-            handleGdbCommand("-exec-run --start"); // Stop in main
+            handleGdbCommand("-exec-run --all --start"); // Stop in main
         }else{
-            handleGdbCommand("-exec-run"); // Do not stop in main. But honor other breakpoints that may have been previously set.
+            handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
         }
 
         // Set window titles with name of program.
@@ -1584,7 +1584,7 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
             }
 
             handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
-            delay(1);
+            delay(2);
 
             // Give the gdb and 'exit' command.
             // This should handle detaching from an attached pid.
@@ -1702,7 +1702,7 @@ void SeerGdbWidget::handleGdbContinue () {
         return;
     }
 
-    handleGdbCommand(QString("-exec-continue %1 --all").arg(gdbRecordDirection()));
+    handleGdbCommand(QString("-exec-continue %1").arg(gdbRecordDirection()));
 }
 
 void SeerGdbWidget::handleGdbRecordStart () {
@@ -2077,9 +2077,6 @@ void SeerGdbWidget::handleGdbSessionLoadBreakpoints () {
 
     handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
     handleGdbGenericpointList();
-
-    delay(1);
-    QFile::remove(QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
 }
 
 void SeerGdbWidget::handleGdbSessionSaveBreakpoints () {
@@ -4101,7 +4098,7 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
     // We do have the ability to use a different signal, though. :^)
 
     if (signal < 0) {
-        handleGdbCommand("-exec-interrupt --all");
+        handleGdbCommand("-exec-interrupt");
 
     }else{
         int stat = kill(executablePid(), signal);

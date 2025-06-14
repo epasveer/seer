@@ -134,9 +134,6 @@ void SeerStackArgumentsBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        argumentsTreeWidget->clear();
-
     }else{
         // Ignore others.
     }

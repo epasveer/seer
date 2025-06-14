@@ -21,7 +21,7 @@
      </property>
      <column>
       <property name="text">
-       <string>State</string>
+       <string>Active</string>
       </property>
      </column>
      <column>

@@ -130,9 +130,6 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        stackTreeWidget->clear();
-
     }else{
         // Ignore others.
     }

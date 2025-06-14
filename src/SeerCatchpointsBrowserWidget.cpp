@@ -221,9 +221,6 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
             qDeleteAll(matches);
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
-
     }else{
         // Ignore others.
     }

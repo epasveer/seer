@@ -13,7 +13,8 @@ SeerThreadIdsBrowserWidget::SeerThreadIdsBrowserWidget (QWidget* parent) : QWidg
 
     // Setup the widgets
     idsTreeWidget->setSortingEnabled(false);
-    idsTreeWidget->resizeColumnToContents(0); // id
+    idsTreeWidget->resizeColumnToContents(0); // state
+    idsTreeWidget->resizeColumnToContents(1); // id
 
     idsTreeWidget->clear();
 
@@ -62,7 +63,14 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
 
             // Construct the item
             QTreeWidgetItem* item = new QTreeWidgetItem;
-            item->setText(0, threadid_text);
+
+            if (threadid_text == currentthreadid_text) {
+                item->setText(0, "*");
+            }else{
+                item->setText(0, " ");
+            }
+
+            item->setText(1, threadid_text);
 
             // Set the text to bold if the ID is the same as the CURRENT ID.
             QFont fnormal = item->font(0); fnormal.setBold(false);
@@ -70,8 +78,10 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
 
             if (threadid_text == currentthreadid_text) {
                 item->setFont(0, fbold);
+                item->setFont(1, fbold);
             }else{
                 item->setFont(0, fnormal);
+                item->setFont(1, fnormal);
             }
 
             // Add the frame to the tree.
@@ -81,19 +91,17 @@ void SeerThreadIdsBrowserWidget::handleText (const QString& text) {
         // Clear the selection and select the one for the current thread-id.
         idsTreeWidget->clearSelection();
 
-        QList<QTreeWidgetItem*> matches = idsTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 0);
+        QList<QTreeWidgetItem*> matches = idsTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 1);
         if (matches.size() > 0) {
             idsTreeWidget->setCurrentItem(matches.first());
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        idsTreeWidget->clear();
 
     }else{
         // Ignore others.
     }
 
     idsTreeWidget->resizeColumnToContents(0);
+    idsTreeWidget->resizeColumnToContents(1);
 
     QApplication::restoreOverrideCursor();
 }
@@ -113,7 +121,7 @@ void SeerThreadIdsBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int c
 
     Q_UNUSED(column);
 
-    emit selectedThread(item->text(0).toInt());
+    emit selectedThread(item->text(1).toInt());
 }
 
 void SeerThreadIdsBrowserWidget::refresh () {
@@ -134,7 +142,7 @@ void SeerThreadIdsBrowserWidget::handleGdbNextToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit nextThreadId(threadid);
     }
@@ -148,7 +156,7 @@ void SeerThreadIdsBrowserWidget::handleGdbStepToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit stepThreadId(threadid);
     }
@@ -162,7 +170,7 @@ void SeerThreadIdsBrowserWidget::handleGdbFinishToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit finishThreadId(threadid);
     }
@@ -176,7 +184,7 @@ void SeerThreadIdsBrowserWidget::handleGdbContinueToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit continueThreadId(threadid);
     }
@@ -190,7 +198,7 @@ void SeerThreadIdsBrowserWidget::handleGdbInterruptToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit interruptThreadId(threadid);
     }

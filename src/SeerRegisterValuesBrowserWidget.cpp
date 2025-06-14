@@ -204,11 +204,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         qDeleteAll(matches);
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        registersTreeWidget->clear();
-
-        _needsRegisterNames = true;
-
     }else{
         // Ignore others.
     }
