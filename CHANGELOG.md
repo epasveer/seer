@@ -20,6 +20,7 @@
 * Fixed bug when adding variable to tracker. Sometimes would not refresh value.
 * Raise Logger or Tracker tab when new variable is added.
 * Implment gdb's "checkpoint" feature. As simple time-travel feature.
+* Add preliminary support for Undo's udb time-traveling debugger.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.

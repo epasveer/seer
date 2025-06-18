@@ -200,22 +200,27 @@ void SeerStackManagerWidget::handleText (const QString& text) {
 
         QString currentthreadid_text = Seer::parseFirst(newtext,   "current-thread-id=", '"', '"', false);
 
-        label->setText("Stack Info for Thread Id : " + currentthreadid_text);
+        if (currentthreadid_text == "") {
+            label->setText("Stack Info - No Thread Selected");
+        }else{
+            label->setText("Stack Info - Thread Id " + currentthreadid_text);
+        }
 
         stackFramesBrowserWidget()->refresh();
         stackArgumentsBrowserWidget()->refresh();
         stackLocalsBrowserWidget()->refresh();
         stackDumpBrowserWidget()->refresh();
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-
-        label->setText("Stack Info");
-
     }else{
         // Ignore others.
     }
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerStackManagerWidget::handleSessionTerminated () {
+
+    label->setText("Stack Info");
 }
 
 void SeerStackManagerWidget::handleStoppingPointReached () {

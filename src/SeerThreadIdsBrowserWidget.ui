@@ -104,8 +104,13 @@
    <item row="1" column="0">
     <widget class="QTreeWidget" name="idsTreeWidget">
      <property name="columnCount">
-      <number>1</number>
+      <number>2</number>
      </property>
+     <column>
+      <property name="text">
+       <string>Active</string>
+      </property>
+     </column>
      <column>
       <property name="text">
        <string>Thread Id</string>

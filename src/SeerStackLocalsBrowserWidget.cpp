@@ -106,9 +106,6 @@ void SeerStackLocalsBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        localsTreeWidget->clear();
-
     }else{
         // Ignore others.
     }

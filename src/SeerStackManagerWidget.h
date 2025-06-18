@@ -32,6 +32,7 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
     public slots:
         void                                            handleText                          (const QString& text);
         void                                            handleStoppingPointReached          ();
+        void                                            handleSessionTerminated             ();
         void                                            refresh                             ();
 
     private slots:

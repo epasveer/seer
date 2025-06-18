@@ -141,9 +141,6 @@ void SeerStackDumpBrowserWidget::handleText (const QString& text) {
 
             addressLineEdit->setText("");
 
-        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-            stackTableWidget->clearContents();
-
         }else{
             // Ignore others.
         }

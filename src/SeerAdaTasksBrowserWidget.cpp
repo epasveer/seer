@@ -135,9 +135,6 @@ void SeerAdaTasksBrowserWidget::handleText (const QString& text) {
             adaTaskTreeWidget->setCurrentItem(matches.first());
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        adaTaskTreeWidget->clear();
-
     }else{
         // Ignore others.
     }

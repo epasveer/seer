@@ -1330,6 +1330,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Record");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(false);
         actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
@@ -1363,6 +1364,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Recording");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
@@ -1395,11 +1397,45 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("RR");
+        actionRecordProcess->setToolTip("Using RR debugger.");
+        actionRecordProcess->setEnabled(true);
+        actionRecordDirection->setEnabled(true);
+
+    }else if (gdbWidget->gdbRecordMode() == "udb") {
+
+        // Menu Control
+        actionControlRecordStart->setEnabled(false);
+        actionControlRecordStop->setEnabled(false);
+        actionControlRecordForward->setEnabled(true);
+        actionControlRecordReverse->setEnabled(true);
+
+        if (gdbWidget->gdbRecordDirection() == "") {
+
+            actionControlRecordForward->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+        }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
+
+            actionControlRecordReverse->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-previous.svg"));
+
+        }else{
+
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(false);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+            qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
+        }
+
+        // Toolbar
+        actionRecordProcess->setText("UDB");
+        actionRecordProcess->setToolTip("Using UDB debugger.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
     }else{
-        qDebug() << "Bad record mode of '" << gdbWidget->gdbRecordMode() << "'";
+        qDebug() << "Bad record mode of:" << gdbWidget->gdbRecordMode();
     }
 }
 

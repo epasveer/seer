@@ -296,11 +296,6 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             handleRefreshButton();
         }
 
-    // End of program. Clear everything as it will be out of date.
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        setVariableName("");
-        setMemoryLength("");
-
     }else{
         // Ignore anything else.
     }

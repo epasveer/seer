@@ -93,10 +93,6 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
                 emit raiseTab();
             }
 
-        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-
-            variablesTreeWidget->clear();
-
         }else{
             // Ignore others.
         }
