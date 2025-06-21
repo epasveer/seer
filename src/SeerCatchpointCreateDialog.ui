@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
-    <height>302</height>
+    <width>543</width>
+    <height>403</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,6 +100,56 @@
         </attribute>
        </widget>
       </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="signalRadioButton">
+        <property name="text">
+         <string>Catch on 'signal'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QRadioButton" name="forkRadioButton">
+        <property name="text">
+         <string>Catch on 'fork'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QRadioButton" name="execRadioButton">
+        <property name="text">
+         <string>Catch on 'exec'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QRadioButton" name="syscallRadioButton">
+        <property name="text">
+         <string>Catch on 'syscall'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QRadioButton" name="vforkRadioButton">
+        <property name="text">
+         <string>Catch on 'vfork'</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">typeButtonGroup</string>
+        </attribute>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -147,16 +197,16 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="nameLabel">
+       <widget class="QLabel" name="argumentsLabel">
         <property name="text">
-         <string>Name</string>
+         <string>Arguments</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="nameLineEdit">
+       <widget class="QLineEdit" name="argumentsLineEdit">
         <property name="placeholderText">
-         <string>Exception/Library name as a regular expression.</string>
+         <string>Optional arguments for selected Catchpoint type.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
@@ -187,9 +237,14 @@
   <tabstop>adaExceptionRadioButton</tabstop>
   <tabstop>catchRadioButton</tabstop>
   <tabstop>adaHandlersRadioButton</tabstop>
+  <tabstop>signalRadioButton</tabstop>
+  <tabstop>forkRadioButton</tabstop>
+  <tabstop>execRadioButton</tabstop>
+  <tabstop>syscallRadioButton</tabstop>
+  <tabstop>vforkRadioButton</tabstop>
   <tabstop>temporaryCheckBox</tabstop>
   <tabstop>disabledCheckBox</tabstop>
-  <tabstop>nameLineEdit</tabstop>
+  <tabstop>argumentsLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -200,8 +255,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -216,8 +271,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

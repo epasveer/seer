@@ -8,7 +8,7 @@ SeerCatchpointCreateDialog::SeerCatchpointCreateDialog (QWidget* parent) : QDial
 
     // Setup the widgets
     setType("");
-    setNameText("");
+    setArguments("");
 
     setTemporaryEnabled(false);
     setDisabledEnabled(false);
@@ -47,6 +47,21 @@ void SeerCatchpointCreateDialog::setType (const QString& text) {
     }else if (text == "handlers") {
         adaHandlersRadioButton->setChecked(true);
 
+    }else if (text == "signal") {
+        signalRadioButton->setChecked(true);
+
+    }else if (text == "fork") {
+        forkRadioButton->setChecked(true);
+
+    }else if (text == "vfork") {
+        vforkRadioButton->setChecked(true);
+
+    }else if (text == "exec") {
+        execRadioButton->setChecked(true);
+
+    }else if (text == "syscall") {
+        syscallRadioButton->setChecked(true);
+
     }else{
         throwRadioButton->setChecked(true);
     }
@@ -78,6 +93,21 @@ QString SeerCatchpointCreateDialog::typeText () const {
     }else if (adaHandlersRadioButton->isChecked()) {
         return "handlers";
 
+    }else if (signalRadioButton->isChecked()) {
+        return "signal";
+
+    }else if (forkRadioButton->isChecked()) {
+        return "fork";
+
+    }else if (vforkRadioButton->isChecked()) {
+        return "vfork";
+
+    }else if (execRadioButton->isChecked()) {
+        return "exec";
+
+    }else if (syscallRadioButton->isChecked()) {
+        return "syscall";
+
     }else{
         return "throw";
     }
@@ -91,12 +121,12 @@ void SeerCatchpointCreateDialog::setDisabledEnabled (bool flag) {
     disabledCheckBox->setChecked(flag);
 }
 
-void SeerCatchpointCreateDialog::setNameText (const QString& text) {
-    nameLineEdit->setText(text);
+void SeerCatchpointCreateDialog::setArguments (const QString& text) {
+    argumentsLineEdit->setText(text);
 }
 
-QString SeerCatchpointCreateDialog::nameText () const {
-    return nameLineEdit->text();
+QString SeerCatchpointCreateDialog::arguments () const {
+    return argumentsLineEdit->text();
 }
 
 bool SeerCatchpointCreateDialog::temporaryEnabled () const {
@@ -124,28 +154,36 @@ QString SeerCatchpointCreateDialog::catchpointText () const {
 
     }else if (typeText() == "exception") { // Handle Ada 'exception'.
 
-        if (nameText() != "") {
-            catchpointParameters += " -e " + nameText();
+        if (arguments() != "") {
+            catchpointParameters += " -e " + arguments();
         }
 
     }else if (typeText() == "handlers") { // Handle Ada 'handlers'.
 
-        if (nameText() != "") {
-            catchpointParameters += " -e " + nameText();
+        if (arguments() != "") {
+            catchpointParameters += " -e " + arguments();
         }
 
     }else if (typeText() == "load") { // Handle library 'load'. Must have a name.
 
-        catchpointParameters += " " + nameText();
+        catchpointParameters += " " + arguments();
 
     }else if (typeText() == "unload") { // Handle library 'unload'. Must have a name.
 
-        catchpointParameters += " " + nameText();
+        catchpointParameters += " " + arguments();
+
+    }else if (typeText() == "signal") { // Handle library 'unload'. Must have a name.
+
+        catchpointParameters += " " + arguments();
+
+    }else if (typeText() == "syscall") { // Handle library 'unload'. Must have a name.
+
+        catchpointParameters += " " + arguments();
 
     }else{  // C++ throw, rethrow, catch. These require '-r', but only if there is a name.
 
-        if (nameText() != "") {
-            catchpointParameters += " -r " + nameText();
+        if (arguments() != "") {
+            catchpointParameters += " -r " + arguments();
         }
     }
 
