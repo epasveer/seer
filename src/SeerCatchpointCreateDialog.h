@@ -25,8 +25,8 @@ class SeerCatchpointCreateDialog : public QDialog, protected Ui::SeerCatchpointC
         void            setNameEnabled              (bool flag);
         bool            nameEnabled                 () const;
 
-        void            setNameText                 (const QString& text);
-        QString         nameText                    () const;
+        void            setArguments                (const QString& text);
+        QString         arguments                   () const;
 
         QString         catchpointText              () const;
 

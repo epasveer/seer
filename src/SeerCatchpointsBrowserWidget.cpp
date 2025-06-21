@@ -96,6 +96,17 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
         //                  times="0"}
         //          ]
         //
+        //    body=[
+        //            bkpt={number="2",
+        //                  type="catchpoint",
+        //                  disp="keep",
+        //                  enabled="y",
+        //                  what="<any signal>",
+        //                  catch-type="signal",
+        //                  thread-groups=["i1"],
+        //                  times="1"}
+        //          ]
+        //
 
         QString newtext = Seer::filterEscapes(text); // Filter escaped characters.
 

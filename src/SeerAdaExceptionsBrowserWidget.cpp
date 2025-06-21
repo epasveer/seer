@@ -160,7 +160,7 @@ void SeerAdaExceptionsBrowserWidget::handleAddCatchpointToolButtonClicked () {
     QTreeWidgetItem* item = adaExceptionsTreeWidget->currentItem();
 
     if (item != 0) {
-        dlg.setNameText(item->text(0));
+        dlg.setArguments(item->text(0));
     }
 
     int ret = dlg.exec();
