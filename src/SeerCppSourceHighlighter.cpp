@@ -75,14 +75,6 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
 
     HighlightingRule rule;
 
-    for (const QString& pattern : keywordPatterns) {
-
-        rule.pattern = QRegularExpression(pattern);
-        rule.format  = _keywordFormat;
-
-        _highlightingRules.append(rule);
-    }
-
     // Set class format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\\bQ[A-Za-z]+\\b"));
     rule.format = _classFormat;
@@ -97,6 +89,15 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\s*\\()"));
     rule.format = _functionFormat;
     _highlightingRules.append(rule);
+
+	// Set keywords format and expression (must have precedence over functions)
+    for (const QString& pattern : keywordPatterns) {
+
+        rule.pattern = QRegularExpression(pattern);
+        rule.format  = _keywordFormat;
+
+        _highlightingRules.append(rule);
+    }
 
     // Set single line comment format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("//[^\n]*"));
