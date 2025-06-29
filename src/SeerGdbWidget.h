@@ -336,6 +336,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbDataDeleteExpressions      (QString expressionids);
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbArrayAddExpression         (QString expression);
+        void                                handleGdbMatrixAddExpression        (QString expression);
         void                                handleGdbStructAddExpression        (QString expression);
         void                                handleGdbVarAddExpression           (QString expression);
         void                                handleGdbImageAddExpression         (QString expression);
@@ -347,6 +348,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbGetSourceAndAssembly       (QString address);
         void                                handleGdbMemoryVisualizer           ();
         void                                handleGdbArrayVisualizer            ();
+        void                                handleGdbMatrixVisualizer           ();
         void                                handleGdbStructVisualizer           ();
         void                                handleGdbVarVisualizer              ();
         void                                handleGdbImageVisualizer            ();

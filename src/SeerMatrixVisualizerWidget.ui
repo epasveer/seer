@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerMatrixVisualizerWidgetForm</class>
+ <widget class="QWidget" name="SeerMatrixVisualizerWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>972</width>
+    <height>704</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="SeerHistoryLineEdit" name="variableNameLineEdit">
+         <property name="toolTip">
+          <string>Variable name or expression.</string>
+         </property>
+         <property name="placeholderText">
+          <string>Variable name</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="variableAddressLineEdit">
+         <property name="toolTip">
+          <string>Variable address.</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="placeholderText">
+          <string>Variable address</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="SeerHistoryLineEdit" name="matrixRowsLineEdit">
+         <property name="toolTip">
+          <string>Total number of rows in the matrix.</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string># rows</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="SeerHistoryLineEdit" name="matrixColumnsLineEdit">
+         <property name="toolTip">
+          <string>Total number of columns in the matrix.</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string># columns</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="SeerHistoryLineEdit" name="matrixOffsetLineEdit">
+         <property name="toolTip">
+          <string>Element offset into matrix. (default=0)</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>offset</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="SeerHistoryLineEdit" name="matrixStrideLineEdit">
+         <property name="toolTip">
+          <string>Element stride between values. (default=1)</string>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>stride</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="matrixDisplayFormatComboBox">
+         <property name="toolTip">
+          <string>Matrix data type.</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>int16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>int32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>int64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>uint16</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>uint32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>uint64</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>float32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>float64</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="refreshToolButton">
+         <property name="toolTip">
+          <string>Refresh the display.</string>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="SeerMatrixWidget" name="matrixTableWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeerMatrixWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">SeerMatrixWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SeerHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">SeerHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>variableNameLineEdit</tabstop>
+  <tabstop>variableAddressLineEdit</tabstop>
+  <tabstop>matrixRowsLineEdit</tabstop>
+  <tabstop>matrixColumnsLineEdit</tabstop>
+  <tabstop>matrixOffsetLineEdit</tabstop>
+  <tabstop>matrixStrideLineEdit</tabstop>
+  <tabstop>matrixDisplayFormatComboBox</tabstop>
+  <tabstop>refreshToolButton</tabstop>
+  <tabstop>matrixTableWidget</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

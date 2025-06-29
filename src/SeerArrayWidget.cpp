@@ -141,7 +141,7 @@ SeerArrayWidget::ArrayMode SeerArrayWidget::aArrayMode () const {
 QString SeerArrayWidget::aArrayModeString () const {
 
     if (aArrayMode() == SeerArrayWidget::Int16ArrayMode) {
-        return "int6";
+        return "int8";
     }else if (aArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return "uint16";
     }else if (aArrayMode() == SeerArrayWidget::Int32ArrayMode) {
@@ -256,7 +256,7 @@ SeerArrayWidget::ArrayMode SeerArrayWidget::bArrayMode () const {
 QString SeerArrayWidget::bArrayModeString () const {
 
     if (bArrayMode() == SeerArrayWidget::Int16ArrayMode) {
-        return "int6";
+        return "int8";
     }else if (bArrayMode() == SeerArrayWidget::UInt16ArrayMode) {
         return "uint16";
     }else if (bArrayMode() == SeerArrayWidget::Int32ArrayMode) {

@@ -2,6 +2,7 @@
 #include "SeerLogWidget.h"
 #include "SeerMemoryVisualizerWidget.h"
 #include "SeerArrayVisualizerWidget.h"
+#include "SeerMatrixVisualizerWidget.h"
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
 #include "SeerImageVisualizerWidget.h"
@@ -215,9 +216,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addVariableLoggerExpression,                                      variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::addVariableExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addVariableTrackerExpression,                                     this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshVariableTrackerValues,                                     this,                                                           &SeerGdbWidget::handleGdbDataListValues);
-    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addMemoryVisualize,                                               this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addArrayVisualize,                                                this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addStructVisualize,                                               this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addMemoryVisualizer,                                              this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addArrayVisualizer,                                               this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addMatrixVisualizer,                                              this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::addStructVisualizer,                                              this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::evaluateVariableExpression,                                       variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::requestAssembly,                                                  this,                                                           &SeerGdbWidget::handleGdbGetAssembly);
@@ -247,33 +249,37 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::refreshStackArguments,                                    this,                                                           &SeerGdbWidget::handleGdbStackListArguments);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addVariableLoggerExpression,                              variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::addVariableExpression);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addVariableTrackerExpression,                             this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
-    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addMemoryVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addArrayVisualize,                                        this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addStructVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addMemoryVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addArrayVisualizer,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addMatrixVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addStructVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::refreshVariableTrackerValues,                             this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::refreshStackLocals,                                          this,                                                           &SeerGdbWidget::handleGdbStackListLocals);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addVariableLoggerExpression,                                 variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::addVariableExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addVariableTrackerExpression,                                this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
-    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addMemoryVisualize,                                          this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addArrayVisualize,                                           this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addStructVisualize,                                          this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addMemoryVisualizer,                                         this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addArrayVisualizer,                                          this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addMatrixVisualizer,                                         this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::addStructVisualizer,                                         this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(stackManagerWidget->stackLocalsBrowserWidget(),            &SeerStackLocalsBrowserWidget::refreshVariableTrackerValues,                                this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
     QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackPointer,                                           this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
     QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::refreshStackDump,                                              this,                                                           QOverload<int,QString,int,int>::of(&SeerGdbWidget::handleGdbMemoryEvaluateExpression));
-    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::addMemoryVisualize,                                            this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(stackManagerWidget->stackDumpBrowserWidget(),              &SeerStackDumpBrowserWidget::addMemoryVisualizer,                                           this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
     QObject::connect(stackManagerWidget,                                        &SeerStackManagerWidget::refreshThreadFrames,                                               this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
 
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerNames,                             this,                                                           &SeerGdbWidget::handleGdbDataListExpressions);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::refreshVariableTrackerValues,                            this,                                                           &SeerGdbWidget::handleGdbDataListValues);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addVariableExpression,                                   this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::deleteVariableExpressions,                               this,                                                           &SeerGdbWidget::handleGdbDataDeleteExpressions);
-    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMemoryVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addArrayVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addStructVisualize,                                      this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMemoryVisualizer,                                     this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addArrayVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMatrixVisualizer,                                     this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addStructVisualizer,                                     this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,                               this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
-    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMemoryVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addArrayVisualize,                                        this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addStructVisualize,                                       this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMemoryVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addArrayVisualizer,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMatrixVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addStructVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterNames,                                     this,                                                           &SeerGdbWidget::handleGdbRegisterListNames);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
@@ -2842,6 +2848,25 @@ void SeerGdbWidget::handleGdbArrayAddExpression (QString expression) {
     w->setAVariableName(expression);
 }
 
+void SeerGdbWidget::handleGdbMatrixAddExpression (QString expression) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerMatrixVisualizerWidget* w = new SeerMatrixVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerMatrixVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerMatrixVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerMatrixVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(w,            &SeerMatrixVisualizerWidget::evaluateMemoryExpression,    this, &SeerGdbWidget::handleGdbArrayEvaluateExpression);
+
+    // Tell the visualizer what variable to use.
+    w->setVariableName(expression);
+}
+
 void SeerGdbWidget::handleGdbStructAddExpression (QString expression) {
 
     if (executableLaunchMode() == "") {
@@ -2855,9 +2880,10 @@ void SeerGdbWidget::handleGdbStructAddExpression (QString expression) {
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                            w,    &SeerStructVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                             w,    &SeerStructVisualizerWidget::handleText);
     QObject::connect(w,            &SeerStructVisualizerWidget::evaluateVariableExpression,  this, &SeerGdbWidget::handleGdbDataEvaluateExpression);
-    QObject::connect(w,            &SeerStructVisualizerWidget::addMemoryVisualize,          this, &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(w,            &SeerStructVisualizerWidget::addArrayVisualize,           this, &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(w,            &SeerStructVisualizerWidget::addStructVisualize,          this, &SeerGdbWidget::handleGdbStructAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addMemoryVisualizer,         this, &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addArrayVisualizer,          this, &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addMatrixVisualizer,         this, &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(w,            &SeerStructVisualizerWidget::addStructVisualizer,         this, &SeerGdbWidget::handleGdbStructAddExpression);
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);
@@ -2881,9 +2907,10 @@ void SeerGdbWidget::handleGdbVarAddExpression (QString expression) {
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjAssign,                   this, &SeerGdbWidget::handleGdbVarObjAssign);
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjDelete,                   this, &SeerGdbWidget::handleGdbVarObjDelete);
     QObject::connect(w,            &SeerVarVisualizerWidget::varObjAttributes,               this, &SeerGdbWidget::handleGdbVarObjAttributes);
-    QObject::connect(w,            &SeerVarVisualizerWidget::addMemoryVisualize,             this, &SeerGdbWidget::handleGdbMemoryAddExpression);
-    QObject::connect(w,            &SeerVarVisualizerWidget::addArrayVisualize,              this, &SeerGdbWidget::handleGdbArrayAddExpression);
-    QObject::connect(w,            &SeerVarVisualizerWidget::addVarVisualize,                this, &SeerGdbWidget::handleGdbVarAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addMemoryVisualizer,            this, &SeerGdbWidget::handleGdbMemoryAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addArrayVisualizer,             this, &SeerGdbWidget::handleGdbArrayAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addMatrixVisualizer,            this, &SeerGdbWidget::handleGdbMatrixAddExpression);
+    QObject::connect(w,            &SeerVarVisualizerWidget::addVarVisualizer,               this, &SeerGdbWidget::handleGdbVarAddExpression);
 
     // Tell the visualizer what variable to use.
     w->setVariableName(expression);
@@ -3000,6 +3027,11 @@ void SeerGdbWidget::handleGdbMemoryVisualizer () {
 void SeerGdbWidget::handleGdbArrayVisualizer () {
 
     handleGdbArrayAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbMatrixVisualizer () {
+
+    handleGdbMatrixAddExpression("");
 }
 
 void SeerGdbWidget::handleGdbStructVisualizer () {

@@ -103,6 +103,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* visualizerMemoryAction = menuVisualizer->addAction("Memory");
     menuVisualizer->addSeparator();
     QAction* visualizerArrayAction  = menuVisualizer->addAction("Array");
+    QAction* visualizerMatrixAction = menuVisualizer->addAction("Matrix");
     QAction* visualizerVarAction    = menuVisualizer->addAction("Struct");
     QAction* visualizerStructAction = menuVisualizer->addAction("Basic Struct");
     QAction* visualizerImageAction  = menuVisualizer->addAction("Image");
@@ -126,6 +127,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionFileQuit,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionViewMatrixVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMatrixVisualizer);
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewVarVisualizer);
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
@@ -177,6 +179,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionVisualizers,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerMemoryAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerArrayAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(visualizerMatrixAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMatrixVisualizer);
     QObject::connect(visualizerVarAction,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
@@ -630,6 +633,11 @@ void SeerMainWindow::handleViewMemoryVisualizer () {
 void SeerMainWindow::handleViewArrayVisualizer () {
 
     gdbWidget->handleGdbArrayVisualizer();
+}
+
+void SeerMainWindow::handleViewMatrixVisualizer () {
+
+    gdbWidget->handleGdbMatrixVisualizer();
 }
 
 void SeerMainWindow::handleViewStructVisualizer () {

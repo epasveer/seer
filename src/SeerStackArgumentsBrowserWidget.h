@@ -29,9 +29,10 @@ class SeerStackArgumentsBrowserWidget : public QWidget, protected Ui::SeerStackA
         void                addVariableLoggerExpression         (QString expression);
         void                addVariableTrackerExpression        (QString expression);
         void                refreshVariableTrackerValues        ();
-        void                addMemoryVisualize                  (QString expression);
-        void                addArrayVisualize                   (QString expression);
-        void                addStructVisualize                  (QString expression);
+        void                addMemoryVisualizer                 (QString expression);
+        void                addArrayVisualizer                  (QString expression);
+        void                addMatrixVisualizer                 (QString expression);
+        void                addStructVisualizer                 (QString expression);
 
     protected:
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& level_text, const QString& name_text, const QString& value_text);

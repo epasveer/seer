@@ -30,9 +30,10 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
 
     signals:
         void                evaluateVariableExpression          (int expressionid, QString expression);
-        void                addMemoryVisualize                  (QString expression);
-        void                addArrayVisualize                   (QString expression);
-        void                addStructVisualize                  (QString expression);
+        void                addMemoryVisualizer                 (QString expression);
+        void                addArrayVisualizer                  (QString expression);
+        void                addMatrixVisualizer                 (QString expression);
+        void                addStructVisualizer                 (QString expression);
         void                raiseTab                            ();
 
     protected:

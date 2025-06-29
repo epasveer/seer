@@ -22,9 +22,10 @@ class SeerVarVisualizerWidget : public QWidget, protected Ui::SeerVarVisualizerW
         void                varObjDelete                        (int expressionid, QString objname);
         void                varObjAssign                        (int expressionid, QString objname, QString value);
         void                varObjAttributes                    (int objid,        QString objname);
-        void                addMemoryVisualize                  (QString expression);
-        void                addArrayVisualize                   (QString expression);
-        void                addVarVisualize                     (QString expression);
+        void                addMemoryVisualizer                 (QString expression);
+        void                addArrayVisualizer                  (QString expression);
+        void                addMatrixVisualizer                 (QString expression);
+        void                addVarVisualizer                    (QString expression);
 
     public slots:
         void                handleText                          (const QString& text);

@@ -182,7 +182,7 @@ void SeerStackDumpBrowserWidget::handleFormatComboBox (const QString& text) {
 
 void SeerStackDumpBrowserWidget::handleVisualizerToolButton () {
 
-    emit addMemoryVisualize(addressLineEdit->text());
+    emit addMemoryVisualizer(addressLineEdit->text());
 }
 
 void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
@@ -230,7 +230,7 @@ void SeerStackDumpBrowserWidget::handleCellDoubleClicked (int row, int col) {
         address.insert(0,"0x");
     }
 
-    emit addMemoryVisualize(address);
+    emit addMemoryVisualizer(address);
 }
 
 void SeerStackDumpBrowserWidget::refresh () {
