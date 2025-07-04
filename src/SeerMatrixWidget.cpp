@@ -240,6 +240,7 @@ void SeerMatrixWidget::create () {
                 setVerticalHeaderItem(row, rowHeaderitem);
             }
 
+            // Set cell item.
             QTableWidgetItem* item = new QTableWidgetItem;
             item->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
@@ -249,73 +250,44 @@ void SeerMatrixWidget::create () {
 
             if (dataType() == SeerMatrixWidget::Int16MatrixType) {
 
-                short v = *reinterpret_cast<short*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<short*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::UInt16MatrixType) {
 
-                unsigned short v = *reinterpret_cast<unsigned short*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<unsigned short*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::Int32MatrixType) {
 
-                int v = *reinterpret_cast<int*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<int*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::UInt32MatrixType) {
 
-                unsigned int v = *reinterpret_cast<unsigned int*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<unsigned int*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::Int64MatrixType) {
 
-                long v = *reinterpret_cast<long*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<long*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::UInt64MatrixType) {
 
-                unsigned long v = *reinterpret_cast<unsigned long*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<unsigned long*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::Float32MatrixType) {
 
-                float v = *reinterpret_cast<float*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<float*>(element.data());
 
             }else if (dataType() == SeerMatrixWidget::Float64MatrixType) {
 
-                double v = *reinterpret_cast<double*>(element.data());
-
-                val = v;
-
-                item->setText(QString::number(v));
+                val = *reinterpret_cast<double*>(element.data());
 
             }else{
                 qWarning() << "Unknown data type.";
 
                 val = 0.0;
             }
+
+            item->setText(QString::number(val));
+            item->setToolTip(QString("(%1,%2) = %3").arg(row).arg(col).arg(item->text()));
 
             setItem(row, col, item);
 
