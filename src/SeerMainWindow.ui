@@ -72,6 +72,7 @@
     </widget>
     <addaction name="actionViewMemoryVisualizer"/>
     <addaction name="actionViewArrayVisualizer"/>
+    <addaction name="actionViewMatrixVisualizer"/>
     <addaction name="actionViewStructVisualizer"/>
     <addaction name="actionViewBasicStructVisualizer"/>
     <addaction name="actionViewImageVisualizer"/>
@@ -199,7 +200,7 @@
      <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
    </property>
    <property name="text">
-    <string></string>
+    <string/>
    </property>
   </action>
   <action name="actionGdbNext">
@@ -322,7 +323,7 @@
      <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
    </property>
    <property name="text">
-    <string></string>
+    <string/>
    </property>
    <property name="statusTip">
     <string>Start the program in GDB. Honor breakpoints, if any.</string>
@@ -654,6 +655,9 @@
    <property name="text">
     <string>Basic Struct Visualizer</string>
    </property>
+   <property name="statusTip">
+    <string>Launch a blank Basic Struct Visualizer.</string>
+   </property>
   </action>
   <action name="actionViewExecutionMessages">
    <property name="text">
@@ -709,6 +713,18 @@
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionViewMatrixVisualizer">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Matrix Visualizer</string>
+   </property>
+   <property name="statusTip">
+    <string>Launch a blank Matrix Visualizer.</string>
    </property>
   </action>
  </widget>

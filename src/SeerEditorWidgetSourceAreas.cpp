@@ -934,6 +934,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addMatrixVisualizerAction;
+    QAction* addMatrixAsteriskVisualizerAction;
+    QAction* addMatrixAmpersandVisualizerAction;
     QAction* addStructVisualizerAction;
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
@@ -991,6 +994,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
     addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addMatrixVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
     addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
     addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
@@ -1031,6 +1037,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
     structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
@@ -1053,6 +1065,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(false);
         addArrayAsteriskVisualizerAction->setEnabled(false);
         addArrayAmpersandVisualizerAction->setEnabled(false);
+        addMatrixVisualizerAction->setEnabled(false);
+        addMatrixAsteriskVisualizerAction->setEnabled(false);
+        addMatrixAmpersandVisualizerAction->setEnabled(false);
         addStructVisualizerAction->setEnabled(false);
         addStructAsteriskVisualizerAction->setEnabled(false);
         addStructAmpersandVisualizerAction->setEnabled(false);
@@ -1071,6 +1086,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(true);
         addArrayAsteriskVisualizerAction->setEnabled(true);
         addArrayAmpersandVisualizerAction->setEnabled(true);
+        addMatrixVisualizerAction->setEnabled(true);
+        addMatrixAsteriskVisualizerAction->setEnabled(true);
+        addMatrixAmpersandVisualizerAction->setEnabled(true);
         addStructVisualizerAction->setEnabled(true);
         addStructAsteriskVisualizerAction->setEnabled(true);
         addStructAmpersandVisualizerAction->setEnabled(true);
@@ -1305,7 +1323,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(textCursor().selectedText());
+            emit addMemoryVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1316,7 +1334,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("*") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1327,7 +1345,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("&") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1338,7 +1356,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(textCursor().selectedText());
+            emit addArrayVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1349,7 +1367,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("*") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1360,7 +1378,40 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("&") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1371,7 +1422,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(textCursor().selectedText());
+            emit addStructVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1382,7 +1433,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("*") + textCursor().selectedText());
+            emit addStructVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1393,7 +1444,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("&") + textCursor().selectedText());
+            emit addStructVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;

@@ -193,6 +193,9 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addMatrixVisualizerAction;
+    QAction* addMatrixAsteriskVisualizerAction;
+    QAction* addMatrixAmpersandVisualizerAction;
     QAction* addStructVisualizerAction;
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
@@ -211,6 +214,9 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(item->text(1)));
     addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(item->text(1)));
     addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+    addMatrixVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
     addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
     addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
     addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
@@ -243,6 +249,12 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
 
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
@@ -355,7 +367,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addMemoryVisualize(item->text(1));
+            emit addMemoryVisualizer(item->text(1));
         }
 
         return;
@@ -366,7 +378,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addMemoryVisualize(QString("*") + item->text(1));
+            emit addMemoryVisualizer(QString("*") + item->text(1));
         }
 
         return;
@@ -377,7 +389,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addMemoryVisualize(QString("&") + item->text(1));
+            emit addMemoryVisualizer(QString("&") + item->text(1));
         }
 
         return;
@@ -388,7 +400,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addArrayVisualize(item->text(1));
+            emit addArrayVisualizer(item->text(1));
         }
 
         return;
@@ -399,7 +411,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addArrayVisualize(QString("*") + item->text(1));
+            emit addArrayVisualizer(QString("*") + item->text(1));
         }
 
         return;
@@ -410,7 +422,40 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addArrayVisualize(QString("&") + item->text(1));
+            emit addArrayVisualizer(QString("&") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMatrixVisualizer(item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMatrixVisualizer(QString("*") + item->text(1));
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addMatrixVisualizer(QString("&") + item->text(1));
         }
 
         return;
@@ -421,29 +466,29 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addStructVisualize(item->text(1));
+            emit addStructVisualizer(item->text(1));
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addStructVisualize(QString("*") + item->text(1));
+            emit addStructVisualizer(QString("*") + item->text(1));
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAmpersandVisualizerAction) {
 
         // Emit the signals.
         if (item->text(1) != "") {
-            emit addStructVisualize(QString("&") + item->text(1));
+            emit addStructVisualizer(QString("&") + item->text(1));
         }
 
         return;
