@@ -83,6 +83,19 @@ unsigned long SeerMatrixWidget::dataSize () const {
     return 0;
 }
 
+int SeerMatrixWidget::dataCount () const {
+
+    if (_data == 0) {
+        return 0;
+    }
+
+    if (elementSize() < 1) {
+        return 0;
+    }
+
+    return _data->size() / elementSize();
+}
+
 unsigned long  SeerMatrixWidget::elementSize () const {
 
     if (dataType() == SeerMatrixWidget::Int16MatrixType) {
@@ -139,6 +152,11 @@ QString SeerMatrixWidget::dataTypeString () const {
     }
 
     return "???";
+}
+
+const QVector<double>& SeerMatrixWidget::dataValues () const {
+
+    return _dataValues;
 }
 
 void SeerMatrixWidget::setData(SeerMatrixWidget::DataStorage* pData) {

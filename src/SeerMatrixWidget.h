@@ -54,6 +54,7 @@ class SeerMatrixWidget: public QTableWidget {
         int                             dataRows                () const;
         int                             dataColumns             () const;
         unsigned long                   dataSize                () const;
+        int                             dataCount               () const;
 
     signals:
         void                            dataChanged             ();

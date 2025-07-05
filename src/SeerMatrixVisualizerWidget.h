@@ -34,6 +34,7 @@ class SeerMatrixVisualizerWidget : public QWidget, protected Ui::SeerMatrixVisua
 
     protected slots:
         void                handleRefreshButton                     ();
+        void                handleHelpButton                        ();
         void                handleVariableNameLineEdit              ();
         void                handleElementRowsLineEdit               ();
         void                handleElementColumnsLineEdit            ();

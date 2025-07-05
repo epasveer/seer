@@ -1,4 +1,5 @@
 #include "SeerMatrixVisualizerWidget.h"
+#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
@@ -11,6 +12,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <QtGlobal>
+#include <algorithm>
+#include <cmath>
 
 SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -38,6 +41,7 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
 
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                                     this,            &SeerMatrixVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerMatrixVisualizerWidget::handleHelpButton);
     QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerMatrixVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(variableNameLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerMatrixVisualizerWidget::handleVariableNameLineEdit);
     QObject::connect(matrixRowsLineEdit,            &SeerHistoryLineEdit::returnPressed,                       this,            &SeerMatrixVisualizerWidget::handleRefreshButton);
@@ -424,6 +428,14 @@ void SeerMatrixVisualizerWidget::handleRefreshButton () {
     emit evaluateMemoryExpression(_memoryId, variableAddressLineEdit->text(), bytes);
 }
 
+void SeerMatrixVisualizerWidget::handleHelpButton () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
+    help->loadFile(":/seer/resources/help/MatrixVisualizer.md");
+    help->show();
+    help->raise();
+}
+
 void SeerMatrixVisualizerWidget::handleVariableNameLineEdit () {
 
     setVariableName (variableNameLineEdit->text());
@@ -540,7 +552,84 @@ void SeerMatrixVisualizerWidget::handleMatrixDisplayFormatComboBox (int index) {
 }
 
 void SeerMatrixVisualizerWidget::handleDataChanged () {
-    return;  // Do nothing for now.
+
+    // Update the meta information.
+
+    // Clear everything.
+    countLineEdit->setText("");
+    rowsLineEdit->setText("");
+    columnsLineEdit->setText("");
+    minimumLineEdit->setText("");
+    maximumLineEdit->setText("");
+    sumLineEdit->setText("");
+    averageLineEdit->setText("");
+    medianLineEdit->setText("");
+    rmsLineEdit->setText("");
+
+
+    // If there's nothing to show, just return.
+    if (matrixTableWidget->dataCount() <= 0) {
+        return;
+    }
+
+    if (matrixTableWidget->dataValues().count() <= 0) {
+        return;
+    }
+
+    // Make a copy of the values for us to play with.
+    QVector<double> values = matrixTableWidget->dataValues();
+
+    // Fill in counts.
+    countLineEdit->setText(QString::number(matrixTableWidget->dataCount()));
+    rowsLineEdit->setText(QString::number(matrixTableWidget->dataRows()));
+    columnsLineEdit->setText(QString::number(matrixTableWidget->dataColumns()));
+
+    // Calculate statistics.
+    double val  = 0.0;
+    double min  = 0.0;
+    double max  = 0.0;
+    double sum  = 0.0;
+    double sum2 = 0.0;
+    double avg  = 0.0;
+    double med  = 0.0;
+    double rms  = 0.0;
+
+    for (int i=0; i<values.size(); i++) {
+
+        val   = values[i];
+
+        min   = std::min(min, val);
+        max   = std::max(max, val);
+        sum  += val;
+        sum2 += std::pow(val, 2);
+    }
+
+    avg = sum / values.size();
+    rms = std::sqrt(sum2 / values.size());
+
+    // Post them.
+    minimumLineEdit->setText(QString::number(min));
+    maximumLineEdit->setText(QString::number(max));
+    sumLineEdit->setText(QString::number(sum));
+    averageLineEdit->setText(QString::number(avg));
+    rmsLineEdit->setText(QString::number(rms));
+
+    // For median, we need to sort the values. So do this last.
+    std::sort(values.begin(), values.end());
+
+    // If the number of elements is odd, the median is the middle element
+    if (values.size() % 2 != 0) {
+        med = values[values.size() / 2];
+    }else{
+        double mid1 = values[values.size() / 2 - 1];
+        double mid2 = values[values.size() / 2];
+
+        med = (mid1 + mid2) / 2.0;
+    }
+
+    medianLineEdit->setText(QString::number(med));
+
+    return;
 }
 
 void SeerMatrixVisualizerWidget::writeSettings() {
