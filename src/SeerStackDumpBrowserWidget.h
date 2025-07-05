@@ -43,7 +43,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
     signals:
         void                refreshStackPointer         (int id, QString expression);
         void                refreshStackDump            (int id, QString address, int offset, int count);
-        void                addMemoryVisualize          (QString expression);
+        void                addMemoryVisualizer         (QString expression);
 
     protected:
         void                showEvent                   (QShowEvent* event);

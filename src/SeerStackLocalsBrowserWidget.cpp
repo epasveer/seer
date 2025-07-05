@@ -161,6 +161,9 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addMatrixVisualizerAction;
+    QAction* addMatrixAsteriskVisualizerAction;
+    QAction* addMatrixAmpersandVisualizerAction;
     QAction* addStructVisualizerAction;
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
@@ -179,6 +182,9 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(item->text(0)));
     addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(item->text(0)));
+    addMatrixVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(0)));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(0)));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(0)));
     addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(0)));
     addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(0)));
@@ -211,6 +217,12 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAsteriskVisualizerAction);
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
 
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
@@ -331,7 +343,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(variable);
+            emit addMemoryVisualizer(variable);
         }
 
         return;
@@ -342,7 +354,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("*") + variable);
+            emit addMemoryVisualizer(QString("*") + variable);
         }
 
         return;
@@ -353,7 +365,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("&") + variable);
+            emit addMemoryVisualizer(QString("&") + variable);
         }
 
         return;
@@ -364,7 +376,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(variable);
+            emit addArrayVisualizer(variable);
         }
 
         return;
@@ -375,7 +387,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("*") + variable);
+            emit addArrayVisualizer(QString("*") + variable);
         }
 
         return;
@@ -386,7 +398,40 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("&") + variable);
+            emit addArrayVisualizer(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("&") + variable);
         }
 
         return;
@@ -397,7 +442,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(variable);
+            emit addStructVisualizer(variable);
         }
 
         return;
@@ -408,7 +453,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("*") + variable);
+            emit addStructVisualizer(QString("*") + variable);
         }
 
         return;
@@ -419,7 +464,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("&") + variable);
+            emit addStructVisualizer(QString("&") + variable);
         }
 
         return;

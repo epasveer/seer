@@ -54,17 +54,17 @@
        </item>
        <item>
         <property name="text">
-         <string>unt16</string>
+         <string>uint16</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>uin32</string>
+         <string>uint32</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>uin64</string>
+         <string>uint64</string>
         </property>
        </item>
        <item>
@@ -195,17 +195,17 @@
        </item>
        <item>
         <property name="text">
-         <string>unt16</string>
+         <string>uint16</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>uin32</string>
+         <string>uint32</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>uin64</string>
+         <string>uint64</string>
         </property>
        </item>
        <item>

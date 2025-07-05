@@ -22,6 +22,7 @@
 * Implment gdb's "checkpoint" feature. As simple time-travel feature.
 * Add preliminary support for Undo's udb time-traveling debugger.
 * Add support for remaining Catchpoint types.
+* Add a Matrix Visualizer for viewing 2D arrays.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.

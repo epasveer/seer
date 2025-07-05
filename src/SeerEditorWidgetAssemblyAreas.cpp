@@ -1093,6 +1093,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     QAction* disableAction;
     QAction* addMemoryAddressVisualizerAction;
     QAction* addArrayAddressVisualizerAction;
+    QAction* addMatrixAddressVisualizerAction;
     QAction* addStructAddressVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
@@ -1128,6 +1129,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     addMemoryAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addArrayAddressVisualizerAction  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addMatrixAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addStructAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
@@ -1146,6 +1148,10 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     arrayVisualizerMenu.addAction(addArrayAddressVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add address to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixAddressVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
     QMenu structVisualizerMenu("Add address to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructAddressVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
@@ -1154,10 +1160,12 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     if (textCursor().selectedText() == "") {
         addMemoryAddressVisualizerAction->setEnabled(false);
         addArrayAddressVisualizerAction->setEnabled(false);
+        addMatrixAddressVisualizerAction->setEnabled(false);
         addStructAddressVisualizerAction->setEnabled(false);
     }else{
         addMemoryAddressVisualizerAction->setEnabled(true);
         addArrayAddressVisualizerAction->setEnabled(true);
+        addMatrixAddressVisualizerAction->setEnabled(true);
         addStructAddressVisualizerAction->setEnabled(true);
     }
 
@@ -1228,7 +1236,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(textCursor().selectedText());
+            emit addMemoryVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1239,7 +1247,18 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(textCursor().selectedText());
+            emit addArrayVisualizer(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAddressVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1250,7 +1269,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(textCursor().selectedText());
+            emit addStructVisualizer(textCursor().selectedText());
         }
 
         return;

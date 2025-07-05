@@ -100,9 +100,11 @@ set(HEADER_FILES
     SeerHexWidget.h
     SeerAsmWidget.h
     SeerArrayWidget.h
+    SeerMarixWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
     SeerArrayVisualizerWidget.h
+    SeerMatrixVisualizerWidget.h
     SeerMemoryVisualizerWidget.h
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
@@ -200,9 +202,11 @@ set(SOURCE_FILES
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
     SeerArrayWidget.cpp
+    SeerMatrixWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
     SeerArrayVisualizerWidget.cpp
+    SeerMatrixVisualizerWidget.cpp
     SeerMemoryVisualizerWidget.cpp
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
