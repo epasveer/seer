@@ -14,11 +14,11 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
-#include <QAction>
 #include <QtWidgets/QToolTip>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
+#include <QtGui/QAction>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>

@@ -206,7 +206,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
     }
 
     if (functionNameText() != "") {
-        breakpointParameters += " --function " + functionNameText();
+        breakpointParameters += " --function \"" + functionNameText() + "\"";
     }
 
     if (labelNameText() != "") {
