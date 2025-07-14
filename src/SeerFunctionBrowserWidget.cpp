@@ -267,6 +267,5 @@ void SeerFunctionBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         return;
     }
-
 }
 
