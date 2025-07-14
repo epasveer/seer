@@ -1,9 +1,12 @@
 #include "SeerFunctionBrowserWidget.h"
+#include "SeerBreakpointCreateDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
+#include <QtGui/QAction>
 #include <QtCore/QFileInfo>
 #include <QtCore/Qt>
 #include <QtCore/QMap>
@@ -20,20 +23,23 @@ SeerFunctionBrowserWidget::SeerFunctionBrowserWidget (QWidget* parent) : QWidget
     // Setup the widgets
     functionSearchLineEdit->setPlaceholderText("Search regex...");
     functionSearchLineEdit->setClearButtonEnabled(true);
+
     functionTreeWidget->setMouseTracking(true);
-  //functionTreeWidget->resizeColumnToContents(0);
-    functionTreeWidget->resizeColumnToContents(1);
-    functionTreeWidget->resizeColumnToContents(2);
-    functionTreeWidget->resizeColumnToContents(3);
-    functionTreeWidget->resizeColumnToContents(4);
-    functionTreeWidget->resizeColumnToContents(5);
-    functionTreeWidget->clear();
     functionTreeWidget->setSortingEnabled(false);
+    functionTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  //functionTreeWidget->resizeColumnToContents(0); // Name
+    functionTreeWidget->resizeColumnToContents(1); // Filename
+    functionTreeWidget->resizeColumnToContents(2); // Line number
+    functionTreeWidget->resizeColumnToContents(3); // Fullname
+    functionTreeWidget->resizeColumnToContents(4); // Type
+    functionTreeWidget->resizeColumnToContents(5); // Description
+    functionTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(functionTreeWidget,      &QTreeWidget::itemDoubleClicked,    this,  &SeerFunctionBrowserWidget::handleItemDoubleClicked);
-    QObject::connect(functionTreeWidget,      &QTreeWidget::itemEntered,          this,  &SeerFunctionBrowserWidget::handleItemEntered);
-    QObject::connect(functionSearchLineEdit,  &QLineEdit::returnPressed,          this,  &SeerFunctionBrowserWidget::handleSearchLineEdit);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::itemDoubleClicked,              this,  &SeerFunctionBrowserWidget::handleItemDoubleClicked);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::itemEntered,                    this,  &SeerFunctionBrowserWidget::handleItemEntered);
+    QObject::connect(functionTreeWidget,      &QTreeWidget::customContextMenuRequested,     this,  &SeerFunctionBrowserWidget::handleContextMenu);
+    QObject::connect(functionSearchLineEdit,  &QLineEdit::returnPressed,                    this,  &SeerFunctionBrowserWidget::handleSearchLineEdit);
 }
 
 SeerFunctionBrowserWidget::~SeerFunctionBrowserWidget () {
@@ -213,5 +219,53 @@ void SeerFunctionBrowserWidget::handleSearchLineEdit () {
 
 void SeerFunctionBrowserWidget::refresh () {
     handleSearchLineEdit();
+}
+
+void SeerFunctionBrowserWidget::handleContextMenu (const QPoint& pos) {
+
+    // Get the item at the cursor.
+    QTreeWidgetItem* item = functionTreeWidget->itemAt(pos);
+
+    if (item == 0) {
+        return;
+    }
+
+    // Create the menu actions.
+    QAction* createBreakpointAction;
+
+    createBreakpointAction = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),
+                                         QString("Create breakpoint in function: \"%1\"").arg(item->text(0)),
+                                         this);
+
+    QMenu menu("Breakpoints", this);
+    menu.setTitle("Breakpoints");
+    menu.addAction(createBreakpointAction);
+
+    // Launch the menu. Get the response.
+    QAction* action = menu.exec(functionTreeWidget->mapToGlobal(pos));
+
+    // Do nothing.
+    if (action == 0) {
+        return;
+    }
+
+    if (action == createBreakpointAction) {
+
+        SeerBreakpointCreateDialog dlg(this);
+        dlg.setFunctionName(item->text(0));
+        dlg.setLineNumber(item->text(2));
+        dlg.setFilename(item->text(3));
+
+        int ret = dlg.exec();
+
+        if (ret == 0) {
+            return;
+        }
+
+        // Emit the create breakpoint signal.
+        emit insertBreakpoint(dlg.breakpointText());
+
+        return;
+    }
 }
 
