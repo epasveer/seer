@@ -447,7 +447,7 @@ void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
 
 void SeerDebugDialog::handleLoadCoreFilenameToolButton () {
 
-    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.*)", nullptr, QFileDialog::DontUseNativeDialog);
+    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.* *.core)", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setCoreFilename(name);
