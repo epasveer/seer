@@ -17,7 +17,7 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
        ~SeerVariableManagerWidget ();
 
         SeerVariableTrackerBrowserWidget*               variableTrackerBrowserWidget        ();
-        SeerVariableLoggerBrowserWidget*                variableLoggerBrowserWidget           ();
+        SeerVariableLoggerBrowserWidget*                variableLoggerBrowserWidget         ();
         SeerRegisterValuesBrowserWidget*                registerValuesBrowserWidget         ();
 
     protected:

@@ -61,6 +61,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 
+        void                                        clearCurrentLines                   ();
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
 
