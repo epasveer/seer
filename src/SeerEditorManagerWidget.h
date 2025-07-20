@@ -21,6 +21,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
        ~SeerEditorManagerWidget ();
 
         void                                            dumpEntries                         () const;
+        SeerEditorManagerEntries&                       entries                             ();
+        const SeerEditorManagerEntries&                 entries                             () const;
         bool                                            hasEntry                            (const QString& fullname) const;
         SeerEditorManagerEntries::iterator              addEntry                            (const QString& fullname, const QString& file);
         SeerEditorManagerEntries::iterator              findEntry                           (const QString& fullname);
@@ -90,6 +92,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestAssembly               (QString address);
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
+        void                                            handleSessionTerminated             ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();

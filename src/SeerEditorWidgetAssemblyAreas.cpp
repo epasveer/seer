@@ -959,6 +959,13 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
     centerCursor();
 }
 
+void SeerEditorWidgetAssemblyArea::clearCurrentLines () {
+
+    _currentLinesExtraSelections.clear();
+
+    refreshExtraSelections();
+}
+
 int SeerEditorWidgetAssemblyArea::findText (const QString& text, QTextDocument::FindFlags flags) {
 
     _findExtraSelections.clear();

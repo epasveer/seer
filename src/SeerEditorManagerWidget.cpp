@@ -83,6 +83,14 @@ SeerEditorManagerWidget::~SeerEditorManagerWidget () {
     deleteAssemblyWidgetTab();
 }
 
+SeerEditorManagerEntries& SeerEditorManagerWidget::entries() {
+    return _entries;
+}
+
+const SeerEditorManagerEntries& SeerEditorManagerWidget::entries() const {
+    return _entries;
+}
+
 void SeerEditorManagerWidget::dumpEntries () const {
 
     qDebug();
@@ -1309,4 +1317,16 @@ void SeerEditorManagerWidget::handleAssemblyConfigChanged () {
     }
 }
 
+void SeerEditorManagerWidget::handleSessionTerminated () {
+
+    // Clear current editors.
+    for (auto entry : entries()) {
+        entry.widget->sourceArea()->clearCurrentLines();
+    }
+
+    // Clear assembly editor.
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
+    }
+}
 
