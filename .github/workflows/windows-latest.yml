@@ -9,36 +9,70 @@ env:
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: windows-latest
 
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up WSL and build in Ubuntu
-        shell: wsl-bash {0}
-        run: |
-          # Ensure your WSL is Ubuntu, otherwise adjust this step accordingly.
-          echo "WSL Distro: $(lsb_release -d)"
+    - name: Setup WSL
+      uses: Vampire/setup-wsl@v3
+      with:
+        distribution: Ubuntu-22.04
 
-          # Set up Qt environment if needed
-          # You can replace this with a proper path if installed manually
-          export PATH=/opt/Qt/6.6.2/gcc_64/bin:$PATH
-          export CMAKE_PREFIX_PATH=/opt/Qt/6.6.2/gcc_64
+    - name: Update ubuntu
+      shell: wsl-bash {0}
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          pkg-config \
+          qt6-base-dev \
+          qt6-base-dev-tools \
+          libgl1-mesa-dev \
+          libxkbcommon-dev \
+          libxcb-xinerama0-dev \
+          libxcb-cursor-dev
 
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release
-          make -j$(nproc)
+    - name: Where Am I
+      shell: wsl-bash {0}
+      run: |
+        pwd
+        ls -l
+        lscpu
 
-      - name: Archive build artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Qt6-App-Binaries
-          path: build/
+    - name: Versions
+      shell: wsl-bash {0}
+      run: g++ --version
+
+    - name: Configure CMake
+      shell: wsl-bash {0}
+      run: |
+        mkdir -p build
+        cd build
+        cmake .. \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
+
+    - name: Build
+      shell: wsl-bash {0}
+      run: |
+        cd build
+        make -j$(nproc)
+
+    - name: Tar
+      shell: wsl-bash {0}
+      run: |
+        cd src/build
+        cp ../../LICENSE .
+        cp ../../CHANGELOG.md .
+        tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
+
+    - name: List Results
+      shell: wsl-bash {0}
+      run: |
+        cd src
+        ls -l build/
 
