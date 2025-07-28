@@ -14,65 +14,31 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: windows-latest
 
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install WSL2 and Ubuntu
-        uses: Vampire/setup-wsl@v1 # Or a similar action to install WSL2 and a distro
+      - name: Set up WSL and build in Ubuntu
+        shell: wsl-bash {0}
+        run: |
+          # Ensure your WSL is Ubuntu, otherwise adjust this step accordingly.
+          echo "WSL Distro: $(lsb_release -d)"
+
+          # Set up Qt environment if needed
+          # You can replace this with a proper path if installed manually
+          export PATH=/opt/Qt/6.6.2/gcc_64/bin:$PATH
+          export CMAKE_PREFIX_PATH=/opt/Qt/6.6.2/gcc_64
+
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j$(nproc)
+
+      - name: Archive build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          distro: Ubuntu
-          version: 2
-
-      - name: Update Ubuntu
-        shell: wsl-bash {0}
-        run: |
-          sudo apt-get update
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: 6.6
-          install-deps: 'true'
-          modules: 'qtcharts'
-
-      - name: Where am I
-        shell: wsl-bash {0}
-        run: |
-          pwd
-          ls -l
-
-      - name: Tool versions
-        shell: wsl-bash {0}
-        run: |
-            g++ --version
-            cmake --version
-
-      - name: Configure CMake
-        # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-        # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-        shell: wsl-bash {0}
-        run: |
-          cd src
-          cmake -B ${{github.workspace}}/src/build -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-
-      - name: Build
-        # Build your program with the given configuration
-        shell: wsl-bash {0}
-        run: |
-          cd src
-          cmake --build ${{github.workspace}}/src/build --config ${{env.BUILD_TYPE}} --target seergdb --parallel 4
-
-      - name: Tar
-        shell: wsl-bash {0}
-        run: |
-          cd src/build
-          cp ../../LICENSE .
-          cp ../../CHANGELOG.md .
-          tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
-
-      - name: List Results
-        shell: wsl-bash {0}
-        run: |
-          cd src
-          ls -l build/
+          name: Qt6-App-Binaries
+          path: build/
 
