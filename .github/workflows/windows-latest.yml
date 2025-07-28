@@ -27,7 +27,6 @@ jobs:
         sudo apt install -y \
           build-essential \
           cmake \
-          ninja-build \
           pkg-config \
           qt6-base-dev \
           qt6-base-dev-tools \
@@ -50,8 +49,7 @@ jobs:
     - name: Configure CMake
       shell: wsl-bash {0}
       run: |
-        mkdir -p build
-        cd build
+        cd src/build
         cmake .. \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
@@ -59,7 +57,7 @@ jobs:
     - name: Build
       shell: wsl-bash {0}
       run: |
-        cd build
+        cd src/build
         make -j$(nproc)
 
     - name: Tar
