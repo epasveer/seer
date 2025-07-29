@@ -26,14 +26,14 @@ jobs:
         sudo apt update
         sudo apt install -y \
           build-essential \
-          cmake \
-          pkg-config \
-          qt6-base-dev \
-          qt6-base-dev-tools \
-          libgl1-mesa-dev \
-          libxkbcommon-dev \
-          libxcb-xinerama0-dev \
-          libxcb-cursor-dev
+          cmake
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: 6.*
+        install-deps: 'true'
+        modules: 'qtcharts'
 
     - name: Where Am I
       shell: wsl-bash {0}
@@ -52,6 +52,7 @@ jobs:
         cd src/build
         cmake .. \
           -DCMAKE_BUILD_TYPE=Release \
+          -DQTVERSION=QT6 \
           -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
 
     - name: Build
