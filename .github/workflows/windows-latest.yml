@@ -46,8 +46,11 @@ jobs:
         QT6_PATH=$(dpkg -L qt6-base-dev | grep -E 'lib.*cmake.*Qt6$' | head -1 | sed 's|/lib.*||')
         echo "Qt6 found at: $QT6_PATH"
 
+        ls -l /usr/lib/x86_64-linux-gnu/cmake/Qt6
+
         # Set environment variables for the session
         echo "export Qt6_DIR=$QT6_PATH" >> ~/.bashrc
+        echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6" >> ~/.bashrc
         echo "export CMAKE_PREFIX_PATH=$QT6_PATH:$CMAKE_PREFIX_PATH" >> ~/.bashrc
         echo "export LD_LIBRARY_PATH=$QT6_PATH/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
         echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> ~/.bashrc
@@ -81,7 +84,9 @@ jobs:
           -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DQTVERSION=QT6 \
-          -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_PREFIX_PATH=$Qt6_DIR \
+          -DQt6_DIR=$Qt6_DIR/lib/cmake/Qt6
 
     - name: Build
       shell: wsl-bash {0}
