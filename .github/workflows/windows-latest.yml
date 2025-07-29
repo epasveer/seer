@@ -28,6 +28,7 @@ jobs:
         sudo apt install -y \
           build-essential \
           cmake \
+          ninja-build \
           pkg-config \
           qt6-base-dev \
           qt6-base-dev-tools \
@@ -37,6 +38,28 @@ jobs:
           libxkbcommon-dev \
           libxcb-xinerama0-dev \
           libxcb-cursor-dev
+
+    - name: Set Qt6 environment variables
+      shell: wsl-bash {0}
+      run: |
+        # Find Qt6 installation path
+        QT6_PATH=$(dpkg -L qt6-base-dev | grep -E 'lib.*cmake.*Qt6$' | head -1 | sed 's|/lib.*||')
+        echo "Qt6 found at: $QT6_PATH"
+
+        # Set environment variables for the session
+        echo "export Qt6_DIR=$QT6_PATH" >> ~/.bashrc
+        echo "export CMAKE_PREFIX_PATH=$QT6_PATH:$CMAKE_PREFIX_PATH" >> ~/.bashrc
+        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib:$LD_LIBRARY_PATH" >> ~/.bashrc
+        echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> ~/.bashrc
+        echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml" >> ~/.bashrc
+        echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins" >> ~/.bashrc
+
+        # Source the updated bashrc
+        source ~/.bashrc
+
+        # Print environment for debugging
+        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+        echo "Qt6_DIR: $Qt6_DIR"
 
     - name: Where Am I
       shell: wsl-bash {0}
@@ -52,8 +75,10 @@ jobs:
     - name: Configure CMake
       shell: wsl-bash {0}
       run: |
+        source ~/.bashrc
         cd src/build
         cmake .. \
+          -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DQTVERSION=QT6 \
           -DCMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6
@@ -61,12 +86,14 @@ jobs:
     - name: Build
       shell: wsl-bash {0}
       run: |
+        source ~/.bashrc
         cd src/build
         make -j$(nproc)
 
     - name: Tar
       shell: wsl-bash {0}
       run: |
+        source ~/.bashrc
         cd src/build
         cp ../../LICENSE .
         cp ../../CHANGELOG.md .
@@ -75,6 +102,7 @@ jobs:
     - name: List Results
       shell: wsl-bash {0}
       run: |
+        source ~/.bashrc
         cd src
         ls -l build/
 
