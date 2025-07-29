@@ -24,16 +24,17 @@ jobs:
       shell: wsl-bash {0}
       run: |
         sudo apt update
+        sudo apt search qt6
         sudo apt install -y \
           build-essential \
-          cmake
-
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v3
-      with:
-        version: 6.*
-        install-deps: 'true'
-        modules: 'qtcharts'
+          cmake \
+          pkg-config \
+          qt6-base-dev \
+          qt6-base-dev-tools \
+          libgl1-mesa-dev \
+          libxkbcommon-dev \
+          libxcb-xinerama0-dev \
+          libxcb-cursor-dev
 
     - name: Where Am I
       shell: wsl-bash {0}
