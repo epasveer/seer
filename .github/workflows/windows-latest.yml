@@ -31,9 +31,8 @@ jobs:
           pkg-config \
           qt6-base-dev \
           qt6-base-dev-tools \
-          qt6-base \
-          qt6-charts \
-          qt6-svg \
+          libqt6charts6-dev \
+          libqt6svg6-dev \
           libgl1-mesa-dev \
           libxkbcommon-dev \
           libxcb-xinerama0-dev \
