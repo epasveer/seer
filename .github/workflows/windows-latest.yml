@@ -65,6 +65,8 @@ jobs:
         echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
         echo "Qt6_DIR:         $Qt6_DIR"
 
+        dpkg -L qt6-base-dev
+
     - name: Where Am I
       shell: wsl-bash {0}
       run: |
@@ -95,10 +97,10 @@ jobs:
       run: |
         source /tmp/env.sh
         echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        locate libQt6Core.so.6
         cd src/build
         pwd
         ls -l
+        ls -l $Qt6_DIR/lib
         make -j$(nproc)
 
     - name: Tar
