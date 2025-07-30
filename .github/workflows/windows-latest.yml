@@ -56,7 +56,7 @@ jobs:
         echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> /tmp/env.sh
         echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> /tmp/env.sh
 
-        # Source the updated bashrc
+        # Source the updated env.sh
         cat    /tmp/env.sh
         source /tmp/env.sh
 
@@ -79,7 +79,7 @@ jobs:
     - name: Configure CMake
       shell: wsl-bash {0}
       run: |
-        source ~/.bashrc
+        source /tmp/env.sh
         cd src/build
         cmake .. \
           -G Ninja \
@@ -92,14 +92,14 @@ jobs:
     - name: Build
       shell: wsl-bash {0}
       run: |
-        source ~/.bashrc
+        source /tmp/env.sh
         cd src/build
         make -j$(nproc)
 
     - name: Tar
       shell: wsl-bash {0}
       run: |
-        source ~/.bashrc
+        source /tmp/env.sh
         cd src/build
         cp ../../LICENSE .
         cp ../../CHANGELOG.md .
@@ -108,7 +108,7 @@ jobs:
     - name: List Results
       shell: wsl-bash {0}
       run: |
-        source ~/.bashrc
+        source /tmp/env.sh
         cd src
         ls -l build/
 
