@@ -82,7 +82,6 @@ jobs:
         source /tmp/env.sh
         cd src/build
         cmake .. \
-          -G Ninja \
           -DCMAKE_BUILD_TYPE=Release \
           -DQTVERSION=QT6 \
           -DCMAKE_BUILD_TYPE=Release \
