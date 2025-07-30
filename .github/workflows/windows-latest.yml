@@ -49,20 +49,21 @@ jobs:
         ls -l /usr/lib/x86_64-linux-gnu/cmake/Qt6
 
         # Set environment variables for the session
-        echo "export Qt6_DIR=$QT6_PATH"                                               >> ~/.bashrc
-        echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6:$QT6_PATH" >> ~/.bashrc
-        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib"                                   >> ~/.bashrc
-        echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> ~/.bashrc
-        echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> ~/.bashrc
-        echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> ~/.bashrc
+        echo "export Qt6_DIR=$QT6_PATH"                                               >  /tmp/env.sh
+        echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6:$QT6_PATH" >> /tmp/env.sh
+        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib"                                   >> /tmp/env.sh
+        echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> /tmp/env.sh
+        echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> /tmp/env.sh
+        echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> /tmp/env.sh
 
         # Source the updated bashrc
-        cat    ~/.bashrc
-        source ~/.bashrc
+        cat    /tmp/env.sh
+        source /tmp/env.sh
 
         # Print environment for debugging
+        echo "SHELL:           $SHELL"
         echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
-        echo "Qt6_DIR: $Qt6_DIR"
+        echo "Qt6_DIR:         $Qt6_DIR"
 
     - name: Where Am I
       shell: wsl-bash {0}
