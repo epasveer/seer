@@ -94,6 +94,8 @@ jobs:
       shell: wsl-bash {0}
       run: |
         source /tmp/env.sh
+        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
+        locate libQt6Core.so.6
         cd src/build
         pwd
         ls -l
