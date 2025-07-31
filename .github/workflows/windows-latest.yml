@@ -38,7 +38,8 @@ jobs:
           libxkbcommon-dev \
           libxcb-xinerama0-dev \
           libxcb-cursor-dev
-      sudo ldconfig /usr/lib/x86_64-linux-gnu
+        sudo ldconfig /usr/lib/x86_64-linux-gnu
+        sudo ldconfig
 
     - name: Set Qt6 environment variables
       shell: wsl-bash {0}
