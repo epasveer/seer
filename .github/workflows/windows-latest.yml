@@ -68,6 +68,8 @@ jobs:
         dpkg -L qt6-base-dev
         dpkg -L libqt6charts6
 
+        ls -l /etc/ld.so.conf.d/
+
     - name: Where Am I
       shell: wsl-bash {0}
       run: |
