@@ -51,7 +51,7 @@ jobs:
         # Set environment variables for the session
         echo "export Qt6_DIR=$QT6_PATH"                                               >  /tmp/env.sh
         echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6:$QT6_PATH" >> /tmp/env.sh
-        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib"                                   >> /tmp/env.sh
+        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib:/usr/lib/x86_64-linux-gnu"         >> /tmp/env.sh
         echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> /tmp/env.sh
         echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> /tmp/env.sh
         echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> /tmp/env.sh
