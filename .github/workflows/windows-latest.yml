@@ -38,6 +38,7 @@ jobs:
           libxkbcommon-dev \
           libxcb-xinerama0-dev \
           libxcb-cursor-dev
+      sudo ldconfig /usr/lib/x86_64-linux-gnu
 
     - name: Set Qt6 environment variables
       shell: wsl-bash {0}
@@ -46,12 +47,9 @@ jobs:
         QT6_PATH=$(dpkg -L qt6-base-dev | grep -E 'lib.*cmake.*Qt6$' | head -1 | sed 's|/lib.*||')
         echo "Qt6 found at: $QT6_PATH"
 
-        ls -l /usr/lib/x86_64-linux-gnu/cmake/Qt6
-
         # Set environment variables for the session
         echo "export Qt6_DIR=$QT6_PATH"                                               >  /tmp/env.sh
         echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6:$QT6_PATH" >> /tmp/env.sh
-        echo "export LD_LIBRARY_PATH=$QT6_PATH/lib:/usr/lib/x86_64-linux-gnu"         >> /tmp/env.sh
         echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> /tmp/env.sh
         echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> /tmp/env.sh
         echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> /tmp/env.sh
@@ -62,13 +60,12 @@ jobs:
 
         # Print environment for debugging
         echo "SHELL:           $SHELL"
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
         echo "Qt6_DIR:         $Qt6_DIR"
 
         dpkg -L qt6-base-dev
         dpkg -L libqt6charts6
 
-        ls -l /etc/ld.so.conf.d/
+        ldconfig -p
 
     - name: Where Am I
       shell: wsl-bash {0}
@@ -99,11 +96,9 @@ jobs:
       shell: wsl-bash {0}
       run: |
         source /tmp/env.sh
-        echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH"
         cd src/build
         pwd
         ls -l
-        ls -l $Qt6_DIR/lib
         make -j$(nproc)
 
     - name: Tar
