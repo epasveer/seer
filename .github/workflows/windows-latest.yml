@@ -66,6 +66,7 @@ jobs:
         echo "Qt6_DIR:         $Qt6_DIR"
 
         dpkg -L qt6-base-dev
+        dpkg -L libqt6charts6
 
     - name: Where Am I
       shell: wsl-bash {0}
