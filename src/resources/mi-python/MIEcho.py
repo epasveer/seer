@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Ernie Pasveer <epasveer@att.net>
+#
+# SPDX-License-Identifier: MIT
+
 #
 # Gdb's own custon Python MI command.
 #

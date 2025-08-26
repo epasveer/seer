@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerDebugDialog.h"
 #include "SeerExecutableFilterProxyModel.h"
 #include "SeerDirectoryFilterProxyModel.h"
