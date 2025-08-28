@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerRegisterValuesBrowserWidget.h"
 #include "SeerRegisterEditValueDialog.h"
 #include "SeerRegisterProfileDialog.h"

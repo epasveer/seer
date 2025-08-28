@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Ernie Pasveer <epasveer@att.net>
+#
+# SPDX-License-Identifier: MIT
+
 #
 # Python MI command to manage gdb's "catchpoint" command..
 #
