@@ -1,7 +1,7 @@
 all: 3dmaze
 
 3dmaze: 3dmaze.c
-	gcc -o 3dmaze 3dmaze.c -lglut -lGL -lGLU -lm
+	gcc -g -o 3dmaze 3dmaze.c -lglut -lGL -lGLU -lm
 
 .PHONY: clean
 clean:
