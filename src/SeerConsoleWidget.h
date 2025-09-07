@@ -24,7 +24,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                deleteTerminal              ();
         void                connectTerminal             ();
         void                disconnectTerminal          ();
+        bool                isTerminalCreated           () const;
         bool                isTerminalConnected         () const;
+        void                resetTerminal               ();
         const QString&      terminalDeviceName          () const;
 
         void                setScrollLines              (int count);
