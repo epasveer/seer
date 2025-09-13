@@ -9,6 +9,7 @@ Record a RR session.
     Or...
 
     $ rr record -n --output-trace-dir=/path/to/rr/trace-directory  hellorr arg1 arg2
+    $ rr record -n --output-trace-dir=`pwd`/rr hellorr one two three
 
 
 Replay the RR session in Seer.
