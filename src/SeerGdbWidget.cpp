@@ -1484,15 +1484,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
-        // Restart the executable if it was already running.
-        if (newExecutableFlag() == false) {
-            if (_executableBreakMode == "inmain") {
-                handleGdbCommand("-exec-run --start"); // Stop in main
-            }else{
-                handleGdbCommand("-exec-run"); // Do not stop in main. But honor other breakpoints that may have been previously set.
-            }
-        }
-
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
 
