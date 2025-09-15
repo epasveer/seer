@@ -1436,6 +1436,9 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            handleGdbLoadMICommands();
+            handleGdbSourceScripts();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -1445,6 +1448,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         setExecutableLaunchMode("rr");
         saveLaunchMode();
         setGdbRecordMode("rr");
+        setGdbRecordDirection("");
         setExecutablePid(0);
 
         // Load the executable, if needed.
