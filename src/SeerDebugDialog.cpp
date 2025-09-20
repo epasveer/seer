@@ -7,6 +7,7 @@
 #include "SeerDirectoryFilterProxyModel.h"
 #include "SeerSlashProcDialog.h"
 #include "SeerHelpPageDialog.h"
+#include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -916,6 +917,30 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR trace-directory load\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR trace-directory load\"");
+
+        // Set default if we can. Otherwise, leave it blank.
+        //
+        if (rrTraceDirectoryLineEdit->text() == "") {
+            QStringList searchPaths = {
+                "$_RR_TRACE_DIR/latest-trace",
+                "$XDG_DATA_HOME/rr/latest-trace",
+                "$HOME/.local/share/rr/latest-trace"
+            };
+
+            QString defaultPath = "";
+            bool    f;
+
+            for (const auto& path : searchPaths) {
+               defaultPath = Seer::expandEnv(path, &f);
+               if (f == false) {
+                   continue;
+               }
+               if (QFile::exists(defaultPath)) {
+                   setRRTraceDirectory(defaultPath);
+                   break;
+               }
+            }
+        }
     }
 
     // ID == 4   COREFILE
