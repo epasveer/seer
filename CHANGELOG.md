@@ -24,6 +24,8 @@
 * Add support for remaining Catchpoint types.
 * Add a Matrix Visualizer for viewing 2D arrays.
 * Add breakpoints from the Function tab.
+* RR: When using the Debug dialog, check a couple standard locations for
+  the RR trace directory.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
