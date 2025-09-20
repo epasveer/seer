@@ -24,6 +24,8 @@
 * Add support for remaining Catchpoint types.
 * Add a Matrix Visualizer for viewing 2D arrays.
 * Add breakpoints from the Function tab.
+* When using the Debug dialog, save the debug settings so they can be fast loaded
+  the next time the Debug dialog is used. Kind of a default project.
 * RR: When using the Debug dialog, check a couple standard locations for
   the RR trace directory.
 
