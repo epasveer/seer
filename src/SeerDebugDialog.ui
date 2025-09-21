@@ -227,7 +227,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="runTab">
          <property name="sizePolicy">
@@ -960,6 +960,9 @@
               <property name="toolTip">
                <string>The path and name of a core file.</string>
               </property>
+              <property name="placeholderText">
+               <string>The path and name of the core file.</string>
+              </property>
               <property name="clearButtonEnabled">
                <bool>true</bool>
               </property>
@@ -1007,7 +1010,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>
