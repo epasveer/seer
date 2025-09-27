@@ -155,10 +155,12 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
     QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableLoggerObjcExpressionAction;
     QAction* addVariableTrackerExpressionAction;
     QAction* addVariableTrackerAsteriskExpressionAction;
     QAction* addVariableTrackerAmpersandExpressionAction;
     QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerObjcExpressionAction;
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
@@ -176,10 +178,12 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(item->text(0)));
     addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(item->text(0)));
+    addVariableLoggerObjcExpressionAction               = new QAction(QString("\"(objc)%1\"").arg(item->text(0)));
     addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(item->text(0)));
     addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(item->text(0)));
     addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(item->text(0)));
+    addVariableTrackerObjcExpressionAction              = new QAction(QString("\"(objc)%1\"").arg(item->text(0)));
     addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(0)));
     addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(0)));
     addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(0)));
@@ -201,6 +205,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
     loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
     loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerObjcExpressionAction);
     menu.addMenu(&loggerMenu);
 
     QMenu trackerMenu("Add variable to Tracker");
@@ -208,6 +213,7 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
     trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
     trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
     trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerObjcExpressionAction);
     menu.addMenu(&trackerMenu);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
@@ -294,6 +300,17 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addVariableLoggerExpression(QString("(objc)") + variable);
+        }
+
+        return;
+    }
+
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
@@ -336,6 +353,18 @@ void SeerStackLocalsBrowserWidget::handleContextMenu (const QPoint& pos) {
         // Emit the signals.
         if (variable != "") {
             emit addVariableTrackerExpression(QString("*&") + variable);
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addVariableTrackerExpression(QString("(objc)") + variable);
             emit refreshVariableTrackerValues();
         }
 

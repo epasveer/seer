@@ -2641,8 +2641,10 @@ void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString e
     }
 
     // Check if there's a ObjectiveC pretext.
-    if (expression.startsWith("oc#")) {
-        handleGdbCommand(QString::number(expressionid) + "-objc-evaluate-expression \"" + expression.mid(3) + "\"");
+    QString token("(objc)");
+
+    if (expression.startsWith(token)) {
+        handleGdbCommand(QString::number(expressionid) + "-objc-evaluate-expression \"" + expression.mid(token.length()) + "\"");
 
     // Otherwise handle normally.
     }else{
