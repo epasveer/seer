@@ -2640,7 +2640,16 @@ void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString e
         return;
     }
 
-    handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression \"" + expression + "\"");
+    // Check if there's a ObjectiveC pretext.
+    QString token("(objc)");
+
+    if (expression.startsWith(token)) {
+        handleGdbCommand(QString::number(expressionid) + "-objc-evaluate-expression \"" + expression.mid(token.length()) + "\"");
+
+    // Otherwise handle normally.
+    }else{
+        handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression \"" + expression + "\"");
+    }
 }
 
 void SeerGdbWidget::handleGdbVarObjCreate (int expressionid, QString expression) {
@@ -2716,7 +2725,7 @@ void SeerGdbWidget::handleGdbDataListValues () {
     }
 
     for (int i=0; i<_dataExpressionId.size(); i++) {
-        handleGdbCommand(QString::number(_dataExpressionId[i]) + "-data-evaluate-expression \"" + _dataExpressionName[i] + "\"");
+        handleGdbDataEvaluateExpression(_dataExpressionId[i], _dataExpressionName[i]);
     }
 }
 
@@ -2777,6 +2786,11 @@ void SeerGdbWidget::handleGdbDataAddExpression (QString expression) {
 void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
     if (executableLaunchMode() == "") {
+
+        // Clear expression list.
+        _dataExpressionId.clear();
+        _dataExpressionName.clear();
+
         return;
     }
 

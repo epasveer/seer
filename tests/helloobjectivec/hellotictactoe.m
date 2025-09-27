@@ -130,7 +130,7 @@
 - (int)getPlayerInput {
     int input;
     printf("Player %c, enter your move (1-9): ", currentPlayer);
-    scanf("%d", &input);
+    (void)scanf("%d", &input);
     
     // Clear input buffer
     int c;

@@ -1,0 +1,24 @@
+{
+    "seerproject": {
+        "executable": "/nas/erniep/Development/seer/tests/helloobjectivec/hellodays",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/helloobjectivec/hellodays_breakpoints.seer",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

@@ -224,6 +224,9 @@ void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
 
     // Delete previous contents.
     variablesTreeWidget->clear();
+
+    // Tell the GdbWidget to forget all tracked expressions.
+    emit deleteVariableExpressions("*");
 }
 
 void SeerVariableTrackerBrowserWidget::refresh () {
