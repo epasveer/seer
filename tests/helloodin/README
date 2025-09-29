@@ -1,0 +1,18 @@
+
+Test programs for the Odin language.
+
+Download an Odin tarball release from:
+
+    https://github.com/odin-lang/Odin/releases
+
+Copy the contents to:
+
+    /usr/local/odin
+
+Add that path to PATH
+
+    export PATH=$PATH:$HOME/.local/bin:/sbin:/usr/local/odin/
+
+Look at the Makefile to see how to compile/link a Odin program.
+
+
