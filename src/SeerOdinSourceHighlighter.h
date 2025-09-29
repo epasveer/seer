@@ -14,12 +14,12 @@
 #include <QtCore/QRegularExpression>
 #include <QtCore/QVector>
 
-class SeerCppSourceHighlighter : public SeerSourceHighlighter {
+class SeerOdinSourceHighlighter : public SeerSourceHighlighter {
 
     Q_OBJECT
 
     public:
-        SeerCppSourceHighlighter (QTextDocument* parent = 0);
+        SeerOdinSourceHighlighter (QTextDocument* parent = 0);
 
         virtual const SeerHighlighterSettings&  highlighterSettings             () override;
         virtual void                            setHighlighterSettings          (const SeerHighlighterSettings& settings) override;

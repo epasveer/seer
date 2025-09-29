@@ -6,6 +6,8 @@
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerCppSourceHighlighter.h"
+#include "SeerOdinSourceHighlighter.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -554,8 +556,16 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     }
 
     QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
-    if (file.contains(cpp_re)) {
-        _sourceHighlighter = new SeerCppSourceHighlighter(0);
+    QRegularExpression odin_re("(?:.odin)$");
+
+    const bool cpp_file = file.contains(cpp_re);
+    const bool odin_file = file.contains(odin_re);
+    if (cpp_file || odin_file) {
+        if (cpp_file) {
+            _sourceHighlighter = new SeerCppSourceHighlighter(0);
+        } else if (odin_file) { 
+            _sourceHighlighter = new SeerOdinSourceHighlighter(0);
+        }
 
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
