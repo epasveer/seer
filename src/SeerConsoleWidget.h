@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -20,7 +24,9 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                deleteTerminal              ();
         void                connectTerminal             ();
         void                disconnectTerminal          ();
+        bool                isTerminalCreated           () const;
         bool                isTerminalConnected         () const;
+        void                resetTerminal               ();
         const QString&      terminalDeviceName          () const;
 
         void                setScrollLines              (int count);

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerMainWindow.h"
 #include "SeerDebugDialog.h"
 #include "SeerConfigDialog.h"
@@ -564,7 +568,14 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
-    dlg.setProjectFilename(projectFilename());
+
+    // If there's a project, use it.
+    if (projectFilename() != "") {
+        dlg.setProjectFilename(projectFilename());
+    // Otherwise use the default project, if there is one.
+    }else{
+        dlg.loadDefaultProjectSettings();
+    }
 
     setProjectFilename(""); // Clear project name here. No need to have it anymore.
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: MIT
+
 #include "QHContainerWidget.h"
 
 QHContainerWidget::QHContainerWidget (QWidget* parent) : QWidget(parent) {

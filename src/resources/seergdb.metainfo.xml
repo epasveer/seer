@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>seergdb.desktop</id>
+
+  <name>SeerGdb</name>
+  <summary>A modern GDB front-end</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later AND LGPL-3.0-or-later AND BSD-2-Clause AND MIT AND CC-BY-3.0 AND CC-BY-4.0</project_license>
+
+  <description>
+    <p>
+      Seer is a graphical user interface to the GNU Debugger (gdb) for Linux.
+    </p>
+    <p>
+      It provides a simple yet visually pleasing interface to gdb, making it easier
+      to debug applications without using the command line directly.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">seergdb.desktop</launchable>
+  <url type="homepage">https://github.com/epasveer/seer</url>
+  <url type="bugtracker">https://github.com/epasveer/seer/issues</url>
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="2.5" date="2025-08-20" />
+  </releases>
+</component>

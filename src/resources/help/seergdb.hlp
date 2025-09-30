@@ -71,6 +71,8 @@ Misc Options:
   --config                                                      Launch with Seer's config dialog.
                                                                 Save settings with: 'Settings->Save Configuration'
 
-  --xxx                                                         Turn on internal Seer debugging messages.
+  --xxx-debug                                                   Turn on internal Seer debugging messages.
+  --xxx-resources                                               Print the contents of Seer's Qt resources.
+  --xxx-styles                                                  Print the names of Qt's available styles.
 
 

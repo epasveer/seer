@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerGdbWidget.h"
 #include "SeerLogWidget.h"
 #include "SeerMemoryVisualizerWidget.h"
@@ -107,7 +111,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
-    // Create the console.
+    // Create the console tab.
+    // Each RUN method will create and connect to the console's terminal.
     createConsole();
 
     // Create editor options bar.
@@ -1055,15 +1060,19 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         // This causes a new gdb each time. The same console, though.
         setNewExecutableFlag(true);
 
-        // Disconnect from the console and delete the old gdb if there is a new executable.
+        // Delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
             killGdb();
         }
 
         // If gdb isn't running, start it.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1086,8 +1095,6 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         }
 
         // Set the program's tty device for stdin and stdout.
-        console()->createTerminal();
-        console()->connectTerminal();
         handleGdbTerminalDeviceName();
 
         setExecutableLaunchMode("run");
@@ -1196,9 +1203,8 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         // This causes a new gdb each time. The same console, though.
         setNewExecutableFlag(true);
 
-        // Disconnect from the console and delete the old gdb if there is a new executable.
+        // Delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1206,6 +1212,11 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1219,6 +1230,10 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
+
+        // Set the program's tty device for stdin and stdout.
+        // Not really needed for 'attach' mode, but do it anyway.
+        handleGdbTerminalDeviceName();
 
         // No console for 'attach' mode but make sure it's reattached.
         setExecutableLaunchMode("attach");
@@ -1291,14 +1306,17 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
 
         // Disconnect from the terminal and delete the old gdb if there is a new executable.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
             killGdb();
         }
 
         // If gdb isn't running, start it.
-        // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1308,6 +1326,10 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
+
+        // Set the program's tty device for stdin and stdout.
+        // Not really needed for 'connect' mode, but do it anyway.
+        handleGdbTerminalDeviceName();
 
         // No console for 'connect' mode but make sure it's reattached.
         setExecutableLaunchMode("connect");
@@ -1323,7 +1345,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
             }else{
                 handleGdbCommand("-gdb-set debug remote 0");
             }
-            handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
+            handleGdbExecutablePreCommands(); // Run any 'pre' commands before program is loaded.
         }
 
         // Connect to the remote gdbserver using the proper remote type.
@@ -1398,29 +1420,35 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
         // Disconnect from the console and delete the old gdb, then reconnect.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
             killGdb();
         }
 
         // If gdb isn't running, start it.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdbRR();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
                 break;
             }
+
+            handleGdbLoadMICommands();
+            handleGdbSourceScripts();
         }
 
         // Set the program's tty device for stdin and stdout.
-        console()->createTerminal();
-        console()->connectTerminal();
         handleGdbTerminalDeviceName();
 
         // Set the launch mode.
         setExecutableLaunchMode("rr");
         saveLaunchMode();
         setGdbRecordMode("rr");
+        setGdbRecordDirection("");
         setExecutablePid(0);
 
         // Load the executable, if needed.
@@ -1459,15 +1487,6 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
-
-        // Restart the executable if it was already running.
-        if (newExecutableFlag() == false) {
-            if (_executableBreakMode == "inmain") {
-                handleGdbCommand("-exec-run --start"); // Stop in main
-            }else{
-                handleGdbCommand("-exec-run"); // Do not stop in main. But honor other breakpoints that may have been previously set.
-            }
-        }
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("%1 (pid=%2)").arg(executableRRTraceDirectory()).arg(QGuiApplication::applicationPid()));
@@ -1508,7 +1527,6 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         // Disconnect from the console and delete the old gdb. No need to reconnect.
         if (newExecutableFlag() == true) {
-            console()->deleteTerminal();
             killGdb();
         }
 
@@ -1516,6 +1534,11 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         // No need to connect to the console in this mode.
         if (isGdbRuning() == false) {
 
+            // Connect the terminal to the console.
+            console()->resetTerminal();
+            console()->connectTerminal();
+
+            // Start gdb.
             bool f = startGdb();
             if (f == false) {
                 QMessageBox::critical(this, tr("Error"), tr("Can't start gdb."));
@@ -1529,6 +1552,10 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
+
+        // Set the program's tty device for stdin and stdout.
+        // Not really needed for 'core' mode, but do it anyway.
+        handleGdbTerminalDeviceName();
 
         // No console for 'core' mode but make sure it's reattached.
         setExecutableLaunchMode("corefile");
@@ -1557,7 +1584,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
-        // This is needed for code mode to refresh the stack frame, for some reason.
+        // This is needed for 'core' mode to refresh the stack frame, for some reason.
         handleGdbStackListFrames();
 
         // Set window titles with name of program.
@@ -2096,7 +2123,7 @@ void SeerGdbWidget::handleGdbTerminalDeviceName () {
 
     if (_consoleWidget->terminalDeviceName() != "") {
 
-        handleGdbCommand(QString("-inferior-tty-set  ") + _consoleWidget->terminalDeviceName());
+        handleGdbCommand(QString("-inferior-tty-set ") + _consoleWidget->terminalDeviceName());
 
     }else{
         qWarning() << "Can't set TTY name because the name is blank.";
@@ -2613,7 +2640,16 @@ void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString e
         return;
     }
 
-    handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression \"" + expression + "\"");
+    // Check if there's a ObjectiveC pretext.
+    QString token("(objc)");
+
+    if (expression.startsWith(token)) {
+        handleGdbCommand(QString::number(expressionid) + "-objc-evaluate-expression \"" + expression.mid(token.length()) + "\"");
+
+    // Otherwise handle normally.
+    }else{
+        handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression \"" + expression + "\"");
+    }
 }
 
 void SeerGdbWidget::handleGdbVarObjCreate (int expressionid, QString expression) {
@@ -2689,7 +2725,7 @@ void SeerGdbWidget::handleGdbDataListValues () {
     }
 
     for (int i=0; i<_dataExpressionId.size(); i++) {
-        handleGdbCommand(QString::number(_dataExpressionId[i]) + "-data-evaluate-expression \"" + _dataExpressionName[i] + "\"");
+        handleGdbDataEvaluateExpression(_dataExpressionId[i], _dataExpressionName[i]);
     }
 }
 
@@ -2750,6 +2786,11 @@ void SeerGdbWidget::handleGdbDataAddExpression (QString expression) {
 void SeerGdbWidget::handleGdbDataDeleteExpressions (QString expressionids) {
 
     if (executableLaunchMode() == "") {
+
+        // Clear expression list.
+        _dataExpressionId.clear();
+        _dataExpressionName.clear();
+
         return;
     }
 

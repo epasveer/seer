@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerSlashProcDialog.h"
 
 SeerSlashProcDialog::SeerSlashProcDialog (QWidget* parent) : QDialog(parent) {

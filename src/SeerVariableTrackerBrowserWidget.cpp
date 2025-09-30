@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerVariableTrackerBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -220,6 +224,9 @@ void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
 
     // Delete previous contents.
     variablesTreeWidget->clear();
+
+    // Tell the GdbWidget to forget all tracked expressions.
+    emit deleteVariableExpressions("*");
 }
 
 void SeerVariableTrackerBrowserWidget::refresh () {

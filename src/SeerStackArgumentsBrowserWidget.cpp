@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerStackArgumentsBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -183,10 +187,12 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
     QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableLoggerObjcExpressionAction;
     QAction* addVariableTrackerExpressionAction;
     QAction* addVariableTrackerAsteriskExpressionAction;
     QAction* addVariableTrackerAmpersandExpressionAction;
     QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerObjcExpressionAction;
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
@@ -200,26 +206,28 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
 
-    addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(item->text(1)));
-    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(item->text(1)));
-    addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(item->text(1)));
-    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(item->text(1)));
-    addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
-    addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(item->text(1)));
-    addMatrixVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addMatrixAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addMatrixAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
-    addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(item->text(1)));
-    addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(item->text(1)));
-    addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(item->text(1)));
+    addVariableLoggerExpressionAction                   = new QAction(QString("%1").arg(item->text(1)));
+    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("*%1").arg(item->text(1)));
+    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("&&%1").arg(item->text(1)));
+    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("*&&%1").arg(item->text(1)));
+    addVariableLoggerObjcExpressionAction               = new QAction(QString("(objc)%1").arg(item->text(0)));
+    addVariableTrackerExpressionAction                  = new QAction(QString("%1").arg(item->text(1)));
+    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("*%1").arg(item->text(1)));
+    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("&&%1").arg(item->text(1)));
+    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("*&&%1").arg(item->text(1)));
+    addVariableTrackerObjcExpressionAction              = new QAction(QString("(objc)%1").arg(item->text(0)));
+    addMemoryVisualizerAction                           = new QAction(QString("%1").arg(item->text(1)));
+    addMemoryAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(item->text(1)));
+    addMemoryAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(item->text(1)));
+    addArrayVisualizerAction                            = new QAction(QString("%1").arg(item->text(1)));
+    addArrayAsteriskVisualizerAction                    = new QAction(QString("*%1").arg(item->text(1)));
+    addArrayAmpersandVisualizerAction                   = new QAction(QString("&&%1").arg(item->text(1)));
+    addMatrixVisualizerAction                           = new QAction(QString("%1").arg(item->text(1)));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(item->text(1)));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(item->text(1)));
+    addStructVisualizerAction                           = new QAction(QString("%1").arg(item->text(1)));
+    addStructAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(item->text(1)));
+    addStructAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(item->text(1)));
 
     QMenu menu("Visualizers", this);
     menu.setTitle("Visualizers");
@@ -229,6 +237,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
     loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
     loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerObjcExpressionAction);
     menu.addMenu(&loggerMenu);
 
     QMenu trackerMenu("Add variable to Tracker");
@@ -236,6 +245,7 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
     trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
     trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
     trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerObjcExpressionAction);
     menu.addMenu(&trackerMenu);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
@@ -314,6 +324,17 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableLoggerExpression(QString("(objc)") + item->text(1));
+        }
+
+        return;
+    }
+
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
@@ -356,6 +377,18 @@ void SeerStackArgumentsBrowserWidget::handleContextMenu (const QPoint& pos) {
         // Emit the signals.
         if (item->text(1) != "") {
             emit addVariableTrackerExpression(QString("*&") + item->text(1));
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (item->text(1) != "") {
+            emit addVariableTrackerExpression(QString("(objc)") + item->text(1));
             emit refreshVariableTrackerValues();
         }
 
