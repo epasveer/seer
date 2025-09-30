@@ -120,22 +120,22 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         int i = 0;
         for ( const auto& name_text : name_list  ) {
 
-            // XXX Commenting this out will get extra registers.
-            // XXX Are they valid?
-            if (name_text == "") {
-                continue;
+            // Some register names come back as "". Not sure why or how.
+            // We'll skip them but we need to still increment the
+            // register id number. Otherwise we may update the wrong
+            // register because we search for the register by its id.
+            if (name_text != "") {
+                QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
+                topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
+                topItem->setText(0, QString::number(i));
+                topItem->setText(1, name_text);
+                topItem->setText(2, "");
+                topItem->setText(3, "new");
+
+                topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
+                registersTreeWidget->addTopLevelItem(topItem);
             }
-
-            QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
-            topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
-            topItem->setText(0, QString::number(i));
-            topItem->setText(1, name_text);
-            topItem->setText(2, "");
-            topItem->setText(3, "new");
-
-            topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-
-            registersTreeWidget->addTopLevelItem(topItem);
 
             i++;
         }
