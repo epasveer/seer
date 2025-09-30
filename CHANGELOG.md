@@ -29,6 +29,7 @@
 * RR: When using the Debug dialog, check a couple standard locations for
   the RR trace directory.
 * ObjectiveC: Add support for printing ObjectiveC object via a '(objc)' pretext.
+* Registers: Fix bug handling register names of "" in gdb's register list.
 
 ## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
