@@ -9,6 +9,10 @@
 
 SeerSourceHighlighter::SeerSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {}
 
+const SeerHighlighterSettings& SeerSourceHighlighter::highlighterSettings() {
+    return _highlighterSettings;
+}
+
 SeerSourceHighlighter* getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
     QRegularExpression cpp_re("(?:" + settings.sourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {

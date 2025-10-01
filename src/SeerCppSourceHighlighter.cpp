@@ -10,11 +10,6 @@ SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : See
     setHighlighterSettings(SeerHighlighterSettings::populate(""));
 }
 
-const SeerHighlighterSettings& SeerCppSourceHighlighter::highlighterSettings() {
-
-    return _highlighterSettings;
-}
-
 void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSettings& settings) {
 
     _highlighterSettings     = settings;
@@ -96,10 +91,8 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
 
 	// Set keywords format and expression (must have precedence over functions)
     for (const QString& pattern : keywordPatterns) {
-
         rule.pattern = QRegularExpression(pattern);
         rule.format  = _keywordFormat;
-
         _highlightingRules.append(rule);
     }
 

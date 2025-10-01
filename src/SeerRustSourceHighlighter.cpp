@@ -11,12 +11,6 @@ SeerRustSourceHighlighter::SeerRustSourceHighlighter(QTextDocument *parent)
   setHighlighterSettings(SeerHighlighterSettings::populate(""));
 }
 
-const SeerHighlighterSettings &
-SeerRustSourceHighlighter::highlighterSettings() {
-
-  return _highlighterSettings;
-}
-
 void SeerRustSourceHighlighter::setHighlighterSettings(
     const SeerHighlighterSettings &settings) {
   _highlighterSettings = settings;
@@ -83,7 +77,6 @@ void SeerRustSourceHighlighter::setHighlighterSettings(
   for (const QString &pattern : keywordPatterns) {
     rule.pattern = QRegularExpression(pattern);
     rule.format = _keywordFormat;
-
     _highlightingRules.append(rule);
   }
 
