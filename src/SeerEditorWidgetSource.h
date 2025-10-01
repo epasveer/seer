@@ -165,7 +165,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
 
-        SeerSourceHighlighter*                   _sourceHighlighter;
+        SeerSourceHighlighter*                      _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 

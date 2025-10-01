@@ -89,18 +89,18 @@ QStringList SeerHighlighterSettings::themeNames() {
     return names;
 }
 
-SeerHighlighterSettings SeerHighlighterSettings::populateForCPP (const QString& themeName) {
+SeerHighlighterSettings SeerHighlighterSettings::populate (const QString& themeName) {
 
     if (themeName == "light") {
-        return SeerHighlighterSettings::populateForCPP_light();
+        return SeerHighlighterSettings::populate_light();
     }else if (themeName == "dark") {
-        return SeerHighlighterSettings::populateForCPP_dark();
+        return SeerHighlighterSettings::populate_dark();
     }
 
-    return SeerHighlighterSettings::populateForCPP_light();
+    return SeerHighlighterSettings::populate_light();
 }
 
-SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
+SeerHighlighterSettings SeerHighlighterSettings::populate_light () {
 
     SeerHighlighterSettings cppSettings;
 
@@ -195,7 +195,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_light () {
     return cppSettings;
 }
 
-SeerHighlighterSettings SeerHighlighterSettings::populateForCPP_dark () {
+SeerHighlighterSettings SeerHighlighterSettings::populate_dark () {
 
     SeerHighlighterSettings cppSettings;
 
