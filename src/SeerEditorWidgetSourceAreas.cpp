@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerEditorWidgetSource.h"
+#include "SeerHighlighterSettings.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
-#include "SeerCppSourceHighlighter.h"
-#include "SeerOdinSourceHighlighter.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -555,18 +555,9 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
-    QRegularExpression odin_re("(?:.odin)$");
-
-    const bool cpp_file = file.contains(cpp_re);
-    const bool odin_file = file.contains(odin_re);
-    if (cpp_file || odin_file) {
-        if (cpp_file) {
-            _sourceHighlighter = new SeerCppSourceHighlighter(0);
-        } else if (odin_file) { 
-            _sourceHighlighter = new SeerOdinSourceHighlighter(0);
-        }
-
+    SeerSourceHighlighter *highlighter = getSourceHighlighter(file, _sourceHighlighterSettings);
+    if (highlighter) {
+        _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
         }else{

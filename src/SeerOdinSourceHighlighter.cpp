@@ -7,7 +7,7 @@
 SeerOdinSourceHighlighter::SeerOdinSourceHighlighter (QTextDocument* parent) : SeerSourceHighlighter(parent) {
 
     // Set to default formats.
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
+    setHighlighterSettings(SeerHighlighterSettings::populate(""));
 }
 
 const SeerHighlighterSettings& SeerOdinSourceHighlighter::highlighterSettings() {
@@ -72,7 +72,7 @@ void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSet
     HighlightingRule rule;
 
     // Set class format and expression.
-    rule.pattern = QRegularExpression(QStringLiteral("\\[A-Za-z]+\\b"));
+    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Z][A-Z0-9_]*\\b"));
     rule.format = _classFormat;
     _highlightingRules.append(rule);
 
@@ -104,43 +104,4 @@ void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSet
     _commentEndExpression   = QRegularExpression(QStringLiteral("\\*/"));
 }
 
-void SeerOdinSourceHighlighter::highlightBlock (const QString& text) {
-
-    for (const HighlightingRule& rule : std::as_const(_highlightingRules)) {
-
-        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-
-        while (matchIterator.hasNext()) {
-            QRegularExpressionMatch match = matchIterator.next();
-            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
-        }
-    }
-
-    setCurrentBlockState(0);
-
-    int startIndex = 0;
-
-    if (previousBlockState() != 1) {
-        startIndex = text.indexOf(_commentStartExpression);
-    }
-
-    while (startIndex >= 0) {
-
-        QRegularExpressionMatch match = _commentEndExpression.match(text, startIndex);
-
-        int endIndex      = match.capturedStart();
-        int commentLength = 0;
-
-        if (endIndex == -1) {
-            setCurrentBlockState(1);
-            commentLength = text.length() - startIndex;
-
-        }else{
-            commentLength = endIndex - startIndex + match.capturedLength();
-        }
-
-        setFormat(startIndex, commentLength, _multiLineCommentFormat);
-        startIndex = text.indexOf(_commentStartExpression, startIndex + commentLength);
-    }
-}
 

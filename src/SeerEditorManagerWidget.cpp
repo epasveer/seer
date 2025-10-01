@@ -22,7 +22,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Initialize private data
     _editorFont                     = QFont("monospace", 10);                      // Default font.
-    _editorHighlighterSettings      = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
+    _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
     _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
     _editorTabSize                  = 4;

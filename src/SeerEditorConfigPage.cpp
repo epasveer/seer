@@ -184,7 +184,7 @@ void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
     setEditorTabSize(4);
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
+    setHighlighterSettings(SeerHighlighterSettings::populate(""));
     setHighlighterEnabled(true);
     setExternalEditorCommand("");
 }
@@ -301,6 +301,6 @@ void SeerEditorConfigPage::handleEnabledChanged () {
 
 void SeerEditorConfigPage::handleApplyTheme () {
 
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(themeComboBox->currentText()));
+    setHighlighterSettings(SeerHighlighterSettings::populate(themeComboBox->currentText()));
 }
 
