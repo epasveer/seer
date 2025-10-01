@@ -21,9 +21,8 @@ class SeerSourceHighlighter : public QSyntaxHighlighter {
 public:
   SeerSourceHighlighter(QTextDocument *parent = 0);
 
-  virtual const SeerHighlighterSettings &highlighterSettings() = 0;
-  virtual void
-  setHighlighterSettings(const SeerHighlighterSettings &settings) = 0;
+  const SeerHighlighterSettings &highlighterSettings();
+  virtual void setHighlighterSettings(SeerHighlighterSettings const& settings) = 0;
 
 protected:
   virtual void highlightBlock(const QString &text);

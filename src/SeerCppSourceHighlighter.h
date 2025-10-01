@@ -14,7 +14,6 @@ class SeerCppSourceHighlighter : public SeerSourceHighlighter {
 public:
   SeerCppSourceHighlighter(QTextDocument *parent = 0);
 
-  virtual const SeerHighlighterSettings &highlighterSettings() override;
   virtual void
   setHighlighterSettings(const SeerHighlighterSettings &settings) override;
 };

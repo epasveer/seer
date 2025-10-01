@@ -10,11 +10,6 @@ SeerOdinSourceHighlighter::SeerOdinSourceHighlighter (QTextDocument* parent) : S
     setHighlighterSettings(SeerHighlighterSettings::populate(""));
 }
 
-const SeerHighlighterSettings& SeerOdinSourceHighlighter::highlighterSettings() {
-
-    return _highlighterSettings;
-}
-
 void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSettings& settings) {
     _highlighterSettings     = settings;
 
@@ -86,7 +81,6 @@ void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSet
     for (const QString& pattern : keywordPatterns) {
         rule.pattern = QRegularExpression(pattern);
         rule.format  = _keywordFormat;
-
         _highlightingRules.append(rule);
     }
 
