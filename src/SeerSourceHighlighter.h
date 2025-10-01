@@ -1,9 +1,17 @@
+/*
+
+## Syntax highlighting
+
+To add syntax highlighting to a language. Subclass `SeerSourceHighlighter`
+and then instatiate your highlighter by matching the filename in the `getSourceHighlighter` function.
+
+*/
+
 #pragma once
 
 #include "SeerHighlighterSettings.h"
 #include <QtCore/QRegularExpression>
 #include <QtGui/QSyntaxHighlighter>
-#include <qstringview.h>
 
 
 class SeerSourceHighlighter : public QSyntaxHighlighter {

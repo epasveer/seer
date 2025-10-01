@@ -7,13 +7,6 @@
 #include "SeerHighlighterSettings.h"
 #include "SeerSourceHighlighter.h"
 
-#include <QtCore/QRegularExpression>
-#include <QtCore/QString>
-#include <QtCore/QVector>
-#include <QtGui/QSyntaxHighlighter>
-#include <QtGui/QTextCharFormat>
-#include <QtGui/QTextDocument>
-
 class SeerOdinSourceHighlighter : public SeerSourceHighlighter {
 
   Q_OBJECT

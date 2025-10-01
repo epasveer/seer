@@ -7,12 +7,12 @@
 #include "SeerHighlighterSettings.h"
 #include "SeerSourceHighlighter.h"
 
-class SeerCppSourceHighlighter : public SeerSourceHighlighter {
+class SeerRustSourceHighlighter : public SeerSourceHighlighter {
 
   Q_OBJECT
 
 public:
-  SeerCppSourceHighlighter(QTextDocument *parent = 0);
+  SeerRustSourceHighlighter(QTextDocument *parent = 0);
 
   virtual const SeerHighlighterSettings &highlighterSettings() override;
   virtual void
