@@ -5,6 +5,7 @@
 #include "SeerSourceHighlighter.h"
 #include "SeerOdinSourceHighlighter.h"
 #include "SeerCppSourceHighlighter.h"
+#include "SeerRustSourceHighlighter.h"
 
 SeerSourceHighlighter::SeerSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {}
 
@@ -16,6 +17,10 @@ SeerSourceHighlighter* getSourceHighlighter(QString const& file, SeerHighlighter
 
     if (file.endsWith(".odin")) {
       return new SeerOdinSourceHighlighter(0);
+    }
+
+    if (file.endsWith(".rs")) {
+        return new SeerRustSourceHighlighter(0);
     }
 
     return nullptr;

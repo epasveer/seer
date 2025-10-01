@@ -63,10 +63,6 @@ void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSet
         QStringLiteral("@(\\([^\\)]*\\)|\\w+)"),
     };
 
-    const QString typePatterns[] = {
-      QStringLiteral("")
-    };
-
     _highlightingRules.clear(); // Clear old rules.
 
     HighlightingRule rule;

@@ -144,6 +144,7 @@ set(HEADER_FILES
     SeerSourceHighlighter.h
     SeerCppSourceHighlighter.h
     SeerOdinSourceHighlighter.h
+    SeerRustSourceHighlighter.h
     SeerAboutDialog.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
@@ -248,6 +249,7 @@ set(SOURCE_FILES
     SeerSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
     SeerOdinSourceHighlighter.cpp
+    SeerRustSourceHighlighter.cpp
     SeerAboutDialog.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
