@@ -550,7 +550,7 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     setTextCursor(cursor);
 
-    // Add a syntax highlighter for C++ files.
+    // Add a syntax highlighter.
     if (_sourceHighlighter) {
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
@@ -1757,6 +1757,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
+    _sourceHighlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
 
         if (highlighterEnabled()) {

@@ -245,7 +245,7 @@ void SeerEditorConfigPage::handleFontDialog () {
 
 void SeerEditorConfigPage::handleHighlighterChanged () {
 
-    SeerHighlighterSettings cppSettings;
+    SeerHighlighterSettings languageSettings;
 
     for (int r=0; r<highlighterTableWidget->rowCount(); r++) {
 
@@ -284,14 +284,14 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         format.setBackground(backgroundColorButton->color());
 
         // Add the format to our settings.
-        cppSettings.add(key, format);
+        languageSettings.add(key, format);
     }
 
     // Get list of source suffixes.
-    cppSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
+    languageSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
 
     // Update our view.
-    setHighlighterSettings(cppSettings);
+    setHighlighterSettings(languageSettings);
 }
 
 void SeerEditorConfigPage::handleEnabledChanged () {
