@@ -126,7 +126,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
     // Set up signals/slots.
     //
-    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
     QObject::connect(actionFileArguments,               &QAction::triggered,                            this,           &SeerMainWindow::handleFileArguments);
     QObject::connect(actionFileQuit,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMemoryVisualizer);
@@ -158,7 +158,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
     QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
     QObject::connect(actionGdbRestart,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
     QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,                       this,           &SeerMainWindow::handleStyleMenuChanged);
@@ -485,14 +485,14 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbLaunch->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "none") {
 
         actionGdbLaunch->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "configdialog") {
 
@@ -544,7 +544,15 @@ const QString& SeerMainWindow::styleName () {
     return _styleName;
 }
 
-void SeerMainWindow::handleFileDebug () {
+void SeerMainWindow::handleFileDebugWithDefaultProject () {
+    handleFileDebug(true);
+}
+
+void SeerMainWindow::handleFileDebugWithOutDefaultProject () {
+    handleFileDebug(false);
+}
+
+void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
 
     SeerDebugDialog dlg(this);
 
@@ -574,7 +582,9 @@ void SeerMainWindow::handleFileDebug () {
         dlg.setProjectFilename(projectFilename());
     // Otherwise use the default project, if there is one.
     }else{
-        dlg.loadDefaultProjectSettings();
+        if (loadDefaultProject) {
+            dlg.loadDefaultProjectSettings();
+        }
     }
 
     setProjectFilename(""); // Clear project name here. No need to have it anymore.

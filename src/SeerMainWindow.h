@@ -76,7 +76,9 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              styleName                               ();
 
     private slots:
-        void                        handleFileDebug                         ();
+        void                        handleFileDebugWithDefaultProject       ();
+        void                        handleFileDebugWithOutDefaultProject    ();
+        void                        handleFileDebug                         (bool loadDefaultProject);
         void                        handleFileArguments                     ();
         void                        handleFileQuit                          ();
         void                        handleViewMemoryVisualizer              ();
