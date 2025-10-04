@@ -50,10 +50,10 @@
      <item>
       <widget class="QCheckBox" name="highlighterEnabledCheckBox">
        <property name="toolTip">
-        <string>Enable or disable highlighting for C/C++ files.</string>
+        <string>Enable or disable highlighting for supported languages' files.</string>
        </property>
        <property name="text">
-        <string>Enable C/C++ highlighter.</string>
+        <string>Enable Syntax highlighting.</string>
        </property>
       </widget>
      </item>
