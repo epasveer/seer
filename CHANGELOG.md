@@ -3,28 +3,26 @@
 
 ## [2.6beta] - 2025-XX-XX
 * Starting version 2.6 development cycle.
-* Fixed regression when adding commands to a watchpoint.
-* Create console once per Seer session. Instead of constant create/destroy.
-* Fixed regression when ignoring files to be opened in the
-  EditorManager.
-* Fixed regression when order of message tabs not being preserved between
-  sessions.
-* Connect mode to a gdb server now supports 'remote' and 'extended-remote'.
-* Connect mode's 'pre' commands are executed before the 'target connect'.
-* Optionally add a timestamp to the Seer and Gdb log widgets.
-* Add 'gdbserver debug' checkbox to Connect launch tab. For showing
+* Watchpoints: Fixed regression when adding commands to a watchpoint.
+* Console: Create console once per Seer session. Instead of constant create/destroy.
+* EditorManager: Fixed regression when ignoring files to be opened in the EditorManager.
+* MessageTabs: Fixed regression when order of message tabs not being preserved between sessions.
+* RemoteMode: Connect mode to a gdb server now supports 'remote' and 'extended-remote'.
+* ConnectMode: Connect mode's 'pre' commands are executed before the 'target connect'.
+* MessageTabs: Optionally add a timestamp to the Seer and Gdb log widgets.
+* ConnectMode: Add 'gdbserver debug' checkbox to Connect launch tab. For showing
   gdb and gdbserver communication debug information in gdb tab.
-* Manage gdb skip commands via a new Skip Browser.
-* Revamp the "run/start" buttons on the menu bar to be a predominate
+* Skips: Manage gdb skip commands via a new Skip Browser.
+* LaunchMode: Revamp the "run/start" buttons on the menu bar to be a predominate
   "terminate" that switches to a "restart".
-* Fixed bug when adding variable to tracker. Sometimes would not refresh value.
-* Raise Logger or Tracker tab when new variable is added.
-* Implment gdb's "checkpoint" feature. As simple time-travel feature.
-* Add preliminary support for Undo's udb time-traveling debugger.
-* Add support for remaining Catchpoint types.
-* Add a Matrix Visualizer for viewing 2D arrays.
-* Add breakpoints from the Function tab.
-* When using the Debug dialog, save the debug settings so they can be fast loaded
+* VariableTracker: Fixed bug when adding variable to tracker. Sometimes would not refresh value.
+* VariableTracker: Raise Logger or Tracker tab when new variable is added.
+* CheckpointMode: Implment gdb's "checkpoint" feature. As simple time-travel feature.
+* Undo: Add preliminary support for Undo's udb time-traveling debugger.
+* CheckpointMode: Add support for remaining Catchpoint types.
+* Visualizers: Add a Matrix Visualizer for viewing 2D arrays.
+* Breakpoints: Add breakpoints from the Function tab.
+* DefaultProject: When using the Debug dialog, save the debug settings so they can be fast loaded
   the next time the Debug dialog is used. Kind of a default project.
 * RR: When using the Debug dialog, check a couple standard locations for
   the RR trace directory.
