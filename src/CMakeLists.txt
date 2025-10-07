@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-project(seergdb VERSION 2.6.0 LANGUAGES CXX)
+project(seergdb VERSION 2.6 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 

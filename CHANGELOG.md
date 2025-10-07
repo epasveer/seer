@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [2.6beta] - 2025-XX-XX
+## [2.6] - 2025-10-07
 * Starting version 2.6 development cycle.
 * Watchpoints: Fixed regression when adding commands to a watchpoint.
 * Console: Create console once per Seer session. Instead of constant create/destroy.
