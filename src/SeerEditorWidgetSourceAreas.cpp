@@ -555,7 +555,8 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    SeerSourceHighlighter *highlighter = getSourceHighlighter(file, _sourceHighlighterSettings);
+    _file = file;
+    SeerSourceHighlighter *highlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (highlighter) {
         _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
