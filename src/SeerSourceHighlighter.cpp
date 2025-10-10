@@ -14,7 +14,7 @@ const SeerHighlighterSettings& SeerSourceHighlighter::highlighterSettings() {
 }
 
 SeerSourceHighlighter* getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
-    QRegularExpression cpp_re("(?:" + settings.sourceSuffixes() + ")$");
+    QRegularExpression cpp_re("(?:" + settings.cppSourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
       return new SeerCppSourceHighlighter(0);
     }

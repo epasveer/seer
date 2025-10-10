@@ -145,7 +145,7 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     highlighterTableWidget->resizeColumnToContents(2); // Foreground color
     highlighterTableWidget->resizeColumnToContents(3); // Background color
 
-    highlighterSuffixesLineEdit->setText(_highlighterSettings.sourceSuffixes());
+    highlighterSuffixesLineEdit->setText(_highlighterSettings.cppSourceSuffixes());
     highlighterSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.

@@ -19,7 +19,7 @@ SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlight
 
     _keys           = rhs._keys;
     _formats        = rhs._formats;
-    _sourceSuffixes = rhs._sourceSuffixes;
+    _cppSourceSuffixes = rhs._cppSourceSuffixes;
 
     return *this;
 }
@@ -72,12 +72,12 @@ int SeerHighlighterSettings::count () const {
 
 void SeerHighlighterSettings::setSourceSuffixes (const QString& suffixes) {
 
-    _sourceSuffixes = suffixes;
+    _cppSourceSuffixes = suffixes;
 }
 
-const QString& SeerHighlighterSettings::sourceSuffixes () {
+const QString& SeerHighlighterSettings::cppSourceSuffixes () {
 
-    return _sourceSuffixes;
+    return _cppSourceSuffixes;
 }
 
 QStringList SeerHighlighterSettings::themeNames() {
