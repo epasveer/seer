@@ -141,7 +141,10 @@ set(HEADER_FILES
     SeerVariableTrackerBrowserWidget.h
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
+    SeerSourceHighlighter.h
     SeerCppSourceHighlighter.h
+    SeerOdinSourceHighlighter.h
+    SeerRustSourceHighlighter.h
     SeerAboutDialog.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
@@ -243,7 +246,10 @@ set(SOURCE_FILES
     SeerVariableTrackerBrowserWidget.cpp
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
+    SeerSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
+    SeerOdinSourceHighlighter.cpp
+    SeerRustSourceHighlighter.cpp
     SeerAboutDialog.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp

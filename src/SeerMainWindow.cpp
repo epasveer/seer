@@ -1552,7 +1552,7 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
-            settings.setValue("suffixes", highlighter.sourceSuffixes());
+            settings.setValue("suffixes", highlighter.cppSourceSuffixes());
         } settings.endGroup();
 
     } settings.endGroup();

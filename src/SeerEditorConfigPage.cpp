@@ -145,7 +145,7 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     highlighterTableWidget->resizeColumnToContents(2); // Foreground color
     highlighterTableWidget->resizeColumnToContents(3); // Background color
 
-    highlighterSuffixesLineEdit->setText(_highlighterSettings.sourceSuffixes());
+    highlighterSuffixesLineEdit->setText(_highlighterSettings.cppSourceSuffixes());
     highlighterSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.
@@ -184,7 +184,7 @@ void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
     setEditorTabSize(4);
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
+    setHighlighterSettings(SeerHighlighterSettings::populate(""));
     setHighlighterEnabled(true);
     setExternalEditorCommand("");
 }
@@ -245,7 +245,7 @@ void SeerEditorConfigPage::handleFontDialog () {
 
 void SeerEditorConfigPage::handleHighlighterChanged () {
 
-    SeerHighlighterSettings cppSettings;
+    SeerHighlighterSettings languageSettings;
 
     for (int r=0; r<highlighterTableWidget->rowCount(); r++) {
 
@@ -284,14 +284,14 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         format.setBackground(backgroundColorButton->color());
 
         // Add the format to our settings.
-        cppSettings.add(key, format);
+        languageSettings.add(key, format);
     }
 
     // Get list of source suffixes.
-    cppSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
+    languageSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
 
     // Update our view.
-    setHighlighterSettings(cppSettings);
+    setHighlighterSettings(languageSettings);
 }
 
 void SeerEditorConfigPage::handleEnabledChanged () {
@@ -301,6 +301,6 @@ void SeerEditorConfigPage::handleEnabledChanged () {
 
 void SeerEditorConfigPage::handleApplyTheme () {
 
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(themeComboBox->currentText()));
+    setHighlighterSettings(SeerHighlighterSettings::populate(themeComboBox->currentText()));
 }
 

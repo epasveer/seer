@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "SeerCppSourceHighlighter.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerKeySettings.h"
 #include "SeerPlainTextEdit.h"
 #include <QShortcut>
@@ -165,7 +165,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
 
-        SeerCppSourceHighlighter*                   _sourceHighlighter;
+        SeerSourceHighlighter*                      _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 

@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerEditorWidgetSource.h"
+#include "SeerHighlighterSettings.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -548,15 +550,15 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     setTextCursor(cursor);
 
-    // Add a syntax highlighter for C++ files.
+    // Add a syntax highlighter.
     if (_sourceHighlighter) {
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
-    if (file.contains(cpp_re)) {
-        _sourceHighlighter = new SeerCppSourceHighlighter(0);
-
+    _file = file;
+    SeerSourceHighlighter *highlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
+    if (highlighter) {
+        _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
         }else{
@@ -1756,6 +1758,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
+    _sourceHighlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
 
         if (highlighterEnabled()) {

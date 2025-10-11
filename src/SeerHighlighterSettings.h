@@ -24,16 +24,16 @@ class SeerHighlighterSettings {
         void                                    add                     (const QString& name, QTextCharFormat& format);
         int                                     count                   () const;
         void                                    setSourceSuffixes       (const QString& suffixes);
-        const QString&                          sourceSuffixes          ();
+        const QString&                          cppSourceSuffixes          ();
 
         static QStringList                      themeNames              ();
-        static SeerHighlighterSettings          populateForCPP          (const QString& themeName);
-        static SeerHighlighterSettings          populateForCPP_light    ();
-        static SeerHighlighterSettings          populateForCPP_dark     ();
+        static SeerHighlighterSettings          populate          (const QString& themeName);
+        static SeerHighlighterSettings          populate_light    ();
+        static SeerHighlighterSettings          populate_dark     ();
 
     private:
         QList<QString>                          _keys;
         QList<QTextCharFormat>                  _formats;
-        QString                                 _sourceSuffixes;
+        QString                                 _cppSourceSuffixes;
 };
 
