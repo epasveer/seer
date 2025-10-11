@@ -9,11 +9,11 @@
 
 class SeerCppSourceHighlighter : public SeerSourceHighlighter {
 
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  SeerCppSourceHighlighter(QTextDocument *parent = 0);
+    public:
+        SeerCppSourceHighlighter(QTextDocument *parent = 0);
 
-  virtual void
-  setHighlighterSettings(const SeerHighlighterSettings &settings) override;
+        virtual void        setHighlighterSettings          (const SeerHighlighterSettings &settings) override;
 };
+

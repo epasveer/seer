@@ -13,7 +13,7 @@ const SeerHighlighterSettings& SeerSourceHighlighter::highlighterSettings() {
     return _highlighterSettings;
 }
 
-SeerSourceHighlighter* getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
+SeerSourceHighlighter* SeerSourceHighlighter::getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
     QRegularExpression cpp_re("(?:" + settings.cppSourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
       return new SeerCppSourceHighlighter(0);
@@ -69,3 +69,4 @@ void SeerSourceHighlighter::highlightBlock (const QString& text) {
         startIndex = text.indexOf(_commentStartExpression, startIndex + commentLength);
     }
 }
+

@@ -17,8 +17,8 @@ SeerHighlighterSettings::~SeerHighlighterSettings () {
 
 SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlighterSettings& rhs) {
 
-    _keys           = rhs._keys;
-    _formats        = rhs._formats;
+    _keys              = rhs._keys;
+    _formats           = rhs._formats;
     _cppSourceSuffixes = rhs._cppSourceSuffixes;
 
     return *this;

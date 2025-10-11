@@ -64,20 +64,20 @@ void SeerOdinSourceHighlighter::setHighlighterSettings (const SeerHighlighterSet
 
     // Set class format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Z][A-Z0-9_]*\\b"));
-    rule.format = _classFormat;
+    rule.format  = _classFormat;
     _highlightingRules.append(rule);
 
     // Set quote format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
-    rule.format = _quotationFormat;
+    rule.format  = _quotationFormat;
     _highlightingRules.append(rule);
 
     // Set function format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\s*\\()"));
-    rule.format = _functionFormat;
+    rule.format  = _functionFormat;
     _highlightingRules.append(rule);
 
-	// Set keywords format and expression (must have precedence over functions)
+    // Set keywords format and expression (must have precedence over functions)
     for (const QString& pattern : keywordPatterns) {
         rule.pattern = QRegularExpression(pattern);
         rule.format  = _keywordFormat;

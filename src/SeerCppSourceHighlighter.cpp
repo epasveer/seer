@@ -89,7 +89,7 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     rule.format = _functionFormat;
     _highlightingRules.append(rule);
 
-	// Set keywords format and expression (must have precedence over functions)
+    // Set keywords format and expression (must have precedence over functions)
     for (const QString& pattern : keywordPatterns) {
         rule.pattern = QRegularExpression(pattern);
         rule.format  = _keywordFormat;
@@ -105,3 +105,4 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     _commentStartExpression = QRegularExpression(QStringLiteral("/\\*"));
     _commentEndExpression   = QRegularExpression(QStringLiteral("\\*/"));
 }
+

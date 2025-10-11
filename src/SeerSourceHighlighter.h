@@ -5,7 +5,7 @@
 To add syntax highlighting to a language. Subclass `SeerSourceHighlighter`
 and then instatiate your highlighter by matching the filename in the `getSourceHighlighter` function.
 
-*/
+ */
 
 #pragma once
 
@@ -16,35 +16,36 @@ and then instatiate your highlighter by matching the filename in the `getSourceH
 
 class SeerSourceHighlighter : public QSyntaxHighlighter {
 
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  SeerSourceHighlighter(QTextDocument *parent = 0);
+    public:
+        SeerSourceHighlighter(QTextDocument *parent = 0);
 
-  const SeerHighlighterSettings &highlighterSettings();
-  virtual void setHighlighterSettings(SeerHighlighterSettings const& settings) = 0;
+        const SeerHighlighterSettings&      highlighterSettings     ();
+        virtual void                        setHighlighterSettings  (SeerHighlighterSettings const& settings) = 0;
 
-protected:
-  virtual void highlightBlock(const QString &text);
+        static SeerSourceHighlighter*       getSourceHighlighter    (QString const& file, SeerHighlighterSettings settings);
 
-  SeerHighlighterSettings _highlighterSettings;
+    protected:
+        virtual void            highlightBlock      (const QString &text);
 
-  QTextCharFormat _singleLineCommentFormat;
-  QTextCharFormat _multiLineCommentFormat;
-  QRegularExpression _commentStartExpression;
-  QRegularExpression _commentEndExpression;
+        SeerHighlighterSettings _highlighterSettings;
 
-  QTextCharFormat _keywordFormat;
-  QTextCharFormat _classFormat;
-  QTextCharFormat _quotationFormat;
-  QTextCharFormat _functionFormat;
+        QTextCharFormat         _singleLineCommentFormat;
+        QTextCharFormat         _multiLineCommentFormat;
+        QRegularExpression      _commentStartExpression;
+        QRegularExpression      _commentEndExpression;
 
-  struct HighlightingRule {
-    QRegularExpression pattern;
-    QTextCharFormat format;
-  };
+        QTextCharFormat         _keywordFormat;
+        QTextCharFormat         _classFormat;
+        QTextCharFormat         _quotationFormat;
+        QTextCharFormat         _functionFormat;
 
-  QVector<HighlightingRule> _highlightingRules{};
+        struct HighlightingRule {
+            QRegularExpression pattern;
+            QTextCharFormat format;
+        };
+
+        QVector<HighlightingRule> _highlightingRules{};
 };
 
-SeerSourceHighlighter *getSourceHighlighter(QString const& file, SeerHighlighterSettings settings);

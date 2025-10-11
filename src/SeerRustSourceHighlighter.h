@@ -9,11 +9,11 @@
 
 class SeerRustSourceHighlighter : public SeerSourceHighlighter {
 
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  SeerRustSourceHighlighter(QTextDocument *parent = 0);
+    public:
+        SeerRustSourceHighlighter(QTextDocument *parent = 0);
 
-  virtual void
-  setHighlighterSettings(const SeerHighlighterSettings &settings) override;
+        virtual void        setHighlighterSettings      (const SeerHighlighterSettings &settings) override;
 };
+

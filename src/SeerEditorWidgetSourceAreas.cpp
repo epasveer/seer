@@ -556,7 +556,7 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     }
 
     _file = file;
-    SeerSourceHighlighter *highlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
+    SeerSourceHighlighter* highlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (highlighter) {
         _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
@@ -1758,7 +1758,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
-    _sourceHighlighter = getSourceHighlighter(_file, _sourceHighlighterSettings);
+    _sourceHighlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
 
         if (highlighterEnabled()) {
