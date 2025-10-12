@@ -322,8 +322,11 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* copyAction    = menu.addAction("Copy selected");
-    QAction* copyAllAction = menu.addAction("Copy all");
+    QAction* deleteAction    = menu.addAction("Delete selected");
+    QAction* deleteAllAction = menu.addAction("Delete all");
+
+    QAction* copyAction      = menu.addAction("Copy selected");
+    QAction* copyAllAction   = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -355,12 +358,13 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     addStructAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
 
 
-    // If no selected item, disable everything but allow 'copyall'.
+    // If no selected item, disable everything but allow 'copyall' and 'deleteall'.
     if (item == 0) {
         memoryVisualizerMenu.setEnabled(false);
         arrayVisualizerMenu.setEnabled(false);
         matrixVisualizerMenu.setEnabled(false);
         structVisualizerMenu.setEnabled(false);
+        deleteAction->setEnabled(false);
         copyAction->setEnabled(false);
     }
 
@@ -371,7 +375,15 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
-    if (action == copyAction || action == copyAction) {
+    if (action == deleteAction) {
+        handleDeleteToolButton();
+    }
+
+    if (action == deleteAllAction) {
+        handleDeleteAllToolButton();
+    }
+
+    if (action == copyAction || action == copyAllAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
