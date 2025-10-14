@@ -1,0 +1,120 @@
+name: windows-latest Developement Build
+
+on:
+  workflow_dispatch:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup WSL
+      uses: Vampire/setup-wsl@v3
+      with:
+        distribution: Ubuntu-22.04
+
+    - name: Update ubuntu
+      shell: wsl-bash {0}
+      run: |
+        sudo apt update
+        sudo apt search qt6
+        sudo apt install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          pkg-config \
+          qt6-base-dev \
+          qt6-base-dev-tools \
+          libqt6charts6-dev \
+          libqt6svg6-dev \
+          libgl1-mesa-dev \
+          libxkbcommon-dev \
+          libxcb-xinerama0-dev \
+          libxcb-cursor-dev
+        sudo ldconfig /usr/lib/x86_64-linux-gnu
+        sudo ldconfig
+
+    - name: Set Qt6 environment variables
+      shell: wsl-bash {0}
+      run: |
+        # Find Qt6 installation path
+        QT6_PATH=$(dpkg -L qt6-base-dev | grep -E 'lib.*cmake.*Qt6$' | head -1 | sed 's|/lib.*||')
+        echo "Qt6 found at: $QT6_PATH"
+
+        # Set environment variables for the session
+        echo "export Qt6_DIR=$QT6_PATH"                                               >  /tmp/env.sh
+        echo "export CMAKE_PREFIX_PATH=/usr/lib/x86_64-linux-gnu/cmake/Qt6:$QT6_PATH" >> /tmp/env.sh
+        echo "export QT_QPA_PLATFORM_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins/platforms" >> /tmp/env.sh
+        echo "export QML_IMPORT_PATH=$QT6_PATH/lib/qt6/qml"                           >> /tmp/env.sh
+        echo "export QT_PLUGIN_PATH=$QT6_PATH/lib/qt6/plugins"                        >> /tmp/env.sh
+
+        # Source the updated env.sh
+        cat    /tmp/env.sh
+        source /tmp/env.sh
+
+        # Print environment for debugging
+        echo "SHELL:           $SHELL"
+        echo "Qt6_DIR:         $Qt6_DIR"
+
+        dpkg -L qt6-base-dev
+        dpkg -L libqt6charts6
+
+        ldconfig -p
+
+    - name: Where Am I
+      shell: wsl-bash {0}
+      run: |
+        pwd
+        ls -l
+        lscpu
+
+    - name: Versions
+      shell: wsl-bash {0}
+      run: g++ --version
+
+    - name: Configure CMake
+      shell: wsl-bash {0}
+      run: |
+        source /tmp/env.sh
+        cd src/build
+        cmake .. \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DQTVERSION=QT6 \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_PREFIX_PATH=$Qt6_DIR \
+          -DQt6_DIR=$Qt6_DIR/lib/cmake/Qt6
+        pwd
+        ls -l
+
+    - name: Build
+      shell: wsl-bash {0}
+      run: |
+        source /tmp/env.sh
+        cd src/build
+        pwd
+        ls -l
+        make -j$(nproc)
+
+    - name: Tar
+      shell: wsl-bash {0}
+      run: |
+        source /tmp/env.sh
+        cd src/build
+        cp ../../LICENSE .
+        cp ../../CHANGELOG.md .
+        tar zcvf seergdb.tar.gz LICENSE CHANGELOG.md seergdb
+
+    - name: List Results
+      shell: wsl-bash {0}
+      run: |
+        source /tmp/env.sh
+        cd src
+        ls -l build/
+

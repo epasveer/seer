@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerPrintpointsBrowserWidget.h"
 #include "SeerPrintpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -169,9 +173,6 @@ void SeerPrintpointsBrowserWidget::handleText (const QString& text) {
                 printpointsTreeWidget->addTopLevelItem(topItem);
             }
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
 
     }else{
         // Ignore others.

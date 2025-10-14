@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-project(seergdb VERSION 2.6.0 LANGUAGES CXX)
+project(seergdb VERSION 2.7.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 
@@ -32,6 +32,7 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
+    find_package(Qt6 COMPONENTS REQUIRED OpenGL)
 
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -51,6 +52,23 @@ endif()
 
 set(HEADER_FILES
     GdbMonitor.h
+    QProcessInfo.h
+    QProcessInfoWidget.h
+    QProgressIndicator.h
+    QColorButton.h
+    QColorSwatch.h
+    QDetachTabWidget.h
+    QZoomChartView.h
+    QZoomChart.h
+    QClearLineEdit.h
+    QIndexTreeWidget.h
+    QStringPair.h
+    QHistoryLineEdit.h
+    QEditDelegate.h
+    QHContainerWidget.h
+    QImageViewer.h
+    QAnsiTextEdit.h
+    SeerUtl.h
     SeerArgumentsDialog.h
     SeerBreakpointCreateDialog.h
     SeerMessagesBrowserWidget.h
@@ -59,6 +77,7 @@ set(HEADER_FILES
     SeerCatchpointsBrowserWidget.h
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
+    SeerCheckpointsBrowserWidget.h
     SeerSeerLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
@@ -81,9 +100,11 @@ set(HEADER_FILES
     SeerHexWidget.h
     SeerAsmWidget.h
     SeerArrayWidget.h
+    SeerMarixWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
     SeerArrayVisualizerWidget.h
+    SeerMatrixVisualizerWidget.h
     SeerMemoryVisualizerWidget.h
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
@@ -115,13 +136,15 @@ set(HEADER_FILES
     SeerThreadManagerWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
-    SeerUtl.h
     SeerVariableLoggerBrowserWidget.h
     SeerVariableManagerWidget.h
     SeerVariableTrackerBrowserWidget.h
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
+    SeerSourceHighlighter.h
     SeerCppSourceHighlighter.h
+    SeerOdinSourceHighlighter.h
+    SeerRustSourceHighlighter.h
     SeerAboutDialog.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
@@ -132,27 +155,26 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
-    QProcessInfo.h
-    QProcessInfoWidget.h
-    QProgressIndicator.h
-    QColorButton.h
-    QColorSwatch.h
-    QDetachTabWidget.h
-    QZoomChartView.h
-    QZoomChart.h
-    QClearLineEdit.h
-    QIndexTreeWidget.h
-    QStringPair.h
-    QHistoryLineEdit.h
-    QEditDelegate.h
-    QHContainerWidget.h
-    QImageViewer.h
-    QAnsiTextEdit.h
     )
 
 set(SOURCE_FILES
-    seergdb.cpp
     GdbMonitor.cpp
+    QProcessInfo.cpp
+    QProcessInfoWidget.cpp
+    QProgressIndicator.cpp
+    QColorButton.cpp
+    QColorSwatch.cpp
+    QDetachTabWidget.cpp
+    QZoomChartView.cpp
+    QZoomChart.cpp
+    QClearLineEdit.cpp
+    QIndexTreeWidget.cpp
+    QHistoryLineEdit.cpp
+    QEditDelegate.cpp
+    QHContainerWidget.cpp
+    QImageViewer.cpp
+    QAnsiTextEdit.cpp
+    SeerUtl.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
     SeerMessagesBrowserWidget.cpp
@@ -161,6 +183,7 @@ set(SOURCE_FILES
     SeerCatchpointsBrowserWidget.cpp
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
+    SeerCheckpointsBrowserWidget.cpp
     SeerSeerLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp
@@ -182,9 +205,11 @@ set(SOURCE_FILES
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
     SeerArrayWidget.cpp
+    SeerMatrixWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
     SeerArrayVisualizerWidget.cpp
+    SeerMatrixVisualizerWidget.cpp
     SeerMemoryVisualizerWidget.cpp
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
@@ -216,13 +241,15 @@ set(SOURCE_FILES
     SeerThreadManagerWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
-    SeerUtl.cpp
     SeerVariableLoggerBrowserWidget.cpp
     SeerVariableManagerWidget.cpp
     SeerVariableTrackerBrowserWidget.cpp
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
+    SeerSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
+    SeerOdinSourceHighlighter.cpp
+    SeerRustSourceHighlighter.cpp
     SeerAboutDialog.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
@@ -233,21 +260,7 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
-    QProcessInfo.cpp
-    QProcessInfoWidget.cpp
-    QProgressIndicator.cpp
-    QColorButton.cpp
-    QColorSwatch.cpp
-    QDetachTabWidget.cpp
-    QZoomChartView.cpp
-    QZoomChart.cpp
-    QClearLineEdit.cpp
-    QIndexTreeWidget.cpp
-    QHistoryLineEdit.cpp
-    QEditDelegate.cpp
-    QHContainerWidget.cpp
-    QImageViewer.cpp
-    QAnsiTextEdit.cpp
+    seergdb.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")
@@ -277,7 +290,7 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 if(${QTVERSION} STREQUAL "QT6")
-    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg)
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL)
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()

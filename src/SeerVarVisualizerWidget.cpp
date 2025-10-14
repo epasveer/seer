@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerVarVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -503,6 +507,9 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction             = new QAction(QString("\"%1\"").arg(variable));
     QAction* addArrayAsteriskVisualizerAction     = new QAction(QString("\"*%1\"").arg(variable));
     QAction* addArrayAmpersandVisualizerAction    = new QAction(QString("\"&&%1\"").arg(variable));
+    QAction* addMatrixVisualizerAction            = new QAction(QString("\"%1\"").arg(variable));
+    QAction* addMatrixAsteriskVisualizerAction    = new QAction(QString("\"*%1\"").arg(variable));
+    QAction* addMatrixAmpersandVisualizerAction   = new QAction(QString("\"&&%1\"").arg(variable));
     QAction* addVarVisualizerAction               = new QAction(QString("\"%1\"").arg(variable));
     QAction* addVarAsteriskVisualizerAction       = new QAction(QString("\"*%1\"").arg(variable));
     QAction* addVarAmpersandVisualizerAction      = new QAction(QString("\"&&%1\"").arg(variable));
@@ -544,6 +551,12 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to an Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addVarVisualizerAction);
     structVisualizerMenu.addAction(addVarAsteriskVisualizerAction);
@@ -581,7 +594,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(variable);
+            emit addMemoryVisualizer(variable);
         }
 
         return;
@@ -594,7 +607,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("*") + variable);
+            emit addMemoryVisualizer(QString("*") + variable);
         }
 
         return;
@@ -607,7 +620,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("&") + variable);
+            emit addMemoryVisualizer(QString("&") + variable);
         }
 
         return;
@@ -620,7 +633,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(variable);
+            emit addArrayVisualizer(variable);
         }
 
         return;
@@ -633,7 +646,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("*") + variable);
+            emit addArrayVisualizer(QString("*") + variable);
         }
 
         return;
@@ -646,7 +659,46 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("&") + variable);
+            emit addArrayVisualizer(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        //qDebug() << "addMatrixVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        //qDebug() << "addMatrixAsteriskVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        //qDebug() << "addMatrixAmpersandVisualizer" << variable;
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("&") + variable);
         }
 
         return;
@@ -659,7 +711,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addVarVisualize(variable);
+            emit addVarVisualizer(variable);
         }
 
         return;
@@ -672,7 +724,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addVarVisualize(QString("*") + variable);
+            emit addVarVisualizer(QString("*") + variable);
         }
 
         return;
@@ -685,7 +737,7 @@ void SeerVarVisualizerWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addVarVisualize(QString("&") + variable);
+            emit addVarVisualizer(QString("&") + variable);
         }
 
         return;

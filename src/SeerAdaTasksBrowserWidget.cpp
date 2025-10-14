@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerAdaTasksBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -134,9 +138,6 @@ void SeerAdaTasksBrowserWidget::handleText (const QString& text) {
         if (matches.size() > 0) {
             adaTaskTreeWidget->setCurrentItem(matches.first());
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        adaTaskTreeWidget->clear();
 
     }else{
         // Ignore others.

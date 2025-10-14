@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -33,9 +37,10 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                refreshVariableTrackerValues    ();
         void                addVariableExpression           (QString expression);
         void                deleteVariableExpressions       (QString expressionids);
-        void                addMemoryVisualize              (QString expression);
-        void                addArrayVisualize               (QString expression);
-        void                addStructVisualize              (QString expression);
+        void                addMemoryVisualizer             (QString expression);
+        void                addArrayVisualizer              (QString expression);
+        void                addMatrixVisualizer             (QString expression);
+        void                addStructVisualizer             (QString expression);
         void                raiseTab                        ();
 
     protected:

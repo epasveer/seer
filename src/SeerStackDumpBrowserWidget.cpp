@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerStackDumpBrowserWidget.h"
 #include "SeerStackDumpSettingsDialog.h"
 #include "SeerUtl.h"
@@ -141,9 +145,6 @@ void SeerStackDumpBrowserWidget::handleText (const QString& text) {
 
             addressLineEdit->setText("");
 
-        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-            stackTableWidget->clearContents();
-
         }else{
             // Ignore others.
         }
@@ -185,7 +186,7 @@ void SeerStackDumpBrowserWidget::handleFormatComboBox (const QString& text) {
 
 void SeerStackDumpBrowserWidget::handleVisualizerToolButton () {
 
-    emit addMemoryVisualize(addressLineEdit->text());
+    emit addMemoryVisualizer(addressLineEdit->text());
 }
 
 void SeerStackDumpBrowserWidget::handlePreferencesToolButton () {
@@ -233,7 +234,7 @@ void SeerStackDumpBrowserWidget::handleCellDoubleClicked (int row, int col) {
         address.insert(0,"0x");
     }
 
-    emit addMemoryVisualize(address);
+    emit addMemoryVisualizer(address);
 }
 
 void SeerStackDumpBrowserWidget::refresh () {

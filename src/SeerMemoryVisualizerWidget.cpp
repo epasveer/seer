@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerMemoryVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -295,11 +299,6 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
         if (autoRefreshCheckBox->isChecked()) {
             handleRefreshButton();
         }
-
-    // End of program. Clear everything as it will be out of date.
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        setVariableName("");
-        setMemoryLength("");
 
     }else{
         // Ignore anything else.

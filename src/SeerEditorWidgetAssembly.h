@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerCppSourceHighlighter.h"
@@ -61,6 +65,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        setCurrentLine                      (const QString& address);
         void                                        scrollToLine                        (const QString& address);
 
+        void                                        clearCurrentLines                   ();
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
 
@@ -100,9 +105,10 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        disableBreakpoints                  (QString breakpoints);
         void                                        refreshBreakpointsStackFrames       ();
         void                                        runToAddress                        (QString address);
-        void                                        addMemoryVisualize                  (QString expression);
-        void                                        addArrayVisualize                   (QString expression);
-        void                                        addStructVisualize                  (QString expression);
+        void                                        addMemoryVisualizer                 (QString expression);
+        void                                        addArrayVisualizer                  (QString expression);
+        void                                        addMatrixVisualizer                 (QString expression);
+        void                                        addStructVisualizer                 (QString expression);
         void                                        requestAssembly                     (QString address);
         void                                        requestSourceAndAssembly            (QString address);
         void                                        showSearchBar                       (bool flag);

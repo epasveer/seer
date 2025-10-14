@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerCatchpointsBrowserWidget.h"
 #include "SeerCatchpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -94,6 +98,17 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
         //                  thread-groups=["i1"],
         //                  regexp="Exception*",
         //                  times="0"}
+        //          ]
+        //
+        //    body=[
+        //            bkpt={number="2",
+        //                  type="catchpoint",
+        //                  disp="keep",
+        //                  enabled="y",
+        //                  what="<any signal>",
+        //                  catch-type="signal",
+        //                  thread-groups=["i1"],
+        //                  times="1"}
         //          ]
         //
 
@@ -220,9 +235,6 @@ void SeerCatchpointsBrowserWidget::handleText (const QString& text) {
 
             qDeleteAll(matches);
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
 
     }else{
         // Ignore others.

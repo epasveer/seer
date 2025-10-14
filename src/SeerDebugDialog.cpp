@@ -1,8 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerDebugDialog.h"
 #include "SeerExecutableFilterProxyModel.h"
 #include "SeerDirectoryFilterProxyModel.h"
 #include "SeerSlashProcDialog.h"
 #include "SeerHelpPageDialog.h"
+#include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -22,23 +27,10 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     setupUi(this);
 
     buttonBox->button(QDialogButtonBox::Ok)->setText("Launch");
+    buttonBox->button(QDialogButtonBox::Reset)->setText("Clear");
 
     // Setup the widgets
-    setExecutableName("");
-    setExecutableSymbolName("");
-    setExecutableArguments("");
-    setBreakpointsFilename("");
-    setExecutableWorkingDirectory(QDir::currentPath());
-    setBreakpointMode("none");
-    setBreakpointFunctionName("");
-    setShowAssemblyTab(false);
-    setRandomizeStartAddress(false);
-    setNonStopMode(false);
-    setAttachPid(0);
-    setConnectHostPort("");
-    setRRTraceDirectory("");
-    setCoreFilename("");
-    setProjectFilename("");
+    reset();
 
     // Create editor options bar.
     QToolButton* loadProjectToolButton = new QToolButton(runModeTabWidget);
@@ -80,15 +72,50 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(helpRRToolButton,                     &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpRRToolButtonClicked);
     QObject::connect(helpCorefileToolButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleHelpCorefileToolButtonClicked);
     QObject::connect(runModeTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleRunModeChanged);
+    QObject::connect(buttonBox,                            &QDialogButtonBox::accepted,         this, &SeerDebugDialog::handleLaunchButtonClicked);
+    QObject::connect(buttonBox,                            &QDialogButtonBox::clicked,          this, &SeerDebugDialog::handleResetButtonClicked);
+
 
     // Set initial run mode.
     handleRunModeChanged(0);
 
     // Restore window settings.
     readSettings();
+
+    // Read default project settings, if any.
+    loadDefaultProjectSettings();
 }
 
 SeerDebugDialog::~SeerDebugDialog () {
+}
+
+void SeerDebugDialog::reset () {
+
+    // At least retain the launch mode.
+    QString launchmode = launchMode();
+
+    // Reset everything else.
+    setExecutableName("");
+    setExecutableSymbolName("");
+    setExecutableWorkingDirectory("");
+    setExecutableArguments("");
+    setBreakpointsFilename("");
+    setBreakpointFunctionName("");
+    setBreakpointSourceName("");
+    setBreakpointMode("inmain");
+    setShowAssemblyTab(false);
+    setRandomizeStartAddress(false);
+    setNonStopMode(false);
+    setPreGdbCommands(QStringList());
+    setPostGdbCommands(QStringList());
+    setAttachPid(0);
+    setConnectHostPort("");
+    setConnectRemoteTargetType("remote");
+    setConnectGdbserverDebug(false);
+    setRRTraceDirectory("");
+    setCoreFilename("");
+    setLaunchMode(launchmode);
+    setProjectFilename("");
 }
 
 void SeerDebugDialog::setExecutableName (const QString& executableName) {
@@ -261,7 +288,7 @@ QString SeerDebugDialog::coreFilename () const {
 void SeerDebugDialog::setAttachPid (int pid) {
 
     if (pid < 1) {
-        attachProgramPidLineEdit->clear();
+        attachProgramPidLineEdit->setText("");
     }else{
         attachProgramPidLineEdit->setText(QString::number(pid));
     }
@@ -337,11 +364,15 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
         runModeTabWidget->setCurrentIndex(0);
 
-        setBreakpointMode("none");
+        setBreakpointMode("inmain");
 
     }else{
 
         qWarning() << "Unknown launch mode of:" << mode;
+
+        runModeTabWidget->setCurrentIndex(0);
+
+        setBreakpointMode("inmain");
     }
 }
 
@@ -447,7 +478,7 @@ void SeerDebugDialog::handleLoadBreakpointsFilenameToolButton () {
 
 void SeerDebugDialog::handleLoadCoreFilenameToolButton () {
 
-    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.*)", nullptr, QFileDialog::DontUseNativeDialog);
+    QString name = QFileDialog::getOpenFileName(this, "Select a core file to debug.", coreFilename(), "Core Files (core core.* *.core)", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setCoreFilename(name);
@@ -481,6 +512,7 @@ void SeerDebugDialog::handleLoadProjectToolButton () {
 
 void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
+    // Look for the mainwindow to place possible QMessageBox on.
     QWidget* p = this;
 
     if (isHidden() == true) {
@@ -504,6 +536,145 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
     // Populate the JSON document from the project file.
     QJsonDocument jsonDoc = QJsonDocument::fromJson(loadFile.readAll());
+
+    bool f = loadJsonDoc(jsonDoc, filename);
+    if (f == false) {
+        return;
+    }
+
+    if (notify) {
+        QMessageBox::information(p, "Success", QString("Loaded the Seer project file '%1'.").arg(filename));
+    }
+}
+
+QJsonDocument SeerDebugDialog::makeJsonDoc() const {
+
+    // Build the JSON document.
+    QJsonDocument jsonDoc;
+    QJsonObject   rootJson;
+    QJsonObject   seerProjectJson;
+    QJsonArray    preConnectCommands;
+    QJsonArray    postConnectCommands;
+
+    // Save pre/post gdb commands.
+    QStringList   preCommands  = preGdbCommands();
+    QStringList   postCommands = postGdbCommands();
+
+    for (const auto& i : preCommands) {
+        preConnectCommands.push_back(QJsonValue(i));
+    }
+
+    for (const auto& i : postCommands) {
+        postConnectCommands.push_back(QJsonValue(i));
+    }
+
+    seerProjectJson["executable"]        = QJsonValue(executableNameLineEdit->text());
+    seerProjectJson["symbolfile"]        = QJsonValue(executableSymbolNameLineEdit->text());
+    seerProjectJson["workingdirectory"]  = QJsonValue(executableWorkingDirectoryLineEdit->text());
+    seerProjectJson["pregdbcommands"]    = preConnectCommands;
+    seerProjectJson["postgdbcommands"]   = postConnectCommands;
+
+    // Save RUN project.
+    if (launchMode() == "run") {
+
+        QJsonObject modeJson;
+
+        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
+        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+
+        seerProjectJson["runmode"]        = modeJson;
+    }
+
+    // Save START project.
+    if (launchMode() == "start") {
+
+        QJsonObject modeJson;
+
+        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
+        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+
+        seerProjectJson["startmode"]      = modeJson;
+    }
+
+    // Save ATTACH project.
+    if (launchMode() == "attach") {
+
+        QJsonObject modeJson;
+
+        modeJson["pid"]               = attachProgramPidLineEdit->text();
+
+        seerProjectJson["attachmode"] = modeJson;
+    }
+
+    // Save CONNECT project.
+    if (launchMode() == "connect") {
+
+        QJsonObject modeJson;
+
+        modeJson["gdbserver"]          = connectProgramHostPortLineEdit->text();
+        modeJson["targettype"]         = connectRemoteTargetTypeCombo->currentText();
+        modeJson["gdbserverdebug"]     = connectGdbserverDebugCheckBox->isChecked();
+
+        seerProjectJson["connectmode"] = modeJson;
+    }
+
+    // Save RR project.
+    if (launchMode() == "rr") {
+
+        QJsonObject modeJson;
+
+        modeJson["tracedirectory"]     = rrTraceDirectoryLineEdit->text();
+        modeJson["breakpointsfile"]    = rrLoadBreakpointsFilenameLineEdit->text();
+
+        seerProjectJson["rrmode"]      = modeJson;
+    }
+
+    // Save COREFILE project.
+    if (launchMode() == "corefile") {
+
+        QJsonObject modeJson;
+
+        modeJson["corefile"]            = loadCoreFilenameLineEdit->text();
+
+        seerProjectJson["corefilemode"] = modeJson;
+    }
+
+    rootJson["seerproject"] = seerProjectJson;
+
+    jsonDoc.setObject(rootJson);
+
+    return jsonDoc;
+}
+
+bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& filename) {
+
+    // Look for the mainwindow to place possible QMessageBox on.
+    QWidget* p = this;
+
+    if (isHidden() == true) {
+
+        foreach (QWidget* w, qApp->topLevelWidgets()) {
+            if (QMainWindow* mainWin = qobject_cast<QMainWindow*>(w)) {
+                p = mainWin;
+                break;
+            }
+        }
+    }
+
     QJsonObject   rootJson;
     QJsonObject   seerProjectJson;
     QJsonObject   runModeJson;
@@ -517,7 +688,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
     if (jsonDoc.isObject() == false) {
         QMessageBox::critical(p, "Error", QString("'%1' is not a Seer project file (bad Json format).").arg(filename));
-        return;
+        return false;
     }
 
     rootJson            = jsonDoc.object();
@@ -533,7 +704,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
     if (seerProjectJson.isEmpty() == true) {
         QMessageBox::critical(p, "Error", QString("'%1' is not a Seer project file (missing 'seerproject' section).").arg(filename));
-        return;
+        return false;
     }
 
     // Load executable/symbol/working directory.
@@ -656,9 +827,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
         setLaunchMode("corefile");
     }
 
-    if (notify) {
-        QMessageBox::information(p, "Success", QString("Loaded the Seer project file '%1'.").arg(filename));
-    }
+    return true;
 }
 
 void SeerDebugDialog::handleSaveProjectToolButton () {
@@ -670,113 +839,8 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         return;
     }
 
-    // Build the JSON document.
-    QJsonDocument jsonDoc;
-    QJsonObject   rootJson;
-    QJsonObject   seerProjectJson;
-    QJsonArray    preConnectCommands;
-    QJsonArray    postConnectCommands;
-
-    // Save pre/post gdb commands.
-    QStringList   preCommands  = preGdbCommands();
-    QStringList   postCommands = postGdbCommands();
-
-    for (const auto& i : preCommands) {
-        preConnectCommands.push_back(QJsonValue(i));
-    }
-
-    for (const auto& i : postCommands) {
-        postConnectCommands.push_back(QJsonValue(i));
-    }
-
-    seerProjectJson["executable"]        = QJsonValue(executableNameLineEdit->text());
-    seerProjectJson["symbolfile"]        = QJsonValue(executableSymbolNameLineEdit->text());
-    seerProjectJson["workingdirectory"]  = QJsonValue(executableWorkingDirectoryLineEdit->text());
-    seerProjectJson["pregdbcommands"]    = preConnectCommands;
-    seerProjectJson["postgdbcommands"]   = postConnectCommands;
-
-    // Save RUN project.
-    if (launchMode() == "run") {
-
-        QJsonObject modeJson;
-
-        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
-        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
-        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
-        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
-        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
-        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
-        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
-        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
-
-        seerProjectJson["runmode"]        = modeJson;
-    }
-
-    // Save START project.
-    if (launchMode() == "start") {
-
-        QJsonObject modeJson;
-
-        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
-        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
-        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
-        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
-        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
-        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
-        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
-        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
-
-        seerProjectJson["startmode"]      = modeJson;
-    }
-
-    // Save ATTACH project.
-    if (launchMode() == "attach") {
-
-        QJsonObject modeJson;
-
-        modeJson["pid"]               = attachProgramPidLineEdit->text();
-
-        seerProjectJson["attachmode"] = modeJson;
-    }
-
-    // Save CONNECT project.
-    if (launchMode() == "connect") {
-
-        QJsonObject modeJson;
-
-        modeJson["gdbserver"]          = connectProgramHostPortLineEdit->text();
-        modeJson["targettype"]         = connectRemoteTargetTypeCombo->currentText();
-        modeJson["gdbserverdebug"]     = connectGdbserverDebugCheckBox->isChecked();
-
-        seerProjectJson["connectmode"] = modeJson;
-    }
-
-    // Save RR project.
-    if (launchMode() == "rr") {
-
-        QJsonObject modeJson;
-
-        modeJson["tracedirectory"]     = rrTraceDirectoryLineEdit->text();
-        modeJson["breakpointsfile"]    = rrLoadBreakpointsFilenameLineEdit->text();
-
-        seerProjectJson["rrmode"]      = modeJson;
-    }
-
-    // Save COREFILE project.
-    if (launchMode() == "corefile") {
-
-        QJsonObject modeJson;
-
-        modeJson["corefile"]            = loadCoreFilenameLineEdit->text();
-
-        seerProjectJson["corefilemode"] = modeJson;
-    }
-
-    rootJson["seerproject"] = seerProjectJson;
-
-    jsonDoc.setObject(rootJson);
+    // Make the json document for the debug dialog settings.
+    QJsonDocument jsonDoc = makeJsonDoc();
 
     // Write the JSON document to the project file.
     QFile saveFile(fname);
@@ -853,6 +917,30 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR trace-directory load\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR trace-directory load\"");
+
+        // Set default if we can. Otherwise, leave it blank.
+        //
+        if (rrTraceDirectoryLineEdit->text() == "") {
+            QStringList searchPaths = {
+                "$_RR_TRACE_DIR/latest-trace",
+                "$XDG_DATA_HOME/rr/latest-trace",
+                "$HOME/.local/share/rr/latest-trace"
+            };
+
+            QString defaultPath = "";
+            bool    f;
+
+            for (const auto& path : searchPaths) {
+               defaultPath = Seer::expandEnv(path, &f);
+               if (f == false) {
+                   continue;
+               }
+               if (QFile::exists(defaultPath)) {
+                   setRRTraceDirectory(defaultPath);
+                   break;
+               }
+            }
+        }
     }
 
     // ID == 4   COREFILE
@@ -864,6 +952,26 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
     }
+}
+
+void SeerDebugDialog::handleLaunchButtonClicked () {
+
+    QJsonDocument document = makeJsonDoc();
+
+    writeDefaultProjectSettings(document);
+}
+
+void SeerDebugDialog::handleResetButtonClicked (QAbstractButton* button) {
+
+    // Was the Reset button clicked?
+    QAbstractButton* resetButton = buttonBox->button(QDialogButtonBox::Reset);
+
+    if (button != resetButton) {
+        return;
+    }
+
+    // Reset all parameters.
+    reset();
 }
 
 void SeerDebugDialog::handleHelpModeToolButtonClicked () {
@@ -920,7 +1028,7 @@ void SeerDebugDialog::writeSettings() {
 
     settings.beginGroup("debugdialog"); {
         settings.setValue("size", size());
-    }settings.endGroup();
+    } settings.endGroup();
 }
 
 void SeerDebugDialog::readSettings() {
@@ -929,6 +1037,31 @@ void SeerDebugDialog::readSettings() {
 
     settings.beginGroup("debugdialog"); {
         resize(settings.value("size", QSize(800, 600)).toSize());
+    } settings.endGroup();
+}
+
+void SeerDebugDialog::writeDefaultProjectSettings (const QJsonDocument& document) {
+
+    QSettings settings;
+
+    settings.beginGroup("debugdialog"); {
+        settings.setValue("defaultproject", document.toJson(QJsonDocument::Compact));
+    } settings.endGroup();
+}
+
+void SeerDebugDialog::loadDefaultProjectSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("debugdialog"); {
+
+        QVariant variantData = settings.value("defaultproject");
+
+        if (variantData.isValid()) {
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(variantData.toByteArray());
+            loadJsonDoc(jsonDoc, "defaultproject");
+        }
+
     } settings.endGroup();
 }
 

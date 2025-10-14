@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerMainWindow.h"
 #include "SeerDebugDialog.h"
 #include "SeerConfigDialog.h"
@@ -103,6 +107,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* visualizerMemoryAction = menuVisualizer->addAction("Memory");
     menuVisualizer->addSeparator();
     QAction* visualizerArrayAction  = menuVisualizer->addAction("Array");
+    QAction* visualizerMatrixAction = menuVisualizer->addAction("Matrix");
     QAction* visualizerVarAction    = menuVisualizer->addAction("Struct");
     QAction* visualizerStructAction = menuVisualizer->addAction("Basic Struct");
     QAction* visualizerImageAction  = menuVisualizer->addAction("Image");
@@ -121,11 +126,12 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     //
     // Set up signals/slots.
     //
-    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
     QObject::connect(actionFileArguments,               &QAction::triggered,                            this,           &SeerMainWindow::handleFileArguments);
     QObject::connect(actionFileQuit,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionViewMatrixVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMatrixVisualizer);
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewVarVisualizer);
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
@@ -152,7 +158,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
     QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
     QObject::connect(actionGdbRestart,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
     QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,                       this,           &SeerMainWindow::handleStyleMenuChanged);
@@ -177,6 +183,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionVisualizers,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerMemoryAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerArrayAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(visualizerMatrixAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMatrixVisualizer);
     QObject::connect(visualizerVarAction,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
@@ -478,14 +485,14 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbLaunch->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "none") {
 
         actionGdbLaunch->setVisible(true);
 
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "configdialog") {
 
@@ -537,7 +544,15 @@ const QString& SeerMainWindow::styleName () {
     return _styleName;
 }
 
-void SeerMainWindow::handleFileDebug () {
+void SeerMainWindow::handleFileDebugWithDefaultProject () {
+    handleFileDebug(true);
+}
+
+void SeerMainWindow::handleFileDebugWithOutDefaultProject () {
+    handleFileDebug(false);
+}
+
+void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
 
     SeerDebugDialog dlg(this);
 
@@ -561,7 +576,16 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
-    dlg.setProjectFilename(projectFilename());
+
+    // If there's a project, use it.
+    if (projectFilename() != "") {
+        dlg.setProjectFilename(projectFilename());
+    // Otherwise use the default project, if there is one.
+    }else{
+        if (loadDefaultProject) {
+            dlg.loadDefaultProjectSettings();
+        }
+    }
 
     setProjectFilename(""); // Clear project name here. No need to have it anymore.
 
@@ -630,6 +654,11 @@ void SeerMainWindow::handleViewMemoryVisualizer () {
 void SeerMainWindow::handleViewArrayVisualizer () {
 
     gdbWidget->handleGdbArrayVisualizer();
+}
+
+void SeerMainWindow::handleViewMatrixVisualizer () {
+
+    gdbWidget->handleGdbMatrixVisualizer();
 }
 
 void SeerMainWindow::handleViewStructVisualizer () {
@@ -1143,6 +1172,9 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,skips=[") && text.endsWith("]")) {
         return;
 
+    }else if (text.startsWith("^done,checkpoints=[") && text.endsWith("]")) {
+        return;
+
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done"))) {
         return;
 
@@ -1327,6 +1359,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Record");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(false);
         actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
@@ -1360,6 +1393,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Recording");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
@@ -1392,11 +1426,45 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("RR");
+        actionRecordProcess->setToolTip("Using RR debugger.");
+        actionRecordProcess->setEnabled(true);
+        actionRecordDirection->setEnabled(true);
+
+    }else if (gdbWidget->gdbRecordMode() == "udb") {
+
+        // Menu Control
+        actionControlRecordStart->setEnabled(false);
+        actionControlRecordStop->setEnabled(false);
+        actionControlRecordForward->setEnabled(true);
+        actionControlRecordReverse->setEnabled(true);
+
+        if (gdbWidget->gdbRecordDirection() == "") {
+
+            actionControlRecordForward->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+        }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
+
+            actionControlRecordReverse->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-previous.svg"));
+
+        }else{
+
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(false);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+            qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
+        }
+
+        // Toolbar
+        actionRecordProcess->setText("UDB");
+        actionRecordProcess->setToolTip("Using UDB debugger.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
     }else{
-        qDebug() << "Bad record mode of '" << gdbWidget->gdbRecordMode() << "'";
+        qDebug() << "Bad record mode of:" << gdbWidget->gdbRecordMode();
     }
 }
 
@@ -1484,7 +1552,7 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
-            settings.setValue("suffixes", highlighter.sourceSuffixes());
+            settings.setValue("suffixes", highlighter.cppSourceSuffixes());
         } settings.endGroup();
 
     } settings.endGroup();

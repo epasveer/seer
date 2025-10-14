@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorManagerWidget.h"
 #include "SeerEditorWidgetSource.h"
 #include "SeerEditorWidgetAssembly.h"
@@ -18,7 +22,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Initialize private data
     _editorFont                     = QFont("monospace", 10);                      // Default font.
-    _editorHighlighterSettings      = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
+    _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
     _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
     _editorTabSize                  = 4;
@@ -81,6 +85,14 @@ SeerEditorManagerWidget::~SeerEditorManagerWidget () {
     _notifyAssemblyTabShown = false;
 
     deleteAssemblyWidgetTab();
+}
+
+SeerEditorManagerEntries& SeerEditorManagerWidget::entries() {
+    return _entries;
+}
+
+const SeerEditorManagerEntries& SeerEditorManagerWidget::entries() const {
+    return _entries;
 }
 
 void SeerEditorManagerWidget::dumpEntries () const {
@@ -877,9 +889,10 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualizer,           this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualizer,            this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
@@ -938,9 +951,10 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualizer,           this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualizer,            this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
 
     // Load the file.
@@ -1036,9 +1050,10 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::runToAddress,                   this, &SeerEditorManagerWidget::handleRunToAddress);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,                this, &SeerEditorManagerWidget::handleRequestAssembly);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestSourceAndAssembly,       this, &SeerEditorManagerWidget::handleRequestSourceAndAssembly);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualize,             this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualize,              this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualize,             this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualizer,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualizer,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMatrixVisualizer,            this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualizer,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(assemblyWidget,                 &SeerEditorWidgetAssembly::evaluateVariableExpression,         this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
 
     // Load the file.
@@ -1257,19 +1272,25 @@ void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid
 void SeerEditorManagerWidget::handleAddMemoryVisualizer (QString expression) {
 
     // rethrow
-    emit addMemoryVisualize (expression);
+    emit addMemoryVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
     // rethrow
-    emit addArrayVisualize (expression);
+    emit addArrayVisualizer (expression);
+}
+
+void SeerEditorManagerWidget::handleAddMatrixVisualizer (QString expression) {
+
+    // rethrow
+    emit addMatrixVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleAddStructVisualizer (QString expression) {
 
     // rethrow
-    emit addStructVisualize (expression);
+    emit addStructVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
@@ -1300,4 +1321,16 @@ void SeerEditorManagerWidget::handleAssemblyConfigChanged () {
     }
 }
 
+void SeerEditorManagerWidget::handleSessionTerminated () {
+
+    // Clear current editors.
+    for (auto entry : entries()) {
+        entry.widget->sourceArea()->clearCurrentLines();
+    }
+
+    // Clear assembly editor.
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
+    }
+}
 

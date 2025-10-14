@@ -1,7 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorWidgetSource.h"
+#include "SeerHighlighterSettings.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -14,11 +20,11 @@
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
-#include <QAction>
 #include <QtWidgets/QToolTip>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
+#include <QtGui/QAction>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
@@ -544,15 +550,15 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     setTextCursor(cursor);
 
-    // Add a syntax highlighter for C++ files.
+    // Add a syntax highlighter.
     if (_sourceHighlighter) {
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
-    if (file.contains(cpp_re)) {
-        _sourceHighlighter = new SeerCppSourceHighlighter(0);
-
+    _file = file;
+    SeerSourceHighlighter* highlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
+    if (highlighter) {
+        _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
         }else{
@@ -924,16 +930,21 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
     QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableLoggerObjcExpressionAction;
     QAction* addVariableTrackerExpressionAction;
     QAction* addVariableTrackerAsteriskExpressionAction;
     QAction* addVariableTrackerAmpersandExpressionAction;
     QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerObjcExpressionAction;
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addMatrixVisualizerAction;
+    QAction* addMatrixAsteriskVisualizerAction;
+    QAction* addMatrixAmpersandVisualizerAction;
     QAction* addStructVisualizerAction;
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
@@ -977,23 +988,28 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         openExternalEditor->setEnabled(true);
     }
 
-    addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
-    addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerExpressionAction                   = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("*&&%1").arg(textCursor().selectedText()));
+    addVariableLoggerObjcExpressionAction               = new QAction(QString("(objc)%1").arg(textCursor().selectedText()));
+    addVariableTrackerExpressionAction                  = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("*&&%1").arg(textCursor().selectedText()));
+    addVariableTrackerObjcExpressionAction              = new QAction(QString("(objc)%1").arg(textCursor().selectedText()));
+    addMemoryVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addMemoryAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addMemoryAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addArrayVisualizerAction                            = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addArrayAsteriskVisualizerAction                    = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addArrayAmpersandVisualizerAction                   = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addMatrixVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addStructVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addStructAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addStructAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
@@ -1010,6 +1026,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
     loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
     loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerObjcExpressionAction);
     menu.addMenu(&loggerMenu);
 
     QMenu trackerMenu("Add variable to Tracker");
@@ -1017,6 +1034,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
     trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
     trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerObjcExpressionAction);
     menu.addMenu(&trackerMenu);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
@@ -1031,6 +1049,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
     structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
@@ -1043,6 +1067,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addVariableLoggerAsteriskExpressionAction->setEnabled(false);
         addVariableLoggerAmpersandExpressionAction->setEnabled(false);
         addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(false);
+        addVariableLoggerObjcExpressionAction->setEnabled(false);
         addVariableTrackerExpressionAction->setEnabled(false);
         addVariableTrackerAsteriskExpressionAction->setEnabled(false);
         addVariableTrackerAmpersandExpressionAction->setEnabled(false);
@@ -1053,6 +1078,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(false);
         addArrayAsteriskVisualizerAction->setEnabled(false);
         addArrayAmpersandVisualizerAction->setEnabled(false);
+        addMatrixVisualizerAction->setEnabled(false);
+        addMatrixAsteriskVisualizerAction->setEnabled(false);
+        addMatrixAmpersandVisualizerAction->setEnabled(false);
         addStructVisualizerAction->setEnabled(false);
         addStructAsteriskVisualizerAction->setEnabled(false);
         addStructAmpersandVisualizerAction->setEnabled(false);
@@ -1061,6 +1089,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addVariableLoggerAsteriskExpressionAction->setEnabled(true);
         addVariableLoggerAmpersandExpressionAction->setEnabled(true);
         addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(true);
+        addVariableLoggerObjcExpressionAction->setEnabled(true);
         addVariableTrackerExpressionAction->setEnabled(true);
         addVariableTrackerAsteriskExpressionAction->setEnabled(true);
         addVariableTrackerAmpersandExpressionAction->setEnabled(true);
@@ -1071,6 +1100,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(true);
         addArrayAsteriskVisualizerAction->setEnabled(true);
         addArrayAmpersandVisualizerAction->setEnabled(true);
+        addMatrixVisualizerAction->setEnabled(true);
+        addMatrixAsteriskVisualizerAction->setEnabled(true);
+        addMatrixAmpersandVisualizerAction->setEnabled(true);
         addStructVisualizerAction->setEnabled(true);
         addStructAsteriskVisualizerAction->setEnabled(true);
         addStructAmpersandVisualizerAction->setEnabled(true);
@@ -1252,6 +1284,17 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableLoggerExpression(QString("(objc)") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
@@ -1300,12 +1343,24 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableTrackerExpression(QString("(objc)") + textCursor().selectedText());
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(textCursor().selectedText());
+            emit addMemoryVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1316,7 +1371,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("*") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1327,7 +1382,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("&") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1338,7 +1393,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(textCursor().selectedText());
+            emit addArrayVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1349,7 +1404,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("*") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1360,7 +1415,40 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("&") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1371,7 +1459,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(textCursor().selectedText());
+            emit addStructVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1382,7 +1470,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("*") + textCursor().selectedText());
+            emit addStructVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1393,7 +1481,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("&") + textCursor().selectedText());
+            emit addStructVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1670,6 +1758,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
+    _sourceHighlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
 
         if (highlighterEnabled()) {

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -21,10 +25,12 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
         void                handleSearchLineEdit        ();
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
         void                handleItemEntered           (QTreeWidgetItem* item, int column);
+        void                handleContextMenu           (const QPoint& pos);
 
     signals:
         void                refreshFunctionList         (int id, const QString& functionRegex);
         void                selectedFile                (QString file, QString fullname, int lineno);
+        void                insertBreakpoint            (QString breakpoint);
 
     protected:
     private:

@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerMatrixVisualizerWidgetForm</class>
+ <widget class="QWidget" name="SeerMatrixVisualizerWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>855</width>
+    <height>622</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="SeerHistoryLineEdit" name="variableNameLineEdit">
+       <property name="toolTip">
+        <string>Variable name or expression.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Variable name</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="variableAddressLineEdit">
+       <property name="toolTip">
+        <string>Variable address.</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Variable address</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerHistoryLineEdit" name="matrixRowsLineEdit">
+       <property name="toolTip">
+        <string>Total number of rows in the matrix.</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string># rows</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerHistoryLineEdit" name="matrixColumnsLineEdit">
+       <property name="toolTip">
+        <string>Total number of columns in the matrix.</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string># columns</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerHistoryLineEdit" name="matrixOffsetLineEdit">
+       <property name="toolTip">
+        <string>Element offset into matrix. (default=0)</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>offset</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerHistoryLineEdit" name="matrixStrideLineEdit">
+       <property name="toolTip">
+        <string>Element stride between values. (default=1)</string>
+       </property>
+       <property name="inputMask">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>stride</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="matrixDisplayFormatComboBox">
+       <property name="toolTip">
+        <string>Matrix data type.</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>int16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>int64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uint16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uint32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>uint64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>float32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>float64</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="refreshToolButton">
+       <property name="toolTip">
+        <string>Refresh the display.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="helpToolButton">
+       <property name="toolTip">
+        <string>Help on Memory Visualizer</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="SeerMatrixWidget" name="matrixTableWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="countLabel">
+       <property name="text">
+        <string>Count</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="countLineEdit">
+       <property name="toolTip">
+        <string># values in matrix</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string># values in matrix</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="rowsLabel">
+       <property name="text">
+        <string>Rows</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLineEdit" name="rowsLineEdit">
+       <property name="toolTip">
+        <string># rows in matrix</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string># rows in matrix</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="columnsLabel">
+       <property name="text">
+        <string>Columns</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QLineEdit" name="columnsLineEdit">
+       <property name="toolTip">
+        <string># columns in matrix</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string># columns in matrix</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <widget class="QLabel" name="minimumLabel">
+       <property name="text">
+        <string>Minimum</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="7">
+      <widget class="QLineEdit" name="minimumLineEdit">
+       <property name="toolTip">
+        <string>Minimum value in matrix</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Minimum value in matrix</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="8">
+      <widget class="QLabel" name="maximumLabel">
+       <property name="text">
+        <string>Maximum</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="9">
+      <widget class="QLineEdit" name="maximumLineEdit">
+       <property name="toolTip">
+        <string>Maximum value in matrix</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Maximum value in matrix</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="10">
+      <spacer name="horizontalSpacer_1">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="sumLabel">
+       <property name="text">
+        <string>Sum</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="sumLineEdit">
+       <property name="toolTip">
+        <string>Sum of all matrix values</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Sum of all matrix values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="averageLabel">
+       <property name="text">
+        <string>Average</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="averageLineEdit">
+       <property name="toolTip">
+        <string>Average of all matrix values</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Average of all matrix values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLabel" name="medianLabel">
+       <property name="text">
+        <string>Median</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5">
+      <widget class="QLineEdit" name="medianLineEdit">
+       <property name="toolTip">
+        <string>Median of all matrix values</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Median of all matrix values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="QLabel" name="rmsLabel">
+       <property name="text">
+        <string>RMS</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="QLineEdit" name="rmsLineEdit">
+       <property name="toolTip">
+        <string>RMS of all matrix values</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>RMS of all matrix values</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="10">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeerMatrixWidget</class>
+   <extends>QTableWidget</extends>
+   <header location="global">SeerMatrixWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SeerHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">SeerHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>variableNameLineEdit</tabstop>
+  <tabstop>variableAddressLineEdit</tabstop>
+  <tabstop>matrixRowsLineEdit</tabstop>
+  <tabstop>matrixColumnsLineEdit</tabstop>
+  <tabstop>matrixOffsetLineEdit</tabstop>
+  <tabstop>matrixStrideLineEdit</tabstop>
+  <tabstop>matrixDisplayFormatComboBox</tabstop>
+  <tabstop>refreshToolButton</tabstop>
+  <tabstop>helpToolButton</tabstop>
+  <tabstop>matrixTableWidget</tabstop>
+  <tabstop>countLineEdit</tabstop>
+  <tabstop>rowsLineEdit</tabstop>
+  <tabstop>columnsLineEdit</tabstop>
+  <tabstop>minimumLineEdit</tabstop>
+  <tabstop>maximumLineEdit</tabstop>
+  <tabstop>sumLineEdit</tabstop>
+  <tabstop>averageLineEdit</tabstop>
+  <tabstop>medianLineEdit</tabstop>
+  <tabstop>rmsLineEdit</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

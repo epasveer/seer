@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerConsoleWidget.h"
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QCheckBox>
@@ -53,9 +57,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
-    // Create psuedo terminal for the console. Don't connect to it yet.
-    createTerminal();
-
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
     QObject::connect(printButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handlePrintButton);
@@ -79,7 +80,7 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
         return;
     }
 
-     // Write text to stdout on terminal that started Seer..
+    // Write text to stdout on terminal that started Seer..
     if (isStdoutEnabled()) {
         write (STDOUT_FILENO, buffer, count);
     }
@@ -251,7 +252,7 @@ void SeerConsoleWidget::handleStdinLineEdit () {
 
     std::string s = str.toStdString();
 
-    if (_ttyFD < 0) {
+    if (isTerminalCreated() == false) {
         return;
     }
 
@@ -266,7 +267,7 @@ void SeerConsoleWidget::handleStdinLineEdit () {
 
 void SeerConsoleWidget::handleTerminalOutput (int socketfd) {
 
-    if (_ttyFD < 0) {
+    if (isTerminalCreated() == false) {
         return;
     }
 
@@ -298,6 +299,12 @@ void SeerConsoleWidget::handleTerminalOutput (int socketfd) {
 }
 
 void SeerConsoleWidget::createTerminal () {
+
+    // Is terminal already created?
+    if (isTerminalCreated()) {
+        qDebug() << "Terminal already created!";
+        return;
+    }
 
     // Create tty and its permissions.
     _ttyFD = posix_openpt(O_RDWR | O_NOCTTY);
@@ -354,7 +361,7 @@ void SeerConsoleWidget::deleteTerminal () {
 
     _terminalDeviceName = "";
 
-    if (_ttyFD < 0) {
+    if (isTerminalCreated() == false) {
         return;
     }
 
@@ -368,7 +375,7 @@ void SeerConsoleWidget::connectTerminal () {
         return;
     }
 
-    if (_ttyFD < 0) {
+    if (isTerminalCreated() == false) {
         qDebug() << "Can't connect Terminal. No _ttyFD!";
         return;
     }
@@ -390,6 +397,15 @@ void SeerConsoleWidget::disconnectTerminal () {
     delete _ttyListener; _ttyListener = 0;
 }
 
+bool SeerConsoleWidget::isTerminalCreated () const {
+
+    if (_ttyFD >= 0) {
+        return true;
+    }
+
+    return false;
+}
+
 bool SeerConsoleWidget::isTerminalConnected () const {
 
     if (_ttyListener != nullptr) {
@@ -397,6 +413,19 @@ bool SeerConsoleWidget::isTerminalConnected () const {
     }
 
     return false;
+}
+
+void SeerConsoleWidget::resetTerminal () {
+
+    if (isTerminalConnected()) {
+        disconnectTerminal();
+    }
+
+    if (isTerminalCreated() == true) {
+        deleteTerminal();
+    }
+
+    createTerminal();
 }
 
 const QString& SeerConsoleWidget::terminalDeviceName () const {
@@ -532,6 +561,9 @@ void SeerConsoleWidget::showEvent (QShowEvent* event) {
 
     // Handle the event as normal.
     QWidget::showEvent(event);
+
+    // Set focus on the text input.
+    stdinLineEdit->setFocus();
 
     // Announce we are now visable.
     emit newTextViewed();

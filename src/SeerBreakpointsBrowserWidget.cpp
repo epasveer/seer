@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -182,9 +186,6 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 breakpointsTreeWidget->addTopLevelItem(topItem);
             }
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
 
     }else{
         // Ignore others.

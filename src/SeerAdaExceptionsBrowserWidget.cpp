@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerAdaExceptionsBrowserWidget.h"
 #include "SeerCatchpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -160,7 +164,7 @@ void SeerAdaExceptionsBrowserWidget::handleAddCatchpointToolButtonClicked () {
     QTreeWidgetItem* item = adaExceptionsTreeWidget->currentItem();
 
     if (item != 0) {
-        dlg.setNameText(item->text(0));
+        dlg.setArguments(item->text(0));
     }
 
     int ret = dlg.exec();

@@ -1,6 +1,10 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
-#include "SeerCppSourceHighlighter.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerKeySettings.h"
 #include "SeerPlainTextEdit.h"
 #include <QShortcut>
@@ -105,9 +109,10 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        addVariableTrackerExpression        (QString expression);
         void                                        refreshVariableTrackerValues        ();
         void                                        evaluateVariableExpression          (int expressionid, QString expression);
-        void                                        addMemoryVisualize                  (QString expression);
-        void                                        addArrayVisualize                   (QString expression);
-        void                                        addStructVisualize                  (QString expression);
+        void                                        addMemoryVisualizer                 (QString expression);
+        void                                        addArrayVisualizer                  (QString expression);
+        void                                        addMatrixVisualizer                 (QString expression);
+        void                                        addStructVisualizer                 (QString expression);
         void                                        showSearchBar                       (bool flag);
         void                                        showAlternateBar                    (bool flag);
         void                                        showReloadBar                       (bool flag);
@@ -160,7 +165,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         SeerEditorWidgetSourceLineNumberArea*       _lineNumberArea;
         SeerEditorWidgetSourceBreakPointArea*       _breakPointArea;
 
-        SeerCppSourceHighlighter*                   _sourceHighlighter;
+        SeerSourceHighlighter*                      _sourceHighlighter;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerSourceBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -142,18 +146,21 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             }
         }
 
+        // Always expand the source items. Expanding the other
+        // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-        _headerFilesItems->setExpanded(false);
-        _miscFilesItems->setExpanded(false);
 
     }else{
         // Ignore others.
     }
 
+    // Sort each item separately.
+    _sourceFilesItems->sortChildren(0, Qt::AscendingOrder);
+    _headerFilesItems->sortChildren(0, Qt::AscendingOrder);
+    _miscFilesItems->sortChildren(0, Qt::AscendingOrder);
+
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
-    sourceTreeWidget->sortByColumn(0, Qt::AscendingOrder);
-    sourceTreeWidget->setSortingEnabled(true);
 
     sourceSearchLineEdit->clear();
 
@@ -258,9 +265,9 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
             }
         }
 
+        // Always expand the source items. Expanding the other
+        // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-        _headerFilesItems->setExpanded(false);
-        _miscFilesItems->setExpanded(false);
 
         //qDebug() << text << matches.size();
     }

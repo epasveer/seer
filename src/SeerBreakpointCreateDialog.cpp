@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerBreakpointCreateDialog.h"
 #include <QtCore/QDebug>
 
@@ -206,7 +210,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
     }
 
     if (functionNameText() != "") {
-        breakpointParameters += " --function " + functionNameText();
+        breakpointParameters += " --function \"" + functionNameText() + "\"";
     }
 
     if (labelNameText() != "") {

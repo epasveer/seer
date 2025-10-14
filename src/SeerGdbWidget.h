@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerConsoleWidget.h"
@@ -9,6 +13,7 @@
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
 #include "SeerPrintpointsBrowserWidget.h"
+#include "SeerCheckpointsBrowserWidget.h"
 #include "GdbMonitor.h"
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
@@ -310,11 +315,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbThreadSelectId             (int threadid);
         void                                handleGdbAdaListTasks               ();
         void                                handleGdbAdaListExceptions          ();
-        void                                handleGdbListSkips                  ();
-        void                                handleGdbAddSkip                    (QString skipmode, QString skipparameters);
-        void                                handleGdbDeleteSkips                (QString skipids);
-        void                                handleGdbEnableSkips                (QString skipids);
-        void                                handleGdbDisableSkips               (QString skipids);
+        void                                handleGdbSkipList                   ();
+        void                                handleGdbSkipAdd                    (QString skipmode, QString skipparameters);
+        void                                handleGdbSkipDelete                 (QString skipids);
+        void                                handleGdbSkipEnable                 (QString skipids);
+        void                                handleGdbSkipDisable                (QString skipids);
+        void                                handleGdbCheckpointList             ();
+        void                                handleGdbCheckpointInsert           ();
+        void                                handleGdbCheckpointSelect           (QString id);
+        void                                handleGdbCheckpointDelete           (QString ids);
         void                                handleGdbRegisterListNames          ();
         void                                handleGdbRegisterListValues         (QString fmt);
         void                                handleGdbRegisterSetValue           (QString fmt, QString name, QString value);
@@ -331,6 +340,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbDataDeleteExpressions      (QString expressionids);
         void                                handleGdbMemoryAddExpression        (QString expression);
         void                                handleGdbArrayAddExpression         (QString expression);
+        void                                handleGdbMatrixAddExpression        (QString expression);
         void                                handleGdbStructAddExpression        (QString expression);
         void                                handleGdbVarAddExpression           (QString expression);
         void                                handleGdbImageAddExpression         (QString expression);
@@ -342,6 +352,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbGetSourceAndAssembly       (QString address);
         void                                handleGdbMemoryVisualizer           ();
         void                                handleGdbArrayVisualizer            ();
+        void                                handleGdbMatrixVisualizer           ();
         void                                handleGdbStructVisualizer           ();
         void                                handleGdbVarVisualizer              ();
         void                                handleGdbImageVisualizer            ();
@@ -447,6 +458,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
         SeerPrintpointsBrowserWidget*       _printpointsBrowserWidget;
+        SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
         SeerGdbLogWidget*                   _gdbOutputLog;
         SeerSeerLogWidget*                  _seerOutputLog;
 

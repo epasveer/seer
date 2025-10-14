@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "ui_SeerMainWindow.h"
@@ -72,11 +76,14 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              styleName                               ();
 
     private slots:
-        void                        handleFileDebug                         ();
+        void                        handleFileDebugWithDefaultProject       ();
+        void                        handleFileDebugWithOutDefaultProject    ();
+        void                        handleFileDebug                         (bool loadDefaultProject);
         void                        handleFileArguments                     ();
         void                        handleFileQuit                          ();
         void                        handleViewMemoryVisualizer              ();
         void                        handleViewArrayVisualizer               ();
+        void                        handleViewMatrixVisualizer              ();
         void                        handleViewStructVisualizer              ();
         void                        handleViewVarVisualizer                 ();
         void                        handleViewImageVisualizer               ();

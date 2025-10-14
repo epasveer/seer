@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerVariableLoggerBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -92,10 +96,6 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
                 emit raiseTab();
             }
-
-        }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-
-            variablesTreeWidget->clear();
 
         }else{
             // Ignore others.
@@ -289,6 +289,9 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction            = new QAction();
     QAction* addArrayAsteriskVisualizerAction    = new QAction();
     QAction* addArrayAmpersandVisualizerAction   = new QAction();
+    QAction* addMatrixVisualizerAction           = new QAction();
+    QAction* addMatrixAsteriskVisualizerAction   = new QAction();
+    QAction* addMatrixAmpersandVisualizerAction  = new QAction();
     QAction* addStructVisualizerAction           = new QAction();
     QAction* addStructAsteriskVisualizerAction   = new QAction();
     QAction* addStructAmpersandVisualizerAction  = new QAction();
@@ -307,14 +310,23 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
     structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* copyAction    = menu.addAction("Copy selected");
-    QAction* copyAllAction = menu.addAction("Copy all");
+    QAction* deleteAction    = menu.addAction("Delete selected");
+    QAction* deleteAllAction = menu.addAction("Delete all");
+
+    QAction* copyAction      = menu.addAction("Copy selected");
+    QAction* copyAllAction   = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -338,16 +350,21 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     addArrayVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addArrayAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addArrayAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
+    addMatrixVisualizerAction->setText(QString("\"%1\"").arg(actionText));
+    addMatrixAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
+    addMatrixAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
     addStructVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addStructAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addStructAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
 
 
-    // If no selected item, disable everything but allow 'copyall'.
+    // If no selected item, disable everything but allow 'copyall' and 'deleteall'.
     if (item == 0) {
         memoryVisualizerMenu.setEnabled(false);
         arrayVisualizerMenu.setEnabled(false);
+        matrixVisualizerMenu.setEnabled(false);
         structVisualizerMenu.setEnabled(false);
+        deleteAction->setEnabled(false);
         copyAction->setEnabled(false);
     }
 
@@ -358,7 +375,15 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
-    if (action == copyAction || action == copyAction) {
+    if (action == deleteAction) {
+        handleDeleteToolButton();
+    }
+
+    if (action == deleteAllAction) {
+        handleDeleteAllToolButton();
+    }
+
+    if (action == copyAction || action == copyAllAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
@@ -399,7 +424,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(variable);
+            emit addMemoryVisualizer(variable);
         }
 
         return;
@@ -410,7 +435,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("*") + variable);
+            emit addMemoryVisualizer(QString("*") + variable);
         }
 
         return;
@@ -421,7 +446,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("&") + variable);
+            emit addMemoryVisualizer(QString("&") + variable);
         }
 
         return;
@@ -432,7 +457,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(variable);
+            emit addArrayVisualizer(variable);
         }
 
         return;
@@ -443,7 +468,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("*") + variable);
+            emit addArrayVisualizer(QString("*") + variable);
         }
 
         return;
@@ -454,7 +479,40 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("&") + variable);
+            emit addArrayVisualizer(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("&") + variable);
         }
 
         return;
@@ -465,29 +523,29 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(variable);
+            emit addStructVisualizer(variable);
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("*") + variable);
+            emit addStructVisualizer(QString("*") + variable);
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAmpersandVisualizerAction) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("&") + variable);
+            emit addStructVisualizer(QString("&") + variable);
         }
 
         return;

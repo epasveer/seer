@@ -21,14 +21,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Update ubuntu
+    - name: Update Ubuntu
       run: |
         sudo apt-get update
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        version: 6.2.4
+        version: 6.6
         install-deps: 'true'
         modules: 'qtcharts'
 
@@ -46,7 +46,7 @@ jobs:
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: |
         cd src
-        cmake -B ${{github.workspace}}/src/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake -B ${{github.workspace}}/src/build -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration

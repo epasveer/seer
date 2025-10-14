@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerStackFramesBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -129,9 +133,6 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 stackTreeWidget->setCurrentItem(matches.first());
             }
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        stackTreeWidget->clear();
 
     }else{
         // Ignore others.

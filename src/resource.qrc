@@ -65,6 +65,7 @@
     <file>resources/help/BasicStructVisualizer.md</file>
     <file>resources/help/MemoryVisualizer.md</file>
     <file>resources/help/ArrayVisualizer.md</file>
+    <file>resources/help/MatrixVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
     <file>resources/help/VariableRegisterInfoBrowser.md</file>
@@ -83,6 +84,9 @@
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>
     <file>resources/mi-python/MIKill.py</file>
+    <file>resources/mi-python/MICheckpoint.py</file>
+    <file>resources/mi-python/MICatchpoint.py</file>
+    <file>resources/mi-python/MIObjectiveC.py</file>
   </qresource>
 </RCC>
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerWatchpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -312,9 +316,6 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                 item->setText(11, line_text);
             }
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
 
     }else{
         // Ignore others.

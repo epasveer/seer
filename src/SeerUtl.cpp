@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerUtl.h"
 #include <QtCore/QFile>
 #include <QtCore/QString>
@@ -19,7 +23,7 @@
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "2.6beta"
+#define SEER_VERSION "2.7beta"
 
 namespace Seer {
 

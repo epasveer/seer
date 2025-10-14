@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerEditorWidgetAssembly.h"
@@ -21,6 +25,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
        ~SeerEditorManagerWidget ();
 
         void                                            dumpEntries                         () const;
+        SeerEditorManagerEntries&                       entries                             ();
+        const SeerEditorManagerEntries&                 entries                             () const;
         bool                                            hasEntry                            (const QString& fullname) const;
         SeerEditorManagerEntries::iterator              addEntry                            (const QString& fullname, const QString& file);
         SeerEditorManagerEntries::iterator              findEntry                           (const QString& fullname);
@@ -85,10 +91,12 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
         void                                            handleAddArrayVisualizer            (QString expression);
+        void                                            handleAddMatrixVisualizer           (QString expression);
         void                                            handleAddStructVisualizer           (QString expression);
         void                                            handleRequestAssembly               (QString address);
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
+        void                                            handleSessionTerminated             ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -112,9 +120,10 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            addVariableTrackerExpression        (QString expression);
         void                                            refreshVariableTrackerValues        ();
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
-        void                                            addMemoryVisualize                  (QString expression);
-        void                                            addArrayVisualize                   (QString expression);
-        void                                            addStructVisualize                  (QString expression);
+        void                                            addMemoryVisualizer                 (QString expression);
+        void                                            addArrayVisualizer                  (QString expression);
+        void                                            addMatrixVisualizer                 (QString expression);
+        void                                            addStructVisualizer                 (QString expression);
         void                                            requestAssembly                     (QString address);
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
