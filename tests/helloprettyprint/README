@@ -5,6 +5,13 @@ Seer has a problem with enabling 'pretty printing' and structs have have \n char
 
     (gdb) set print pretty on
 
+    $ seergdb --project project-with-pretty-print.seer
+    $ seergdb --project project-without-pretty-print.seer
+
+Hit continue to stop at line 19.
+Add "a" to Tracker or Logger.
+With pretty-printing the tree looks like crap.
+
 Without pretty print
     10^done,value="{B = 1, C = 0, D = \"asd\", E = std::vector<bool> of length 1, capacity 64 = {true}}"
     11^done,value="1"
