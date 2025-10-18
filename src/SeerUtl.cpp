@@ -31,6 +31,54 @@ namespace Seer {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
     }
 
+    QString filterBareNewLines (const QString& str) {
+
+        // Remove bare (not inside quotes) '\n' substrings.
+        // Maybe extra spaces after '\n'.
+        // "{\n  B = 1,\n  C = 0,\n  D = \"asd\",\n  E = std::vector<bool> of length 1, capacity 64 = {true}\n}"
+        // "{B = 1, C = 0, D = \"asd\", E = std::vector<bool> of length 1, capacity 64 = {true}}"
+
+        QString   tmp;
+        qsizetype anchor=0;
+        qsizetype curr=0;
+        qsizetype end=str.length();
+
+        // Loop through string a character at a time.
+        while (curr < end) {
+
+            // Found a '\n' substring. Deal with it.
+            if (str.mid(curr,2) == "\\n") {
+
+                // Append the good bits before the '\n'.
+                tmp.append(str.mid(anchor,curr-anchor));
+                curr += 2;
+
+                // Skip trailing spaces, if any, after '\n'.
+                while (curr < end) {
+                    if (str.at(curr) == ' ') {
+                        curr++;
+                    }else{
+                        break;
+                    }
+                }
+
+                anchor = curr;
+
+            // Other character. Skip it.
+            }else{
+                curr++;
+            }
+        }
+
+        // Anything left to deal with?
+        if (curr > anchor) {
+            tmp.append(str.mid(anchor,curr-anchor));
+            anchor = curr;
+        }
+
+        return tmp;
+    }
+
     QString filterEscapes (const QString& str) {
 
         // Remove one level of '\'.

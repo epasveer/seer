@@ -61,6 +61,12 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
                 break;
             }
 
+            // If with brackets (a structure), filter out excess '\n'
+            // in case pretty-print-on is used.
+            if (value_text.front() == '{' && value_text.back() == '}') {
+                value_text = Seer::filterBareNewLines(value_text);
+            }
+
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
 
             if (matches.size() > 0) {
