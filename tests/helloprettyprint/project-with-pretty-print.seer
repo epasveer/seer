@@ -1,0 +1,24 @@
+{
+    "seerproject": {
+        "executable": "helloprettyprint",
+        "postgdbcommands": [
+            "set print pretty on"
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/helloprettyprint/breakpoints.seer",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

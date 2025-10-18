@@ -142,6 +142,12 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
             QString id_text    = text.section('^', 0,0);
             QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
+            // If with brackets (a structure), filter out excess '\n'
+            // in case pretty-print-on is used.
+            if (value_text.front() == '{' && value_text.back() == '}') {
+                value_text = Seer::filterBareNewLines(value_text);
+            }
+
             // Find the ones that match our 'id'.
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 2);
 

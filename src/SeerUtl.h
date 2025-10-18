@@ -13,6 +13,7 @@ namespace Seer {
 
     QString                     version             ();
 
+    QString                     filterBareNewLines  (const QString& str);
     QString                     filterEscapes       (const QString& str);
     QStringList                 filterEscapes       (const QStringList& strings);
     QString                     expandTabs          (const QString& str, int tabwidth, bool morph);
