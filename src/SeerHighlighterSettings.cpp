@@ -17,9 +17,11 @@ SeerHighlighterSettings::~SeerHighlighterSettings () {
 
 SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlighterSettings& rhs) {
 
-    _keys              = rhs._keys;
-    _formats           = rhs._formats;
-    _cppSourceSuffixes = rhs._cppSourceSuffixes;
+    _keys               = rhs._keys;
+    _formats            = rhs._formats;
+    _cppSourceSuffixes  = rhs._cppSourceSuffixes;
+    _rustSourceSuffixes = rhs._rustSourceSuffixes;
+    _odinSourceSuffixes = rhs._odinSourceSuffixes;
 
     return *this;
 }
@@ -70,14 +72,34 @@ int SeerHighlighterSettings::count () const {
     return _keys.size();
 }
 
-void SeerHighlighterSettings::setSourceSuffixes (const QString& suffixes) {
+void SeerHighlighterSettings::setCppSourceSuffixes (const QString& suffixes) {
 
     _cppSourceSuffixes = suffixes;
+}
+
+void SeerHighlighterSettings::setOdinSourceSuffixes (const QString& suffixes) {
+
+    _odinSourceSuffixes = suffixes;
+}
+
+void SeerHighlighterSettings::setRustSourceSuffixes (const QString& suffixes) {
+
+    _rustSourceSuffixes = suffixes;
 }
 
 const QString& SeerHighlighterSettings::cppSourceSuffixes () {
 
     return _cppSourceSuffixes;
+}
+
+const QString& SeerHighlighterSettings::odinSourceSuffixes () {
+
+    return _odinSourceSuffixes;
+}
+
+const QString& SeerHighlighterSettings::rustSourceSuffixes () {
+
+    return _rustSourceSuffixes;
 }
 
 QStringList SeerHighlighterSettings::themeNames() {
@@ -190,7 +212,9 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_light () {
     f.setBackground(QColor("#ffffff"));
     languageSettings.add("Keyword", f);
 
-    languageSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setOdinSourceSuffixes(".odin");
+    languageSettings.setRustSourceSuffixes(".rs");
 
     return languageSettings;
 }
@@ -285,7 +309,9 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_dark () {
     f.setBackground(QColor("#232629"));
     languageSettings.add("Keyword", f);
 
-    languageSettings.setSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setOdinSourceSuffixes(".odin");
+    languageSettings.setRustSourceSuffixes(".rs");
 
     return languageSettings;
 }

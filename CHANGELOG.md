@@ -6,6 +6,7 @@
 * SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)
 * VariableTracker: Add 'deleteselect' and 'deleteall' to RMB context menu.
 * VariableLogger: Add 'deleteselect' and 'deleteall' to RMB context menu.
+* EditorConfig: Show syntax highlighting for C/C++, Rust, and Odin.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.

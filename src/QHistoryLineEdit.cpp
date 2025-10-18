@@ -250,6 +250,13 @@ void QHistoryLineEdit::focusOutEvent (QFocusEvent* ev) {
     emit lostFocus();
 }
 
+void QHistoryLineEdit::focusInEvent (QFocusEvent* ev) {
+
+    QLineEdit::focusInEvent(ev);
+
+    emit gainedFocus();
+}
+
 void QHistoryLineEdit::previousLine () {
 
     if ( _lines.empty() ) {
