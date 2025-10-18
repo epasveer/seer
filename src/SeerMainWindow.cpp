@@ -1552,7 +1552,9 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
-            settings.setValue("suffixes", highlighter.cppSourceSuffixes());
+            settings.setValue("cppsuffixes",  highlighter.cppSourceSuffixes());
+            settings.setValue("odinsuffixes", highlighter.odinSourceSuffixes());
+            settings.setValue("rustsuffixes", highlighter.rustSourceSuffixes());
         } settings.endGroup();
 
     } settings.endGroup();
@@ -1651,9 +1653,9 @@ void SeerMainWindow::readConfigSettings () {
                 } settings.endGroup();
             }
 
-            if (settings.contains("suffixes")) {
-                highlighter.setSourceSuffixes(settings.value("suffixes").toString());
-            }
+            if (settings.contains("cppsuffixes"))  highlighter.setCppSourceSuffixes(settings.value("cppsuffixes").toString());
+            if (settings.contains("odinsuffixes")) highlighter.setOdinSourceSuffixes(settings.value("odinsuffixes").toString());
+            if (settings.contains("rustsuffixes")) highlighter.setRustSourceSuffixes(settings.value("rustsuffixes").toString());
 
             gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);
 

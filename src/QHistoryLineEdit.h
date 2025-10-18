@@ -52,11 +52,13 @@ class QHistoryLineEdit : public QLineEdit {
     signals:
         void        lineExecuted                        (QString text);
         void        lostFocus                           ();
+        void        gainedFocus                         ();
 
     protected:
         void        keyPressEvent                       (QKeyEvent*   event) Q_DECL_OVERRIDE;
         void        wheelEvent                          (QWheelEvent* event) Q_DECL_OVERRIDE;
         void        focusOutEvent                       (QFocusEvent* event) Q_DECL_OVERRIDE;
+        void        focusInEvent                        (QFocusEvent* event) Q_DECL_OVERRIDE;
 
         void        previousLine                        ();
         void        nextLine                            ();

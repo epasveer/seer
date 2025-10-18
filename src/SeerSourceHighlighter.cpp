@@ -14,16 +14,19 @@ const SeerHighlighterSettings& SeerSourceHighlighter::highlighterSettings() {
 }
 
 SeerSourceHighlighter* SeerSourceHighlighter::getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
+
     QRegularExpression cpp_re("(?:" + settings.cppSourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
       return new SeerCppSourceHighlighter(0);
     }
 
-    if (file.endsWith(".odin")) {
+    QRegularExpression odin_re("(?:" + settings.odinSourceSuffixes() + ")$");
+    if (file.contains(odin_re)) {
       return new SeerOdinSourceHighlighter(0);
     }
 
-    if (file.endsWith(".rs")) {
+    QRegularExpression rust_re("(?:" + settings.rustSourceSuffixes() + ")$");
+    if (file.contains(rust_re)) {
         return new SeerRustSourceHighlighter(0);
     }
 
