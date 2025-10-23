@@ -13,6 +13,7 @@ static QLoggingCategory LC("seer.gdbmonitor");
 
 GdbMonitor::GdbMonitor (QObject* parent) : QObject(parent) {
     _process = 0;
+    _countIgnoreFlag = 0;
 }
 
 GdbMonitor::~GdbMonitor () {
@@ -89,14 +90,22 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
         qCDebug(LC) << text;
 
-        // Start broadcasting it around.
-        emit allTextOutput(text);
+#if ENABLE_GDB_LOGOUT == 1
+        // Start broadcasting it around. For debugging
+        emit allTextOutput("from gdbmonitor: " + text + "\n");
+#endif
 
         if (text[0] == '~') {
             emit tildeTextOutput(text);
         }else if (text[0] == '=') {
             emit equalTextOutput(text);
         }else if (text[0] == '*') {
+            // If gdb-multiarch is running and quick bp is added then this will bypass next SIGINT
+            if (isAddingQuickBreakpoint())
+            {
+                removeQuickBreakpointFlag();
+                continue;
+            }
             emit astrixTextOutput(text);
         }else if (text[0] == '^') {
             emit caretTextOutput(text);
@@ -176,3 +185,17 @@ QProcess* GdbMonitor::process () {
     return _process;
 }
 
+void GdbMonitor::setNewHardBreakpointFlag()
+{
+    _countIgnoreFlag = 1;
+}
+
+void GdbMonitor::removeQuickBreakpointFlag ()
+{
+    _countIgnoreFlag = 0;
+}
+
+bool GdbMonitor::isAddingQuickBreakpoint()
+{
+    return _countIgnoreFlag;
+}

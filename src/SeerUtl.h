@@ -53,5 +53,7 @@ namespace Seer {
     int                         typeBytes           (const QString& type);
     bool                        readFile            (const QString& filename, QStringList& lines);
     void                        printStackTrace     ();
+    bool                        isFileExistNotify   (const QString& filename);
+    bool                        isDirExistNotify    (const QString& filename);
 }
 
