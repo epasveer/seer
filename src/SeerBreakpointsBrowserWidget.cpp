@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -154,8 +150,8 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 QString script_text            = Seer::filterBookends(keyValueMap["script"],            '[', ']');
                 QString original_location_text = Seer::filterBookends(keyValueMap["original-location"], '"', '"');
 
-                // Only look for 'breakpoint' type break points.
-                if (type_text != "breakpoint") {
+                // Only look for 'breakpoint' or "hw breakpoint" type break points. "hw breakpoint" is specifically for openocd
+                if (type_text != "breakpoint" && type_text != "hw breakpoint") {
                     continue;
                 }
 
