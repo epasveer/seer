@@ -19,7 +19,13 @@
 #include <QtCore/QJsonValue>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QDebug>
+#include <QtWidgets/QCheckBox>
 #include <QtGlobal>
+#include <QScrollArea>
+#include <QFormLayout>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <tuple>
 
 SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
@@ -53,6 +59,22 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
     runModeTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
+    exceptionLevelComboBox->addItem(QString("EL1H"));
+    exceptionLevelComboBox->addItem(QString("EL3H"));
+    exceptionLevelComboBox->addItem(QString("N-EL1H"));
+    exceptionLevelComboBox->addItem(QString("N-EL2H"));
+    exceptionLevelComboBox->addItem(QString("EL1H / EL3H"));
+    exceptionLevelComboBox->addItem(QString("N-EL1H / N-EL2H"));
+    exceptionLevelComboBox->addItem(QString("off"));
+    exceptionLevelComboBox->setCurrentIndex(0);
+    tempFuncLineEdit->setEnabled(false);
+    exceptionLevelComboBox->setEnabled(false);
+    absolutePathLineEdit->setEnabled(false);
+    dockerPathLineEdit->setEnabled(false);
+
+    _OpenOCDSymbolWidgetManager = new OpenOCDSymbolWidgetManager(this);
+    openOCDTabWidget->addTab(_OpenOCDSymbolWidgetManager, "Symbol Files");
+
     // Connect things.
     QObject::connect(executableNameToolButton,             &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableNameToolButton);
     QObject::connect(executableSymbolNameToolButton,       &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableSymbolNameToolButton);
@@ -75,7 +97,15 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(buttonBox,                            &QDialogButtonBox::accepted,         this, &SeerDebugDialog::handleLaunchButtonClicked);
     QObject::connect(buttonBox,                            &QDialogButtonBox::clicked,          this, &SeerDebugDialog::handleResetButtonClicked);
 
-
+    // OpenOCD
+    QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDDefaultButtonClicked);
+    QObject::connect(openOCDTabWidget,                     &QTabWidget::currentChanged,         this, &SeerDebugDialog::handleOpenOCDTabChanged);
+    QObject::connect(executableOpenOCDButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableOpenOCDButtonClicked);
+    QObject::connect(dockerCheckBox,                       &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDDockerCheckboxClicked);
+    QObject::connect(absolutePathButton,                   &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDBuildFolderPathButton);
+    QObject::connect(openOCDMainHelpButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainHelpButtonClicked);
+    QObject::connect(tempFuncCheckBox,                     &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDTempFuncCheckBoxClicked);
+    QObject::connect(stopExceptionLebelCheckBox,           &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDStopExceptionLebelCheckBoxClicked);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -206,6 +236,10 @@ QString SeerDebugDialog::breakpointMode () const {
         return "infunction";
     }else if (breakpointAtSourceRadioButton->isChecked()) {
         return "insource";
+    }
+    // openocd is selected
+    if (runModeTabWidget->currentIndex() == 5) {
+        return "hardware";
     }
 
     return "inmain";
@@ -360,7 +394,12 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
         runModeTabWidget->setCurrentIndex(4);
 
-    }else if (mode == "") {
+    } else if (mode == "openocd") {
+
+        runModeTabWidget->setCurrentIndex(5);
+
+    }
+    else if (mode == "") {
 
         runModeTabWidget->setCurrentIndex(0);
 
@@ -405,6 +444,10 @@ QString SeerDebugDialog::launchMode () const {
     }else if (runModeTabWidget->currentIndex() == 4) {
 
         return "corefile";
+
+    } else if (runModeTabWidget->currentIndex() == 5) {
+
+        return "openocd";
     }
 
     qWarning() << "Unknown launch mode of:" << runModeTabWidget->currentIndex();
@@ -683,6 +726,8 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     QJsonObject   connectModeJson;
     QJsonObject   rrModeJson;
     QJsonObject   corefileModeJson;
+    // openocd mode json
+    QJsonObject   openocdModeJson;
     QJsonArray    preConnectCommands;
     QJsonArray    postConnectCommands;
 
@@ -699,6 +744,8 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     connectModeJson     = seerProjectJson.value("connectmode").toObject();
     rrModeJson          = seerProjectJson.value("rrmode").toObject();
     corefileModeJson    = seerProjectJson.value("corefilemode").toObject();
+    // openocd mode
+    openocdModeJson     = seerProjectJson.value("openocdmode").toObject();
     preConnectCommands  = seerProjectJson.value("pregdbcommands").toArray();
     postConnectCommands = seerProjectJson.value("postgdbcommands").toArray();
 
@@ -827,6 +874,65 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
         setLaunchMode("corefile");
     }
 
+    // Load OPENOCD project
+    if (openocdModeJson.isEmpty() == false) {
+
+        executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
+        openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
+        openOcdGdbMultiarchLineEdit             ->setText(openocdModeJson["gdbMultiarchExe"].toString());
+        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
+        openOCD_Telnet_Port_LineEdit            ->setText(openocdModeJson["telnetPort"].toString());
+        openOCDGdbCommandLineEdit               ->setText(openocdModeJson["gdbMultiarchCommand"].toString());
+        openOCDTargetLineEdit                   ->setText(openocdModeJson["openOCDTarget"].toString());
+        dockerCheckBox                          ->setChecked(openocdModeJson["dockerCheckBox"].toBool());
+        absolutePathLineEdit                    ->setText(openocdModeJson["absolutePathLineEdit"].toString());
+        dockerPathLineEdit                      ->setText(openocdModeJson["dockerPathLineEdit"].toString());
+        tempFuncCheckBox                        ->setChecked(openocdModeJson["tempFuncCheckBox"].toBool());
+        tempFuncLineEdit                        ->setText(openocdModeJson["tempFuncLineEdit"].toString());
+        stopExceptionLebelCheckBox              ->setChecked(openocdModeJson["stopExceptionLebelCheckBox"].toBool());
+        exceptionLevelComboBox                  ->setCurrentText(openocdModeJson["exceptionLevelComboBox"].toString());
+
+        if (tempFuncCheckBox->isChecked())
+            tempFuncLineEdit->setEnabled(true);
+        else
+            tempFuncLineEdit->setEnabled(false);
+
+        if (stopExceptionLebelCheckBox->isChecked())
+            exceptionLevelComboBox->setEnabled(true);
+        else
+            exceptionLevelComboBox->setEnabled(false);
+
+        if (dockerCheckBox->isChecked())
+        {
+            absolutePathLineEdit->setEnabled(true);
+            dockerPathLineEdit->setEnabled(true);
+        }
+        else
+        {
+            absolutePathLineEdit->setEnabled(false);
+            dockerPathLineEdit->setEnabled(false);
+        }
+
+        // Load symbol files
+        _symbolFiles.clear();
+        while (_OpenOCDSymbolWidgetManager->countSymbolFiles() > 1)
+            _OpenOCDSymbolWidgetManager->deleteGroupBox();
+        _OpenOCDSymbolWidgetManager->deleteGroupBox();
+        QJsonArray array = openocdModeJson["symbolFiles"].toArray();
+        for (const QJsonValue &value : array) {
+            QJsonObject obj = value.toObject();
+            QMap<QString, std::tuple<QString, bool, QString>> tmpSymbolFile;
+            tmpSymbolFile[obj["symbolFile"].toString()] = std::make_tuple(
+                obj["sourcePath"].toString(),
+                obj["enableLoadAddress"].toBool(),
+                obj["loadAddress"].toString()
+            );
+            _OpenOCDSymbolWidgetManager->addGroupBox(tmpSymbolFile);
+        }
+
+        setLaunchMode("openocd");
+    }
+
     return true;
 }
 
@@ -841,6 +947,148 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
 
     // Make the json document for the debug dialog settings.
     QJsonDocument jsonDoc = makeJsonDoc();
+    QJsonObject   rootJson;
+    QJsonObject   seerProjectJson;
+    QJsonArray    preConnectCommands;
+    QJsonArray    postConnectCommands;
+
+    // Save pre/post gdb commands.
+    QStringList   preCommands  = preGdbCommands();
+    QStringList   postCommands = postGdbCommands();
+
+    for (const auto& i : preCommands) {
+        preConnectCommands.push_back(QJsonValue(i));
+    }
+
+    for (const auto& i : postCommands) {
+        postConnectCommands.push_back(QJsonValue(i));
+    }
+
+    seerProjectJson["executable"]        = QJsonValue(executableNameLineEdit->text());
+    seerProjectJson["symbolfile"]        = QJsonValue(executableSymbolNameLineEdit->text());
+    seerProjectJson["workingdirectory"]  = QJsonValue(executableWorkingDirectoryLineEdit->text());
+    seerProjectJson["pregdbcommands"]    = preConnectCommands;
+    seerProjectJson["postgdbcommands"]   = postConnectCommands;
+
+    // Save RUN project.
+    if (launchMode() == "run") {
+
+        QJsonObject modeJson;
+
+        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
+        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+
+        seerProjectJson["runmode"]        = modeJson;
+    }
+
+    // Save START project.
+    if (launchMode() == "start") {
+
+        QJsonObject modeJson;
+
+        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
+        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+
+        seerProjectJson["startmode"]      = modeJson;
+    }
+
+    // Save ATTACH project.
+    if (launchMode() == "attach") {
+
+        QJsonObject modeJson;
+
+        modeJson["pid"]               = attachProgramPidLineEdit->text();
+
+        seerProjectJson["attachmode"] = modeJson;
+    }
+
+    // Save CONNECT project.
+    if (launchMode() == "connect") {
+
+        QJsonObject modeJson;
+
+        modeJson["gdbserver"]          = connectProgramHostPortLineEdit->text();
+        modeJson["targettype"]         = connectRemoteTargetTypeCombo->currentText();
+        modeJson["gdbserverdebug"]     = connectGdbserverDebugCheckBox->isChecked();
+
+        seerProjectJson["connectmode"] = modeJson;
+    }
+
+    // Save RR project.
+    if (launchMode() == "rr") {
+
+        QJsonObject modeJson;
+
+        modeJson["tracedirectory"]     = rrTraceDirectoryLineEdit->text();
+        modeJson["breakpointsfile"]    = rrLoadBreakpointsFilenameLineEdit->text();
+
+        seerProjectJson["rrmode"]      = modeJson;
+    }
+
+    // Save COREFILE project.
+    if (launchMode() == "corefile") {
+
+        QJsonObject modeJson;
+
+        modeJson["corefile"]            = loadCoreFilenameLineEdit->text();
+
+        seerProjectJson["corefilemode"] = modeJson;
+    }
+
+    // Save OpenOCD project.
+    if (launchMode() == "openocd") {
+        QJsonObject modeJson;
+
+        modeJson["openocdExe"]                  = executableOpenOCDPathLineEdit->text();
+        modeJson["openocdCommand"]              = openOCDCommandLineEdit->toPlainText();
+        modeJson["gdbMultiarchExe"]             = openOcdGdbMultiarchLineEdit->text();
+        modeJson["gdbPort"]                     = openOCD_GDB_Port_LineEdit->text();
+        modeJson["telnetPort"]                  = openOCD_Telnet_Port_LineEdit->text();
+        modeJson["gdbMultiarchCommand"]         = openOCDGdbCommandLineEdit->text();
+        modeJson["openOCDTarget"]               = openOCDTargetLineEdit->text();
+        modeJson["dockerCheckBox"]              = dockerCheckBox->isChecked();
+        modeJson["absolutePathLineEdit"]        = absolutePathLineEdit->text();
+        modeJson["dockerPathLineEdit"]          = dockerPathLineEdit->text();
+        modeJson["tempFuncCheckBox"]            = tempFuncCheckBox->isChecked();
+        modeJson["tempFuncLineEdit"]            = tempFuncLineEdit->text();
+        modeJson["stopExceptionLebelCheckBox"]  = stopExceptionLebelCheckBox->isChecked();
+        modeJson["exceptionLevelComboBox"]      = exceptionLevelComboBox->currentText();
+        modeJson["numberSymbolFile"]            = _OpenOCDSymbolWidgetManager->countSymbolFiles();
+        QJsonArray symbolFileArray;
+        const QMap<QString, std::tuple<QString, bool, QString>> symbolFiles = _OpenOCDSymbolWidgetManager->symbolFiles();
+
+        int index = 0;
+        for (auto it = symbolFiles.constBegin(); it != symbolFiles.constEnd(); ++it, ++index) {
+            const auto &tuple = it.value();
+            QJsonObject entry;
+            entry["index"] = index;
+            entry["symbolFile"]         = it.key();
+            entry["sourcePath"]         = std::get<0>(tuple);       // read Source code path
+            entry["enableLoadAddress"]  = std::get<1>(tuple);       // load address enabled
+            entry["loadAddress"]        = std::get<2>(tuple);       // load address
+            symbolFileArray.append(entry);
+        }
+        modeJson["symbolFiles"] = symbolFileArray;
+        seerProjectJson["openocdmode"] = modeJson;
+    }
+
+    rootJson["seerproject"] = seerProjectJson;
+
+    jsonDoc.setObject(rootJson);
 
     // Write the JSON document to the project file.
     QFile saveFile(fname);
@@ -883,6 +1131,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"run\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"run\"");
     }
@@ -895,6 +1145,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"attach\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"attach\"");
     }
@@ -907,6 +1159,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableSymbolNameToolButton->setEnabled(true);
         executableWorkingDirectoryLineEdit->setEnabled(true);
         executableWorkingDirectoryToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"connect\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"connect\"");
     }
@@ -915,6 +1169,8 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
     if (id == 3) {
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before \"RR trace-directory load\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after \"RR trace-directory load\"");
 
@@ -949,8 +1205,21 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         executableNameToolButton->setEnabled(true);
         executableSymbolNameLineEdit->setEnabled(true);
         executableSymbolNameToolButton->setEnabled(true);
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(true);
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
+    }
+
+    // ID = 5   OpenOCD
+    if (id == 5) {
+        if (openOCDTabWidget->currentIndex() == 1) {
+            postCommandsPlainTextEdit->setVisible(true);
+            preCommandsPlainTextEdit->setVisible(false);
+        } else {
+            postCommandsPlainTextEdit->setVisible(false);
+            preCommandsPlainTextEdit->setVisible(false);
+        }
     }
 }
 
@@ -978,6 +1247,7 @@ void SeerDebugDialog::handleHelpModeToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
     help->loadFile(":/seer/resources/help/DebugModes.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -1073,3 +1343,507 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
+/***********************************************************************************************************************
+ * OpenOCD getter and setter from LineEdit                                                                             *
+ **********************************************************************************************************************/
+const QString SeerDebugDialog::openOCDExePath() {
+    return executableOpenOCDPathLineEdit->text();
+}
+
+void SeerDebugDialog::setOpenOCDExePath (const QString& path) {
+    executableOpenOCDPathLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::gdbPort() {
+    return openOCD_GDB_Port_LineEdit->text();
+}
+
+void SeerDebugDialog::setGdbPort (const QString& port){
+    openOCD_GDB_Port_LineEdit->setText(port);
+}
+
+const QString SeerDebugDialog::telnetPort() {
+    return openOCD_Telnet_Port_LineEdit->text();
+}
+
+void SeerDebugDialog::setTelnetPort (const QString& port){
+    openOCD_Telnet_Port_LineEdit->setText(port);
+}
+
+const QString SeerDebugDialog::openOCDCommand() {
+    QString tmp = openOCDCommandLineEdit->toPlainText();
+    tmp.replace("\n", " ");
+    return tmp;
+}
+
+void SeerDebugDialog::setOpenOCDCommand (const QString& command){
+    openOCDCommandLineEdit->setPlainText(command);
+}
+
+// ::GDB Multiarch
+const QString SeerDebugDialog::gdbMultiarchExePath () {
+    return openOcdGdbMultiarchLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchExePath (const QString& path) {
+    openOcdGdbMultiarchLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::gdbMultiarchCommand () {
+    return openOCDGdbCommandLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchCommand (const QString& command) {
+    openOCDGdbCommandLineEdit->setText(command);
+}
+
+bool SeerDebugDialog::isGdbMultiarchIsStopAtTempFunc () {
+    return tempFuncCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setGdbMultiarchStopAtTempFunc (bool check) {
+    tempFuncCheckBox->setChecked(check);
+    handleOpenOCDTempFuncCheckBoxClicked();
+}
+
+const QString SeerDebugDialog::gdbMultiarchStopAtFunc () {
+    return tempFuncLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchStopAtFunc (const QString& func) {
+    tempFuncLineEdit->setText(func);
+}
+
+bool SeerDebugDialog::isGdbMultiarchStopAtException() {
+    return stopExceptionLebelCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setGdbMultiarchStopAtExeption (bool check) {
+    stopExceptionLebelCheckBox->setChecked(check);
+    handleOpenOCDStopExceptionLebelCheckBoxClicked();
+}
+
+const QString SeerDebugDialog::gdbMultiarchExeptionLevelToStop() {
+    return exceptionLevelComboBox->currentText();
+}
+
+void SeerDebugDialog::setGdbMultiarchExeptionLevelToStop (const QString& level) {
+    exceptionLevelComboBox->setCurrentText(level);
+}
+
+const QString SeerDebugDialog::openOCDTarget ()
+{
+    return openOCDTargetLineEdit->text();
+}
+
+void SeerDebugDialog::setOpenOCDTarget (const QString& target)
+{
+    openOCDTargetLineEdit->setText(target);
+}
+// :: Docker
+bool SeerDebugDialog::isBuiltInDocker()
+{
+    return dockerCheckBox->isChecked();
+}
+
+void SeerDebugDialog::setBuiltInDocker(bool check)
+{
+    dockerCheckBox->setChecked(check);
+    handleOpenOCDDockerCheckboxClicked();
+}
+
+const QString SeerDebugDialog::absoluteBuildFolderPath()
+{
+    return absolutePathLineEdit->text();
+}
+
+void SeerDebugDialog::setAbsoluteBuildFolderPath(const QString& path)
+{
+    return absolutePathLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::dockerBuildFolderPath()
+{
+    return dockerPathLineEdit->text();
+}
+
+void SeerDebugDialog::setDockerBuildFolderPath(const QString& path)
+{
+    return dockerPathLineEdit->setText(path);
+}
+
+// :: Symbol Files
+OpenOCDSymbolWidgetManager* SeerDebugDialog::symbolWidgetManager()
+{
+    return _OpenOCDSymbolWidgetManager;
+}
+
+void SeerDebugDialog::setSymbolFiles (const QMap<QString, std::tuple<QString, bool, QString>>& symbolFiles)
+{
+    symbolWidgetManager()->addGroupBox(symbolFiles);
+}
+/***********************************************************************************************************************
+ * OpenOCD Slots                                                                                                       *
+ **********************************************************************************************************************/
+// Do this when OpenOCD Tab -> Main -> Default Button clicked
+void SeerDebugDialog::handleOpenOCDDefaultButtonClicked() {
+    QString defaultOpenOCDPath = "/usr/local/bin/openocd";
+    QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
+    QString defaultGDBPort = "3333";
+    QString defaultTelnetPort = "4444";
+    executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
+    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
+    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
+    openOCD_Telnet_Port_LineEdit->setText(defaultTelnetPort);
+}
+// When OpenOCD Tab changed
+void SeerDebugDialog::handleOpenOCDTabChanged(int id)
+{
+    // When gdb Tab is selected, hide pre/post gdb commands
+    if (id == 1)
+    {
+        postCommandsPlainTextEdit->setVisible(true);
+        preCommandsPlainTextEdit->setVisible(false);
+    }
+    else        // Every other tab selected, don't show pre/post gdb commands
+    {
+        postCommandsPlainTextEdit->setVisible(false);
+        preCommandsPlainTextEdit->setVisible(false);
+    }
+    
+}
+
+void SeerDebugDialog::handleExecutableOpenOCDButtonClicked () {
+    QString name = QFileDialog::getOpenFileName(this, "Select OpenOCD executable.", openOCDExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setOpenOCDExePath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDDockerCheckboxClicked()
+{
+    if (dockerCheckBox->isChecked())
+    {
+        absolutePathLineEdit->setEnabled(true);
+        dockerPathLineEdit->setEnabled(true);
+    }
+    else
+    {
+        absolutePathLineEdit->setEnabled(false);
+        dockerPathLineEdit->setEnabled(false);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDBuildFolderPathButton () {
+    QString name = QFileDialog::getExistingDirectory(this, "Select build folder.", absoluteBuildFolderPath(), \
+                                                        QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setAbsoluteBuildFolderPath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDMainHelpButtonClicked()
+{
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
+    help->loadFile(":/seer/resources/help/OpenOCDHelp.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
+    help->exec();
+}
+
+void SeerDebugDialog::handleOpenOCDTempFuncCheckBoxClicked()
+{
+    if (tempFuncCheckBox->isChecked())
+    {
+        tempFuncLineEdit->setEnabled(true);
+    }
+    else
+    {
+        tempFuncLineEdit->setEnabled(false);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDStopExceptionLebelCheckBoxClicked()
+{
+    if (stopExceptionLebelCheckBox->isChecked())
+    {
+        exceptionLevelComboBox->setEnabled(true);
+    }
+    else
+    {
+        exceptionLevelComboBox->setEnabled(false);
+    }
+}
+
+/***********************************************************************************************************************
+ * OpenOCD Symbol Widget, for single symbol file widget                                                                *
+ **********************************************************************************************************************/
+OpenOCDSymbolFileWidget::OpenOCDSymbolFileWidget(QWidget *parent)
+    : QWidget(parent)
+{
+    auto *mainLayout = new QVBoxLayout(this);
+    QFormLayout *formLayout = new QFormLayout;
+
+    // Row 1: Symbol file
+    QWidget *rowWidget1 = new QWidget(this);
+    QHBoxLayout *rowLayout1 = new QHBoxLayout(rowWidget1);
+    rowLayout1->setContentsMargins(0, 0, 0, 0);
+
+    _symbolLineEdit = new QLineEdit(this);
+    QPushButton *_symbolToolButton = new QPushButton("", this);
+    _symbolToolButton->setFixedSize(24, 23);
+    _symbolToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
+
+    rowLayout1->addWidget(_symbolLineEdit);
+    rowLayout1->addWidget(_symbolToolButton);
+    formLayout->addRow(new QLabel("Symbol file"), rowWidget1);
+
+    // Row 2: Source code
+    QWidget *rowWidget2 = new QWidget(this);
+    QHBoxLayout *rowLayout2 = new QHBoxLayout(rowWidget2);
+    rowLayout2->setContentsMargins(0, 0, 0, 0);
+
+    _sourceLineEdit = new QLineEdit(this);
+    QPushButton *_sourceToolButton = new QPushButton("", this);
+    _sourceToolButton->setFixedSize(24, 23);
+    _sourceToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
+
+    rowLayout2->addWidget(_sourceLineEdit);
+    rowLayout2->addWidget(_sourceToolButton);
+    formLayout->addRow(new QLabel("Source code"), rowWidget2);
+
+    // Row 3: Checkbox + LineEdit
+    QWidget *rowWidget3 = new QWidget(this);
+    QHBoxLayout *rowLayout3 = new QHBoxLayout(rowWidget3);
+    rowLayout3->setContentsMargins(0, 0, 0, 0);
+
+    _loadAddressCheckBox = new QCheckBox("Load address", this);
+    _loadAddressLineEdit = new QLineEdit(this);
+    _loadAddressLineEdit->setPlaceholderText("Enter value (Hex)");
+    _loadAddressLineEdit->setEnabled(false);
+
+    rowLayout3->addWidget(_loadAddressCheckBox);
+    rowLayout3->addWidget(_loadAddressLineEdit);
+    formLayout->addRow(rowWidget3);
+
+    mainLayout->addLayout(formLayout);
+
+    connect(_symbolToolButton,      &QPushButton::clicked,  this, &OpenOCDSymbolFileWidget::handleOpenOCDSymbolPathButtonClicked);
+    connect(_sourceToolButton,      &QPushButton::clicked,  this, &OpenOCDSymbolFileWidget::handleOpenOCDDirPathButtonClicked);
+    connect(_loadAddressCheckBox,   &QCheckBox::clicked,    this, &OpenOCDSymbolFileWidget::handleOpenOCDLoadAddressCheckBoxClicked);
+}
+
+
+OpenOCDSymbolFileWidget::~OpenOCDSymbolFileWidget() {
+}
+
+void OpenOCDSymbolFileWidget::handleOpenOCDSymbolPathButtonClicked () {
+    QString name = QFileDialog::getOpenFileName(this, "Select Symbol File.", _symbolLineEdit->text(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        _symbolPath = name;
+        _symbolLineEdit->setText(name);
+    }
+}
+
+void OpenOCDSymbolFileWidget::handleOpenOCDDirPathButtonClicked () {
+    QString name = QFileDialog::getExistingDirectory(this, "Select Source Code Directory.", _sourceLineEdit->text(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        _sourcePath = name;
+        _sourceLineEdit->setText(name);
+    }
+}
+
+void OpenOCDSymbolFileWidget::handleOpenOCDLoadAddressCheckBoxClicked () {
+
+    if (_loadAddressCheckBox->isChecked())
+    {
+        _loadAddressLineEdit->setEnabled(true);
+    }
+    else
+    {
+        _loadAddressLineEdit->setEnabled(false);
+    }
+}
+
+const QString OpenOCDSymbolFileWidget::symbolPath () {
+    return _symbolLineEdit->text();
+}
+
+const QString OpenOCDSymbolFileWidget::sourcePath () {
+    return _sourceLineEdit->text();
+}
+
+void OpenOCDSymbolFileWidget::setSymbolPath (const QString& path) {
+    _symbolPath = path;
+    _symbolLineEdit->setText(path);
+}
+
+void OpenOCDSymbolFileWidget::setSourcePath (const QString& path) {
+    _sourcePath = path;
+    _sourceLineEdit->setText(path);
+}
+
+bool OpenOCDSymbolFileWidget::isLoadAddressEnabled()
+{
+    if (_loadAddressCheckBox->isChecked())
+        return true;
+    else
+        return false;
+}
+
+void OpenOCDSymbolFileWidget::setEnableLoadAddress (bool enable)
+{
+    _loadAddressCheckBox->setChecked(enable);
+    if (enable)
+        _loadAddressLineEdit->setEnabled(true);
+    else
+        _loadAddressLineEdit->setEnabled(false);
+}
+
+const QString OpenOCDSymbolFileWidget::loadAddress()
+{
+    return _loadAddressLineEdit->text();
+}
+
+void OpenOCDSymbolFileWidget::setLoadAddress (const QString& address)
+{
+    _loadAddressLineEdit->setText(address);
+}
+/***********************************************************************************************************************
+ * OpenOCD -> Symbol file widget manager, used for handling multiple symbol files                                      *
+ **********************************************************************************************************************/
+OpenOCDSymbolWidgetManager::OpenOCDSymbolWidgetManager (QWidget* parent) : QWidget(parent) {
+    auto *mainLayout = new QVBoxLayout(this);
+
+    // --- Scrollable area ---
+    _scrollWidget = new QWidget(this);
+    _scrollLayout = new QVBoxLayout(_scrollWidget);
+    _scrollLayout->setAlignment(Qt::AlignTop);
+
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(_scrollWidget);
+
+    mainLayout->addWidget(scrollArea);
+
+    // --- Fixed buttons at bottom ---
+    auto *buttonLayout = new QHBoxLayout;
+    QPushButton *moreButton = new QPushButton("More", this);
+    QPushButton *deleteButton = new QPushButton("Delete", this);
+    buttonLayout->addStretch();
+    buttonLayout->addWidget(moreButton);
+    buttonLayout->addWidget(deleteButton);
+    buttonLayout->addStretch();
+    mainLayout->addLayout(buttonLayout);
+
+    connect(moreButton,         &QPushButton::clicked,  this,   &OpenOCDSymbolWidgetManager::addEmptyGroupBox);
+    connect(deleteButton,       &QPushButton::clicked,  this,   &OpenOCDSymbolWidgetManager::deleteGroupBox);
+
+    // add the first group box
+    addEmptyGroupBox();
+    this->show();
+}
+
+OpenOCDSymbolWidgetManager::~OpenOCDSymbolWidgetManager() {
+
+}
+
+void OpenOCDSymbolWidgetManager::addEmptyGroupBox()
+{
+    if (_groupBoxes.size() >= 1)
+    {
+        OpenOCDSymbolFileWidget *lastBox = _groupBoxes.last();
+        if (lastBox->symbolPath() == "")
+            return;
+        if (lastBox->sourcePath() == "")
+            return;
+    }
+    OpenOCDSymbolFileWidget *box = new OpenOCDSymbolFileWidget(this);
+    // Form layout for labels + line edits
+    _scrollLayout->addWidget(box);
+    _groupBoxes.append(box);
+}
+
+void OpenOCDSymbolWidgetManager::addGroupBox(const QMap<QString, std::tuple<QString, bool, QString>> &box)
+{
+    if (box.isEmpty())
+        return;
+
+    for (auto it = box.constBegin(); it != box.constEnd(); ++it)
+    {
+        // Extract key and tuple
+        const QString &symbolFile       = it.key();
+        const auto &tuple               = it.value();
+        const QString sourcePath        = std::get<0>(tuple);
+        const bool enableLoadAddress    = std::get<1>(tuple);
+        const QString loadAddress       = std::get<2>(tuple);
+
+        // Reuse last box if it's empty
+        if (!_groupBoxes.isEmpty()) {
+            OpenOCDSymbolFileWidget *lastBox = _groupBoxes.last();
+            if (lastBox->symbolPath().isEmpty() && lastBox->sourcePath().isEmpty()) {
+                lastBox->setSymbolPath(symbolFile);
+                lastBox->setSourcePath(sourcePath);
+                lastBox->setEnableLoadAddress(enableLoadAddress);
+                lastBox->setLoadAddress(loadAddress);
+                continue;
+            }
+        }
+
+        // Otherwise create new widget
+        OpenOCDSymbolFileWidget *widget = new OpenOCDSymbolFileWidget(this);
+        _scrollLayout->addWidget(widget);
+        _groupBoxes.append(widget);
+
+        widget->setSymbolPath(symbolFile);
+        widget->setSourcePath(sourcePath);
+        widget->setEnableLoadAddress(enableLoadAddress);
+        widget->setLoadAddress(loadAddress);
+    }
+}
+
+void OpenOCDSymbolWidgetManager::deleteGroupBox()
+{
+    OpenOCDSymbolFileWidget *lastBox = _groupBoxes.last();
+    if (_groupBoxes.size() == 1)
+    {
+        lastBox->setSymbolPath("");
+        lastBox->setSourcePath("");
+        lastBox->setEnableLoadAddress(false);
+        lastBox->setLoadAddress("");
+        return;
+    }
+    OpenOCDSymbolFileWidget *takelastBox = _groupBoxes.takeLast();
+    _scrollLayout->removeWidget(takelastBox);
+    delete takelastBox;
+}
+
+
+const QMap<QString, std::tuple<QString, bool, QString>> OpenOCDSymbolWidgetManager::symbolFiles()
+{
+    // clear previous entries
+    _symbolFiles.clear();
+
+    for (auto it = _groupBoxes.begin(); it != _groupBoxes.end(); ++it) {
+        OpenOCDSymbolFileWidget *box = *it;
+
+        if (box->symbolPath().isEmpty() || box->sourcePath().isEmpty())
+            continue;
+
+        _symbolFiles.insert(
+            box->symbolPath(),
+            std::make_tuple(box->sourcePath(), box->isLoadAddressEnabled(), box->loadAddress()
+            )
+        );
+    }
+
+    return _symbolFiles;
+}
+
+
+int OpenOCDSymbolWidgetManager::countSymbolFiles() {
+    return _groupBoxes.size();
+}

@@ -18,6 +18,11 @@
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
 #include <QtWidgets/QWidget>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+#include <QMap>
+#include <tuple>
 
 #include "ui_SeerGdbWidget.h"
 
@@ -218,6 +223,74 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                clearBackupLaunchMode               ();
         const QString&                      backupLaunchMode                    () const;
 
+        // OpenOCD
+        SeerOpenOCDWidget*                  openOCDWidgetInstance               ();
+        // ::Main
+        const QString&                      openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
+        const QString&                      openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        // ::GDB Multiarch
+        const QString&                      gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString&                      gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString&                      telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        const QString&                      gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        bool                                isGdbMultiarchIsStopAtTempFunc        ();
+        void                                setGdbMultiarchStopAtTempFunc     (bool check);
+        const QString                       gdbMultiarchStopAtFunc              ();
+        void                                setGdbMultiarchStopAtFunc           (const QString& func);
+        bool                                isGdbMultiarchStopAtException       ();
+        void                                setGdbMultiarchStopAtExeption  (bool check);
+        const QString                       gdbMultiarchExeptionLevelToStop     ();
+        void                                setGdbMultiarchExeptionLevelToStop  (const QString& level);
+        const QString                       openOCDTarget                       ();
+        void                                setOpenOCDTarget                    (const QString& target);
+        // ::Docker
+        bool                                isBuiltInDocker                     ();
+        void                                setBuiltInDocker                    (bool check);
+        const QString                       absoluteBuildFolderPath             ();
+        void                                setAbsoluteBuildFolderPath          (const QString& path);
+        const QString                       dockerBuildFolderPath               ();
+        void                                setDockerBuildFolderPath            (const QString& path);
+
+        // ::Symbol Files
+        void                                setSymbolFiles                      (const QMap<QString, std::tuple<QString, bool, QString>>& symbolFiles);
+        const QMap<QString, std::tuple<QString, bool, QString>>     symbolFiles (void);
+        void                                setSeekIdentifierFlag               (bool flag);
+        bool                                isSeekIdentifier                    ();
+
+        void                                setGdbMultiarchPid                  (int pid);
+        void                                setNewHardwareBreakpointFlag        (bool flag);
+        bool                                isNewHardwareBreakpointFlag         ();
+        void                                setDebugOnInitFlag                  (bool flag);
+        bool                                isDebugOnInit                       ();
+        void                                setGdbMultiarchRunningState         (bool flag);
+        bool                                gdbMultiarchRunningState            ();
+        QProcess*                           openocdProcess                      ();
+        // handle multithread, for openocd debug on init feature
+        void                                debugOnInitHandler                  ();
+        void                                traceIdentifierHandler              (const QString& identifier);
+        // Sync function, only for debug on init
+        void                                handleSyncGdbInterruptSIGINT        ();
+        void                                handleSyncGdbGenericpointList       ();
+        void                                handleSyncGdbContinue               ();
+        void                                handleSyncBreakInsert               (QString bp);
+        void                                handleSyncBreakEnable               (QString bp);
+        void                                handleSyncBreakDisable              (QString bp);
+        void                                handleSyncManualGdbCommand          (QString expression);
+        void                                handleSyncSendToSerial              (QString path, QString expression);
+        void                                handleSyncRefreshSource             ();
+        // Handler for Sync function
+        void                                handleSyncGdbFindVariableIdentifier (const QString& identifier);
+        void                                handleSyncGdbFindFunctionIdentifier (const QString& identifier);
+        void                                handleSyncGdbFindTypeIdentifier     (const QString& identifier);
+        void                                handleSendToSerial                  (QString path, QString expression);
+        void                                handleSeekIdentifier                (const QString& identifier);
+
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
         void                                handleLogsTabChanged                (int index);
@@ -232,6 +305,10 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbConnectExecutable          (bool loadSessionBreakpoints);
         void                                handleGdbRRExecutable               (bool loadSessionBreakpoints);
         void                                handleGdbCoreFileExecutable         ();
+        // openocd gdb-multiarch support
+        void                                handleGdbMultiarchOpenOCDExecutable ();
+        void                                handleOpenOCDMainHelpButtonClicked  ();
+        void                                handleDebugKernelModule             ();
         void                                handleGdbTerminateExecutable        (bool confirm=true);
         void                                handleGdbShutdown                   ();
         void                                handleGdbRunToLine                  (QString fullname, int lineno);
@@ -377,6 +454,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleConsoleNewTextAdded           ();
         void                                handleConsoleNewTextViewed          ();
         void                                handleAboutToQuit                   ();
+        void                                handleOpenOCDStartFailed            ();
+
+        // For handling tracing functions, variables and types
+        void                                handleSyncSeekVariableIdentifier    (const QString& identifier);
+        void                                handleSyncSeekFunctionIdentifier    (const QString& identifier);
+        void                                handleSyncSeekTypeIdentifier        (const QString& identifier);
+
+        // Handling exception level changed
+        void                                handleExceptionLevelChanged         (const QString& exceptionLevel);
 
     signals:
         void                                stoppingPointReached                ();
@@ -385,6 +471,21 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                assemblyConfigChanged               ();
         void                                recordSettingsChanged               ();
         void                                stateChanged                        ();
+        //openocd, for debugging gdb log
+        void                                allTextOutput                       (const QString& text);
+        // For Debug on Init
+        void                                debugOnInitContinue                 ();
+        void                                requestContinue                     ();
+        void                                requestBreakList                    ();
+        void                                requestBreakInsert                  (QString bp);
+        void                                requestBreakEnable                  (QString bp);
+        void                                requestBreakDisable                 (QString bp);
+        void                                requestGdbCommand                   (QString expression);
+        void                                requestSendToSerial                 (QString path, QString expression);
+        void                                requestRefreshSource                ();
+        void                                requestSeekVariableIdentifier       (const QString& expression);
+        void                                requestSeekFunctionIdentifier       (const QString& expression);
+        void                                requestSeekTypeIdentifier           (const QString& expression);
 
     protected:
         void                                writeLogsSettings                   ();
@@ -396,6 +497,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         bool                                startGdb                            ();
         bool                                startGdbRR                          ();
+
+        // For openOCD gdb-multiarch support
         void                                killGdb                             ();
         void                                createConsole                       ();
         void                                deleteConsole                       ();
@@ -436,6 +539,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointFunctionName;
         QString                             _executableBreakpointSourceName;
         int                                 _executablePid;
+        int                                 _gdbmultiarchPid;               // specifically for gdbmultiarch
         QString                             _executableConnectHostPort;
         QString                             _executableRRTraceDirectory;
         QString                             _executableCoreFilename;
@@ -461,6 +565,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
         SeerGdbLogWidget*                   _gdbOutputLog;
         SeerSeerLogWidget*                  _seerOutputLog;
+        
 
         GdbMonitor*                         _gdbMonitor;
         QProcess*                           _gdbProcess;
@@ -469,5 +574,71 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QVector<QString>                    _dataExpressionName;
 
         QStringList                         _ignoreFilePatterns;
-};
 
+        // openOCD variables
+        // OpenOCD
+        QString                             _openOCDExePath;
+        QString                             _openOCDCommands;
+        // GDB Multiarch
+        QString                             _gdbMultiarchExePath;
+        QString                             _GDBPort;
+        QString                             _TelnetPort;
+        QString                             _gdbMultiarchCommands;
+        QString                             _gdbMultiarchProgram;
+        QString                             _gdbMultiarchArguments;
+        // Docker
+        bool                                _isBuildInDocker;
+        QString                             _absoluteBuildPath;
+        QString                             _dockerBuildPath;
+        // Symbol Files
+        QMap<QString, std::tuple<QString, bool, QString>>              _symbolFiles;
+        // gdb multiarch variables
+        bool                                _newHBreakFlag;
+        bool                                _isTargetRunning;               // hold target state: running / halted
+        bool                                _debugOnInitFlag;               // flag handling openocd debug on init
+        bool                                _seekingIndentifierFlag;        // flag for handling seek identifier
+        bool                                _isStopAtTempFunc;
+        QString                             _stopAtFunc;
+        bool                                _isStopAtException;
+        QString                             _exceptionLevelToStop;
+        QString                             _openOCDTarget;        
+        // Kernel module
+        QString                             _moduleName;
+        QString                             _commandToTerm;
+        QString                             _kernelModuleSymbolPath;
+        QString                             _kernelModuleSourceCodePath;
+        QString                             _serialPortPath;
+        // Thread, Muxtex and condition variable, for Debug on Init synchronization. There are 3 types of Muxtex and condition
+        // variable: for sigint, continue and normal command
+        // _debugOnInitOperation for sync normal operation.
+        // _debugOnInitStop for sigint operation
+        // _debugOnInitRunning for continue operation
+        // _debugOnInitListBp For handling -break-list
+        // _debugOnInitHandleBp for handling breakpoint operation like delete, insert, enable, disable
+        QMutex                              _debugOnInitOperationMutex;
+        QWaitCondition                      _debugOnInitOperationCv;
+        QMutex                              _debugOnInitStopMutex;
+        QWaitCondition                      _debugOnInitStopCv;
+        QMutex                              _debugOnInitRunningMutex;
+        QWaitCondition                      _debugOnInitRunningCv;
+        QMutex                              _debugOnInitListBpMutex;
+        QWaitCondition                      _debugOnInitListBpCv;
+        QMutex                              _debugOnInitHandleBpMutex;
+        QWaitCondition                      _debugOnInitHandleBpCv;
+        QMutex                              _debugOnInitRefreshSourceMutex;
+        QWaitCondition                      _debugOnInitRefreshSourceCv;
+        QThread*                            _workerThread;
+        bool                                _debugOnInitBpReadFlag;
+        bool                                _debugOnInitTempBpFlag;
+        bool                                _debugOnInitJustReadModuleDir;
+
+        QMutex                              _seekIdentifierMutex;
+        QWaitCondition                      _seekIdentifierCv;
+        QString                             _Identifier;
+
+        // List of breakpoint previous status, used in Debug on Init
+        QMap<QString,QString>               _mapListBpStatus;
+        // List of kernel module address
+        QMap<QString, QString>              _mapKernelModuleAddress;
+        int                                 _moduleInitLineNo = 0;
+};

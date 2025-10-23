@@ -5,7 +5,7 @@
 #pragma once
 
 #include "ui_SeerMainWindow.h"
-#include "SeerRunStatusIndicator.h"
+#include "SeerRunStatusIndicatorBox.h"
 #include "SeerKeySettings.h"
 #include "SeerProgressIndicator.h"
 #include <QtWidgets/QMainWindow>
@@ -75,10 +75,44 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
 
+        // openocd get and set functions
+        // ::Main
+        const QString&                      openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
+        const QString&                      gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString&                      telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        const QString&                      openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        // ::GDB Multiarch
+        const QString&                      gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString&                      gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        bool                                isGdbMultiarchIsStopAtTempFunc      ();
+        void                                setGdbMultiarchStopAtTempFunc       (bool check);
+        const QString                       gdbMultiarchStopAtFunc              ();
+        void                                setGdbMultiarchStopAtFunc           (const QString& func);
+        bool                                isGdbMultiarchStopAtException       ();
+        void                                setGdbMultiarchStopAtExeption       (bool check);
+        const QString                       gdbMultiarchExeptionLevelToStop     ();
+        void                                setGdbMultiarchExeptionLevelToStop  (const QString& level);
+        const QString                       openOCDTarget                       ();
+        void                                setOpenOCDTarget                    (const QString& target);
+        // ::Docker
+        bool                                isBuiltInDocker                     ();
+        void                                setBuiltInDocker                    (bool check);
+        const QString                       absoluteBuildFolderPath             ();
+        void                                setAbsoluteBuildFolderPath          (const QString& path);
+        const QString                       dockerBuildFolderPath               ();
+        void                                setDockerBuildFolderPath            (const QString& path);
+        // ::Symbol Files
+        void                                setSymbolFiles                      (const QMap<QString, std::tuple<QString, bool, QString>>& _symbolFiles);
+        const QMap<QString, std::tuple<QString, bool, QString>>     symbolFiles (void);
+
     private slots:
-        void                        handleFileDebugWithDefaultProject       ();
-        void                        handleFileDebugWithOutDefaultProject    ();
-        void                        handleFileDebug                         (bool loadDefaultProject);
+        void                        handleFileDebug                         ();
         void                        handleFileArguments                     ();
         void                        handleFileQuit                          ();
         void                        handleViewMemoryVisualizer              ();
@@ -96,7 +130,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleSettingsSaveConfiguration         ();
         void                        handleHelpAbout                         ();
         void                        handleText                              (const QString& text);
-        void                        handleRunStatusChanged                  (SeerRunStatusIndicator::RunStatus status);
+        void                        handleRunStatusChanged                  (SeerRunStatusIndicatorBox::RunStatus status);
         void                        handleRecordSettingsChanged             ();
         void                        handleChangeWindowTitle                 (QString title);
         void                        handleHelpToolButtonClicked             ();
@@ -105,6 +139,10 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleStyleMenuChanged                  ();
         void                        handleShowMessage                       (QString message, int time);
         void                        handleGdbStateChanged                   ();
+        void                        handleGdbTargetRunning                  ();
+        void                        handleGdbTargetInterrupt                ();
+        void                        handleStatusChanged                     (QString message);
+        void                        handleExceptionButtonClicked            ();
 
     protected:
         void                        writeSettings                           ();
@@ -118,11 +156,17 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        refreshShortCuts                        ();
 
     private:
-        QActionGroup*               _styleMenuActionGroup;
-        QString                     _styleName;
-        QAction*                    _interruptAction;
-        SeerProgressIndicator*      _progressIndicator;
-        SeerKeySettings             _keySettings;
-        QString                     _projectFile;
+        void  createExceptionLevelBar();
+        void  deleteExceptionLevelBar();
+        QActionGroup*                       _styleMenuActionGroup;
+        QString                             _styleName;
+        QAction*                            _interruptAction;
+        SeerProgressIndicator*              _progressIndicator;
+        SeerKeySettings                     _keySettings;
+        QString                             _projectFile;
+        SeerRunStatusIndicatorBox*          _runStatus;
+        QWidget*                            _groupExeptionLevel = nullptr;
+        QPushButton*                        _exceptionButton;
+        QComboBox*                          _exceptionComboBox;
 };
 

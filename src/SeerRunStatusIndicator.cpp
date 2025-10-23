@@ -24,19 +24,15 @@ void SeerRunStatusIndicator::setRunStatus (SeerRunStatusIndicator::RunStatus sta
     _runStatus = status;
 
     if (status == RunStatus::Idle) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         setText("Idle");
 
     }else if (status == RunStatus::Stopped) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         setText("Stopped");
 
     }else if (status == RunStatus::Running) {
-        QApplication::setOverrideCursor(Qt::BusyCursor);
         setText("Running");
 
     }else{
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         setText("Unknown");
     }
 

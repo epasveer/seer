@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QSplitter" name="leftCenterRightSplitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -118,9 +118,31 @@
      </widget>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="SeerOpenOCDWidget" name="openocdWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>SeerOpenOCDWidget</class>
+   <extends>QWidget</extends>
+   <header>SeerOpenOCDWidget.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>SeerEditorManagerWidget</class>
    <extends>QWidget</extends>

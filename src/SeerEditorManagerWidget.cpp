@@ -9,6 +9,7 @@
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
+#include "SeerMainWindow.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
@@ -17,6 +18,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QTimer>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -34,6 +36,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showOpcodeColumn               = false;
     _showSourceLines                = false;
     _notifyAssemblyTabShown         = true;
+    _enableOpenFile                 = true;
 
     // Setup UI
     setupUi(this);
@@ -428,8 +431,14 @@ const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
+    if (isOpenFileEnable() == false)
+    {
+        // By pass until isOpenFileEnable() is true
+        return;
+    }
     // Update the current line.
     if (text.startsWith("*stopped")) {
+        
 
         //qDebug() << ":stopped:" << text;
 
@@ -602,7 +611,11 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
     }else if (text.startsWith("^done,stack=[") && text.endsWith("]")) {
-
+        if (isOpenFileEnable() == false)
+        {
+            // wait until breakpoint -h is successfully added
+            return;
+        }
         //qDebug() << ":stack:" << text;
 
         //
@@ -631,7 +644,9 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
             // Parse through the frame list and set the current lines that are in the frame list.
             QStringList frame_list = Seer::parse(newtext, "frame=", '{', '}', false);
-
+            _lastFrameList = frame_list;
+            SeerEditorManagerEntries::iterator i_later=endEntry();
+            int line_later = -1;
             for ( const auto& frame_text : frame_list  ) {
                 QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
                 QString addr_text     = Seer::parseFirst(frame_text, "addr=",     '"', '"', false);
@@ -643,10 +658,18 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
                 SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
                 SeerEditorManagerEntries::iterator e = endEntry();
-
+                if (level_text.toInt() == 0)    // if current line level = 0, save command and paint it later, fix recursion
+                {
+                    i_later = i;
+                    line_later = line_text.toInt();
+                    continue;
+                }
                 if (i != e) {
                     i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
                 }
+            }
+            if (i_later != endEntry()) {
+                i_later->widget->sourceArea()->addCurrentLine(line_later, 0);
             }
         }
 
@@ -721,7 +744,27 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
         }
 
-    }else{
+    }else if (text.startsWith("*running")) {
+        // target / program is running, should erase 'yellow' color is for the current line 
+        // _lastFrameList is invoked to erase previously "colored" line
+        for ( const auto& frame_text : _lastFrameList  ) {
+            QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
+            QString addr_text     = Seer::parseFirst(frame_text, "addr=",     '"', '"', false);
+            QString func_text     = Seer::parseFirst(frame_text, "func=",     '"', '"', false);
+            QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
+            QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+            QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+            QString arch_text     = Seer::parseFirst(frame_text, "arch=",     '"', '"', false);
+
+            SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
+            SeerEditorManagerEntries::iterator e = endEntry();
+
+            if (i != e) {
+                i->widget->sourceArea()->eraseColorCurrentLine(line_text.toInt());
+            }
+        }
+    }
+    else{
         // Ignore others.
         return;
     }
@@ -759,6 +802,13 @@ void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
 }
 
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
+
+    if (isOpenFileEnable() == false)
+    {
+        // Alow bypass only 1 time
+        setEnableOpenFile(true);
+        return;
+    }
 
     // Must have a valid filename.
     if (file == "" || fullname == "") {
@@ -894,6 +944,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    // Immediately connect each new source code tab to SeerEditorManagerWidget slots
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -956,6 +1008,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    // Immediately connect each new source code tab to SeerEditorManagerWidget slots
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1159,6 +1213,7 @@ void SeerEditorManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
     help->loadFile(":/seer/resources/help/CodeManager.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->show();
     help->raise();
 }
@@ -1334,3 +1389,18 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     }
 }
 
+// These 2 functions are used for temporarily disable handleOpenFile
+// To Fix bug: openocd open source at SIGINT during running
+void SeerEditorManagerWidget::setEnableOpenFile(bool state) {
+    _enableOpenFile = state;
+}
+
+bool SeerEditorManagerWidget::isOpenFileEnable() {
+    return _enableOpenFile;
+}
+
+// Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
+void SeerEditorManagerWidget::seekIdentifierForwarder(const QString& identifier)
+{
+    emit seekIdentifier(identifier);
+}

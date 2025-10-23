@@ -29,7 +29,9 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
         void                        setIgnoreFilePatterns       (const QStringList& patterns);
         const QStringList&          ignoreFilePatterns          () const;
 
-    public slots:
+        const QString&              findFileWithRegrex          (const QString& expression);
+
+        public slots:
         void                        handleText                  (const QString& text);
         void                        handleSessionTerminated     ();
         void                        refresh                     ();
@@ -54,5 +56,6 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
         QStringList                 _headerFilePatterns;
         QStringList                 _miscFilePatterns;
         QStringList                 _ignoreFilePatterns;
+        QMap<QString,QString>       _files;                     // save for later use, like trace identifier, or search for module_init func
 };
 

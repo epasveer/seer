@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1206</width>
+    <width>1289</width>
     <height>726</height>
    </rect>
   </property>
@@ -22,8 +22,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1206</width>
-     <height>23</height>
+     <width>1289</width>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -140,12 +140,25 @@
     <addaction name="separator"/>
     <addaction name="actionControlInterrupt"/>
    </widget>
+   <widget class="QMenu" name="menuOpenOCD">
+    <property name="title">
+     <string>OpenOCD</string>
+    </property>
+    <property name="toolTipsVisible">
+     <bool>false</bool>
+    </property>
+    <addaction name="actionOpenOCDAttach"/>
+    <addaction name="actionOpenOCDDebugModule"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpenOCDHelp"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuControl"/>
    <addaction name="menuView"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuOpenOCD"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -178,6 +191,8 @@
    <addaction name="actionInterruptProcess"/>
    <addaction name="separator"/>
    <addaction name="actionVisualizers"/>
+   <addaction name="separator"/>
+   <addaction name="actionOpenOCDAttach"/>
   </widget>
   <action name="actionFileQuit">
    <property name="icon">
@@ -725,6 +740,76 @@
    </property>
    <property name="statusTip">
     <string>Launch a blank Matrix Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDDebugModule">
+   <property name="text">
+    <string>Debug Module on init ...</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDConfiguration">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/thenounproject/configure.svg</normaloff>:/seer/resources/thenounproject/configure.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Configuration...</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDRecent_Project">
+   <property name="text">
+    <string>Recent OpenOCD Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Recent Project</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDImport_Project">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/import.png</normaloff>:/seer/resources/icons-icons/import.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import Project</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDHelp">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/help.png</normaloff>:/seer/resources/icons-icons/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionOpenOCDAttach">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/openOCDattach.png</normaloff>:/seer/resources/icons-icons/openOCDattach.png</iconset>
+   </property>
+   <property name="text">
+    <string>Attach</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect OpenOCD to target</string>
+   </property>
+   <property name="whatsThis">
+    <string extracomment="OpenOCD connect to target"/>
+   </property>
+   <property name="font">
+    <font/>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
    </property>
   </action>
  </widget>

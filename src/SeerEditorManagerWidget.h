@@ -97,6 +97,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
+        void                                            setEnableOpenFile                   (bool state);
+        bool                                            isOpenFileEnable                    ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -104,6 +106,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTextSearchToolButtonClicked   ();
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
+        void                                            seekIdentifierForwarder             (const QString& identifier);
 
     signals:
         void                                            refreshBreakpointsList              ();
@@ -128,6 +131,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
+        void                                            seekIdentifier                      (const QString& identifier);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -155,5 +159,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showOpcodeColumn;
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
+        QStringList                                     _lastFrameList;         // variable for saving previous backtrace
+        bool                                            _enableOpenFile;        // This variable temporarily disable handleOpenFile
 };
 

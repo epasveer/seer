@@ -33,6 +33,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
+#include <QSet>
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
@@ -79,6 +80,8 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
+
+    setMouseTracking(true);
 
     // Calling close() will clear the text document.
     close();
@@ -773,6 +776,32 @@ void SeerEditorWidgetSourceArea::addCurrentLine (int lineno, int level) {
     }else{
         lineFormat = highlighterSettings().get("Calling Line");
     }
+
+    // Create a selection at the cursor.
+    QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+    QTextCursor cursor = textCursor();
+
+    cursor.setPosition(block.position());
+
+    QTextEdit::ExtraSelection selection;
+    selection.format.setForeground(lineFormat.foreground());
+    selection.format.setBackground(lineFormat.background());
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+
+    // Add it to the extra selection list.
+    _currentLinesExtraSelections.append(selection);
+
+    // Refresh all the extra selections.
+    refreshExtraSelections();
+}
+
+void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
+
+    // Erase color of this line
+    QTextCharFormat lineFormat;
+    lineFormat = highlighterSettings().get("Text");
 
     // Create a selection at the cursor.
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
@@ -1939,3 +1968,88 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
     QWidget::mouseReleaseEvent(event);
 }
 
+/***********************************************************************************************************************
+ * OpenOCD deploy trace funtion, variable and type feature                                                             *
+ **********************************************************************************************************************/
+bool SeerEditorWidgetSourceArea::isOverWord(const QPoint &pos)
+{
+    QTextCursor cursor = cursorForPosition(pos);
+    cursor.select(QTextCursor::WordUnderCursor);
+    return !cursor.selectedText().isEmpty();
+}
+
+QString SeerEditorWidgetSourceArea::wordUnderCursor(const QPoint &pos) const
+{
+    QTextCursor cursor = cursorForPosition(pos);
+    cursor.select(QTextCursor::WordUnderCursor);
+    return cursor.selectedText();
+}
+
+void SeerEditorWidgetSourceArea::updateCursor(const QPoint &pos)
+{
+    _ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
+    if (_ctrlHeld && isOverWord(pos)) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+        _wordUnderCursor = wordUnderCursor(pos);
+    } else {
+        QApplication::restoreOverrideCursor();
+    }
+}
+
+void SeerEditorWidgetSourceArea::mouseMoveEvent(QMouseEvent *event) 
+{
+    updateCursor(event->pos());
+    QPlainTextEdit::mouseMoveEvent(event);
+}
+
+// Check text and decide if that text is valid identifier (function, variable, type name)
+bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text) 
+{
+    static const QSet<QString> keywords = {
+        // Add your C and C++ keywords as QString literals here
+        "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+        "else", "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long",
+        "register", "restrict", "return", "short", "signed", "sizeof", "static", "struct",
+        "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "_Alignas",
+        "_Alignof", "_Atomic", "_Bool", "_Complex", "_Generic", "_Imaginary", "_Noreturn",
+        "_Static_assert", "_Thread_local",
+
+        "alignas", "alignof", "and", "and_eq", "asm", "bitand", "bitor", "bool", "catch",
+        "char16_t", "char32_t", "class", "compl", "const_cast", "constexpr", "decltype",
+        "delete", "dynamic_cast", "explicit", "export", "false", "friend", "mutable", "namespace",
+        "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private",
+        "protected", "public", "reinterpret_cast", "static_assert", "static_cast", "template",
+        "this", "thread_local", "throw", "true", "try", "typeid", "typename", "using",
+        "virtual", "wchar_t", "xor", "xor_eq"
+    };
+
+    if (text.isEmpty())
+        return false;
+
+    if (keywords.contains(text))
+        return false;
+
+    QChar firstChar = text[0];
+    if (!firstChar.isLetter() && firstChar != '_')
+        return false;
+
+    for (int i = 1; i < text.size(); ++i) {
+        QChar ch = text[i];
+        if (!ch.isLetterOrNumber() && ch != '_')
+            return false;
+    }
+
+    return true;
+}
+
+// When Ctrl is hold and left mouse is clicked, and cursor is pointing at a word, try to look for that word 
+void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton && _wordUnderCursor != "" && _ctrlHeld) {
+        if (isValidIdentifier(_wordUnderCursor))
+        {
+            emit seekIdentifier(_wordUnderCursor);
+        }
+    }
+    QPlainTextEdit::mousePressEvent(event);
+}

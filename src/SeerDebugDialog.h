@@ -9,9 +9,10 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QJsonDocument>
-
+#include <tuple>
 #include "ui_SeerDebugDialog.h"
 
+class OpenOCDSymbolWidgetManager;
 class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
 
     Q_OBJECT
@@ -91,7 +92,43 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QJsonDocument           makeJsonDoc                                     () const;
         bool                    loadJsonDoc                                     (const QJsonDocument& jsonDoc, const QString& filename);
 
-    protected slots:
+        // openocd get and set functions
+        // ::Main
+        const QString                       openOCDExePath                      ();
+        void                                setOpenOCDExePath                   (const QString& path);
+        const QString                       gdbPort                             ();
+        void                                setGdbPort                          (const QString& port);
+        const QString                       openOCDCommand                      ();
+        void                                setOpenOCDCommand                   (const QString& command);
+        const QString                       telnetPort                          ();
+        void                                setTelnetPort                       (const QString& port);
+        // ::GDB Multiarch
+        const QString                       gdbMultiarchExePath                 ();
+        void                                setGdbMultiarchExePath              (const QString& path);
+        const QString                       gdbMultiarchCommand                 ();
+        void                                setGdbMultiarchCommand              (const QString& command);
+        bool                                isGdbMultiarchIsStopAtTempFunc      ();
+        void                                setGdbMultiarchStopAtTempFunc       (bool check);
+        const QString                       gdbMultiarchStopAtFunc              ();
+        void                                setGdbMultiarchStopAtFunc           (const QString& func);
+        bool                                isGdbMultiarchStopAtException       ();
+        void                                setGdbMultiarchStopAtExeption       (bool check);
+        const QString                       gdbMultiarchExeptionLevelToStop     ();
+        void                                setGdbMultiarchExeptionLevelToStop  (const QString& level);
+        const QString                       openOCDTarget                       ();
+        void                                setOpenOCDTarget                    (const QString& target);
+        // ::Docker
+        bool                                isBuiltInDocker                     ();
+        void                                setBuiltInDocker                    (bool check);
+        const QString                       absoluteBuildFolderPath             ();
+        void                                setAbsoluteBuildFolderPath          (const QString& path);
+        const QString                       dockerBuildFolderPath               ();
+        void                                setDockerBuildFolderPath            (const QString& path);
+        // ::Symbol Files
+        OpenOCDSymbolWidgetManager*         symbolWidgetManager                 ();
+        void                                setSymbolFiles                      (const QMap<QString, std::tuple<QString, bool, QString>>& symbolFiles);
+
+        public slots:
         void                    handleExecutableNameToolButton                  ();
         void                    handleExecutableSymbolNameToolButton            ();
         void                    handleExecutableWorkingDirectoryToolButton      ();
@@ -103,6 +140,12 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleLoadProjectToolButton                     ();
         void                    handleSaveProjectToolButton                     ();
         void                    handleRunModeChanged                            (int id);
+
+        // OpenOCD button handler
+        void                    handleOpenOCDDefaultButtonClicked               ();
+        void                    handleOpenOCDTabChanged                         (int id);
+        void                    handleExecutableOpenOCDButtonClicked            ();
+        void                    handleOpenOCDBuildFolderPathButton              ();
         void                    handleLaunchButtonClicked                       ();
         void                    handleResetButtonClicked                        (QAbstractButton* button);
 
@@ -113,6 +156,10 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleHelpConnectToolButtonClicked              ();
         void                    handleHelpRRToolButtonClicked                   ();
         void                    handleHelpCorefileToolButtonClicked             ();
+        void                    handleOpenOCDDockerCheckboxClicked              ();
+        void                    handleOpenOCDMainHelpButtonClicked              ();
+        void                    handleOpenOCDTempFuncCheckBoxClicked            ();
+        void                    handleOpenOCDStopExceptionLebelCheckBoxClicked  ();
 
     protected:
         void                    writeSettings                                   ();
@@ -121,6 +168,63 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    resizeEvent                                     (QResizeEvent* event);
 
     private:
-        QString                 _projectFilename;
+        QString                         _projectFilename;
+        OpenOCDSymbolWidgetManager*     _OpenOCDSymbolWidgetManager = nullptr;
+        QMap<QString, QString>          _symbolFiles;
 };
 
+class OpenOCDSymbolFileWidget: public QWidget{
+    Q_OBJECT
+
+public:
+    explicit OpenOCDSymbolFileWidget (QWidget* parent = nullptr);
+    ~OpenOCDSymbolFileWidget ();
+    const QString               symbolPath ();
+    const QString               sourcePath ();
+    bool                        isLoadAddressEnabled ();
+    const QString               loadAddress ();
+    void                        setSymbolPath (const QString& path);
+    void                        setSourcePath (const QString& path);
+    void                        setEnableLoadAddress (bool enable);
+    void                        setLoadAddress (const QString& address);
+
+private slots:
+    void                    handleOpenOCDSymbolPathButtonClicked ();
+    void                    handleOpenOCDDirPathButtonClicked ();
+    void                    handleOpenOCDLoadAddressCheckBoxClicked ();
+
+private:
+    QString                 _symbolPath;
+    QString                 _sourcePath;
+    QLineEdit*              _symbolLineEdit;
+    QLineEdit*              _sourceLineEdit;
+    QPushButton*            _symbolToolButton;
+    QPushButton*            _sourceToolButton;
+    QCheckBox*              _loadAddressCheckBox;
+    QLineEdit*              _loadAddressLineEdit;
+    bool                    _isLoadAddressEnabled = false;
+    QString                 _loadAddress = "";
+};
+
+class OpenOCDSymbolWidgetManager : public QWidget{
+    Q_OBJECT
+
+public:
+    explicit OpenOCDSymbolWidgetManager (QWidget* parent = nullptr);
+    ~OpenOCDSymbolWidgetManager ();
+
+    const QMap<QString, std::tuple<QString, bool, QString>>  symbolFiles ();
+    int                                     countSymbolFiles ();
+    void                                    addGroupBox(const QMap<QString, std::tuple<QString, bool, QString>> &box);
+
+public slots:
+    void                                    addEmptyGroupBox();
+    void                                    deleteGroupBox();
+
+private:
+    int                                     _countSymbolFiles = 0;
+    QWidget *                               _scrollWidget;
+    QVBoxLayout *                           _scrollLayout;
+    QList<OpenOCDSymbolFileWidget *>        _groupBoxes;
+    QMap<QString, std::tuple<QString, bool, QString>> _symbolFiles;
+};

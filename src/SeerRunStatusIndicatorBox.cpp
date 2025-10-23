@@ -42,35 +42,29 @@ void SeerRunStatusIndicatorBox::setRunStatus (SeerRunStatusIndicatorBox::RunStat
     _runStatus = status;
 
     if (status == RunStatus::Idle) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         statusLabel->setText("Idle");
         statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
 
     }else if (status == RunStatus::Stopped) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         statusLabel->setText("Stopped");
         statusLabel->setStyleSheet("background-color: red; color: black; font-weight: bold;");
 
     }
     else if (status == RunStatus::Stop_By_Breakpoint) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         statusLabel->setText("Stop by breakpoint");
         statusLabel->setStyleSheet("background-color: yellow; color: black; font-weight: bold;");
     }
     else if (status == RunStatus::Running) {
-        QApplication::setOverrideCursor(Qt::BusyCursor);
         statusLabel->setText("Running");
         statusLabel->setStyleSheet("background-color: green; color: black; font-weight: bold;");
 
     }
     else if (status == RunStatus::Disconnect) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         statusLabel->setText("DISCONNECTED");
         statusLabel->setStyleSheet("background-color: red; color: black; font-weight: bold;");
 
     }
     else {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
         statusLabel->setText("Unknown");
     }
     // QMessageBox::warning(this, "SeerRunStatusIndicatorBox", "SeerRunStatusIndicatorBox");
