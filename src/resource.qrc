@@ -26,6 +26,9 @@
     <file>resources/icons-icons/minimize.png</file>
     <file>resources/icons-icons/attach.png</file>
     <file>resources/icons-icons/style.png</file>
+    <file>resources/icons-icons/help.png</file>
+    <file>resources/icons-icons/import.png</file>
+    <file>resources/icons-icons/openOCDattach.png</file>
     <file>resources/RelaxLightIcons/application-menu.svg</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>
     <file>resources/RelaxLightIcons/document-open.svg</file>
@@ -81,6 +84,7 @@
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/Printpoints.md</file>
     <file>resources/help/Skips.md</file>
+    <file>resources/help/OpenOCDHelp.md</file>
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>
     <file>resources/mi-python/MIKill.py</file>

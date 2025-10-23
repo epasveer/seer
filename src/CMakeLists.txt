@@ -33,6 +33,7 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
     find_package(Qt6 COMPONENTS REQUIRED OpenGL)
+    find_package(Qt6 COMPONENTS REQUIRED SerialPort)
 
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -113,7 +114,7 @@ set(HEADER_FILES
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
     SeerRegisterTreeWidgetItem.h
-    SeerRunStatusIndicator.h
+    SeerRunStatusIndicatorBox.h
     SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
     SeerFunctionBrowserWidget.h
@@ -155,6 +156,8 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
+    SeerOpenOCDWidget.h
+    SeerOpenOCDDebugOnInit.h
     )
 
 set(SOURCE_FILES
@@ -218,7 +221,7 @@ set(SOURCE_FILES
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp
     SeerRegisterTreeWidgetItem.cpp
-    SeerRunStatusIndicator.cpp
+    SeerRunStatusIndicatorBox.cpp
     SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
     SeerFunctionBrowserWidget.cpp
@@ -260,6 +263,8 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
+    SeerOpenOCDWidget.cpp
+    SeerOpenOCDDebugOnInit.cpp
     seergdb.cpp
     )
 
@@ -290,8 +295,13 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 if(${QTVERSION} STREQUAL "QT6")
-    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL)
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL Qt6::SerialPort)
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
 
+# Global macro, turn ENABLE_GDB_LOGOUT=1 to enable gdb logout
+target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+        ENABLE_GDB_LOGOUT=1
+)
