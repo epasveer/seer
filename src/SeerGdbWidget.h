@@ -275,7 +275,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                debugOnInitHandler                  ();
         void                                traceIdentifierHandler              (const QString& identifier);
         // Sync function, only for debug on init
-        void                                handleSyncGdbInterruptSIGINT        ();
+        void                                handleSyncGdbInterruptSIGINT_DebugOnInit        ();
         void                                handleSyncGdbGenericpointList       ();
         void                                handleSyncGdbContinue               ();
         void                                handleSyncBreakInsert               (QString bp);
@@ -290,6 +290,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleSyncGdbFindTypeIdentifier     (const QString& identifier);
         void                                handleSendToSerial                  (QString path, QString expression);
         void                                handleSeekIdentifier                (const QString& identifier);
+        void                                handleSyncGdbInterruptSIGINT_TraceIdentifier();
 
     public slots:
         void                                handleLogsTabMoved                  (int to, int from);
@@ -629,13 +630,18 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QWaitCondition                      _debugOnInitRefreshSourceCv;
         QThread*                            _workerThread;
         bool                                _debugOnInitBpReadFlag;
+        bool                                _debugOnInitFindLoadModuleFile;
         bool                                _debugOnInitTempBpFlag;
         bool                                _debugOnInitJustReadModuleDir;
-
+        QString                             _loadModuleFile;
+        int                                 _loadModuleLineNo;
         QMutex                              _seekIdentifierMutex;
         QWaitCondition                      _seekIdentifierCv;
         QString                             _Identifier;
-
+        bool                                _sigINTDebugOnInitFlag          = false;
+        // Mutex and Cond variable for tracing identifier
+        QMutex                              _traceIdentiferStopMutex;
+        QWaitCondition                      _traceIdentiferStopCv;
         // List of breakpoint previous status, used in Debug on Init
         QMap<QString,QString>               _mapListBpStatus;
         // List of kernel module address
