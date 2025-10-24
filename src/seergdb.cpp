@@ -54,6 +54,7 @@ int main (int argc, char* argv[]) {
     // Create the app.
     //
     QApplication app(argc, argv);
+    app.setCursorFlashTime(1000);
 
     QCoreApplication::setApplicationName("seergdb");
     QCoreApplication::setOrganizationName("seergdb");

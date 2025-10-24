@@ -82,6 +82,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
 
     setMouseTracking(true);
+    setCursorWidth(2);          // make cursor a little bit bigger
 
     // Calling close() will clear the text document.
     close();
