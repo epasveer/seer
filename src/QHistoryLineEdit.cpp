@@ -186,6 +186,10 @@ void QHistoryLineEdit::keyPressEvent (QKeyEvent* ev) {
         }
     }
 
+    if ( ev->key() == Qt::Key_Escape ) {
+        emit escapePressed();
+    }
+
     QLineEdit::keyPressEvent(ev);
 
     if (_completer) {
