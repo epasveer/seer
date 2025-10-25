@@ -41,6 +41,7 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     _textSearchReloadShortcut = new QShortcut(QKeySequence(tr("Ctrl+R")),       this);
     _lineSearchShortcut       = new QShortcut(QKeySequence(tr("Ctrl+L")),       this);
     _alternateDirShortcut     = new QShortcut(QKeySequence(tr("Ctrl+O")),       this);
+    _toggleBreakpointShortcut = new QShortcut(QKeySequence(tr("Ctrl+B")),       this);
 
     setKeySettings(SeerKeySettings::populate());
 
@@ -73,6 +74,7 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     QObject::connect(_textSearchReloadShortcut,         &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
     QObject::connect(_lineSearchShortcut,               &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleLineSearchShortcut);
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
+    QObject::connect(_toggleBreakpointShortcut,         &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleToggleBreakpointShortcut);
 }
 
 SeerEditorWidgetSource::~SeerEditorWidgetSource () {
@@ -132,7 +134,7 @@ void SeerEditorWidgetSource::showSearchBar (bool flag, QString field) {
 
     searchBarWidget->setVisible(flag);
 
-    // If 'show', give the searchTextLineEdit the focus.
+    // If 'show', give the searchTextLineEdit or the searchTextLineEdit the focus.
     if (flag) {
         if (field == "text") {
             searchTextLineEdit->setFocus(Qt::MouseFocusReason);
@@ -304,6 +306,11 @@ void SeerEditorWidgetSource::handleAlternateDirectoryShortcut () {
     }else{
         showAlternateBar(true);
     }
+}
+
+void SeerEditorWidgetSource::handleToggleBreakpointShortcut () {
+
+    sourceArea()->breakpointToggle();
 }
 
 void SeerEditorWidgetSource::handleReloadToolButton () {

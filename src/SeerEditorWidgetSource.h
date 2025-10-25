@@ -78,6 +78,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         const QVector<bool>&                        breakpointEnableds                  () const;
         int                                         breakpointLineToNumber              (int lineno) const;
         bool                                        breakpointLineEnabled               (int lineno) const;
+        void                                        breakpointToggle                    ();
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
@@ -266,6 +267,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        handleTextSearchShortcut                ();
         void                                        handleLineSearchShortcut                ();
         void                                        handleAlternateDirectoryShortcut        ();
+        void                                        handleToggleBreakpointShortcut          ();
         void                                        handleReloadToolButton                  ();
         void                                        handleReloadCloseToolButton             ();
         void                                        handleEscapePressed                     ();
@@ -281,5 +283,6 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         QShortcut*                                  _textSearchReloadShortcut;
         QShortcut*                                  _lineSearchShortcut;
         QShortcut*                                  _alternateDirShortcut;
+        QShortcut*                                  _toggleBreakpointShortcut;
 };
 
