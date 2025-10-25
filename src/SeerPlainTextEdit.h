@@ -9,6 +9,7 @@
 #include <QtCore/QString>
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
+#include <QtCore/QTimer>
 
 class SeerPlainTextEdit : public QPlainTextEdit {
 
@@ -20,6 +21,16 @@ class SeerPlainTextEdit : public QPlainTextEdit {
        ~SeerPlainTextEdit ();
 
         void                    forwardViewportEvent        (QEvent* event);
+
+    protected:
+        void                    paintEvent                  (QPaintEvent* event);
+
+    private slots:
+        void                    blinkCursor                 ();
+
+    private:
+        QTimer*                 _cursorTimer;
+        bool                    _cursorVisible;
 };
 
 
