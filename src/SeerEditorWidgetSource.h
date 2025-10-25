@@ -249,6 +249,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
 
     public slots:
         void                                        showSearchBar                           (bool flag);
+        void                                        showSearchBar                           (bool flag, QString field);
         void                                        setSearchMatchCase                      (bool flag);
         void                                        showAlternateBar                        (bool flag);
         void                                        showReloadBar                           (bool flag);
@@ -263,9 +264,11 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        handleAlternateFileOpenToolButton       ();
         void                                        handleAlternateLineEdit                 ();
         void                                        handleTextSearchShortcut                ();
+        void                                        handleLineSearchShortcut                ();
         void                                        handleAlternateDirectoryShortcut        ();
         void                                        handleReloadToolButton                  ();
         void                                        handleReloadCloseToolButton             ();
+        void                                        handleEscapePressed                     ();
 
     signals:
         void                                        addAlternateDirectory                   (QString path);
@@ -276,6 +279,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
         QShortcut*                                  _textSearchReloadShortcut;
+        QShortcut*                                  _lineSearchShortcut;
         QShortcut*                                  _alternateDirShortcut;
 };
 

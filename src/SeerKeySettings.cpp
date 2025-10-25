@@ -75,6 +75,7 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("SearchText",       SeerKeySetting("SearchText",       QKeySequence::fromString("Ctrl+F"),       "Seach for text in the code editor."));
     keySettings.add("SearchTextNext",   SeerKeySetting("SearchTextNext",   QKeySequence::fromString("Ctrl+G"),       "Seach for next text in the code editor."));
     keySettings.add("SearchTextPrev",   SeerKeySetting("SearchTextPrev",   QKeySequence::fromString("Ctrl+Shift+G"), "Seach for previous text in the code editor."));
+    keySettings.add("SearchLine",       SeerKeySetting("SearchLine",       QKeySequence::fromString("Ctrl+L"),       "Seach for line number in the code editor."));
     keySettings.add("AlternateDir",     SeerKeySetting("AlternateDir",     QKeySequence::fromString("Ctrl+O"),       "Look for source file in an alternate directory."));
 
     return keySettings;
