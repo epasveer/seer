@@ -69,11 +69,10 @@ void SeerOpenOCDWidget::killOpenOCD ()
 {
     if (_openocdProcess)
     {
-        if (_openocdProcess->state() == QProcess::Running) {
-            _openocdProcess->kill();
-             _openocdProcess->waitForFinished();
-            delete _openocdProcess;
-            _openocdProcess = nullptr;
+        _openocdProcess->terminate();                       // Try graceful termination first
+        if (!_openocdProcess->waitForFinished(1000)) {      // Wait up to 1 second
+            _openocdProcess->kill();                        // Force kill as a last resort
+            _openocdProcess->waitForFinished(500);          // Brief wait to ensure kill completes
         }
     }
 }
