@@ -1185,6 +1185,29 @@ void SeerGdbWidget::handleText (const QString& text) {
             _seekIdentifierMutex.unlock();
 
         }
+        else if (text.startsWith("^done,result"))          // seeking for function, variable and type identifiers
+        {
+            if (_lsmodDebugOnInitFlag)                      // if lsmod to read kernel module info
+            {
+                // ^done,result="done",modules="[{name="helloworld"}]"
+                _lsmodMutex.lock();
+                QString moduleName = "";
+                QString nameKey = "name=";
+                int startIndex = text.indexOf(nameKey) + nameKey.length() + 2;
+
+                if (startIndex != -1) {
+                    moduleName = text.mid(startIndex, _moduleName.length());    // extract module name
+                }
+                if (moduleName == _moduleName)
+                    _isModuleIsLoaded = true;
+                else
+                    _isModuleIsLoaded = false;
+
+                _lsmodDebugOnInitFlag = false;              // reset flag
+                _lsmodCv.notify_one();
+                _lsmodMutex.unlock();
+            }
+        }
     }
     else{
         // All other text is ignored by this widget.
@@ -4930,8 +4953,8 @@ void SeerGdbWidget::handleDebugKernelModule()
 {
     // 1. Read all breakpoints status, save it
     // 2. Disable all breakpoints
-    // 3. Add temp breakpoint to module_init at kernel/module/main.c
-    // 4. Send command insmod to serial terminal
+    // 3. Check lsmod to see if module is already loaded
+    // 4. Add temp breakpoint to load_module and insmod the module
     // 5. Wait until breakpoint reached, read kernel module adress: *mod->sect_attrs->attrs@mod->sect_attrs->nsections
     // 6. Load kernel module to gdb-multiarch with provided address
     // 7. Let's put breakpoint at _init function and run to it
@@ -5003,17 +5026,36 @@ void SeerGdbWidget::debugOnInitHandler()
         handleSyncBreakDisable(it.key());
     }
 
-    // 3. Add temp breakpoint to load_module.
-    QString tmpBp = "-t load_module";
-    handleSyncBreakInsert(tmpBp);
-    handleSyncGdbContinue();                        // -exec-continue -> *stopped,reason="breakpoint-hit"
-    
-    // 4. Send command insmod to serial terminal
+    // 3. Check lsmod to see if module is already loaded
     // raise this flag, so that *stopped will stop and read data to find out which file contains load_module function
     _debugOnInitFindLoadModuleFile = true;
-    QString rmmodCmd = "rmmod " + _moduleName;
-    handleSyncSendToSerial(_serialPortPath, rmmodCmd);              // First, rmmod, for redundancy
-    handleSyncSendToSerial(_serialPortPath, _commandToTerm);        // And insmod
+
+    _lsmodDebugOnInitFlag = true;
+    _isModuleIsLoaded = false;
+    handleSyncLsmod(_moduleName);                   // lsmod module name  -> return: ^done,result
+
+    if (_isModuleIsLoaded)
+    {
+        // 8. Reload previous breakpoint. Let target run.
+        for (auto it = _mapListBpStatus.begin(); it != _mapListBpStatus.end(); it ++)
+        {
+            if (it.value() == "y")
+                handleSyncBreakEnable(it.key());
+            else
+                handleSyncBreakDisable(it.key());
+        }
+        handleSyncGdbContinue();
+        emit requestWarning(QString("Module is already loaded. Please unload module first before debug on init."));
+        setDebugOnInitFlag(false);                  // lower this flag, indicating debug on init thread ended
+        return;
+    }
+
+    // 4. Add temp breakpoint to load_module and insmod the module
+    QString tmpBp = "-t load_module";
+    handleSyncBreakInsert(tmpBp);                   // Add temp breakpoint
+    handleSyncGdbContinue();                        // -exec-continue -> *stopped,reason="breakpoint-hit"
+
+    handleSyncSendToSerial(_serialPortPath, _commandToTerm);        // And insmod the module
     // Wait until breakpoint reached
     _debugOnInitStopMutex.lock();
     _debugOnInitStopCv.wait(&_debugOnInitStopMutex);
@@ -5023,7 +5065,7 @@ void SeerGdbWidget::debugOnInitHandler()
     int lineNumber = 0;
     if (_loadModuleFile.isEmpty())
     {
-        QMessageBox::warning(this, "Seer", "Debug on Init fail!\n Cannot find kernel/module/main.c.", QMessageBox::Ok);
+        emit requestWarning(QString("Debug on Init fail!\n Cannot find kernel/module/main.c."));
         return;
     }
     else            // Now, let check which line has "return do_init_module(mod)"
@@ -5033,7 +5075,7 @@ void SeerGdbWidget::debugOnInitHandler()
             QFile file(_loadModuleFile);
 
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QMessageBox::warning(this, "Seer", "Debug on Init fail!\n Cannot open file kernel/module/main.c.", QMessageBox::Ok);
+                emit requestWarning(QString("Debug on Init fail!\n Cannot open file kernel/module/main.c."));
                 return;
             }
             QTextStream in(&file);
@@ -5080,7 +5122,7 @@ void SeerGdbWidget::debugOnInitHandler()
     // 7. Let's put breakpoint at _init function and run to it
     QString initFuncbpCmd = "thbreak *" + _mapKernelModuleAddress.value(".init.text");;
     handleSyncManualGdbCommand(initFuncbpCmd);
-    handleSyncGdbContinue();
+    
     // 8. Reload previous breakpoint. Let target run.
     for (auto it = _mapListBpStatus.begin(); it != _mapListBpStatus.end(); it ++)
     {
@@ -5089,9 +5131,10 @@ void SeerGdbWidget::debugOnInitHandler()
         else
             handleSyncBreakDisable(it.key());
     }
-    setDebugOnInitFlag(false);                      // lower this flag, indicating debug on init thread ended
 
-    QMessageBox::warning(this, "Seer", "Debug on Init done.", QMessageBox::Ok);
+    handleSyncGdbContinue();
+    emit requestWarning(QString("Debug on Init done."));
+    setDebugOnInitFlag(false);                      // lower this flag, indicating debug on init thread ended
     return;
 }
 
@@ -5230,6 +5273,24 @@ void SeerGdbWidget::handleSyncRefreshSource()
     _debugOnInitRefreshSourceMutex.unlock();
 }
 
+// Functions for handling python lsmod
+void SeerGdbWidget::handleSyncLsmod(QString kernelModuleName)
+{
+    _lsmodMutex.lock();
+    emit requestLsmod(kernelModuleName);
+    _lsmodCv.wait(&_lsmodMutex);
+    _lsmodMutex.unlock();
+}
+
+void SeerGdbWidget::handleGdbLsmod (const QString& kernelModuleName)
+{
+    handleGdbCommand("-lsmod " + kernelModuleName);
+}
+
+void SeerGdbWidget::handleSyncWarning (const QString& warningMsg)
+{
+    QMessageBox::warning(this, "Seer", QString(warningMsg), QMessageBox::Ok);
+}
 /***********************************************************************************************************************
  * Functions for handling tracing identifier                                                                           *
  **********************************************************************************************************************/
