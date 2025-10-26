@@ -78,6 +78,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         const QVector<bool>&                        breakpointEnableds                  () const;
         int                                         breakpointLineToNumber              (int lineno) const;
         bool                                        breakpointLineEnabled               (int lineno) const;
+        void                                        breakpointToggle                    ();
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
@@ -249,6 +250,7 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
 
     public slots:
         void                                        showSearchBar                           (bool flag);
+        void                                        showSearchBar                           (bool flag, QString field);
         void                                        setSearchMatchCase                      (bool flag);
         void                                        showAlternateBar                        (bool flag);
         void                                        showReloadBar                           (bool flag);
@@ -263,9 +265,12 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         void                                        handleAlternateFileOpenToolButton       ();
         void                                        handleAlternateLineEdit                 ();
         void                                        handleTextSearchShortcut                ();
+        void                                        handleLineSearchShortcut                ();
         void                                        handleAlternateDirectoryShortcut        ();
+        void                                        handleToggleBreakpointShortcut          ();
         void                                        handleReloadToolButton                  ();
         void                                        handleReloadCloseToolButton             ();
+        void                                        handleEscapePressed                     ();
 
     signals:
         void                                        addAlternateDirectory                   (QString path);
@@ -276,6 +281,8 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
         QShortcut*                                  _textSearchReloadShortcut;
+        QShortcut*                                  _lineSearchShortcut;
         QShortcut*                                  _alternateDirShortcut;
+        QShortcut*                                  _toggleBreakpointShortcut;
 };
 

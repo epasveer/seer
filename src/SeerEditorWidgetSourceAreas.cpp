@@ -927,6 +927,30 @@ bool SeerEditorWidgetSourceArea::breakpointLineEnabled (int lineno) const {
     return _breakpointsEnableds[i];
 }
 
+void SeerEditorWidgetSourceArea::breakpointToggle () {
+
+    // Get current lineno.
+    int lineno = textCursor().blockNumber() + 1;
+
+    // If there is a breakpoint on the line, toggle it.
+    if (hasBreakpointLine(lineno)) {
+
+        // Toggle the breakpoint.
+        // Enable if disabled. Disable if enabled.
+        if (breakpointLineEnabled(lineno) == false) {
+            // Emit the enable breakpoint signal.
+            emit enableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }else{
+            // Emit the disable breakpoint signal.
+            emit deleteBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }
+
+    // Otherwise, do a quick create of a new breakpoint.
+    }else{
+        emit insertBreakpoint(QString("-f --source \"%1\" --line %2").arg(fullname()).arg(lineno));
+    }
+}
+
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
 #if QT_VERSION >= 0x060000
