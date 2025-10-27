@@ -639,10 +639,6 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setBuiltInDocker(isBuiltInDocker());
     dlg.setAbsoluteBuildFolderPath(absoluteBuildFolderPath());
     dlg.setDockerBuildFolderPath(dockerBuildFolderPath());
-    dlg.setGdbMultiarchStopAtTempFunc(isGdbMultiarchIsStopAtTempFunc());
-    dlg.setGdbMultiarchStopAtFunc(gdbMultiarchStopAtFunc());
-    dlg.setGdbMultiarchStopAtExeption(isGdbMultiarchStopAtException());
-    dlg.setGdbMultiarchExeptionLevelToStop(gdbMultiarchExeptionLevelToStop());
     dlg.setOpenOCDTarget(openOCDTarget());
     dlg.setSymbolFiles(symbolFiles());
 
@@ -690,10 +686,6 @@ void SeerMainWindow::handleFileDebug () {
     setBuiltInDocker(dlg.isBuiltInDocker());
     setAbsoluteBuildFolderPath(dlg.absoluteBuildFolderPath());
     setDockerBuildFolderPath(dlg.dockerBuildFolderPath());
-    setGdbMultiarchStopAtTempFunc(dlg.isGdbMultiarchIsStopAtTempFunc());
-    setGdbMultiarchStopAtFunc(dlg.gdbMultiarchStopAtFunc());
-    setGdbMultiarchStopAtExeption(dlg.isGdbMultiarchStopAtException());
-    setGdbMultiarchExeptionLevelToStop(dlg.gdbMultiarchExeptionLevelToStop());
     setOpenOCDTarget(dlg.openOCDTarget());
     setSymbolFiles(dlg.symbolWidgetManager()->symbolFiles());
 
@@ -1969,38 +1961,6 @@ const QString& SeerMainWindow::gdbMultiarchCommand () {
 
 void SeerMainWindow::setGdbMultiarchCommand (const QString& command) {
     gdbWidget->setGdbMultiarchCommand(command);
-}
-
-bool SeerMainWindow::isGdbMultiarchIsStopAtTempFunc () {
-    return gdbWidget->isGdbMultiarchIsStopAtTempFunc();
-}
-
-void SeerMainWindow::setGdbMultiarchStopAtTempFunc (bool check) {
-    gdbWidget->setGdbMultiarchStopAtTempFunc(check);
-}
-
-const QString SeerMainWindow::gdbMultiarchStopAtFunc () {
-    return gdbWidget->gdbMultiarchStopAtFunc();
-}
-
-void SeerMainWindow::setGdbMultiarchStopAtFunc (const QString& func) {
-    gdbWidget->setGdbMultiarchStopAtFunc(func);
-}
-
-bool SeerMainWindow::isGdbMultiarchStopAtException () {
-    return gdbWidget->isGdbMultiarchStopAtException();
-}
-
-void SeerMainWindow::setGdbMultiarchStopAtExeption (bool check) {
-    gdbWidget->setGdbMultiarchStopAtExeption(check);
-}
-
-const QString SeerMainWindow::gdbMultiarchExeptionLevelToStop() {
-    return gdbWidget->gdbMultiarchExeptionLevelToStop();
-}
-
-void SeerMainWindow::setGdbMultiarchExeptionLevelToStop (const QString& level) {
-    gdbWidget->setGdbMultiarchExeptionLevelToStop(level);
 }
 
 /// ::Docker

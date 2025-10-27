@@ -107,14 +107,6 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                                setGdbMultiarchExePath              (const QString& path);
         const QString                       gdbMultiarchCommand                 ();
         void                                setGdbMultiarchCommand              (const QString& command);
-        bool                                isGdbMultiarchIsStopAtTempFunc      ();
-        void                                setGdbMultiarchStopAtTempFunc       (bool check);
-        const QString                       gdbMultiarchStopAtFunc              ();
-        void                                setGdbMultiarchStopAtFunc           (const QString& func);
-        bool                                isGdbMultiarchStopAtException       ();
-        void                                setGdbMultiarchStopAtExeption       (bool check);
-        const QString                       gdbMultiarchExeptionLevelToStop     ();
-        void                                setGdbMultiarchExeptionLevelToStop  (const QString& level);
         const QString                       openOCDTarget                       ();
         void                                setOpenOCDTarget                    (const QString& target);
         // ::Docker
@@ -158,8 +150,6 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleHelpCorefileToolButtonClicked             ();
         void                    handleOpenOCDDockerCheckboxClicked              ();
         void                    handleOpenOCDMainHelpButtonClicked              ();
-        void                    handleOpenOCDTempFuncCheckBoxClicked            ();
-        void                    handleOpenOCDStopExceptionLebelCheckBoxClicked  ();
 
     protected:
         void                    writeSettings                                   ();

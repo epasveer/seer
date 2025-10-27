@@ -4646,38 +4646,6 @@ void SeerGdbWidget::setGdbMultiarchCommand (const QString& command) {
     _gdbMultiarchCommands = command;
 }
 
-bool SeerGdbWidget::isGdbMultiarchIsStopAtTempFunc () {
-    return _isStopAtTempFunc;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtTempFunc (bool check) {
-    _isStopAtTempFunc = check;
-}
-
-const QString SeerGdbWidget::gdbMultiarchStopAtFunc () {
-    return _stopAtFunc;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtFunc (const QString& func) {
-    _stopAtFunc = func;
-}
-
-bool SeerGdbWidget::isGdbMultiarchStopAtException() {
-    return _isStopAtException;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtExeption (bool check) {
-    _isStopAtException = check;
-}
-
-const QString SeerGdbWidget::gdbMultiarchExeptionLevelToStop () {
-    return _exceptionLevelToStop;
-}
-
-void SeerGdbWidget::setGdbMultiarchExeptionLevelToStop (const QString& level) {
-    _exceptionLevelToStop = level;
-}
-
 const QString SeerGdbWidget::openOCDTarget ()
 {
     return _openOCDTarget;
@@ -4804,11 +4772,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
     openocdWidget->createOpenOCDConsole(logsTabWidget);
     openocdWidget->setTelnetPort(telnetPort());
     openocdWidget->setOpenOCDTarget(_openOCDTarget);
-    
-    if (isGdbMultiarchStopAtException())
-        openocdWidget->setStopAtException(gdbMultiarchExeptionLevelToStop());
-    else
-        openocdWidget->setStopAtException("");
+
     // Start OpenOCD with the given path and command
     bool foo = openocdWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
     if (foo == false) {

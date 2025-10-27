@@ -1377,30 +1377,24 @@
                 <item row="4" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_28">
                   <item>
-                   <widget class="QGroupBox" name="groupBox">
-                    <property name="title">
-                     <string/>
-                    </property>
-                    <layout class="QHBoxLayout" name="horizontalLayout_16">
-                     <item>
-                      <widget class="QCheckBox" name="tempFuncCheckBox">
-                       <property name="text">
-                        <string>Temporarily stop at function</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="tempFuncLineEdit"/>
-                     </item>
-                    </layout>
-                   </widget>
-                  </item>
-                  <item>
                    <widget class="QGroupBox" name="groupBox_3">
                     <property name="title">
                      <string/>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_29">
+                     <item>
+                      <spacer name="horizontalSpacer_10">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
                      <item>
                       <widget class="QLabel" name="label_6">
                        <property name="text">
@@ -1410,22 +1404,6 @@
                      </item>
                      <item>
                       <widget class="QLineEdit" name="openOCDTargetLineEdit"/>
-                     </item>
-                     <item>
-                      <widget class="QCheckBox" name="stopExceptionLebelCheckBox">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="text">
-                        <string>Stop at exception level</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QComboBox" name="exceptionLevelComboBox"/>
                      </item>
                     </layout>
                    </widget>

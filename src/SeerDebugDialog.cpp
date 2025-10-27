@@ -59,16 +59,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
 
     runModeTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
 
-    exceptionLevelComboBox->addItem(QString("EL1H"));
-    exceptionLevelComboBox->addItem(QString("EL3H"));
-    exceptionLevelComboBox->addItem(QString("N-EL1H"));
-    exceptionLevelComboBox->addItem(QString("N-EL2H"));
-    exceptionLevelComboBox->addItem(QString("EL1H / EL3H"));
-    exceptionLevelComboBox->addItem(QString("N-EL1H / N-EL2H"));
-    exceptionLevelComboBox->addItem(QString("off"));
-    exceptionLevelComboBox->setCurrentIndex(0);
-    tempFuncLineEdit->setEnabled(false);
-    exceptionLevelComboBox->setEnabled(false);
     absolutePathLineEdit->setEnabled(false);
     dockerPathLineEdit->setEnabled(false);
 
@@ -104,8 +94,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(dockerCheckBox,                       &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDDockerCheckboxClicked);
     QObject::connect(absolutePathButton,                   &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDBuildFolderPathButton);
     QObject::connect(openOCDMainHelpButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainHelpButtonClicked);
-    QObject::connect(tempFuncCheckBox,                     &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDTempFuncCheckBoxClicked);
-    QObject::connect(stopExceptionLebelCheckBox,           &QCheckBox::clicked,                 this, &SeerDebugDialog::handleOpenOCDStopExceptionLebelCheckBoxClicked);
     // Set initial run mode.
     handleRunModeChanged(0);
 
@@ -887,20 +875,6 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
         dockerCheckBox                          ->setChecked(openocdModeJson["dockerCheckBox"].toBool());
         absolutePathLineEdit                    ->setText(openocdModeJson["absolutePathLineEdit"].toString());
         dockerPathLineEdit                      ->setText(openocdModeJson["dockerPathLineEdit"].toString());
-        tempFuncCheckBox                        ->setChecked(openocdModeJson["tempFuncCheckBox"].toBool());
-        tempFuncLineEdit                        ->setText(openocdModeJson["tempFuncLineEdit"].toString());
-        stopExceptionLebelCheckBox              ->setChecked(openocdModeJson["stopExceptionLebelCheckBox"].toBool());
-        exceptionLevelComboBox                  ->setCurrentText(openocdModeJson["exceptionLevelComboBox"].toString());
-
-        if (tempFuncCheckBox->isChecked())
-            tempFuncLineEdit->setEnabled(true);
-        else
-            tempFuncLineEdit->setEnabled(false);
-
-        if (stopExceptionLebelCheckBox->isChecked())
-            exceptionLevelComboBox->setEnabled(true);
-        else
-            exceptionLevelComboBox->setEnabled(false);
 
         if (dockerCheckBox->isChecked())
         {
@@ -1063,10 +1037,6 @@ void SeerDebugDialog::handleSaveProjectToolButton () {
         modeJson["dockerCheckBox"]              = dockerCheckBox->isChecked();
         modeJson["absolutePathLineEdit"]        = absolutePathLineEdit->text();
         modeJson["dockerPathLineEdit"]          = dockerPathLineEdit->text();
-        modeJson["tempFuncCheckBox"]            = tempFuncCheckBox->isChecked();
-        modeJson["tempFuncLineEdit"]            = tempFuncLineEdit->text();
-        modeJson["stopExceptionLebelCheckBox"]  = stopExceptionLebelCheckBox->isChecked();
-        modeJson["exceptionLevelComboBox"]      = exceptionLevelComboBox->currentText();
         modeJson["numberSymbolFile"]            = _OpenOCDSymbolWidgetManager->countSymbolFiles();
         QJsonArray symbolFileArray;
         const QMap<QString, std::tuple<QString, bool, QString>> symbolFiles = _OpenOCDSymbolWidgetManager->symbolFiles();
@@ -1397,40 +1367,6 @@ void SeerDebugDialog::setGdbMultiarchCommand (const QString& command) {
     openOCDGdbCommandLineEdit->setText(command);
 }
 
-bool SeerDebugDialog::isGdbMultiarchIsStopAtTempFunc () {
-    return tempFuncCheckBox->isChecked();
-}
-
-void SeerDebugDialog::setGdbMultiarchStopAtTempFunc (bool check) {
-    tempFuncCheckBox->setChecked(check);
-    handleOpenOCDTempFuncCheckBoxClicked();
-}
-
-const QString SeerDebugDialog::gdbMultiarchStopAtFunc () {
-    return tempFuncLineEdit->text();
-}
-
-void SeerDebugDialog::setGdbMultiarchStopAtFunc (const QString& func) {
-    tempFuncLineEdit->setText(func);
-}
-
-bool SeerDebugDialog::isGdbMultiarchStopAtException() {
-    return stopExceptionLebelCheckBox->isChecked();
-}
-
-void SeerDebugDialog::setGdbMultiarchStopAtExeption (bool check) {
-    stopExceptionLebelCheckBox->setChecked(check);
-    handleOpenOCDStopExceptionLebelCheckBoxClicked();
-}
-
-const QString SeerDebugDialog::gdbMultiarchExeptionLevelToStop() {
-    return exceptionLevelComboBox->currentText();
-}
-
-void SeerDebugDialog::setGdbMultiarchExeptionLevelToStop (const QString& level) {
-    exceptionLevelComboBox->setCurrentText(level);
-}
-
 const QString SeerDebugDialog::openOCDTarget ()
 {
     return openOCDTargetLineEdit->text();
@@ -1550,30 +1486,6 @@ void SeerDebugDialog::handleOpenOCDMainHelpButtonClicked()
     help->loadFile(":/seer/resources/help/OpenOCDHelp.md");
     help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->exec();
-}
-
-void SeerDebugDialog::handleOpenOCDTempFuncCheckBoxClicked()
-{
-    if (tempFuncCheckBox->isChecked())
-    {
-        tempFuncLineEdit->setEnabled(true);
-    }
-    else
-    {
-        tempFuncLineEdit->setEnabled(false);
-    }
-}
-
-void SeerDebugDialog::handleOpenOCDStopExceptionLebelCheckBoxClicked()
-{
-    if (stopExceptionLebelCheckBox->isChecked())
-    {
-        exceptionLevelComboBox->setEnabled(true);
-    }
-    else
-    {
-        exceptionLevelComboBox->setEnabled(false);
-    }
 }
 
 /***********************************************************************************************************************
