@@ -2249,6 +2249,8 @@ void SeerGdbWidget::handleGdbBreakpointsInsert (QString breakpoints) {
     for (const QString& breakpoint : breakpointlist) {
         handleGdbBreakpointInsert(breakpoint);
     }
+
+    handleGdbGenericpointList();
 }
 
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
