@@ -20,8 +20,6 @@
 #include <QtCore/QMap>
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QPoint>
-
-// QuangNM13: add trace function/variable/type feature
 #include <QMouseEvent>
 #include <QKeyEvent>
 
@@ -61,6 +59,10 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                                     findFile                            (const QString& file, const QString& fullname, const QString& alternateDirectory, const QStringList& alternateDirectories);
 
         void                                        setCurrentLine                      (int lineno);
+        void                                        setCurrentColumn                    (int colno);
+        int                                         currentLine                         () const;
+        int                                         currentColumn                       () const;
+        int                                         firstDisplayLine                    () const;
         void                                        scrollToLine                        (int lineno);
 
         void                                        clearCurrentLines                   ();

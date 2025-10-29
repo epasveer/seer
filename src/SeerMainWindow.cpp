@@ -231,6 +231,10 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget,                         &SeerGdbWidget::requestLsmod,                   gdbWidget,      &SeerGdbWidget::handleGdbLsmod);
     QObject::connect(gdbWidget,                         &SeerGdbWidget::requestWarning,                 gdbWidget,      &SeerGdbWidget::handleSyncWarning);
 
+    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
+    QObject::connect(shortcut,              &QShortcut::activated,                                      gdbWidget->editorManager(),   &SeerEditorManagerWidget::handleOpenRecentlyClosedFile);
+
     handleRecordSettingsChanged();
 
     //
@@ -250,7 +254,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 }
 
 SeerMainWindow::~SeerMainWindow() {
-    handleTerminateExecutable();                    // QuangNM13: see if this could fix segmantation fault on exit.
+    handleTerminateExecutable();                    // see if this could fix segmantation fault on exit.
 }
 
 void SeerMainWindow::setExecutableName (const QString& executableName) {

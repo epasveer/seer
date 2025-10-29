@@ -738,6 +738,31 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
     refreshExtraSelections();
 }
 
+int SeerEditorWidgetSourceArea::currentLine () const {
+    QTextCursor cursor = textCursor();
+    return cursor.blockNumber() + 1;;
+}
+
+void SeerEditorWidgetSourceArea::setCurrentColumn (int colno) {
+    QTextCursor cursor = textCursor();
+
+    int lineStartPos = cursor.block().position();
+    int newPos       = lineStartPos + (colno - 1);
+
+    cursor.setPosition(newPos);
+    setTextCursor(cursor);
+}
+
+int SeerEditorWidgetSourceArea::currentColumn () const {
+    QTextCursor cursor = textCursor();
+    return cursor.positionInBlock() + 1;
+}
+
+int SeerEditorWidgetSourceArea::firstDisplayLine () const {
+    QTextBlock block = firstVisibleBlock();
+    return block.blockNumber() + 1;
+}
+
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
     // Scroll to the first line if we went before it.

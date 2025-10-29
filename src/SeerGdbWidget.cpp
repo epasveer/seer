@@ -1901,7 +1901,7 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
                 openocdWidget->killConsole();
             }
 
-            
+            editorManagerWidget->clearFilesStack();
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
 
