@@ -12,3 +12,5 @@ tests/          export-ignore
 notes/Theme_dark.png   export-ignore
 notes/Theme_light.png  export-ignore
 tests/helloname/core.helloname.*  export-ignore
+# Fix \n\r issues on Windows and Linux/Mac
+* text=auto
