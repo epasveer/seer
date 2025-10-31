@@ -2107,8 +2107,14 @@ void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
     QPlainTextEdit::mousePressEvent(event);
 }
 
-// When Ctrl is hold and left mouse is clicked, and cursor is pointing at a word, try to look for that word 
+// When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit seekIdentifier signal
 void SeerEditorWidgetSourceArea::handleSeekIdentifierF12()
 {
-
+    QTextCursor cursor = textCursor();
+    cursor.select(QTextCursor::WordUnderCursor);
+    QString wordUnderCursor = cursor.selectedText();
+    if (isValidIdentifier(wordUnderCursor))
+    {
+        emit seekIdentifier(wordUnderCursor);
+    }
 }

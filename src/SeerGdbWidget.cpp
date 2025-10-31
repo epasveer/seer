@@ -1171,6 +1171,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
                     QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
                     QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
                     name_text = name_text.section('(', 0, 0).trimmed();
                     if (name_text == _Identifier)           // you found it! signal to open file
                     {
