@@ -131,6 +131,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
         void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
+        void                                        handleSeekIdentifierF12             ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);

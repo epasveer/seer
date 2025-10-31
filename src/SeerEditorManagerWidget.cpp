@@ -1432,7 +1432,7 @@ bool SeerEditorManagerWidget::isOpenFileEnable() {
 // Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
 void SeerEditorManagerWidget::seekIdentifierForwarder(const QString& identifier)
 {
-    emit seekIdentifier(identifier);
+    emit seekIdentifierForward(identifier);
 }
 
 // Clear the stack of recently closed files and backward/forward list

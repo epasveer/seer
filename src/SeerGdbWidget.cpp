@@ -453,7 +453,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::requestRefreshSource,                                                       this,                                                           &SeerGdbWidget::handleGdbExecutableSources);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
     // For handling tracing functions, variables and types
-    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::seekIdentifier,                                                   this,                                                           &SeerGdbWidget::handleSeekIdentifier);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::seekIdentifierForward,                                            this,                                                           &SeerGdbWidget::handleSeekIdentifier);
 
     // Restore window settings.
     readSettings();
@@ -1171,6 +1171,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
                     QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
                     QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+                    name_text = name_text.section('(', 0, 0).trimmed();
                     if (name_text == _Identifier)           // you found it! signal to open file
                     {
                         if (!_debugOnInitFindLoadModuleFile)                // if not handling debug on init

@@ -69,6 +69,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
+    // // Add Trace Identifier when F12 button is pressed (F12). F12 -> SeerEditorWidgetSourceAreas ->
+    QShortcut *shortcutF12 = new QShortcut(QKeySequence("F12"), this);
+    QObject::connect(shortcutF12,   &QShortcut::activated,                                  this, &SeerEditorWidgetSourceArea::handleSeekIdentifierF12);
 
     setCurrentLine(0);
 
@@ -2102,4 +2105,10 @@ void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
         }
     }
     QPlainTextEdit::mousePressEvent(event);
+}
+
+// When Ctrl is hold and left mouse is clicked, and cursor is pointing at a word, try to look for that word 
+void SeerEditorWidgetSourceArea::handleSeekIdentifierF12()
+{
+
 }
