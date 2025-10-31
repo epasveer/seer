@@ -1510,6 +1510,12 @@ void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
             QScrollBar *scrollBar = editorWidget->sourceArea()->verticalScrollBar();
             int step = scrollBar->singleStep();
             scrollBar->setValue(topValue.firstDisplayLine * step - 1);
+
+            // Set cursor position
+            QTextBlock  block  = editorWidget->sourceArea()->document()->findBlockByLineNumber(topValue.line-1);
+            QTextCursor cursor = editorWidget->sourceArea()->textCursor();
+            cursor.setPosition(block.position() + topValue.column - 1);
+            editorWidget->sourceArea()->setTextCursor(cursor);
         }
     }
 }

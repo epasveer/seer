@@ -187,6 +187,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         QTimer*                                         _timer;                     // timer to deply forward/backward
         std::stack<SeerCurrentFile>                     _stackClosedFiles;          // list of recently closed files (Ctrl + Shift + T)
         QList<SeerCurrentFile>                          _listForwardFiles;          // list of opened files with its cursor position
-        SeerCurrentFile*                                _forwardQueuePointer = &_listForwardFiles[0];
+        SeerCurrentFile*                                _forwardQueuePointer;
 };
 
