@@ -7,6 +7,11 @@
 * VariableTracker: Add 'deleteselect' and 'deleteall' to RMB context menu.
 * VariableLogger: Add 'deleteselect' and 'deleteall' to RMB context menu.
 * EditorConfig: Show syntax highlighting for C/C++, Rust, and Odin.
+* Editor: ^F to focus on text search ^L to focus on line search.
+* Editor: ESC to hide search panel.
+* Editor: ^B to toggle breakpoint on current line.
+* Editor: Show cursor all the time.
+* Breakpoints: Allow multiple filename:line entries for the --break-source option.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.
