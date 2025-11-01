@@ -12,6 +12,7 @@
 * Editor: ^B to toggle breakpoint on current line.
 * Editor: Show cursor all the time.
 * Breakpoints: Allow multiple filename:line entries for the --break-source option.
+* Control: Add ^D to toggle record playback direction for RR, Undo, and gdb's Record.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.

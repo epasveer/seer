@@ -123,6 +123,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     setKeySettings(SeerKeySettings::populate());
     setProjectFilename("");
 
+    // Set the default shotcut key to toggle record direction.
+    actionRecordDirection->setShortcut(QKeySequence::fromString("Ctrl+D"));
+
     //
     // Set up signals/slots.
     //
@@ -1808,6 +1811,15 @@ void SeerMainWindow::refreshShortCuts () {
         actionFileQuit->setShortcut(setting._sequence);
     }
 
+    if (_keySettings.has("ToggleRecordDirection")) {
+
+        SeerKeySetting setting = _keySettings.get("ToggleRecordDirection");
+
+        actionRecordDirection->setText(QString("Direction") + " (" + setting._sequence.toString() + ")");
+        actionRecordDirection->setShortcut(setting._sequence);
+    }
+
+    // Notify the editor manager of changes.
     gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 
