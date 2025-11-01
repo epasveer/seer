@@ -2100,7 +2100,7 @@ void SeerGdbWidget::handleGdbInterrupt () {
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
         {
             handleGdbInterruptSIGINT();
-            QApplication::setOverrideCursor(Qt::ArrowCursor);
+            QApplication::restoreOverrideCursor();
         }
     else
         sendGdbInterrupt(-1);
@@ -4901,7 +4901,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
         break;
     }
 
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
 
     qCDebug(LC) << "Finishing 'gdb-multiarch connect'.";
 
