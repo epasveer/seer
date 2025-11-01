@@ -78,6 +78,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         const QVector<bool>&                        breakpointEnableds                  () const;
         int                                         breakpointAddressToNumber           (const QString& address) const;
         bool                                        breakpointAddressEnabled            (const QString& address) const;
+        void                                        breakpointToggle                    ();
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
@@ -280,6 +281,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        reloadAssembly                      ();
         void                                        reloadRegisters                     ();
         void                                        showSearchBar                       (bool flag);
+        void                                        showSearchBar                       (bool flag, QString field);
         void                                        setSearchMatchCase                  (bool flag);
         void                                        setShowAddressColumn                (bool flag);
         void                                        setShowOffsetColumn                 (bool flag);
@@ -297,11 +299,14 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleSearchUpToolButton            ();
         void                                        handleSearchCloseToolButton         ();
         void                                        handleTextSearchShortcut            ();
+        void                                        handleLineSearchShortcut            ();
+        void                                        handleToggleBreakpointShortcut      ();
         void                                        handleShowAddressColumn             ();
         void                                        handleShowOffsetColumn              ();
         void                                        handleShowOpcodeColumn              ();
         void                                        handleShowSourceLines               ();
         void                                        handleEditPreferences               ();
+        void                                        handleEscapePressed                 ();
 
     signals:
         void                                        evaluateVariableExpression          (int expressionid, QString expression);
@@ -318,6 +323,8 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         QShortcut*                                  _textSearchShortcut;
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
+        QShortcut*                                  _lineSearchShortcut;
+        QShortcut*                                  _toggleBreakpointShortcut;
         QAction*                                    _editPreferencesAction;
         QString                                     _pcName;
         QString                                     _spName;

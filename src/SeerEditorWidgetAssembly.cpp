@@ -35,9 +35,11 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     showSearchBar(false);      // Hide the search bar. ctrl+F to show it again.
     setSearchMatchCase(true);  // Search with case sensitivity.
 
-    _textSearchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")), this);
-    _textSearchNextShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")), this);
-    _textSearchPrevShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+    _textSearchShortcut       = new QShortcut(QKeySequence(tr("Ctrl+F")),       this);
+    _textSearchNextShortcut   = new QShortcut(QKeySequence(tr("Ctrl+G")),       this);
+    _textSearchPrevShortcut   = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+    _lineSearchShortcut       = new QShortcut(QKeySequence(tr("Ctrl+L")),       this);
+    _toggleBreakpointShortcut = new QShortcut(QKeySequence(tr("Ctrl+B")),       this);
 
     setKeySettings(SeerKeySettings::populate());
 
@@ -59,7 +61,8 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,                &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::returnPressed,               this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
+    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::escapePressed,               this,  &SeerEditorWidgetAssembly::handleEscapePressed);
 #if QT_VERSION >= 0x060900
     QObject::connect(matchCaseCheckBox,                 &QCheckBox::checkStateChanged,                  this,  &SeerEditorWidgetAssembly::handleSearchTextLineEdit);
 #else
@@ -67,7 +70,8 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
 #endif
     QObject::connect(searchDownToolButton,              &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
     QObject::connect(searchUpToolButton,                &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
-    QObject::connect(searchLineNumberLineEdit,          &QLineEdit::returnPressed,                      this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
+    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::returnPressed,               this,  &SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit);
+    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::escapePressed,               this,  &SeerEditorWidgetAssembly::handleEscapePressed);
     QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::handleSearchCloseToolButton);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadAssembly);
     QObject::connect(refreshToolButton,                 &QToolButton::clicked,                          this,  &SeerEditorWidgetAssembly::reloadRegisters);
@@ -82,11 +86,13 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     QObject::connect(showOpcodeCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowOpcodeColumn);
     QObject::connect(showSourceCheckBox,                &QCheckBox::stateChanged,                       this,  &SeerEditorWidgetAssembly::handleShowSourceLines);
 #endif
-    QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  &SeerEditorWidgetAssembly::showSearchBar);
+    QObject::connect(assemblyWidget,                    &SeerEditorWidgetAssemblyArea::showSearchBar,   this,  qOverload<bool>(&SeerEditorWidgetAssembly::showSearchBar));
 
     QObject::connect(_textSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleTextSearchShortcut);
     QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchDownToolButton);
     QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleSearchUpToolButton);
+    QObject::connect(_lineSearchShortcut,               &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleLineSearchShortcut);
+    QObject::connect(_toggleBreakpointShortcut,         &QShortcut::activated,                          this,  &SeerEditorWidgetAssembly::handleToggleBreakpointShortcut);
 
     QObject::connect(_editPreferencesAction,            &QAction::triggered,                            this,  &SeerEditorWidgetAssembly::handleEditPreferences);
 
@@ -219,12 +225,22 @@ void SeerEditorWidgetAssembly::reloadRegisters () {
 }
 
 void SeerEditorWidgetAssembly::showSearchBar (bool flag) {
+    showSearchBar(flag, "");
+}
+
+void SeerEditorWidgetAssembly::showSearchBar (bool flag, QString field) {
 
     searchBarWidget->setVisible(flag);
 
-    // If 'show', give the searchTextLineEdit the focus.
+    // If 'show', give the searchTextLineEdit or the searchTextLineEdit the focus.
     if (flag) {
-        searchTextLineEdit->setFocus(Qt::MouseFocusReason);
+        if (field == "text") {
+            searchTextLineEdit->setFocus(Qt::MouseFocusReason);
+        }else if (field == "line") {
+            searchLineNumberLineEdit->setFocus(Qt::MouseFocusReason);
+        }else{
+            searchTextLineEdit->setFocus(Qt::MouseFocusReason);
+        }
     }
 }
 
@@ -376,6 +392,7 @@ void SeerEditorWidgetAssembly::handleSearchLineNumberLineEdit () {
     QString address = searchLineNumberLineEdit->text();
 
     if (address == "") {
+        showSearchBar(false);
         return;
     }
 
@@ -394,6 +411,7 @@ void SeerEditorWidgetAssembly::handleSearchTextLineEdit () {
 
     if (str == "") {
         assemblyArea()->clearFindText();
+        showSearchBar(false);
         return;
     }
 
@@ -432,10 +450,24 @@ void SeerEditorWidgetAssembly::handleSearchCloseToolButton () {
 void SeerEditorWidgetAssembly::handleTextSearchShortcut () {
 
     if (isSearchBarShown() == true) {
-        showSearchBar(false);
+        showSearchBar(false, "");
     }else{
-        showSearchBar(true);
+        showSearchBar(true, "text");
     }
+}
+
+void SeerEditorWidgetAssembly::handleLineSearchShortcut () {
+
+    if (isSearchBarShown() == true) {
+        showSearchBar(false, "");
+    }else{
+        showSearchBar(true, "line");
+    }
+}
+
+void SeerEditorWidgetAssembly::handleToggleBreakpointShortcut () {
+
+    assemblyArea()->breakpointToggle();
 }
 
 void SeerEditorWidgetAssembly::handleShowAddressColumn () {
@@ -485,6 +517,11 @@ void SeerEditorWidgetAssembly::handleEditPreferences () {
 
         writeSettings();
     }
+}
+
+void SeerEditorWidgetAssembly::handleEscapePressed () {
+
+    showSearchBar(false, "");
 }
 
 void SeerEditorWidgetAssembly::writeSettings () {

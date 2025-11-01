@@ -53,6 +53,7 @@ class QHistoryLineEdit : public QLineEdit {
         void        lineExecuted                        (QString text);
         void        lostFocus                           ();
         void        gainedFocus                         ();
+        void        escapePressed                       ();
 
     protected:
         void        keyPressEvent                       (QKeyEvent*   event) Q_DECL_OVERRIDE;

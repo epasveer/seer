@@ -1142,7 +1142,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         // Set the program's arguments before running.
         handleGdbExecutableArguments();
 
-        // Set a breakpoint for start up if "infunction" or "insource".
+        // Set a breakpoint for start up if "infunction".
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
             if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
@@ -1152,8 +1152,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
             }
         }
 
+        // Set breakpoints for start up if "insource".
         if (_executableBreakMode == "insource" && executableBreakpointSourceName() != "") {
-            handleGdbBreakpointInsert(executableBreakpointSourceName());
+            handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
 
         // Run any 'post' commands after program is loaded.
@@ -1273,6 +1274,11 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         // Attach to the executable's pid.
         handleGdbCommand(QString("-target-attach %1").arg(executablePid()));
 
+        // Set breakpoints for start up if "insource".
+        if (executableBreakpointSourceName() != "") {
+            handleGdbBreakpointsInsert(executableBreakpointSourceName());
+        }
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
@@ -1379,6 +1385,11 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception off");
         }
 
+        // Set breakpoints for start up if "insource".
+        if (executableBreakpointSourceName() != "") {
+            handleGdbBreakpointsInsert(executableBreakpointSourceName());
+        }
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
@@ -1483,6 +1494,11 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
         if (gdbEnablePrettyPrinting()) {
             handleGdbCommand("-enable-pretty-printing"); // Turn on pretty-printing. Can not be turned off.
+        }
+
+        // Set breakpoints for start up if "insource".
+        if (executableBreakpointSourceName() != "") {
+            handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
 
         // Run any 'post' commands after program is loaded.
@@ -2220,6 +2236,21 @@ void SeerGdbWidget::handleGdbBreakpointInfo (int breakpointid, QString breakpoin
     QString str = QString("%1-break-info %2").arg(breakpointid).arg(breakpoint);
 
     handleGdbCommand(str);
+}
+
+void SeerGdbWidget::handleGdbBreakpointsInsert (QString breakpoints) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    QStringList breakpointlist = breakpoints.split(',');
+
+    for (const QString& breakpoint : breakpointlist) {
+        handleGdbBreakpointInsert(breakpoint);
+    }
+
+    handleGdbGenericpointList();
 }
 
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
