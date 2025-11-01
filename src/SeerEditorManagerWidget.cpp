@@ -784,7 +784,6 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
     //qDebug() << index << tabWidget->count() << tabWidget->tabText(0);
 
     // If it is the place holder, don't delete it.
-    QString tabtext = tabWidget->tabText(index);
     if (tabWidget->tabText(index) == "") {
         return;
     }
