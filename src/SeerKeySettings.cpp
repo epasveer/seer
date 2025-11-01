@@ -78,7 +78,7 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("SearchLine",               SeerKeySetting("SearchLine",            QKeySequence::fromString("Ctrl+L"),       "Seach for line number in the code editor."));
     keySettings.add("AlternateDir",             SeerKeySetting("AlternateDir",          QKeySequence::fromString("Ctrl+O"),       "Look for source file in an alternate directory."));
     keySettings.add("ToggleBreakpoint",         SeerKeySetting("ToggleBreakpoint",      QKeySequence::fromString("Ctrl+B"),       "Toggle the breakpoint status of current line."));
-    keySettings.add("ToggleRecordDirection",    SeerKeySetting("ToggleRecordDirection", QKeySequence::fromString("Ctrl+D"),       "Toggle the record playback directory."));
+    keySettings.add("ToggleRecordDirection",    SeerKeySetting("ToggleRecordDirection", QKeySequence::fromString("Ctrl+D"),       "Toggle the record playback direction."));
 
     return keySettings;
 }
