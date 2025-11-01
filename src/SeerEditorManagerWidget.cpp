@@ -1449,18 +1449,21 @@ void SeerEditorManagerWidget::onTimerTimeout()
     // Save the current file and cursor position
     SeerEditorWidgetSource* editorWidget = dynamic_cast<SeerEditorWidgetSource*>(tabWidget->widget(tabWidget->currentIndex()));
     SeerCurrentFile fileInfo;
-    fileInfo.file               = editorWidget->sourceArea()->file();
-    fileInfo.fullname           = editorWidget->sourceArea()->fullname();
-    fileInfo.line               = editorWidget->sourceArea()->currentLine();
-    fileInfo.column             = editorWidget->sourceArea()->currentColumn();
-    fileInfo.firstDisplayLine   = editorWidget->sourceArea()->firstDisplayLine();
-    if (fileInfo.file != "")
+    if (editorWidget)
     {
-        // Check if the top of stack is the same file
-        if (!_listForwardFiles.isEmpty() && _listForwardFiles.back() == fileInfo)
+        fileInfo.file               = editorWidget->sourceArea()->file();
+        fileInfo.fullname           = editorWidget->sourceArea()->fullname();
+        fileInfo.line               = editorWidget->sourceArea()->currentLine();
+        fileInfo.column             = editorWidget->sourceArea()->currentColumn();
+        fileInfo.firstDisplayLine   = editorWidget->sourceArea()->firstDisplayLine();
+        if (fileInfo.file != "")
         {
-            
-            _listForwardFiles.append(fileInfo);
+            // Check if the top of stack is the same file
+            if (!_listForwardFiles.isEmpty() && _listForwardFiles.back() == fileInfo)
+            {
+                
+                _listForwardFiles.append(fileInfo);
+            }
         }
     }
 }

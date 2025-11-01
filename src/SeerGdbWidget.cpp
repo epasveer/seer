@@ -5321,7 +5321,7 @@ void SeerGdbWidget::traceIdentifierHandler(const QString& identifier)
         handleSyncGdbFindTypeIdentifier(QString(" --name " + identifier));
     }
     setSeekIdentifierFlag(false);    // Lower the flag
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+    QApplication::restoreOverrideCursor();
 }
 
 /***********************************************************************************************************************

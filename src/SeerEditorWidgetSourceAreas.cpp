@@ -85,7 +85,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
 
     setMouseTracking(true);
-    setCursorWidth(2);          // make cursor a little bit bigger
 
     // Calling close() will clear the text document.
     close();
@@ -2042,8 +2041,13 @@ void SeerEditorWidgetSourceArea::updateCursor(const QPoint &pos)
 {
     _ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
     if (_ctrlHeld && isOverWord(pos)) {
-        QApplication::setOverrideCursor(Qt::PointingHandCursor);
         _wordUnderCursor = wordUnderCursor(pos);
+        if (isValidIdentifier(_wordUnderCursor))
+        {
+            QApplication::setOverrideCursor(Qt::PointingHandCursor);
+        } else {
+            QApplication::restoreOverrideCursor();
+        }
     } else {
         QApplication::restoreOverrideCursor();
     }
@@ -2101,6 +2105,7 @@ void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton && _wordUnderCursor != "" && _ctrlHeld) {
         if (isValidIdentifier(_wordUnderCursor))
         {
+            QApplication::restoreOverrideCursor();
             emit seekIdentifier(_wordUnderCursor);
         }
     }
