@@ -1,0 +1,8 @@
+Mimics feature in VS Code: "Mouse Button Navigation" (or sometimes "Back/Forward navigation").
+In which , when you click "Thumb mouse button 2" on your mouse, vscode will move backward/ Forward to previous File
+
+Deploy:
+SeerEditorWidgetSourceAreas.cpp = File
+SeerEditorManagerWidget.cpp : Manage all SeerEditorWidgetSourceAreas
+
+SeerEditorWidgetSourceAreas::handleCursorPositionChanged -> send signal to SeerEditorManagerWidget

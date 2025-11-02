@@ -18,7 +18,13 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+<<<<<<< HEAD
 #include <QTimer>
+=======
+#include <QScrollBar>
+#include <QPlainTextEdit>
+#include <QMouseEvent>
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -845,6 +851,11 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         editorWidget->sourceArea()->scrollToLine(lineno);
     }
 
+<<<<<<< HEAD
+=======
+    handleAddToMouseNavigation({file, fullname, lineno, 1, editorWidget->sourceArea()->firstDisplayLine()});
+
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
     // Ask for the breakpoint list to be resent, in case this file has breakpoints.
     emit refreshBreakpointsList();
 
@@ -946,6 +957,11 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     // Immediately connect each new source code tab to SeerEditorManagerWidget slots
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
+<<<<<<< HEAD
+=======
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::fileClosed,                    this, &SeerEditorManagerWidget::handleFileClosed);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -1010,6 +1026,11 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     // Immediately connect each new source code tab to SeerEditorManagerWidget slots
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
+<<<<<<< HEAD
+=======
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::fileClosed,                    this, &SeerEditorManagerWidget::handleFileClosed);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1037,7 +1058,10 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
         while (b != e) {
             if (editorWidget == b->widget) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
                 deleteEntry(b);                 // Delete the entry from the map.
                 tabWidget->removeTab(index);    // Remove the tab.
                 delete editorWidget;            // Delete the actual EditorWidget
@@ -1402,5 +1426,177 @@ bool SeerEditorManagerWidget::isOpenFileEnable() {
 // Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
 void SeerEditorManagerWidget::seekIdentifierForwarder(const QString& identifier)
 {
+<<<<<<< HEAD
     emit seekIdentifier(identifier);
 }
+=======
+    emit seekIdentifierForward(identifier);
+}
+
+// Clear the stack of recently closed files and backward/forward list
+void SeerEditorManagerWidget::clearFilesStack()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
+    }
+    _listForwardFiles.clear();
+    _forwardFilesIndex = -1;
+}
+
+
+void SeerEditorManagerWidget::handleFileClosed(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
+{
+    if (currentFile.file != "")
+        _stackClosedFiles.push(currentFile);
+}
+
+void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
+{
+    // Record this file in the forward list.
+    if (currentFile.file != "")
+    {
+        // Check if the last added file is the same as currentFile
+        if (!_listForwardFiles.empty())
+        {
+            const SeerEditorWidgetSourceArea::SeerCurrentFile& lastFile = _listForwardFiles[_listForwardFiles.size() -1];
+            if (currentFile == lastFile)
+            {
+                return;
+            }
+        }
+        
+        // if _forwardFilesIndex is at the end of the list, just append
+        if (_forwardFilesIndex >= _listForwardFiles.size() - 1)
+        {
+            _listForwardFiles.append(currentFile);
+            _forwardFilesIndex ++;
+        }
+        else    // else remove all entries after _forwardFilesIndex and then append
+        {
+            int removeCount = _listForwardFiles.size() - 1 - _forwardFilesIndex;
+            for (int i=0; i < removeCount; i++)
+            {
+                _listForwardFiles.removeLast();
+            }
+            if (currentFile == _listForwardFiles[_listForwardFiles.size() -1])
+            {
+                return;
+            }
+            _listForwardFiles.append(currentFile);
+            _forwardFilesIndex = _listForwardFiles.size() -1;
+        }
+    }   
+}
+
+// Handle opening recently closed file: When use Ctrl + Shift + T
+void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
+    if (!_stackClosedFiles.empty()) {
+        SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+        _stackClosedFiles.pop();
+        // Must have a valid filename.
+        if (topValue.file == "" || topValue.fullname == "") {
+            return;
+        }
+
+        // Get the EditorWidget for the file. Create one if needed.
+        SeerEditorWidgetSource* editorWidget = editorWidgetTab(topValue.fullname);
+        
+        if (editorWidget == 0) {
+            editorWidget = createEditorWidgetTab(topValue.fullname, topValue.file);
+        }
+
+        // Can still be null, if the file is ignored.
+        if (editorWidget == 0) {
+            return;
+        }
+
+        // Push this tab to the top only if the current one in not the "Assembly" tab.
+        QString tabtext = "";
+
+        if (tabWidget->currentIndex() >= 0) {
+            tabtext = tabWidget->tabText(tabWidget->currentIndex());
+        }
+
+        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+            // Do nothing. The "Assembly" tab is already on top.
+        }else{
+            tabWidget->setCurrentWidget(editorWidget);
+        }
+
+        if (topValue.firstDisplayLine > 0) {            // scroll to the previous first display line
+            QScrollBar *scrollBar = editorWidget->sourceArea()->verticalScrollBar();
+            int step = scrollBar->singleStep();
+            scrollBar->setValue(topValue.firstDisplayLine * step - 1);
+
+            // Set cursor position
+            QTextBlock  block  = editorWidget->sourceArea()->document()->findBlockByLineNumber(topValue.line-1);
+            QTextCursor cursor = editorWidget->sourceArea()->textCursor();
+            cursor.setPosition(block.position() + topValue.column - 1);
+            editorWidget->sourceArea()->setTextCursor(cursor);
+        }
+    }
+}
+
+void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo) {
+    // Get the EditorWidget for the file. Create one if needed.
+    SeerEditorWidgetSource* editorWidget = editorWidgetTab(fileInfo.fullname);
+    
+    if (editorWidget == 0) {
+        editorWidget = createEditorWidgetTab(fileInfo.fullname, fileInfo.file);
+    }
+
+    // Can still be null, if the file is ignored.
+    if (editorWidget == 0) {
+        return;
+    }
+
+    // Push this tab to the top only if the current one in not the "Assembly" tab.
+    QString tabtext = "";
+
+    if (tabWidget->currentIndex() >= 0) {
+        tabtext = tabWidget->tabText(tabWidget->currentIndex());
+    }
+
+    if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+        // Do nothing. The "Assembly" tab is already on top.
+    }else{
+        tabWidget->setCurrentWidget(editorWidget);
+    }
+
+    if (fileInfo.firstDisplayLine > 0) {            // scroll to the previous first display line
+        QScrollBar *scrollBar = editorWidget->sourceArea()->verticalScrollBar();
+        int step = scrollBar->singleStep();
+        scrollBar->setValue(fileInfo.firstDisplayLine * step - 1);
+
+        // Set cursor position
+        QTextBlock  block  = editorWidget->sourceArea()->document()->findBlockByLineNumber(fileInfo.line-1);
+        QTextCursor cursor = editorWidget->sourceArea()->textCursor();
+        cursor.setPosition(block.position() + fileInfo.column - 1);
+        editorWidget->sourceArea()->setTextCursor(cursor);
+    }
+}
+
+void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
+{
+    // Back button (XButton1) clicked
+    if (event->button() == Qt::XButton1) {
+        if (_forwardFilesIndex - 1 < 0)
+            return;
+        -- _forwardFilesIndex;
+        const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
+        handleOpenForwardBackward(info);
+    }
+    // Forward button (XButton2) clicked
+    else if (event->button() == Qt::XButton2) {
+        if (_forwardFilesIndex + 1 > _listForwardFiles.size() - 1)
+            return;
+        ++ _forwardFilesIndex;
+        const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
+        handleOpenForwardBackward(info);
+    }
+    else 
+    {
+        QWidget::mousePressEvent(event);
+    }
+}
+>>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a

@@ -239,14 +239,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setTelnetPort                       (const QString& port);
         const QString&                      gdbMultiarchCommand                 ();
         void                                setGdbMultiarchCommand              (const QString& command);
-        bool                                isGdbMultiarchIsStopAtTempFunc        ();
-        void                                setGdbMultiarchStopAtTempFunc     (bool check);
-        const QString                       gdbMultiarchStopAtFunc              ();
-        void                                setGdbMultiarchStopAtFunc           (const QString& func);
-        bool                                isGdbMultiarchStopAtException       ();
-        void                                setGdbMultiarchStopAtExeption  (bool check);
-        const QString                       gdbMultiarchExeptionLevelToStop     ();
-        void                                setGdbMultiarchExeptionLevelToStop  (const QString& level);
         const QString                       openOCDTarget                       ();
         void                                setOpenOCDTarget                    (const QString& target);
         // ::Docker
@@ -603,10 +595,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _isTargetRunning;               // hold target state: running / halted
         bool                                _debugOnInitFlag;               // flag handling openocd debug on init
         bool                                _seekingIndentifierFlag;        // flag for handling seek identifier
-        bool                                _isStopAtTempFunc;
-        QString                             _stopAtFunc;
-        bool                                _isStopAtException;
-        QString                             _exceptionLevelToStop;
         QString                             _openOCDTarget;        
         // Kernel module
         QString                             _moduleName;

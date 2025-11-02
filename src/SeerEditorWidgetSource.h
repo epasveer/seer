@@ -20,20 +20,35 @@
 #include <QtCore/QMap>
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QPoint>
-
-// QuangNM13: add trace function/variable/type feature
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QTimer>
 
 class SeerEditorWidgetSourceLineNumberArea;
 class SeerEditorWidgetSourceBreakPointArea;
 
 class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
-
+    
     Q_OBJECT
 
     public:
+        struct SeerCurrentFile {
+            QString                   file;
+            QString                   fullname;
+            int                       line;             // line to set the cursor to
+            int                       column;           // column to set the cursor to
+            int                       firstDisplayLine;      // line to display at top
+            bool operator==(const SeerCurrentFile& other) const {
+                return (fullname == other.fullname) && (line == other.line) &&
+                        (column == other.column) && (firstDisplayLine == other.firstDisplayLine);
+            }
+            bool operator!=(const SeerCurrentFile& other) const {
+                return (fullname != other.fullname) | (line != other.line) |
+                        (column != other.column) | (firstDisplayLine != other.firstDisplayLine);
+            }
+        };
         SeerEditorWidgetSourceArea (QWidget* parent = 0);
+        ~SeerEditorWidgetSourceArea ();
 
         void                                        enableLineNumberArea                (bool flag);
         bool                                        lineNumberAreaEnabled               () const;
@@ -61,6 +76,10 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                                     findFile                            (const QString& file, const QString& fullname, const QString& alternateDirectory, const QStringList& alternateDirectories);
 
         void                                        setCurrentLine                      (int lineno);
+        void                                        setCurrentColumn                    (int colno);
+        int                                         currentLine                         () const;
+        int                                         currentColumn                       () const;
+        int                                         firstDisplayLine                    () const;
         void                                        scrollToLine                        (int lineno);
 
         void                                        clearCurrentLines                   ();
@@ -100,6 +119,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         int                                         editorTabSize                       () const;
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
+        SeerCurrentFile                             readCurrentPosition                 ();
 
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
@@ -123,12 +143,16 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
         void                                        seekIdentifier                      (const QString& identifier);
+        void                                        fileClosed                          (const SeerCurrentFile& currentFile);
+        void                                        addToMouseNavigation                (const SeerCurrentFile& currentFile);
 
     public slots:
         void                                        handleText                          (const QString& text);
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
         void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
+        void                                        handleSeekIdentifierF12             ();
+        void                                        handleCursorPositionChanged         ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
@@ -188,6 +212,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         bool                                        _ctrlHeld = false;
         QString                                     _wordUnderCursor;
+        int                                         _ignoreThumbMouseEvent = 0;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {

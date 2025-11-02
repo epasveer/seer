@@ -453,7 +453,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::requestRefreshSource,                                                       this,                                                           &SeerGdbWidget::handleGdbExecutableSources);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
     // For handling tracing functions, variables and types
-    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::seekIdentifier,                                                   this,                                                           &SeerGdbWidget::handleSeekIdentifier);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::seekIdentifierForward,                                            this,                                                           &SeerGdbWidget::handleSeekIdentifier);
 
     // Restore window settings.
     readSettings();
@@ -1171,6 +1171,8 @@ void SeerGdbWidget::handleText (const QString& text) {
 
                     QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
                     QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
+                    name_text = name_text.section('(', 0, 0).trimmed();
                     if (name_text == _Identifier)           // you found it! signal to open file
                     {
                         if (!_debugOnInitFindLoadModuleFile)                // if not handling debug on init
@@ -1901,7 +1903,7 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
                 openocdWidget->killConsole();
             }
 
-            
+            editorManagerWidget->clearFilesStack();
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
 
@@ -2098,7 +2100,7 @@ void SeerGdbWidget::handleGdbInterrupt () {
         _gdbProcess->state() == QProcess::Running && _gdbmultiarchPid > 0)
         {
             handleGdbInterruptSIGINT();
-            QApplication::setOverrideCursor(Qt::ArrowCursor);
+            QApplication::restoreOverrideCursor();
         }
     else
         sendGdbInterrupt(-1);
@@ -4646,38 +4648,6 @@ void SeerGdbWidget::setGdbMultiarchCommand (const QString& command) {
     _gdbMultiarchCommands = command;
 }
 
-bool SeerGdbWidget::isGdbMultiarchIsStopAtTempFunc () {
-    return _isStopAtTempFunc;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtTempFunc (bool check) {
-    _isStopAtTempFunc = check;
-}
-
-const QString SeerGdbWidget::gdbMultiarchStopAtFunc () {
-    return _stopAtFunc;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtFunc (const QString& func) {
-    _stopAtFunc = func;
-}
-
-bool SeerGdbWidget::isGdbMultiarchStopAtException() {
-    return _isStopAtException;
-}
-
-void SeerGdbWidget::setGdbMultiarchStopAtExeption (bool check) {
-    _isStopAtException = check;
-}
-
-const QString SeerGdbWidget::gdbMultiarchExeptionLevelToStop () {
-    return _exceptionLevelToStop;
-}
-
-void SeerGdbWidget::setGdbMultiarchExeptionLevelToStop (const QString& level) {
-    _exceptionLevelToStop = level;
-}
-
 const QString SeerGdbWidget::openOCDTarget ()
 {
     return _openOCDTarget;
@@ -4804,11 +4774,6 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
     openocdWidget->createOpenOCDConsole(logsTabWidget);
     openocdWidget->setTelnetPort(telnetPort());
     openocdWidget->setOpenOCDTarget(_openOCDTarget);
-    
-    if (isGdbMultiarchStopAtException())
-        openocdWidget->setStopAtException(gdbMultiarchExeptionLevelToStop());
-    else
-        openocdWidget->setStopAtException("");
     // Start OpenOCD with the given path and command
     bool foo = openocdWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
     if (foo == false) {
@@ -4935,7 +4900,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable()
         break;
     }
 
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QApplication::restoreOverrideCursor();
 
     qCDebug(LC) << "Finishing 'gdb-multiarch connect'.";
 
@@ -5355,7 +5320,7 @@ void SeerGdbWidget::traceIdentifierHandler(const QString& identifier)
         handleSyncGdbFindTypeIdentifier(QString(" --name " + identifier));
     }
     setSeekIdentifierFlag(false);    // Lower the flag
-    QApplication::setOverrideCursor(Qt::BusyCursor);
+    QApplication::restoreOverrideCursor();
 }
 
 /***********************************************************************************************************************
@@ -5383,5 +5348,3 @@ void SeerGdbWidget::handleExceptionLevelChanged(const QString& exceptionLevel)
     }
         
 }
-
-

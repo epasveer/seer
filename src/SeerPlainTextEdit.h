@@ -12,7 +12,7 @@
 #include <QtCore/QTimer>
 
 class SeerPlainTextEdit : public QPlainTextEdit {
-
+    #define CURSOR_WIDTH            2
     Q_OBJECT
 
     public:
@@ -27,6 +27,7 @@ class SeerPlainTextEdit : public QPlainTextEdit {
 
     private slots:
         void                    blinkCursor                 ();
+        void                    handleCursorPositionChanged ();
 
     private:
         QTimer*                 _cursorTimer;
