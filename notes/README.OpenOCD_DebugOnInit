@@ -1,0 +1,5 @@
+OpenOCD Debug on init only means for MPU - Linux embedded system to debug kernel module
+
+This feature will stop program right at __init function of kernel module
+
+This feature requires synchronization between threads. This is because "Debug on init" 

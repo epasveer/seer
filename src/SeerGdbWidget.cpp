@@ -5349,5 +5349,3 @@ void SeerGdbWidget::handleExceptionLevelChanged(const QString& exceptionLevel)
     }
         
 }
-
-

@@ -15,24 +15,9 @@
 #include <QtCore/QStringList>
 #include <stack>
 #include <QList>
-#include <QTimer>
 #include "ui_SeerEditorManagerWidget.h"
 
 class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerWidgetForm {
-    struct SeerCurrentFile {
-        QString                   file;
-        QString                   fullname;
-        int                       line;             // line to set the cursor to
-        int                       column;           // column to set the cursor to
-        int                       firstDisplayLine;      // line to display at top
-        bool operator==(const SeerCurrentFile& other) const {
-            return file == other.file &&
-                fullname == other.fullname &&
-                line == other.line &&
-                column == other.column &&
-                firstDisplayLine == other.firstDisplayLine;
-        }
-    };
 
     Q_OBJECT
 
@@ -116,7 +101,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            setEnableOpenFile                   (bool state);
         bool                                            isOpenFileEnable                    ();
         void                                            handleOpenRecentlyClosedFile        ();
-        void                                            onScroll                            ();
+        void                                            handleFileClosed                    (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
+        void                                            handleAddToMouseNavigation          (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
     
     protected:
         void                                            mousePressEvent                     (QMouseEvent *event) override;
@@ -162,7 +148,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
-        void                                            onTimerTimeout                      ();
+        void                                            handleOpenForwardBackward           (const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo);
         
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -185,8 +171,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _enableOpenFile;        // This variable temporarily disable handleOpenFile
         // Variable for deploy forward/backward and re-open feature (mimics vscode)
         QTimer*                                         _timer;                     // timer to deply forward/backward
-        std::stack<SeerCurrentFile>                     _stackClosedFiles;          // list of recently closed files (Ctrl + Shift + T)
-        QList<SeerCurrentFile>                          _listForwardFiles;          // list of opened files with its cursor position
-        SeerCurrentFile*                                _forwardQueuePointer;
+        std::stack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;          // list of recently closed files (Ctrl + Shift + T)
+        QList<SeerEditorWidgetSourceArea::SeerCurrentFile>                          _listForwardFiles;          // list of opened files with its cursor position
+        int                                             _forwardFilesIndex = -1;
 };
 

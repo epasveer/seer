@@ -69,9 +69,12 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
-    // // Add Trace Identifier when F12 button is pressed (F12). F12 -> SeerEditorWidgetSourceAreas ->
+    // Add Trace Identifier when F12 button is pressed (F12). F12 -> SeerEditorWidgetSourceArea::handleSeekIdentifierF12 -> emit seekIdentifier(wordUnderCursor)
     QShortcut *shortcutF12 = new QShortcut(QKeySequence("F12"), this);
     QObject::connect(shortcutF12,   &QShortcut::activated,                                  this, &SeerEditorWidgetSourceArea::handleSeekIdentifierF12);
+
+    // Connect cursor position changed signal.
+    QObject::connect(this,          &QPlainTextEdit::cursorPositionChanged,                 this, &SeerEditorWidgetSourceArea::handleCursorPositionChanged);
 
     setCurrentLine(0);
 
@@ -88,6 +91,13 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     // Calling close() will clear the text document.
     close();
+}
+
+SeerEditorWidgetSourceArea::~SeerEditorWidgetSourceArea(){
+    // Read current position of cursor and first display line.
+    SeerCurrentFile currentFile = readCurrentPosition();
+    // Send a signal to SeerEditorManagerWidget, append to _stackClosedFiles
+    emit fileClosed(currentFile);
 }
 
 void SeerEditorWidgetSourceArea::enableLineNumberArea (bool flag) {
@@ -2021,7 +2031,7 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
 }
 
 /***********************************************************************************************************************
- * OpenOCD deploy trace funtion, variable and type feature                                                             *
+ *  Trace funtion, variable and type feature                                                                           *
  **********************************************************************************************************************/
 bool SeerEditorWidgetSourceArea::isOverWord(const QPoint &pos)
 {
@@ -2107,7 +2117,22 @@ void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
         {
             QApplication::restoreOverrideCursor();
             emit seekIdentifier(_wordUnderCursor);
+            event->ignore();        // If we don't ignore the event, the cursor will move to that position, which is not desired
+            return;
         }
+    } else if (event->button() == Qt::XButton1 || event->button() == Qt::XButton2) {
+        // Avoid the default back/forward action
+        _ignoreThumbMouseEvent ++;
+        SeerCurrentFile firstInfo = readCurrentPosition();
+        // _ignoreThumbMouseEvent will incremented in mousePressEvent when thumb mouse button is pressed but it may not be decremented
+        // if user just click the thumb mouse button without moving the cursor. So here we check if the position is the same as last time, 
+        // which means cursor didn't move, then we reset _ignoreThumbMouseEvent to 0 to avoid blocking future events.
+        QTimer::singleShot(30, this, [this, firstInfo]() {      // let's give 30 ms for cursor to move to new position
+            SeerCurrentFile secondInfo = readCurrentPosition();
+            if (firstInfo == secondInfo) {                      // cursor didn't move
+                _ignoreThumbMouseEvent = 0;                     // reset to 0
+            }
+        } );
     }
     QPlainTextEdit::mousePressEvent(event);
 }
@@ -2122,4 +2147,35 @@ void SeerEditorWidgetSourceArea::handleSeekIdentifierF12()
     {
         emit seekIdentifier(wordUnderCursor);
     }
+}
+
+// read current position in the source area: file name, line, column of cursor and first displayed line
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
+{
+    SeerCurrentFile info;
+    info.file               = file();
+    info.fullname           = fullname();
+    info.line               = currentLine();
+    info.column             = currentColumn();
+    info.firstDisplayLine   = firstDisplayLine();
+    return info;
+}
+
+void SeerEditorWidgetSourceArea::handleCursorPositionChanged()
+{
+    // Emit signal to SeerEditorManagerWidget.cpp and save position
+    // Read current position, deploy a timer
+    SeerCurrentFile firstInfo = readCurrentPosition();
+    if (_ignoreThumbMouseEvent > 0)
+    {
+        _ignoreThumbMouseEvent --;
+        return;
+    }
+        
+    QTimer::singleShot(2000, this, [this, firstInfo]() {
+        SeerCurrentFile secondInfo = readCurrentPosition();
+        if (firstInfo == secondInfo) {
+            emit addToMouseNavigation(firstInfo);
+        }
+    } );
 }

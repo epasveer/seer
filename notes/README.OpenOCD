@@ -1,0 +1,1 @@
+Embedded target (MCU, MPU)  <--- JTAG Peripheral ---> Hardware debugger <------> OpenOCD, driver <------> GDB-multiarch <------> Software
