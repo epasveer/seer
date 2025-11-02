@@ -18,13 +18,9 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
-<<<<<<< HEAD
-#include <QTimer>
-=======
 #include <QScrollBar>
 #include <QPlainTextEdit>
 #include <QMouseEvent>
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -851,11 +847,8 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         editorWidget->sourceArea()->scrollToLine(lineno);
     }
 
-<<<<<<< HEAD
-=======
     handleAddToMouseNavigation({file, fullname, lineno, 1, editorWidget->sourceArea()->firstDisplayLine()});
 
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
     // Ask for the breakpoint list to be resent, in case this file has breakpoints.
     emit refreshBreakpointsList();
 
@@ -957,11 +950,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     // Immediately connect each new source code tab to SeerEditorManagerWidget slots
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
-<<<<<<< HEAD
-=======
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::fileClosed,                    this, &SeerEditorManagerWidget::handleFileClosed);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -1026,11 +1016,8 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     // Immediately connect each new source code tab to SeerEditorManagerWidget slots
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::seekIdentifier,                this, &SeerEditorManagerWidget::seekIdentifierForwarder);
-<<<<<<< HEAD
-=======
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::fileClosed,                    this, &SeerEditorManagerWidget::handleFileClosed);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1058,10 +1045,7 @@ void SeerEditorManagerWidget::deleteEditorWidgetTab (int index) {
 
         while (b != e) {
             if (editorWidget == b->widget) {
-<<<<<<< HEAD
 
-=======
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
                 deleteEntry(b);                 // Delete the entry from the map.
                 tabWidget->removeTab(index);    // Remove the tab.
                 delete editorWidget;            // Delete the actual EditorWidget
@@ -1426,10 +1410,6 @@ bool SeerEditorManagerWidget::isOpenFileEnable() {
 // Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
 void SeerEditorManagerWidget::seekIdentifierForwarder(const QString& identifier)
 {
-<<<<<<< HEAD
-    emit seekIdentifier(identifier);
-}
-=======
     emit seekIdentifierForward(identifier);
 }
 
@@ -1599,4 +1579,3 @@ void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
         QWidget::mousePressEvent(event);
     }
 }
->>>>>>> 5d04870c6d040c79d9a8d0a6e88dba561323610a
