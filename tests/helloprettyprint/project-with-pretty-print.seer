@@ -5,7 +5,7 @@
             "set print pretty on"
         ],
         "pregdbcommands": [
-            ""
+            "set print pretty on"
         ],
         "startmode": {
             "arguments": "",
