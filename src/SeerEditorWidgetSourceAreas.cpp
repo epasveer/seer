@@ -2153,7 +2153,7 @@ void SeerEditorWidgetSourceArea::handleSeekIdentifierF12()
 SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
 {
     SeerCurrentFile info;
-    info.file               = file();
+    info.file               = QFileInfo(file()).fileName();     // extract file name from full path
     info.fullname           = fullname();
     info.line               = currentLine();
     info.column             = currentColumn();

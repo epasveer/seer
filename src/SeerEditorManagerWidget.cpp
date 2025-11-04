@@ -1454,13 +1454,14 @@ void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetS
         else    // else remove all entries after _forwardFilesIndex and then append
         {
             int removeCount = _listForwardFiles.size() - 1 - _forwardFilesIndex;
+            if ((currentFile == _listForwardFiles[_listForwardFiles.size() -1]) || (currentFile == _listForwardFiles[0]) 
+                || (currentFile == _listForwardFiles[_listForwardFiles.size() - 1 - removeCount]) )
+            {
+                return;
+            }
             for (int i=0; i < removeCount; i++)
             {
                 _listForwardFiles.removeLast();
-            }
-            if (currentFile == _listForwardFiles[_listForwardFiles.size() -1])
-            {
-                return;
             }
             _listForwardFiles.append(currentFile);
             _forwardFilesIndex = _listForwardFiles.size() -1;
