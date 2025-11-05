@@ -477,7 +477,7 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
         }
         QString test0 = childItem->text(0);
         QString test1 = childItem->text(1);
-        handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), nullptr);
+        handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), old_pair.second);
     }
 }
 
