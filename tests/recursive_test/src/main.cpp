@@ -6,14 +6,66 @@
 #include <unistd.h>
 using namespace std;
 
+struct structTetst
+{
+    int id;
+    string b;
+};
+structTetst globalStruct = {42, "Hello"};
+/***
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 int main() {
-    int i =0;
+    globalStruct.id =0;
     int a = 10, b = 3;
     pid_t pid = getpid();
     std::cout << "Process ID: " << pid << std::endl;
-    while (i<100)
+    while (globalStruct.id < 100)
     {
-        i++;
+        globalStruct.id++;
         cout << "Basic Arithmetic:" << endl;
         cout << a << " + " << b << " = " << add(a, b) << endl;
         cout << a << " - " << b << " = " << subtract(a, b) << endl;
