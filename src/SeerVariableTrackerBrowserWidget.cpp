@@ -423,16 +423,13 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     // Convert to a list of name/value pairs.
     QStringList nv_pairs        = Seer::parseCommaList(text, '{', '}');
     QStringList nv_old_pairs    = Seer::parseCommaList(captureOld1, '{', '}');
-    if (old_text != value_text)
-    {
-        parentItem->setForeground(0, QBrush(Qt::red));   // Red text
-        parentItem->setForeground(1, QBrush(Qt::red));  // Blue text
-    }
-    else
-    {
-        parentItem->setForeground(0, QBrush(Qt::black));   // Red text
-        parentItem->setForeground(1, QBrush(Qt::black));  // Blue text
-    }
+
+    QFont parentFont = parentItem->font(0);
+    parentFont.setBold(old_text != value_text);
+    parentFont.setItalic(old_text != value_text);
+    parentItem->setFont(0, parentFont);
+    parentItem->setFont(1, parentFont);
+
     // Go through each pair and add the name and its value to the tree.
     for (int i = 0; i < nv_pairs.size(); ++i) {
         QString nv      = nv_pairs[i];
@@ -447,19 +444,19 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
                 childItem = parentItem->child(i);
                 childItem->setText(0, pair.first);
                 childItem->setText(1, pair.second);
-                childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                // childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                 childItem->setText(2, id_text);
                 childItem->setText(3, "reused");
-                if (pair.second != old_pair.second)
-                {
-                    childItem->setForeground(0, QBrush(Qt::red));   // Red text
-                    childItem->setForeground(1, QBrush(Qt::red));  // Blue text
-                }
-                else
-                {
-                    childItem->setForeground(0, QBrush(Qt::black));   // Gray text
-                    childItem->setForeground(1, QBrush(Qt::black));  // Gray text
-                }
+
+                QFont childFontCol0 = childItem->font(0);
+                QFont childFontCol1 = childItem->font(0);
+                childFontCol0.setBold(pair.second != old_pair.second);
+                childFontCol0.setItalic(pair.second != old_pair.second);
+                childFontCol1.setBold(pair.second != old_pair.second);
+                childFontCol1.setItalic(pair.second != old_pair.second);
+                childItem->setFont(0, childFontCol0);
+                childItem->setFont(1, childFontCol1);
+
                 break;
             }
         }
