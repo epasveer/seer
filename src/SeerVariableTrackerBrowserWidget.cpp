@@ -168,8 +168,10 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 }
 
                 QString old_text = item->text(1);
-                old_text = old_text.replace("\\\"", "\"");
-                value_text = value_text.replace("\\\"", "\"");
+                old_text.replace("\\\"", "\"");
+                old_text.remove('\\');
+                value_text.replace("\\\"", "\"");
+                value_text.remove('\\');
                 if (old_text == "")
                 {
                     // if empty -> first time. Pass the same text for old and new
@@ -179,8 +181,14 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 {
                     if (old_text.front() == '{' && old_text.back() == '}') {
                         old_text = Seer::filterBareNewLines(old_text);
+                        handleItemCreate (item, value_text, old_text);
                     }
-                    handleItemCreate (item, value_text, old_text);
+                    else
+                    {
+                        // In some cases, old_text might have value like "Structure has no component named operator*" or
+                        // "No symbol "symbol" in current context" when variable is out of scope. By pass it
+                    }
+                    
                 }
 
                 emit raiseTab();
