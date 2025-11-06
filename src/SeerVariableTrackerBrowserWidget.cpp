@@ -351,7 +351,6 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     // Fill in parent item. Whether is a simple or complex entry.
     parentItem->setText(0, name_text);
     parentItem->setText(1, Seer::filterEscapes(value_text));
-    parentItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
     parentItem->setText(2, id_text);
     parentItem->setText(3, "reused");
 
@@ -425,8 +424,7 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     QStringList nv_old_pairs    = Seer::parseCommaList(captureOld1, '{', '}');
 
     QFont parentFont = parentItem->font(0);
-    parentFont.setBold(old_text != value_text);
-    parentFont.setItalic(old_text != value_text);
+    parentFont.setBold(old_text != value_text);     // if value has changed -> set font to bold
     parentItem->setFont(0, parentFont);
     parentItem->setFont(1, parentFont);
 
@@ -444,16 +442,14 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
                 childItem = parentItem->child(i);
                 childItem->setText(0, pair.first);
                 childItem->setText(1, pair.second);
-                // childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                 childItem->setText(2, id_text);
                 childItem->setText(3, "reused");
 
                 QFont childFontCol0 = childItem->font(0);
-                QFont childFontCol1 = childItem->font(0);
+                QFont childFontCol1 = QFontDatabase::systemFont(QFontDatabase::FixedFont);
                 childFontCol0.setBold(pair.second != old_pair.second);
-                childFontCol0.setItalic(pair.second != old_pair.second);
                 childFontCol1.setBold(pair.second != old_pair.second);
-                childFontCol1.setItalic(pair.second != old_pair.second);
                 childItem->setFont(0, childFontCol0);
                 childItem->setFont(1, childFontCol1);
 
