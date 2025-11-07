@@ -423,6 +423,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
     QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
+    #if ENABLE_GDB_LOGOUT == 1
+    // For debuging
+    QObject::connect(this,                                                      &SeerGdbWidget::gdbCommandLogout,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+#endif
+
     // Restore window settings.
     readSettings();
 }
@@ -1029,6 +1035,11 @@ void SeerGdbWidget::handleGdbCommand (const QString& command) {
     QString str = command + "\n";    // Ensure there's a trailing RETURN.
 
     QByteArray bytes = str.toUtf8(); // 8-bit Unicode Transformation Format
+
+#if ENABLE_GDB_LOGOUT == 1
+    // Broadcast this log. For debugging
+    emit gdbCommandLogout("From Widget:" + str);
+#endif
 
     _gdbProcess->write(bytes);       // Send the data into the stdin stream of the bash child process
 }

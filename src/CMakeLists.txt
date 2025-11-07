@@ -295,3 +295,8 @@ elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
 
+# Global macro, turn ENABLE_GDB_LOGOUT=1 to enable gdb logout
+target_compile_definitions(${PROJECT_NAME}
+    PUBLIC
+        ENABLE_GDB_LOGOUT=1
+)
