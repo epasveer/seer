@@ -6,18 +6,7 @@
 #include <unistd.h>
 using namespace std;
 
-struct childStruct
-{
-    int childId;
-    string childString;
-};
 
-struct structTetst
-{
-    int id;
-    string b;
-    childStruct child;
-};
 struct structTetst globalStruct = {-2, "test", {-1, "childTest"}};
 /***
  * 
