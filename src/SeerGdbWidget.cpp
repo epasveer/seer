@@ -423,8 +423,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
     QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
-    #if ENABLE_GDB_LOGOUT == 1
-    // For debuging
+#if ENABLE_GDB_LOGOUT == 1
+    // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
     QObject::connect(this,                                                      &SeerGdbWidget::gdbCommandLogout,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
 #endif
