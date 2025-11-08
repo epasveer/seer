@@ -464,108 +464,70 @@ namespace Seer {
 
     QStringList parseCommaList  (const QString& str, QChar startBracket, QChar endBracket) {
 
-        // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
-        //
-        // name = "Pasveer, Ernie"
-        // age = 60
-        // salary = 0.25
-        // location = {city = "Houston", state = "Texas", zip = 77063}
-        //
-        // special case: garbage value:
-        // {id = 2, b = \"000hildTest 2000377177000000260324377377377177\", '000' <repeats 11 times>, \"hildTest 2000-", '0' <repeats 11 times>, "1", '0' <repeats 21 times>, "330324377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 21 times>, \"325377377\", child = {childId = -9864, childString = \"\"}}
+    // name = "Pasveer, Ernie", age = 60, salary = 0.25, location = {city = "Houston", state = "Texas", zip = 77063}
+    //
+    // name = "Pasveer, Ernie"
+    // age = 60
+    // salary = 0.25
+    // location = {city = "Houston", state = "Texas", zip = 77063}
+    //
+    // special case: garbage value:
+    // {id = 2, b = \"000hildTest 2000377177000000260324377377377177\", '000' <repeats 11 times>, \"hildTest 2000-", '0' <repeats 11 times>, "1", '0' <repeats 21 times>, "330324377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 21 times>, \"325377377\", child = {childId = -9864, childString = \"\"}}
 
-        QStringList list;
-        int         index        = 0;
-        int         state        = 0;
-        int         start        = 0;
-        int         end          = 0;
-        bool        inquotes     = false;
-        int         bracketlevel = 0;
+    enum STATE{
+        START       = 0,
+        SCANNING    = 1,
+        FOUND       = 2,
+        IGNORE      = 3,
+    };
+    QStringList list;
+    int         index        = 0;
+    int         start        = 0;
+    int         end          = 0;
+    int         previousComma= 0;
+    STATE       state        = START;
 
-        while (index < str.length()) {
-
-            // Handle start of field.
-            if (state == 0) {     // Start of field.
-                start = index;
-                end   = index;
-                state = 1; // Look for end of field (a command or eol).
-
-                continue;
+    while (index < str.length())
+    {
+        // Handle "="
+        if (str[index] == '=') {
+            if (state == SCANNING)               // looking for 2nd '='
+            {
+                // state = FOUND;
+                end = previousComma;
+                QString field = str.mid(start, end-start);
+                list.append(field.trimmed());
+                start = previousComma + 1;
             }
+            if (state == START)               // looking for 2nd '='
+            {
+                state = SCANNING;
 
-            // Handle end of field.
-            if (state == 1) {
-
-                // Handle "{"
-                if (str[index] == startBracket) {
-                    if (inquotes == false) {
-                        bracketlevel++;
-                    }
-
-                    index++; continue;
-                }
-
-                // Handle "}"
-                if (str[index] == endBracket) {
-                    if (inquotes == false) {
-                        bracketlevel--;
-                        if (bracketlevel < 0) {
-                            qDebug() << "BracketLevel is less than 0!";
-                        }
-                    }
-
-                    index++; continue;
-                }
-
-                // Handle """
-                if (str[index] == '"') {
-                    if (inquotes == false) {
-                        inquotes = true;
-                    }else{
-                        inquotes = false;
-                    }
-
-                    index++; continue;
-                }
-
-                // Handle ","
-                if (str[index] == ',') {
-                    if (inquotes) {
-                        index++; continue;
-                    }
-
-                    // Extract field, only if the bracket level is at zero.
-                    // Otherwise, continue.
-                    if (bracketlevel == 0) {
-                        end = index;
-
-                        QString field = str.mid(start, end-start);
-
-                        list.append(field.trimmed());
-
-                        state = 0; // Look for the next field.
-                    }
-
-                    index++; continue;
-                }
-
-                // Handle any other character.
-                index++; continue;
             }
-
-            qDebug() << "Bad state!";
-            index++; continue;
         }
 
-        // Handle last field, if any.
-        if (state == 1) {
-            end = index;
+        if (str[index] == startBracket)
+        {
+            state = IGNORE;
+        }
 
-            QString field = str.mid(start, end-start);
+        if (str[index] == endBracket)
+        {
+            state = SCANNING;
+        }
 
+        if (str[index] == ',' && state != IGNORE) {
+            previousComma = index;
+        }
+
+        // The last
+        if (index == str.length() - 1)
+        {
+            QString field = str.mid(start, index);
             list.append(field.trimmed());
         }
-
+        index++;
+    }
         return list;
     }
 
