@@ -177,6 +177,10 @@ void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) 
     if (_keySettings.has("SearchTextPrev") == true) {
         _textSearchPrevShortcut->setKey(_keySettings.get("SearchTextPrev")._sequence);
     }
+
+    if (_keySettings.has("ToggleBreakpoint") == true) {
+        _toggleBreakpointShortcut->setKey(_keySettings.get("ToggleBreakpoint")._sequence);
+    }
 }
 
 const SeerKeySettings& SeerEditorWidgetAssembly::keySettings () const {

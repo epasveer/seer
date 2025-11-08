@@ -119,6 +119,10 @@ void SeerEditorWidgetSource::setKeySettings (const SeerKeySettings& settings) {
     if (_keySettings.has("AlternateDir") == true) {
         _alternateDirShortcut->setKey(_keySettings.get("AlternateDir")._sequence);
     }
+
+    if (_keySettings.has("ToggleBreakpoint") == true) {
+        _toggleBreakpointShortcut->setKey(_keySettings.get("ToggleBreakpoint")._sequence);
+    }
 }
 
 const SeerKeySettings& SeerEditorWidgetSource::keySettings () const {
