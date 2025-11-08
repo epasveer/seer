@@ -471,6 +471,8 @@ namespace Seer {
         // salary = 0.25
         // location = {city = "Houston", state = "Texas", zip = 77063}
         //
+        // special case: garbage value:
+        // {id = 2, b = \"000hildTest 2000377177000000260324377377377177\", '000' <repeats 11 times>, \"hildTest 2000-", '0' <repeats 11 times>, "1", '0' <repeats 21 times>, "330324377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 21 times>, \"325377377\", child = {childId = -9864, childString = \"\"}}
 
         QStringList list;
         int         index        = 0;
