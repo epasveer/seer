@@ -97,7 +97,7 @@
     <property name="title">
      <string>Control</string>
     </property>
-    <widget class="QMenu" name="menuRecord">
+    <widget class="QMenu" name="actionControlRecordMenu">
      <property name="toolTip">
       <string>Set Record mode.</string>
      </property>
@@ -111,7 +111,7 @@
      <addaction name="actionControlRecordStart"/>
      <addaction name="actionControlRecordStop"/>
     </widget>
-    <widget class="QMenu" name="menuDirection">
+    <widget class="QMenu" name="actionControlDirectionMenu">
      <property name="toolTip">
       <string>Set Playback direction.</string>
      </property>
@@ -125,6 +125,18 @@
      <addaction name="actionControlRecordForward"/>
      <addaction name="actionControlRecordReverse"/>
     </widget>
+    <widget class="QMenu" name="actionControlReverseMenu">
+     <property name="title">
+      <string>Reverse</string>
+     </property>
+     <addaction name="actionControlReverseContinue"/>
+     <addaction name="actionControlReverseNext"/>
+     <addaction name="actionControlReverseStep"/>
+     <addaction name="actionControlReverseFinish"/>
+     <addaction name="separator"/>
+     <addaction name="actionControlReverseNexti"/>
+     <addaction name="actionControlReverseStepi"/>
+    </widget>
     <addaction name="actionControlRestart"/>
     <addaction name="actionControlTerminate"/>
     <addaction name="actionControlContinue"/>
@@ -135,8 +147,9 @@
     <addaction name="actionControlNexti"/>
     <addaction name="actionControlStepi"/>
     <addaction name="separator"/>
-    <addaction name="menuRecord"/>
-    <addaction name="menuDirection"/>
+    <addaction name="actionControlRecordMenu"/>
+    <addaction name="actionControlDirectionMenu"/>
+    <addaction name="actionControlReverseMenu"/>
     <addaction name="separator"/>
     <addaction name="actionControlInterrupt"/>
    </widget>
@@ -725,6 +738,60 @@
    </property>
    <property name="statusTip">
     <string>Launch a blank Matrix Visualizer.</string>
+   </property>
+  </action>
+  <action name="actionControlReverseContinue">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Continue</string>
+   </property>
+  </action>
+  <action name="actionControlReverseNext">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-over.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Next</string>
+   </property>
+  </action>
+  <action name="actionControlReverseStep">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Step</string>
+   </property>
+  </action>
+  <action name="actionControlReverseFinish">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-out.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Finish</string>
+   </property>
+  </action>
+  <action name="actionControlReverseNexti">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-instruction.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Nexti</string>
+   </property>
+  </action>
+  <action name="actionControlReverseStepi">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-step-into-instruction.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Reverse Stepi</string>
    </property>
   </action>
  </widget>

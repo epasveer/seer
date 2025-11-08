@@ -242,6 +242,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbStepi                      ();
         void                                handleGdbFinish                     ();
         void                                handleGdbContinue                   ();
+        void                                handleGdbReverseNext                ();
+        void                                handleGdbReverseNexti               ();
+        void                                handleGdbReverseStep                ();
+        void                                handleGdbReverseStepi               ();
+        void                                handleGdbReverseFinish              ();
+        void                                handleGdbReverseContinue            ();
         void                                handleGdbRecordStart                ();
         void                                handleGdbRecordStop                 ();
         void                                handleGdbRecordForward              ();

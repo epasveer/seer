@@ -1767,6 +1767,60 @@ void SeerGdbWidget::handleGdbContinue () {
     handleGdbCommand(QString("-exec-continue %1").arg(gdbRecordDirection()));
 }
 
+void SeerGdbWidget::handleGdbReverseNext () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-next --reverse");
+}
+
+void SeerGdbWidget::handleGdbReverseNexti () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-next-instruction --reverse");
+}
+
+void SeerGdbWidget::handleGdbReverseStep () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-step --reverse");
+}
+
+void SeerGdbWidget::handleGdbReverseStepi () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-step-instruction --reverse");
+}
+
+void SeerGdbWidget::handleGdbReverseFinish () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-finish --reverse");
+}
+
+void SeerGdbWidget::handleGdbReverseContinue () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-exec-continue --reverse");
+}
+
 void SeerGdbWidget::handleGdbRecordStart () {
 
     if (executableLaunchMode() == "") {

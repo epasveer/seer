@@ -152,6 +152,12 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlNexti,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNexti);
     QObject::connect(actionControlStepi,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStepi);
     QObject::connect(actionControlFinish,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlReverseContinue,      &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseContinue);
+    QObject::connect(actionControlReverseNext,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseNext);
+    QObject::connect(actionControlReverseStep,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseStep);
+    QObject::connect(actionControlReverseNexti,         &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseNexti);
+    QObject::connect(actionControlReverseStepi,         &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseStepi);
+    QObject::connect(actionControlReverseFinish,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseFinish);
     QObject::connect(actionControlRecordStart,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordStart);
     QObject::connect(actionControlRecordForward,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordForward);
     QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordReverse);
@@ -1359,6 +1365,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordReverse->setEnabled(false);
         actionControlRecordForward->setChecked(false);
         actionControlRecordReverse->setChecked(false);
+        actionControlReverseContinue->setEnabled(false);
+        actionControlReverseNext->setEnabled(false);
+        actionControlReverseStep->setEnabled(false);
+        actionControlReverseFinish->setEnabled(false);
+        actionControlReverseNexti->setEnabled(false);
+        actionControlReverseStepi->setEnabled(false);
 
         // Toolbar
         actionRecordProcess->setText("Record");
@@ -1374,6 +1386,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordStop->setEnabled(true);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
 
@@ -1407,6 +1425,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordStop->setEnabled(false);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
 
@@ -1440,6 +1464,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordStop->setEnabled(false);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
 
@@ -1782,6 +1812,48 @@ void SeerMainWindow::refreshShortCuts () {
         actionControlContinue->setShortcut(setting._sequence);
     }
 
+    if (_keySettings.has("ReverseNext")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseNext");
+
+        actionControlReverseNext->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseNexti")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseNexti");
+
+        actionControlReverseNexti->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseStep")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseStep");
+
+        actionControlReverseStep->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseStepi")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseStepi");
+
+        actionControlReverseStepi->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseFinish")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseFinish");
+
+        actionControlReverseFinish->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseContinue")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseContinue");
+
+        actionControlReverseContinue->setShortcut(setting._sequence);
+    }
+
     if (_keySettings.has("Interrupt")) {
 
         SeerKeySetting setting = _keySettings.get("Interrupt");
@@ -1817,6 +1889,8 @@ void SeerMainWindow::refreshShortCuts () {
 
         actionRecordDirection->setText(QString("Direction") + " (" + setting._sequence.toString() + ")");
         actionRecordDirection->setShortcut(setting._sequence);
+
+        actionControlDirectionMenu->setTitle(QString("Direction") + "   (Toggle " + setting._sequence.toString() + ")");
     }
 
     // Notify the editor manager of changes.
