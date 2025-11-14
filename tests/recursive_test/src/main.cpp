@@ -7,36 +7,7 @@
 using namespace std;
 
 
-struct familyStruct globalStruct = {
-    // DAD
-        {
-            50,
-            "DAD_NAME",
-            {
-                {1,
-                "1st_child"},
-                {2,
-                "2nd_child"},
-                {3,
-                "3rd_child"},
-            }
-        },
-        4, "FAMILY",  
-        // MOM
-        {
-            45,
-            "MOM_NAME",
-            {
-                {'a',
-                "a_child"},
-                {'b',
-                "b_child"},
-                {'c',
-                "c_child"},
-            }
-
-        }
-    };
+struct structTetst globalStruct = {-2, "test", {-1, "childTest"}};
 /***
  * 
  * 
@@ -84,15 +55,15 @@ struct familyStruct globalStruct = {
  * 
  */
 int main() {
-    globalStruct.numberOfNumber =0;
+    globalStruct.id =0;
     int a = 10, b = 3;
     pid_t pid = getpid();
     std::cout << "Process ID: " << pid << std::endl;
-    while (globalStruct.numberOfNumber < 100)
+    while (globalStruct.id < 100)
     {
-        globalStruct.numberOfNumber++;
-        globalStruct.dad.age = globalStruct.numberOfNumber;
-        globalStruct.dad.name = "Dad String " + std::to_string(globalStruct.numberOfNumber);
+        globalStruct.id++;
+        globalStruct.child.childId = globalStruct.id;
+        globalStruct.child.childString = "Child String " + std::to_string(globalStruct.id);
         cout << "Basic Arithmetic:" << endl;
         cout << a << " + " << b << " = " << add(a, b) << endl;
         cout << a << " - " << b << " = " << subtract(a, b) << endl;
@@ -102,7 +73,7 @@ int main() {
         cout << "\nAdvanced Math:" << endl;
         cout << "Factorial of 5 = " << factorial(5) << endl;
         cout << "Fibonacci of 7 = " << fibonacci(7) << endl;
-        globalStruct.dad.age ++;
+        globalStruct.child.childId ++;
         std::this_thread::sleep_for(std::chrono::seconds(2));
     }
     return 0;
