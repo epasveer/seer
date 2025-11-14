@@ -5,17 +5,27 @@
 #include <chrono>
 #include <unistd.h>
 #include <string>
+#include <vector>
+
 struct childStruct
 {
-    int childId;
-    std::string childString;
+    int age;
+    std::string name;
 };
 
-struct structTetst
+struct parentStruct
 {
-    int id;
-    std::string b;
-    childStruct child;
+    int age;
+    std::string name;
+    childStruct childArr[100];
+};
+
+struct familyStruct
+{
+    parentStruct dad;
+    int numberOfNumber;
+    char familyName[50];
+    parentStruct mom;
 };
 
 int factorial(int n);

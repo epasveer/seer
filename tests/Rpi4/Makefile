@@ -2,6 +2,9 @@
 
 DEVICE:=
 
+default:
+	/bin/bash build_Rpi4_owrt.sh
+
 install_docker:
 	bash install_docker.sh
 
