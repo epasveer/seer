@@ -388,7 +388,16 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     QString text = capture1;
 
     // Convert to a list of name/value pairs.
-    QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
+    QStringList nv_pairs;
+    if (text.startsWith("{"))
+    {
+        // String might describe an array: {a=1, b=1},{a=1, b=1},{a=1, b=1},{a=1, b=1}
+        nv_pairs = Seer::parseArray(parentItem->text(0), text);
+    }
+    else
+    {
+        nv_pairs = Seer::parseCommaList(text, '{', '}');
+    }
 
     // Go through each pair and add the name and its value to the tree.
     for (const auto& nv : nv_pairs) {

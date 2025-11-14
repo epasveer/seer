@@ -531,6 +531,67 @@ namespace Seer {
         return list;
     }
 
+    //
+    // Parse an array, turn it to QList
+    //
+
+    QStringList parseArray (const QString& parentName, const QString& str)
+    {
+        // Input: {age = 1, name = "1st_child"}, {age = 2, name = "2nd_child"}
+        // Output: QStringList : parentName[0] = {age = 1, name = "1st_child"}, parentName[1] = {age = 1, name = "1st_child"}
+
+        QStringList list;
+        int index = 0;
+        int cntStartBracket = 0;
+        int cntEndBracket = 0;
+        int start = 0;
+        int cnt = 0;
+
+        while (index < str.length())
+        {
+            if (str[index] == '{')
+            {
+                if (cntStartBracket == cntEndBracket)
+                    start = index;
+                cntStartBracket++;
+            }
+            if (str[index] == '}')
+            {
+                // Check to see if character after it is ",". Otherwise, it probably trash character.
+                if (index + 1 < str.length())
+                {
+                    if (str[index + 1] == '}' || str[index + 1] == ',' || index + 1 == str.length() )
+                    {
+                        cntEndBracket++;
+                        if (cntStartBracket == cntEndBracket)
+                        {
+                            QString field = str.mid(start, index + 1 - start);
+                            field = parentName + "[" + QString::number(cnt) + "] = " + field;
+                            list.append(field.trimmed());
+                            cntStartBracket = 0; cntEndBracket = 0;
+                            cnt++;
+                        }
+                    }
+                }
+                else if (index + 1 == str.length())
+                {
+                    // The last element
+                    cntEndBracket++;
+                    if (cntStartBracket == cntEndBracket)
+                    {
+                        QString field = str.mid(start, index + 1 - start);
+                        field = parentName + "[" + QString::number(cnt) + "] = " + field;
+                        list.append(field.trimmed());
+                        cntStartBracket = 0; cntEndBracket = 0;
+                        cnt++;
+                    }
+                }
+            }
+            index ++;
+        }
+        return list;
+    }
+
     QMap<QString,QString> createKeyValueMap (const QStringList& list, QChar separator) {
 
         QMap<QString,QString> map;
