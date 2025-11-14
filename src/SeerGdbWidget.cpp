@@ -1168,6 +1168,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
             handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
 
+        // Elaborate gdb variable output
+        handleGdbCommand("set print repeats unlimited");
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
@@ -1290,6 +1293,9 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
             handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
 
+        // Elaborate gdb variable output
+        handleGdbCommand("set print repeats unlimited");
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
@@ -1400,6 +1406,9 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
         if (executableBreakpointSourceName() != "") {
             handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
+
+        // Elaborate gdb variable output
+        handleGdbCommand("set print repeats unlimited");
 
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
@@ -1512,6 +1521,9 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
             handleGdbBreakpointsInsert(executableBreakpointSourceName());
         }
 
+        // Elaborate gdb variable output
+        handleGdbCommand("set print repeats unlimited");
+
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
 
@@ -1607,6 +1619,9 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
         // Load the executable's core file.
         handleGdbCommand(QString("-target-select core %1").arg(executableCoreFilename()));
+
+        // Elaborate gdb variable output
+        handleGdbCommand("set print repeats unlimited");
 
         // Run any 'post' commands after program is loaded.
         handleGdbExecutablePostCommands();
