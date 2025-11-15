@@ -26,6 +26,7 @@ namespace Seer {
     QStringList                 filterBookends      (const QStringList& strings, QChar startBracket, QChar endBracket);
     QStringList                 parseCommaList      (const QString& str);
     QStringList                 parseCommaList      (const QString& str, QChar startBracket, QChar endBracket);
+    QStringList                 parseArray          (const QString& parentName, const QString& str);
     QMap<QString,QString>       createKeyValueMap   (const QStringList& list, QChar separator);
     QStringPair                 parseNameValue      (const QString& str, QChar separator);
     QString                     quoteChars          (const QString& str, const QString& chars);
