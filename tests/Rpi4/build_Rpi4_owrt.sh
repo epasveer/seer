@@ -16,7 +16,8 @@ git config --global http.maxRequestBuffer 100M
 git config --global http.version HTTP/1.1
 git config --global http.maxRequests 100
 git config --global core.compression 0
-
+git config --global --unset http.proxy 
+git config --global --unset https.proxy
 # Define variables
 TOPDIR=$PWD
 OPENWRT_DIR="$PWD/openwrt"

@@ -1,0 +1,26 @@
+################################################################################
+# Bootloader configuration - config.txt
+################################################################################
+
+################################################################################
+# For overclocking and various other settings, see:
+# https://www.raspberrypi.com/documentation/computers/config_txt.html
+################################################################################
+
+# OpenWrt config
+include distroconfig.txt
+
+[all]
+# Place your custom settings here.
+[all]
+enable_jtag_gpio=1
+gpio=22-27=a4
+
+[pi1]
+gpio=4=a5
+
+[pi2]
+gpio=4=a5
+
+[pi3]
+gpio=4=a5

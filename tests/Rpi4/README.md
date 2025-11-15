@@ -9,7 +9,7 @@ Debugging hardware will be more laborious than debugging PC application.
 # Build Rpi4 image
 + `make build_docker` to build docker
 + `make docker` to enter docker container
-+ `./build_Rpi4_owrt.sh` inside docker to automatically build image for Rpi4. Wait for 1 or 2 hours, depends on your internet speed and PC specs
++ `make` inside docker to automatically build image for Rpi4. Wait for 1 or 2 hours, depends on your internet speed and PC specs
 + Final image will be: openwrt-bcm27xx-bcm2711-rpi-4-squashfs-factory.img
 # Flash image to your microSD card
 Please read this carefully before deployment
