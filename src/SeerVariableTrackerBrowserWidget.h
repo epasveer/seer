@@ -44,8 +44,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                raiseTab                        ();
 
     protected:
-        void                handleItemCreate                (QTreeWidgetItem* item,       const QString& value_text);
-        void                handleItemCreate                (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text);
+        void                handleItemCreate                (QTreeWidgetItem* item,       const QString& value_text, const QString& old_text);
+        void                handleItemCreate                (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text, const QString& old_text);
         void                showEvent                       (QShowEvent* event);
 
     private:
