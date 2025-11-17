@@ -24,6 +24,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         bool                    gdbRandomizeStartAddress                        () const;
         bool                    gdbEnablePrettyPrinting                         () const;
         QString                 gdbRemoteTargetType                             () const;
+        QString                 gdbArchitectureType                             () const;
 
 
         void                    setGdbProgram                                   (const QString& program);
@@ -34,6 +35,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
         void                    setGdbRandomizeStartAddress                     (bool flag);
         void                    setGdbEnablePrettyPrinting                      (bool flag);
         void                    setGdbRemoteTargetType                          (const QString& type);
+        void                    setGdbArchitectureType                          (const QString& type);
 
         void                    reset                                           ();
 

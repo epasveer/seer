@@ -112,6 +112,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbRemoteTargetType              (const QString& type);
         QString                             gdbRemoteTargetType                 () const;
 
+        void                                setGdbArchitectureType              (const QString& type);
+        QString                             gdbArchitectureType                 () const;
+
         void                                setGdbRecordMode                    (const QString& mode);
         QString                             gdbRecordMode                       () const;
 
@@ -376,6 +379,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbForkFollowMode             (QString mode);
         void                                handleGdbLoadMICommands             ();
         void                                handleGdbSourceScripts              ();
+        void                                handleGdbSetArchitectureType        ();
 
         void                                handleGdbProcessFinished            (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored             (QProcess::ProcessError errorStatus);
@@ -429,6 +433,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbRecordMode;
         QString                             _gdbRecordDirection;
         QString                             _gdbRemoteTargetType;
+        QString                             _gdbArchitectureType;
         bool                                _assemblyShowAssemblyTabOnStartup;
         QString                             _assemblyDisassemblyFlavor;
         QString                             _assemblySymbolDemangling;

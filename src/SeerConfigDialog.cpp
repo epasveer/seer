@@ -244,6 +244,16 @@ QString SeerConfigDialog::gdbRemoteTargetType () const {
     return _gdbConfigPage->gdbRemoteTargetType();
 }
 
+void SeerConfigDialog::setGdbArchitectureType (const QString& type) {
+
+    _gdbConfigPage->setGdbArchitectureType(type);
+}
+
+QString SeerConfigDialog::gdbArchitectureType () const {
+
+    return _gdbConfigPage->gdbArchitectureType();
+}
+
 void SeerConfigDialog::setEditorFont (const QFont& font) {
 
     _editorConfigPage->setEditorFont(font);

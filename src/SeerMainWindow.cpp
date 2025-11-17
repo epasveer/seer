@@ -741,6 +741,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
     dlg.setGdbRemoteTargetType(gdbWidget->gdbRemoteTargetType());
+    dlg.setGdbArchitectureType(gdbWidget->gdbArchitectureType());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
@@ -785,6 +786,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
     gdbWidget->setGdbRemoteTargetType(dlg.gdbRemoteTargetType());
+    gdbWidget->setGdbArchitectureType(dlg.gdbArchitectureType());
     gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
@@ -1554,6 +1556,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
         settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
         settings.setValue("remotetargettype",           gdbWidget->gdbRemoteTargetType());
+        settings.setValue("architecturetype",           gdbWidget->gdbArchitectureType());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
@@ -1633,6 +1636,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
         gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());
         gdbWidget->setGdbRemoteTargetType(settings.value("remotetargettype", "extended-remote").toString());
+        gdbWidget->setGdbArchitectureType(settings.value("architecturetype", "auto").toString());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {

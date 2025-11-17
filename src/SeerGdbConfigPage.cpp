@@ -62,6 +62,15 @@ QString SeerGdbConfigPage::gdbRemoteTargetType () const {
     return gdbRemoteTargetTypeCombo->currentText();
 }
 
+QString SeerGdbConfigPage::gdbArchitectureType () const {
+
+    QString type = gdbArchitectureLineEdit->text();
+
+    if (type == "") type = "auto";
+
+    return type;
+}
+
 void SeerGdbConfigPage::setGdbProgram (const QString& program) {
 
     gdbProgramLineEdit->setText(program);
@@ -102,6 +111,11 @@ void SeerGdbConfigPage::setGdbRemoteTargetType (const QString& type) {
     gdbRemoteTargetTypeCombo->setCurrentText(type);
 }
 
+void SeerGdbConfigPage::setGdbArchitectureType (const QString& type) {
+
+    gdbArchitectureLineEdit->setText(type);
+}
+
 void SeerGdbConfigPage::reset () {
 
     setGdbProgram("/usr/bin/gdb");
@@ -111,6 +125,8 @@ void SeerGdbConfigPage::reset () {
     setGdbHandleTerminatingException(true);
     setGdbRandomizeStartAddress(false);
     setGdbEnablePrettyPrinting(true);
+    setGdbRemoteTargetType("extended-remote");
+    setGdbArchitectureType("auto");
 }
 
 void SeerGdbConfigPage::handleGdbProgramToolButton () {
