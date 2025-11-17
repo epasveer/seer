@@ -68,6 +68,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbRemoteTargetType                          (const QString& type);
         QString                             gdbRemoteTargetType                             () const;
 
+        void                                setGdbArchitectureType                          (const QString& type);
+        QString                             gdbArchitectureType                             () const;
+
         // Editor settings.
         void                                setEditorFont                                   (const QFont& font);
         const QFont&                        editorFont                                      () const;

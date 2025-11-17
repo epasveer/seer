@@ -756,6 +756,16 @@ QString SeerGdbWidget::gdbRemoteTargetType () const {
     return _gdbRemoteTargetType;
 }
 
+void SeerGdbWidget::setGdbArchitectureType (const QString& type) {
+
+    _gdbArchitectureType = type;
+}
+
+QString SeerGdbWidget::gdbArchitectureType () const {
+
+    return _gdbArchitectureType;
+}
+
 void SeerGdbWidget::setGdbRecordMode(const QString& mode) {
 
     if (mode == "auto") {
@@ -1115,6 +1125,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
 
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
+            handleGdbSetArchitectureType();
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
@@ -1258,6 +1269,7 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
 
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
+            handleGdbSetArchitectureType();
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
@@ -1376,6 +1388,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
 
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
+            handleGdbSetArchitectureType();
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running.
@@ -1485,6 +1498,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         // Load the executable, if needed.
         // For RR, this will start it.
         if (newExecutableFlag() == true) {
+            handleGdbSetArchitectureType();
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
@@ -1604,6 +1618,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         reattachConsole();
 
         if (newExecutableFlag() == true) {
+            handleGdbSetArchitectureType();
             handleGdbExecutablePreCommands();       // Run any 'pre' commands before program is loaded.
             handleGdbExecutableName();              // Load the program into the gdb process.
             handleGdbExecutableSources();           // Load the program source files.
@@ -4147,6 +4162,13 @@ void SeerGdbWidget::handleGdbSourceScripts () {
         handleGdbCommand(command);
     }
     qDebug() << "Done.";
+}
+
+void SeerGdbWidget::handleGdbSetArchitectureType () {
+
+    if (gdbArchitectureType() != "") {
+        handleGdbCommand(QString("set architecture ") + gdbArchitectureType());
+    }
 }
 
 QString SeerGdbWidget::assemblySymbolDemagling () const {

@@ -14,6 +14,7 @@
 * Breakpoints: Allow multiple filename:line entries for the --break-source option.
 * Control: Add ^D to toggle record playback direction for RR, Undo, and gdb's Record.
 * Control: Add SHIFT+F5 (etal) to reverse step (etc.) during record playback for RR, Undo, and gdb's Record.
+* GDB: Add Seer config to set gdb architecture.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.
