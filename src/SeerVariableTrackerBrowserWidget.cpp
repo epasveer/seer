@@ -443,6 +443,12 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     if (nv_old_pairs.size() != nv_pairs.size())         // Check if variable has changed type or is out of scope
     {
         // If sizes don't match, it seems that variables is out of scope or changed type
+        // First, delete all children, otherwise we might have leftovers
+        while (parentItem->childCount() > 0) {
+            QTreeWidgetItem* item = parentItem->child(0);
+            delete item;
+        }
+        // Then, recreate all children
         for (const auto& nv : nv_pairs)
         {
             QStringPair pair = Seer::parseNameValue(nv, '=');
