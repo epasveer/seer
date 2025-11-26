@@ -440,6 +440,42 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
         nv_old_pairs = Seer::parseCommaList(captureOld1, '{', '}');
     }
 
+    if (nv_old_pairs.size() != nv_pairs.size())         // Check if variable has changed type or is out of scope
+    {
+        // If sizes don't match, it seems that variables is out of scope or changed type
+        for (const auto& nv : nv_pairs)
+        {
+            QStringPair pair = Seer::parseNameValue(nv, '=');
+            // Look for the existing child, if any so we can reuse it.
+            QTreeWidgetItem* childItem = 0;
+            for (int i=0; i<parentItem->childCount(); i++) {
+                if (parentItem->child(i)->text(0) == pair.first) {
+                    childItem = parentItem->child(i);
+                    childItem->setText(0, pair.first);
+                    childItem->setText(1, pair.second);
+                    childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                    childItem->setText(2, id_text);
+                    childItem->setText(3, "reused");
+                    break;
+                }
+            }
+
+            // Otherwise, create a new child.
+            if (childItem == 0) {
+                childItem = new QTreeWidgetItem;
+                childItem->setText(0, pair.first);
+                childItem->setText(1, pair.second);
+                childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                childItem->setText(2, id_text);
+                childItem->setText(3, "new");
+
+                parentItem->addChild(childItem);
+            }
+            handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), "");
+        }
+        return;
+    }
+
     QFont parentFont = parentItem->font(0);
     parentFont.setBold(old_text != value_text);     // if value has changed -> set font to bold
     parentItem->setFont(0, parentFont);
