@@ -12,7 +12,6 @@
 #include <QtGui/QClipboard>
 #include <QtCore/QTimer>
 #include <QtCore/QDebug>
-#include <iostream>
 
 SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* parent) : QWidget(parent) {
 
