@@ -174,22 +174,13 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                 value_text.remove('\\');
                 if (old_text == "")
                 {
-                    // if empty -> first time. Pass the same text for old and new
+                    // If old_text is empty -> This node is created for the first time. Pass the same text for old and new
                     handleItemCreate (item, value_text, value_text);
                 }
                 else
                 {
-                    if (old_text.front() == '{' && old_text.back() == '}') {
-                        old_text = Seer::filterBareNewLines(old_text);
-                        handleItemCreate (item, value_text, old_text);
-                    }
-                    else
-                    {
-                        // In some cases, old_text might have value like "Structure has no component named operator*" or
-                        // "No symbol "symbol" in current context" when variable is out of scope. By pass it
-                        handleItemCreate (item, value_text, old_text);
-                    }
-                    
+                    old_text = Seer::filterBareNewLines(old_text);
+                    handleItemCreate (item, value_text, old_text);
                 }
 
                 emit raiseTab();
@@ -427,8 +418,27 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     QString text = capture1;
 
     // Convert to a list of name/value pairs.
-    QStringList nv_pairs        = Seer::parseCommaList(text, '{', '}');
-    QStringList nv_old_pairs    = Seer::parseCommaList(captureOld1, '{', '}');
+    QStringList nv_pairs;
+    if (text.startsWith("{"))
+    {
+        // String might describe an array: {a=1, b=1},{a=1, b=1},{a=1, b=1},{a=1, b=1}
+        nv_pairs = Seer::parseArray(parentItem->text(0), text);
+    }
+    else
+    {
+        nv_pairs = Seer::parseCommaList(text, '{', '}');
+    }
+
+    QStringList nv_old_pairs;
+    if (text.startsWith("{"))
+    {
+        // String might describe an array: {a=1, b=1},{a=1, b=1},{a=1, b=1},{a=1, b=1}
+        nv_old_pairs = Seer::parseArray(parentItem->text(0), captureOld1);
+    }
+    else
+    {
+        nv_old_pairs = Seer::parseCommaList(captureOld1, '{', '}');
+    }
 
     QFont parentFont = parentItem->font(0);
     parentFont.setBold(old_text != value_text);     // if value has changed -> set font to bold
