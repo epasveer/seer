@@ -27,8 +27,10 @@ class SeerPlainTextEdit : public QPlainTextEdit {
 
     private slots:
         void                    blinkCursor                 ();
+        void                    handleCursorPositionChanged ();
 
     private:
+        constexpr static int    CURSOR_WIDTH = 2;
         QTimer*                 _cursorTimer;
         bool                    _cursorVisible;
 };

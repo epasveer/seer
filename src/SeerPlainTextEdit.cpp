@@ -7,6 +7,8 @@
 #include <QtGui/QPainter>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPaintEvent>
+#include <QTextBlock>
+#include <QColor>
 
 SeerPlainTextEdit::SeerPlainTextEdit(const QString& text, QWidget* parent) : QPlainTextEdit(text, parent) {
 
@@ -14,6 +16,7 @@ SeerPlainTextEdit::SeerPlainTextEdit(const QString& text, QWidget* parent) : QPl
     _cursorTimer   = new QTimer(this);
 
     QObject::connect(_cursorTimer, &QTimer::timeout, this, &SeerPlainTextEdit::blinkCursor);
+    QObject::connect(this, &QPlainTextEdit::cursorPositionChanged, this, &SeerPlainTextEdit::handleCursorPositionChanged);
 
     _cursorTimer->start(500);
 }
@@ -24,6 +27,7 @@ SeerPlainTextEdit::SeerPlainTextEdit(QWidget* parent) : QPlainTextEdit(parent) {
     _cursorTimer   = new QTimer(this);
 
     QObject::connect(_cursorTimer, &QTimer::timeout, this, &SeerPlainTextEdit::blinkCursor);
+    QObject::connect(this, &QPlainTextEdit::cursorPositionChanged, this, &SeerPlainTextEdit::handleCursorPositionChanged);
 
     _cursorTimer->start(500);
 }
@@ -49,13 +53,37 @@ void SeerPlainTextEdit::paintEvent(QPaintEvent* event) {
     QPlainTextEdit::paintEvent(event);
 
     // If the widget does not have focus, draw the cursor manually.
-    if (!hasFocus() && _cursorVisible) {
+    if (_cursorVisible) {
+        setCursorWidth(CURSOR_WIDTH);
         QRect r = cursorRect();
-        if (r.isValid()) {
-            QPainter p(viewport());
-            p.fillRect(r, palette().text().color());
-        }
+        QPainter p(viewport());
+        p.fillRect(r, palette().text().color());
     }
+    else
+    {
+        setCursorWidth(0);
+    }
+
+    // Add margin highlight for current line
+    QPainter painter(viewport());
+    QTextCursor cursor = textCursor();
+    QTextBlock block = cursor.block();
+
+    // Get the rectangle of the current line (block)
+    QRectF rect = blockBoundingGeometry(block).translated(contentOffset());
+
+    // Optional: add a few pixels margin around the block
+    rect.adjust(-2, 0, 2, 0);
+
+    // Draw a visible border
+    QPen pen(QColor(200, 200, 200), 0.5);
+    painter.setPen(pen);
+    painter.drawRect(rect);
+}
+
+// Add margin highlight for current line
+void SeerPlainTextEdit::handleCursorPositionChanged() {
+    viewport()->update();
 }
 
 //
