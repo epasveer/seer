@@ -166,8 +166,21 @@ void SeerVariableTrackerBrowserWidget::handleText (const QString& text) {
                     ++itmark;
                 }
 
-                // Set the value.
-                handleItemCreate (item, value_text);
+                QString old_text = item->text(1);
+                old_text.replace("\\\"", "\"");
+                old_text.remove('\\');
+                value_text.replace("\\\"", "\"");
+                value_text.remove('\\');
+                if (old_text == "")
+                {
+                    // If old_text is empty -> This node is created for the first time. Pass the same text for old and new
+                    handleItemCreate (item, value_text, value_text);
+                }
+                else
+                {
+                    old_text = Seer::filterBareNewLines(old_text);
+                    handleItemCreate (item, value_text, old_text);
+                }
 
                 emit raiseTab();
 
@@ -327,17 +340,16 @@ void SeerVariableTrackerBrowserWidget::showEvent (QShowEvent* event) {
     refresh();
 }
 
-void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* item, const QString& value_text) {
+void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* item, const QString& value_text, const QString& old_text) {
 
-    handleItemCreate(item, item->text(2), item->text(0), value_text);
+    handleItemCreate(item, item->text(2), item->text(0), value_text, old_text);
 }
 
-void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text) {
+void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text, const QString& old_text) {
 
     // Fill in parent item. Whether is a simple or complex entry.
     parentItem->setText(0, name_text);
     parentItem->setText(1, Seer::filterEscapes(value_text));
-    parentItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
     parentItem->setText(2, id_text);
     parentItem->setText(3, "reused");
 
@@ -372,8 +384,26 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
             QTreeWidgetItem* item = parentItem->child(0);
             delete item;
         }
+    }
 
-        return;
+    // Do the same for old_text
+    QString captureOld0; // With bookends.
+    QString captureOld1; // Without.
+
+    QRegularExpressionMatch withaddress_match_Old = withaddress_re.match(old_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+    if (withaddress_match_Old.hasMatch()) {
+        captureOld0 = withaddress_match_Old.captured(0);
+        captureOld1 = withaddress_match_Old.captured(1);
+
+    }else{
+        QRegularExpression noaddress_re("^\\{(.*?)\\}$");
+        QRegularExpressionMatch noaddress_match = noaddress_re.match(old_text, 0, QRegularExpression::PartialPreferCompleteMatch);
+
+        if (noaddress_match.hasMatch()) {
+            captureOld0 = noaddress_match.captured(0);
+            captureOld1 = noaddress_match.captured(1);
+        }
     }
 
     // Add the complex entry to the tree. Reuse, if possible.
@@ -398,11 +428,71 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
         nv_pairs = Seer::parseCommaList(text, '{', '}');
     }
 
+    QStringList nv_old_pairs;
+    if (text.startsWith("{"))
+    {
+        // String might describe an array: {a=1, b=1},{a=1, b=1},{a=1, b=1},{a=1, b=1}
+        nv_old_pairs = Seer::parseArray(parentItem->text(0), captureOld1);
+    }
+    else
+    {
+        nv_old_pairs = Seer::parseCommaList(captureOld1, '{', '}');
+    }
+
+    if (nv_old_pairs.size() != nv_pairs.size())         // Check if variable has changed type or is out of scope
+    {
+        // If sizes don't match, it seems that variables is out of scope or changed type
+        // First, delete all children, otherwise we might have leftovers
+        while (parentItem->childCount() > 0) {
+            QTreeWidgetItem* item = parentItem->child(0);
+            delete item;
+        }
+        // Then, recreate all children
+        for (const auto& nv : nv_pairs)
+        {
+            QStringPair pair = Seer::parseNameValue(nv, '=');
+            // Look for the existing child, if any so we can reuse it.
+            QTreeWidgetItem* childItem = 0;
+            for (int i=0; i<parentItem->childCount(); i++) {
+                if (parentItem->child(i)->text(0) == pair.first) {
+                    childItem = parentItem->child(i);
+                    childItem->setText(0, pair.first);
+                    childItem->setText(1, pair.second);
+                    childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                    childItem->setText(2, id_text);
+                    childItem->setText(3, "reused");
+                    break;
+                }
+            }
+
+            // Otherwise, create a new child.
+            if (childItem == 0) {
+                childItem = new QTreeWidgetItem;
+                childItem->setText(0, pair.first);
+                childItem->setText(1, pair.second);
+                childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+                childItem->setText(2, id_text);
+                childItem->setText(3, "new");
+
+                parentItem->addChild(childItem);
+            }
+            handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), "");
+        }
+        return;
+    }
+
+    QFont parentFont = parentItem->font(0);
+    parentFont.setBold(old_text != value_text);     // if value has changed -> set font to bold
+    parentItem->setFont(0, parentFont);
+    parentItem->setFont(1, parentFont);
+
     // Go through each pair and add the name and its value to the tree.
-    for (const auto& nv : nv_pairs) {
-
-        QStringPair pair = Seer::parseNameValue(nv, '=');
-
+    for (int i = 0; i < nv_pairs.size(); ++i) {
+        QString nv      = nv_pairs[i];
+        QString nv_old  = nv_old_pairs[i];
+            
+        QStringPair pair        = Seer::parseNameValue(nv, '=');
+        QStringPair old_pair    = Seer::parseNameValue(nv_old, '=');
         // Look for the existing child, if any so we can reuse it.
         QTreeWidgetItem* childItem = 0;
         for (int i=0; i<parentItem->childCount(); i++) {
@@ -413,6 +503,14 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
                 childItem->setFont(1, QFontDatabase::systemFont(QFontDatabase::FixedFont));
                 childItem->setText(2, id_text);
                 childItem->setText(3, "reused");
+
+                QFont childFontCol0 = childItem->font(0);
+                QFont childFontCol1 = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+                childFontCol0.setBold(pair.second != old_pair.second);
+                childFontCol1.setBold(pair.second != old_pair.second);
+                childItem->setFont(0, childFontCol0);
+                childItem->setFont(1, childFontCol1);
+
                 break;
             }
         }
@@ -429,7 +527,7 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
             parentItem->addChild(childItem);
         }
 
-        handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1));
+        handleItemCreate(childItem, id_text, childItem->text(0), childItem->text(1), old_pair.second);
     }
 }
 

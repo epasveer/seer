@@ -86,6 +86,10 @@ struct familyStruct globalStruct = {
 int main() {
     globalStruct.numberOfNumber =0;
     int a = 10, b = 3;
+    a ++;
+    b ++;
+    a *= 2;
+    b *= 2;
     pid_t pid = getpid();
     std::cout << "Process ID: " << pid << std::endl;
     while (globalStruct.numberOfNumber < 100)

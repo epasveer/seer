@@ -77,12 +77,15 @@ int factorial(int n) {
 
         }
     };
+    struct familyStruct b;
     family.numberOfNumber ++;
     family.numberOfNumber ++;
     family.numberOfNumber ++;
-    int abc = 0;
+    int abc = 0, a = 100;
     abc ++;
+    a ++;
     abc *= 2;
+    a /= 2;
     family.dad.childArr[0].age ++;
     family.dad.childArr[1].name = "childTest " + std::to_string(abc);
     family.mom.childArr[1].age ++;
