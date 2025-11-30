@@ -1628,7 +1628,11 @@ void SeerMainWindow::readConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
+#ifdef SEER_GDB_NAME
+        gdbWidget->setGdbProgram(settings.value("program", STRINGIFY(SEER_GDB_NAME)).toString());
+#else
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+#endif
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
         gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
         gdbWidget->setGdbNonStopMode(settings.value("nonstopmode", false).toBool());

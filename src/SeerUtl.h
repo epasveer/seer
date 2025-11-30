@@ -9,6 +9,12 @@
 #include <QtCore/QMap>
 #include <QtCore/Qt>
 
+// 1. A helper macro that accepts an argument and stringifies it.
+#define STRINGIFY_HELPER(x) #x
+
+// 2. The main macro that forces expansion of 'x' before passing it to the helper.
+#define STRINGIFY(x) STRINGIFY_HELPER(x)
+
 namespace Seer {
 
     QString                     version             ();

@@ -295,8 +295,23 @@ elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()
 
-# Global macro, turn ENABLE_GDB_LOGOUT=1 to enable gdb logout
-target_compile_definitions(${PROJECT_NAME}
-    PUBLIC
-        ENABLE_GDB_LOGOUT=1
+# Handle gdb logout debugging. Turn CONFIG_SEER_GDB_LOGOUT=1 to enable gdb logout
+# -DCONFIG_SEER_GDB_LOGOUT=1
+if(NOT DEFINED CONFIG_SEER_GDB_LOGOUT)
+    set(CONFIG_SEER_GDB_LOGOUT 0)
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_LOGOUT=${CONFIG_SEER_GDB_LOGOUT}
 )
+
+# Handle default gdb binary name and location.
+# -DCONFIG_SEER_GDB_NAME=/app/bin/gdb
+if(NOT DEFINED CONFIG_SEER_GDB_NAME)
+    set(CONFIG_SEER_GDB_NAME"/usr/bin/gdb")
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_NAME=${CONFIG_SEER_GDB_NAME}
+)
+

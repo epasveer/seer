@@ -61,7 +61,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _catchpointsBrowserWidget           = 0;
     _gdbOutputLog                       = 0;
     _seerOutputLog                      = 0;
+#ifdef SEER_GDB_NAME
+    _gdbProgram                         = STRINGIFY(SEER_GDB_NAME);
+#else
     _gdbProgram                         = "/usr/bin/gdb";
+#endif
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _gdbNonStopMode                     = false;
@@ -423,7 +427,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
     QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
 
-#if ENABLE_GDB_LOGOUT == 1
+#if SEER_GDB_LOGOUT == 1
     // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
     QObject::connect(this,                                                      &SeerGdbWidget::gdbCommandLogout,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
@@ -1046,7 +1050,7 @@ void SeerGdbWidget::handleGdbCommand (const QString& command) {
 
     QByteArray bytes = str.toUtf8(); // 8-bit Unicode Transformation Format
 
-#if ENABLE_GDB_LOGOUT == 1
+#if SEER_GDB_LOGOUT == 1
     // Broadcast this log. For debugging
     emit gdbCommandLogout("From Widget:" + str);
 #endif

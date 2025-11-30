@@ -89,7 +89,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
         qCDebug(LC) << text;
 
-#if ENABLE_GDB_LOGOUT == 1
+#if SEER_GDB_LOGOUT == 1
         // Start broadcasting it around. For debugging
         emit allTextOutput("From GdbMonitor: " + text + "\n");
 #endif
