@@ -1688,6 +1688,9 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
 
             // Kill the gdb.
             killGdb();
+            
+            // Clear the closed files stack.
+            editorManagerWidget->clearClosedFilesStack();
 
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
