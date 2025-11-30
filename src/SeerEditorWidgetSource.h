@@ -30,7 +30,24 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
     Q_OBJECT
 
     public:
-        SeerEditorWidgetSourceArea (QWidget* parent = 0);
+        struct SeerCurrentFile {
+            QString                   file;
+            QString                   fullname;
+            int                       line;             // line to set the cursor to
+            int                       column;           // column to set the cursor to
+            int                       firstDisplayLine;      // line to display at top
+            bool operator==(const SeerCurrentFile& other) const {
+                return (fullname == other.fullname) && (line == other.line) &&
+                        (column == other.column) && (firstDisplayLine == other.firstDisplayLine);
+            }
+            bool operator!=(const SeerCurrentFile& other) const {
+                return (fullname != other.fullname) | (line != other.line) |
+                        (column != other.column) | (firstDisplayLine != other.firstDisplayLine);
+            }
+        };
+
+        SeerEditorWidgetSourceArea  (QWidget* parent = 0);
+        ~SeerEditorWidgetSourceArea();
 
         void                                        enableLineNumberArea                (bool flag);
         bool                                        lineNumberAreaEnabled               () const;
@@ -58,6 +75,10 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                                     findFile                            (const QString& file, const QString& fullname, const QString& alternateDirectory, const QStringList& alternateDirectories);
 
         void                                        setCurrentLine                      (int lineno);
+        void                                        setCurrentColumn                    (int colno);
+        int                                         currentLine                         () const;
+        int                                         currentColumn                       () const;
+        int                                         firstDisplayLine                    () const;
         void                                        scrollToLine                        (int lineno);
 
         void                                        clearCurrentLines                   ();
@@ -96,6 +117,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         int                                         editorTabSize                       () const;
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
+        SeerCurrentFile                             readCurrentPosition                 ();
 
         void                                        eraseColorCurrentLine               (int lineno);
     signals:
@@ -119,6 +141,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showAlternateBar                    (bool flag);
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
+
+        // Signal emitted when file is closed
+        void                                        signalFileClosed                    (const SeerCurrentFile& currentFile);
 
     public slots:
         void                                        handleText                          (const QString& text);

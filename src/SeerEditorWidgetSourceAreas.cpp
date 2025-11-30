@@ -84,6 +84,13 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     close();
 }
 
+SeerEditorWidgetSourceArea::~SeerEditorWidgetSourceArea(){
+    // Read current position of cursor and first displayed line.
+    SeerCurrentFile currentFile = readCurrentPosition();
+    // Send a signal to SeerEditorManagerWidget, append to _stackClosedFiles
+    emit signalFileClosed(currentFile);
+}
+
 void SeerEditorWidgetSourceArea::enableLineNumberArea (bool flag) {
     _enableLineNumberArea = flag;
 
@@ -731,6 +738,31 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
     // Refresh all the extra selections.
     refreshExtraSelections();
+}
+
+void SeerEditorWidgetSourceArea::setCurrentColumn (int colno) {
+    QTextCursor cursor = textCursor();
+
+    int lineStartPos = cursor.block().position();
+    int newPos       = lineStartPos + (colno - 1);
+
+    cursor.setPosition(newPos);
+    setTextCursor(cursor);
+}
+
+int SeerEditorWidgetSourceArea::currentLine () const {
+    QTextCursor cursor = textCursor();
+    return cursor.blockNumber() + 1;;
+}
+
+int SeerEditorWidgetSourceArea::currentColumn () const {
+    QTextCursor cursor = textCursor();
+    return cursor.positionInBlock() + 1;
+}
+
+int SeerEditorWidgetSourceArea::firstDisplayLine () const {
+    QTextBlock block = firstVisibleBlock();
+    return block.blockNumber() + 1;
 }
 
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
@@ -1693,6 +1725,18 @@ void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
 
     // Refresh all the extra selections.
     refreshExtraSelections();
+}
+
+// Read current position in the source area: file name, line, column of cursor and first displayed line
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
+{
+    SeerCurrentFile info;
+    info.file               = QFileInfo(file()).fileName();     // extract file name from full path
+    info.fullname           = fullname();
+    info.line               = currentLine();
+    info.column             = currentColumn();
+    info.firstDisplayLine   = firstDisplayLine();
+    return info;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {

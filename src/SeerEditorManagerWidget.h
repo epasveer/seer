@@ -13,6 +13,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QStack>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -69,6 +70,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             editorTabSize                       () const;
         void                                            setEditorExternalEditorCommand      (const QString& externalEditorCommand);
         const QString&                                  editorExternalEditorCommand         () const;
+        void                                            clearClosedFilesStack               ();
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -97,6 +99,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
+        void                                            handleFileClosed                    (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
+        void                                            handleOpenRecentlyClosedFile        ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -156,5 +160,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
         QStringList                                     _lastFrameList;         // variable for saving previous backtrace
+
+        // list of recently closed files (Ctrl + Shift + T)
+        QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
 };
 

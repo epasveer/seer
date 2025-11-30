@@ -17,6 +17,10 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QScrollBar>
+#include <QPlainTextEdit>
+#include <QMouseEvent>
+#include <QTimer>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -424,6 +428,13 @@ void SeerEditorManagerWidget::setEditorExternalEditorCommand (const QString& ext
 const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
 
     return _editorExternalEditorCommand;
+}
+
+void SeerEditorManagerWidget::clearClosedFilesStack ()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
+    }
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -920,6 +931,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalFileClosed,              this, &SeerEditorManagerWidget::handleFileClosed);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -982,6 +994,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalFileClosed,              this, &SeerEditorManagerWidget::handleFileClosed);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1360,3 +1373,76 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     }
 }
 
+void SeerEditorManagerWidget::handleFileClosed(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
+{
+    if (currentFile.file != "")
+        _stackClosedFiles.push(currentFile);
+}
+
+// Handle opening recently closed file: When use Ctrl + Shift + T
+void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
+    if (!_stackClosedFiles.empty()) {
+        SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+        _stackClosedFiles.pop();
+        // Must have a valid filename.
+        if (topValue.file == "" || topValue.fullname == "") {
+            return;
+        }
+
+        // Get the EditorWidget for the file. Create one if needed.
+        SeerEditorWidgetSource* editorWidget = editorWidgetTab(topValue.fullname);
+        
+        if (editorWidget == 0) {
+            editorWidget = createEditorWidgetTab(topValue.fullname, topValue.file);
+        }
+
+        // Can still be null, if the file is ignored.
+        if (editorWidget == 0) {
+            return;
+        }
+
+        // Push this tab to the top only if the current one in not the "Assembly" tab.
+        QString tabtext = "";
+
+        if (tabWidget->currentIndex() >= 0) {
+            tabtext = tabWidget->tabText(tabWidget->currentIndex());
+        }
+
+        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+            // Do nothing.
+        }else{
+            tabWidget->setCurrentWidget(editorWidget);
+        }
+
+        if (topValue.line > 0) {
+            QPlainTextEdit* textEdit = editorWidget->sourceArea();
+
+            // Create a small helper lambda that does the actual restoration
+            auto restoreView = [textEdit, topValue, this]() {
+                QTextDocument* doc = textEdit->document();
+                int lineIndex = topValue.line - 1;  // 0-based
+
+                if (lineIndex >= doc->lineCount()) {
+                    return;
+                }
+
+                QTextBlock block = doc->findBlockByLineNumber(lineIndex);
+                if (!block.isValid()) {
+                    return;
+                }
+
+                QTextCursor cursor(block);
+                cursor.setPosition(block.position() + qMax(0, topValue.column - 1));
+
+                textEdit->setTextCursor(cursor);
+
+                if (topValue.firstDisplayLine > 0) {
+                    QScrollBar* sb = textEdit->verticalScrollBar();
+                    sb->setValue(topValue.firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
+                }
+            };
+
+            QTimer::singleShot(0, textEdit, restoreView);
+        }
+    }
+}
