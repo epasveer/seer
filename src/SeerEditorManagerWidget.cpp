@@ -632,6 +632,8 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             // Parse through the frame list and set the current lines that are in the frame list.
             QStringList frame_list = Seer::parse(newtext, "frame=", '{', '}', false);
 
+            SeerEditorManagerEntries::iterator i_later=endEntry();
+            int lineToPrintLater = -1;
             for ( const auto& frame_text : frame_list  ) {
                 QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
                 QString addr_text     = Seer::parseFirst(frame_text, "addr=",     '"', '"', false);
@@ -644,9 +646,18 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
                 SeerEditorManagerEntries::iterator e = endEntry();
 
+                if (level_text.toInt() == 0)    // if current line level = 0, save command and paint it later, fix recursive painting
+                {
+                    i_later = i;
+                    lineToPrintLater = line_text.toInt();
+                    continue;
+                }
                 if (i != e) {
                     i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
                 }
+            }
+            if (i_later != endEntry() && lineToPrintLater != -1) {
+                i_later->widget->sourceArea()->addCurrentLine(lineToPrintLater, 0);
             }
         }
 
