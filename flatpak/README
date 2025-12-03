@@ -1,0 +1,31 @@
+$ vim com.github.epasveer.seergdb.json
+
+$ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seergdb/
+
+$ flatpak list
+Name                                     Application ID                                    Version                             Branch                 Installation
+Flatpak Builder Flatpak                  org.flatpak.Builder                               v0-Flathub                          stable                 system
+
+$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+$ flatpak info io.github.epasveer.seergdb
+$ flatpak search gdb
+$ flatpak remove io.github.epasveer.seergdb
+
+$ flatpak-builder --force-clean build-dir io.github.epasveer.seergdb.yml
+$ flatpak-builder --user --install --force-clean build-dir io.github.epasveer.seergdb.yml
+
+$ flatpak run io.github.epasveer.seergdb /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+$ flatpak run io.github.epasveer.seergdb --gdb-program=/app/bin/gdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+
+$ flatpak run --command=bash io.github.epasveer.seergdb
+$ flatpak run --command=bash org.gnome.Sdk//46
+$ flatpak run --command=bash org.freedesktop.Platform.GL.default
+$ flatpak run --command=bash org.freedesktop.Sdk//24.08
+$ flatpak run --command=bash org.freedesktop.Sdk/x86_64/25.08
+
+$ flatpak uninstall io.github.epasveer.seergdb
+$ \rm -rf build-dir/ repo/ .flatpak-builder/ seergdb.flatpak
+$ flatpak-builder --force-clean --repo=repo build-dir io.github.epasveer.seergdb.yml
+$ flatpak build-bundle repo seergdb.flatpak io.github.epasveer.seergdb master
+$ flatpak install --bundle --user seergdb.flatpak
+

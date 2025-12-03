@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.epasveer.seergdb</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>seergdb</name>
+  <summary>A GUI frontend to GDB debugger</summary>
+  <description>
+    <p>
+      Seer is a graphical frontend to the GDB debugger that provides a rich development environment for debugging programs.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>Source code browsing and breakpoint management</li>
+      <li>Variable inspection and modification</li>
+      <li>Stack frame navigation</li>
+      <li>Memory inspection</li>
+      <li>Assembly view</li>
+      <li>Register view</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">io.github.epasveer.seergdb.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main debugging window</caption>
+      <image>https://raw.githubusercontent.com/epasveer/seer/main/images/mainview.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/epasveer/seer</url>
+  <url type="bugtracker">https://github.com/epasveer/seer/issues</url>
+  <developer_name>Ernie Pasveer</developer_name>
+  <releases>
+    <release version="2.5" date="2025-07-19"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

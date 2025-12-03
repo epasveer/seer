@@ -1,0 +1,58 @@
+app-id: io.github.epasveer.seergdb
+runtime: org.kde.Platform
+runtime-version: '6.8'
+sdk: org.kde.Sdk
+command: seergdb
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+#  - --filesystem=host:ro
+#  - --filesystem=home:ro
+#  - --filesystem=/var/lib/flatpak:ro
+  # Access to system debugging
+  - --device=all
+  # Allow ptrace for debugging processes
+  - --allow=devel
+  # Filesystem access for debugging programs
+  - --filesystem=host
+  # Allow talking to system bus for debugging
+  - --socket=system-bus
+  - --socket=session-bus
+modules:
+  - name: copy-mpfr
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 /usr/lib/x86_64-linux-gnu/libmpfr.so.6.2.2 /app/lib/libmpfr.so.6.2.2
+      - ln -s libmpfr.so.6.2.2 /app/lib/libmpfr.so.6
+      - ln -s libmpfr.so.6.2.2 /app/lib/libmpfr.so
+
+  - name: copy-gdb
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 /usr/bin/gdb       /app/bin/gdb
+      - install -Dm755 /usr/bin/gdbserver /app/bin/gdbserver
+      - mkdir -p -m 755                   /app/share/gdb
+      - cp -rp /usr/share/gdb/*           /app/share/gdb/
+
+  - name: seer
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/epasveer/seer.git
+        branch: main
+        # branch: 393-add-external-define-to-set-default-gdb-to-use
+        # commit: a04e774023ea69d06b4054f18fedbe26286a6957
+        # tag: v2.6
+    build-commands:
+      - mkdir build
+      - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCONFIG_SEER_GDB_NAME=/app/bin/gdb ../src
+      - cd build && ninja
+      - install -Dm755 build/seergdb /app/bin/seergdb
+
+# Make sure runtime can find it:
+environment:
+  LD_LIBRARY_PATH: "/app/lib:/app/lib64"
+

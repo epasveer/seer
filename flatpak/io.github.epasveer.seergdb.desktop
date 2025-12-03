@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=seergdb
+GenericName=GDB Frontend
+Comment=A GUI frontend to GDB debugger
+Icon=io.github.epasveer.seergdb
+Exec=seergdb
+Terminal=false
+Categories=Development;Debugger;Qt;
+Keywords=debug;gdb;debugger;qt;
+StartupNotify=true
+X-Flatpak=io.github.epasveer.seergdb
