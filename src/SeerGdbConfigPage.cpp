@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerGdbConfigPage.h"
+#include "SeerUtl.h"
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QFileDialog>
 #include <QtGlobal>
@@ -118,7 +119,11 @@ void SeerGdbConfigPage::setGdbArchitectureType (const QString& type) {
 
 void SeerGdbConfigPage::reset () {
 
-    setGdbProgram("/usr/bin/gdb");
+#ifdef SEER_GDB_NAME
+    setGdbProgram(STRINGIFY(SEER_GDB_NAME));
+#else
+    setGdbProgram("/usr/bin/gdb";
+#endif
     setGdbArguments("--interpreter=mi");
     setGdbAsyncMode(true);
     setGdbNonStopMode(false);
