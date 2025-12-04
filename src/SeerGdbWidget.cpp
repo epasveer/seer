@@ -3700,6 +3700,9 @@ bool SeerGdbWidget::startGdb () {
 
     //qDebug() << _gdbProcess->state();
 
+    // Signal that gdb session has started.
+    emit gdbSessionStarted();
+
     return true;
 }
 
@@ -3748,6 +3751,9 @@ bool SeerGdbWidget::startGdbRR () {
 
     //qDebug() << _gdbProcess->state();
 
+    // Signal that gdb session has started.
+    emit gdbSessionStarted();
+
     return true;
 }
 
@@ -3772,6 +3778,9 @@ void SeerGdbWidget::killGdb () {
     if (isGdbRuning()) {
         qWarning() << "Is running but shouldn't be.";
     }
+
+    // Signal that gdb session has ended.
+    emit gdbSessionEnded();
 }
 
 void SeerGdbWidget::createConsole () {
