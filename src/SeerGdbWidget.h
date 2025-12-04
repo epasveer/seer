@@ -397,6 +397,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                recordSettingsChanged               ();
         void                                stateChanged                        ();
         void                                gdbCommandLogout                    (const QString& text);
+        void                                gdbSessionStarted                   ();  
+        void                                gdbSessionEnded                     ();
 
     protected:
         void                                writeLogsSettings                   ();
