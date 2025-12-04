@@ -308,7 +308,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 # Handle default gdb binary name and location.
 # -DCONFIG_SEER_GDB_NAME=/app/bin/gdb
 if(NOT DEFINED CONFIG_SEER_GDB_NAME)
-    set(CONFIG_SEER_GDB_NAME"/usr/bin/gdb")
+    set(CONFIG_SEER_GDB_NAME "/usr/bin/gdb")
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
