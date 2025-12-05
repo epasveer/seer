@@ -1371,6 +1371,9 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     if (assemblyWidgetTab() != 0) {
         assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
     }
+
+    // Clear stack of closed files.
+    clearClosedFilesStack();
 }
 
 void SeerEditorManagerWidget::handleFileClosed(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
