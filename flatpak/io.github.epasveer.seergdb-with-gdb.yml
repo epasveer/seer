@@ -9,6 +9,9 @@ finish-args:
   - --socket=wayland
   - --device=dri
   - --share=network
+#  - --filesystem=host:ro
+#  - --filesystem=home:ro
+#  - --filesystem=/var/lib/flatpak:ro
   # Access to system debugging
   - --device=all
   # Allow ptrace for debugging processes
@@ -19,7 +22,22 @@ finish-args:
   - --socket=system-bus
   - --socket=session-bus
 modules:
-  - name: seergdb
+  - name: copy-mpfr
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 /usr/lib/x86_64-linux-gnu/libmpfr.so.6.2.2 /app/lib/libmpfr.so.6.2.2
+      - ln -s libmpfr.so.6.2.2 /app/lib/libmpfr.so.6
+      - ln -s libmpfr.so.6.2.2 /app/lib/libmpfr.so
+
+  - name: copy-gdb
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 /usr/bin/gdb       /app/bin/gdb
+      - install -Dm755 /usr/bin/gdbserver /app/bin/gdbserver
+      - mkdir -p -m 755                   /app/share/gdb
+      - cp -rp /usr/share/gdb/*           /app/share/gdb/
+
+  - name: seer
     buildsystem: simple
     sources:
       - type: git
@@ -30,9 +48,7 @@ modules:
         # tag: v2.6
     build-commands:
       - mkdir build
-      - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app \
-                                   -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host" \
-                                    ../src
+      - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCONFIG_SEER_GDB_NAME=/app/bin/gdb ../src
       - cd build && ninja
       - install -Dm755 build/seergdb /app/bin/seergdb
 
