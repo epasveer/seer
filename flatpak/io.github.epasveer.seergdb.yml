@@ -32,7 +32,7 @@ modules:
     build-commands:
       - mkdir build
       - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app \
-                                   -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host" \
+                                   -DCONFIG_SEER_GDB_LAUNCHER=\"flatpak-spawn --host\" \
                                     ../src
       - cd build && ninja
       - install -Dm755 build/seergdb /app/bin/seergdb
