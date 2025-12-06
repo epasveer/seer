@@ -1,4 +1,5 @@
 .flatpak-builder
 build-dir
 repo
+seergdb.flatpak
 

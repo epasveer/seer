@@ -2,6 +2,7 @@ $ vim com.github.epasveer.seergdb.json
 
 $ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seergdb/
 
+$ flatpak update
 $ flatpak list
 Name                                     Application ID                                    Version                             Branch                 Installation
 Flatpak Builder Flatpak                  org.flatpak.Builder                               v0-Flathub                          stable                 system
@@ -14,7 +15,7 @@ $ flatpak remove io.github.epasveer.seergdb
 $ flatpak-builder --force-clean build-dir io.github.epasveer.seergdb.yml
 $ flatpak-builder --user --install --force-clean build-dir io.github.epasveer.seergdb.yml
 
-$ flatpak run io.github.epasveer.seergdb /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+$ flatpak run io.github.epasveer.seergdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
 $ flatpak run io.github.epasveer.seergdb --gdb-program=/app/bin/gdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
 
 $ flatpak run --command=bash io.github.epasveer.seergdb
