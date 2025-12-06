@@ -768,6 +768,9 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setRRArguments(gdbWidget->rrArguments());
     dlg.setRRGdbArguments(gdbWidget->rrGdbArguments());
 
+    // Launcher is a read-only thing. Just need to show it.
+    dlg.setProgramLauncher(gdbWidget->gdbProgramLauncher());
+
     int ret = dlg.exec();
 
     if (ret == 0) {

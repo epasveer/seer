@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>788</width>
-    <height>714</height>
+    <height>881</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,133 +68,159 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
-          <property name="toolTip">
-           <string>Turn gdb 'async' mode on or off.</string>
-          </property>
-          <property name="text">
-           <string>Async mode</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="gdbNonStopModeCheckBox">
-          <property name="toolTip">
-           <string>Allow other threads to continue if any thread reaches a breakpoint.</string>
-          </property>
-          <property name="text">
-           <string>Non-stop mode</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
-          <property name="toolTip">
-           <string>Randomize the process start address.</string>
-          </property>
-          <property name="text">
-           <string>Randomize start address</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
-          <property name="toolTip">
-           <string>Handle terminating exceptions when calling functions.</string>
-          </property>
-          <property name="text">
-           <string>Handle  terminating-exception</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="gdbEnablePrettyPrintingCheckBox">
-          <property name="toolTip">
-           <string>Show variables with gdb's 'pretty-printing' system.</string>
-          </property>
-          <property name="text">
-           <string>Enable pretty-printing</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      <item row="2" column="0">
+       <widget class="QLabel" name="gdbLauncherLabel">
+        <property name="text">
+         <string>GDB launcher</string>
+        </property>
+       </widget>
       </item>
-      <item row="3" column="0" colspan="3">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="gdbRemoteTargetTypeLabel">
-          <property name="text">
-           <string>Remote target type</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="gdbRemoteTargetTypeCombo">
-          <property name="toolTip">
-           <string>Select the type of remote target connection.</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>remote</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>extended-remote</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <spacer name="horizontalSpacer_1">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>385</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="gdbArchitectureTypeLabel">
-          <property name="text">
-           <string>Architecture type</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="gdbArchitectureLineEdit">
-          <property name="toolTip">
-           <string>Executable architecture type.</string>
-          </property>
-          <property name="clearButtonEnabled">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>385</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="gdbLauncherLineEdit">
+        <property name="toolTip">
+         <string>The program, if needed, to launch the gdb binary.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>No launcher is needed.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="gdbAsyncModeCheckBox">
+       <property name="toolTip">
+        <string>Turn gdb 'async' mode on or off.</string>
+       </property>
+       <property name="text">
+        <string>Async mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="gdbNonStopModeCheckBox">
+       <property name="toolTip">
+        <string>Allow other threads to continue if any thread reaches a breakpoint.</string>
+       </property>
+       <property name="text">
+        <string>Non-stop mode</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QCheckBox" name="gdbRandomizeStartAddressCheckBox">
+       <property name="toolTip">
+        <string>Randomize the process start address.</string>
+       </property>
+       <property name="text">
+        <string>Randomize start address</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="gdbHandleTerminateExceptionCheckBox">
+       <property name="toolTip">
+        <string>Handle terminating exceptions when calling functions.</string>
+       </property>
+       <property name="text">
+        <string>Handle  terminating-exception</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="gdbEnablePrettyPrintingCheckBox">
+       <property name="toolTip">
+        <string>Show variables with gdb's 'pretty-printing' system.</string>
+       </property>
+       <property name="text">
+        <string>Enable pretty-printing</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="gdbRemoteTargetTypeLabel">
+       <property name="text">
+        <string>Remote target type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="gdbRemoteTargetTypeCombo">
+       <property name="toolTip">
+        <string>Select the type of remote target connection.</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>remote</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>extended-remote</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer_1">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>385</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="gdbArchitectureTypeLabel">
+       <property name="text">
+        <string>Architecture type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="gdbArchitectureLineEdit">
+       <property name="toolTip">
+        <string>Executable architecture type.</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>385</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QTextBrowser" name="textBrowser">
@@ -211,6 +237,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changing many of these require saving the new configuration and restarting Seer to take effect&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. If a different debugger is used, it must provide that.  So, usually, the &amp;quot;--interpreter=mi&amp;quot; argument is a must.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sometimes, gdb needs to be launched by another program. For example, under flatpak, gdb needs to be launched by flatpak-spawn. This is defined when compiling Seer. See the CMakefile.txt file. Normally, this does not need to be set.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Async mode allows all gdb actions to happen in the background. This allows  interrupting of a running program possible. Note, this is disabled for 'connect' mode as background commands may overwhelm the gdbserver.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;

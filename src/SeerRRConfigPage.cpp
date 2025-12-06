@@ -42,6 +42,11 @@ void SeerRRConfigPage::setRRProgram (const QString& program) {
     rrProgramLineEdit->setText(program);
 }
 
+void SeerRRConfigPage::setRRProgramLauncher (const QString& launcher) {
+
+    return rrLauncherLineEdit->setText(launcher);
+}
+
 void SeerRRConfigPage::setRRArguments (const QString& arguments) {
 
     rrArgumentsLineEdit->setText(arguments);
@@ -55,6 +60,7 @@ void SeerRRConfigPage::setGdbArguments (const QString& arguments) {
 void SeerRRConfigPage::reset () {
 
     setRRProgram("/usr/bin/rr");
+    setRRProgramLauncher("");
     setRRArguments("replay --interpreter=mi");
     setGdbArguments("");
 }

@@ -77,6 +77,11 @@ void SeerGdbConfigPage::setGdbProgram (const QString& program) {
     gdbProgramLineEdit->setText(program);
 }
 
+void SeerGdbConfigPage::setGdbProgramLauncher (const QString& launcher) {
+
+    return gdbLauncherLineEdit->setText(launcher);
+}
+
 void SeerGdbConfigPage::setGdbArguments (const QString& arguments) {
 
     gdbArgumentsLineEdit->setText(arguments);
@@ -124,6 +129,7 @@ void SeerGdbConfigPage::reset () {
 #else
     setGdbProgram("/usr/bin/gdb";
 #endif
+    setGdbProgramLauncher("");
     setGdbArguments("--interpreter=mi");
     setGdbAsyncMode(true);
     setGdbNonStopMode(false);

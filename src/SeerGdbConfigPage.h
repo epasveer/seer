@@ -28,6 +28,7 @@ class SeerGdbConfigPage : public QWidget, protected Ui::SeerGdbConfigPage {
 
 
         void                    setGdbProgram                                   (const QString& program);
+        void                    setGdbProgramLauncher                           (const QString& launcher);
         void                    setGdbArguments                                 (const QString& arguments);
         void                    setGdbAsyncMode                                 (bool flag);
         void                    setGdbNonStopMode                               (bool flag);

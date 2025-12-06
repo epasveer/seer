@@ -20,6 +20,7 @@ class SeerRRConfigPage : public QWidget, protected Ui::SeerRRConfigPage {
         QString                 gdbArguments                                    () const;
 
         void                    setRRProgram                                    (const QString& program);
+        void                    setRRProgramLauncher                            (const QString& launcher);
         void                    setRRArguments                                  (const QString& arguments);
         void                    setGdbArguments                                 (const QString& arguments);
 

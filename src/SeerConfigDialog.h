@@ -43,6 +43,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setSeerClearManualCommandHistory                (bool flag);
         bool                                seerClearManualCommandHistory                   () const;
 
+        // Program to launch gdb, rr, etc. Can be blank. Needed by flatpak.
+        void                                setProgramLauncher                              (const QString& launcher);
+
         // Gdb settings.
         void                                setGdbProgram                                   (const QString& program);
         QString                             gdbProgram                                      () const;
