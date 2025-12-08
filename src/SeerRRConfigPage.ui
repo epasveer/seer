@@ -20,6 +20,16 @@
       <string>RR Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="rrProgramLineEdit">
+        <property name="toolTip">
+         <string>Specify the path and name of the RR debugger.</string>
+        </property>
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="gdbProgramLabel">
         <property name="text">
@@ -27,10 +37,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="rrProgramLineEdit">
+      <item row="1" column="0">
+       <widget class="QLabel" name="rrArgumentsLabel">
+        <property name="text">
+         <string>RR arguments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
         <property name="toolTip">
-         <string>Specify the path and name of the RR debugger.</string>
+         <string>Any extra arguments to pass to the gdb debugger.</string>
         </property>
         <property name="clearButtonEnabled">
          <bool>true</bool>
@@ -51,13 +68,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="rrArgumentsLabel">
-        <property name="text">
-         <string>RR arguments</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QLineEdit" name="rrArgumentsLineEdit">
         <property name="toolTip">
@@ -69,45 +79,9 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="rrLauncherLabel">
-        <property name="text">
-         <string>RR launcher</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="rrLauncherLineEdit">
-        <property name="toolTip">
-         <string>The program, if needed, to launch the RR binary.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="placeholderText">
-         <string>No launcher is needed.</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
        <widget class="QLabel" name="gdbArgumentsLabel">
         <property name="text">
          <string>GDB arguments</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="gdbArgumentsLineEdit">
-        <property name="toolTip">
-         <string>Any extra arguments to pass to the gdb debugger.</string>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -128,9 +102,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Changing many of these require saving the new configuration and restarting Seer to take effect&lt;/span&gt;.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;&lt;br /&gt;&amp;quot;RR program&amp;quot; points to the path and name of the RR program.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;&amp;quot;RR arguments&amp;quot; specifies the arguments to pass to RR. It must minimally have 'replay --interpreter=mi'. And other arguments you may need for RR.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sometimes, RR needs to be launched by another program. For example, under flatpak, RR needs to be launched by flatpak-spawn. This is defined when compiling Seer. See the CMakefile.txt file. Normally, this does not need to be set.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;&amp;quot;GDB arguments&amp;quot; specified the arguments to pass on to gdb. Usually not needed.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RR will be started by the launcher specified in the GDB config tab.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;Between these input fields, Seer forms the command:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;      $ /usr/bin/rr replay --interpreter=mi [RR-arguments] [trace-directory] [--tty /dev/pts] [-- gdb-arguments] &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif';&quot;&gt;&lt;br /&gt;&lt;/span&gt;Note, Seer relies on the &amp;quot;mi&amp;quot; interpreter that is built into gdb. So, the &amp;quot;--interpreter=mi&amp;quot; argument is a must. This is specified in the &amp;quot;RR arguments&amp;quot; field.&lt;/p&gt;
@@ -142,8 +115,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </widget>
    </item>
   </layout>
-  <zorder>rrGroupBox</zorder>
-  <zorder>textBrowser</zorder>
  </widget>
  <resources>
   <include location="resource.qrc"/>

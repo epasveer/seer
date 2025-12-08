@@ -79,7 +79,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         const QString&                      executableBreakMode                 () const;
 
         // Gdb settings.
-        QString                             gdbProgramLauncher                  () const;
+        void                                setGdbLauncher                      (const QString& launchProgram);
+        QString                             gdbLauncher                         () const;
 
         void                                setGdbProgram                       (const QString& program);
         QString                             gdbProgram                          () const;
@@ -419,6 +420,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                delay                               (int seconds);
 
         bool                                _isQuitting;
+        QString                             _gdbLauncher;
         QString                             _gdbProgram;
         QString                             _gdbArguments;
         QString                             _gdbProgramOverride;

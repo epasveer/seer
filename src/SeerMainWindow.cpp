@@ -733,6 +733,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
+    dlg.setGdbLauncher(gdbWidget->gdbLauncher());
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
@@ -767,9 +768,6 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setRRProgram(gdbWidget->rrProgram());
     dlg.setRRArguments(gdbWidget->rrArguments());
     dlg.setRRGdbArguments(gdbWidget->rrGdbArguments());
-
-    // Launcher is a read-only thing. Just need to show it.
-    dlg.setProgramLauncher(gdbWidget->gdbProgramLauncher());
 
     int ret = dlg.exec();
 

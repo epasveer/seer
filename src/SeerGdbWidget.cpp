@@ -61,11 +61,19 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _catchpointsBrowserWidget           = 0;
     _gdbOutputLog                       = 0;
     _seerOutputLog                      = 0;
+
 #ifdef SEER_GDB_NAME
     _gdbProgram                         = STRINGIFY(SEER_GDB_NAME);
 #else
     _gdbProgram                         = "/usr/bin/gdb";
 #endif
+
+#ifdef SEER_GDB_LAUNCHER
+    _gdbLauncher                        = STRINGIFY(SEER_GDB_LAUNCHER);
+#else
+    _gdbLauncher                        = "";
+#endif
+
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _gdbNonStopMode                     = false;
@@ -630,15 +638,14 @@ QString SeerGdbWidget::gdbProgram () const {
     return _gdbProgram;
 }
 
-QString SeerGdbWidget::gdbProgramLauncher () const {
+void SeerGdbWidget::setGdbLauncher (const QString& launchProgram) {
 
-    QString gdbLauncher = "";
+    _gdbLauncher = launchProgram;
+}
 
-#ifdef SEER_GDB_LAUNCHER
-    gdbLauncher = STRINGIFY(SEER_GDB_LAUNCHER);
-#endif
+QString SeerGdbWidget::gdbLauncher () const {
 
-    return gdbLauncher;
+    return _gdbLauncher;
 }
 
 void SeerGdbWidget::setGdbArguments (const QString& arguments) {
@@ -3659,8 +3666,8 @@ bool SeerGdbWidget::startGdb () {
     QString rawcommand;
 
     // Is a 'launcher' being used? Like 'flatpak-spawn'.
-    if (gdbProgramLauncher() != "") {
-        rawcommand += gdbProgramLauncher() + " ";
+    if (gdbLauncher() != "") {
+        rawcommand += gdbLauncher() + " ";
     }
 
     // Set the gdb program name to use.
@@ -3736,8 +3743,8 @@ bool SeerGdbWidget::startGdbRR () {
     QString rawcommand;
 
     // Is a 'launcher' being used? Like 'flatpak-spawn'.
-    if (gdbProgramLauncher() != "") {
-        rawcommand += gdbProgramLauncher() + " ";
+    if (gdbLauncher() != "") {
+        rawcommand += gdbLauncher() + " ";
     }
 
     // Set the RR program name to use.
