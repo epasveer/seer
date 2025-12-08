@@ -3,9 +3,12 @@ $ vim com.github.epasveer.seergdb.json
 $ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seergdb/
 
 $ flatpak update
+$ flatpak install flathub org.kde.Sdk//6.10
+$ flatpak install flathub org.kde.Platform//6.10
 $ flatpak list
 Name                                     Application ID                                    Version                             Branch                 Installation
 Flatpak Builder Flatpak                  org.flatpak.Builder                               v0-Flathub                          stable                 system
+...
 
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 $ flatpak info io.github.epasveer.seergdb
