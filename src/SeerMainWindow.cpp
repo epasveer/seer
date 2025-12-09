@@ -534,7 +534,12 @@ void SeerMainWindow::setStyleName (const QString& name) {
             return;
         }
 
-        s.open(QFile::ReadOnly | QFile::Text);
+        bool f = s.open(QFile::ReadOnly | QFile::Text);
+        if (f == false) {
+            qDebug() << "Can't open Stylesheet '" + name + "'!";
+            return;
+        }
+
         QTextStream ts(&s);
         qApp->setStyleSheet(ts.readAll());
 

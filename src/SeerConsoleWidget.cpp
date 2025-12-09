@@ -81,8 +81,9 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
     }
 
     // Write text to stdout on terminal that started Seer..
+    // Ignore errors.
     if (isStdoutEnabled()) {
-        write (STDOUT_FILENO, buffer, count);
+        (void)write (STDOUT_FILENO, buffer, count);
     }
 
     // Write text to Ansi widget.
