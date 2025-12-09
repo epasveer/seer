@@ -23,7 +23,7 @@
   <screenshots>
     <screenshot type="default">
       <caption>Main debugging window</caption>
-      <image>https://raw.githubusercontent.com/epasveer/seer/main/images/mainview.png</image>
+      <url>file:///app/share/appdata/screenshots/seer_screenshot.png</url>
     </screenshot>
   </screenshots>
   <url type="homepage">https://github.com/epasveer/seer</url>

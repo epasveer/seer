@@ -1,5 +1,5 @@
 .flatpak-builder
 build-dir
 repo
-seergdb.flatpak
+seer.flatpak
 
