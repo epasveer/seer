@@ -83,7 +83,10 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
     // Write text to stdout on terminal that started Seer..
     // Ignore errors.
     if (isStdoutEnabled()) {
-        (void)write (STDOUT_FILENO, buffer, count);
+        ssize_t n = ::write (STDOUT_FILENO, buffer, count);
+        if (n < count) {
+            qDebug("Can't write stdout to terminal");
+        }
     }
 
     // Write text to Ansi widget.
