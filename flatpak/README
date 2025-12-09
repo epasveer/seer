@@ -1,6 +1,6 @@
-$ vim com.github.epasveer.seergdb.json
+$ vim com.github.epasveer.seer.json
 
-$ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seergdb/
+$ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seer/
 
 $ flatpak update
 $ flatpak install flathub org.kde.Sdk//6.10
@@ -11,29 +11,29 @@ Flatpak Builder Flatpak                  org.flatpak.Builder                    
 ...
 
 $ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-$ flatpak info io.github.epasveer.seergdb
+$ flatpak info io.github.epasveer.seer
 $ flatpak search gdb
-$ flatpak remove io.github.epasveer.seergdb
+$ flatpak remove io.github.epasveer.seer
 
-$ flatpak-builder --force-clean build-dir io.github.epasveer.seergdb.yml
-$ flatpak-builder --user --install --force-clean build-dir io.github.epasveer.seergdb.yml
+$ flatpak-builder --force-clean build-dir io.github.epasveer.seer.yml
+$ flatpak-builder --user --install --force-clean build-dir io.github.epasveer.seer.yml
 
-$ flatpak run io.github.epasveer.seergdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
-$ flatpak run io.github.epasveer.seergdb --gdb-program=/app/bin/gdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+$ flatpak run io.github.epasveer.seer -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+$ flatpak run io.github.epasveer.seer --gdb-program=/app/bin/gdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
 
-$ flatpak run --command=bash io.github.epasveer.seergdb
+$ flatpak run --command=bash io.github.epasveer.seer
 $ flatpak run --command=bash org.gnome.Sdk//46
 $ flatpak run --command=bash org.freedesktop.Platform.GL.default
 $ flatpak run --command=bash org.freedesktop.Sdk//24.08
 $ flatpak run --command=bash org.freedesktop.Sdk/x86_64/25.08
 
-$ flatpak uninstall io.github.epasveer.seergdb
-$ \rm -rf build-dir/ repo/ .flatpak-builder/ seergdb.flatpak
-$ flatpak-builder --force-clean --repo=repo build-dir io.github.epasveer.seergdb.yml
-$ flatpak build-bundle repo seergdb.flatpak io.github.epasveer.seergdb master
-$ flatpak install --bundle --user seergdb.flatpak
+$ flatpak uninstall -y io.github.epasveer.seer
+$ \rm -rf build-dir/ repo/ .flatpak-builder/ seer.flatpak
+$ flatpak-builder --force-clean --repo=repo build-dir io.github.epasveer.seer.yml
+$ flatpak build-bundle repo seer.flatpak io.github.epasveer.seer master
+$ flatpak install --bundle --user seer.flatpak
 
 
 $ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
-$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest io.github.epasveer.seergdb.yml
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest io.github.epasveer.seer.yml
 

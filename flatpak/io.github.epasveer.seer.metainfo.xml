@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.epasveer.seergdb</id>
+  <id>io.github.epasveer.seer</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <name>seergdb</name>
+  <name>seer</name>
   <summary>A GUI frontend to GDB debugger</summary>
   <description>
     <p>
@@ -19,7 +19,7 @@
       <li>Register view</li>
     </ul>
   </description>
-  <launchable type="desktop-id">io.github.epasveer.seergdb.desktop</launchable>
+  <launchable type="desktop-id">io.github.epasveer.seer.desktop</launchable>
   <screenshots>
     <screenshot type="default">
       <caption>Main debugging window</caption>
