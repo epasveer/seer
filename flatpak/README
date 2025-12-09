@@ -33,3 +33,7 @@ $ flatpak-builder --force-clean --repo=repo build-dir io.github.epasveer.seergdb
 $ flatpak build-bundle repo seergdb.flatpak io.github.epasveer.seergdb master
 $ flatpak install --bundle --user seergdb.flatpak
 
+
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest io.github.epasveer.seergdb.yml
+
