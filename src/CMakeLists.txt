@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.10.0)
 
 project(seergdb VERSION 2.7.0 LANGUAGES CXX)
 
@@ -313,5 +313,15 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     SEER_GDB_NAME=${CONFIG_SEER_GDB_NAME}
+)
+
+# Handle default gdb binary launcher (for flatpak, et al)
+# -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host"
+if(NOT DEFINED CONFIG_SEER_GDB_LAUNCHER)
+    set(CONFIG_SEER_GDB_LAUNCHER "")
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_LAUNCHER=${CONFIG_SEER_GDB_LAUNCHER}
 )
 

@@ -61,11 +61,19 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _catchpointsBrowserWidget           = 0;
     _gdbOutputLog                       = 0;
     _seerOutputLog                      = 0;
+
 #ifdef SEER_GDB_NAME
     _gdbProgram                         = STRINGIFY(SEER_GDB_NAME);
 #else
     _gdbProgram                         = "/usr/bin/gdb";
 #endif
+
+#ifdef SEER_GDB_LAUNCHER
+    _gdbLauncher                        = STRINGIFY(SEER_GDB_LAUNCHER);
+#else
+    _gdbLauncher                        = "";
+#endif
+
     _gdbArguments                       = "--interpreter=mi";
     _gdbASyncMode                       = true;
     _gdbNonStopMode                     = false;
@@ -630,6 +638,16 @@ QString SeerGdbWidget::gdbProgram () const {
     return _gdbProgram;
 }
 
+void SeerGdbWidget::setGdbLauncher (const QString& launchProgram) {
+
+    _gdbLauncher = launchProgram;
+}
+
+QString SeerGdbWidget::gdbLauncher () const {
+
+    return _gdbLauncher;
+}
+
 void SeerGdbWidget::setGdbArguments (const QString& arguments) {
 
     _gdbArguments = arguments;
@@ -1034,15 +1052,17 @@ void SeerGdbWidget::handleManualCommandExecute () {
     handleGdbCommand(command);
 }
 
-void SeerGdbWidget::handleGdbCommand (const QString& command) {
+void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors) {
 
     qCDebug(LC) << "Command=" << command;
 
     if (_gdbProcess->state() == QProcess::NotRunning) {
-        QMessageBox::warning(this, "Seer",
-                                   QString("The executable has not been started yet or has already exited.\n\n") +
-                                   "(" + command + ")",
-                                   QMessageBox::Ok);
+        if (ignoreErrors == false) {
+            QMessageBox::warning(this, "Seer",
+                                 QString("The executable has not been started yet or has already exited.\n\n") +
+                                 "(" + command + ")",
+                                 QMessageBox::Ok);
+        }
         return;
     }
 
@@ -1679,12 +1699,12 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
                 }
             }
 
-            handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+            handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()), true);
             delay(2);
 
             // Give the gdb and 'exit' command.
             // This should handle detaching from an attached pid.
-            handleGdbCommand("-exec-kill");
+            handleGdbCommand("-exec-kill", true);
 
             // Kill the gdb.
             killGdb();
@@ -3640,53 +3660,51 @@ bool SeerGdbWidget::startGdb () {
         return false;
     }
 
-    // Set the gdb program name to use.
-    bool ok;
+    // Build the raw command to launch the gdb program.
+    // Later the raw command will be broken into individual strings (via ' ')
+    // that the QProcess object expects.
+    QString rawcommand;
 
-    QString rawcommand = gdbProgramOverride();
-
-    if (rawcommand == "") {
-        rawcommand = gdbProgram();
+    // Is a 'launcher' being used? Like 'flatpak-spawn'.
+    if (gdbLauncher() != "") {
+        rawcommand += gdbLauncher() + " ";
     }
 
+    // Set the gdb program name to use.
+    if (gdbProgramOverride() != "") {
+        rawcommand += gdbProgramOverride() + " ";
+    }else{
+        rawcommand += gdbProgram() + " ";
+    }
+
+    // Build the gdb argument list.
+    if (gdbArgumentsOverride() != "") {
+        rawcommand += gdbArgumentsOverride() + " ";
+    }else{
+        rawcommand += gdbArguments() + " ";
+    }
+
+    // Now expand any $VAR environment variables.
+    bool ok;
     QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
 
     //qDebug() << "Raw command     : " << rawcommand;
     //qDebug() << "Expanded command: " << expandedcommand;
 
     if (ok == false) {
-
         QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch gdb:\n'%1'").arg(rawcommand));
-
-        return false;
-    }
-
-    // Build the gdb argument list.
-    QString rawarguments = gdbArgumentsOverride();
-
-    if (rawarguments == "") {
-        rawarguments = gdbArguments();
-    }
-
-    QString expandedarguments = Seer::expandEnv(rawarguments, &ok);
-
-    //qDebug() << "Raw arguments     : " << rawarguments;
-    //qDebug() << "Expanded arguments: " << expandedarguments;
-
-    if (ok == false) {
-
-        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in arguments to launch gdb:\n'%1'").arg(rawarguments));
-
         return false;
     }
 
     // Split string into words, handling "double quoted" words.
-    QStringList args = Seer::split(expandedarguments);
+    QStringList args = Seer::split(expandedcommand);
 
-    //qDebug() << args;
+    // Extract the program name and create a list of arguments.
+    QString program = args.front();
+    args.pop_front();
 
     // Give the gdb process the program and the argument list.
-    _gdbProcess->setProgram(expandedcommand);
+    _gdbProcess->setProgram(program);
     _gdbProcess->setArguments(args);
 
     // We need to set the C language, otherwise the MI interface is translated and our message
@@ -3719,22 +3737,46 @@ bool SeerGdbWidget::startGdbRR () {
         return false;
     }
 
-    // Set the gdb program name to use.
-    QString command   = rrProgram();
-    QString arguments = rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory();
+    // Build the raw command to launch the RR program.
+    // Later the raw command will be broken into individual strings (via ' ')
+    // that the QProcess object expects.
+    QString rawcommand;
 
+    // Is a 'launcher' being used? Like 'flatpak-spawn'.
+    if (gdbLauncher() != "") {
+        rawcommand += gdbLauncher() + " ";
+    }
+
+    // Set the RR program name to use.
+    rawcommand += rrProgram() + " ";
+    rawcommand += rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory() + " ";
+
+    // Set any extra gdb arguments that RR may want.
     if (rrGdbArguments() != "") {
-        arguments += " -- " + rrGdbArguments();
+        rawcommand += "-- " + rrGdbArguments() + " ";
+    }
+
+    // Now expand any $VAR environment variables.
+    bool ok;
+    QString expandedcommand = Seer::expandEnv(rawcommand, &ok);
+
+    //qDebug() << "Raw command     : " << rawcommand;
+    //qDebug() << "Expanded command: " << expandedcommand;
+
+    if (ok == false) {
+        QMessageBox::critical(this, "Error", QString("Can't resolve all environment variables in command to launch RR:\n'%1'").arg(rawcommand));
+        return false;
     }
 
     // Split string into words, handling "double quoted" words.
-    QStringList args = Seer::split(arguments);
+    QStringList args = Seer::split(expandedcommand);
 
-    //qDebug() << "Expanded command: "   << command;
-    //qDebug() << "Expanded arguments: " << arguments;
+    // Extract the program name and create a list of arguments.
+    QString program = args.front();
+    args.pop_front();
 
     // Give the gdb process the program and the argument list.
-    _gdbProcess->setProgram(command);
+    _gdbProcess->setProgram(program);
     _gdbProcess->setArguments(args);
 
     // We need to set the C language, otherwise the MI interface is translated and our message

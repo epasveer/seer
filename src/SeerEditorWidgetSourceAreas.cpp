@@ -501,9 +501,8 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     QFile inputFile(filename);
 
-    inputFile.open(QIODevice::ReadOnly);
-
-    if (!inputFile.isOpen()) {
+    bool f = inputFile.open(QIODevice::ReadOnly);
+    if (f == false) {
 
         QMessageBox::critical(this, "Can't read source file.",  "Can't read : " + filename + "\nThe file is there but can't be opened.");
 

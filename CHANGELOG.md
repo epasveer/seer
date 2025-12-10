@@ -15,6 +15,8 @@
 * Control: Add ^D to toggle record playback direction for RR, Undo, and gdb's Record.
 * Control: Add SHIFT+F5 (etal) to reverse step (etc.) during record playback for RR, Undo, and gdb's Record.
 * GDB: Add Seer config to set gdb architecture.
+* GDB: Add an optional 'launcher' program to start gdb. eg: flatpak-spawn.
+* Build: Add flatpak generation to github actions.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.

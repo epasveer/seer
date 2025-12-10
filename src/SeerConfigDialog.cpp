@@ -164,6 +164,16 @@ bool SeerConfigDialog::seerClearManualCommandHistory () const {
     return _seerConfigPage->clearManualCommandHistory();
 }
 
+void SeerConfigDialog::setGdbLauncher (const QString& launcher) {
+
+    _gdbConfigPage->setGdbLauncher(launcher);
+}
+
+QString SeerConfigDialog::gdbLauncher () const {
+
+    return _gdbConfigPage->gdbLauncher();
+}
+
 void SeerConfigDialog::setGdbProgram (const QString& program) {
 
     _gdbConfigPage->setGdbProgram(program);

@@ -37,7 +37,11 @@ void SeerHelpPageDialog::loadFile (const QString& filename) {
 
     // Get the Help text from the file.
     QFile file(filename);
-    file.open(QFile::ReadOnly|QFile::Text);
+
+    bool f = file.open(QFile::ReadOnly|QFile::Text);
+    if (f == false) {
+        return;
+    }
 
     QTextStream stream(&file);
 

@@ -1,0 +1,40 @@
+$ vim com.github.epasveer.seer.json
+
+$ ls -l ~/.local/share/flatpak/app/com.github.epasveer.seer/
+
+$ flatpak update
+$ flatpak install flathub org.kde.Sdk//6.10
+$ flatpak install flathub org.kde.Platform//6.10
+$ flatpak list
+Name                                     Application ID                                    Version                             Branch                 Installation
+Flatpak Builder Flatpak                  org.flatpak.Builder                               v0-Flathub                          stable                 system
+...
+
+$ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+$ flatpak info io.github.epasveer.seer
+$ flatpak search gdb
+$ flatpak remove io.github.epasveer.seer
+
+$ flatpak-builder --force-clean build-dir io.github.epasveer.seer.yml
+$ flatpak-builder --user --install --force-clean build-dir io.github.epasveer.seer.yml
+
+$ flatpak run io.github.epasveer.seer -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+$ flatpak run io.github.epasveer.seer --gdb-program=/app/bin/gdb -s /nas/erniep/Development/seer/tests/hellostruct/hellostruct
+
+$ flatpak run --command=bash io.github.epasveer.seer
+$ flatpak run --command=bash org.gnome.Sdk//46
+$ flatpak run --command=bash org.freedesktop.Platform.GL.default
+$ flatpak run --command=bash org.freedesktop.Sdk//24.08
+$ flatpak run --command=bash org.freedesktop.Sdk/x86_64/25.08
+
+$ flatpak uninstall -y io.github.epasveer.seer
+$ \rm -rf build-dir/ repo/ .flatpak-builder/ seer.flatpak
+$ flatpak run org.flatpak.Builder --force-clean build-dir io.github.epasveer.seer.yml
+$ flatpak run org.flatpak.Builder --force-clean --repo=repo build-dir io.github.epasveer.seer.yml
+$ flatpak build-bundle repo seer.flatpak io.github.epasveer.seer master
+$ flatpak install -y --bundle --user seer.flatpak
+
+
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo
+$ flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest io.github.epasveer.seer.yml
+

@@ -17,7 +17,11 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
 
     // Get the About text from the resource.
     QFile file(":/seer/resources/ABOUT.md");
-    file.open(QFile::ReadOnly | QFile::Text);
+
+    bool f = file.open(QFile::ReadOnly | QFile::Text);
+    if (f == false) {
+        return;
+    }
 
     QTextStream stream(&file);
 

@@ -534,7 +534,12 @@ void SeerMainWindow::setStyleName (const QString& name) {
             return;
         }
 
-        s.open(QFile::ReadOnly | QFile::Text);
+        bool f = s.open(QFile::ReadOnly | QFile::Text);
+        if (f == false) {
+            qDebug() << "Can't open Stylesheet '" + name + "'!";
+            return;
+        }
+
         QTextStream ts(&s);
         qApp->setStyleSheet(ts.readAll());
 
@@ -733,6 +738,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
+    dlg.setGdbLauncher(gdbWidget->gdbLauncher());
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
@@ -778,6 +784,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
     gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
+    gdbWidget->setGdbLauncher(dlg.gdbLauncher());
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
@@ -1548,6 +1555,7 @@ void SeerMainWindow::writeConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
+        settings.setValue("launcher",                   gdbWidget->gdbLauncher());
         settings.setValue("program",                    gdbWidget->gdbProgram());
         settings.setValue("arguments",                  gdbWidget->gdbArguments());
         settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
@@ -1628,6 +1636,12 @@ void SeerMainWindow::readConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
+#ifdef SEER_GDB_LAUNCHER
+        gdbWidget->setGdbLauncher(settings.value("launcher", STRINGIFY(SEER_GDB_LAUNCHER)).toString());
+#else
+        gdbWidget->setGdbLauncher(settings.value("launcher", "").toString());
+#endif
+
 #ifdef SEER_GDB_NAME
         gdbWidget->setGdbProgram(settings.value("program", STRINGIFY(SEER_GDB_NAME)).toString());
 #else

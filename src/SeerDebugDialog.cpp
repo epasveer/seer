@@ -527,9 +527,9 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
 
     // Open the project file.
     QFile loadFile(filename);;
-    loadFile.open(QIODevice::ReadOnly);
 
-    if (loadFile.error() != 0) {
+    bool f = loadFile.open(QIODevice::ReadOnly);
+    if (f == false) {
         QMessageBox::critical(p, "Error", QString("Can't open the Seer project file '%1'.").arg(filename));
         return;
     }
@@ -537,7 +537,7 @@ void SeerDebugDialog::loadProject (const QString& filename, bool notify) {
     // Populate the JSON document from the project file.
     QJsonDocument jsonDoc = QJsonDocument::fromJson(loadFile.readAll());
 
-    bool f = loadJsonDoc(jsonDoc, filename);
+    f = loadJsonDoc(jsonDoc, filename);
     if (f == false) {
         return;
     }

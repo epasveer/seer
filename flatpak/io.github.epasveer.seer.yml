@@ -1,0 +1,36 @@
+app-id: io.github.epasveer.seer
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: seergdb
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=ipc
+  - --filesystem=host # Filesystem access for debugging programs
+  - --talk-name=org.freedesktop.Flatpak # Permission to `flatpak-spawn --host`
+modules:
+  - name: seergdb
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/epasveer/seer.git
+        # branch: main
+        branch: 377-suggestion-consider-publishing-this-project-on-flathub
+        # branch: 393-add-external-define-to-set-default-gdb-to-use
+        # commit: a04e774023ea69d06b4054f18fedbe26286a6957
+        # tag: v2.6
+    build-commands:
+      - mkdir build
+      - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host" ../src
+      - cd build && ninja
+      - install -Dm755 build/seergdb /app/bin/seergdb
+    post-install:
+      - install -Dm644 flatpak/io.github.epasveer.seer.metainfo.xml     /app/share/metainfo/io.github.epasveer.seer.metainfo.xml
+      - install -Dm644 flatpak/io.github.epasveer.seer.desktop          /app/share/applications/io.github.epasveer.seer.desktop
+      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/64x64/apps/io.github.epasveer.seer.png
+      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/128x128/apps/io.github.epasveer.seer.png
+      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/256x256/apps/io.github.epasveer.seer.png
+      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/512x512/apps/io.github.epasveer.seer.png
+
