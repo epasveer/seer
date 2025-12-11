@@ -25,6 +25,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+
+    - name: Create/update tag
+      uses: rickstaa/action-create-tag@v1
+      with:
+        tag: ${{ github.event.inputs.tag_name }}
+        message: "Release ${{ github.event.inputs.tag_name }}"
+        force_push_tag: true
+
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
