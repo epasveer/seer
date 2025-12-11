@@ -47,7 +47,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         };
 
         SeerEditorWidgetSourceArea  (QWidget* parent = 0);
-        ~SeerEditorWidgetSourceArea();
 
         void                                        enableLineNumberArea                (bool flag);
         bool                                        lineNumberAreaEnabled               () const;
@@ -140,9 +139,6 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showAlternateBar                    (bool flag);
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
-
-        // Signal emitted when file is closed
-        void                                        signalFileClosed                    (const SeerCurrentFile& currentFile);
 
     public slots:
         void                                        handleText                          (const QString& text);

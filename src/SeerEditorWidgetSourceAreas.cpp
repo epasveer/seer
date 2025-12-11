@@ -84,13 +84,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     close();
 }
 
-SeerEditorWidgetSourceArea::~SeerEditorWidgetSourceArea(){
-    // Read current position of cursor and first displayed line.
-    SeerCurrentFile currentFile = readCurrentPosition();
-    // Send a signal to SeerEditorManagerWidget, append to _stackClosedFiles
-    emit signalFileClosed(currentFile);
-}
-
 void SeerEditorWidgetSourceArea::enableLineNumberArea (bool flag) {
     _enableLineNumberArea = flag;
 

@@ -99,7 +99,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
-        void                                            handleFileClosed                    (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
         void                                            handleOpenRecentlyClosedFile        ();
 
     private slots:
