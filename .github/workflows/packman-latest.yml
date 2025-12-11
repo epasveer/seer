@@ -26,8 +26,12 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Create flatpak-latest tag
-      run: |
-        git tag -a -f flatpak-latest -m "flatpak-latest for ${{ github.ref_name }} branch."
+      - uses: rickstaa/action-create-tag@v1
+        id: "tag_create"
+        with:
+          tag: "flatpak-latest"
+          force_push_tag: true
+          message: "flatpak-latest for ${{ github.ref_name }} branch."
 
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
