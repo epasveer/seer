@@ -25,6 +25,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Create flatpak-latest tag
+      run: |
+        git tag -a -f flatpak-latest -m "flatpak-latest for ${{ github.ref_name }} branch."
+
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
@@ -46,6 +50,7 @@ jobs:
         body: Build from latest ${{ github.ref_name }} branch.
         files: |
           seergdb.flatpak
+        tag_name: flatpak-latest
         draft: false
         prerelease: true
       env:
