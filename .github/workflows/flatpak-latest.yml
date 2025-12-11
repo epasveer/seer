@@ -40,12 +40,12 @@ jobs:
         manifest-path: flatpak/io.github.epasveer.seer.yml
         cache-key: flatpak-builder-${{ github.sha }}
 
-    - name: Upload Flatpak bundle as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: seergdb-flatpak
-        path: seergdb.flatpak
-        retention-days: 30
+#   - name: Upload Flatpak bundle as artifact
+#     uses: actions/upload-artifact@v4
+#     with:
+#       name: seergdb-flatpak
+#       path: seergdb.flatpak
+#       retention-days: 30
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
