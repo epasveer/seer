@@ -42,9 +42,11 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
+        name: Flatpak Development Release
+        body: Build from latest ${{ github.ref_name }} branch.
         files: |
           seergdb.flatpak
-        draft: true
+        draft: false
         prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
