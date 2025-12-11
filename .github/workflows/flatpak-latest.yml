@@ -25,13 +25,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Create flatpak-latest tag
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: flatpak-latest
-          force_push_tag: true
-          message: flatpak-latest
-
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
