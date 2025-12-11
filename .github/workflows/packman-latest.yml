@@ -32,9 +32,20 @@ jobs:
         manifest-path: flatpak/io.github.epasveer.seer.yml
         cache-key: flatpak-builder-${{ github.sha }}
 
-    - name: Upload Flatpak bundle
+    - name: Upload Flatpak bundle as artifact
       uses: actions/upload-artifact@v4
       with:
         name: seergdb-flatpak
         path: seergdb.flatpak
         retention-days: 30
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: seergdb.flatpak
+        draft: true
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
