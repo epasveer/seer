@@ -1,4 +1,4 @@
-name: windows-latest Developement Build
+name: windows-latest Development Build
 
 on:
   workflow_dispatch:

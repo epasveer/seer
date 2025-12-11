@@ -1,0 +1,40 @@
+name: flatpak-latest Development Build
+
+on:
+  workflow_dispatch:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  flatpak:
+    name: Build Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:kde-6.10
+      options: --privileged
+
+    steps:
+    - name: Where Am I
+      run: |
+        pwd
+        ls -l
+        lscpu
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Flatpak
+      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      with:
+        bundle: seergdb.flatpak
+        manifest-path: flatpak/io.github.epasveer.seer.yml
+        cache-key: flatpak-builder-${{ github.sha }}
+
+    - name: Upload Flatpak bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: seergdb-flatpak
+        path: seergdb.flatpak
+        retention-days: 30

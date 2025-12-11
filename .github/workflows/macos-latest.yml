@@ -1,4 +1,4 @@
-name: macos-latest Developement Build
+name: macos-latest Development Build
 
 on:
   workflow_dispatch:
@@ -77,7 +77,7 @@ jobs:
           cd src
           ls -l build/
 
-      - name: Build MacOS Developement Release
+      - name: Build MacOS Development Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

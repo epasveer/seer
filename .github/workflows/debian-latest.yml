@@ -1,4 +1,4 @@
-name: debian-latest Developement Build
+name: debian-latest Development Build
 
 on:
   workflow_dispatch:
@@ -67,7 +67,7 @@ jobs:
         cd src
         ls -l build/
 
-    - name: Build Debian Developement Release
+    - name: Build Debian Development Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}

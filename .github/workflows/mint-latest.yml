@@ -1,4 +1,4 @@
-name: mint-latest Developement Build
+name: mint-latest Development Build
 
 on:
   workflow_dispatch:
@@ -66,7 +66,7 @@ jobs:
         cd src
         ls -l build/
 
-    - name: Build Mint Developement Release
+    - name: Build Mint Development Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
