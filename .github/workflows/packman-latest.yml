@@ -40,10 +40,10 @@ jobs:
         retention-days: 30
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
       with:
-        files: seergdb.flatpak
+        files: |
+          seergdb.flatpak
         draft: true
         prerelease: true
       env:
