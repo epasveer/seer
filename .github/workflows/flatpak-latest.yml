@@ -29,8 +29,8 @@ jobs:
     - name: Create/update tag
       uses: rickstaa/action-create-tag@v1
       with:
-        tag: ${{ github.event.inputs.tag_name }}
-        message: "Release ${{ github.event.inputs.tag_name }}"
+        tag: flatpak-latest
+        message: "Release."
         force_push_tag: true
 
     - name: Build Flatpak
