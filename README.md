@@ -48,6 +48,13 @@ Available through the following package managers:
 
     zypper install seergdb
 
+### Flatpak
+
+    Official Seer versions from Flathub (coming soon!)
+
+    Alpha Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github.
+
+
 Install from source
 ---------
 (Recommended) Seer can be built with Qt6 by following the instructions below.
