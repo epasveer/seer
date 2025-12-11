@@ -36,7 +36,7 @@ jobs:
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        bundle: seergdb.flatpak
+        bundle: seer.flatpak
         manifest-path: flatpak/io.github.epasveer.seer.yml
         cache-key: flatpak-builder-${{ github.sha }}
 
@@ -46,7 +46,7 @@ jobs:
         name: Flatpak Development Release
         body: Build from latest ${{ github.ref_name }} branch.
         files: |
-          seergdb.flatpak
+          seer.flatpak
         tag_name: flatpak-latest
         draft: false
         prerelease: true
