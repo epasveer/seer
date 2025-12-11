@@ -70,7 +70,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             editorTabSize                       () const;
         void                                            setEditorExternalEditorCommand      (const QString& externalEditorCommand);
         const QString&                                  editorExternalEditorCommand         () const;
-        void                                            clearClosedFilesStack               ();
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -100,6 +99,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
         void                                            handleOpenRecentlyClosedFile        ();
+        void                                            handleGdbStateChanged               ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();

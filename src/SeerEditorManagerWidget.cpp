@@ -430,13 +430,6 @@ const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
     return _editorExternalEditorCommand;
 }
 
-void SeerEditorManagerWidget::clearClosedFilesStack ()
-{
-    while (!_stackClosedFiles.empty()) {
-        _stackClosedFiles.pop();
-    }
-}
-
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
     // Update the current line.
@@ -760,9 +753,11 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
 
     // Push to _stackClosedFiles before deleting
     QString fullname = tabWidget->tabToolTip(index).section(" : ", 1, 1);
-    SeerEditorManagerEntries::iterator i = findEntry(fullname);
-    SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
-    _stackClosedFiles.push(current);
+    if (fullname != "") {                       // Don't push place holder or Assembly tab
+        SeerEditorManagerEntries::iterator i = findEntry(fullname);
+        SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
+        _stackClosedFiles.push(current);
+    }
 
     // Delete the tab.
     deleteEditorWidgetTab(index);
@@ -1360,9 +1355,6 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     if (assemblyWidgetTab() != 0) {
         assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
     }
-
-    // Clear stack of closed files.
-    clearClosedFilesStack();
 }
 
 // Handle opening recently closed file: When use Ctrl + Shift + T
@@ -1430,5 +1422,13 @@ void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
 
             QTimer::singleShot(0, textEdit, restoreView);
         }
+    }
+}
+
+// Clear the stack of recently closed files whenever a new gdb session starts
+void SeerEditorManagerWidget::handleGdbStateChanged()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
     }
 }
