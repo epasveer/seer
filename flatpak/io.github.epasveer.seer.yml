@@ -16,10 +16,9 @@ modules:
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
+        commit: 65b7f00008544d1e70d15eae8c272fe9e010ac09
         # branch: main
-        branch: 377-suggestion-consider-publishing-this-project-on-flathub
-        # branch: 393-add-external-define-to-set-default-gdb-to-use
-        # commit: a04e774023ea69d06b4054f18fedbe26286a6957
+        # branch: 377-suggestion-consider-publishing-this-project-on-flathub
         # tag: v2.6
     build-commands:
       - mkdir build
