@@ -50,9 +50,9 @@ Available through the following package managers:
 
 ### Flatpak
 
-Official Seer versions from Flathub (coming soon!)
+Official Seer versions from Flathub - Coming soon!
 
-Alpha Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github.
+Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github.
 
 
 Install from source
