@@ -773,6 +773,12 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
         return;
     }
 
+    // Push to _stackClosedFiles before deleting
+    QString fullname = tabWidget->tabToolTip(index).section(" : ", 1, 1);
+    SeerEditorManagerEntries::iterator i = findEntry(fullname);
+    SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
+    _stackClosedFiles.push(current);
+
     // Delete the tab.
     deleteEditorWidgetTab(index);
 
@@ -931,7 +937,6 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalFileClosed,              this, &SeerEditorManagerWidget::handleFileClosed);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -994,7 +999,6 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalFileClosed,              this, &SeerEditorManagerWidget::handleFileClosed);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1374,12 +1378,6 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
 
     // Clear stack of closed files.
     clearClosedFilesStack();
-}
-
-void SeerEditorManagerWidget::handleFileClosed(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
-{
-    if (currentFile.file != "")
-        _stackClosedFiles.push(currentFile);
 }
 
 // Handle opening recently closed file: When use Ctrl + Shift + T
