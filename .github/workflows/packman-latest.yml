@@ -27,9 +27,8 @@ jobs:
 
     - name: Create flatpak-latest tag
       - uses: rickstaa/action-create-tag@v1
-        id: "tag_create"
         with:
-          tag: "flatpak-latest"
+          tag: flatpak-latest
           force_push_tag: true
           message: "flatpak-latest for ${{ github.ref_name }} branch."
 
