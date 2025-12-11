@@ -30,7 +30,7 @@ jobs:
       uses: rickstaa/action-create-tag@v1
       with:
         tag: flatpak-latest
-        message: "Release."
+        message: Tag from latest ${{ github.ref_name }} branch.
         force_push_tag: true
 
     - name: Build Flatpak
@@ -39,13 +39,6 @@ jobs:
         bundle: seergdb.flatpak
         manifest-path: flatpak/io.github.epasveer.seer.yml
         cache-key: flatpak-builder-${{ github.sha }}
-
-#   - name: Upload Flatpak bundle as artifact
-#     uses: actions/upload-artifact@v4
-#     with:
-#       name: seergdb-flatpak
-#       path: seergdb.flatpak
-#       retention-days: 30
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
