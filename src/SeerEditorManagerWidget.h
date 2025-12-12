@@ -13,7 +13,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <stack>
+#include <QStack>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -160,6 +160,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _notifyAssemblyTabShown;
 
         // list of recently closed files (Ctrl + Shift + T)
-        std::stack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
+        QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
 };
 
