@@ -214,10 +214,6 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
-    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
-    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
-    QObject::connect(shortcut,                          &QShortcut::activated,                          gdbWidget->editorManager(),   &SeerEditorManagerWidget::handleOpenRecentlyClosedFile);
-
     handleRecordSettingsChanged();
 
     //
