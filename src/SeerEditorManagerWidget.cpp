@@ -631,7 +631,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
             // Parse through the frame list and set the current lines that are in the frame list.
             QStringList frame_list = Seer::parse(newtext, "frame=", '{', '}', false);
-
+            _lastFrameList = frame_list;
             SeerEditorManagerEntries::iterator i_later=endEntry();
             int lineToPrintLater = -1;
             for ( const auto& frame_text : frame_list  ) {
@@ -732,7 +732,22 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
         }
 
-    }else{
+    }else if (text.startsWith("*running")) {
+        // target / program is running, should erase 'yellow' color is for the current line 
+        // _lastFrameList is invoked to erase previously "colored" line
+        for ( const auto& frame_text : _lastFrameList  ) {
+            QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+            QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+            SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
+            SeerEditorManagerEntries::iterator e = endEntry();
+
+            if (i != e) {
+                i->widget->sourceArea()->eraseColorCurrentLine(line_text.toInt());
+            }
+        }
+    }
+    else{
         // Ignore others.
         return;
     }
