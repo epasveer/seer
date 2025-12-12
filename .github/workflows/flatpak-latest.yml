@@ -38,7 +38,7 @@ jobs:
       with:
         branch: ${{ github.ref_name }}
         bundle: seer.flatpak
-        manifest-path: flatpak/io.github.epasveer.seer.yml
+        manifest-path: flatpak/io.github.epasveer.seer.github.yml
         cache-key: flatpak-builder-${{ github.sha }}
 
     - name: Create Release
