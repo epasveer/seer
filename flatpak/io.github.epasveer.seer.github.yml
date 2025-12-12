@@ -16,10 +16,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
-        # commit: 65b7f00008544d1e70d15eae8c272fe9e010ac09
-        # branch: main
-        # branch: 377-suggestion-consider-publishing-this-project-on-flathub
-        # tag: v2.6
+        branch: main
     build-commands:
       - mkdir build
       - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host" ../src
