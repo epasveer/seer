@@ -36,6 +36,7 @@ jobs:
     - name: Build Flatpak
       uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
+        branch: ${{ github.ref_name }}
         bundle: seer.flatpak
         manifest-path: flatpak/io.github.epasveer.seer.yml
         cache-key: flatpak-builder-${{ github.sha }}
