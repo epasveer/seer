@@ -13,6 +13,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QStack>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -97,6 +98,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
+        void                                            handleOpenRecentlyClosedFile        ();
+        void                                            handleGdbStateChanged               ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -155,5 +158,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showOpcodeColumn;
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
+
+        // list of recently closed files (Ctrl + Shift + T)
+        QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
 };
 

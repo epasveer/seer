@@ -17,6 +17,10 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QScrollBar>
+#include <QPlainTextEdit>
+#include <QMouseEvent>
+#include <QTimer>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -78,6 +82,10 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+
+    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
+    QObject::connect(shortcut,              &QShortcut::activated,             this, &SeerEditorManagerWidget::handleOpenRecentlyClosedFile);
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -747,6 +755,14 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
         return;
     }
 
+    // Push to _stackClosedFiles before deleting
+    QString fullname = tabWidget->tabToolTip(index).section(" : ", 1, 1);
+    if (fullname != "") {                       // Don't push place holder or Assembly tab
+        SeerEditorManagerEntries::iterator i = findEntry(fullname);
+        SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
+        _stackClosedFiles.push(current);
+    }
+
     // Delete the tab.
     deleteEditorWidgetTab(index);
 
@@ -1345,3 +1361,78 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     }
 }
 
+// Handle opening recently closed file: When use Ctrl + Shift + T
+void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
+    if (!_stackClosedFiles.empty()) {
+        SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+        _stackClosedFiles.pop();
+        // Must have a valid filename.
+        if (topValue.file == "" || topValue.fullname == "") {
+            return;
+        }
+
+        // Get the EditorWidget for the file. Create one if needed.
+        SeerEditorWidgetSource* editorWidget = editorWidgetTab(topValue.fullname);
+        
+        if (editorWidget == 0) {
+            editorWidget = createEditorWidgetTab(topValue.fullname, topValue.file);
+        }
+
+        // Can still be null, if the file is ignored.
+        if (editorWidget == 0) {
+            return;
+        }
+
+        // Push this tab to the top only if the current one in not the "Assembly" tab.
+        QString tabtext = "";
+
+        if (tabWidget->currentIndex() >= 0) {
+            tabtext = tabWidget->tabText(tabWidget->currentIndex());
+        }
+
+        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+            // Do nothing.
+        }else{
+            tabWidget->setCurrentWidget(editorWidget);
+        }
+
+        if (topValue.line > 0) {
+            QPlainTextEdit* textEdit = editorWidget->sourceArea();
+
+            // Create a small helper lambda that does the actual restoration
+            auto restoreView = [textEdit, topValue, this]() {
+                QTextDocument* doc = textEdit->document();
+                int lineIndex = topValue.line - 1;  // 0-based
+
+                if (lineIndex >= doc->lineCount()) {
+                    return;
+                }
+
+                QTextBlock block = doc->findBlockByLineNumber(lineIndex);
+                if (!block.isValid()) {
+                    return;
+                }
+
+                QTextCursor cursor(block);
+                cursor.setPosition(block.position() + qMax(0, topValue.column - 1));
+
+                textEdit->setTextCursor(cursor);
+
+                if (topValue.firstDisplayLine > 0) {
+                    QScrollBar* sb = textEdit->verticalScrollBar();
+                    sb->setValue(topValue.firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
+                }
+            };
+
+            QTimer::singleShot(0, textEdit, restoreView);
+        }
+    }
+}
+
+// Clear the stack of recently closed files whenever a new gdb session starts
+void SeerEditorManagerWidget::handleGdbStateChanged()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
+    }
+}
