@@ -97,6 +97,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
 
+        void                                        eraseColorCurrentLine               (int lineno);
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);

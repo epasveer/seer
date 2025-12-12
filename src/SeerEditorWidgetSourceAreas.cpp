@@ -1669,6 +1669,32 @@ const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
     return _externalEditorCommand;
 }
 
+void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
+
+    // Erase color of this line
+    QTextCharFormat lineFormat;
+    lineFormat = highlighterSettings().get("Text");
+
+    // Create a selection at the cursor.
+    QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+    QTextCursor cursor = textCursor();
+
+    cursor.setPosition(block.position());
+
+    QTextEdit::ExtraSelection selection;
+    selection.format.setForeground(lineFormat.foreground());
+    selection.format.setBackground(lineFormat.background());
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+
+    // Add it to the extra selection list.
+    _currentLinesExtraSelections.append(selection);
+
+    // Refresh all the extra selections.
+    refreshExtraSelections();
+}
+
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {

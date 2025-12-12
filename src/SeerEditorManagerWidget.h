@@ -155,5 +155,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showOpcodeColumn;
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
+        QStringList                                     _lastFrameList;         // variable for saving previous backtrace
 };
 
