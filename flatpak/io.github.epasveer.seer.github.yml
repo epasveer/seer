@@ -3,13 +3,16 @@ runtime: org.kde.Platform
 runtime-version: '6.10'
 sdk: org.kde.Sdk
 command: seergdb
+
 finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --device=dri
+  - --device=all # Needed for stdout/stdin to debug target
   - --share=ipc
   - --filesystem=host # Filesystem access for debugging programs
   - --talk-name=org.freedesktop.Flatpak # Permission to `flatpak-spawn --host`
+
 modules:
   - name: seergdb
     buildsystem: simple
