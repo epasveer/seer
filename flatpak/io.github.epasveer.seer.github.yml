@@ -15,21 +15,21 @@ finish-args:
 
 modules:
   - name: seergdb
-    buildsystem: simple
+    buildsystem: cmake-ninja
+    builddir: true
+    subdir: src
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
         branch: main
-    build-commands:
-      - mkdir build
-      - cd build && cmake -G Ninja -DCMAKE_INSTALL_PREFIX=/app -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host" ../src
-      - cd build && ninja
-      - install -Dm755 build/seergdb /app/bin/seergdb
     post-install:
-      - install -Dm644 flatpak/io.github.epasveer.seer.metainfo.xml     /app/share/metainfo/io.github.epasveer.seer.metainfo.xml
-      - install -Dm644 flatpak/io.github.epasveer.seer.desktop          /app/share/applications/io.github.epasveer.seer.desktop
-      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/64x64/apps/io.github.epasveer.seer.png
-      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/128x128/apps/io.github.epasveer.seer.png
-      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/256x256/apps/io.github.epasveer.seer.png
-      - install -Dm644 flatpak/io.github.epasveer.seer.png              /app/share/icons/hicolor/512x512/apps/io.github.epasveer.seer.png
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.metainfo.xml     /app/share/metainfo/io.github.epasveer.seer.metainfo.xml
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.desktop          /app/share/applications/io.github.epasveer.seer.desktop
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.32x32.png        /app/share/icons/hicolor/32x32/apps/io.github.epasveer.seer.png
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.64x64.png        /app/share/icons/hicolor/64x64/apps/io.github.epasveer.seer.png
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.128x128.png      /app/share/icons/hicolor/128x128/apps/io.github.epasveer.seer.png
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.256x256.png      /app/share/icons/hicolor/256x256/apps/io.github.epasveer.seer.png
+      - install -Dm644 ../../flatpak/io.github.epasveer.seer.512x512.png      /app/share/icons/hicolor/512x512/apps/io.github.epasveer.seer.png
 
