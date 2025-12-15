@@ -1442,6 +1442,30 @@ void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
             QTimer::singleShot(0, textEdit, restoreView);
         }
     }
+    // Trigger repaint, use _lastFrameList to repaint
+    SeerEditorManagerEntries::iterator i_later=endEntry();
+    int lineToPrintLater = -1;
+    for ( const auto& frame_text : _lastFrameList  ) {
+        QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
+        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+        QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+        SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
+        SeerEditorManagerEntries::iterator e = endEntry();
+
+        if (level_text.toInt() == 0)    // if current line level = 0, save command and paint it later, fix recursive painting
+        {
+            i_later = i;
+            lineToPrintLater = line_text.toInt();
+            continue;
+        }
+        if (i != e) {
+            i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
+        }
+    }
+    if (i_later != endEntry() && lineToPrintLater != -1) {
+        i_later->widget->sourceArea()->addCurrentLine(lineToPrintLater, 0);
+    }
 }
 
 // Clear the stack of recently closed files whenever a new gdb session starts
