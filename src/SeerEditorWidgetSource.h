@@ -140,16 +140,20 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showAlternateBar                    (bool flag);
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
+        void                                        seekIdentifier                      (const QString& identifier);
 
     public slots:
         void                                        handleText                          (const QString& text);
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
         void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
+        void                                        handleSeekIdentifierF12             ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
         void                                        contextMenuEvent                    (QContextMenuEvent* event);
+        void                                        mouseMoveEvent                      (QMouseEvent* event) override;
+        void                                        mousePressEvent                     (QMouseEvent* event) override;
         void                                        mouseReleaseEvent                   (QMouseEvent* event);
         bool                                        event                               (QEvent* event);
         void                                        showExpressionTooltip               ();
@@ -163,6 +167,11 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
 
     private:
+        void                                        updateCursor                        (const QPoint &pos);
+        bool                                        isOverWord                          (const QPoint &pos);
+        QString                                     wordUnderCursor                     (const QPoint &pos) const;
+        bool                                        isValidIdentifier                   (const QString& text);
+
         QString                                     _fullname;
         QString                                     _file;
         QString                                     _alternateDirectory;
@@ -194,6 +203,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         int                                         _sourceTabSize;
         QString                                     _externalEditorCommand;
+
+        bool                                        _ctrlHeld = false;
+        QString                                     _wordUnderCursor;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {
