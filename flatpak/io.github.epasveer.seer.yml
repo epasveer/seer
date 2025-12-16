@@ -24,7 +24,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
-        commit: 995d543b99374f5138d72d6e0b49588ad89af6db
+        commit: 54471cb45f38f016159adaf7c16df34c2a9514ad
         # tag: v2.6
     post-install:
       - install -Dm644 ../../flatpak/io.github.epasveer.seer.metainfo.xml     /app/share/metainfo/io.github.epasveer.seer.metainfo.xml
