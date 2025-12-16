@@ -20,13 +20,10 @@ modules:
     subdir: src
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
-      - -DCONFIG_SEER_INSTALL_FLATHUB_ICONS=1
+      - -DCONFIG_SEER_INSTALL_FLATHUB_FILES=1
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
         commit: 4bb26b82959257265c50c7289a5bcb2879870713
         # tag: v2.6
-    post-install:
-      - install -Dm644 ../../flatpak/io.github.epasveer.seer.metainfo.xml     /app/share/metainfo/io.github.epasveer.seer.metainfo.xml
-      - install -Dm644 ../../flatpak/io.github.epasveer.seer.desktop          /app/share/applications/io.github.epasveer.seer.desktop
 
