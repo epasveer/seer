@@ -50,6 +50,7 @@ elseif(${QTVERSION} STREQUAL "QT5")
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
+# Define the source location of header files
 set(HEADER_FILES
     GdbMonitor.h
     QProcessInfo.h
@@ -157,6 +158,7 @@ set(HEADER_FILES
     SeerHistoryLineEdit.h
     )
 
+# Define the source location of source files
 set(SOURCE_FILES
     GdbMonitor.cpp
     QProcessInfo.cpp
@@ -263,6 +265,16 @@ set(SOURCE_FILES
     seergdb.cpp
     )
 
+# Define the source location of icon files
+set(ICON_SIZES 32 64 128 256 512)
+set(ICON_SRCS
+    resources/icons/32x32/seergdb.png
+    resources/icons/64x64/seergdb.png
+    resources/icons/128x128/seergdb.png
+    resources/icons/256x256/seergdb.png
+    resources/icons/512x512/seergdb.png
+)
+
 if(${QTVERSION} STREQUAL "QT6")
     qt6_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 elseif(${QTVERSION} STREQUAL "QT5")
@@ -324,4 +336,22 @@ endif()
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     SEER_GDB_LAUNCHER=${CONFIG_SEER_GDB_LAUNCHER}
 )
+
+# Install icons to standard XDG icon directories
+# -DCONFIG_SEER_INSTALL_ICONS=1
+if(DEFINED CONFIG_SEER_INSTALL_ICONS)
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/32x32/seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/64x64/seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/128x128/seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/256x256/seergdb.png" DESTINATION "share/icons/hicolor/256x256/apps")
+endif()
+
+# Install flathub icons to standard XDG icon directories
+# -DCONFIG_SEER_INSTALL_FLATHUB_ICONS=1
+if(DEFINED CONFIG_SEER_INSTALL_FLATHUB_ICONS)
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/32x32/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/64x64/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/128x128/io.github.epasveer.seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/256x256/io.github.epasveer.seergdb.png" DESTINATION "share/icons/hicolor/256x256/apps")
+endif()
 
