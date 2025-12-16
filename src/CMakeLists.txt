@@ -339,7 +339,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 # Install icons to standard XDG icon directories
 # -DCONFIG_SEER_INSTALL_ICONS=1
-if(DEFINED CONFIG_SEER_INSTALL_ICONS)
+if(CONFIG_SEER_INSTALL_ICONS)
+    message("-- Will install icons to system")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/32x32/seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/64x64/seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/128x128/seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
@@ -348,7 +349,8 @@ endif()
 
 # Install flathub icons to standard XDG icon directories
 # -DCONFIG_SEER_INSTALL_FLATHUB_ICONS=1
-if(DEFINED CONFIG_SEER_INSTALL_FLATHUB_ICONS)
+if(CONFIG_SEER_INSTALL_FLATHUB_ICONS)
+    message("-- Will install flathub icons to system")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/32x32/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/64x64/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/128x128/io.github.epasveer.seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
