@@ -1,11 +1,11 @@
 <RCC>
   <qresource prefix="/seer">
-    <file>resources/seergdb_32x32.png</file>
-    <file>resources/seergdb_64x64.png</file>
-    <file>resources/seergdb_128x128.png</file>
-    <file>resources/seergdb_256x256.png</file>
-    <file>resources/seergdb_512x512.png</file>
-    <file>resources/rr_256x256.png</file>
+    <file>resources/icons/hicolor/32x32/seergdb.png</file>
+    <file>resources/icons/hicolor/64x64/seergdb.png</file>
+    <file>resources/icons/hicolor/128x128/seergdb.png</file>
+    <file>resources/icons/hicolor/256x256/seergdb.png</file>
+    <file>resources/icons/hicolor/512x512/seergdb.png</file>
+    <file>resources/icons/hicolor/256x256/rr.png</file>
     <file>resources/ABOUT.md</file>
     <file>resources/thenounproject/memory.svg</file>
     <file>resources/thenounproject/source.svg</file>

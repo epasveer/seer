@@ -33,7 +33,7 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Matrix Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 

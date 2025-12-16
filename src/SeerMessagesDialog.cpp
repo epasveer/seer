@@ -19,7 +19,7 @@ SeerMessagesDialog::SeerMessagesDialog (QWidget* parent) : QDialog(parent) {
     // Construct the UI.
     setupUi(this);
 
-    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Execution Messages");
 
     // Setup the widgets.
