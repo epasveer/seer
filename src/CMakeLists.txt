@@ -265,16 +265,6 @@ set(SOURCE_FILES
     seergdb.cpp
     )
 
-# Define the source location of icon files
-set(ICON_SIZES 32 64 128 256 512)
-set(ICON_SRCS
-    resources/icons/32x32/seergdb.png
-    resources/icons/64x64/seergdb.png
-    resources/icons/128x128/seergdb.png
-    resources/icons/256x256/seergdb.png
-    resources/icons/512x512/seergdb.png
-)
-
 if(${QTVERSION} STREQUAL "QT6")
     qt6_add_resources(SOURCE_FILES resource.qrc resources/qdarkstyle/dark/darkstyle.qrc resources/qdarkstyle/light/lightstyle.qrc)
 elseif(${QTVERSION} STREQUAL "QT5")
@@ -348,12 +338,14 @@ if(CONFIG_SEER_INSTALL_ICONS)
 endif()
 
 # Install flathub icons to standard XDG icon directories
-# -DCONFIG_SEER_INSTALL_FLATHUB_ICONS=1
-if(CONFIG_SEER_INSTALL_FLATHUB_ICONS)
-    message("-- Will install flathub icons to system")
+# -DCONFIG_SEER_INSTALL_FLATHUB_FILES=1
+if(CONFIG_SEER_INSTALL_FLATHUB_FILES)
+    message("-- Will install flathub icons+files to system")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/32x32/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/64x64/io.github.epasveer.seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/128x128/io.github.epasveer.seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/256x256/io.github.epasveer.seergdb.png" DESTINATION "share/icons/hicolor/256x256/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.metainfo.xml"                 DESTINATION "share/metainfo")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.desktop"                      DESTINATION "share/application")
 endif()
 
