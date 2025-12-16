@@ -5,7 +5,7 @@
   <project_license>GPL-3.0-or-later</project_license>
   <name>seer</name>
   <summary>A GUI frontend to GDB debugger</summary>
-  <icon type="cached">io.github.epasveer.seer</icon>
+  <icon type="stock">io.github.epasveer.seer</icon>
   <description>
     <p>
       Seer is a graphical frontend to the GDB debugger that provides a rich development environment for debugging programs.
