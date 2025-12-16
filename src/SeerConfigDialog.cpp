@@ -63,7 +63,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
 
     // Create icons.
     QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
-    configSeerButton->setIcon(QIcon(":/seer/resources/seergdb_128x128.png"));
+    configSeerButton->setIcon(QIcon(":/seer/resources/icons/hicolor/128x128/seergdb.png"));
     configSeerButton->setText(tr("Seer"));
     configSeerButton->setTextAlignment(Qt::AlignHCenter);
     configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -99,7 +99,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configRRButton = new QListWidgetItem(contentsListWidget);
-    configRRButton->setIcon(QIcon(":/seer/resources/rr_256x256.png"));
+    configRRButton->setIcon(QIcon(":/seer/resources/icons/hicolor/256x256/rr.png"));
     configRRButton->setText(tr("RR"));
     configRRButton->setTextAlignment(Qt::AlignHCenter);
     configRRButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

@@ -31,7 +31,7 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Image Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 

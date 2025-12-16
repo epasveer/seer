@@ -478,7 +478,7 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     // widget. Show the Seer icon!
     if (_fullname == "" || _file == "") {
         setStyleSheet("QPlainTextEdit {"
-            "background: url(:/seer/resources/seergdb_512x512.png) center no-repeat;"
+            "background: url(:/seer/resources/icons/hicolor/512x512/seergdb.png) center no-repeat;"
             "border: none;"
             "}");
         return;
