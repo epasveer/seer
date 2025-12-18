@@ -27,7 +27,7 @@ MacOS may need help finding the cmake config file for Qt6.
 Sometimes you need to specify a newer version of g++/gcc. Your installation
 may have an old version as the default.
 
-    % cmake -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=Debug ..
+    % cmake -DCMAKE_CXX_COMPILER=g++-14 -DQTVERSION=QT6 -DCMAKE_BUILD_TYPE=Debug ..
 
 Checkout the Seer wiki for more build info.
 

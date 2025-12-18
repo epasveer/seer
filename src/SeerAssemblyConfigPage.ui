@@ -20,14 +20,49 @@
       <string>Assembly Settings</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="3">
-       <widget class="QCheckBox" name="assemblyTabOnStartupCheckBox">
+      <item row="0" column="0">
+       <widget class="QLabel" name="showAssemblyTabLabel">
         <property name="text">
-         <string>Show Assembly tab on Seer startup</string>
+         <string>Show Assembly tab on startup</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="5" colspan="2">
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer_11">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>27</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="2">
+       <widget class="QComboBox" name="showAssemblyTabComboBox">
+        <item>
+         <property name="text">
+          <string>never</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>always</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>auto</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="5">
        <spacer name="horizontalSpacer_7">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -47,7 +82,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="5" colspan="2">
+      <item row="1" column="5">
        <spacer name="horizontalSpacer_8">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -119,7 +154,7 @@
         </attribute>
        </widget>
       </item>
-      <item row="3" column="5" colspan="2">
+      <item row="3" column="5">
        <spacer name="horizontalSpacer_5">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -178,7 +213,7 @@
         </attribute>
        </widget>
       </item>
-      <item row="4" column="5" colspan="2">
+      <item row="4" column="5">
        <spacer name="horizontalSpacer_6">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -299,7 +334,7 @@
         </item>
        </widget>
       </item>
-      <item row="6" column="5" colspan="2">
+      <item row="6" column="5">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -377,7 +412,7 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="5" colspan="2">
+      <item row="7" column="5">
        <spacer name="horizontalSpacer_10">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -400,12 +435,20 @@
     <widget class="QTextBrowser" name="textBrowser">
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Noto Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Set various Assembly and Register settings.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Seer can show the program's assembly as a tab in the Code Manager. The Assembly tab can be shown automatically when Seer starts, or it can always be shown with:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Seer can show the program's assembly as a tab in the Code Manager. The Assembly tab can be shown automatically when Seer starts. There are these start up modes.&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Never. Seer won't show the assembly tab at start up.&lt;/li&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Always. Seer will always show the assembly tab.&lt;/li&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Auto. Seer will show the the assembly tab if there is no source file to show.&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;The assembly tab can always be shown with:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;    View-&amp;gt;Assembly View&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Monospace';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -421,15 +464,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Monospace';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Monospace';&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Monospace';&quot;&gt;The Assembly Editor can show different columns along side the assembly. These can be quickly changed in the Assembly Editor using ^F.&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Address&lt;/li&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Address&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Offset&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opcode&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Source&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The Assembly Editor does its best to show relevant assembly.  This means setting the 'start' and 'end' address of the disassembly. There are two modes.&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Function - The start and end address is defined by the function the current $PC is in. Needs debug information. Otherwise, a blank editor is shown.&lt;/li&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;
+&lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Function - The start and end address is defined by the function the current $PC is in. Needs debug information. Otherwise, a blank editor is shown.&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Length - A number of bytes after the current $PC is shown.&lt;/li&gt;&lt;/ul&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;In the Register browser, register values can be shown in various formats:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Natural (A predefined format, based on the register name)&lt;/span&gt;&lt;/li&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;
+&lt;li style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; background-color:transparent;&quot;&gt;Natural (A predefined format, based on the register name)&lt;/span&gt;&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hex&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Octal&lt;/li&gt;
 &lt;li style=&quot; background-color:transparent;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Binary&lt;/li&gt;
@@ -443,7 +489,6 @@ p, li { white-space: pre-wrap; }
   <zorder>printPointGroupBox</zorder>
  </widget>
  <tabstops>
-  <tabstop>assemblyTabOnStartupCheckBox</tabstop>
   <tabstop>assemblyTabOnTopCheckBox</tabstop>
   <tabstop>attFlavorRadioButton</tabstop>
   <tabstop>intelFlavorRadioButton</tabstop>
@@ -461,7 +506,7 @@ p, li { white-space: pre-wrap; }
  <connections/>
  <buttongroups>
   <buttongroup name="disassemblyFlavorButtonGroup"/>
-  <buttongroup name="assemblyDemangleButtonGroup"/>
   <buttongroup name="disassemblyModeButtonGroup"/>
+  <buttongroup name="assemblyDemangleButtonGroup"/>
  </buttongroups>
 </ui>

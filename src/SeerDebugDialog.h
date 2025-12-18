@@ -44,8 +44,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 breakpointFunctionName                          () const;
         void                    setBreakpointSourceName                         (const QString& sourceFilenameAndLineno);
         QString                 breakpointSourceName                            () const;
-        void                    setShowAssemblyTab                              (bool flag);
-        bool                    showAssemblyTab                                 () const;
+        void                    setShowAssemblyTabMode                          (const QString& mode);
+        QString                 showAssemblyTabMode                             () const;
         void                    setRandomizeStartAddress                        (bool flag);
         bool                    randomizeStartAddress                           () const;
         void                    setNonStopMode                                  (bool flag);

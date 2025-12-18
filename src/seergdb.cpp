@@ -327,11 +327,11 @@ int main (int argc, char* argv[]) {
 
     if (executableShowAssemblyTab != "") {
         if (executableShowAssemblyTab == "yes") {
-            seer.setExecutableShowAssemblyTab(true);
-
+            seer.setExecutableShowAssemblyTabMode("always");
         }else if (executableShowAssemblyTab == "no") {
-            seer.setExecutableShowAssemblyTab(false);
-
+            seer.setExecutableShowAssemblyTabMode("never");
+        }else if (executableShowAssemblyTab == "auto") {
+            seer.setExecutableShowAssemblyTabMode("auto");
         }else{
             printf("%s: Unknown --show-assembly-tab option '%s'\n", qPrintable(QCoreApplication::applicationName()), qPrintable(executableShowAssemblyTab));
             return 1;

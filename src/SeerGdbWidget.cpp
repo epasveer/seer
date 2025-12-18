@@ -42,53 +42,53 @@ static QLoggingCategory LC("seer.gdbwidget");
 
 SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
-    _executableName                     = "";
-    _executableArguments                = "";
-    _executableWorkingDirectory         = "";
-    _executableBreakpointsFilename      = "";
-    _executableBreakpointFunctionName   = "";
-    _executableConnectHostPort          = "";
-    _executableRRTraceDirectory         = "";
-    _executableCoreFilename             = "";
-    _executablePid                      = 0;
+    _executableName                         = "";
+    _executableArguments                    = "";
+    _executableWorkingDirectory             = "";
+    _executableBreakpointsFilename          = "";
+    _executableBreakpointFunctionName       = "";
+    _executableConnectHostPort              = "";
+    _executableRRTraceDirectory             = "";
+    _executableCoreFilename                 = "";
+    _executablePid                          = 0;
 
-    _gdbMonitor                         = 0;
-    _gdbProcess                         = 0;
-    _consoleWidget                      = 0;
-    _consoleIndex                       = -1;
-    _breakpointsBrowserWidget           = 0;
-    _watchpointsBrowserWidget           = 0;
-    _catchpointsBrowserWidget           = 0;
-    _gdbOutputLog                       = 0;
-    _seerOutputLog                      = 0;
+    _gdbMonitor                             = 0;
+    _gdbProcess                             = 0;
+    _consoleWidget                          = 0;
+    _consoleIndex                           = -1;
+    _breakpointsBrowserWidget               = 0;
+    _watchpointsBrowserWidget               = 0;
+    _catchpointsBrowserWidget               = 0;
+    _gdbOutputLog                           = 0;
+    _seerOutputLog                          = 0;
 
 #ifdef SEER_GDB_NAME
-    _gdbProgram                         = STRINGIFY(SEER_GDB_NAME);
+    _gdbProgram                             = STRINGIFY(SEER_GDB_NAME);
 #else
-    _gdbProgram                         = "/usr/bin/gdb";
+    _gdbProgram                             = "/usr/bin/gdb";
 #endif
 
 #ifdef SEER_GDB_LAUNCHER
-    _gdbLauncher                        = STRINGIFY(SEER_GDB_LAUNCHER);
+    _gdbLauncher                            = STRINGIFY(SEER_GDB_LAUNCHER);
 #else
-    _gdbLauncher                        = "";
+    _gdbLauncher                            = "";
 #endif
 
-    _gdbArguments                       = "--interpreter=mi";
-    _gdbASyncMode                       = true;
-    _gdbNonStopMode                     = false;
-    _gdbServerDebug                     = false;
-    _assemblyShowAssemblyTabOnStartup   = false;
-    _assemblyDisassemblyFlavor          = "att";
-    _gdbHandleTerminatingException      = true;
-    _gdbRandomizeStartAddress           = false;
-    _gdbEnablePrettyPrinting            = true;
-    _gdbRemoteTargetType                = "extended-remote";
-    _gdbRecordMode                      = "";
-    _gdbRecordDirection                 = "";
-    _consoleScrollLines                 = 1000;
-    _rememberManualCommandCount         = 10;
-    _currentFrame                       = -1;
+    _gdbArguments                           = "--interpreter=mi";
+    _gdbASyncMode                           = true;
+    _gdbNonStopMode                         = false;
+    _gdbServerDebug                         = false;
+    _assemblyShowAssemblyTabOnStartupMode   = "never";
+    _assemblyDisassemblyFlavor              = "att";
+    _gdbHandleTerminatingException          = true;
+    _gdbRandomizeStartAddress               = false;
+    _gdbEnablePrettyPrinting                = true;
+    _gdbRemoteTargetType                    = "extended-remote";
+    _gdbRecordMode                          = "";
+    _gdbRecordDirection                     = "";
+    _consoleScrollLines                     = 1000;
+    _rememberManualCommandCount             = 10;
+    _currentFrame                           = -1;
 
     setIsQuitting(false);
     setNewExecutableFlag(true);
@@ -305,6 +305,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadIds,                                           this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedFile,                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedAddress,                                            editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedThread,                                             this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::nextThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbNextThreadId);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::stepThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbStepThreadId);
@@ -1167,7 +1168,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
+        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
             editorManager()->showAssembly();
         }
 
@@ -1311,7 +1312,7 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
+        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
             editorManager()->showAssembly();
         }
 
@@ -1429,7 +1430,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
+        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
             editorManager()->showAssembly();
         }
 
@@ -1540,7 +1541,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartup()) {
+        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
             editorManager()->showAssembly();
         }
 
@@ -1649,7 +1650,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
             handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-            if (assemblyShowAssemblyTabOnStartup()) {
+            if (assemblyShowAssemblyTabOnStartupMode() == "always") {
                 editorManager()->showAssembly();
             }
         }
@@ -3493,17 +3494,17 @@ void SeerGdbWidget::writeSettings () {
     } settings.endArray();
 
     settings.beginGroup("assembly"); {
-        settings.setValue("showassemblytabonstartup",    assemblyShowAssemblyTabOnStartup());
-        settings.setValue("keepassemblytabontop",        assemblyKeepAssemblyTabOnTop());
-        settings.setValue("assemblydisassemblyflavor",   assemblyDisassemblyFlavor());
-        settings.setValue("assemblysymboldemagling",     assemblySymbolDemagling());
-        settings.setValue("assemblyregisterformat",      assemblyRegisterFormat());
-        settings.setValue("assemblyshowaddresscolumn",   assemblyShowAddressColumn());
-        settings.setValue("assemblyshowoffsetcolumn",    assemblyShowOffsetColumn());
-        settings.setValue("assemblyshowopcodecolumn",    assemblyShowOpcodeColumn());
-        settings.setValue("assemblyshowsourcelines",     assemblyShowSourceLines());
-        settings.setValue("assemblydisassemblymode",     assemblyDisassemblyMode());
-        settings.setValue("assemblydisassemblybytes",    assemblyDisassemblyBytes());
+        settings.setValue("showassemblytabonstartupmode",    assemblyShowAssemblyTabOnStartupMode());
+        settings.setValue("keepassemblytabontop",            assemblyKeepAssemblyTabOnTop());
+        settings.setValue("assemblydisassemblyflavor",       assemblyDisassemblyFlavor());
+        settings.setValue("assemblysymboldemagling",         assemblySymbolDemagling());
+        settings.setValue("assemblyregisterformat",          assemblyRegisterFormat());
+        settings.setValue("assemblyshowaddresscolumn",       assemblyShowAddressColumn());
+        settings.setValue("assemblyshowoffsetcolumn",        assemblyShowOffsetColumn());
+        settings.setValue("assemblyshowopcodecolumn",        assemblyShowOpcodeColumn());
+        settings.setValue("assemblyshowsourcelines",         assemblyShowSourceLines());
+        settings.setValue("assemblydisassemblymode",         assemblyDisassemblyMode());
+        settings.setValue("assemblydisassemblybytes",        assemblyDisassemblyBytes());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -3612,16 +3613,16 @@ void SeerGdbWidget::readSettings () {
     }
 
     settings.beginGroup("assembly"); {
-        setAssemblyShowAssemblyTabOnStartup( settings.value("showassemblytabonstartup",  false).toBool());
-        setAssemblyKeepAssemblyTabOnTop(     settings.value("keepassemblytabontop",      true).toBool());
-        setAssemblyDisassemblyFlavor(        settings.value("assemblydisassemblyflavor", "att").toString());
-        setAssemblySymbolDemagling(          settings.value("assemblysymboldemagling",   "on").toString());
-        setAssemblyRegisterFormat(           settings.value("assemblyregisterformat",    "Natural").toString());
-        setAssemblyShowAddressColumn(        settings.value("assemblyshowaddresscolumn", true).toBool());
-        setAssemblyShowOffsetColumn(         settings.value("assemblyshowoffsetcolumn",  false).toBool());
-        setAssemblyShowOpcodeColumn(         settings.value("assemblyshowopcodecolumn",  false).toBool());
-        setAssemblyShowSourceLines(          settings.value("assemblyshowsourcelines",   false).toBool());
-        setAssemblyDisassemblyMode(          settings.value("assemblydisassemblymode",   "function").toString(),    settings.value("assemblydisassemblybytes", "256").toInt());
+        setAssemblyShowAssemblyTabOnStartupMode( settings.value("showassemblytabonstartupmode",  "never").toString());
+        setAssemblyKeepAssemblyTabOnTop(         settings.value("keepassemblytabontop",          true).toBool());
+        setAssemblyDisassemblyFlavor(            settings.value("assemblydisassemblyflavor",     "att").toString());
+        setAssemblySymbolDemagling(              settings.value("assemblysymboldemagling",       "on").toString());
+        setAssemblyRegisterFormat(               settings.value("assemblyregisterformat",        "Natural").toString());
+        setAssemblyShowAddressColumn(            settings.value("assemblyshowaddresscolumn",     true).toBool());
+        setAssemblyShowOffsetColumn(             settings.value("assemblyshowoffsetcolumn",      false).toBool());
+        setAssemblyShowOpcodeColumn(             settings.value("assemblyshowopcodecolumn",      false).toBool());
+        setAssemblyShowSourceLines(              settings.value("assemblyshowsourcelines",       false).toBool());
+        setAssemblyDisassemblyMode(              settings.value("assemblydisassemblymode",       "function").toString(),    settings.value("assemblydisassemblybytes", "256").toInt());
     } settings.endGroup();
 
     settings.beginGroup("gdboutputlog"); {
@@ -4022,14 +4023,14 @@ const QStringList& SeerGdbWidget::sourceIgnoreFilePatterns () const {
     return _ignoreFilePatterns;
 }
 
-void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartup (bool flag) {
+void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartupMode (const QString& mode) {
 
-    _assemblyShowAssemblyTabOnStartup = flag;
+    _assemblyShowAssemblyTabOnStartupMode = mode;
 }
 
-bool SeerGdbWidget::assemblyShowAssemblyTabOnStartup () const {
+QString SeerGdbWidget::assemblyShowAssemblyTabOnStartupMode () const {
 
-    return _assemblyShowAssemblyTabOnStartup;
+    return _assemblyShowAssemblyTabOnStartupMode;
 }
 
 void SeerGdbWidget::setAssemblyKeepAssemblyTabOnTop (bool flag) {

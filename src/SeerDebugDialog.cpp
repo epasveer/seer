@@ -103,7 +103,7 @@ void SeerDebugDialog::reset () {
     setBreakpointFunctionName("");
     setBreakpointSourceName("");
     setBreakpointMode("inmain");
-    setShowAssemblyTab(false);
+    setShowAssemblyTabMode("never");
     setRandomizeStartAddress(false);
     setNonStopMode(false);
     setPreGdbCommands(QStringList());
@@ -237,12 +237,12 @@ QString SeerDebugDialog::breakpointSourceName () const {
     return breakpointAtSourceLineEdit->text();
 }
 
-void SeerDebugDialog::setShowAssemblyTab (bool flag) {
-    showAsseblyTabCheckBox->setChecked(flag);
+void SeerDebugDialog::setShowAssemblyTabMode (const QString& mode) {
+    showAssemblyTabComboBox->setCurrentText(mode);
 }
 
-bool SeerDebugDialog::showAssemblyTab () const {
-    return showAsseblyTabCheckBox->isChecked();
+QString SeerDebugDialog::showAssemblyTabMode () const {
+    return showAssemblyTabComboBox->currentText();
 }
 
 void SeerDebugDialog::setRandomizeStartAddress (bool flag) {
@@ -585,7 +585,7 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
         modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
         modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
         modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["showassemblytabmode"]   = showAssemblyTabComboBox->currentText();
         modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
         modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
 
@@ -603,7 +603,7 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
         modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
         modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
         modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytab"]       = showAsseblyTabCheckBox->isChecked();
+        modeJson["showassemblytabmode"]   = showAssemblyTabComboBox->currentText();
         modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
         modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
 
@@ -749,7 +749,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
             }
 
             breakpointInFunctionLineEdit->setText(runModeJson["breakinfunctionname"].toString());
-            showAsseblyTabCheckBox->setChecked(runModeJson["showassemblytab"].toBool());
+            showAssemblyTabComboBox->setCurrentText(runModeJson["showassemblytabmode"].toString());
             nonStopModeCheckBox->setChecked(runModeJson["nonstopmode"].toBool());
             randomizeStartAddressCheckBox->setChecked(runModeJson["randomizestartaddress"].toBool());
 
@@ -774,7 +774,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
             }
 
             breakpointInFunctionLineEdit->setText(startModeJson["breakinfunctionname"].toString());
-            showAsseblyTabCheckBox->setChecked(startModeJson["showassemblytab"].toBool());
+            showAssemblyTabComboBox->setCurrentText(startModeJson["showassemblytabmode"].toString());
             nonStopModeCheckBox->setChecked(startModeJson["nonstopmode"].toBool());
             randomizeStartAddressCheckBox->setChecked(startModeJson["randomizestartaddress"].toBool());
 

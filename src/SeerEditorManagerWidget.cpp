@@ -835,16 +835,24 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
         return;
     }
 
+    qDebug() << address;
+
     // Get the AssemblyWidget so the address can be loaded. Return if there is no widget.
     SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
+    // Create assembly widget, if allowed.
+    if (assemblyWidget == 0) {
+        assemblyWidget = createAssemblyWidgetTab();
+    }
+
+    // No assembly widget, return.
     if (assemblyWidget == 0) {
         return;
     }
 
-    //qDebug() << address;
-
+    // Update assembly widget.
     assemblyWidget->assemblyArea()->setAddress(address);
+    assemblyWidget->reloadRegisters();
 }
 
 SeerEditorWidgetSource* SeerEditorManagerWidget::currentEditorWidgetTab () {
