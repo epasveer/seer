@@ -27,6 +27,7 @@ class SeerRunStatusIndicator : public QLabel {
 
         void                                setRunStatus                (SeerRunStatusIndicator::RunStatus status);
         SeerRunStatusIndicator::RunStatus   runStatus                   () const;
+        QGroupBox*                          indicatorBox                ();
 
     signals:
         void                                statusChanged               (SeerRunStatusIndicator::RunStatus status);
@@ -39,9 +40,8 @@ class SeerRunStatusIndicator : public QLabel {
 
     private:
         SeerRunStatusIndicator::RunStatus   _runStatus;
-        QGroupBox                           *_groupBox;
-        QLabel                              *_coreLabel;
-        QLabel                              *_statusLabel;
-        QHBoxLayout                         *_layout;
+        QGroupBox*                          _groupBox;
+        QLabel*                             _statusLabel;
+        QHBoxLayout*                        _layout;
 };
 

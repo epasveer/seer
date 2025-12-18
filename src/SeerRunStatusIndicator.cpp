@@ -14,22 +14,18 @@ SeerRunStatusIndicator::SeerRunStatusIndicator(QWidget* parent) : QLabel(parent)
     // Create group box
     _groupBox = new QGroupBox();
     _groupBox->setTitle("");
-    // --- Create two fixed-size labels ---
-    _coreLabel = new QLabel("Core");
-    _coreLabel->setAlignment(Qt::AlignCenter);
-    _coreLabel->setFixedSize(80, 25);
-    _coreLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
+    _groupBox->setFlat(true);
+    _groupBox->setStyleSheet("QGroupBox { border: none; }");
 
     _statusLabel = new QLabel("Status");
     _statusLabel->setAlignment(Qt::AlignCenter);
     _statusLabel->setFixedSize(150, 25);
     _statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
 
-    // --- Layout with spacing ---
+    //  Layout
     auto *layout = new QHBoxLayout();
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    layout->addWidget(_coreLabel);
     layout->addWidget(_statusLabel);
     _groupBox->setLayout(layout);
 }
@@ -94,6 +90,10 @@ SeerRunStatusIndicator::RunStatus SeerRunStatusIndicator::runStatus () const {
     return _runStatus;
 }
 
+QGroupBox* SeerRunStatusIndicator::indicatorBox() {
+    return _groupBox;
+}
+
 void SeerRunStatusIndicator::handleText (const QString& text) {
 
     if (text.startsWith("*running,thread-id=\"")) {
@@ -132,8 +132,6 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
 
 // handle when program stop/ killed
 void SeerRunStatusIndicator::handleTerminate() {
-    _coreLabel->setText("Core");
-    _coreLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
     _statusLabel->setText("Status");
     _statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
     // also tell SeerProgressIndicator to stop spinning
