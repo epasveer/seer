@@ -33,16 +33,16 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         struct SeerCurrentFile {
             QString                   file;
             QString                   fullname;
-            int                       line;             // line to set the cursor to
-            int                       column;           // column to set the cursor to
-            int                       firstDisplayLine;      // line to display at top
+            int                       cursorRow;            // line to set the cursor to
+            int                       cursorCol;            // column to set the cursor to
+            int                       firstDisplayLine;     // line to display at top
             bool operator==(const SeerCurrentFile& other) const {
-                return (fullname == other.fullname) && (line == other.line) &&
-                        (column == other.column) && (firstDisplayLine == other.firstDisplayLine);
+                return (fullname == other.fullname) && (cursorRow == other.cursorRow) &&
+                        (cursorCol == other.cursorCol) && (firstDisplayLine == other.firstDisplayLine);
             }
             bool operator!=(const SeerCurrentFile& other) const {
-                return (fullname != other.fullname) | (line != other.line) |
-                        (column != other.column) | (firstDisplayLine != other.firstDisplayLine);
+                return (fullname != other.fullname) | (cursorRow != other.cursorRow) |
+                        (cursorCol != other.cursorCol) | (firstDisplayLine != other.firstDisplayLine);
             }
         };
 

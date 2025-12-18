@@ -85,7 +85,15 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
-    QObject::connect(shortcut,              &QShortcut::activated,             this, &SeerEditorManagerWidget::handleOpenRecentlyClosedFile);
+    QObject::connect(shortcut,              &QShortcut::activated,    [this] () {
+            if (!_stackClosedFiles.empty())
+            {
+                SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+                _stackClosedFiles.pop();
+                handleOpenFileWithDetails(topValue.file, topValue.fullname, topValue.cursorRow, topValue.cursorCol, topValue.firstDisplayLine); 
+            }
+        }
+    );
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -801,7 +809,11 @@ void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
 }
 
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
+    // Open file and scroll to lineno
+    handleOpenFileWithDetails(file, fullname, lineno, 0, 0);
+}
 
+void SeerEditorManagerWidget::handleOpenFileWithDetails (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine) {
     // Must have a valid filename.
     if (file == "" || fullname == "") {
         return;
@@ -832,9 +844,43 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         tabWidget->setCurrentWidget(editorWidget);
     }
 
-    // If lineno is > 0, set the line number of the editor widget
-    if (lineno > 0) {
-        editorWidget->sourceArea()->scrollToLine(lineno);
+    if (firstDisplayLine > 0) {
+        // firstDisplayLine is always > 0 
+        // this means the function is handling open closed files, set cursor position and first display line
+        QPlainTextEdit* textEdit = editorWidget->sourceArea();
+        // Create a small helper lambda that does the actual restoration
+        auto restoreView = [textEdit, cursorRow, cursorCol, firstDisplayLine, this]() {
+            QTextDocument* doc = textEdit->document();
+            int lineIndex = cursorRow - 1;  // 0-based
+
+            if (lineIndex >= doc->lineCount()) {
+                return;
+            }
+
+            QTextBlock block = doc->findBlockByLineNumber(lineIndex);
+            if (!block.isValid()) {
+                return;
+            }
+
+            QTextCursor cursor(block);
+            cursor.setPosition(block.position() + qMax(0, cursorCol - 1));
+
+            textEdit->setTextCursor(cursor);
+
+            if (firstDisplayLine > 0) {
+                QScrollBar* sb = textEdit->verticalScrollBar();
+                sb->setValue(firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
+            }
+        };
+
+        QTimer::singleShot(0, textEdit, restoreView);
+    }
+    else
+    {
+        // otherwise, just open file and scroll to cursorRow
+        if (cursorRow > 0) {
+            editorWidget->sourceArea()->scrollToLine(cursorRow);
+        }
     }
 
     // Ask for the breakpoint list to be resent, in case this file has breakpoints.
@@ -1373,98 +1419,6 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     // Clear assembly editor.
     if (assemblyWidgetTab() != 0) {
         assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
-    }
-}
-
-// Handle opening recently closed file: When use Ctrl + Shift + T
-void SeerEditorManagerWidget::handleOpenRecentlyClosedFile() {
-    if (!_stackClosedFiles.empty()) {
-        SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
-        _stackClosedFiles.pop();
-        // Must have a valid filename.
-        if (topValue.file == "" || topValue.fullname == "") {
-            return;
-        }
-
-        // Get the EditorWidget for the file. Create one if needed.
-        SeerEditorWidgetSource* editorWidget = editorWidgetTab(topValue.fullname);
-        
-        if (editorWidget == 0) {
-            editorWidget = createEditorWidgetTab(topValue.fullname, topValue.file);
-        }
-
-        // Can still be null, if the file is ignored.
-        if (editorWidget == 0) {
-            return;
-        }
-
-        // Push this tab to the top only if the current one in not the "Assembly" tab.
-        QString tabtext = "";
-
-        if (tabWidget->currentIndex() >= 0) {
-            tabtext = tabWidget->tabText(tabWidget->currentIndex());
-        }
-
-        if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
-            // Do nothing.
-        }else{
-            tabWidget->setCurrentWidget(editorWidget);
-        }
-
-        if (topValue.line > 0) {
-            QPlainTextEdit* textEdit = editorWidget->sourceArea();
-
-            // Create a small helper lambda that does the actual restoration
-            auto restoreView = [textEdit, topValue, this]() {
-                QTextDocument* doc = textEdit->document();
-                int lineIndex = topValue.line - 1;  // 0-based
-
-                if (lineIndex >= doc->lineCount()) {
-                    return;
-                }
-
-                QTextBlock block = doc->findBlockByLineNumber(lineIndex);
-                if (!block.isValid()) {
-                    return;
-                }
-
-                QTextCursor cursor(block);
-                cursor.setPosition(block.position() + qMax(0, topValue.column - 1));
-
-                textEdit->setTextCursor(cursor);
-
-                if (topValue.firstDisplayLine > 0) {
-                    QScrollBar* sb = textEdit->verticalScrollBar();
-                    sb->setValue(topValue.firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
-                }
-            };
-
-            QTimer::singleShot(0, textEdit, restoreView);
-        }
-    }
-    // Trigger repaint, use _lastFrameList to repaint
-    SeerEditorManagerEntries::iterator i_later=endEntry();
-    int lineToPrintLater = -1;
-    for ( const auto& frame_text : _lastFrameList  ) {
-        QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
-        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
-        QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
-
-        SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
-        SeerEditorManagerEntries::iterator e = endEntry();
-
-        if (level_text.toInt() == 0)    // if current line level = 0, save command and paint it later, fix recursive painting
-        {
-            i_later = i;
-            lineToPrintLater = line_text.toInt();
-            continue;
-        }
-        if (i != e) {
-            i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
-        }
-    }
-    if (i_later != endEntry() && lineToPrintLater != -1) {
-        i_later->widget->sourceArea()->addCurrentLine(lineToPrintLater, 0);
     }
 }
 

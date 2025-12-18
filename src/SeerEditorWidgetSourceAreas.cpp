@@ -1726,8 +1726,8 @@ SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurr
     SeerCurrentFile info;
     info.file               = QFileInfo(file()).fileName();     // extract file name from full path
     info.fullname           = fullname();
-    info.line               = currentLine();
-    info.column             = currentColumn();
+    info.cursorRow          = currentLine();
+    info.cursorCol          = currentColumn();
     info.firstDisplayLine   = firstDisplayLine();
     return info;
 }

@@ -98,7 +98,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
-        void                                            handleOpenRecentlyClosedFile        ();
         void                                            handleGdbStateChanged               ();
 
     private slots:
@@ -140,6 +139,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
+        void                                            handleOpenFileWithDetails           (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine);
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
