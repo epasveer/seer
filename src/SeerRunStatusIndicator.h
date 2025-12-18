@@ -6,6 +6,9 @@
 
 #include <QtWidgets/QLabel>
 #include <QtCore/QString>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
 
 class SeerRunStatusIndicator : public QLabel {
 
@@ -15,7 +18,8 @@ class SeerRunStatusIndicator : public QLabel {
         enum RunStatus {
             Idle    = 0,
             Stopped = 1,
-            Running = 2
+            Stop_By_Breakpoint = 2,
+            Running = 3,
         };
 
         explicit SeerRunStatusIndicator(QWidget* parent = 0);
@@ -23,16 +27,20 @@ class SeerRunStatusIndicator : public QLabel {
 
         void                                setRunStatus                (SeerRunStatusIndicator::RunStatus status);
         SeerRunStatusIndicator::RunStatus   runStatus                   () const;
+        QGroupBox*                          indicatorBox                ();
 
     signals:
         void                                statusChanged               (SeerRunStatusIndicator::RunStatus status);
 
     public slots:
         void                                handleText                  (const QString& text);
+        void                                handleSessionTerminated     ();
 
     protected:
 
     private:
-        SeerRunStatusIndicator::RunStatus   _runStatus;
+        QGroupBox*                          _groupBox;
+        QLabel*                             _statusLabel;
+        QHBoxLayout*                        _layout;
 };
 

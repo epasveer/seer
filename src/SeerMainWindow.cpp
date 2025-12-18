@@ -36,7 +36,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add status bar indicator.
     SeerRunStatusIndicator* runStatus = new SeerRunStatusIndicator(this);
 
-    statusBar()->addPermanentWidget(runStatus);
+    statusBar()->addPermanentWidget(runStatus->indicatorBox());
 
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
@@ -214,6 +214,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
     handleRecordSettingsChanged();
 
     //
