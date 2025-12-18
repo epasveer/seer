@@ -34,12 +34,11 @@ class SeerRunStatusIndicator : public QLabel {
 
     public slots:
         void                                handleText                  (const QString& text);
-        void                                handleTerminate             ();
+        void                                handleSessionTerminated     ();
 
     protected:
 
     private:
-        SeerRunStatusIndicator::RunStatus   _runStatus;
         QGroupBox*                          _groupBox;
         QLabel*                             _statusLabel;
         QHBoxLayout*                        _layout;
