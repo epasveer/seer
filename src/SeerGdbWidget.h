@@ -438,7 +438,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _gdbRecordDirection;
         QString                             _gdbRemoteTargetType;
         QString                             _gdbArchitectureType;
-        QString                             _assemblyShowAssemblyTabOnStartupMode;
         QString                             _assemblyDisassemblyFlavor;
         QString                             _assemblySymbolDemangling;
         QString                             _assemblyRegisterFormat;

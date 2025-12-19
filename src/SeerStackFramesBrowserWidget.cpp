@@ -137,11 +137,7 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 }
 
                 // Automatically bring up the assembly for the first frame.
-                if (firstFrameLevel != "") {
-                    if (firstFrameAddr != "") {
-                        emit selectedAddress(firstFrameAddr);
-                    }
-                }
+                emit maybeSelectedAddress(firstLiveFrameFile, firstLiveFrameFullname, firstFrameAddr);
             }
 
             // Select the first frame level.
@@ -215,7 +211,7 @@ void SeerStackFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int
 
     // Select address if we can.
     if (item->text(5) != "") {
-        emit selectedAddress(item->text(5));
+        emit maybeSelectedAddress(item->text(2), item->text(4), item->text(5));
     }
 }
 

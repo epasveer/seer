@@ -38,10 +38,13 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries::const_iterator        endEntry                            () const;
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
+        void                                            maybeShowAssembly                   ();
         void                                            showAssembly                        ();
         SeerEditorWidgetAssembly*                       assemblyWidgetTab                   ();
         void                                            setKeepAssemblyTabOnTop             (bool flag);
         bool                                            keepAssemblyTabOnTop                () const;
+        void                                            setShowAssemblyTabOnStartupMode     (const QString& mode);
+        QString                                         showAssemblyTabOnStartupMode        () const;
         void                                            setAssemblyShowAddressColumn        (bool flag);
         bool                                            assemblyShowAddressColumn           () const;
         void                                            setAssemblyShowOffsetColumn         (bool flag);
@@ -77,6 +80,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTabCurrentChanged             (int index);
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
         void                                            handleOpenAddress                   (const QString& address);
+        void                                            handleMaybeOpenAddress              (const QString& file, const QString& fullname, const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
         void                                            handleInsertPrintpoint              (QString type, QString function, QString channel, QString parameters);
         void                                            handleDeleteBreakpoints             (QString breakpoints);
@@ -152,6 +156,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         QString                                         _editorExternalEditorCommand;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
+        QString                                         _showAssemblyTabOnStartupMode;
         bool                                            _keepAssemblyTabOnTop;
         bool                                            _showAddressColumn;
         bool                                            _showOffsetColumn;

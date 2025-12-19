@@ -30,6 +30,7 @@ class SeerStackFramesBrowserWidget : public QWidget, protected Ui::SeerStackFram
         void                refreshStackFrames          ();
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedAddress             (QString address);
+        void                maybeSelectedAddress        (QString file, QString fullname, QString address);
         void                selectedFrame               (int frameno);
 
     protected:

@@ -78,7 +78,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbASyncMode                           = true;
     _gdbNonStopMode                         = false;
     _gdbServerDebug                         = false;
-    _assemblyShowAssemblyTabOnStartupMode   = "never";
     _assemblyDisassemblyFlavor              = "att";
     _gdbHandleTerminatingException          = true;
     _gdbRandomizeStartAddress               = false;
@@ -264,6 +263,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedFrame,                                               this,                                                           &SeerGdbWidget::handleGdbStackSelectFrame);
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::selectedAddress,                                             editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
+    QObject::connect(stackManagerWidget->stackFramesBrowserWidget(),            &SeerStackFramesBrowserWidget::maybeSelectedAddress,                                        editorManagerWidget,                                            &SeerEditorManagerWidget::handleMaybeOpenAddress);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::refreshStackArguments,                                    this,                                                           &SeerGdbWidget::handleGdbStackListArguments);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addVariableLoggerExpression,                              variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::addVariableExpression);
     QObject::connect(stackManagerWidget->stackArgumentsBrowserWidget(),         &SeerStackArgumentsBrowserWidget::addVariableTrackerExpression,                             this,                                                           &SeerGdbWidget::handleGdbDataAddExpression);
@@ -306,6 +306,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedFile,                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedAddress,                                            editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
+    QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::maybeSelectedAddress,                                       editorManagerWidget,                                            &SeerEditorManagerWidget::handleMaybeOpenAddress);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::selectedThread,                                             this,                                                           &SeerGdbWidget::handleGdbThreadSelectId);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::nextThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbNextThreadId);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::stepThreadId,                                               this,                                                           &SeerGdbWidget::handleGdbStepThreadId);
@@ -344,6 +345,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedAddress,                                             editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
+    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::maybeSelectedAddress,                                        editorManagerWidget,                                            &SeerEditorManagerWidget::handleMaybeOpenAddress);
 
     QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::refreshWatchpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
     QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::deleteWatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbWatchpointDelete);
@@ -1170,9 +1172,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
-            editorManager()->showAssembly();
-        }
+        editorManager()->maybeShowAssembly();
 
         if (gdbHandleTerminatingException()) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
@@ -1314,9 +1314,7 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
-            editorManager()->showAssembly();
-        }
+        editorManager()->maybeShowAssembly();
 
         if (gdbHandleTerminatingException()) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
@@ -1432,9 +1430,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
-            editorManager()->showAssembly();
-        }
+        editorManager()->maybeShowAssembly();
 
         if (gdbHandleTerminatingException()) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
@@ -1543,9 +1539,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-        if (assemblyShowAssemblyTabOnStartupMode() == "always") {
-            editorManager()->showAssembly();
-        }
+        editorManager()->maybeShowAssembly();
 
         if (gdbHandleTerminatingException()) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
@@ -1652,9 +1646,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
             handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
             handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
 
-            if (assemblyShowAssemblyTabOnStartupMode() == "always") {
-                editorManager()->showAssembly();
-            }
+            editorManager()->maybeShowAssembly();
         }
 
         setNewExecutableFlag(false);
@@ -4027,12 +4019,12 @@ const QStringList& SeerGdbWidget::sourceIgnoreFilePatterns () const {
 
 void SeerGdbWidget::setAssemblyShowAssemblyTabOnStartupMode (const QString& mode) {
 
-    _assemblyShowAssemblyTabOnStartupMode = mode;
+    editorManager()->setShowAssemblyTabOnStartupMode(mode);
 }
 
 QString SeerGdbWidget::assemblyShowAssemblyTabOnStartupMode () const {
 
-    return _assemblyShowAssemblyTabOnStartupMode;
+    return editorManager()->showAssemblyTabOnStartupMode();
 }
 
 void SeerGdbWidget::setAssemblyKeepAssemblyTabOnTop (bool flag) {

@@ -32,6 +32,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
     _assemblyWidget                 = 0;
+    _showAssemblyTabOnStartupMode   = "never";
     _keepAssemblyTabOnTop           = true;
     _showAddressColumn              = true;
     _showOffsetColumn               = false;
@@ -176,6 +177,13 @@ void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i)
     _entries.erase(i);
 }
 
+void SeerEditorManagerWidget::maybeShowAssembly () {
+
+    if (showAssemblyTabOnStartupMode() == "always") {
+        showAssembly();
+    }
+}
+
 void SeerEditorManagerWidget::showAssembly () {
 
     // Create and show the assembly widget if it isn't already.
@@ -201,6 +209,17 @@ bool SeerEditorManagerWidget::keepAssemblyTabOnTop () const {
 
     return _keepAssemblyTabOnTop;
 }
+
+void SeerEditorManagerWidget::setShowAssemblyTabOnStartupMode (const QString& mode) {
+
+    _showAssemblyTabOnStartupMode = mode;
+}
+
+QString SeerEditorManagerWidget::showAssemblyTabOnStartupMode () const {
+
+    return _showAssemblyTabOnStartupMode;
+}
+
 
 void SeerEditorManagerWidget::setAssemblyShowAddressColumn (bool flag) {
 
@@ -897,8 +916,6 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
         return;
     }
 
-    qDebug() << address;
-
     // Get the AssemblyWidget so the address can be loaded. Return if there is no widget.
     SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
@@ -915,6 +932,34 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
     // Update assembly widget.
     assemblyWidget->assemblyArea()->setAddress(address);
     assemblyWidget->reloadRegisters();
+}
+
+void SeerEditorManagerWidget::handleMaybeOpenAddress (const QString& file, const QString& fullname, const QString& address) {
+
+    // Must have a valid address.
+    if (address == "") {
+        return;
+    }
+
+    // Don't open the assembly tab if told not to.
+    if (showAssemblyTabOnStartupMode() == "never") {
+        return;
+    }
+
+    // Open the assembly tab.
+    if (showAssemblyTabOnStartupMode() == "always") {
+        handleOpenAddress(address);
+        return;
+    }
+
+    // If the mode is 'auto', open the assembly tab if there's no source file for the address.
+    if (showAssemblyTabOnStartupMode() == "auto") {
+        if (file != "" && fullname != "") {
+            return;
+        }
+
+        handleOpenAddress(address);
+    }
 }
 
 SeerEditorWidgetSource* SeerEditorManagerWidget::currentEditorWidgetTab () {

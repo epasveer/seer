@@ -47,6 +47,7 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
         void                insertBreakpoint            (QString breakpoint);
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedAddress             (QString address);
+        void                maybeSelectedAddress        (QString file, QString fullname, QString address);
 
     protected:
         void                showEvent                   (QShowEvent* event);
