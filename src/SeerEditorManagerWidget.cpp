@@ -17,6 +17,10 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QScrollBar>
+#include <QPlainTextEdit>
+#include <QMouseEvent>
+#include <QTimer>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -78,6 +82,18 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+
+    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
+    QObject::connect(shortcut,              &QShortcut::activated,    [this] () {
+            if (!_stackClosedFiles.empty())
+            {
+                SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+                _stackClosedFiles.pop();
+                handleOpenFileWithDetails(topValue.file, topValue.fullname, topValue.cursorRow, topValue.cursorCol, topValue.firstDisplayLine); 
+            }
+        }
+    );
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -762,6 +778,14 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
         return;
     }
 
+    // Push to _stackClosedFiles before deleting
+    QString fullname = tabWidget->tabToolTip(index).section(" : ", 1, 1);
+    if (fullname != "") {                       // Don't push place holder or Assembly tab
+        SeerEditorManagerEntries::iterator i = findEntry(fullname);
+        SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
+        _stackClosedFiles.push(current);
+    }
+
     // Delete the tab.
     deleteEditorWidgetTab(index);
 
@@ -785,7 +809,11 @@ void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
 }
 
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
+    // Open file and scroll to lineno
+    handleOpenFileWithDetails(file, fullname, lineno, 0, 0);
+}
 
+void SeerEditorManagerWidget::handleOpenFileWithDetails (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine) {
     // Must have a valid filename.
     if (file == "" || fullname == "") {
         return;
@@ -816,9 +844,43 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         tabWidget->setCurrentWidget(editorWidget);
     }
 
-    // If lineno is > 0, set the line number of the editor widget
-    if (lineno > 0) {
-        editorWidget->sourceArea()->scrollToLine(lineno);
+    if (firstDisplayLine > 0) {
+        // firstDisplayLine is always > 0 
+        // this means the function is handling open closed files, set cursor position and first display line
+        QPlainTextEdit* textEdit = editorWidget->sourceArea();
+        // Create a small helper lambda that does the actual restoration
+        auto restoreView = [textEdit, cursorRow, cursorCol, firstDisplayLine, this]() {
+            QTextDocument* doc = textEdit->document();
+            int lineIndex = cursorRow - 1;  // 0-based
+
+            if (lineIndex >= doc->lineCount()) {
+                return;
+            }
+
+            QTextBlock block = doc->findBlockByLineNumber(lineIndex);
+            if (!block.isValid()) {
+                return;
+            }
+
+            QTextCursor cursor(block);
+            cursor.setPosition(block.position() + qMax(0, cursorCol - 1));
+
+            textEdit->setTextCursor(cursor);
+
+            if (firstDisplayLine > 0) {
+                QScrollBar* sb = textEdit->verticalScrollBar();
+                sb->setValue(firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
+            }
+        };
+
+        QTimer::singleShot(0, textEdit, restoreView);
+    }
+    else
+    {
+        // otherwise, just open file and scroll to cursorRow
+        if (cursorRow > 0) {
+            editorWidget->sourceArea()->scrollToLine(cursorRow);
+        }
     }
 
     // Ask for the breakpoint list to be resent, in case this file has breakpoints.
@@ -1360,3 +1422,10 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
     }
 }
 
+// Clear the stack of recently closed files whenever a new gdb session starts
+void SeerEditorManagerWidget::handleGdbStateChanged()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
+    }
+}

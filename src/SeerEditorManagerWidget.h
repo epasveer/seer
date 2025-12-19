@@ -13,6 +13,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QStack>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -97,6 +98,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
+        void                                            handleGdbStateChanged               ();
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -137,6 +139,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
+        void                                            handleOpenFileWithDetails           (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine);
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -156,5 +159,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
         QStringList                                     _lastFrameList;         // variable for saving previous backtrace
+
+        // list of recently closed files (Ctrl + Shift + T)
+        QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
 };
 

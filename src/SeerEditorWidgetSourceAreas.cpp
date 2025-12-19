@@ -733,6 +733,31 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
     refreshExtraSelections();
 }
 
+void SeerEditorWidgetSourceArea::setCurrentColumn (int colno) {
+    QTextCursor cursor = textCursor();
+
+    int lineStartPos = cursor.block().position();
+    int newPos       = lineStartPos + (colno - 1);
+
+    cursor.setPosition(newPos);
+    setTextCursor(cursor);
+}
+
+int SeerEditorWidgetSourceArea::currentLine () const {
+    QTextCursor cursor = textCursor();
+    return cursor.blockNumber() + 1;;
+}
+
+int SeerEditorWidgetSourceArea::currentColumn () const {
+    QTextCursor cursor = textCursor();
+    return cursor.positionInBlock() + 1;
+}
+
+int SeerEditorWidgetSourceArea::firstDisplayLine () const {
+    QTextBlock block = firstVisibleBlock();
+    return block.blockNumber() + 1;
+}
+
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
 
     // Scroll to the first line if we went before it.
@@ -1693,6 +1718,18 @@ void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
 
     // Refresh all the extra selections.
     refreshExtraSelections();
+}
+
+// Read current position in the source area: file name, line, column of cursor and first displayed line
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
+{
+    SeerCurrentFile info;
+    info.file               = QFileInfo(file()).fileName();     // extract file name from full path
+    info.fullname           = fullname();
+    info.cursorRow          = currentLine();
+    info.cursorCol          = currentColumn();
+    info.firstDisplayLine   = firstDisplayLine();
+    return info;
 }
 
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
