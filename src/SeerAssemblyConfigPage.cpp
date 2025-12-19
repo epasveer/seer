@@ -20,9 +20,9 @@ SeerAssemblyConfigPage::SeerAssemblyConfigPage(QWidget* parent) : QWidget(parent
 SeerAssemblyConfigPage::~SeerAssemblyConfigPage() {
 }
 
-bool SeerAssemblyConfigPage::showAssemblyTabOnStartup () const {
+QString SeerAssemblyConfigPage::showAssemblyTabOnStartupMode () const {
 
-    return assemblyTabOnStartupCheckBox->isChecked();
+    return showAssemblyTabComboBox->currentText();
 }
 
 bool SeerAssemblyConfigPage::keepAssemblyTabOnTop () const {
@@ -93,9 +93,9 @@ int SeerAssemblyConfigPage::disassemblyBytes () const {
     return pcLengthSpinBox->value();
 }
 
-void SeerAssemblyConfigPage::setShowAssemblyTabOnStartup (bool flag) {
+void SeerAssemblyConfigPage::setShowAssemblyTabOnStartupMode (const QString& mode) {
 
-    assemblyTabOnStartupCheckBox->setChecked(flag);
+    showAssemblyTabComboBox->setCurrentText(mode);
 }
 
 void SeerAssemblyConfigPage::setKeepAssemblyTabOnTop (bool flag) {
@@ -163,7 +163,7 @@ void SeerAssemblyConfigPage::setDisassemblyMode (const QString& mode, int bytes)
 
 void SeerAssemblyConfigPage::reset () {
 
-    setShowAssemblyTabOnStartup(false);
+    setShowAssemblyTabOnStartupMode("never");
     setKeepAssemblyTabOnTop(true);
     setDisassemblyFlavor("att");
     setSymbolDemagling("on");

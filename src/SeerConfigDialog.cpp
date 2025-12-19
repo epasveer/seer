@@ -364,14 +364,14 @@ QStringList SeerConfigDialog::sourceHeaderFilePatterns () const {
     return _sourceConfigPage->headerFilePatterns();
 }
 
-void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartup (bool flag) {
+void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartupMode (const QString& mode) {
 
-    _assemblyConfigPage->setShowAssemblyTabOnStartup(flag);
+    _assemblyConfigPage->setShowAssemblyTabOnStartupMode(mode);
 }
 
-bool SeerConfigDialog::assemblyShowAssemblyTabOnStartup () const {
+QString SeerConfigDialog::assemblyShowAssemblyTabOnStartupMode () const {
 
-    return _assemblyConfigPage->showAssemblyTabOnStartup();
+    return _assemblyConfigPage->showAssemblyTabOnStartupMode();
 }
 
 void SeerConfigDialog::setAssemblyKeepAssemblyTabOnTop (bool flag) {

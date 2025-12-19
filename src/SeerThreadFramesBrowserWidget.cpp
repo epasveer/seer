@@ -237,10 +237,18 @@ void SeerThreadFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, in
 
         int lineno = item->text(6).toInt();
 
-        //qDebug() << "Emit selectedFile and selectedFrame";
-
-        emit selectedFile(item->text(5), item->text(7), lineno);
+        // Select thread.
         emit selectedThread(item->text(1).toInt());
+
+        // Select file if we can.
+        if (item->text(5) != "" && item->text(7) != "") {
+            emit selectedFile(item->text(5), item->text(7), lineno);
+        }
+
+        // Select address if we can.
+        if (item->text(11) != "") {
+            emit maybeSelectedAddress(item->text(5), item->text(7), item->text(11));
+        }
     }
 }
 

@@ -108,8 +108,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         QStringList                         sourceHeaderFilePatterns                        () const;
 
         // Assembly settings.
-        void                                setAssemblyShowAssemblyTabOnStartup             (bool flag);
-        bool                                assemblyShowAssemblyTabOnStartup                () const;
+        void                                setAssemblyShowAssemblyTabOnStartupMode         (const QString& mode);
+        QString                             assemblyShowAssemblyTabOnStartupMode            () const;
 
         void                                setAssemblyKeepAssemblyTabOnTop                 (bool flag);
         bool                                assemblyKeepAssemblyTabOnTop                    () const;

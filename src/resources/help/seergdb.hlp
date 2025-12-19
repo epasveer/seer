@@ -63,7 +63,7 @@ Misc Options:
   --bs,  --break-source <filename:lineno,...>                   Set breakpoints at a list of source files and line numbers. For 'run',
                                                                 'start', 'attach', 'connect', or 'rr'.
                                                                     eg:  --bs myprog.cpp:30,myprog.cpp:210
-  --sat, --show-assembly-tab <yes|no>                           Show the Assembly Tab on Seer startup. For 'run' or 'start'.
+  --sat, --show-assembly-tab <yes|no|auto>                      Show the Assembly Tab on Seer startup. For 'run' or 'start'.
   --sar, --start-address-randomize <yes|no>                     Randomize the program's starting address. For 'run' or 'start'.
   --nsm, --non-stop-mode <yes|no>                               Continue to run other threads at breakpoints. For 'run' or 'start'.
 

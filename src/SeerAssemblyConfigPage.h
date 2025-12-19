@@ -16,7 +16,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         explicit SeerAssemblyConfigPage (QWidget* parent = 0);
        ~SeerAssemblyConfigPage ();
 
-        bool                    showAssemblyTabOnStartup                        () const;
+        QString                 showAssemblyTabOnStartupMode                    () const;
         bool                    keepAssemblyTabOnTop                            () const;
         QString                 disassemblyFlavor                               () const;
         QString                 symbolDemagling                                 () const;
@@ -28,7 +28,7 @@ class SeerAssemblyConfigPage : public QWidget, protected Ui::SeerAssemblyConfigP
         QString                 disassemblyMode                                 () const;
         int                     disassemblyBytes                                () const;
 
-        void                    setShowAssemblyTabOnStartup                     (bool flag);
+        void                    setShowAssemblyTabOnStartupMode                 (const QString& mode);
         void                    setKeepAssemblyTabOnTop                         (bool flag);
         void                    setDisassemblyFlavor                            (const QString& flavor);
         void                    setSymbolDemagling                              (const QString& onoff);

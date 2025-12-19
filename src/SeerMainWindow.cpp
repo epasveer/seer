@@ -322,12 +322,12 @@ const QString& SeerMainWindow::executableBreakpointSourceName () const {
     return gdbWidget->executableBreakpointSourceName();
 }
 
-void SeerMainWindow::setExecutableShowAssemblyTab (bool flag) {
-    gdbWidget->setAssemblyShowAssemblyTabOnStartup(flag);
+void SeerMainWindow::setExecutableShowAssemblyTabMode (const QString& mode) {
+    gdbWidget->setAssemblyShowAssemblyTabOnStartupMode(mode);
 }
 
-bool SeerMainWindow::executableShowAssemblyTab () const {
-    return gdbWidget->assemblyShowAssemblyTabOnStartup();
+QString SeerMainWindow::executableShowAssemblyTabMode () const {
+    return gdbWidget->assemblyShowAssemblyTabOnStartupMode();
 }
 
 void SeerMainWindow::setExecutableRandomizeStartAddress (bool flag) {
@@ -580,7 +580,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
     dlg.setBreakpointSourceName(executableBreakpointSourceName());
-    dlg.setShowAssemblyTab(executableShowAssemblyTab());
+    dlg.setShowAssemblyTabMode(executableShowAssemblyTabMode());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
@@ -624,7 +624,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
     setExecutableBreakpointSourceName(dlg.breakpointSourceName());
-    setExecutableShowAssemblyTab(dlg.showAssemblyTab());
+    setExecutableShowAssemblyTabMode(dlg.showAssemblyTabMode());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
@@ -760,7 +760,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
     dlg.setSourceSourceFilePatterns(gdbWidget->sourceSourceFilePatterns());
     dlg.setSourceHeaderFilePatterns(gdbWidget->sourceHeaderFilePatterns());
-    dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
+    dlg.setAssemblyShowAssemblyTabOnStartupMode(gdbWidget->assemblyShowAssemblyTabOnStartupMode());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
     dlg.setAssemblyDisassemblyFlavor(gdbWidget->assemblyDisassemblyFlavor());
     dlg.setAssemblySymbolDemagling(gdbWidget->assemblySymbolDemagling());
@@ -805,7 +805,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
     gdbWidget->setSourceSourceFilePatterns(dlg.sourceSourceFilePatterns());
     gdbWidget->setSourceHeaderFilePatterns(dlg.sourceHeaderFilePatterns());
-    gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
+    gdbWidget->setAssemblyShowAssemblyTabOnStartupMode(dlg.assemblyShowAssemblyTabOnStartupMode());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
     gdbWidget->setAssemblyDisassemblyFlavor(dlg.assemblyDisassemblyFlavor());
     gdbWidget->setAssemblySymbolDemagling(dlg.assemblySymbolDemagling());

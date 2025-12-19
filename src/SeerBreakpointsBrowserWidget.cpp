@@ -233,7 +233,7 @@ void SeerBreakpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
     int lineno = item->text(8).toInt();
 
     emit selectedFile(item->text(6), item->text(7), lineno);
-    emit selectedAddress(item->text(4));
+    emit maybeSelectedAddress(item->text(6), item->text(7), item->text(4));
 }
 
 void SeerBreakpointsBrowserWidget::handleRefreshToolButton () {

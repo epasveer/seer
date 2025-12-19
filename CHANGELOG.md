@@ -17,6 +17,7 @@
 * GDB: Add Seer config to set gdb architecture.
 * GDB: Add an optional 'launcher' program to start gdb. eg: flatpak-spawn.
 * Build: Add flatpak generation to github actions.
+* Assemby: An option to show assembly tab when there is no source file.
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.
