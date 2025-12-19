@@ -442,6 +442,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
 #endif
 
+    QObject::connect(this,                                                      &SeerGdbWidget::stateChanged,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleGdbStateChanged);
+
     // Restore window settings.
     readSettings();
 }
