@@ -215,7 +215,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
-    handleRecordSettingsChanged();
+
+    // Connect Go to Definition signal/slot.
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindVariableIdentifier,  gdbWidget,      &SeerGdbWidget::gdbFindVariableIdentifier);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindFunctionIdentifier,  [this](const QString& identifier){ gdbWidget->handleGdbCommand(QString("-symbol-info-functions  --name " + identifier)); });
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindTypeIdentifier,      [this](const QString& identifier){ gdbWidget->handleGdbCommand(QString("-symbol-info-types  --name " + identifier)); });
 
     //
     // Initialize contents.

@@ -69,6 +69,10 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
+    // Feature: Go to definition (F12)
+    QShortcut* gotoDefShortcut = new QShortcut(QKeySequence(Qt::Key_F12), this);
+    QObject::connect(gotoDefShortcut,   &QShortcut::activated,                              this, &SeerEditorWidgetSourceArea::handleGotoDefinition);
+
     setCurrentLine(0);
 
     updateMarginAreasWidth(0);
@@ -2028,37 +2032,6 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
 /***********************************************************************************************************************
  * Go to definition feature                                                                                            *
  **********************************************************************************************************************/
-bool SeerEditorWidgetSourceArea::isOverWord(const QPoint &pos)
-{
-    QTextCursor cursor = cursorForPosition(pos);
-    cursor.select(QTextCursor::WordUnderCursor);
-    return !cursor.selectedText().isEmpty();
-}
-
-QString SeerEditorWidgetSourceArea::wordUnderCursor(const QPoint &pos) const
-{
-    QTextCursor cursor = cursorForPosition(pos);
-    cursor.select(QTextCursor::WordUnderCursor);
-    return cursor.selectedText();
-}
-
-void SeerEditorWidgetSourceArea::updateCursor(const QPoint &pos)
-{
-    _ctrlHeld = QApplication::keyboardModifiers() & Qt::ControlModifier;
-    if (_ctrlHeld && isOverWord(pos)) {
-        QApplication::setOverrideCursor(Qt::PointingHandCursor);
-        _wordUnderCursor = wordUnderCursor(pos);
-    } else {
-        QApplication::restoreOverrideCursor();
-    }
-}
-
-void SeerEditorWidgetSourceArea::mouseMoveEvent(QMouseEvent *event) 
-{
-    updateCursor(event->pos());
-    QPlainTextEdit::mouseMoveEvent(event);
-}
-
 // Check text and decide if that text is valid identifier (function, variable, type name)
 bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text) 
 {
@@ -2099,26 +2072,14 @@ bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text)
     return true;
 }
 
-// When Ctrl is hold and left mouse is clicked, and cursor is pointing at a word, try to look for that word 
-void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton && _wordUnderCursor != "" && _ctrlHeld) {
-        if (isValidIdentifier(_wordUnderCursor))
-        {
-            emit seekIdentifier(_wordUnderCursor);
-        }
-    }
-    QPlainTextEdit::mousePressEvent(event);
-}
-
-// When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit seekIdentifier signal
-void SeerEditorWidgetSourceArea::handleSeekIdentifierF12()
+// When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit gdbGotoDefinition signal
+void SeerEditorWidgetSourceArea::handleGotoDefinition()
 {
     QTextCursor cursor = textCursor();
     cursor.select(QTextCursor::WordUnderCursor);
     QString wordUnderCursor = cursor.selectedText();
     if (isValidIdentifier(wordUnderCursor))
     {
-        emit seekIdentifier(wordUnderCursor);
+        emit gdbGotoDefinition(wordUnderCursor);
     }
 }

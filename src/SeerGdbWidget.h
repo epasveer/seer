@@ -18,6 +18,9 @@
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
 #include <QtWidgets/QWidget>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 
 #include "ui_SeerGdbWidget.h"
 
@@ -392,6 +395,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleConsoleNewTextViewed                  ();
         void                                handleAboutToQuit                           ();
 
+        void                                handleGdbGotoDefinition                     (const QString& identifier);
+        void                                gdbFindVariableIdentifier                   (const QString& identifier);
+
     signals:
         void                                stoppingPointReached                        ();
         void                                sessionTerminated                           ();
@@ -400,6 +406,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                recordSettingsChanged                       ();
         void                                stateChanged                                ();
         void                                gdbCommandLogout                            (const QString& text);
+        void                                requestFindVariableIdentifier               (const QString& identifier);
+        void                                requestFindFunctionIdentifier               (const QString& identifier);
+        void                                requestFindTypeIdentifier                   (const QString& identifier);
 
     protected:
         void                                writeLogsSettings                           ();
@@ -418,6 +427,13 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         SeerConsoleWidget*                  console                                     ();
         void                                sendGdbInterrupt                            (int signal);
         void                                delay                                       (int seconds);
+
+        void                                gotoDefinitionWorker                        (const QString& identifier);
+
+        // Functions for Gdb and Seer synchronization
+        void                                syncFindVariableIdentifier               (const QString& identifier);
+        void                                syncFindFunctionIdentifier               (const QString& identifier);
+        void                                syncFindTypeIdentifier                   (const QString& identifier);
 
         bool                                _isQuitting;
         QString                             _gdbLauncher;
@@ -485,5 +501,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QVector<QString>                    _dataExpressionName;
 
         QStringList                         _ignoreFilePatterns;
+
+        QThread*                            _workerThread;
+
+        // Variable for Go to Definition handling
+        QString                             _gotoDefIdentifier;
+        QMutex                              _gotoDefMutex;
+        QWaitCondition                      _gotoDefWaitCond;
 };
 
