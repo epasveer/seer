@@ -38,7 +38,7 @@ jobs:
       with:
         branch: main
         bundle: seer.flatpak
-        manifest-path: flatpak/io.github.epasveer.seer.github.yml # Always uses 'main'!
+        manifest-path: src/resources/flathub/io.github.epasveer.seer.github.yml # Always uses 'main'!
         cache-key: flatpak-builder-${{ github.sha }}
 
     - name: Create Release
