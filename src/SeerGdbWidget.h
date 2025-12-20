@@ -397,6 +397,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         void                                handleGdbGotoDefinition                     (const QString& identifier);
         void                                gdbFindVariableIdentifier                   (const QString& identifier);
+        void                                gdbFindFunctionIdentifier                   (const QString& identifier);
+        void                                gdbFindTypeIdentifier                       (const QString& identifier);
 
     signals:
         void                                stoppingPointReached                        ();
