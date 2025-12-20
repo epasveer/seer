@@ -346,6 +346,6 @@ if(CONFIG_SEER_INSTALL_FLATHUB_FILES)
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/128x128/io.github.epasveer.seer.png" DESTINATION "share/icons/hicolor/128x128/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/256x256/io.github.epasveer.seer.png" DESTINATION "share/icons/hicolor/256x256/apps")
     install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.metainfo.xml"              DESTINATION "share/metainfo")
-    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.desktop"                   DESTINATION "share/application")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.desktop"                   DESTINATION "share/applications")
 endif()
 
