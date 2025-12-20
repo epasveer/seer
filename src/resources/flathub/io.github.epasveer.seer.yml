@@ -24,6 +24,6 @@ modules:
     sources:
       - type: git
         url: https://github.com/epasveer/seer.git
-        commit: 8764eb1137d82945e961494d78f0ad14edcaf5dd
-        # tag: v2.6
+        commit: 10855eba3a623e95c66a10245cb368f9fb978504
+        # tag: v2.7
 
