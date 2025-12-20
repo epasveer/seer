@@ -215,6 +215,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
+    handleRecordSettingsChanged();
 
     // Connect Go to Definition signal/slot.
     QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindVariableIdentifier,  gdbWidget,      &SeerGdbWidget::gdbFindVariableIdentifier);
