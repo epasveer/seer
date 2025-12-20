@@ -134,6 +134,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
 
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleText);
@@ -812,8 +813,8 @@ void SeerGdbWidget::handleText (const QString& text) {
             QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
 
             // If that file is not in source browser, skip it
-            // if (sourceLibraryManagerWidget->sourceBrowserWidget()->findFileWithRegrex(fullname_text).isEmpty())
-            //     continue;
+            if (sourceLibraryManagerWidget->sourceBrowserWidget()->findFileWithRegrex(fullname_text).isEmpty())
+                continue;
 
             QString symbols_text = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
             QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
@@ -3946,4 +3947,12 @@ void SeerGdbWidget::syncFindTypeIdentifier (const QString& identifier)
 void SeerGdbWidget::gdbFindVariableIdentifier(const QString& identifier)
 {
     handleGdbCommand("-symbol-info-variables --name " + identifier);
+}
+void SeerGdbWidget::gdbFindFunctionIdentifier (const QString& identifier)
+{
+    handleGdbCommand("-symbol-info-functions --name " + identifier);
+}
+void SeerGdbWidget::gdbFindTypeIdentifier (const QString& identifier)
+{
+    handleGdbCommand("-symbol-info-types --name " + identifier);
 }
