@@ -3,62 +3,46 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerRunStatusIndicator.h"
+#include <QtGui/QFontMetrics>
 #include <QtWidgets/QApplication>
 #include <QtCore/QDebug>
-#include <QGroupBox>
-#include <QPainter>
 
 SeerRunStatusIndicator::SeerRunStatusIndicator(QWidget* parent) : QLabel(parent) {
-    // Create group box
-    _groupBox = new QGroupBox();
-    _groupBox->setTitle("");
-    _groupBox->setFlat(true);
-    _groupBox->setStyleSheet("QGroupBox { border: none; }");
 
-    _statusLabel = new QLabel("Status");
-    _statusLabel->setAlignment(Qt::AlignCenter);
-    _statusLabel->setFixedSize(150, 25);
-    _statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
+    QSize size = fontMetrics().size(Qt::TextSingleLine, "XXXXXXXXXXXXXXXXXX");
 
-    //  Layout
-    auto *layout = new QHBoxLayout();
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-    layout->addWidget(_statusLabel);
-    _groupBox->setLayout(layout);
+    setAlignment(Qt::AlignCenter);
+    setFixedWidth(size.width());
+    setText("Status");
+    setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
 }
 
 SeerRunStatusIndicator::~SeerRunStatusIndicator() {
 }
 
 void SeerRunStatusIndicator::setRunStatus (SeerRunStatusIndicator::RunStatus status) {
+
     if (status == RunStatus::Idle) {
-        _statusLabel->setText("Session Terminated");
-        _statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
+        setText("Session Terminated");
+        setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
 
     }else if (status == RunStatus::Stopped) {
-        _statusLabel->setText("Stopped");
-        _statusLabel->setStyleSheet("background-color: red; color: black; font-weight: bold;");
+        setText("Stopped");
+        setStyleSheet("background-color: red; color: black; font-weight: bold;");
 
-    }
-    else if (status == RunStatus::Stop_By_Breakpoint) {
-        _statusLabel->setText("Stop by breakpoint");
-        _statusLabel->setStyleSheet("background-color: yellow; color: black; font-weight: bold;");
-    }
-    else if (status == RunStatus::Running) {
-        _statusLabel->setText("Running");
-        _statusLabel->setStyleSheet("background-color: green; color: black; font-weight: bold;");
+    }else if (status == RunStatus::Stop_By_Breakpoint) {
+        setText("Stop by breakpoint");
+        setStyleSheet("background-color: yellow; color: black; font-weight: bold;");
 
-    }
-    else {
-        _statusLabel->setText("Unknown");
+    }else if (status == RunStatus::Running) {
+        setText("Running");
+        setStyleSheet("background-color: green; color: black; font-weight: bold;");
+
+    }else{
+        setText("Unknown");
     }
 
     emit statusChanged(status);
-}
-
-QGroupBox* SeerRunStatusIndicator::indicatorBox() {
-    return _groupBox;
 }
 
 void SeerRunStatusIndicator::handleText (const QString& text) {
@@ -99,8 +83,11 @@ void SeerRunStatusIndicator::handleText (const QString& text) {
 
 // handle when program stop/ killed
 void SeerRunStatusIndicator::handleSessionTerminated() {
-    _statusLabel->setText("Session Terminated");
-    _statusLabel->setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
+
+    setText("Session Terminated");
+    setStyleSheet("background-color: lightgray; color: black; font-weight: bold;");
+
     // also tell SeerProgressIndicator to stop spinning
     setRunStatus(SeerRunStatusIndicator::Idle);
 }
+

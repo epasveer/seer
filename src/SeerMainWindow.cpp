@@ -36,7 +36,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     // Add status bar indicator.
     SeerRunStatusIndicator* runStatus = new SeerRunStatusIndicator(this);
 
-    statusBar()->addPermanentWidget(runStatus->indicatorBox());
+    statusBar()->addPermanentWidget(runStatus);
 
     // Add progress spin widget.
     QWidget* spacerWidget = new QWidget(this);
