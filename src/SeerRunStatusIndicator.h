@@ -6,8 +6,6 @@
 
 #include <QtWidgets/QLabel>
 #include <QtCore/QString>
-#include <QGroupBox>
-#include <QHBoxLayout>
 #include <QLabel>
 
 class SeerRunStatusIndicator : public QLabel {
@@ -27,7 +25,6 @@ class SeerRunStatusIndicator : public QLabel {
 
         void                                setRunStatus                (SeerRunStatusIndicator::RunStatus status);
         SeerRunStatusIndicator::RunStatus   runStatus                   () const;
-        QGroupBox*                          indicatorBox                ();
 
     signals:
         void                                statusChanged               (SeerRunStatusIndicator::RunStatus status);
@@ -39,8 +36,5 @@ class SeerRunStatusIndicator : public QLabel {
     protected:
 
     private:
-        QGroupBox*                          _groupBox;
-        QLabel*                             _statusLabel;
-        QHBoxLayout*                        _layout;
 };
 
