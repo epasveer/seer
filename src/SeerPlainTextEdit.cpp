@@ -12,6 +12,9 @@
 
 SeerPlainTextEdit::SeerPlainTextEdit(const QString& text, QWidget* parent) : QPlainTextEdit(text, parent) {
 
+    // Turn off the widget's cursor. We'll do our own in the paintEvent.
+    setCursorWidth(0);
+
     _cursorVisible = true;
     _cursorTimer   = new QTimer(this);
 
@@ -22,6 +25,9 @@ SeerPlainTextEdit::SeerPlainTextEdit(const QString& text, QWidget* parent) : QPl
 }
 
 SeerPlainTextEdit::SeerPlainTextEdit(QWidget* parent) : QPlainTextEdit(parent) {
+
+    // Turn off the widget's cursor. We'll do our own in the paintEvent.
+    setCursorWidth(0);
 
     _cursorVisible = true;
     _cursorTimer   = new QTimer(this);
@@ -52,22 +58,19 @@ void SeerPlainTextEdit::paintEvent(QPaintEvent* event) {
     // First, let the standard QPlainTextEdit handle its painting.
     QPlainTextEdit::paintEvent(event);
 
-    // If the widget does not have focus, draw the cursor manually.
+    // Get our painter.
+    QPainter painter(viewport());
+
+    // Draw the cursor manually.
     if (_cursorVisible) {
-        setCursorWidth(CURSOR_WIDTH);
         QRect r = cursorRect();
-        QPainter p(viewport());
-        p.fillRect(r, palette().text().color());
-    }
-    else
-    {
-        setCursorWidth(0);
+        r.setWidth(CURSOR_WIDTH);
+        painter.fillRect(r, palette().text().color());
     }
 
     // Add margin highlight for current line
-    QPainter painter(viewport());
     QTextCursor cursor = textCursor();
-    QTextBlock block = cursor.block();
+    QTextBlock  block  = cursor.block();
 
     // Get the rectangle of the current line (block)
     QRectF rect = blockBoundingGeometry(block).translated(contentOffset());
