@@ -42,17 +42,23 @@ Available through the following package managers:
 
 ### Pamac (Manjaro)
 
-    pamac install seer
+    $ pamac install seer
 
 ### zypper (openSUSE Tumbleweed)
 
-    zypper install seergdb
+    $ zypper install seergdb
+
+### Flathub
+
+Flathub website. [Here](https://flathub.org/en/apps/io.github.epasveer.seer)
+
+    $ flatpak install flathub io.github.epasveer.seer
 
 ### Flatpak
 
-Official Seer versions from Flathub - Coming soon!
+Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github. Download ```seer.flatpak```. Install it:
 
-Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github.
+    $ flatpak install -y --bundle --user seer.flatpak
 
 
 Install from source
