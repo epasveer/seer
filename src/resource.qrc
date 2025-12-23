@@ -87,6 +87,7 @@
     <file>resources/mi-python/MICheckpoint.py</file>
     <file>resources/mi-python/MICatchpoint.py</file>
     <file>resources/mi-python/MIObjectiveC.py</file>
+    <file>resources/mi-python/MIFrames.py</file>
   </qresource>
 </RCC>
 

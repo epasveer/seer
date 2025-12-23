@@ -17,5 +17,5 @@ install:
 # This rule tells make to delete hellothreads2 and hellothreads2.o
 .PHONY: clean
 clean:
-	rm -f hellothreads2 hellothreads2.o
+	rm -f hellothreads2 hellothreads2.o Digraph.*
 

@@ -109,10 +109,10 @@ def print_parallel_stack(node, first_node=True, indent='', last_node=False):
         function_indent = indent + ('' if last_node else '│') + base_indent
     if first_node:
         thread_count = len(node.threads)
-        print(before_thread_indent)
-        print('{}Threads: {}'.format(thread_indent, thread_count))
+        print(before_thread_indent, file=sys.stderr)
+        print('{}Threads: {}'.format(thread_indent, thread_count, file=sys.stderr))
     if node.function:
-        print('{}{}'.format(function_indent, node.function))
+        print('{}{}'.format(function_indent, node.function, file=sys.stderr))
     if len(node.nodes) == 1:
         print_parallel_stack(node.nodes[0], False, indent, last_node)
         return
@@ -178,11 +178,9 @@ def get_graph(node):
 
 
 def main():
-    arg_parser = argparse.ArgumentParser(description='Shows Parallel Stacks of a Process',
-                                         epilog='Data sources are a process, a log file or standard input.')
+    arg_parser = argparse.ArgumentParser(description='Shows Parallel Stacks of a Process', epilog='Data sources are a process, a log file or standard input.')
     data_source_group = arg_parser.add_mutually_exclusive_group()
-    data_source_group.add_argument('-l', '--log_file', metavar='filename', help='a GDB log file with backtraces',
-                                   type=argparse.FileType('r'), default=sys.stdin)
+    data_source_group.add_argument('-l', '--log_file', metavar='filename', help='a GDB log file with backtraces', type=argparse.FileType('r'), default=sys.stdin)
     data_source_group.add_argument('-p', '--pid', type=int, required=False, help='a process ID')
     args = arg_parser.parse_args()
 
@@ -197,12 +195,12 @@ def main():
         gdb_output = input_file.read().splitlines()
     threads = parse_gdb_output(gdb_output)
     for thread in threads:
-        print(thread)
+        print(thread, file=sys.stderr)
 
     tree = get_parallel_stacks(threads)
     print_parallel_stack(tree)
-    get_graph(tree).render(view=True)
-    #print(get_graph(tree).source)
+    get_graph(tree).render('DirectedGraph.gv', view=True, format='png')
+    print(get_graph(tree).source, file=sys.stderr)
 
 
 if __name__ == "__main__":

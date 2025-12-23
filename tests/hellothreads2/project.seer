@@ -1,0 +1,24 @@
+{
+    "seerproject": {
+        "executable": "hellothreads2",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/hellothreads2/breakpoints.seer",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytabmode": "auto"
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}
