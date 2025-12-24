@@ -110,6 +110,7 @@ set(HEADER_FILES
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
     SeerImageVisualizerWidget.h
+    SeerParallelStacksVisualizerWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
@@ -216,6 +217,7 @@ set(SOURCE_FILES
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
     SeerImageVisualizerWidget.cpp
+    SeerParallelStacksVisualizerWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp

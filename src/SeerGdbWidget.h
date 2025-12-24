@@ -369,6 +369,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbStructVisualizer                   ();
         void                                handleGdbVarVisualizer                      ();
         void                                handleGdbImageVisualizer                    ();
+        void                                handleGdbParallelStacksVisualizer           ();
         void                                handleSplitterMoved                         (int pos, int index);
         void                                handleManualCommandChanged                  ();
         void                                handleLogOuputChanged                       ();

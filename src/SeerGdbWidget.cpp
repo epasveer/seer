@@ -10,6 +10,7 @@
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
 #include "SeerImageVisualizerWidget.h"
+#include "SeerParallelStacksVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
@@ -3235,6 +3236,20 @@ void SeerGdbWidget::handleGdbVarVisualizer () {
 void SeerGdbWidget::handleGdbImageVisualizer () {
 
     handleGdbImageAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbParallelStacksVisualizer () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerParallelStacksVisualizerWidget* w = new SeerParallelStacksVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,         w,    &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,          w,    &SeerParallelStacksVisualizerWidget::handleText);
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
