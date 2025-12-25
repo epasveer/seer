@@ -67,6 +67,7 @@
     <file>resources/help/ArrayVisualizer.md</file>
     <file>resources/help/MatrixVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>
+    <file>resources/help/ParallelStacksVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
     <file>resources/help/VariableRegisterInfoBrowser.md</file>
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>

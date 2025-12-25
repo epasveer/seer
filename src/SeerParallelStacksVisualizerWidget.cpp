@@ -60,7 +60,7 @@ void SeerParallelStacksVisualizerWidget::handleRefreshButton () {
 void SeerParallelStacksVisualizerWidget::handleHelpButton () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
-    help->loadFile(":/seer/resources/help/ImageVisualizer.md");
+    help->loadFile(":/seer/resources/help/ParallelStacksVisualizer.md");
     help->show();
     help->raise();
 }
