@@ -74,7 +74,7 @@ class MIFrames(gdb.MICommand):
 
             try:
                 result = {
-                    'threads': [],
+                    'frames': [],
                     'current_thread_id': current_thread.num if current_thread else None,
                     'current_frame_level': current_frame_level,
                     'total_threads': 0,
@@ -93,10 +93,10 @@ class MIFrames(gdb.MICommand):
                 for thread in all_threads:
                     thread_data = self._process_thread(thread, current_thread, options)
                     if thread_data['frames']:  # Only include if we got frames
-                        result['threads'].append(thread_data)
+                        result['frames'].append(thread_data)
                         result['total_frames'] += len(thread_data['frames'])
 
-                result['total_threads'] = len(result['threads'])
+                result['total_threads'] = len(result['frames'])
 
                 return result
 
@@ -118,7 +118,7 @@ class MIFrames(gdb.MICommand):
     def _process_thread(self, thread, current_thread, options):
         """Process a single thread."""
         thread_data = {
-            'id': thread.num,
+            'thread-id': thread.num,
             'target-id': str(thread.ptid),
             'name': thread.name or '',
             'state': 'running' if thread.is_running() else 'stopped',
