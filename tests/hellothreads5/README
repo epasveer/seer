@@ -1,0 +1,201 @@
+
+thread apply all bt
+
+    Thread 11 (Thread 0x7ffff2ff66c0 (LWP 26147) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x00000000004042d4 in w1 (i=9) at hellothreads5.cpp:15
+    #3  0x00000000004043cb in worker (i=9) at hellothreads5.cpp:29
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43f030: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43f030: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43f028) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43f028) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43f020) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 10 (Thread 0x7ffff37f76c0 (LWP 26146) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x0000000000404357 in w2 (i=8) at hellothreads5.cpp:22
+    #3  0x00000000004043d7 in worker (i=8) at hellothreads5.cpp:31
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43eed0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43eed0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43eec8) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43eec8) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43eec0) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 9 (Thread 0x7ffff3ff86c0 (LWP 26145) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x00000000004042d4 in w1 (i=7) at hellothreads5.cpp:15
+    #3  0x00000000004043cb in worker (i=7) at hellothreads5.cpp:29
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43ece0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43ece0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43ecd8) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43ecd8) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43ecd0) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 8 (Thread 0x7ffff47f96c0 (LWP 26144) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x0000000000404357 in w2 (i=6) at hellothreads5.cpp:22
+    #3  0x00000000004043d7 in worker (i=6) at hellothreads5.cpp:31
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43eb80: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43eb80: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43eb78) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43eb78) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43eb70) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 7 (Thread 0x7ffff4ffa6c0 (LWP 26143) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x00000000004042d4 in w1 (i=5) at hellothreads5.cpp:15
+    #3  0x00000000004043cb in worker (i=5) at hellothreads5.cpp:29
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43ea20: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43ea20: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43ea18) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43ea18) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43ea10) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 6 (Thread 0x7ffff57fb6c0 (LWP 26142) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x0000000000404357 in w2 (i=4) at hellothreads5.cpp:22
+    #3  0x00000000004043d7 in worker (i=4) at hellothreads5.cpp:31
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43e8c0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43e8c0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43e8b8) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43e8b8) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43e8b0) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 5 (Thread 0x7ffff5ffc6c0 (LWP 26141) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x00000000004042d4 in w1 (i=3) at hellothreads5.cpp:15
+    #3  0x00000000004043cb in worker (i=3) at hellothreads5.cpp:29
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43e440: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43e440: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43e438) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43e438) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43e430) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 4 (Thread 0x7ffff67fd6c0 (LWP 26140) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x0000000000404357 in w2 (i=2) at hellothreads5.cpp:22
+    #3  0x00000000004043d7 in worker (i=2) at hellothreads5.cpp:31
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43e2c0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43e2c0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43e2b8) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43e2b8) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43e2b0) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 3 (Thread 0x7ffff6ffe6c0 (LWP 26139) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x00000000004042d4 in w1 (i=1) at hellothreads5.cpp:15
+    #3  0x00000000004043cb in worker (i=1) at hellothreads5.cpp:29
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43e460: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43e460: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43e458) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43e458) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43e450) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 2 (Thread 0x7ffff77ff6c0 (LWP 26138) "hellothreads5"):
+    #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
+    #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
+    #2  0x0000000000404357 in w2 (i=0) at hellothreads5.cpp:22
+    #3  0x00000000004043d7 in worker (i=0) at hellothreads5.cpp:31
+    #4  0x0000000000419549 in std::__invoke_impl<void, void (*)(int), int> (__f=@0x43e2e0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:63
+    #5  0x00000000004178d0 in std::__invoke<void (*)(int), int> (__fn=@0x43e2e0: 0x4043ac <worker(int)>) at /usr/include/c++/15/bits/invoke.h:98
+    #6  0x0000000000410c83 in std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul> (this=0x43e2d8) at /usr/include/c++/15/bits/std_thread.h:303
+    #7  0x00000000004101dc in std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator() (this=0x43e2d8) at /usr/include/c++/15/bits/std_thread.h:310
+    #8  0x000000000040ee34 in std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run (this=0x43e2d0) at /usr/include/c++/15/bits/std_thread.h:255
+    #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
+    #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
+    #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
+    
+    Thread 1 (Thread 0x7ffff7e7d740 (LWP 26131) "hellothreads5"):
+    #0  0x00007ffff792048c in read () from /lib64/libc.so.6
+    #1  0x00007ffff789e133 in __GI__IO_file_underflow () from /lib64/libc.so.6
+    #2  0x00007ffff78a064b in _IO_default_uflow () from /lib64/libc.so.6
+    #3  0x00007ffff789a768 in getc () from /lib64/libc.so.6
+    #4  0x00007ffff7d1eb11 in __gnu_cxx::stdio_sync_filebuf<char, std::char_traits<char> >::underflow() () from /usr/local/lib64/libstdc++.so.6
+    #5  0x00007ffff7d2ca1f in std::basic_istream<char, std::char_traits<char> >::sentry::sentry(std::basic_istream<char, std::char_traits<char> >&, bool) () from /usr/local/lib64/libstdc++.so.6
+    #6  0x00007ffff7cd3247 in std::basic_istream<char, std::char_traits<char> >& std::operator>><char, std::char_traits<char>, std::allocator<char> >(std::basic_istream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&) () from /usr/local/lib64/libstdc++.so.6
+    #7  0x00000000004044ea in main () at hellothreads5.cpp:50
+
+
+-frames-list
+
+    ^done,frames=[
+            {thread-id="10",target-id="(26131, 26146, 0)",name="hellothreads5",state="stopped",current="0",
+                frames=[
+                    {level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="2",addr="0x404357",func="w2",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="22",type="normal"},
+                    {level="3",addr="0x4043d7",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="31",type="normal"},
+                    {level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},
+                    {level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},
+                    {level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},
+                    {level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},
+                    {level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},
+                    {level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},
+                    {level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}
+                ]
+            },
+            {thread-id="9",target-id="(26131, 26145, 0)",name="hellothreads5",state="stopped",current="0",
+                frames=[
+                    {level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="2",addr="0x4042d4",func="w1",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="15",type="normal"},
+                    {level="3",addr="0x4043cb",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="29",type="normal"},
+                    {level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},
+                    {level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},
+                    {level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},
+                    {level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},
+                    {level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},
+                    {level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},
+                    {level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},
+                    {level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}
+                ]
+            },
+            {thread-id="6",target-id="(26131, 26142, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x404357",func="w2",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="22",type="normal"},{level="3",addr="0x4043d7",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="31",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="11",target-id="(26131, 26147, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x4042d4",func="w1",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="15",type="normal"},{level="3",addr="0x4043cb",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="29",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="8",target-id="(26131, 26144, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x404357",func="w2",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="22",type="normal"},{level="3",addr="0x4043d7",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="31",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="3",target-id="(26131, 26139, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x4042d4",func="w1",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="15",type="normal"},{level="3",addr="0x4043cb",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="29",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="7",target-id="(26131, 26143, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x4042d4",func="w1",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="15",type="normal"},{level="3",addr="0x4043cb",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="29",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="4",target-id="(26131, 26140, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x404357",func="w2",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="22",type="normal"},{level="3",addr="0x4043d7",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="31",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="2",target-id="(26131, 26138, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x404357",func="w2",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="22",type="normal"},{level="3",addr="0x4043d7",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="31",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="5",target-id="(26131, 26141, 0)",name="hellothreads5",state="stopped",current="0",frames=[{level="0",addr="0x7ffff78a3c1e",func="__futex_abstimed_wait_common",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff78a6548",func="pthread_cond_wait@@GLIBC_2.3.2",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x4042d4",func="w1",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="15",type="normal"},{level="3",addr="0x4043cb",func="worker",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="29",type="normal"},{level="4",addr="0x419549",func="std::__invoke_impl<void, void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="63",type="normal"},{level="5",addr="0x4178d0",func="std::__invoke<void (*)(int), int>",arch="i386:x86-64",file="/usr/include/c++/15/bits/invoke.h",fullname="/usr/include/c++/15/bits/invoke.h",line="98",type="normal"},{level="6",addr="0x410c83",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::_M_invoke<0ul, 1ul>",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="303",type="normal"},{level="7",addr="0x4101dc",func="std::thread::_Invoker<std::tuple<void (*)(int), int> >::operator()",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="310",type="normal"},{level="8",addr="0x40ee34",func="std::thread::_State_impl<std::thread::_Invoker<std::tuple<void (*)(int), int> > >::_M_run",arch="i386:x86-64",file="/usr/include/c++/15/bits/std_thread.h",fullname="/usr/include/c++/15/bits/std_thread.h",line="255",type="normal"},{level="9",addr="0x7ffff7ce8964",func="??",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="10",addr="0x7ffff78a6f6c",func="start_thread",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="11",addr="0x7ffff792e388",func="clone3",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"}]},
+            {thread-id="1",target-id="(26131, 26131, 0)",name="hellothreads5",state="stopped",current="1",frames=[{level="0",addr="0x7ffff792048c",func="read",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="1",addr="0x7ffff789e133",func="__GI__IO_file_underflow",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="2",addr="0x7ffff78a064b",func="_IO_default_uflow",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="3",addr="0x7ffff789a768",func="getc",arch="i386:x86-64",from="/lib64/libc.so.6",type="normal"},{level="4",addr="0x7ffff7d1eb11",func="__gnu_cxx::stdio_sync_filebuf<char, std::char_traits<char> >::underflow()",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="5",addr="0x7ffff7d2ca1f",func="std::basic_istream<char, std::char_traits<char> >::sentry::sentry(std::basic_istream<char, std::char_traits<char> >&, bool)",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="6",addr="0x7ffff7cd3247",func="std::basic_istream<char, std::char_traits<char> >& std::operator>><char, std::char_traits<char>, std::allocator<char> >(std::basic_istream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)",arch="i386:x86-64",from="/usr/local/lib64/libstdc++.so.6",type="normal"},{level="7",addr="0x4044ea",func="main",arch="i386:x86-64",file="hellothreads5.cpp",fullname="/nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp",line="50",type="normal"}]}
+        ],
+        current_thread_id="1",current_frame_level="0",total_threads="11",total_frames="128"
+
