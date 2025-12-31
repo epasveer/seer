@@ -3208,6 +3208,15 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
     handleGdbCommand(command);
 }
 
+void SeerGdbWidget::handleGdbParallelStackFrames (int expressionid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString::number(expressionid) + "-frames-list");
+}
+
 void SeerGdbWidget::handleGdbMemoryVisualizer () {
 
     handleGdbMemoryAddExpression("");
@@ -3248,8 +3257,9 @@ void SeerGdbWidget::handleGdbParallelStacksVisualizer () {
     w->show();
 
     // Connect things.
-    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,         w,    &SeerParallelStacksVisualizerWidget::handleText);
-    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,          w,    &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerParallelStacksVisualizerWidget::refreshParallelStackFrames,     this,    &SeerGdbWidget::handleGdbParallelStackFrames);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                                       w,       &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                                        w,       &SeerParallelStacksVisualizerWidget::handleText);
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

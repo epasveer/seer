@@ -229,7 +229,7 @@ void SeerMemoryVisualizerWidget::handleText (const QString& text) {
             QStringList range_list = Seer::parse(memory_text, "", '{', '}', false);
 
             // Loop through the memory ranges.
-            for ( const auto& range_text : range_list  ) {
+            for ( const auto& range_text : range_list ) {
 
                 QString contents_text = Seer::parseFirst(range_text, "contents=", '"', '"', false);
 
