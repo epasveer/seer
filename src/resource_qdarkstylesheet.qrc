@@ -24,6 +24,7 @@
     <file>resources/icons-icons/hide.png</file>
     <file>resources/icons-icons/maximize.png</file>
     <file>resources/icons-icons/minimize.png</file>
+    <file>resources/icons-icons/attach.png</file>
     <file>resources/icons-icons/style.png</file>
     <file>resources/RelaxLightIcons/application-menu.svg</file>
     <file>resources/RelaxLightIcons/document-new.svg</file>
@@ -57,6 +58,7 @@
     <file>resources/RelaxLightIcons/data-information.svg</file>
     <file>resources/RelaxLightIcons/data-warning.svg</file>
     <file>resources/RelaxLightIcons/dialog-question.svg</file>
+    <file>resources/RelaxLightIcons/system-shutdown.svg</file>
     <file>resources/qdarkstyle/light/lightstyle.qrc</file>
     <file>resources/qdarkstyle/dark/darkstyle.qrc</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
@@ -65,9 +67,10 @@
     <file>resources/help/BasicStructVisualizer.md</file>
     <file>resources/help/MemoryVisualizer.md</file>
     <file>resources/help/ArrayVisualizer.md</file>
+    <file>resources/help/MatrixVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
-    <file>resources/help/VariableRegisterInfoBrowser.md</file>
+    <file>resources/help/VariableRegisterSignalInfoBrowser.md</file>
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>
     <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
@@ -78,6 +81,15 @@
     <file>resources/help/ConnectDebugMode.md</file>
     <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
+    <file>resources/help/Printpoints.md</file>
+    <file>resources/help/Skips.md</file>
+    <file>resources/mi-python/MIEcho.py</file>
+    <file>resources/mi-python/MISkip.py</file>
+    <file>resources/mi-python/MIKill.py</file>
+    <file>resources/mi-python/MICheckpoint.py</file>
+    <file>resources/mi-python/MICatchpoint.py</file>
+    <file>resources/mi-python/MIObjectiveC.py</file>
+    <file>resources/mi-python/MISignals.py</file>
   </qresource>
 </RCC>
 

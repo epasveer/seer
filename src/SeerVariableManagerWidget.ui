@@ -35,7 +35,7 @@
       <string notr="true">font-weight: bold;</string>
      </property>
      <property name="text">
-      <string>Variable/Register Info</string>
+      <string>Variable/Register/Signal Info</string>
      </property>
      <property name="textFormat">
       <enum>Qt::PlainText</enum>

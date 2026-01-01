@@ -204,9 +204,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->signalValuesBrowserWidget(),             &SeerSignalValuesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
@@ -301,6 +302,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterNames,                                     this,                                                           &SeerGdbWidget::handleGdbRegisterListNames);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::refreshRegisterValues,                                    this,                                                           &SeerGdbWidget::handleGdbRegisterListValues);
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
+    QObject::connect(variableManagerWidget->signalValuesBrowserWidget(),        &SeerSignalValuesBrowserWidget::refreshSignalValues,                                        this,                                                           &SeerGdbWidget::handleGdbSignalListValues);
 
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadIds,                                           this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
@@ -2778,6 +2780,14 @@ void SeerGdbWidget::handleGdbRegisterSetValue (QString fmt, QString name, QStrin
     handleGdbRegisterListValues(fmt);
 }
 
+void SeerGdbWidget::handleGdbSignalListValues () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-signal-list-values");
+}
 
 void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString expression) {
 

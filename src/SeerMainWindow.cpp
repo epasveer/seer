@@ -1191,6 +1191,12 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,skips=[") && text.endsWith("]")) {
         return;
 
+    }else if (text.startsWith("^done,signal-values=[") && text.endsWith("]")) {
+        return;
+
+    }else if (text.startsWith("^done,signal-names=[") && text.endsWith("]")) {
+        return;
+
     }else if (text.startsWith("^done,checkpoints=[") && text.endsWith("]")) {
         return;
 
