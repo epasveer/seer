@@ -14,7 +14,7 @@ class MISignal(gdb.MICommand):
     """
     Run the 'signal' command.
 
-    -signal-list        List all signals, including the attributes for each signal (name, stop, print, pass, description).
+    -signal-list-values    List all signals, including the attributes for each signal (name, stop, print, pass, description).
 
 
     (gdb) info signals
@@ -94,9 +94,45 @@ class MISignal(gdb.MICommand):
 
             return { "signal-names": signalnames}
 
+        elif self._mode == "stop":
+
+            gdb.execute ("handle " + " ".join(argv) + " stop", from_tty=True, to_string=True)
+            return None
+
+        elif self._mode == "nostop":
+
+            gdb.execute ("handle " + " ".join(argv) + " nostop", from_tty=True, to_string=True)
+            return None
+
+        elif self._mode == "print":
+
+            gdb.execute ("handle " + " ".join(argv) + " print", from_tty=True, to_string=True)
+            return None
+
+        elif self._mode == "noprint":
+
+            gdb.execute ("handle " + " ".join(argv) + " noprint", from_tty=True, to_string=True)
+            return None
+
+        elif self._mode == "pass":
+
+            gdb.execute ("handle " + " ".join(argv) + " pass", from_tty=True, to_string=True)
+            return None
+
+        elif self._mode == "nopass":
+
+            gdb.execute ("handle " + " ".join(argv) + " nopass", from_tty=True, to_string=True)
+            return None
+
         else:
             raise gdb.GdbError("signal: Invalid parameter: %s" % self._mode)
 
 MISignal("-signal-list-names",  "list-names")
 MISignal("-signal-list-values", "list-values")
+MISignal("-signal-stop",        "stop")
+MISignal("-signal-nostop",      "nostop")
+MISignal("-signal-print",       "print")
+MISignal("-signal-noprint",     "noprint")
+MISignal("-signal-pass",        "pass")
+MISignal("-signal-nopass",      "nopass")
 
