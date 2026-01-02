@@ -68,7 +68,7 @@
    <item>
     <widget class="QIndexTreeWidget" name="signalsTreeWidget">
      <property name="columnCount">
-      <number>5</number>
+      <number>6</number>
      </property>
      <attribute name="headerShowSortIndicator" stdset="0">
       <bool>false</bool>
@@ -96,6 +96,11 @@
      <column>
       <property name="text">
        <string>Description</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Used</string>
       </property>
      </column>
     </widget>

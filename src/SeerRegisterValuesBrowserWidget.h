@@ -30,6 +30,7 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        refresh                                 ();
 
     protected slots:
+        void                        handleItemDoubleClicked                 (QTreeWidgetItem* item, int column);
         void                        handleItemEntered                       (QTreeWidgetItem* item, int column);
         void                        handleContextMenu                       (const QPoint& pos);
         void                        handleIndexEditingFinished              (const QModelIndex& index);
@@ -55,12 +56,12 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        deleteProfileSettings                   (const QString& profileName);
 
     private:
+        void                        _editItem                               (QTreeWidgetItem* item);
         bool                        _needsRegisterNames;
         QStringList                 _registerNames;
         QVector<bool>               _registerEnabled;
         QAction*                    _newProfileAction;
         QAction*                    _modifyProfileAction;
         QAction*                    _deleteProfileAction;
-
 };
 

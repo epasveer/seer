@@ -36,7 +36,29 @@ class MISignal(gdb.MICommand):
 
     def invoke(self, argv):
 
-        if self._mode == "list-values":
+        if self._mode == "list-names":
+
+            signalnames = []
+
+            result = gdb.execute ("info signals", to_string=True)
+
+            lines = result.split("\n")
+            for line in lines:
+                if (line == ""):
+                    continue
+
+                columns = re.search(r"^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$", line)
+                if columns:
+                    if (columns.group(1) == "Signal"):
+                        continue
+                    if (columns.group(1) == "Use"):
+                        continue
+
+                    signalnames.append(columns.group(1))
+
+            return { "signal-names": signalnames}
+
+        elif self._mode == "list-values":
 
             command = ""
             result  = ""
@@ -71,28 +93,6 @@ class MISignal(gdb.MICommand):
                     signalentries.append(signalmeta)
 
             return { "signal-values": signalentries}
-
-        elif self._mode == "list-names":
-
-            signalnames = []
-
-            result = gdb.execute ("info signals", to_string=True)
-
-            lines = result.split("\n")
-            for line in lines:
-                if (line == ""):
-                    continue
-
-                columns = re.search(r"^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$", line)
-                if columns:
-                    if (columns.group(1) == "Signal"):
-                        continue
-                    if (columns.group(1) == "Use"):
-                        continue
-
-                    signalnames.append(columns.group(1))
-
-            return { "signal-names": signalnames}
 
         elif self._mode == "stop":
 
