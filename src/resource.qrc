@@ -68,7 +68,7 @@
     <file>resources/help/MatrixVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
-    <file>resources/help/VariableRegisterInfoBrowser.md</file>
+    <file>resources/help/VariableRegisterSignalInfoBrowser.md</file>
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>
     <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
@@ -87,6 +87,7 @@
     <file>resources/mi-python/MICheckpoint.py</file>
     <file>resources/mi-python/MICatchpoint.py</file>
     <file>resources/mi-python/MIObjectiveC.py</file>
+    <file>resources/mi-python/MISignals.py</file>
   </qresource>
 </RCC>
 

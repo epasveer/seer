@@ -24,18 +24,20 @@ SeerVariableManagerWidget::SeerVariableManagerWidget (QWidget* parent) : QWidget
     _variableLoggerBrowserWidget  = new SeerVariableLoggerBrowserWidget(this);
     _variableTrackerBrowserWidget = new SeerVariableTrackerBrowserWidget(this);
     _registerValuesBrowserWidget  = new SeerRegisterValuesBrowserWidget(this);
+    _signalValuesBrowserWidget    = new SeerSignalValuesBrowserWidget(this);
 
     tabWidget->addTab(_variableLoggerBrowserWidget,  "Logger");
     tabWidget->addTab(_variableTrackerBrowserWidget, "Tracker");
     tabWidget->addTab(_registerValuesBrowserWidget,  "Registers");
+    tabWidget->addTab(_signalValuesBrowserWidget,    "Signals");
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
-    refreshToolButton->setToolTip("Refresh the variable/register information.");
+    refreshToolButton->setToolTip("Refresh the variable/register/signal information.");
 
     QToolButton* helpToolButton = new QToolButton(tabWidget);
     helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
-    helpToolButton->setToolTip("Help on variable/register information.");
+    helpToolButton->setToolTip("Help on variable/register/signal information.");
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
@@ -71,16 +73,21 @@ SeerRegisterValuesBrowserWidget* SeerVariableManagerWidget::registerValuesBrowse
     return _registerValuesBrowserWidget;
 }
 
+SeerSignalValuesBrowserWidget* SeerVariableManagerWidget::signalValuesBrowserWidget () {
+    return _signalValuesBrowserWidget;
+}
+
 void SeerVariableManagerWidget::handleRefreshToolButtonClicked () {
 
     variableTrackerBrowserWidget()->refresh();
     registerValuesBrowserWidget()->refresh();
+    signalValuesBrowserWidget()->refresh();
 }
 
 void SeerVariableManagerWidget::handleHelpToolButtonClicked () {
 
     SeerHelpPageDialog* help = new SeerHelpPageDialog;
-    help->loadFile(":/seer/resources/help/VariableRegisterInfoBrowser.md");
+    help->loadFile(":/seer/resources/help/VariableRegisterSignalInfoBrowser.md");
     help->show();
     help->raise();
 }

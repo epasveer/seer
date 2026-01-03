@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+// SPDX-FileCopyrightText: 2026 Ernie Pasveer <epasveer@att.net>
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
 
-#include "ui_SeerRegisterValuesBrowserWidget.h"
+#include "ui_SeerSignalValuesBrowserWidget.h"
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMenu>
 #include <QtCore/QString>
@@ -12,16 +12,15 @@
 #include <QtCore/QVector>
 #include <QtCore/QDebug>
 
-class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegisterValuesBrowserWidgetForm {
+class SeerSignalValuesBrowserWidget : public QWidget, protected Ui::SeerSignalValuesBrowserWidgetForm {
 
     Q_OBJECT
 
     public:
-        explicit SeerRegisterValuesBrowserWidget (QWidget* parent = 0);
-       ~SeerRegisterValuesBrowserWidget ();
+        explicit SeerSignalValuesBrowserWidget (QWidget* parent = 0);
+       ~SeerSignalValuesBrowserWidget ();
 
     public:
-        void                        setRegisterFormat                       (QString fmt);
 
     public slots:
         void                        handleText                              (const QString& text);
@@ -33,33 +32,30 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        handleItemDoubleClicked                 (QTreeWidgetItem* item, int column);
         void                        handleItemEntered                       (QTreeWidgetItem* item, int column);
         void                        handleContextMenu                       (const QPoint& pos);
-        void                        handleIndexEditingFinished              (const QModelIndex& index);
-        void                        handleFormatChanged                     (int index);
-        void                        handleColumnSelected                    (int logicalIndex);
         void                        handleNewProfile                        ();
         void                        handleModifyProfile                     ();
         void                        handleDeleteProfile                     ();
-        void                        handleShowHideRegisters                 ();
+        void                        handleShowHideSignals                   ();
         void                        handleProfileChanged                    (int index);
 
     signals:
-        void                        refreshRegisterNames                    ();
-        void                        refreshRegisterValues                   (QString fmt);
-        void                        setRegisterValue                        (QString fmt, QString name, QString value);
+        void                        refreshSignalNames                      ();
+        void                        refreshSignalValues                     (QString names);
+        void                        setSignalValue                          (QString name, QString stop, QString print, QString pass);
 
     protected:
         void                        showEvent                               (QShowEvent* event);
         void                        readSettings                            ();
         void                        writeSettings                           ();
-        bool                        readProfileSettings                     (const QString& profileName, QStringList& registerNames, QVector<bool>& registerEnabled);
-        void                        writeProfileSettings                    (const QString& profileName, const QStringList& registerNames, const QVector<bool>& registerEnabled);
+        bool                        readProfileSettings                     (const QString& profileName, QStringList& signalNames, QVector<bool>& signalEnabled);
+        void                        writeProfileSettings                    (const QString& profileName, const QStringList& signalNames, const QVector<bool>& signalEnabled);
         void                        deleteProfileSettings                   (const QString& profileName);
 
     private:
         void                        _editItem                               (QTreeWidgetItem* item);
-        bool                        _needsRegisterNames;
-        QStringList                 _registerNames;
-        QVector<bool>               _registerEnabled;
+        bool                        _needsSignalNames;
+        QStringList                 _signalNames;
+        QVector<bool>               _signalEnabled;
         QAction*                    _newProfileAction;
         QAction*                    _modifyProfileAction;
         QAction*                    _deleteProfileAction;
