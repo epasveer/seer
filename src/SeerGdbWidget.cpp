@@ -304,6 +304,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->registerValuesBrowserWidget(),      &SeerRegisterValuesBrowserWidget::setRegisterValue,                                         this,                                                           &SeerGdbWidget::handleGdbRegisterSetValue);
     QObject::connect(variableManagerWidget->signalValuesBrowserWidget(),        &SeerSignalValuesBrowserWidget::refreshSignalNames,                                         this,                                                           &SeerGdbWidget::handleGdbSignalListNames);
     QObject::connect(variableManagerWidget->signalValuesBrowserWidget(),        &SeerSignalValuesBrowserWidget::refreshSignalValues,                                        this,                                                           &SeerGdbWidget::handleGdbSignalListValues);
+    QObject::connect(variableManagerWidget->signalValuesBrowserWidget(),        &SeerSignalValuesBrowserWidget::setSignalValue,                                             this,                                                           &SeerGdbWidget::handleGdbSignalSetValue);
 
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadIds,                                           this,                                                           &SeerGdbWidget::handleGdbThreadListIds);
     QObject::connect(threadManagerWidget->threadFramesBrowserWidget(),          &SeerThreadFramesBrowserWidget::refreshThreadFrames,                                        this,                                                           &SeerGdbWidget::handleGdbThreadListFrames);
@@ -2798,6 +2799,19 @@ void SeerGdbWidget::handleGdbSignalListValues (QString names) {
     }
 
     handleGdbCommand("-signal-list-values " + names);
+}
+
+void SeerGdbWidget::handleGdbSignalSetValue (QString name, QString stop, QString print, QString pass) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    // Set the signal value.
+    handleGdbCommand("-signal-set-value " + name + " " + stop + " " + print + " " + pass);
+
+    // Refresh whoever is listening.
+    handleGdbSignalListValues("");
 }
 
 void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString expression) {

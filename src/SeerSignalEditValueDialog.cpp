@@ -22,7 +22,7 @@ SeerSignalEditValueDialog::~SeerSignalEditValueDialog () {
 void SeerSignalEditValueDialog::set (const QString& signame, const QString& stopvalue, const QString& printvalue, const QString& passvalue, const QString& description) {
 
     signalNameLineEdit->setText(signame);
-    signalDescriptionLabel->setText(description);
+    signalDescriptionLineEdit->setText(description);
 
     signalStopCheckBox->setCheckState(Qt::Unchecked);
     signalPrintCheckBox->setCheckState(Qt::Unchecked);
@@ -75,6 +75,6 @@ QString SeerSignalEditValueDialog::passText () const {
 
 QString SeerSignalEditValueDialog::descriptionText () const {
 
-    return signalDescriptionLabel->text();
+    return signalDescriptionLineEdit->text();
 }
 

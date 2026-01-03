@@ -96,11 +96,13 @@ class MISignal(gdb.MICommand):
 
         elif self._mode == "stop":
 
+            # handle signal [ signal … ] stop
             gdb.execute ("handle " + " ".join(argv) + " stop", from_tty=True, to_string=True)
             return None
 
         elif self._mode == "nostop":
 
+            # handle signal [ signal … ] nostop
             gdb.execute ("handle " + " ".join(argv) + " nostop", from_tty=True, to_string=True)
             return None
 
@@ -124,6 +126,12 @@ class MISignal(gdb.MICommand):
             gdb.execute ("handle " + " ".join(argv) + " nopass", from_tty=True, to_string=True)
             return None
 
+        elif self._mode == "set-value":
+
+            # handle signal [ signal … ] [keywords…]
+            gdb.execute ("handle " + " ".join(argv), from_tty=True, to_string=True)
+            return None
+
         else:
             raise gdb.GdbError("signal: Invalid parameter: %s" % self._mode)
 
@@ -135,4 +143,5 @@ MISignal("-signal-print",       "print")
 MISignal("-signal-noprint",     "noprint")
 MISignal("-signal-pass",        "pass")
 MISignal("-signal-nopass",      "nopass")
+MISignal("-signal-set-value",   "set-value")
 
