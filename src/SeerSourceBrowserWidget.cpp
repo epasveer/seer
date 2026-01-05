@@ -119,11 +119,11 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             //qDebug() << file_text << fullname_text;
 
             // Skip duplicates
-            if (files.contains(fullname_text)) {
+            if (_sourceFiles.contains(fullname_text)) {
                 continue;
             }
 
-            files.insert(fullname_text, file_text);
+            _sourceFiles.insert(fullname_text, file_text);
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -171,6 +171,7 @@ void SeerSourceBrowserWidget::handleSessionTerminated () {
 
     // Delete previous files.
     deleteChildItems();
+    _sourceFiles.clear();
 }
 
 void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
@@ -295,4 +296,17 @@ void SeerSourceBrowserWidget::deleteChildItems () {
         delete i;
     }
 }
+
+const QString& SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression)
+{
+    QMap<QString, QString>::const_iterator it;
+    for (it = _sourceFiles.constBegin(); it != _sourceFiles.constEnd(); ++it) {
+        if (it.key().contains(expression)) {
+            return it.key();
+        }
+    }
+    static const QString empty;
+    return empty;
+}
+
 

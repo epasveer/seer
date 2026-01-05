@@ -217,6 +217,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
     handleRecordSettingsChanged();
 
+    // Connect Go to Definition signal/slot.
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindVariableIdentifier,  gdbWidget,      &SeerGdbWidget::gdbFindVariableIdentifier);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindFunctionIdentifier,  gdbWidget,      &SeerGdbWidget::gdbFindFunctionIdentifier);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::requestFindTypeIdentifier,      gdbWidget,      &SeerGdbWidget::gdbFindTypeIdentifier);
+
     //
     // Initialize contents.
     //
