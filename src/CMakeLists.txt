@@ -79,6 +79,7 @@ set(HEADER_FILES
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
     SeerCheckpointsBrowserWidget.h
+    SeerCommandLogsWidget.h
     SeerSeerLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
@@ -189,6 +190,7 @@ set(SOURCE_FILES
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
     SeerCheckpointsBrowserWidget.cpp
+    SeerCommandLogsWidget.cpp
     SeerSeerLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp

@@ -87,7 +87,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbRecordDirection                     = "";
     _consoleScrollLines                     = 1000;
     _rememberManualCommandCount             = 10;
-    _currentFrame                           = -1;
 
     setIsQuitting(false);
     setNewExecutableFlag(true);

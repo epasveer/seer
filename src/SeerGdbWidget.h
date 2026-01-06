@@ -465,7 +465,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _executablePreGdbCommands;
         QStringList                         _executablePostGdbCommands;
         bool                                _newExecutableFlag;
-        int                                 _currentFrame;
 
         SeerConsoleWidget*                  _consoleWidget;
         int                                 _consoleIndex;
