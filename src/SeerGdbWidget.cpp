@@ -54,13 +54,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     _gdbMonitor                             = 0;
     _gdbProcess                             = 0;
-    _consoleWidget                          = 0;
-    _consoleIndex                           = -1;
-    _breakpointsBrowserWidget               = 0;
-    _watchpointsBrowserWidget               = 0;
-    _catchpointsBrowserWidget               = 0;
-    _gdbOutputLog                           = 0;
-    _seerOutputLog                          = 0;
 
 #ifdef SEER_GDB_NAME
     _gdbProgram                             = STRINGIFY(SEER_GDB_NAME);
@@ -85,73 +78,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbRemoteTargetType                    = "extended-remote";
     _gdbRecordMode                          = "";
     _gdbRecordDirection                     = "";
-    _consoleScrollLines                     = 1000;
-    _rememberManualCommandCount             = 10;
 
     setIsQuitting(false);
     setNewExecutableFlag(true);
 
     setupUi(this);
-
-    // Setup the widgets
-    QFont font;
-    font.setFamily("monospace [Consolas]");
-    font.setFixedPitch(true);
-    font.setStyleHint(QFont::TypeWriter);
-
-    _messagesBrowserWidget    = new SeerMessagesBrowserWidget(this);
-    _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
-    _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
-    _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
-    _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
-    _checkpointsBrowserWidget = new SeerCheckpointsBrowserWidget(this);
-
-    _gdbOutputLog             = new SeerGdbLogWidget(this);
-    _seerOutputLog            = new SeerSeerLogWidget(this);
-    _gdbOutputLog->setPlaceholderText("[gdb output]");
-    _seerOutputLog->setPlaceholderText("[seer output]");
-
-    logsTabWidget->addTab(_messagesBrowserWidget,    "Messages");
-    logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
-    logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
-    logsTabWidget->addTab(_catchpointsBrowserWidget, "Catchpoints");
-    logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
-    logsTabWidget->addTab(_checkpointsBrowserWidget, "Checkpoints");
-    logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
-    logsTabWidget->addTab(_seerOutputLog,            "Seer output");
-    logsTabWidget->setCurrentIndex(0);
-
-    // Create the console tab.
-    // Each RUN method will create and connect to the console's terminal.
-    createConsole();
-
-    // Create editor options bar.
-    QToolButton* breakpointsLoadToolButton = new QToolButton(logsTabWidget);
-    breakpointsLoadToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
-    breakpointsLoadToolButton->setToolTip("Load previously saved breakpoints.");
-
-    QToolButton* breakpointsSaveToolButton = new QToolButton(logsTabWidget);
-    breakpointsSaveToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-save-as.svg"));
-    breakpointsSaveToolButton->setToolTip("Save breakpoints to a file.");
-
-    QToolButton* helpToolButton = new QToolButton(logsTabWidget);
-    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
-    helpToolButton->setToolTip("Help on Breakpoint/Gdb/Seer information.");
-
-    QHContainerWidget* hcontainer = new QHContainerWidget(this);
-    hcontainer->setSpacing(3);
-    hcontainer->addWidget(breakpointsLoadToolButton);
-    hcontainer->addWidget(breakpointsSaveToolButton);
-    hcontainer->addWidget(helpToolButton);
-
-    logsTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
-
-    // Set manual command settings.
-    manualCommandComboBox->setFont(font);
-    manualCommandComboBox->setEditable(true);
-    manualCommandComboBox->lineEdit()->setPlaceholderText("Manually enter a gdb/mi command...");
-    manualCommandComboBox->lineEdit()->setToolTip("Manually enter a gdb/mi command.");
-    manualCommandComboBox->lineEdit()->setClearButtonEnabled(true);
 
     // Create the gdb process.
     _gdbProcess = new QProcess(this);
@@ -160,30 +91,23 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbMonitor = new GdbMonitor(this);
     _gdbMonitor->setProcess(_gdbProcess);
 
-    // Restore tab ordering.
-    readLogsSettings();
-
     // Handle the app's 'quit' event, in case we want to do things before exiting.
     QObject::connect(QCoreApplication::instance(),                              &QCoreApplication::aboutToQuit,                                                             this,                                                           &SeerGdbWidget::handleAboutToQuit);
 
     // Connect things.
-    QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::tabMoved,                                                                         this,                                                           &SeerGdbWidget::handleLogsTabMoved);
-    QObject::connect(logsTabWidget->tabBar(),                                   &QTabBar::currentChanged,                                                                   this,                                                           &SeerGdbWidget::handleLogsTabChanged);
-    QObject::connect(_messagesBrowserWidget,                                    &SeerMessagesBrowserWidget::showMessages,                                                   this,                                                           &SeerGdbWidget::handleRaiseMessageTab);
-
-    QObject::connect(manualCommandComboBox->lineEdit(),                         &QLineEdit::returnPressed,                                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
+    QObject::connect(commandLogsWidget,                                         &SeerCommandLogsWidget::executeGdbCommand,                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardError,                                                          _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardError);
     QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),            this,                                                           &SeerGdbWidget::handleGdbProcessFinished); // ??? Do we care about the gdb process ending? For now, terminate Seer.
     QObject::connect(_gdbProcess,                                               static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::errorOccurred),          this,                                                           &SeerGdbWidget::handleGdbProcessErrored);
 
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::ampersandTextOutput,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::atsignTextOutput,                                                              _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _seerOutputLog,                                                 &SeerSeerLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               commandLogsWidget->gdbOutputLog(),                              &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::ampersandTextOutput,                                                           commandLogsWidget->gdbOutputLog(),                              &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::atsignTextOutput,                                                              commandLogsWidget->gdbOutputLog(),                              &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               commandLogsWidget->seerOutputLog(),                             &SeerSeerLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->seerOutputLog(),                             &SeerSeerLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              commandLogsWidget->seerOutputLog(),                             &SeerSeerLogWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              editorManagerWidget,                                            &SeerEditorManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleText);
@@ -198,16 +122,16 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackArgumentsBrowserWidget(),              &SeerStackArgumentsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget->stackDumpBrowserWidget(),                   &SeerStackDumpBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               stackManagerWidget,                                             &SeerStackManagerWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->breakpointsBrowser(),                        &SeerBreakpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->checkpointsBrowser(),                                      &SeerCheckpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->signalValuesBrowserWidget(),             &SeerSignalValuesBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
 
@@ -338,50 +262,50 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::scheduleMultipleModeChanged,                                      this,                                                           &SeerGdbWidget::handleGdbScheduleMultipleMode);
     QObject::connect(threadManagerWidget,                                       &SeerThreadManagerWidget::forkFollowsModeChanged,                                           this,                                                           &SeerGdbWidget::handleGdbForkFollowMode);
 
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::refreshBreakpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::deleteBreakpoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointDelete);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::enableBreakpoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::disableBreakpoints,                                          this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::insertBreakpoint,                                            this,                                                           &SeerGdbWidget::handleGdbBreakpointInsert);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::selectedAddress,                                             editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
-    QObject::connect(_breakpointsBrowserWidget,                                 &SeerBreakpointsBrowserWidget::maybeSelectedAddress,                                        editorManagerWidget,                                            &SeerEditorManagerWidget::handleMaybeOpenAddress);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::refreshBreakpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::deleteBreakpoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointDelete);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::enableBreakpoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::disableBreakpoints,                                          this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::insertBreakpoint,                                            this,                                                           &SeerGdbWidget::handleGdbBreakpointInsert);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::selectedAddress,                                             editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenAddress);
+    QObject::connect(commandLogsWidget->breakpointsBrowser(),                   &SeerBreakpointsBrowserWidget::maybeSelectedAddress,                                        editorManagerWidget,                                            &SeerEditorManagerWidget::handleMaybeOpenAddress);
 
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::refreshWatchpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::deleteWatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbWatchpointDelete);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::enableWatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbWatchpointEnable);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::disableWatchpoints,                                          this,                                                           &SeerGdbWidget::handleGdbWatchpointDisable);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::insertWatchpoint,                                            this,                                                           &SeerGdbWidget::handleGdbWatchpointInsert);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
-    QObject::connect(_watchpointsBrowserWidget,                                 &SeerWatchpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::refreshWatchpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::deleteWatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbWatchpointDelete);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::enableWatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbWatchpointEnable);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::disableWatchpoints,                                          this,                                                           &SeerGdbWidget::handleGdbWatchpointDisable);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::insertWatchpoint,                                            this,                                                           &SeerGdbWidget::handleGdbWatchpointInsert);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
+    QObject::connect(commandLogsWidget->watchpointsBrowser(),                   &SeerWatchpointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
 
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::refreshCatchpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::deleteCatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCatchpointDelete);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::enableCatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCatchpointEnable);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::disableCatchpoints,                                          this,                                                           &SeerGdbWidget::handleGdbCatchpointDisable);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::insertCatchpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCatchpointInsert);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
-    QObject::connect(_catchpointsBrowserWidget,                                 &SeerCatchpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::refreshCatchpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::deleteCatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCatchpointDelete);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::enableCatchpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCatchpointEnable);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::disableCatchpoints,                                          this,                                                           &SeerGdbWidget::handleGdbCatchpointDisable);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::insertCatchpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCatchpointInsert);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(commandLogsWidget->catchpointsBrowser(),                   &SeerCatchpointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
 
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::refreshPrintpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::deletePrintpoints,                                           this,                                                           &SeerGdbWidget::handleGdbPrintpointDelete);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::enablePrintpoints,                                           this,                                                           &SeerGdbWidget::handleGdbPrintpointEnable);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::disablePrintpoints,                                          this,                                                           &SeerGdbWidget::handleGdbPrintpointDisable);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::insertPrintpoint,                                            this,                                                           &SeerGdbWidget::handleGdbPrintpointInsert);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
-    QObject::connect(_printpointsBrowserWidget,                                 &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::refreshPrintpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::deletePrintpoints,                                           this,                                                           &SeerGdbWidget::handleGdbPrintpointDelete);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::enablePrintpoints,                                           this,                                                           &SeerGdbWidget::handleGdbPrintpointEnable);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::disablePrintpoints,                                          this,                                                           &SeerGdbWidget::handleGdbPrintpointDisable);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::insertPrintpoint,                                            this,                                                           &SeerGdbWidget::handleGdbPrintpointInsert);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
+    QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
-    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::refreshCheckpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbCheckpointList);
-    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::insertCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointInsert);
-    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::selectCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointSelect);
-    QObject::connect(_checkpointsBrowserWidget,                                 &SeerCheckpointsBrowserWidget::deleteCheckpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCheckpointDelete);
+    QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::refreshCheckpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbCheckpointList);
+    QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::insertCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointInsert);
+    QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::selectCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointSelect);
+    QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::deleteCheckpoints,                                           this,                                                           &SeerGdbWidget::handleGdbCheckpointDelete);
 
     QObject::connect(this,                                                      &SeerGdbWidget::assemblyConfigChanged,                                                      editorManagerWidget,                                            &SeerEditorManagerWidget::handleAssemblyConfigChanged);
 
@@ -396,11 +320,11 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->signalValuesBrowserWidget(),             &SeerSignalValuesBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->breakpointsBrowser(),                        &SeerBreakpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->watchpointsBrowser(),                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->catchpointsBrowser(),                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->printpointsBrowser(),                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->checkpointsBrowser(),                                      &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
 
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          editorManagerWidget,                                            &SeerEditorManagerWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleSessionTerminated);
@@ -422,25 +346,17 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->threadIdsBrowserWidget(),                  &SeerThreadIdsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->threadGroupsBrowserWidget(),               &SeerThreadGroupsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          threadManagerWidget->adaTasksBrowserWidget(),                   &SeerAdaTasksBrowserWidget::handleSessionTerminated);
-    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _breakpointsBrowserWidget,                                      &SeerBreakpointsBrowserWidget::handleSessionTerminated);
-    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _watchpointsBrowserWidget,                                      &SeerWatchpointsBrowserWidget::handleSessionTerminated);
-    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _catchpointsBrowserWidget,                                      &SeerCatchpointsBrowserWidget::handleSessionTerminated);
-    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _printpointsBrowserWidget,                                      &SeerPrintpointsBrowserWidget::handleSessionTerminated);
-    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          _checkpointsBrowserWidget,                                      &SeerCheckpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->breakpointsBrowser(),                        &SeerBreakpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->checkpointsBrowser(),                        &SeerCheckpointsBrowserWidget::handleSessionTerminated);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagerSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
-    QObject::connect(manualCommandComboBox,                                     QOverload<int>::of(&QComboBox::activated),                                                  this,                                                           &SeerGdbWidget::handleManualCommandChanged);
-    QObject::connect(_gdbOutputLog,                                             &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
-    QObject::connect(_gdbOutputLog,                                             &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
-    QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logEnabledChanged,                                                          this,                                                           &SeerGdbWidget::handleLogOuputChanged);
-    QObject::connect(_seerOutputLog,                                            &SeerLogWidget::logTimeStampChanged,                                                        this,                                                           &SeerGdbWidget::handleLogOuputChanged);
-
-    QObject::connect(breakpointsLoadToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbLoadBreakpoints);
-    QObject::connect(breakpointsSaveToolButton,                                 &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleGdbSaveBreakpoints);
-    QObject::connect(helpToolButton,                                            &QToolButton::clicked,                                                                      this,                                                           &SeerGdbWidget::handleHelpToolButtonClicked);
+    QObject::connect(commandLogsWidget->gdbOutputLog(),                         &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
 
 #if SEER_GDB_LOGOUT == 1
     // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
@@ -456,7 +372,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
 SeerGdbWidget::~SeerGdbWidget () {
 
-    deleteConsole();
+    commandLogsWidget->deleteConsole();
 
     if (_gdbMonitor) {
         delete _gdbMonitor;
@@ -845,138 +761,7 @@ const SeerEditorManagerWidget* SeerGdbWidget::editorManager () const {
 
 void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messageType) {
 
-    if (_messagesBrowserWidget == 0) {
-        return;
-    }
-
-    _messagesBrowserWidget->addMessage(message, messageType);
-}
-
-void SeerGdbWidget::handleLogsTabMoved (int to, int from) {
-
-    Q_UNUSED(from);
-    Q_UNUSED(to);
-
-    // Keep track of console tab if it moved.
-    if (_consoleIndex == from) {
-        _consoleIndex = to;
-    }
-
-    // Don't handle anything here if Seer is exiting.
-    if (isQuitting()) {
-        return;
-    }
-
-    writeLogsSettings();
-}
-
-void SeerGdbWidget::handleLogsTabChanged (int index) {
-
-    Q_UNUSED(index);
-
-    // Don't handle anything here if Seer is exiting.
-    if (isQuitting()) {
-        return;
-    }
-
-    writeLogsSettings();
-}
-
-void SeerGdbWidget::handleRaiseMessageTab () {
-
-    int idx = logsTabWidget->indexOf(_messagesBrowserWidget);
-
-    if (idx < 0) {
-        return;
-    }
-
-    logsTabWidget->setCurrentIndex(idx);
-}
-
-void SeerGdbWidget::writeLogsSettings () {
-
-    // Write tab order to settings.
-    QStringList tabs;
-
-    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        tabs.append(logsTabWidget->tabBar()->tabText(i));
-    }
-
-    QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
-
-    //qDebug() << "Tabs"    << tabs;
-    //qDebug() << "Current" << current;
-
-    QSettings settings;
-
-    settings.beginGroup("logsmanagerwindow"); {
-        settings.setValue("taborder",   tabs.join(','));
-        settings.setValue("tabcurrent", current);
-    } settings.endGroup();
-}
-
-void SeerGdbWidget::readLogsSettings () {
-
-    // Can't move things?
-    if (logsTabWidget->tabBar()->isMovable() == false) {
-        return;
-    }
-
-    // Read tab order from settings.
-    QSettings   settings;
-    QStringList tabs;
-    QString     current;
-
-    settings.beginGroup("logsmanagerwindow"); {
-        tabs    = settings.value("taborder").toString().split(',');
-        current = settings.value("tabcurrent").toString();
-    } settings.endGroup();
-
-    //qDebug() << "Tabs"    << tabs;
-    //qDebug() << "Current" << current;
-
-    // Move tabs to the requested order.
-    for (int i=0; i<tabs.count(); i++) {
-
-        QString tab = tabs[i];
-        int     tb  = -1;
-
-        for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
-            if (logsTabWidget->tabBar()->tabText(j) == tab) {
-                tb = j;
-                break;
-            }
-        }
-
-        if (tb != -1) {
-            logsTabWidget->tabBar()->moveTab(tb, i);
-        }
-    }
-
-    // Find the console tab index.
-    _consoleIndex = -1;
-    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-        if (logsTabWidget->tabBar()->tabText(i) == "Console output") {
-            _consoleIndex = i;
-            break;
-        }
-    }
-
-    if (_consoleIndex < 0) {
-        qDebug() << "The console tab index is not in the settings.";
-    }
-
-    // Make a tab current.
-    if (current != "") {
-        for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
-            if (logsTabWidget->tabBar()->tabText(i) == current) {
-                logsTabWidget->setCurrentIndex(i);
-                break;
-            }
-        }
-    }else{
-        logsTabWidget->setCurrentIndex(0);
-    }
+    commandLogsWidget->messagesBrowser()->addMessage(message, messageType);
 }
 
 void SeerGdbWidget::handleText (const QString& text) {
@@ -1010,52 +795,12 @@ void SeerGdbWidget::handleText (const QString& text) {
     }
 }
 
-void SeerGdbWidget::handleManualCommandExecute () {
-
-    // Get new command.
-    QString command = manualCommandComboBox->currentText();
+void SeerGdbWidget::handleManualCommandExecute (QString command) {
 
     // Do nothing if it is blank.
     if (command == "") {
         return;
     }
-
-    // Remove the second to last line, if it is blank.
-    if (manualCommandComboBox->count() >= 2) {
-
-        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-2);
-
-        if (lastCommand == "") {
-            manualCommandComboBox->removeItem(manualCommandComboBox->count()-2);
-        }
-    }
-
-    // Remove the last line, if it is blank.
-    if (manualCommandComboBox->count() >= 1) {
-
-        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
-
-        if (lastCommand == "") {
-            manualCommandComboBox->removeItem(manualCommandComboBox->count()-1);
-        }
-    }
-
-    // Add entered command to the end of the list as long as it's not
-    // already there.
-    if (manualCommandComboBox->count() > 0) {
-
-        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
-
-        if (lastCommand != command) {
-            manualCommandComboBox->addItem(command);
-        }
-    }
-
-    // Add a blank entry. It will be removed when the next manual command is entered.
-    manualCommandComboBox->addItem("");
-
-    // Point to last one.
-    manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
 
     // Execute it.
     handleGdbCommand(command);
@@ -1296,7 +1041,7 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
         setExecutableLaunchMode("attach");
         saveLaunchMode();
         setGdbRecordMode("auto");
-        reattachConsole();
+        commandLogsWidget->reattachConsole();
 
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
@@ -1400,7 +1145,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
         saveLaunchMode();
         setGdbRecordMode("auto");
         setExecutablePid(0);
-        reattachConsole();
+        commandLogsWidget->reattachConsole();
 
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
@@ -1640,7 +1385,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
         saveLaunchMode();
         setGdbRecordMode("auto");
         setExecutablePid(0);
-        reattachConsole();
+        commandLogsWidget->reattachConsole();
 
         if (newExecutableFlag() == true) {
             handleGdbSetArchitectureType();
@@ -2255,9 +2000,9 @@ void SeerGdbWidget::handleGdbSessionSaveBreakpoints () {
 
 void SeerGdbWidget::handleGdbTerminalDeviceName () {
 
-    if (_consoleWidget->terminalDeviceName() != "") {
+    if (commandLogsWidget->console()->terminalDeviceName() != "") {
 
-        handleGdbCommand(QString("-inferior-tty-set ") + _consoleWidget->terminalDeviceName());
+        handleGdbCommand(QString("-inferior-tty-set ") + commandLogsWidget->console()->terminalDeviceName());
 
     }else{
         qWarning() << "Can't set TTY name because the name is blank.";
@@ -3281,101 +3026,6 @@ void SeerGdbWidget::handleSplitterMoved (int pos, int index) {
     writeSettings();
 }
 
-void SeerGdbWidget::handleManualCommandChanged () {
-
-    //qDebug() << "Manual Command ComboBox changed";
-
-    writeSettings();
-}
-
-void SeerGdbWidget::handleLogOuputChanged () {
-
-    //qDebug() << "Log Output changed";
-
-    writeSettings();
-}
-
-void SeerGdbWidget::handleGdbLoadBreakpoints () {
-
-    QFileDialog dialog(this, "Seer - Load Breakpoints from a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
-    dialog.setOptions(QFileDialog::DontUseNativeDialog);
-    dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("seer");
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return;
-    }
-
-    QStringList files = dialog.selectedFiles();
-
-    if (files.size() == 0) {
-        return;
-    }
-
-    if (files.size() > 1) {
-        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
-        return;
-    }
-
-    QString fname = files[0];
-
-    handleGdbCommand("source -v " + fname);
-    handleGdbGenericpointList();
-
-    QMessageBox::information(this, "Seer", "Loaded.");
-}
-
-void SeerGdbWidget::handleGdbSaveBreakpoints () {
-
-    if (_breakpointsBrowserWidget->isEmpty() &&
-        _watchpointsBrowserWidget->isEmpty() &&
-        _catchpointsBrowserWidget->isEmpty() &&
-        _printpointsBrowserWidget->isEmpty()) {
-
-        QMessageBox::information(this, "Seer", "No breakpoints of any kind to save.");
-
-        return;
-    }
-
-    QFileDialog dialog(this, "Seer - Save Breakpoints to a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
-    dialog.setOptions(QFileDialog::DontUseNativeDialog);
-    dialog.setAcceptMode(QFileDialog::AcceptSave);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setDefaultSuffix("seer");
-    dialog.selectFile("breakpoints.seer");
-
-    if (dialog.exec() != QDialog::Accepted) {
-        return;
-    }
-
-    QStringList files = dialog.selectedFiles();
-
-    if (files.size() == 0) {
-        return;
-    }
-
-    if (files.size() > 1) {
-        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
-        return;
-    }
-
-    QString fname = files[0];
-
-    handleGdbCommand("save breakpoints " + fname);
-
-    QMessageBox::information(this, "Seer", "Saved.");
-}
-
-void SeerGdbWidget::handleHelpToolButtonClicked () {
-
-    SeerHelpPageDialog* help = new SeerHelpPageDialog;
-    help->loadFile(":/seer/resources/help/BreakpointGdbSeerManager.md");
-    help->show();
-    help->raise();
-}
-
-
 void SeerGdbWidget::handleGdbAssemblyDisassemblyFlavor () {
 
     if (_assemblyDisassemblyFlavor != "") {
@@ -3419,30 +3069,6 @@ void SeerGdbWidget::handleGdbProcessErrored (QProcess::ProcessError errorStatus)
     }
 }
 
-void SeerGdbWidget::handleConsoleModeChanged () {
-
-    if (_consoleIndex < 0) {
-        return;
-    }
-
-    if (_consoleWidget == nullptr) {
-        return;
-    }
-
-    if (_consoleMode == "detached") {
-        logsTabWidget->detachTab(_consoleIndex, false);
-        _consoleWidget->raise();
-        _consoleWidget->resetSize();
-    }else if (_consoleMode == "detachedminimized") {
-        logsTabWidget->detachTab(_consoleIndex, true);
-        _consoleWidget->resetSize();
-    }else if (_consoleMode == "attached") {
-        logsTabWidget->reattachTab(_consoleIndex);
-    }else{
-        logsTabWidget->reattachTab(_consoleIndex);
-    }
-}
-
 void SeerGdbWidget::handleAboutToQuit () {
 
     // Detect if we're exiting Seer.
@@ -3466,15 +3092,6 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("mode", consoleMode());
         settings.setValue("scrolllines", consoleScrollLines());
     }settings.endGroup();
-
-    settings.beginWriteArray("manualgdbcommandshistory"); {
-        QStringList commands = manualCommands(rememberManualCommandCount());
-
-        for (int i = 0; i < commands.size(); ++i) {
-            settings.setArrayIndex(i);
-            settings.setValue("command", commands[i]);
-        }
-    } settings.endArray();
 
     settings.beginWriteArray("sourcealternatedirectories"); {
         QStringList directories = sourceAlternateDirectories();
@@ -3534,21 +3151,12 @@ void SeerGdbWidget::writeSettings () {
         settings.setValue("assemblydisassemblymode",         assemblyDisassemblyMode());
         settings.setValue("assemblydisassemblybytes",        assemblyDisassemblyBytes());
     } settings.endGroup();
-
-    settings.beginGroup("gdboutputlog"); {
-        settings.setValue("enabled", isGdbOutputLogEnabled());
-        settings.setValue("timestamp", isGdbOutputLogTimeStampEnabled());
-    } settings.endGroup();
-
-    settings.beginGroup("seeroutputlog"); {
-        settings.setValue("enabled", isSeerOutputLogEnabled());
-        settings.setValue("timestamp", isSeerOutputLogTimeStampEnabled());
-    } settings.endGroup();
 }
 
 void SeerGdbWidget::readSettings () {
 
     QSettings settings;
+    int       size;
 
     settings.beginGroup("mainwindowsplitters"); {
         leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
@@ -3561,18 +3169,6 @@ void SeerGdbWidget::readSettings () {
         setConsoleMode(settings.value("mode", "attached").toString());
         setConsoleScrollLines(settings.value("scrolllines", 1000).toInt());
     } settings.endGroup();
-
-    int size = settings.beginReadArray("manualgdbcommandshistory"); {
-        QStringList commands;
-
-        for (int i = 0; i < size; ++i) {
-            settings.setArrayIndex(i);
-
-            commands << settings.value("command").toString();
-        }
-
-        setManualCommands(commands);
-    } settings.endArray();
 
     size = settings.beginReadArray("sourcealternatedirectories"); {
         QStringList directories;
@@ -3651,16 +3247,6 @@ void SeerGdbWidget::readSettings () {
         setAssemblyShowOpcodeColumn(             settings.value("assemblyshowopcodecolumn",      false).toBool());
         setAssemblyShowSourceLines(              settings.value("assemblyshowsourcelines",       false).toBool());
         setAssemblyDisassemblyMode(              settings.value("assemblydisassemblymode",       "function").toString(),    settings.value("assemblydisassemblybytes", "256").toInt());
-    } settings.endGroup();
-
-    settings.beginGroup("gdboutputlog"); {
-        setGdbOutputLogEnabled(settings.value("enabled", true).toBool());
-        setGdbOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
-    } settings.endGroup();
-
-    settings.beginGroup("seeroutputlog"); {
-        setSeerOutputLogEnabled(settings.value("enabled", false).toBool());
-        setSeerOutputLogTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
 }
 
@@ -3778,7 +3364,7 @@ bool SeerGdbWidget::startGdbRR () {
 
     // Set the RR program name to use.
     rawcommand += rrProgram() + " ";
-    rawcommand += rrArguments() + " --tty " + _consoleWidget->terminalDeviceName() + " " + executableRRTraceDirectory() + " ";
+    rawcommand += rrArguments() + " --tty " + commandLogsWidget->console()->terminalDeviceName() + " " + executableRRTraceDirectory() + " ";
 
     // Set any extra gdb arguments that RR may want.
     if (rrGdbArguments() != "") {
@@ -3845,157 +3431,44 @@ void SeerGdbWidget::killGdb () {
     }
 }
 
-void SeerGdbWidget::createConsole () {
-
-    if (_consoleWidget == 0) {
-        _consoleWidget = new SeerConsoleWidget(0);
-
-        // Connect window title changes.
-        QObject::connect(this, &SeerGdbWidget::changeWindowTitle, _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
-
-        // The console needs to know when it's detached or reattached.
-        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabDetached),   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
-        QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabReattached), _consoleWidget, &SeerConsoleWidget::handleTabReattached);
-
-        _consoleIndex = logsTabWidget->addTab(_consoleWidget, "Console output");
-
-        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextAdded,  this, &SeerGdbWidget::handleConsoleNewTextAdded);
-        QObject::connect(_consoleWidget, &SeerConsoleWidget::newTextViewed, this, &SeerGdbWidget::handleConsoleNewTextViewed);
-
-        setConsoleMode(consoleMode());
-        setConsoleScrollLines(consoleScrollLines());
-    }
-}
-
-void SeerGdbWidget::handleConsoleNewTextAdded () {
-
-    if (_consoleIndex >= 0) {
-        logsTabWidget->setTabIcon(_consoleIndex, QIcon(":/seer/resources/RelaxLightIcons/data-information.svg"));
-    }
-}
-
-void SeerGdbWidget::handleConsoleNewTextViewed () {
-
-    if (_consoleIndex >= 0) {
-        logsTabWidget->setTabIcon(_consoleIndex, QIcon());
-    }
-}
-
 SeerConsoleWidget* SeerGdbWidget::console () {
 
-    return _consoleWidget;
-}
-
-void SeerGdbWidget::deleteConsole () {
-
-    if (_consoleWidget) {
-
-        if (_consoleIndex >= 0) {
-            logsTabWidget->removeTab(_consoleIndex);
-        }
-
-        delete _consoleWidget;
-        _consoleWidget = 0;
-        _consoleIndex  = -1;
-    }
-}
-
-void SeerGdbWidget::reattachConsole () {
-
-     if (_consoleIndex < 0) {
-        return;
-    }
-
-    if (_consoleWidget == nullptr) {
-        return;
-    }
-
-    _consoleMode = "attached";
-
-    logsTabWidget->reattachTab(_consoleIndex);
+    return commandLogsWidget->console();
 }
 
 void SeerGdbWidget::setConsoleMode (const QString& mode) {
 
-    _consoleMode = mode;
-
-    handleConsoleModeChanged();
+    commandLogsWidget->setConsoleMode(mode);
 }
 
 QString SeerGdbWidget::consoleMode () const {
 
-    return _consoleMode;
+    return commandLogsWidget->consoleMode();
 }
 
 void SeerGdbWidget::setConsoleScrollLines (int count) {
 
-    _consoleScrollLines = count;
-
-    if (_consoleWidget) {
-        _consoleWidget->setScrollLines(_consoleScrollLines);
-    }
+    commandLogsWidget->setConsoleScrollLines(count);
 }
 
 int SeerGdbWidget::consoleScrollLines () const {
 
-    return _consoleScrollLines;
-}
-
-void SeerGdbWidget::setManualCommands (const QStringList& commands) {
-
-    manualCommandComboBox->clear();
-    manualCommandComboBox->addItems(commands);
-
-    // Point to last one.
-    if (manualCommandComboBox->count() > 0) {
-        manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
-    }
-}
-
-QStringList SeerGdbWidget::manualCommands(int count) const {
-
-    //qDebug() << "Count =" << count;
-
-    // Select all if a zero.
-    if (count == 0) {
-        count = manualCommandComboBox->count();
-    }
-
-    // No more than count.
-    if (count > manualCommandComboBox->count()) {
-        count = manualCommandComboBox->count();
-    }
-
-    // Calculate starting position in list.
-    int index = manualCommandComboBox->count() - count;
-
-    // Get the list.
-    QStringList list;
-
-    for (; index<count; index++) {
-        list << manualCommandComboBox->itemText(index);
-    }
-
-    return list;
+    return commandLogsWidget->consoleScrollLines();
 }
 
 void SeerGdbWidget::setRememberManualCommandCount (int count) {
 
-    _rememberManualCommandCount = count;
+    commandLogsWidget->setRememberManualCommandCount(count);
 }
 
 int SeerGdbWidget::rememberManualCommandCount () const {
 
-    return _rememberManualCommandCount;
+    return commandLogsWidget->rememberManualCommandCount();
 }
 
 void SeerGdbWidget::clearManualCommandHistory () {
 
-    // Zap the entries in the combobox.
-    manualCommandComboBox->clear();
-
-    // Write the settings.
-    writeSettings();
+    commandLogsWidget->clearManualCommandHistory();
 }
 
 const QStringList& SeerGdbWidget::sourceAlternateDirectories() const {
@@ -4317,46 +3790,6 @@ QString SeerGdbWidget::assemblyDisassemblyMode () const {
 int SeerGdbWidget::assemblyDisassemblyBytes () const {
 
     return _assemblyDisassemblyBytes;
-}
-
-void SeerGdbWidget::setGdbOutputLogEnabled (bool flag) {
-
-    _gdbOutputLog->setLogEnabled(flag);
-}
-
-bool SeerGdbWidget::isGdbOutputLogEnabled () const {
-
-    return _gdbOutputLog->isLogEnabled();
-}
-
-void SeerGdbWidget::setGdbOutputLogTimeStampEnabled (bool flag) {
-
-    _gdbOutputLog->setTimeStampEnabled(flag);
-}
-
-bool SeerGdbWidget::isGdbOutputLogTimeStampEnabled () const {
-
-    return _gdbOutputLog->isTimeStampEnabled();
-}
-
-void SeerGdbWidget::setSeerOutputLogEnabled (bool flag) {
-
-    _seerOutputLog->setLogEnabled(flag);
-}
-
-bool SeerGdbWidget::isSeerOutputLogEnabled () const {
-
-    return _seerOutputLog->isLogEnabled();
-}
-
-void SeerGdbWidget::setSeerOutputLogTimeStampEnabled (bool flag) {
-
-    _seerOutputLog->setTimeStampEnabled(flag);
-}
-
-bool SeerGdbWidget::isSeerOutputLogTimeStampEnabled () const {
-
-    return _seerOutputLog->isTimeStampEnabled();
 }
 
 void SeerGdbWidget::sendGdbInterrupt (int signal) {

@@ -124,15 +124,11 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setGdbRecordDirection                       (const QString& direction);
         QString                             gdbRecordDirection                          () const;
 
+        SeerConsoleWidget*                  console                                     ();
         void                                setConsoleMode                              (const QString& mode);
         QString                             consoleMode                                 () const;
-
         void                                setConsoleScrollLines                       (int count);
         int                                 consoleScrollLines                          () const;
-
-        void                                setManualCommands                           (const QStringList& commands);
-        QStringList                         manualCommands                              (int count) const;
-
         void                                setRememberManualCommandCount               (int count);
         int                                 rememberManualCommandCount                  () const;
         void                                clearManualCommandHistory                   ();
@@ -183,18 +179,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             assemblyDisassemblyMode                     () const;
         int                                 assemblyDisassemblyBytes                    () const;
 
-        void                                setGdbOutputLogEnabled                      (bool flag);
-        bool                                isGdbOutputLogEnabled                       () const;
-
-        void                                setGdbOutputLogTimeStampEnabled             (bool flag);
-        bool                                isGdbOutputLogTimeStampEnabled              () const;
-
-        void                                setSeerOutputLogEnabled                     (bool flag);
-        bool                                isSeerOutputLogEnabled                      () const;
-
-        void                                setSeerOutputLogTimeStampEnabled            (bool flag);
-        bool                                isSeerOutputLogTimeStampEnabled             () const;
-
         // RR settings.
         void                                setRRProgram                                (const QString& program);
         QString                             rrProgram                                   () const;
@@ -230,7 +214,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleRaiseMessageTab                       ();
 
         void                                handleText                                  (const QString& text);
-        void                                handleManualCommandExecute                  ();
+        void                                handleManualCommandExecute                  (QString command);
         void                                handleGdbCommand                            (const QString& command, bool ignoreErrors=false);
         void                                handleGdbExit                               ();
         void                                handleGdbRunExecutable                      (const QString& breakMode, bool loadSessionBreakpoints);
@@ -373,11 +357,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbVarVisualizer                      ();
         void                                handleGdbImageVisualizer                    ();
         void                                handleSplitterMoved                         (int pos, int index);
-        void                                handleManualCommandChanged                  ();
-        void                                handleLogOuputChanged                       ();
-        void                                handleGdbLoadBreakpoints                    ();
-        void                                handleGdbSaveBreakpoints                    ();
-        void                                handleHelpToolButtonClicked                 ();
         void                                handleGdbAssemblyDisassemblyFlavor          ();
         void                                handleGdbAssemblySymbolDemangling           ();
         void                                handleGdbSchedulerLockingMode               (QString mode);
@@ -390,9 +369,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessFinished                    (int exitCode, QProcess::ExitStatus exitStatus);
         void                                handleGdbProcessErrored                     (QProcess::ProcessError errorStatus);
 
-        void                                handleConsoleModeChanged                    ();
-        void                                handleConsoleNewTextAdded                   ();
-        void                                handleConsoleNewTextViewed                  ();
         void                                handleAboutToQuit                           ();
 
     signals:
@@ -405,8 +381,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                gdbCommandLogout                            (const QString& text);
 
     protected:
-        void                                writeLogsSettings                           ();
-        void                                readLogsSettings                            ();
 
     private:
         bool                                isQuitting                                  () const;
@@ -415,10 +389,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                startGdb                                    ();
         bool                                startGdbRR                                  ();
         void                                killGdb                                     ();
-        void                                createConsole                               ();
-        void                                deleteConsole                               ();
-        void                                reattachConsole                             ();
-        SeerConsoleWidget*                  console                                     ();
         void                                sendGdbInterrupt                            (int signal);
         void                                delay                                       (int seconds);
 
@@ -465,20 +435,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _executablePreGdbCommands;
         QStringList                         _executablePostGdbCommands;
         bool                                _newExecutableFlag;
-
-        SeerConsoleWidget*                  _consoleWidget;
-        int                                 _consoleIndex;
-        QString                             _consoleMode;
-        int                                 _consoleScrollLines;
-        int                                 _rememberManualCommandCount;
-        SeerMessagesBrowserWidget*          _messagesBrowserWidget;
-        SeerBreakpointsBrowserWidget*       _breakpointsBrowserWidget;
-        SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
-        SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
-        SeerPrintpointsBrowserWidget*       _printpointsBrowserWidget;
-        SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
-        SeerGdbLogWidget*                   _gdbOutputLog;
-        SeerSeerLogWidget*                  _seerOutputLog;
 
         GdbMonitor*                         _gdbMonitor;
         QProcess*                           _gdbProcess;

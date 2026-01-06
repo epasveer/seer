@@ -109,8 +109,17 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     manualCommandComboBox->lineEdit()->setClearButtonEnabled(true);
 
     // Connect things.
-    QObject::connect(logsTabWidget->tabBar(),    &QTabBar::tabMoved,          this,   &SeerCommandLogsWidget::handleLogsTabMoved);
-    QObject::connect(logsTabWidget->tabBar(),    &QTabBar::currentChanged,    this,   &SeerCommandLogsWidget::handleLogsTabChanged);
+    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::tabMoved,                             this,   &SeerCommandLogsWidget::handleLogsTabMoved);
+    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::currentChanged,                       this,   &SeerCommandLogsWidget::handleLogsTabChanged);
+    QObject::connect(manualCommandComboBox->lineEdit(), &QLineEdit::returnPressed,                      this,   &SeerCommandLogsWidget::handleManualCommandExecute);
+    QObject::connect(manualCommandComboBox,             QOverload<int>::of(&QComboBox::activated),      this,   &SeerCommandLogsWidget::handleManualCommandChanged);
+    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logTimeStampChanged,            this,   &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logTimeStampChanged,            this,   &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(breakpointsLoadToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbLoadBreakpoints);
+    QObject::connect(breakpointsSaveToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbSaveBreakpoints);
+    QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleHelpToolButtonClicked);
 
     // Restore tab ordering.
     readSettings();
@@ -119,11 +128,6 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
 SeerCommandLogsWidget::~SeerCommandLogsWidget () {
 
     deleteConsole();
-}
-
-QLineEdit* SeerCommandLogsWidget::commandLineEdit () {
-
-    return manualCommandComboBox->lineEdit();
 }
 
 SeerMessagesBrowserWidget* SeerCommandLogsWidget::messagesBrowser () {
@@ -249,6 +253,63 @@ int SeerCommandLogsWidget::consoleScrollLines () const {
     return _consoleScrollLines;
 }
 
+void SeerCommandLogsWidget::setManualCommands (const QStringList& commands) {
+
+    manualCommandComboBox->clear();
+    manualCommandComboBox->addItems(commands);
+
+    // Point to last one.
+    if (manualCommandComboBox->count() > 0) {
+        manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
+    }
+}
+
+QStringList SeerCommandLogsWidget::manualCommands(int count) const {
+
+    //qDebug() << "Count =" << count;
+
+    // Select all if a zero.
+    if (count == 0) {
+        count = manualCommandComboBox->count();
+    }
+
+    // No more than count.
+    if (count > manualCommandComboBox->count()) {
+        count = manualCommandComboBox->count();
+    }
+
+    // Calculate starting position in list.
+    int index = manualCommandComboBox->count() - count;
+
+    // Get the list.
+    QStringList list;
+
+    for (; index<count; index++) {
+        list << manualCommandComboBox->itemText(index);
+    }
+
+    return list;
+}
+
+void SeerCommandLogsWidget::setRememberManualCommandCount (int count) {
+
+    _rememberManualCommandCount = count;
+}
+
+int SeerCommandLogsWidget::rememberManualCommandCount () const {
+
+    return _rememberManualCommandCount;
+}
+
+void SeerCommandLogsWidget::clearManualCommandHistory () {
+
+    // Zap the entries in the combobox.
+    manualCommandComboBox->clear();
+
+    // Write the settings.
+    writeSettings();
+}
+
 void SeerCommandLogsWidget::handleLogsTabMoved (int to, int from) {
 
     Q_UNUSED(from);
@@ -332,6 +393,152 @@ void SeerCommandLogsWidget::handleConsoleNewTextViewed () {
     }
 }
 
+void SeerCommandLogsWidget::handleManualCommandExecute () {
+
+    // Get new command.
+    QString command = manualCommandComboBox->currentText();
+
+    // Do nothing if it is blank.
+    if (command == "") {
+        return;
+    }
+
+    // Remove the second to last line, if it is blank.
+    if (manualCommandComboBox->count() >= 2) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-2);
+
+        if (lastCommand == "") {
+            manualCommandComboBox->removeItem(manualCommandComboBox->count()-2);
+        }
+    }
+
+    // Remove the last line, if it is blank.
+    if (manualCommandComboBox->count() >= 1) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
+
+        if (lastCommand == "") {
+            manualCommandComboBox->removeItem(manualCommandComboBox->count()-1);
+        }
+    }
+
+    // Add entered command to the end of the list as long as it's not
+    // already there.
+    if (manualCommandComboBox->count() > 0) {
+
+        QString lastCommand = manualCommandComboBox->itemText(manualCommandComboBox->count()-1);
+
+        if (lastCommand != command) {
+            manualCommandComboBox->addItem(command);
+        }
+    }
+
+    // Add a blank entry. It will be removed when the next manual command is entered.
+    manualCommandComboBox->addItem("");
+
+    // Point to last one.
+    manualCommandComboBox->setCurrentIndex(manualCommandComboBox->count()-1);
+
+    // Execute it.
+    emit executeGdbCommand(command);
+
+    writeSettings();
+}
+
+void SeerCommandLogsWidget::handleManualCommandChanged () {
+
+    //qDebug() << "Manual Command ComboBox changed";
+
+    writeSettings();
+}
+
+
+void SeerCommandLogsWidget::handleLogOutputChanged () {
+
+    writeSettings();
+}
+
+void SeerCommandLogsWidget::handleGdbLoadBreakpoints () {
+
+    QFileDialog dialog(this, "Seer - Load Breakpoints from a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
+    dialog.setOptions(QFileDialog::DontUseNativeDialog);
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("seer");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    QString fname = files[0];
+
+    emit executeGdbCommand("source -v " + fname);
+    emit refreshBreakpointsList();
+
+    QMessageBox::information(this, "Seer", "Loaded.");
+}
+
+void SeerCommandLogsWidget::handleGdbSaveBreakpoints () {
+
+    if (breakpointsBrowser()->isEmpty() &&
+        watchpointsBrowser()->isEmpty() &&
+        catchpointsBrowser()->isEmpty() &&
+        printpointsBrowser()->isEmpty()) {
+
+        QMessageBox::information(this, "Seer", "No breakpoints of any kind to save.");
+
+        return;
+    }
+
+    QFileDialog dialog(this, "Seer - Save Breakpoints to a file.", "./", "Breakpoints (*.seer);;All files (*.*)");
+    dialog.setOptions(QFileDialog::DontUseNativeDialog);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setDefaultSuffix("seer");
+    dialog.selectFile("breakpoints.seer");
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QStringList files = dialog.selectedFiles();
+
+    if (files.size() == 0) {
+        return;
+    }
+
+    if (files.size() > 1) {
+        QMessageBox::critical(this, tr("Error"), tr("Select only 1 file."));
+        return;
+    }
+
+    QString fname = files[0];
+
+    emit executeGdbCommand("save breakpoints " + fname);
+
+    QMessageBox::information(this, "Seer", "Saved.");
+}
+
+void SeerCommandLogsWidget::handleHelpToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
+    help->loadFile(":/seer/resources/help/BreakpointGdbSeerManager.md");
+    help->show();
+    help->raise();
+}
+
 void SeerCommandLogsWidget::writeSettings () {
 
     // Write tab order to settings.
@@ -352,20 +559,36 @@ void SeerCommandLogsWidget::writeSettings () {
         settings.setValue("taborder",   tabs.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
+
+    // Write the manual command history.
+    settings.beginWriteArray("manualgdbcommandshistory"); {
+        QStringList commands = manualCommands(rememberManualCommandCount());
+
+        for (int i = 0; i < commands.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("command", commands[i]);
+        }
+    } settings.endArray();
+
+    // Write log settings.
+    settings.beginGroup("gdboutputlog"); {
+        settings.setValue("enabled",   _gdbOutputLog->isLogEnabled());
+        settings.setValue("timestamp", _gdbOutputLog->isTimeStampEnabled());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        settings.setValue("enabled",   _seerOutputLog->isLogEnabled());
+        settings.setValue("timestamp", _seerOutputLog->isTimeStampEnabled());
+    } settings.endGroup();
 }
 
 void SeerCommandLogsWidget::readSettings () {
 
-    // Can't move things?
-    if (logsTabWidget->tabBar()->isMovable() == false) {
-        return;
-    }
+    QSettings settings;
 
     // Read tab order from settings.
-    QSettings   settings;
     QStringList tabs;
     QString     current;
-
     settings.beginGroup("logsmanagerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
         current = settings.value("tabcurrent").toString();
@@ -416,5 +639,29 @@ void SeerCommandLogsWidget::readSettings () {
     }else{
         logsTabWidget->setCurrentIndex(0);
     }
+
+    // Read the manual command history.
+    int size = settings.beginReadArray("manualgdbcommandshistory"); {
+        QStringList commands;
+
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+
+            commands << settings.value("command").toString();
+        }
+
+        setManualCommands(commands);
+    } settings.endArray();
+
+    // Read log settings.
+    settings.beginGroup("gdboutputlog"); {
+        _gdbOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
+        _gdbOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        _seerOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
+        _seerOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
+    } settings.endGroup();
 }
 

@@ -23,9 +23,8 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
 
     public:
         explicit SeerCommandLogsWidget (QWidget* parent = 0);
-       ~SeerCommandLogsWidget ();
+        ~SeerCommandLogsWidget ();
 
-        QLineEdit*                          commandLineEdit                 ();
         SeerMessagesBrowserWidget*          messagesBrowser                 ();
         SeerBreakpointsBrowserWidget*       breakpointsBrowser              ();
         SeerWatchpointsBrowserWidget*       watchpointsBrowser              ();
@@ -44,15 +43,29 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         void                                setConsoleScrollLines           (int count);
         int                                 consoleScrollLines              () const;
 
-    public slots:
+        void                                setManualCommands               (const QStringList& commands);
+        QStringList                         manualCommands                  (int count) const;
+        void                                setRememberManualCommandCount   (int count);
+        int                                 rememberManualCommandCount      () const;
+        void                                clearManualCommandHistory       ();
+
+    protected slots:
         void                                handleLogsTabMoved              (int to, int from);
         void                                handleLogsTabChanged            (int index);
         void                                handleRaiseMessageTab           ();
         void                                handleConsoleModeChanged        ();
         void                                handleConsoleNewTextAdded       ();
         void                                handleConsoleNewTextViewed      ();
+        void                                handleManualCommandExecute      ();
+        void                                handleManualCommandChanged      ();
+        void                                handleLogOutputChanged          ();
+        void                                handleGdbLoadBreakpoints        ();
+        void                                handleGdbSaveBreakpoints        ();
+        void                                handleHelpToolButtonClicked     ();
 
     signals:
+        void                                executeGdbCommand               (QString command);
+        void                                refreshBreakpointsList          ();
 
     protected:
         void                                writeSettings                   ();
