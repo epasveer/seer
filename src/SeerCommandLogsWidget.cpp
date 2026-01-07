@@ -80,27 +80,6 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     // Each RUN method will create and connect to the console's terminal.
     createConsole();
 
-    // Create editor options bar.
-    QToolButton* breakpointsLoadToolButton = new QToolButton(logsTabWidget);
-    breakpointsLoadToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-open.svg"));
-    breakpointsLoadToolButton->setToolTip("Load previously saved breakpoints.");
-
-    QToolButton* breakpointsSaveToolButton = new QToolButton(logsTabWidget);
-    breakpointsSaveToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/document-save-as.svg"));
-    breakpointsSaveToolButton->setToolTip("Save breakpoints to a file.");
-
-    QToolButton* helpToolButton = new QToolButton(logsTabWidget);
-    helpToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/help-about.svg"));
-    helpToolButton->setToolTip("Help on Breakpoint/Gdb/Seer information.");
-
-    QHContainerWidget* hcontainer = new QHContainerWidget(this);
-    hcontainer->setSpacing(3);
-    hcontainer->addWidget(breakpointsLoadToolButton);
-    hcontainer->addWidget(breakpointsSaveToolButton);
-    hcontainer->addWidget(helpToolButton);
-
-    logsTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
-
     // Set manual command settings.
     manualCommandComboBox->setFont(font);
     manualCommandComboBox->setEditable(true);

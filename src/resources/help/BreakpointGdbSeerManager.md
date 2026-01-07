@@ -119,6 +119,15 @@ This input field allows GDB and GDB/mi commands to be manually entered. The resu
 
 Seer maintains a history of N commands, as set in the Seer Config dialogs. This history is remembered for the next time Seer is used.
 
+### MACRO gdb commands
+
+There are 10 macros you can create for custom commands. They are labelled "M1" through "M0". Think of your keyboard with numeric
+keys 1 through 0. They have hotkeys mapped from Ctrl+Shift+1 through Ctrl+Shift+0. Clicking the button or usinging the hotkey will
+execute the commands in the macro. Holding down the button will bring up an editor to edit the contents of the macro. 
+
+Typically the macro contains gdb commands or gdbmi commands. Output will go to the GDB output tab. The macro is executed using gdb's
+"source" command, which can handle a lot off unique cases.
+
 ### References
 
 Consult these gdb references
