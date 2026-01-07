@@ -7,104 +7,101 @@
     <x>0</x>
     <y>0</y>
     <width>997</width>
-    <height>566</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QSplitter" name="sourceLibraryVariableManagerSplitter">
-   <property name="geometry">
-    <rect>
-     <x>9</x>
-     <y>9</y>
-     <width>16</width>
-     <height>548</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-     <horstretch>10</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-   <widget class="SeerSourceSymbolLibraryManagerWidget" name="sourceLibraryManagerWidget" native="true">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>50</horstretch>
-      <verstretch>50</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-   <widget class="SeerVariableManagerWidget" name="variableManagerWidget" native="true">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>50</horstretch>
-      <verstretch>50</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QSplitter" name="stackThreadManagerSplitter">
-   <property name="geometry">
-    <rect>
-     <x>954</x>
-     <y>9</y>
-     <width>34</width>
-     <height>548</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-     <horstretch>30</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-   <widget class="SeerStackManagerWidget" name="stackManagerWidget" native="true">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>50</horstretch>
-      <verstretch>50</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-   <widget class="SeerThreadManagerWidget" name="threadManagerWidget" native="true">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>50</horstretch>
-      <verstretch>50</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QSplitter" name="sourceCommandLogsSplitter">
-   <property name="geometry">
-    <rect>
-     <x>24</x>
-     <y>9</y>
-     <width>0</width>
-     <height>0</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Vertical</enum>
-   </property>
-   <widget class="SeerEditorManagerWidget" name="editorManagerWidget" native="true">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>20</horstretch>
-      <verstretch>75</verstretch>
-     </sizepolicy>
-    </property>
-   </widget>
-   <widget class="SeerCommandLogsWidget" name="commandLogsWidget" native="true"/>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="leftCenterRightSplitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
+     <widget class="QSplitter" name="sourceLibraryVariableManagerSplitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>10</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="SeerSourceSymbolLibraryManagerWidget" name="sourceLibraryManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>50</horstretch>
+         <verstretch>50</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="SeerVariableManagerWidget" name="variableManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>50</horstretch>
+         <verstretch>50</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QSplitter" name="sourceCommandLogsSplitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="SeerEditorManagerWidget" name="editorManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>20</horstretch>
+         <verstretch>75</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="SeerCommandLogsWidget" name="commandLogsWidget" native="true"/>
+     </widget>
+     <widget class="QSplitter" name="stackThreadManagerSplitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>30</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="SeerStackManagerWidget" name="stackManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>50</horstretch>
+         <verstretch>50</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="SeerThreadManagerWidget" name="threadManagerWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>50</horstretch>
+         <verstretch>50</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>

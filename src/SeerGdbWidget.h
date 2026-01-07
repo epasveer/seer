@@ -209,10 +209,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         const QString&                      backupLaunchMode                            () const;
 
     public slots:
-        void                                handleLogsTabMoved                          (int to, int from);
-        void                                handleLogsTabChanged                        (int index);
-        void                                handleRaiseMessageTab                       ();
-
         void                                handleText                                  (const QString& text);
         void                                handleManualCommandExecute                  (QString command);
         void                                handleGdbCommand                            (const QString& command, bool ignoreErrors=false);

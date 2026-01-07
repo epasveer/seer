@@ -354,7 +354,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(sourceLibraryVariableManagerSplitter,                      &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
-    QObject::connect(codeManagerLogTabsSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
+    QObject::connect(sourceCommandLogsSplitter,                                 &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagerSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(commandLogsWidget->gdbOutputLog(),                         &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
 
@@ -3083,7 +3083,7 @@ void SeerGdbWidget::writeSettings () {
 
     settings.beginGroup("mainwindowsplitters"); {
         settings.setValue("leftCenterRightSplitter",              leftCenterRightSplitter->saveState());
-        settings.setValue("codeManagerLogTabsSplitter",           codeManagerLogTabsSplitter->saveState());
+        settings.setValue("sourceCommandLogsSplitter",            sourceCommandLogsSplitter->saveState());
         settings.setValue("sourceLibraryVariableManagerSplitter", sourceLibraryVariableManagerSplitter->saveState());
         settings.setValue("stackThreadManagerSplitter",           stackThreadManagerSplitter->saveState());
     } settings.endGroup();
@@ -3160,7 +3160,7 @@ void SeerGdbWidget::readSettings () {
 
     settings.beginGroup("mainwindowsplitters"); {
         leftCenterRightSplitter->restoreState(settings.value("leftCenterRightSplitter").toByteArray());
-        codeManagerLogTabsSplitter->restoreState(settings.value("codeManagerLogTabsSplitter").toByteArray());
+        sourceCommandLogsSplitter->restoreState(settings.value("sourceCommandLogsSplitter").toByteArray());
         sourceLibraryVariableManagerSplitter->restoreState(settings.value("sourceLibraryVariableManagerSplitter").toByteArray());
         stackThreadManagerSplitter->restoreState(settings.value("stackThreadManagerSplitter").toByteArray());
     } settings.endGroup();
