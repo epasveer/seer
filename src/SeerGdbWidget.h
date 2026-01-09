@@ -212,6 +212,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleText                                  (const QString& text);
         void                                handleManualCommandExecute                  (QString command);
         void                                handleGdbCommand                            (const QString& command, bool ignoreErrors=false);
+        void                                handleGdbCommands                           (const QStringList& commands);
         void                                handleGdbExit                               ();
         void                                handleGdbRunExecutable                      (const QString& breakMode, bool loadSessionBreakpoints);
         void                                handleGdbAttachExecutable                   (bool loadSessionBreakpoints);

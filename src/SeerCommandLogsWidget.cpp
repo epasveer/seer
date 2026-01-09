@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerCommandLogsWidget.h"
+#include "SeerMacroToolButton.h"
 #include "SeerLogWidget.h"
 #include "SeerHelpPageDialog.h"
 #include <QtGui/QFont>
@@ -415,8 +416,6 @@ void SeerCommandLogsWidget::handleManualCommandExecute () {
 
 void SeerCommandLogsWidget::handleManualCommandChanged () {
 
-    //qDebug() << "Manual Command ComboBox changed";
-
     writeHistorySettings();
 }
 
@@ -508,9 +507,19 @@ void SeerCommandLogsWidget::handleHelpToolButtonClicked () {
 
 void SeerCommandLogsWidget::handleMacroToolButtonClicked (QAbstractButton* button) {
 
-    if (button == m2ToolButton) {
-        qDebug() << "m2ToolButton pressed";
+    if (button == nullptr) {
+        return;
     }
+
+    SeerMacroToolButton* tb = qobject_cast<SeerMacroToolButton*>(button);
+
+    QStringList lines = tb->commands();
+
+    if (lines.size() == 0) {
+        return;
+    }
+
+    emit executeGdbCommands(lines);
 }
 
 void SeerCommandLogsWidget::writeSettings () {

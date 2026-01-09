@@ -8,6 +8,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QtCore/QTimer>
+#include <QtCore/QSettings>
 
 SeerMacroToolButton::SeerMacroToolButton(QWidget* parent) : QToolButton(parent) {
 
@@ -25,6 +26,9 @@ SeerMacroToolButton::SeerMacroToolButton(QWidget* parent) : QToolButton(parent) 
 void SeerMacroToolButton::setMacroName (const QString& name) {
 
     _macroName = name;
+
+    // Read settings once we have a proper macro name.
+    readSettings();
 }
 
 const QString& SeerMacroToolButton::macroName () const {
@@ -40,6 +44,51 @@ void SeerMacroToolButton::setCommands (const QStringList& commands) {
 const QStringList& SeerMacroToolButton::commands () const {
 
     return _commands;
+}
+
+void SeerMacroToolButton::writeSettings () {
+
+    if (macroName() == "") {
+        return;
+    }
+
+    QSettings settings;
+
+    settings.beginWriteArray("macrocommands_" + macroName()); {
+
+        QStringList lines = commands();
+
+        for (int i = 0; i < lines.size(); ++i) {
+            settings.setArrayIndex(i);
+            settings.setValue("command", lines[i]);
+        }
+
+    } settings.endArray();
+
+}
+
+void SeerMacroToolButton::readSettings () {
+
+    if (macroName() == "") {
+        return;
+    }
+
+    QSettings settings;
+
+    if (settings.childGroups().contains("macrocommands_" + macroName())) {
+        int size = settings.beginReadArray("macrocommands_" + macroName()); {
+
+            QStringList lines;
+
+            for (int i = 0; i < size; ++i) {
+                settings.setArrayIndex(i);
+
+                lines << settings.value("command").toString();
+            }
+
+            setCommands(lines);
+        } settings.endArray();
+    }
 }
 
 void SeerMacroToolButton::mousePressEvent (QMouseEvent* event) {
@@ -77,6 +126,7 @@ void SeerMacroToolButton::handleEditMacro () {
 
     if (dlg.exec()) {
         setCommands(dlg.commands());
+        writeSettings();
     }
 }
 

@@ -96,6 +96,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Connect things.
     QObject::connect(commandLogsWidget,                                         &SeerCommandLogsWidget::executeGdbCommand,                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
+    QObject::connect(commandLogsWidget,                                         &SeerCommandLogsWidget::executeGdbCommands,                                                 this,                                                           &SeerGdbWidget::handleGdbCommands);
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardError,                                                          _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardError);
@@ -830,6 +831,13 @@ void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors)
 #endif
 
     _gdbProcess->write(bytes);       // Send the data into the stdin stream of the bash child process
+}
+
+void SeerGdbWidget::handleGdbCommands (const QStringList& commands) {
+
+    for (auto command : commands) {
+        handleGdbCommand(command, true);
+    }
 }
 
 void SeerGdbWidget::handleGdbExit () {
