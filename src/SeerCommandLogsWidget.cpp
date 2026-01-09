@@ -4,46 +4,23 @@
 
 #include "SeerCommandLogsWidget.h"
 #include "SeerLogWidget.h"
-#include "SeerMemoryVisualizerWidget.h"
-#include "SeerArrayVisualizerWidget.h"
-#include "SeerMatrixVisualizerWidget.h"
-#include "SeerStructVisualizerWidget.h"
-#include "SeerVarVisualizerWidget.h"
-#include "SeerImageVisualizerWidget.h"
 #include "SeerHelpPageDialog.h"
-#include "SeerUtl.h"
-#include "QHContainerWidget.h"
 #include <QtGui/QFont>
-#include <QtGui/QGuiApplication>
-#include <QtWidgets/QApplication>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
-#include <QtCore/QLoggingCategory>
+#include <QtWidgets/QMenu>
 #include <QtCore/QSettings>
-#include <QtCore/QProcess>
-#include <QtCore/QRegularExpression>
-#include <QtCore/QDir>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QFileInfoList>
-#include <QtCore/QThread>
 #include <QtCore/QDebug>
-#include <QtGlobal>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <signal.h>
-#include <string.h>
-#include <errno.h>
+
+#include <QWidgetAction>
 
 SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent) {
 
-    _consoleWidget                          = 0;
-    _consoleIndex                           = -1;
-    _consoleScrollLines                     = 1000;
-    _rememberManualCommandCount             = 10;
+    _consoleWidget              = 0;
+    _consoleIndex               = -1;
+    _consoleScrollLines         = 1000;
+    _rememberManualCommandCount = 10;
 
     setupUi(this);
 
@@ -52,6 +29,17 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     font.setFamily("monospace [Consolas]");
     font.setFixedPitch(true);
     font.setStyleHint(QFont::TypeWriter);
+
+    m1ToolButton->setMacroName("M1");
+    m2ToolButton->setMacroName("M2");
+    m3ToolButton->setMacroName("M3");
+    m4ToolButton->setMacroName("M4");
+    m5ToolButton->setMacroName("M5");
+    m6ToolButton->setMacroName("M6");
+    m7ToolButton->setMacroName("M7");
+    m8ToolButton->setMacroName("M8");
+    m9ToolButton->setMacroName("M9");
+    m0ToolButton->setMacroName("M0");
 
     _messagesBrowserWidget    = new SeerMessagesBrowserWidget(this);
     _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
@@ -99,9 +87,11 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     QObject::connect(breakpointsLoadToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbLoadBreakpoints);
     QObject::connect(breakpointsSaveToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbSaveBreakpoints);
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleHelpToolButtonClicked);
+    QObject::connect(macroButtonGroup,                  &QButtonGroup::buttonClicked,                   this,   &SeerCommandLogsWidget::handleMacroToolButtonClicked);
 
-    // Restore tab ordering.
+    // Restore tab ordering and manual command history.
     readSettings();
+    readHistorySettings();
 }
 
 SeerCommandLogsWidget::~SeerCommandLogsWidget () {
@@ -245,8 +235,6 @@ void SeerCommandLogsWidget::setManualCommands (const QStringList& commands) {
 
 QStringList SeerCommandLogsWidget::manualCommands(int count) const {
 
-    //qDebug() << "Count =" << count;
-
     // Select all if a zero.
     if (count == 0) {
         count = manualCommandComboBox->count();
@@ -285,8 +273,8 @@ void SeerCommandLogsWidget::clearManualCommandHistory () {
     // Zap the entries in the combobox.
     manualCommandComboBox->clear();
 
-    // Write the settings.
-    writeSettings();
+    // Write the history settings.
+    writeHistorySettings();
 }
 
 void SeerCommandLogsWidget::handleLogsTabMoved (int to, int from) {
@@ -422,14 +410,14 @@ void SeerCommandLogsWidget::handleManualCommandExecute () {
     // Execute it.
     emit executeGdbCommand(command);
 
-    writeSettings();
+    writeHistorySettings();
 }
 
 void SeerCommandLogsWidget::handleManualCommandChanged () {
 
     //qDebug() << "Manual Command ComboBox changed";
 
-    writeSettings();
+    writeHistorySettings();
 }
 
 
@@ -518,6 +506,13 @@ void SeerCommandLogsWidget::handleHelpToolButtonClicked () {
     help->raise();
 }
 
+void SeerCommandLogsWidget::handleMacroToolButtonClicked (QAbstractButton* button) {
+
+    if (button == m2ToolButton) {
+        qDebug() << "m2ToolButton pressed";
+    }
+}
+
 void SeerCommandLogsWidget::writeSettings () {
 
     // Write tab order to settings.
@@ -538,16 +533,6 @@ void SeerCommandLogsWidget::writeSettings () {
         settings.setValue("taborder",   tabs.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
-
-    // Write the manual command history.
-    settings.beginWriteArray("manualgdbcommandshistory"); {
-        QStringList commands = manualCommands(rememberManualCommandCount());
-
-        for (int i = 0; i < commands.size(); ++i) {
-            settings.setArrayIndex(i);
-            settings.setValue("command", commands[i]);
-        }
-    } settings.endArray();
 
     // Write log settings.
     settings.beginGroup("gdboutputlog"); {
@@ -619,19 +604,6 @@ void SeerCommandLogsWidget::readSettings () {
         logsTabWidget->setCurrentIndex(0);
     }
 
-    // Read the manual command history.
-    int size = settings.beginReadArray("manualgdbcommandshistory"); {
-        QStringList commands;
-
-        for (int i = 0; i < size; ++i) {
-            settings.setArrayIndex(i);
-
-            commands << settings.value("command").toString();
-        }
-
-        setManualCommands(commands);
-    } settings.endArray();
-
     // Read log settings.
     settings.beginGroup("gdboutputlog"); {
         _gdbOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
@@ -642,5 +614,36 @@ void SeerCommandLogsWidget::readSettings () {
         _seerOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
         _seerOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
     } settings.endGroup();
+}
+
+void SeerCommandLogsWidget::writeHistorySettings () {
+
+    QSettings settings;
+
+    // Write the manual command history.
+    settings.beginWriteArray("manualgdbcommandshistory"); {
+        QStringList commands = manualCommands(rememberManualCommandCount());
+        if (commands.size() > 0) {
+            for (int i = 0; i < commands.size(); ++i) {
+                settings.setArrayIndex(i);
+                settings.setValue("command", commands[i]);
+            }
+        }
+    } settings.endArray();
+}
+
+void SeerCommandLogsWidget::readHistorySettings () {
+
+    QSettings settings;
+
+    // Read the manual command history.
+    int size = settings.beginReadArray("manualgdbcommandshistory"); {
+        QStringList commands;
+        for (int i = 0; i < size; ++i) {
+            settings.setArrayIndex(i);
+            commands << settings.value("command").toString();
+        }
+        setManualCommands(commands);
+    } settings.endArray();
 }
 

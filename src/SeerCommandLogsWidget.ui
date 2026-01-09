@@ -29,103 +29,136 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QToolButton" name="m1ToolButton">
+      <widget class="SeerMacroToolButton" name="m1ToolButton">
        <property name="toolTip">
         <string>M1 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M1</string>
        </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m2ToolButton">
+      <widget class="SeerMacroToolButton" name="m2ToolButton">
        <property name="toolTip">
         <string>M2 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M2</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m3ToolButton">
+      <widget class="SeerMacroToolButton" name="m3ToolButton">
        <property name="toolTip">
         <string>M3 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M3</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m4ToolButton">
+      <widget class="SeerMacroToolButton" name="m4ToolButton">
        <property name="toolTip">
         <string>M4 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M4</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m5ToolButton">
+      <widget class="SeerMacroToolButton" name="m5ToolButton">
        <property name="toolTip">
         <string>M5 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M5</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m6ToolButton">
+      <widget class="SeerMacroToolButton" name="m6ToolButton">
        <property name="toolTip">
         <string>M6 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M6</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m7ToolButton">
+      <widget class="SeerMacroToolButton" name="m7ToolButton">
        <property name="toolTip">
         <string>M7 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M7</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m8ToolButton">
+      <widget class="SeerMacroToolButton" name="m8ToolButton">
        <property name="toolTip">
         <string>M8 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M8</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m9ToolButton">
+      <widget class="SeerMacroToolButton" name="m9ToolButton">
        <property name="toolTip">
         <string>M9 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M9</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="m0ToolButton">
+      <widget class="SeerMacroToolButton" name="m0ToolButton">
        <property name="toolTip">
         <string>M0 macro. Click to execute. Hold down to edit.</string>
        </property>
        <property name="text">
         <string>M0</string>
        </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
@@ -216,9 +249,17 @@
    <header location="global">QDetachTabWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>SeerMacroToolButton</class>
+   <extends>QToolButton</extends>
+   <header>SeerMacroToolButton.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="resource.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="macroButtonGroup"/>
+ </buttongroups>
 </ui>

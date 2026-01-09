@@ -160,6 +160,8 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
+    SeerMacroEditorDialog.h
+    SeerMacroToolButton.h
     )
 
 # Define the source location of source files
@@ -270,6 +272,8 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
+    SeerMacroEditorDialog.cpp
+    SeerMacroToolButton.cpp
     seergdb.cpp
     )
 

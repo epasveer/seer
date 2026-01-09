@@ -62,6 +62,7 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         void                                handleGdbLoadBreakpoints        ();
         void                                handleGdbSaveBreakpoints        ();
         void                                handleHelpToolButtonClicked     ();
+        void                                handleMacroToolButtonClicked    (QAbstractButton* button);
 
     signals:
         void                                executeGdbCommand               (QString command);
@@ -70,6 +71,8 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
     protected:
         void                                writeSettings                   ();
         void                                readSettings                    ();
+        void                                writeHistorySettings            ();
+        void                                readHistorySettings             ();
 
     private:
         SeerConsoleWidget*                  _consoleWidget;
