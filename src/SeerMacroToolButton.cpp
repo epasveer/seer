@@ -7,6 +7,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QShortcut>
 #include <QtCore/QTimer>
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
@@ -36,6 +37,11 @@ void SeerMacroToolButton::setMacroName (const QString& name) {
         _macroFileName = "";
         return;
     }
+
+    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
+    QShortcut* shortcut = new QShortcut(QKeySequence(QString("Ctrl+Shift+")+_macroName[1]), this);
+
+    QObject::connect(shortcut, &QShortcut::activated,       this, &QToolButton::click);
 
     // Create the macro filename where the macro is to be written.
     QSettings settings;
