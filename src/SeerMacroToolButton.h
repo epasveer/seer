@@ -17,12 +17,13 @@ class SeerMacroToolButton : public QToolButton {
 
         void                    setMacroName            (const QString& name);
         const QString&          macroName               () const;
+        const QString&          macroFileName           () const;
 
         void                    setCommands             (const QStringList& commands);
         const QStringList&      commands                () const;
 
-        void                    writeSettings           ();
-        void                    readSettings            ();
+        void                    writeMacro              ();
+        void                    readMacro               ();
 
     protected:
         void                    mousePressEvent         (QMouseEvent* event) override;
@@ -39,6 +40,7 @@ class SeerMacroToolButton : public QToolButton {
         QMenu*                  _menu;
         QPoint                  _pressPos;
         QString                 _macroName;
+        QString                 _macroFileName;
         QStringList             _commands;
 };
 

@@ -66,7 +66,6 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
 
     signals:
         void                                executeGdbCommand               (QString command);
-        void                                executeGdbCommands              (QStringList commands);
         void                                refreshBreakpointsList          ();
 
     protected:

@@ -513,13 +513,13 @@ void SeerCommandLogsWidget::handleMacroToolButtonClicked (QAbstractButton* butto
 
     SeerMacroToolButton* tb = qobject_cast<SeerMacroToolButton*>(button);
 
-    QStringList lines = tb->commands();
+    QString macroFileName = tb->macroFileName();
 
-    if (lines.size() == 0) {
+    if (macroFileName == "") {
         return;
     }
 
-    emit executeGdbCommands(lines);
+    emit executeGdbCommand("source -v " + macroFileName);
 }
 
 void SeerCommandLogsWidget::writeSettings () {

@@ -96,7 +96,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Connect things.
     QObject::connect(commandLogsWidget,                                         &SeerCommandLogsWidget::executeGdbCommand,                                                  this,                                                           &SeerGdbWidget::handleManualCommandExecute);
-    QObject::connect(commandLogsWidget,                                         &SeerCommandLogsWidget::executeGdbCommands,                                                 this,                                                           &SeerGdbWidget::handleGdbCommands);
 
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardOutput,                                                         _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardOutput);
     QObject::connect(_gdbProcess,                                               &QProcess::readyReadStandardError,                                                          _gdbMonitor,                                                    &GdbMonitor::handleReadyReadStandardError);
@@ -135,6 +134,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
 
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleText);
@@ -791,6 +791,11 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         handleGdbTerminateExecutable(false);
 
+    // Scan the output for magic text to refresh the Signal tab.
+    }else if (text.startsWith("~\"@refresh-signal-values\"")) {
+
+        handleGdbSignalListValues("all");
+
     }else{
         // All other text is ignored by this widget.
     }
@@ -834,6 +839,11 @@ void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors)
 }
 
 void SeerGdbWidget::handleGdbCommands (const QStringList& commands) {
+
+    // This may not be as good as using "source file.gdb" because it doesn't
+    // stop on errors.
+    //
+    // Leaving it here, though.
 
     for (auto command : commands) {
         handleGdbCommand(command, true);

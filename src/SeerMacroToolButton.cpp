@@ -9,6 +9,10 @@
 #include <QtGui/QMouseEvent>
 #include <QtCore/QTimer>
 #include <QtCore/QSettings>
+#include <QtCore/QFileInfo>
+#include <QtCore/QDir>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 SeerMacroToolButton::SeerMacroToolButton(QWidget* parent) : QToolButton(parent) {
 
@@ -25,15 +29,33 @@ SeerMacroToolButton::SeerMacroToolButton(QWidget* parent) : QToolButton(parent) 
 
 void SeerMacroToolButton::setMacroName (const QString& name) {
 
+    // Set the macro name. If it's "", nullify our state.
     _macroName = name;
 
-    // Read settings once we have a proper macro name.
-    readSettings();
+    if (_macroName == "") {
+        _macroFileName = "";
+        return;
+    }
+
+    // Create the macro filename where the macro is to be written.
+    QSettings settings;
+
+    QFileInfo fileInfo(settings.fileName());
+
+    _macroFileName = fileInfo.absolutePath() + "/macros/" + _macroName + ".macro";
+
+    // Read settings now we have a proper macro name.
+    readMacro();
 }
 
 const QString& SeerMacroToolButton::macroName () const {
 
     return _macroName;
+}
+
+const QString& SeerMacroToolButton::macroFileName () const {
+
+    return _macroFileName;
 }
 
 void SeerMacroToolButton::setCommands (const QStringList& commands) {
@@ -46,48 +68,58 @@ const QStringList& SeerMacroToolButton::commands () const {
     return _commands;
 }
 
-void SeerMacroToolButton::writeSettings () {
+void SeerMacroToolButton::writeMacro () {
 
-    if (macroName() == "") {
+    // No macro filename, don't save.
+    if (macroFileName() == "") {
         return;
     }
 
-    QSettings settings;
+    // Get the absolute path of the filename.
+    QFileInfo fileInfo(macroFileName());
 
-    settings.beginWriteArray("macrocommands_" + macroName()); {
+    QString path = fileInfo.absolutePath();
 
-        QStringList lines = commands();
+    // Create the directory.
+    QDir().mkpath(path);
 
-        for (int i = 0; i < lines.size(); ++i) {
-            settings.setArrayIndex(i);
-            settings.setValue("command", lines[i]);
+    // Create the macro file and write the lines to it.
+    QFile file(macroFileName());
+
+    if (file.open(QFile::WriteOnly|QFile::Text|QFile::Truncate)) {
+
+        QTextStream out(&file);
+
+        for (const QString& line : commands()) {
+            out << line << "\n";
         }
 
-    } settings.endArray();
-
+        file.close();
+    }
 }
 
-void SeerMacroToolButton::readSettings () {
+void SeerMacroToolButton::readMacro () {
 
-    if (macroName() == "") {
+    if (macroFileName() == "") {
         return;
     }
 
-    QSettings settings;
+    QFile file(macroFileName());
 
-    if (settings.childGroups().contains("macrocommands_" + macroName())) {
-        int size = settings.beginReadArray("macrocommands_" + macroName()); {
+    if (file.open(QFile::ReadOnly|QFile::Text)) {
 
-            QStringList lines;
+        QStringList lines;
 
-            for (int i = 0; i < size; ++i) {
-                settings.setArrayIndex(i);
+        QTextStream in(&file);
 
-                lines << settings.value("command").toString();
-            }
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            lines.append(line);
+        }
 
-            setCommands(lines);
-        } settings.endArray();
+        file.close();
+
+        setCommands(lines);
     }
 }
 
@@ -126,7 +158,7 @@ void SeerMacroToolButton::handleEditMacro () {
 
     if (dlg.exec()) {
         setCommands(dlg.commands());
-        writeSettings();
+        writeMacro();
     }
 }
 
