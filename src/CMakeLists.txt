@@ -79,6 +79,7 @@ set(HEADER_FILES
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
     SeerCheckpointsBrowserWidget.h
+    SeerCommandLogsWidget.h
     SeerSeerLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
@@ -159,6 +160,8 @@ set(HEADER_FILES
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
     SeerHistoryLineEdit.h
+    SeerMacroEditorDialog.h
+    SeerMacroToolButton.h
     )
 
 # Define the source location of source files
@@ -189,6 +192,7 @@ set(SOURCE_FILES
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
     SeerCheckpointsBrowserWidget.cpp
+    SeerCommandLogsWidget.cpp
     SeerSeerLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp
@@ -268,6 +272,8 @@ set(SOURCE_FILES
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
     SeerHistoryLineEdit.cpp
+    SeerMacroEditorDialog.cpp
+    SeerMacroToolButton.cpp
     seergdb.cpp
     )
 
