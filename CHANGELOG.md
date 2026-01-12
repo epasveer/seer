@@ -18,6 +18,8 @@
 * GDB: Add an optional 'launcher' program to start gdb. eg: flatpak-spawn.
 * Build: Add flatpak generation to github actions.
 * Assemby: An option to show assembly tab when there is no source file.
+* Signals: Add an window to show how GDB handles signals. And to set that behavior.
+* Macros: Add 10 macros for custom commands that are executed by clicking a button (or a hot key).
 
 ## [2.6] - 2025-10-07
 * Watchpoints: Fixed regression when adding commands to a watchpoint.

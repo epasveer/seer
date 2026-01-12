@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerCommandLogsWidgetForm</class>
+ <widget class="QWidget" name="SeerCommandLogsWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>975</width>
+    <height>384</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Seer - Commands and Logs</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="SeerMacroToolButton" name="m1ToolButton">
+       <property name="toolTip">
+        <string>M1 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M1</string>
+       </property>
+       <property name="arrowType">
+        <enum>Qt::NoArrow</enum>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m2ToolButton">
+       <property name="toolTip">
+        <string>M2 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M2</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m3ToolButton">
+       <property name="toolTip">
+        <string>M3 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M3</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m4ToolButton">
+       <property name="toolTip">
+        <string>M4 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M4</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m5ToolButton">
+       <property name="toolTip">
+        <string>M5 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M5</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m6ToolButton">
+       <property name="toolTip">
+        <string>M6 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M6</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m7ToolButton">
+       <property name="toolTip">
+        <string>M7 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M7</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m8ToolButton">
+       <property name="toolTip">
+        <string>M8 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M8</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m9ToolButton">
+       <property name="toolTip">
+        <string>M9 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M9</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m0ToolButton">
+       <property name="toolTip">
+        <string>M0 macro. Click to execute. Hold down to edit.</string>
+       </property>
+       <property name="text">
+        <string>M0</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>578</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="breakpointsLoadToolButton">
+       <property name="toolTip">
+        <string>Load previously saved breakpoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="breakpointsSaveToolButton">
+       <property name="toolTip">
+        <string>Save breakpoints to a file.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="helpToolButton">
+       <property name="toolTip">
+        <string>Help on Breakpoint/Logs/Commands information.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QComboBox" name="manualCommandComboBox">
+     <property name="toolTip">
+      <string extracomment="Enter a gdb/gdbmi command to execute."/>
+     </property>
+     <property name="editable">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDetachTabWidget" name="logsTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="movable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="tabWidget">
+      <attribute name="title">
+       <string>Tab 1</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QDetachTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header location="global">QDetachTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SeerMacroToolButton</class>
+   <extends>QToolButton</extends>
+   <header>SeerMacroToolButton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="macroButtonGroup"/>
+ </buttongroups>
+</ui>

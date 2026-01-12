@@ -1,14 +1,15 @@
-## Variable/Register Info Browser
+## Variable/Register/Signal Info Browser
 
 ### Introduction
 
-The Variable/Register Info browser is a simple, but quick, method of viewing the values of the program's variables.
+The Variable/Register/Signal Info browser is a simple, but quick, method of viewing the values of the program's variables.
 
-Seer presents this information in three tabs:
+Seer presents this information in four tabs:
 
 * Logger
 * Tracker
 * Registers
+* Signals
 
 ### Logger
 The logger is a simple method for printing the value of a variable. There is an entry field to manually enter the name of the variable. The variable must be part of the active stack frame, as selected by the Stack Info browser.
@@ -74,11 +75,26 @@ registers. It can't be modified or deleted.
 
 Switching between register profiles is easily done using the "Profile" list selector.
 
+### Signals
+Signals is a view of the program's signal settings and how gdb handles them. The handling can be modified here.
+
+This information is shown for each signal.
+```
+      Column            Description
+      ---------------   ----------------------------------------------
+      Name              The name of the signal.
+      Stop              GDB should stop your program when this signal happens.
+                        This implies the print keyword as well.
+      Print             GDB should print a message when this signal happens.
+      Pass              GDB should allow your program to see this signal; your program can handle the signal,
+                        or else it may terminate if the signal is fatal and not handled. pass and noignore are synonyms.
+      Description       The description of the signal.
+```
+
 ### References
 
 Consult these gdb references
 
 1. [Link](https://sourceware.org/gdb/onlinedocs/gdb/Registers.html) Viewing/setting register values.
-
-
+2. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Signals.html) Viewing/setting signal values.
 

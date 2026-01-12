@@ -32,7 +32,6 @@ class MICheckpoint(gdb.MICommand):
             checkpointentries = []
 
             result = gdb.execute ("info checkpoints " + " ".join(argv), to_string=True)
-            print(result)
 
             lines = result.split("\n")
             for line in lines:

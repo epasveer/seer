@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>997</width>
-    <height>566</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,6 +19,9 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
+     </property>
      <widget class="QSplitter" name="sourceLibraryVariableManagerSplitter">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -28,6 +31,9 @@
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SeerSourceSymbolLibraryManagerWidget" name="sourceLibraryManagerWidget" native="true">
        <property name="sizePolicy">
@@ -46,15 +52,12 @@
        </property>
       </widget>
      </widget>
-     <widget class="QSplitter" name="codeManagerLogTabsSplitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>100</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+     <widget class="QSplitter" name="sourceCommandLogsSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SeerEditorManagerWidget" name="editorManagerWidget" native="true">
        <property name="sizePolicy">
@@ -64,30 +67,7 @@
         </sizepolicy>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget_2">
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
-        <item>
-         <widget class="QComboBox" name="manualCommandComboBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QDetachTabWidget" name="logsTabWidget">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>25</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="movable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <widget class="SeerCommandLogsWidget" name="commandLogsWidget" native="true"/>
      </widget>
      <widget class="QSplitter" name="stackThreadManagerSplitter">
       <property name="sizePolicy">
@@ -98,6 +78,9 @@
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="SeerStackManagerWidget" name="stackManagerWidget" native="true">
        <property name="sizePolicy">
@@ -152,9 +135,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QDetachTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header location="global">QDetachTabWidget.h</header>
+   <class>SeerCommandLogsWidget</class>
+   <extends>QWidget</extends>
+   <header>SeerCommandLogsWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
