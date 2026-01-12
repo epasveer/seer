@@ -22,6 +22,7 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     _consoleIndex               = -1;
     _consoleScrollLines         = 1000;
     _rememberManualCommandCount = 10;
+    _aboutToQuit                = false;
 
     setupUi(this);
 
@@ -89,10 +90,13 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     QObject::connect(breakpointsSaveToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbSaveBreakpoints);
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleHelpToolButtonClicked);
     QObject::connect(macroButtonGroup,                  &QButtonGroup::buttonClicked,                   this,   &SeerCommandLogsWidget::handleMacroToolButtonClicked);
+    QObject::connect(qApp,                              &QCoreApplication::aboutToQuit,                 this,   &SeerCommandLogsWidget::handleAboutToQuit);
+
 
     // Restore tab ordering and manual command history.
     readSettings();
     readHistorySettings();
+    readLogSettings();
 }
 
 SeerCommandLogsWidget::~SeerCommandLogsWidget () {
@@ -150,9 +154,6 @@ void SeerCommandLogsWidget::createConsole () {
     if (_consoleWidget == 0) {
 
         _consoleWidget = new SeerConsoleWidget(0);
-
-        // Connect window title changes.
-        // XXX QObject::connect(this, &SeerGdbWidget::changeWindowTitle, _consoleWidget, &SeerConsoleWidget::handleChangeWindowTitle);
 
         // The console needs to know when it's detached or reattached.
         QObject::connect(logsTabWidget, qOverload<QWidget*>(&QDetachTabWidget::tabDetached),   _consoleWidget, &SeerConsoleWidget::handleTabDetached);
@@ -289,11 +290,9 @@ void SeerCommandLogsWidget::handleLogsTabMoved (int to, int from) {
     }
 
     // Don't handle anything here if Seer is exiting.
-    /* XXX
-    if (isQuitting()) {
+    if (_aboutToQuit) {
         return;
     }
-    */
 
     writeSettings();
 }
@@ -303,11 +302,9 @@ void SeerCommandLogsWidget::handleLogsTabChanged (int index) {
     Q_UNUSED(index);
 
     // Don't handle anything here if Seer is exiting.
-    /* XXX
-    if (isQuitting()) {
+    if (_aboutToQuit) {
         return;
     }
-    */
 
     writeSettings();
 }
@@ -422,7 +419,7 @@ void SeerCommandLogsWidget::handleManualCommandChanged () {
 
 void SeerCommandLogsWidget::handleLogOutputChanged () {
 
-    writeSettings();
+    writeLogSettings();
 }
 
 void SeerCommandLogsWidget::handleGdbLoadBreakpoints () {
@@ -542,17 +539,6 @@ void SeerCommandLogsWidget::writeSettings () {
         settings.setValue("taborder",   tabs.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
-
-    // Write log settings.
-    settings.beginGroup("gdboutputlog"); {
-        settings.setValue("enabled",   _gdbOutputLog->isLogEnabled());
-        settings.setValue("timestamp", _gdbOutputLog->isTimeStampEnabled());
-    } settings.endGroup();
-
-    settings.beginGroup("seeroutputlog"); {
-        settings.setValue("enabled",   _seerOutputLog->isLogEnabled());
-        settings.setValue("timestamp", _seerOutputLog->isTimeStampEnabled());
-    } settings.endGroup();
 }
 
 void SeerCommandLogsWidget::readSettings () {
@@ -612,17 +598,6 @@ void SeerCommandLogsWidget::readSettings () {
     }else{
         logsTabWidget->setCurrentIndex(0);
     }
-
-    // Read log settings.
-    settings.beginGroup("gdboutputlog"); {
-        _gdbOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
-        _gdbOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
-    } settings.endGroup();
-
-    settings.beginGroup("seeroutputlog"); {
-        _seerOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
-        _seerOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
-    } settings.endGroup();
 }
 
 void SeerCommandLogsWidget::writeHistorySettings () {
@@ -654,5 +629,42 @@ void SeerCommandLogsWidget::readHistorySettings () {
         }
         setManualCommands(commands);
     } settings.endArray();
+}
+
+void SeerCommandLogsWidget::writeLogSettings () {
+
+    QSettings settings;
+
+    // Write log settings.
+    settings.beginGroup("gdboutputlog"); {
+        settings.setValue("enabled",   _gdbOutputLog->isLogEnabled());
+        settings.setValue("timestamp", _gdbOutputLog->isTimeStampEnabled());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        settings.setValue("enabled",   _seerOutputLog->isLogEnabled());
+        settings.setValue("timestamp", _seerOutputLog->isTimeStampEnabled());
+    } settings.endGroup();
+}
+
+void SeerCommandLogsWidget::readLogSettings () {
+
+    QSettings settings;
+
+    // Read log settings.
+    settings.beginGroup("gdboutputlog"); {
+        _gdbOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
+        _gdbOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
+    } settings.endGroup();
+
+    settings.beginGroup("seeroutputlog"); {
+        _seerOutputLog->setLogEnabled(settings.value("enabled", true).toBool());
+        _seerOutputLog->setTimeStampEnabled(settings.value("timestamp", false).toBool());
+    } settings.endGroup();
+}
+
+void SeerCommandLogsWidget::handleAboutToQuit () {
+
+    _aboutToQuit = true;
 }
 
