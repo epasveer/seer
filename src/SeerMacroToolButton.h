@@ -19,6 +19,9 @@ class SeerMacroToolButton : public QToolButton {
         const QString&          macroName               () const;
         const QString&          macroFileName           () const;
 
+        void                    setMacroNickname        (const QString& nickname);
+        const QString&          macroNickname           () const;
+
         void                    setCommands             (const QStringList& commands);
         const QStringList&      commands                () const;
 
@@ -36,11 +39,14 @@ class SeerMacroToolButton : public QToolButton {
         void                    handleEditMacro         ();
 
     private:
+        void                    updateToolTip           ();
+
         QTimer*                 _holdTimer;
         QMenu*                  _menu;
         QPoint                  _pressPos;
         QString                 _macroName;
         QString                 _macroFileName;
+        QString                 _macroNickname;
         QStringList             _commands;
 };
 

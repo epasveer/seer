@@ -516,7 +516,13 @@ void SeerCommandLogsWidget::handleMacroToolButtonClicked (QAbstractButton* butto
         return;
     }
 
-    emit executeGdbCommand("source -v " + macroFileName);
+    QString commands = tb->commands().join('\n');
+
+    if (commands == "") {
+        return;
+    }
+
+    emit executeGdbCommand(commands);
 }
 
 void SeerCommandLogsWidget::writeSettings () {

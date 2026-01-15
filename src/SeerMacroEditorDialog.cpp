@@ -25,6 +25,16 @@ void SeerMacroEditorDialog::setMacroName (const QString& name) {
     setWindowTitle("Seer - Macro Editor for '" + name + "'");
 }
 
+void SeerMacroEditorDialog::setMacroNickname (const QString& nickname) {
+
+    nicknameLineEdit->setText(nickname);
+}
+
+QString SeerMacroEditorDialog::macroNickname () const {
+
+    return nicknameLineEdit->text();
+}
+
 void SeerMacroEditorDialog::setCommands (const QStringList& commands) {
 
     textEditor->clear();

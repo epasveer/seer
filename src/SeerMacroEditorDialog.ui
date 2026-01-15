@@ -19,6 +19,27 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="nicknameLabel">
+       <property name="text">
+        <string>Nickname</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="nicknameLineEdit">
+       <property name="placeholderText">
+        <string>Macro nickname</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QPlainTextEdit" name="textEditor">
      <property name="placeholderText">
       <string>Insert gdb commands on multiple lines</string>

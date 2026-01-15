@@ -1,4 +1,11 @@
 
+Start seer with breakpoints and 'continue' a few times until there are 10 threads.
+Then run 'parallel-stacks'.
+
+    $ seergdb -s --bl=breakpoints.seer hellothreads5
+
+(gdb) pipe thread apply all bt | python3 parallel-stacks.py
+
 thread apply all bt
 
     Thread 11 (Thread 0x7ffff2ff66c0 (LWP 26147) "hellothreads5"):
@@ -14,7 +21,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 10 (Thread 0x7ffff37f76c0 (LWP 26146) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -28,7 +35,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 9 (Thread 0x7ffff3ff86c0 (LWP 26145) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -42,7 +49,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 8 (Thread 0x7ffff47f96c0 (LWP 26144) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -56,7 +63,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 7 (Thread 0x7ffff4ffa6c0 (LWP 26143) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -70,7 +77,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 6 (Thread 0x7ffff57fb6c0 (LWP 26142) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -84,7 +91,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 5 (Thread 0x7ffff5ffc6c0 (LWP 26141) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -98,7 +105,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 4 (Thread 0x7ffff67fd6c0 (LWP 26140) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -112,7 +119,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 3 (Thread 0x7ffff6ffe6c0 (LWP 26139) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -126,7 +133,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 2 (Thread 0x7ffff77ff6c0 (LWP 26138) "hellothreads5"):
     #0  0x00007ffff78a3c1e in __futex_abstimed_wait_common () from /lib64/libc.so.6
     #1  0x00007ffff78a6548 in pthread_cond_wait@@GLIBC_2.3.2 () from /lib64/libc.so.6
@@ -140,7 +147,7 @@ thread apply all bt
     #9  0x00007ffff7ce8964 in ?? () from /usr/local/lib64/libstdc++.so.6
     #10 0x00007ffff78a6f6c in start_thread () from /lib64/libc.so.6
     #11 0x00007ffff792e388 in clone3 () from /lib64/libc.so.6
-    
+
     Thread 1 (Thread 0x7ffff7e7d740 (LWP 26131) "hellothreads5"):
     #0  0x00007ffff792048c in read () from /lib64/libc.so.6
     #1  0x00007ffff789e133 in __GI__IO_file_underflow () from /lib64/libc.so.6

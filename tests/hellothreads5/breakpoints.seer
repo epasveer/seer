@@ -1,0 +1,3 @@
+break -source /nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp -line 15
+break -source /nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp -line 22
+break -source /nas/erniep/Development/seer/tests/hellothreads5/hellothreads5.cpp -line 38

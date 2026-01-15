@@ -19,6 +19,9 @@ class SeerMacroEditorDialog : public QDialog, protected Ui::SeerMacroEditorDialo
 
         void                    setMacroName            (const QString& name);
 
+        void                    setMacroNickname        (const QString& nickname);
+        QString                 macroNickname           () const;
+
         void                    setCommands             (const QStringList& commands);
         QStringList             commands                () const;
 

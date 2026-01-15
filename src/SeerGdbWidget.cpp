@@ -842,13 +842,13 @@ void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors)
 void SeerGdbWidget::handleGdbCommands (const QStringList& commands) {
 
     // This may not be as good as using "source file.gdb" because it doesn't
-    // stop on errors.
+    // stop on errors. But "source" doesn't support running mi commands.
     //
     // Leaving it here, though.
 
-    for (auto command : commands) {
-        handleGdbCommand(command, true);
-    }
+    QString c = commands.join('\n');
+
+    handleGdbCommand(c, true);
 }
 
 void SeerGdbWidget::handleGdbExit () {
