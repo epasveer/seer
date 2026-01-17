@@ -8,10 +8,11 @@ assigned to them. These can be configured with "Settings->Configure->Keys".
 
 The buttons are arranged in groups.
 
-* Restarting the debug session.
+* Starting/Restarting the debug session.
 
-    * Run - Restart the program. Only stop at any previously set breakpoints.
-    * Start - Restart the program. Stop in main().
+    * Debug - Start a new debugging session.
+    * Restart - Restart the current debugging session. Stop in main().
+    * Terminate - Terminate the current debugging session.
 
 * Stepping.
 
@@ -31,6 +32,9 @@ The buttons are arranged in groups.
 
     * Memory - Visualize a region of memory in a 'hex viewer'.
     * Array - Visualize a region of memory as arrays. A table and 2D plot.
+    * Matrix - Visualize a region of memory as a 2D table of values.
     * Struct - Visualize a region of memory as a nested C/C++ structure.
+    * Basic Struct - Similiar as 'Struct' but doesn't follow pointers.
     * Image - Visualize a region of memory as a RGB or RGBA image.
+    * Parallel Stacks - View and interact with threads. (BETA)
 

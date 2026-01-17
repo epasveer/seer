@@ -12,38 +12,12 @@
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QSettings>
-#include <QtCore/QVector>
+#include <QtCore/QProcess>
+#include <QtCore/QStringList>
+#include <QtCore/QFile>
 #include <QtCore/QDebug>
 
 namespace Seer::PSV {
-
-    class Frame {
-        public:
-            Frame ();
-            Frame (const QString& text);
-           ~Frame ();
-
-            int                 level           () const;
-            const QString&      addr            () const;
-            const QString&      function        () const;
-            const QString&      arch            () const;
-            const QString&      file            () const;
-            const QString&      fullname        () const;
-            int                 line            () const;
-            const QString&      type            () const;
-
-        private:
-            int                 _level;
-            QString             _addr;
-            QString             _function;
-            QString             _arch;
-            QString             _file;
-            QString             _fullname;
-            int                 _line;
-            QString             _type;
-    };
-
-    typedef QVector<Frame> FramesVector;
 
     Frame::Frame() {
     }
@@ -94,33 +68,6 @@ namespace Seer::PSV {
     const QString& Frame::type () const {
         return _type;
     }
-
-    class Thread {
-        public:
-            Thread ();
-            Thread (const QString& text);
-           ~Thread ();
-
-            int                 id              () const;
-            const QString&      target_id       () const;
-            const QString&      name            () const;
-            const QString&      state           () const;
-            int                 current         () const;
-
-            int                 frameCount      () const;
-            const Frame&        frame           (int i) const;
-
-        private:
-            int                 _id;
-            QString             _target_id;
-            QString             _name;
-            QString             _state;
-            int                 _current;
-
-            FramesVector        _frames;
-    };
-
-    typedef QVector<Thread> ThreadsVector;
 
     Thread::Thread () {
     }
@@ -223,7 +170,7 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
         if (id_text.toInt() == _id) {
 
-            Seer::PSV::ThreadsVector threads;
+            _threads.clear();
 
             QString result_text = Seer::parseFirst(text, "frames=", '[', ']', false);
 
@@ -234,16 +181,32 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
                 Seer::PSV::Thread thread(thread_text);
 
-                threads.push_back(thread);
+                _threads.push_back(thread);
 
                 //qDebug().noquote() << thread_text;
                 //qDebug() << thread_id_text << target_id_text << name_text << current_text;
             }
 
-            for (const auto& thread : threads ) {
+            for (const auto& thread : _threads ) {
                 qDebug() << "Thread" << thread.id() << "has" << thread.frameCount() << "frames.";
             }
+
+            createDirectedGraph();
         }
+
+    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+
+        imageViewer->clearImage();
+
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleRefreshButton();
+        }
+
+    }else{
+        // Ignore anything else.
     }
 
     QApplication::restoreOverrideCursor();
@@ -298,5 +261,70 @@ void SeerParallelStacksVisualizerWidget::resizeEvent (QResizeEvent* event) {
     writeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
+
+    // Clear old image.
+    imageViewer->clearImage();
+
+    // Create the 'gv' file.
+    QFile file("/tmp/xxx.gv");
+
+    if (file.open(QFile::WriteOnly|QFile::Text|QFile::Truncate) == false) {
+        qDebug() << "Can't create 'gv' file!";
+    }
+
+    QTextStream out(&file);
+
+    // Write 'gv' header.
+    out << "digraph {\n";
+
+    out << "\tgraph [rankdir=BT]\n";
+    out << "\tnode [shape=plaintext]\n";
+
+    // Loop through each stack and create the graph.
+    for (int t=0; t<_threads.size(); t++) {
+
+        out << "\t" << QString::number(t) << " [label=<<table BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\"><tr><td align=\"right\"><b>1 Threads</b></td></tr>";
+
+        for (int f=0; f<_threads[t].frameCount(); f++) {
+
+            const Seer::PSV::Frame& frame = _threads[t].frame(f);
+
+            out << "<tr><td align=\"left\"><font color=\"darkgreen\">" << frame.function().toHtmlEscaped() << "</font></td></tr>";
+        }
+
+        out << "</table>>]\n";
+    }
+
+    // Write 'gv' footer.
+    out << "}\n";
+
+    // Close 'gv' file.
+    file.close();
+
+    // Now create the pdf file.
+    // dot -Tpdf xxx.gv -o xxx.gv.pdf
+    QString     program = "dot";
+    QStringList arguments;
+
+    arguments << "-Tsvg";
+    arguments << "/tmp/xxx.gv";
+    arguments << "-o";
+    arguments << "/tmp/xxx.gv.svg";
+
+    int exitCode = QProcess::execute(program, arguments);
+    if (exitCode != 0) {
+        qDebug() << "Command failed with exit code:" << exitCode;
+        return;
+    }
+
+    // View the image.
+    imageViewer->loadFile("/tmp/xxx.gv.svg");
+
+    // Delete tmp files.
+    QFile::remove("/tmp/xxx.gv");
+    QFile::remove("/tmp/xxx.gv.svg");
 }
 
