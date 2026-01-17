@@ -111,7 +111,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* visualizerVarAction             = menuVisualizer->addAction("Struct");
     QAction* visualizerStructAction          = menuVisualizer->addAction("Basic Struct");
     QAction* visualizerImageAction           = menuVisualizer->addAction("Image");
-    QAction* visualizerParallelStacksAction  = menuVisualizer->addAction("Parallel Stacks");
+    QAction* visualizerParallelStacksAction  = menuVisualizer->addAction("Parallel Stacks (BETA)");
 
     actionVisualizers->setMenu(menuVisualizer);
 
