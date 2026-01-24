@@ -1383,7 +1383,26 @@ void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 void SeerEditorManagerWidget::handleRunToAddress (QString address) {
 
     // rethrow
-    emit runToAddress (address);
+    if (address != "") {
+        emit runToAddress (address);
+    }
+}
+
+void SeerEditorManagerWidget::handleRunToSelectedLine () {
+
+    SeerEditorWidgetSource*   sourceTab   = currentEditorWidgetTab();
+    SeerEditorWidgetAssembly* assemblyTab = assemblyWidgetTab();
+
+    if (sourceTab) {
+        emit runToLine (sourceTab->sourceArea()->fullname(), sourceTab->sourceArea()->currentLine());
+    }
+
+    if (assemblyTab) {
+        QString address = assemblyTab->assemblyArea()->currentLine();
+        if (address != "") {
+            emit runToAddress (address);
+        }
+    }
 }
 
 void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {

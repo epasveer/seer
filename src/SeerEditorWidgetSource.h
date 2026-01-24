@@ -95,6 +95,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         int                                         breakpointLineToNumber              (int lineno) const;
         bool                                        breakpointLineEnabled               (int lineno) const;
         void                                        breakpointToggle                    ();
+        void                                        runToSelectedLine                   ();
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
@@ -119,6 +120,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         SeerCurrentFile                             readCurrentPosition                 ();
 
         void                                        eraseColorCurrentLine               (int lineno);
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);

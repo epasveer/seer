@@ -86,6 +86,7 @@ SeerKeySettings SeerKeySettings::populate () {
     keySettings.add("ReverseNexti",             SeerKeySetting("ReverseNexti",          QKeySequence::fromString("Shift+Ctrl+F5"),      "Execute the previous instruction. Step over functions."));
     keySettings.add("ReverseStepi",             SeerKeySetting("ReverseStepi",          QKeySequence::fromString("Shift+Ctrl+F6"),      "Execute the previous instruction. Step into functions."));
     keySettings.add("ReverseFinish",            SeerKeySetting("ReverseFinish",         QKeySequence::fromString("Shift+F7"),           "Finish the current function in reverse."));
+    keySettings.add("RunToLine",                SeerKeySetting("RunToLine",             QKeySequence::fromString("F9"),                 "Run to the currently selected line."));
 
     return keySettings;
 }

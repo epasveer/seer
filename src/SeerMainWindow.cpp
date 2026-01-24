@@ -144,25 +144,26 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionConsoleDetachedMinimized,    &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetachedMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                            this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRestart,              &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
-    QObject::connect(actionControlTerminate,            &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
-    QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionControlNexti,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNexti);
-    QObject::connect(actionControlStepi,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStepi);
-    QObject::connect(actionControlFinish,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionControlReverseContinue,      &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseContinue);
-    QObject::connect(actionControlReverseNext,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseNext);
-    QObject::connect(actionControlReverseStep,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseStep);
-    QObject::connect(actionControlReverseNexti,         &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseNexti);
-    QObject::connect(actionControlReverseStepi,         &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseStepi);
-    QObject::connect(actionControlReverseFinish,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbReverseFinish);
-    QObject::connect(actionControlRecordStart,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordStart);
-    QObject::connect(actionControlRecordForward,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordForward);
-    QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordReverse);
-    QObject::connect(actionControlRecordStop,           &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordStop);
-    QObject::connect(actionControlInterrupt,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionControlRestart,              &QAction::triggered,                            this,                           &SeerMainWindow::handleRestartExecutable);
+    QObject::connect(actionControlTerminate,            &QAction::triggered,                            this,                           &SeerMainWindow::handleTerminateExecutable);
+    QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlNexti,                &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbNexti);
+    QObject::connect(actionControlStepi,                &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbStepi);
+    QObject::connect(actionControlFinish,               &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlRunToLine,            &QAction::triggered,                            gdbWidget->editorManager(),     &SeerEditorManagerWidget::handleRunToSelectedLine);
+    QObject::connect(actionControlReverseContinue,      &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseContinue);
+    QObject::connect(actionControlReverseNext,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseNext);
+    QObject::connect(actionControlReverseStep,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseStep);
+    QObject::connect(actionControlReverseNexti,         &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseNexti);
+    QObject::connect(actionControlReverseStepi,         &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseStepi);
+    QObject::connect(actionControlReverseFinish,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseFinish);
+    QObject::connect(actionControlRecordStart,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordStart);
+    QObject::connect(actionControlRecordForward,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordForward);
+    QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordReverse);
+    QObject::connect(actionControlRecordStop,           &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordStop);
+    QObject::connect(actionControlInterrupt,            &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
@@ -1920,6 +1921,13 @@ void SeerMainWindow::refreshShortCuts () {
         actionRecordDirection->setShortcut(setting._sequence);
 
         actionControlDirectionMenu->setTitle(QString("Direction") + "   (Toggle " + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("RunToLine")) {
+
+        SeerKeySetting setting = _keySettings.get("RunToLine");
+
+        actionControlRunToLine->setShortcut(setting._sequence);
     }
 
     // Notify the editor manager of changes.
