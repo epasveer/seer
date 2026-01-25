@@ -181,6 +181,7 @@ void SeerEditorWidgetSource::showReloadBar (bool flag) {
 
             reloadFilenameLabel->setText("The file \"" + Seer::elideText(sourceArea()->file(),Qt::ElideLeft,elideLength) + "\" has changed on disk. RELOADING...");
             reloadFilenameLabel->setToolTip(sourceArea()->file());
+
             reloadToolButton->setFocus(Qt::MouseFocusReason);  // Give the reload button the focus.
 
             // Schedule the reload.
@@ -190,6 +191,7 @@ void SeerEditorWidgetSource::showReloadBar (bool flag) {
 
             reloadFilenameLabel->setText("The file \"" + Seer::elideText(sourceArea()->file(),Qt::ElideLeft,elideLength) + "\" has changed on disk.");
             reloadFilenameLabel->setToolTip(sourceArea()->file());
+
             reloadToolButton->setFocus(Qt::MouseFocusReason);  // Give the reload button the focus.
         }
 
