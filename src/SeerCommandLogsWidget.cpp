@@ -763,3 +763,6 @@ void SeerCommandLogsWidget::handleTabsContextMenuButtonClicked() {
     contextMenu.exec(QCursor::pos());
 }
 
+QDetachTabWidget* SeerCommandLogsWidget::logsTabWidgetInstance () {
+    return logsTabWidget;
+}

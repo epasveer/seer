@@ -75,6 +75,28 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
 
+        // OpenOCD getter and setter functions
+        // ::Main
+        const QString&              openOCDExePath                          ();
+        void                        setOpenOCDExePath                       (const QString& path);
+        const QString&              openOCDCommand                          ();
+        void                        setOpenOCDCommand                       (const QString& command);
+        // ::GDB Multiarch
+        const QString&              gdbMultiarchExePath                    ();
+        void                        setGdbMultiarchExePath                 (const QString& path);
+        const QString&              gdbMultiarchPort                       ();
+        void                        setGdbMultiarchPort                    (const QString& port);
+        const QString&              gdbMultiarchCommand                    ();
+        void                        setGdbMultiarchCommand                 (const QString& command);
+        // ::Symbol Files
+        const QString&              symbolFile                             ();
+        void                        setSymbolFile                          (const QString& path);
+        const QString&              workingDirectory                       ();
+        void                        setWorkingDirectory                    (const QString& path);
+        bool                        hasLoadAddress                         ();
+        const QString&              loadAddress                            ();
+        void                        setLoadAddress                         (const QString& address);
+
     private slots:
         void                        handleFileDebugWithDefaultProject       ();
         void                        handleFileDebugWithOutDefaultProject    ();
