@@ -215,6 +215,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
+
+    // This handle button state when target state changes
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleStatusChanged);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleStatusChanged);
+
     handleRecordSettingsChanged();
 
     //
@@ -1926,3 +1931,53 @@ void SeerMainWindow::refreshShortCuts () {
     gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 
+/***********************************************************************************************************************
+ * Change action button availability when status change
+ **********************************************************************************************************************/
+void SeerMainWindow::handleStatusChanged(QString message) {
+    // target halt
+    if (message.startsWith("*stopped") || message.startsWith("^done,stack"))
+    {
+        handleGdbTargetInterrupt();
+    }
+    else if (message.startsWith("*running"))      // target is running
+    {
+        handleGdbTargetRunning();
+    }
+}
+// Disable some button while target is running
+void SeerMainWindow::handleGdbTargetRunning()
+{
+    actionControlContinue->setEnabled(false);
+    actionControlNext->setEnabled(false);
+    actionControlStep->setEnabled(false);
+    actionControlFinish->setEnabled(false);
+    actionControlNexti->setEnabled(false);
+    actionControlStepi->setEnabled(false);
+    actionGdbContinue->setEnabled(false);
+    actionGdbNext->setEnabled(false);
+    actionGdbStep->setEnabled(false);
+    actionGdbFinish->setEnabled(false);
+    actionGdbNexti->setEnabled(false);
+    actionGdbStepi->setEnabled(false);
+    actionInterruptProcess->setEnabled(true);
+    actionControlInterrupt->setEnabled(true);
+}
+// Enable some button while target is interrupted
+void SeerMainWindow::handleGdbTargetInterrupt()
+{
+    actionControlContinue->setEnabled(true);
+    actionControlNext->setEnabled(true);
+    actionControlStep->setEnabled(true);
+    actionControlFinish->setEnabled(true);
+    actionControlNexti->setEnabled(true);
+    actionControlStepi->setEnabled(true);
+    actionGdbContinue->setEnabled(true);
+    actionGdbNext->setEnabled(true);
+    actionGdbStep->setEnabled(true);
+    actionGdbFinish->setEnabled(true);
+    actionGdbNexti->setEnabled(true);
+    actionGdbStepi->setEnabled(true);
+    actionInterruptProcess->setEnabled(false);
+    actionControlInterrupt->setEnabled(false);
+}
