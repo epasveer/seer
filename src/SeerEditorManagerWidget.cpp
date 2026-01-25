@@ -31,6 +31,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
+    _editorAutoSourceReload         = false;
     _assemblyWidget                 = 0;
     _showAssemblyTabOnStartupMode   = "never";
     _keepAssemblyTabOnTop           = true;
@@ -459,6 +460,25 @@ void SeerEditorManagerWidget::setEditorExternalEditorCommand (const QString& ext
 const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
 
     return _editorExternalEditorCommand;
+}
+
+void SeerEditorManagerWidget::setEditorAutoSourceReload (bool flag) {
+
+    _editorAutoSourceReload = flag;
+
+    // Update current editors.
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setAutoSourceReload(_editorAutoSourceReload);
+        b++;
+    }
+}
+
+bool SeerEditorManagerWidget::editorAutoSourceReload () const {
+
+    return _editorAutoSourceReload;
 }
 
 void SeerEditorManagerWidget::handleText (const QString& text) {
@@ -982,6 +1002,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::editorWidgetTab (const QString&
         return 0;
     }
 
+    // Return the editor widget.
     return i->widget;
 }
 
@@ -1007,6 +1028,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setEditorFont(editorFont());
     editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setExternalEditorCommand(editorExternalEditorCommand());
+    editorWidget->sourceArea()->setAutoSourceReload(editorAutoSourceReload());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
@@ -1069,6 +1091,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setEditorFont(editorFont());
     editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setExternalEditorCommand(editorExternalEditorCommand());
+    editorWidget->sourceArea()->setAutoSourceReload(editorAutoSourceReload());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());

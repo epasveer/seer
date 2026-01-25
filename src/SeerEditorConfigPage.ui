@@ -262,15 +262,22 @@
     </widget>
    </item>
    <item row="5" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="1" column="0">
+      <widget class="QLabel" name="autoReloadSourceFileLabel">
+       <property name="text">
+        <string>Auto Source Reload</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
       <widget class="QLabel" name="externalEditorCommandLabel">
        <property name="text">
         <string>External Editor Command</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="QHistoryLineEdit" name="externalEditorCommandLineEdit">
        <property name="toolTip">
         <string>Command to launch external editor.</string>
@@ -283,6 +290,16 @@
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="autoReloadSourceFileCheckBox">
+       <property name="toolTip">
+        <string>Automatically reload source files if they are externally modified.</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -323,8 +340,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&amp;quot;.h|.cpp|.c&amp;quot;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The tab size, in spaces, can be set to properly display source files that contain tab characters.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You can specify a command to launch an external editor. While in a source window, you can use the RMB menu to launch the external editor on the current file. However, these changes are not recognized by Seer. When specifying the command, you have these two variables. One for the name of the source file, and one for the line number to tell the editor to go to. Here are a few examples:&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'monospace';&quot;&gt;geany &amp;quot;%{file}&amp;quot;:%{line}&lt;br /&gt;kate --line %{line} &amp;quot;%{file}&amp;quot;&lt;br /&gt;gedit &amp;quot;%{file}&amp;quot; +%{line}&lt;br /&gt;konsole -e vim &amp;quot;%{file}&amp;quot; +%{line}&lt;br /&gt;&lt;br /&gt;&lt;/span&gt;You may need to close and reopen the source files for changes to take effect.&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'monospace';&quot;&gt;geany &amp;quot;%{file}&amp;quot;:%{line}&lt;br /&gt;kate --line %{line} &amp;quot;%{file}&amp;quot;&lt;br /&gt;gedit &amp;quot;%{file}&amp;quot; +%{line}&lt;br /&gt;konsole -e vim &amp;quot;%{file}&amp;quot; +%{line}&lt;br /&gt;&lt;br /&gt;&lt;/span&gt;Seer detects if the underlining source file is modified externally. Seer can automatically reload the file or prompt you to reload it.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You may need to close and reopen the source files for changes to take effect.&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Seer detects if the underlining source file is modified. Seer can automatically reload the file or prompt you to reload it.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>

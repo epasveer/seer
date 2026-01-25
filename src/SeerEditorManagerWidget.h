@@ -73,6 +73,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             editorTabSize                       () const;
         void                                            setEditorExternalEditorCommand      (const QString& externalEditorCommand);
         const QString&                                  editorExternalEditorCommand         () const;
+        void                                            setEditorAutoSourceReload           (bool flag);
+        bool                                            editorAutoSourceReload              () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -154,6 +156,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerKeySettings                                 _editorKeySettings;
         int                                             _editorTabSize;
         QString                                         _editorExternalEditorCommand;
+        bool                                            _editorAutoSourceReload;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
         QString                                         _showAssemblyTabOnStartupMode;

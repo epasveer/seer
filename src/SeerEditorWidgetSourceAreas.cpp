@@ -42,6 +42,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _autoSourceReload           = false;
     _selectedExpressionId       = Seer::createID();
     _selectedBreakpointId       = Seer::createID();
 
@@ -59,7 +60,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
     _breakPointArea->setMouseTracking(true);
-
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
@@ -1692,6 +1692,16 @@ void SeerEditorWidgetSourceArea::setExternalEditorCommand (const QString& extern
 const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
 
     return _externalEditorCommand;
+}
+
+void SeerEditorWidgetSourceArea::setAutoSourceReload (bool flag) {
+
+    _autoSourceReload = flag;
+}
+
+bool SeerEditorWidgetSourceArea::autoSourceReload () const {
+
+    return _autoSourceReload;
 }
 
 void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
