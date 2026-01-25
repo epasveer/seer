@@ -69,6 +69,10 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
+    // Feature: Go to definition (F12)
+    QShortcut* gotoDefShortcut = new QShortcut(QKeySequence(Qt::Key_F12), this);
+    QObject::connect(gotoDefShortcut,   &QShortcut::activated,                              this, &SeerEditorWidgetSourceArea::handleGotoDefinition);
+
     setCurrentLine(0);
 
     updateMarginAreasWidth(0);
@@ -2025,3 +2029,57 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
     QWidget::mouseReleaseEvent(event);
 }
 
+/***********************************************************************************************************************
+ * Go to definition feature                                                                                            *
+ **********************************************************************************************************************/
+// Check text and decide if that text is valid identifier (function, variable, type name)
+bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text) 
+{
+    static const QSet<QString> keywords = {
+        // Add your C and C++ keywords as QString literals here
+        "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+        "else", "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long",
+        "register", "restrict", "return", "short", "signed", "sizeof", "static", "struct",
+        "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "_Alignas",
+        "_Alignof", "_Atomic", "_Bool", "_Complex", "_Generic", "_Imaginary", "_Noreturn",
+        "_Static_assert", "_Thread_local",
+
+        "alignas", "alignof", "and", "and_eq", "asm", "bitand", "bitor", "bool", "catch",
+        "char16_t", "char32_t", "class", "compl", "const_cast", "constexpr", "decltype",
+        "delete", "dynamic_cast", "explicit", "export", "false", "friend", "mutable", "namespace",
+        "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private",
+        "protected", "public", "reinterpret_cast", "static_assert", "static_cast", "template",
+        "this", "thread_local", "throw", "true", "try", "typeid", "typename", "using",
+        "virtual", "wchar_t", "xor", "xor_eq"
+    };
+
+    if (text.isEmpty())
+        return false;
+
+    if (keywords.contains(text))
+        return false;
+
+    QChar firstChar = text[0];
+    if (!firstChar.isLetter() && firstChar != '_')
+        return false;
+
+    for (int i = 1; i < text.size(); ++i) {
+        QChar ch = text[i];
+        if (!ch.isLetterOrNumber() && ch != '_')
+            return false;
+    }
+
+    return true;
+}
+
+// When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit gdbGotoDefinition signal
+void SeerEditorWidgetSourceArea::handleGotoDefinition()
+{
+    QTextCursor cursor = textCursor();
+    cursor.select(QTextCursor::WordUnderCursor);
+    QString wordUnderCursor = cursor.selectedText();
+    if (isValidIdentifier(wordUnderCursor))
+    {
+        emit gdbGotoDefinition(wordUnderCursor);
+    }
+}
