@@ -1454,7 +1454,7 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
             if (confirm) {
                 int result = QMessageBox::warning(this, "Seer",
                         QString("Terminate current session?"),
-                        QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
+                        QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Ok);
 
                 if (result == QMessageBox::Cancel) {
                     break;

@@ -451,8 +451,8 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionGdbTerminate->setVisible(false);
     actionGdbLaunch->setVisible(false);
 
-    actionControlRestart->setVisible(false);
-    actionControlTerminate->setVisible(false);
+    actionControlRestart->setVisible(true);
+    actionControlTerminate->setVisible(true);
     actionControlInterrupt->setVisible(true);
 
     if (launchMode == "run") {
@@ -860,6 +860,18 @@ void SeerMainWindow::handleTerminateExecutable () {
 
 void SeerMainWindow::handleRestartExecutable () {
 
+    // Prompt if there's already a gdb running.
+    if (gdbWidget->isGdbRuning() == true) {
+
+        int result = QMessageBox::warning(this, "Seer",
+                QString("Restart current session?"),
+                QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Ok);
+
+        if (result == QMessageBox::Cancel) {
+            return;
+        }
+    }
+
     if (gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode()) {
         gdbWidget->restoreLaunchMode();
     }
@@ -939,7 +951,8 @@ void SeerMainWindow::handleGdbStateChanged () {
         // Launch and Restart. Applies to all.
         actionGdbLaunch->setVisible(false);
         actionGdbRestart->setVisible(false);
-        actionControlRestart->setVisible(false);
+        actionControlRestart->setVisible(true);
+        actionControlTerminate->setVisible(true);
 
         // Run mode
         if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start" ||
@@ -948,7 +961,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbTerminate->setVisible(true);
             actionGdbTerminate->setText("Terminate");
             actionGdbTerminate->setToolTip("Terminate the current debugging session.");
-            actionControlTerminate->setVisible(true);
             actionControlTerminate->setText("Terminate");
             actionControlTerminate->setToolTip("Terminate the current debugging session.");
 
@@ -958,7 +970,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbTerminate->setVisible(true);
             actionGdbTerminate->setText("Detach");
             actionGdbTerminate->setToolTip("Detach from the current debugging session.");
-            actionControlTerminate->setVisible(true);
             actionControlTerminate->setText("Detach");
             actionControlTerminate->setToolTip("Detach from the current debugging session.");
 
@@ -968,7 +979,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbTerminate->setVisible(true);
             actionGdbTerminate->setText("Disconnect");
             actionGdbTerminate->setToolTip("Disconnect from the current debugging session.");
-            actionControlTerminate->setVisible(true);
             actionControlTerminate->setText("Disconnect");
             actionControlTerminate->setToolTip("Disconnect from the current debugging session.");
 
@@ -993,7 +1003,8 @@ void SeerMainWindow::handleGdbStateChanged () {
 
         // Hide terminate. Applies to all.
         actionGdbTerminate->setVisible(false);
-        actionControlTerminate->setVisible(false);
+        actionControlRestart->setVisible(true);
+        actionControlTerminate->setVisible(true);
 
         if (gdbWidget->backupLaunchMode() == "run" || gdbWidget->backupLaunchMode() == "start" ||
             gdbWidget->backupLaunchMode() == "rr"  || gdbWidget->backupLaunchMode() == "corefile") {
@@ -1001,7 +1012,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbRestart->setVisible(true);
             actionGdbRestart->setText("Restart");
             actionGdbRestart->setToolTip("Restart the current debugging session.");
-            actionControlRestart->setVisible(true);
             actionControlRestart->setText("Restart");
             actionControlRestart->setToolTip("Restart the current debugging session.");
 
@@ -1009,7 +1019,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbRestart->setVisible(true);
             actionGdbRestart->setText("Reattach");
             actionGdbRestart->setToolTip("Reattach the current debugging session.");
-            actionControlRestart->setVisible(true);
             actionControlRestart->setText("Reattach");
             actionControlRestart->setToolTip("Reattach the current debugging session.");
 
@@ -1017,7 +1026,6 @@ void SeerMainWindow::handleGdbStateChanged () {
             actionGdbRestart->setVisible(true);
             actionGdbRestart->setText("Reconnect");
             actionGdbRestart->setToolTip("Reconnect the current debugging session.");
-            actionControlRestart->setVisible(true);
             actionControlRestart->setText("Reconnect");
             actionControlRestart->setToolTip("Reconnect the current debugging session.");
 
@@ -1778,6 +1786,7 @@ const SeerKeySettings SeerMainWindow::keySettings () const {
 void SeerMainWindow::refreshShortCuts () {
 
     // Dynamically change tool tip for 'Restart' depending on debug mode.
+
     if (_keySettings.has("Restart")) {
 
         SeerKeySetting setting = _keySettings.get("Restart");
@@ -1785,6 +1794,15 @@ void SeerMainWindow::refreshShortCuts () {
         actionGdbRestart->setToolTip(setting._description);
         actionGdbRestart->setText(setting._action + " (" + setting._sequence.toString() + ")");
         actionControlRestart->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("Terminate")) {
+
+        SeerKeySetting setting = _keySettings.get("Terminate");
+
+        actionGdbTerminate->setToolTip(setting._description);
+        actionGdbTerminate->setText(setting._action + " (" + setting._sequence.toString() + ")");
+        actionControlTerminate->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Next")) {
