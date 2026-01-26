@@ -140,6 +140,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showAlternateBar                    (bool flag);
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
+        void                                        addToMouseNavigation                (const SeerCurrentFile& currentFile);
 
     public slots:
         void                                        handleText                          (const QString& text);
@@ -154,6 +155,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         bool                                        event                               (QEvent* event);
         void                                        showExpressionTooltip               ();
         void                                        hideExpressionTooltip               ();
+        void                                        mousePressEvent                     (QMouseEvent *event) override;
 
     private slots:
         void                                        refreshExtraSelections              ();
@@ -163,6 +165,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
 
     private:
+        void                                        handleCursorPositionChanged         ();
         QString                                     _fullname;
         QString                                     _file;
         QString                                     _alternateDirectory;
@@ -194,6 +197,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         int                                         _sourceTabSize;
         QString                                     _externalEditorCommand;
+
+        int                                         _ignoreThumbMouseEvent = 0;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {
