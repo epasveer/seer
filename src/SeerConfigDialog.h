@@ -91,6 +91,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setExternalEditorCommand                        (const QString& externalEditorCommand);
         QString                             externalEditorCommand                           () const;
 
+        void                                setEditorAutoSourceReload                       (bool flag);
+        bool                                editorAutoSourceReload                          () const;
+
         // Source settings.
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
         QStringList                         sourceAlternateDirectories                      () const;

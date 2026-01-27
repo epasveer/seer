@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerEditorWidgetSource.h"
+#include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
 #include <QtGui/QTextBlock>
@@ -19,6 +20,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
+#include <QtCore/QTimer>
 #include <QtCore/QDebug>
 
 SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent) {
@@ -172,10 +174,30 @@ void SeerEditorWidgetSource::showReloadBar (bool flag) {
     reloadBarWidget->setStyleSheet("QWidget { background-color : #00AA00; color : #FFFF00; }");
 
     if (flag) {
-        reloadFilenameLabel->setText("The file \"" + sourceArea()->file() + "\" has changed on disk.");
-        reloadToolButton->setFocus(Qt::MouseFocusReason);      // If 'show', give the reload button the focus.
+
+        int elideLength = 50;
+
+        if (sourceArea()->autoSourceReload()) {
+
+            reloadFilenameLabel->setText("The file \"" + Seer::elideText(sourceArea()->file(),Qt::ElideLeft,elideLength) + "\" has changed on disk. RELOADING...");
+            reloadFilenameLabel->setToolTip(sourceArea()->file());
+
+            reloadToolButton->setFocus(Qt::MouseFocusReason);  // Give the reload button the focus.
+
+            // Schedule the reload.
+            QTimer::singleShot(1000, this, &SeerEditorWidgetSource::handleReloadToolButton);
+
+        }else{
+
+            reloadFilenameLabel->setText("The file \"" + Seer::elideText(sourceArea()->file(),Qt::ElideLeft,elideLength) + "\" has changed on disk.");
+            reloadFilenameLabel->setToolTip(sourceArea()->file());
+
+            reloadToolButton->setFocus(Qt::MouseFocusReason);  // Give the reload button the focus.
+        }
+
     }else{
         reloadFilenameLabel->setText("");
+        reloadFilenameLabel->setToolTip("");
     }
 }
 
