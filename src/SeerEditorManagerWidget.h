@@ -92,6 +92,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRefreshBreakpointsStackFrames ();
         void                                            handleRunToLine                     (QString fullname, int lineno);
         void                                            handleRunToAddress                  (QString address);
+        void                                            handleRunToSelectedLine             ();
         void                                            handleAddVariableLoggerExpression   (QString expression);
         void                                            handleAddVariableTrackerExpression  (QString expression);
         void                                            handleRefreshVariableTrackerValues  ();

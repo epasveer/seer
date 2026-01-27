@@ -143,6 +143,7 @@
     <addaction name="actionControlNext"/>
     <addaction name="actionControlStep"/>
     <addaction name="actionControlFinish"/>
+    <addaction name="actionControlRunToLine"/>
     <addaction name="separator"/>
     <addaction name="actionControlNexti"/>
     <addaction name="actionControlStepi"/>
@@ -795,6 +796,21 @@
    </property>
    <property name="text">
     <string>Reverse Stepi</string>
+   </property>
+  </action>
+  <action name="actionControlRunToLine">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Run To Line</string>
+   </property>
+   <property name="statusTip">
+    <string>Run to the currently selected line. Stop at any breakpoints, or when the program exits.</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

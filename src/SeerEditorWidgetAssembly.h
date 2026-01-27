@@ -63,6 +63,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        setAddress                          (const QString& address, bool force=false);
         const QString&                              address                             () const;
         bool                                        setCurrentLine                      (const QString& address);
+        const QString                               currentLine                         () const;
         void                                        scrollToLine                        (const QString& address);
 
         void                                        clearCurrentLines                   ();

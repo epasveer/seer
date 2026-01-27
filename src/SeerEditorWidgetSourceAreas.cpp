@@ -948,6 +948,13 @@ void SeerEditorWidgetSourceArea::breakpointToggle () {
     }
 }
 
+void SeerEditorWidgetSourceArea::runToSelectedLine () {
+
+    // Emit the runToLine signal.
+    emit runToLine(fullname(), currentLine());
+
+}
+
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
 #if QT_VERSION >= 0x060000
@@ -1005,13 +1012,13 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open external editor on line %1").arg(lineno), this);
 
         runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
@@ -1022,13 +1029,13 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         openExternalEditor->setEnabled(true);
 
     }else{
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on line %1").arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint on line %1").arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint on line %1").arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint on line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open file in external editor"), this);
 
         runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
@@ -1734,14 +1741,15 @@ void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
 }
 
 // Read current position in the source area: file name, line, column of cursor and first displayed line
-SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
-{
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition() {
+
     SeerCurrentFile info;
     info.file               = QFileInfo(file()).fileName();     // extract file name from full path
     info.fullname           = fullname();
     info.cursorRow          = currentLine();
     info.cursorCol          = currentColumn();
     info.firstDisplayLine   = firstDisplayLine();
+
     return info;
 }
 
