@@ -336,10 +336,13 @@
      <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart the debugging session</string>
    </property>
    <property name="statusTip">
-    <string>Start the program in GDB. Honor breakpoints, if any.</string>
+    <string>Restart the debugging session. Honor breakpoints, if any.</string>
    </property>
   </action>
   <action name="actionControlContinue">
@@ -716,13 +719,13 @@
      <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Terminate</string>
    </property>
    <property name="toolTip">
-    <string/>
+    <string>Terminate the debugging session</string>
    </property>
    <property name="statusTip">
-    <string/>
+    <string>Terminate the debugging session.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
