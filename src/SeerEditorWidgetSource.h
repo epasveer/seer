@@ -116,6 +116,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         int                                         editorTabSize                       () const;
         void                                        setExternalEditorCommand            (const QString& externalEditorCommand);
         const QString&                              externalEditorCommand               ();
+        void                                        setAutoSourceReload                 (bool flag);
+        bool                                        autoSourceReload                    () const;
         SeerCurrentFile                             readCurrentPosition                 ();
 
         void                                        eraseColorCurrentLine               (int lineno);
@@ -197,7 +199,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
         int                                         _sourceTabSize;
         QString                                     _externalEditorCommand;
-
+        bool                                        _autoSourceReload;
         int                                         _ignoreThumbMouseEvent = 0;
 };
 

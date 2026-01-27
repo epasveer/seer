@@ -179,6 +179,16 @@ QString SeerEditorConfigPage::externalEditorCommand () const {
     return externalEditorCommandLineEdit->text();
 }
 
+void SeerEditorConfigPage::setAutoSourceReload (bool flag) {
+
+    autoReloadSourceFileCheckBox->setChecked(flag);
+}
+
+bool SeerEditorConfigPage::autoSourceReload () const {
+
+    return autoReloadSourceFileCheckBox->isChecked();
+}
+
 void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
@@ -186,6 +196,7 @@ void SeerEditorConfigPage::reset () {
     setHighlighterSettings(SeerHighlighterSettings::populate(""));
     setHighlighterEnabled(true);
     setExternalEditorCommand("");
+    setAutoSourceReload(false);
 }
 
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
