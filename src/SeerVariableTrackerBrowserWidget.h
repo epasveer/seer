@@ -31,6 +31,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleItemExpanded              (QTreeWidgetItem* item);
         void                handleItemCollapsed             (QTreeWidgetItem* item);
         void                handleContextMenu               (const QPoint& pos);
+        void                handleRememberToolButton        (bool checked);
 
     signals:
         void                refreshVariableTrackerNames     ();
@@ -49,6 +50,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                showEvent                       (QShowEvent* event);
 
     private:
+        void                readSettings                    ();
+        void                writeSettings                   ();
 
 };
 

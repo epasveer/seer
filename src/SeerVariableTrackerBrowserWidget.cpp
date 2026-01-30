@@ -11,6 +11,7 @@
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
 #include <QtCore/QTimer>
+#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
 SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -39,6 +40,10 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemExpanded,                    this, &SeerVariableTrackerBrowserWidget::handleItemExpanded);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                     this, &SeerVariableTrackerBrowserWidget::handleItemEntered);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,      this, &SeerVariableTrackerBrowserWidget::handleContextMenu);
+    QObject::connect(variableRememberToolButton,     &QToolButton::toggled,                         this, &SeerVariableTrackerBrowserWidget::handleRememberToolButton);
+
+    // Read state.
+    readSettings();
 }
 
 SeerVariableTrackerBrowserWidget::~SeerVariableTrackerBrowserWidget () {
@@ -239,6 +244,11 @@ void SeerVariableTrackerBrowserWidget::handleStoppingPointReached () {
 }
 
 void SeerVariableTrackerBrowserWidget::handleSessionTerminated () {
+
+    // Remember the variable names?
+    if (variableRememberToolButton->isChecked() == true) {
+        return;
+    }
 
     // Delete previous contents.
     variablesTreeWidget->clear();
@@ -803,5 +813,33 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         return;
     }
+}
+
+void SeerVariableTrackerBrowserWidget::handleRememberToolButton (bool checked) {
+
+    Q_UNUSED(checked);
+
+    writeSettings();
+}
+
+void SeerVariableTrackerBrowserWidget::readSettings () {
+
+    QSettings settings;
+    bool      remember = false;
+
+    settings.beginGroup("variabletrackerwindow"); {
+        remember = settings.value("remembervariablenames", remember).toBool();
+    } settings.endGroup();
+
+    variableRememberToolButton->setChecked(remember);
+}
+
+void SeerVariableTrackerBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("variabletrackerwindow"); {
+        settings.setValue("remembervariablenames", variableRememberToolButton->isChecked());
+    } settings.endGroup();
 }
 
