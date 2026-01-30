@@ -852,7 +852,45 @@ void SeerMainWindow::handleHelpAbout () {
 
 void SeerMainWindow::handleTerminateExecutable () {
 
-    gdbWidget->handleGdbTerminateExecutable();
+    if (gdbWidget->isGdbRuning() == true) {
+
+        QSettings settings;
+        bool      prompt = true;
+
+        settings.beginGroup("mainwindow"); {
+            prompt = settings.value("promptterminate", prompt).toBool();
+        } settings.endGroup();
+
+        if (prompt) {
+
+            QMessageBox msgBox(this);
+            msgBox.setWindowTitle("Seer");
+            msgBox.setText("Terminate current session?");
+            msgBox.setIcon(QMessageBox::Question);
+
+            // Add "Don't ask again" checkbox
+            QCheckBox* dontAskAgainBox = new QCheckBox("Don't ask again", &msgBox);
+            msgBox.setCheckBox(dontAskAgainBox);
+
+            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+
+            int result = msgBox.exec();
+
+            // Save preference if checked
+            if (dontAskAgainBox->isChecked()) {
+                settings.beginGroup("mainwindow"); {
+                    settings.setValue("promptterminate", false);
+                } settings.endGroup();
+            }
+
+            if (result == QMessageBox::Cancel) {
+                return;
+            }
+        }
+
+        gdbWidget->handleGdbTerminateExecutable(false);
+    }
 }
 
 void SeerMainWindow::handleRestartExecutable () {
@@ -897,6 +935,10 @@ void SeerMainWindow::handleRestartExecutable () {
                 return;
             }
         }
+    }
+
+    if (gdbWidget->isGdbRuning() == true) {
+        gdbWidget->handleGdbTerminateExecutable(false);
     }
 
     if (gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode()) {
