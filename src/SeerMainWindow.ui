@@ -144,6 +144,7 @@
     <addaction name="actionControlNext"/>
     <addaction name="actionControlStep"/>
     <addaction name="actionControlFinish"/>
+    <addaction name="actionControlRunToLine"/>
     <addaction name="separator"/>
     <addaction name="actionControlNexti"/>
     <addaction name="actionControlStepi"/>
@@ -337,10 +338,13 @@
      <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart the debugging session</string>
    </property>
    <property name="statusTip">
-    <string>Start the program in GDB. Honor breakpoints, if any.</string>
+    <string>Restart the debugging session. Honor breakpoints, if any.</string>
    </property>
   </action>
   <action name="actionControlContinue">
@@ -717,13 +721,13 @@
      <normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</normaloff>:/seer/resources/RelaxLightIcons/system-shutdown.svg</iconset>
    </property>
    <property name="text">
-    <string/>
+    <string>Terminate</string>
    </property>
    <property name="toolTip">
-    <string/>
+    <string>Terminate the debugging session</string>
    </property>
    <property name="statusTip">
-    <string/>
+    <string>Terminate the debugging session.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -802,6 +806,21 @@
    </property>
    <property name="text">
     <string>ParallelStacks Visualizer</string>
+   </property>
+  </action>
+  <action name="actionControlRunToLine">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</normaloff>:/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Run To Line</string>
+   </property>
+   <property name="statusTip">
+    <string>Run to the currently selected line. Stop at any breakpoints, or when the program exits.</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

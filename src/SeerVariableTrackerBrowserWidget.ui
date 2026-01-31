@@ -30,6 +30,23 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="variableRememberToolButton">
+       <property name="toolTip">
+        <string>Remember variable names between sessions.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/pin.svg</normaloff>:/seer/resources/RelaxLightIcons/pin.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="variableDeleteToolButton">
        <property name="toolTip">
         <string>Delete selected variables.</string>

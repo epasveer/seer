@@ -73,6 +73,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             editorTabSize                       () const;
         void                                            setEditorExternalEditorCommand      (const QString& externalEditorCommand);
         const QString&                                  editorExternalEditorCommand         () const;
+        void                                            setEditorAutoSourceReload           (bool flag);
+        bool                                            editorAutoSourceReload              () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -90,6 +92,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRefreshBreakpointsStackFrames ();
         void                                            handleRunToLine                     (QString fullname, int lineno);
         void                                            handleRunToAddress                  (QString address);
+        void                                            handleRunToSelectedLine             ();
         void                                            handleAddVariableLoggerExpression   (QString expression);
         void                                            handleAddVariableTrackerExpression  (QString expression);
         void                                            handleRefreshVariableTrackerValues  ();
@@ -103,6 +106,10 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleAssemblyConfigChanged         ();
         void                                            handleSessionTerminated             ();
         void                                            handleGdbStateChanged               ();
+        void                                            handleAddToMouseNavigation          (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
+
+    protected:
+        void                                            mousePressEvent                     (QMouseEvent *event) override;
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -144,6 +151,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
         void                                            handleOpenFileWithDetails           (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine);
+        void                                            handleOpenForwardBackward           (const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo);
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -154,6 +162,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerKeySettings                                 _editorKeySettings;
         int                                             _editorTabSize;
         QString                                         _editorExternalEditorCommand;
+        bool                                            _editorAutoSourceReload;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
         QString                                         _showAssemblyTabOnStartupMode;
@@ -167,5 +176,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         // list of recently closed files (Ctrl + Shift + T)
         QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
+        // list of cursor positions for mouse navigation (back/forward)
+        QList<SeerEditorWidgetSourceArea::SeerCurrentFile>                      _listForwardFiles;
+        int                                             _forwardFilesIndex = -1;
 };
 

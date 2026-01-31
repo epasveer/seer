@@ -42,6 +42,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _autoSourceReload           = false;
     _selectedExpressionId       = Seer::createID();
     _selectedBreakpointId       = Seer::createID();
 
@@ -60,7 +61,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
     _breakPointArea->setMouseTracking(true);
 
-
     enableLineNumberArea(true);
     enableBreakPointArea(true);
 
@@ -68,6 +68,9 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
+
+    // Connect cursor position changed signal.
+    QObject::connect(this,          &QPlainTextEdit::cursorPositionChanged,                 this, &SeerEditorWidgetSourceArea::handleCursorPositionChanged);
 
     setCurrentLine(0);
 
@@ -945,6 +948,13 @@ void SeerEditorWidgetSourceArea::breakpointToggle () {
     }
 }
 
+void SeerEditorWidgetSourceArea::runToSelectedLine () {
+
+    // Emit the runToLine signal.
+    emit runToLine(fullname(), currentLine());
+
+}
+
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
 #if QT_VERSION >= 0x060000
@@ -1002,13 +1012,13 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open external editor on line %1").arg(lineno), this);
 
         runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
@@ -1019,13 +1029,13 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         openExternalEditor->setEnabled(true);
 
     }else{
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on line %1").arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint on line %1").arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint on line %1").arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint on line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open file in external editor"), this);
 
         runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
@@ -1694,6 +1704,16 @@ const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
     return _externalEditorCommand;
 }
 
+void SeerEditorWidgetSourceArea::setAutoSourceReload (bool flag) {
+
+    _autoSourceReload = flag;
+}
+
+bool SeerEditorWidgetSourceArea::autoSourceReload () const {
+
+    return _autoSourceReload;
+}
+
 void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
 
     // Erase color of this line
@@ -1721,14 +1741,15 @@ void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
 }
 
 // Read current position in the source area: file name, line, column of cursor and first displayed line
-SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition()
-{
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition() {
+
     SeerCurrentFile info;
     info.file               = QFileInfo(file()).fileName();     // extract file name from full path
     info.fullname           = fullname();
     info.cursorRow          = currentLine();
     info.cursorCol          = currentColumn();
     info.firstDisplayLine   = firstDisplayLine();
+
     return info;
 }
 
@@ -2025,3 +2046,43 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
     QWidget::mouseReleaseEvent(event);
 }
 
+/***********************************************************************************************************************
+ *  Functions for mouse navigation feature                                                                             *
+ **********************************************************************************************************************/
+void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::XButton1 || event->button() == Qt::XButton2) {
+        // Avoid the default back/forward action
+        _ignoreThumbMouseEvent ++;
+        SeerCurrentFile firstInfo = readCurrentPosition();
+        // _ignoreThumbMouseEvent will incremented in mousePressEvent when thumb mouse button is pressed but it may not be decremented
+        // if user just click the thumb mouse button without moving the cursor. So here we check if the position is the same as last time, 
+        // which means cursor didn't move, then we reset _ignoreThumbMouseEvent to 0 to avoid blocking future events.
+        QTimer::singleShot(30, this, [this, firstInfo]() {      // let's give 30 ms for cursor to move to new position
+            SeerCurrentFile secondInfo = readCurrentPosition();
+            if (firstInfo == secondInfo) {                      // cursor didn't move
+                _ignoreThumbMouseEvent = 0;                     // reset to 0
+            }
+        } );
+    }
+    QPlainTextEdit::mousePressEvent(event);
+}
+
+void SeerEditorWidgetSourceArea::handleCursorPositionChanged()
+{
+    // Emit signal to SeerEditorManagerWidget.cpp and save position
+    // Read current position, deploy a timer
+    SeerCurrentFile firstInfo = readCurrentPosition();
+    if (_ignoreThumbMouseEvent > 0)
+    {
+        _ignoreThumbMouseEvent --;
+        return;
+    }
+        
+    QTimer::singleShot(2000, this, [this, firstInfo]() {
+        SeerCurrentFile secondInfo = readCurrentPosition();
+        if (firstInfo == secondInfo) {
+            emit addToMouseNavigation(firstInfo);
+        }
+    } );
+}

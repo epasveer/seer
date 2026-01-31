@@ -33,6 +33,9 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setExternalEditorCommand        (const QString& externalEditorCommand);
         QString                             externalEditorCommand           () const;
 
+        void                                setAutoSourceReload             (bool flag);
+        bool                                autoSourceReload                () const;
+
         void                                reset                           ();
 
     protected slots:

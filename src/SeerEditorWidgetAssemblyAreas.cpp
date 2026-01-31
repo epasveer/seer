@@ -877,6 +877,16 @@ bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     return true;
 }
 
+const QString SeerEditorWidgetAssemblyArea::currentLine () const {
+
+    // Get current lineno.
+    int lineno = textCursor().blockNumber() + 1;
+
+    QString address = _lineAddressMap[lineno];
+
+    return address;
+}
+
 void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
 
     // Just return.
@@ -1142,11 +1152,11 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         int breakno = breakpointAddressToNumber(address);
 
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        runToAddressAction        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to address %1").arg(address), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
 
         runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
@@ -1155,11 +1165,11 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
         disableAction->setEnabled(true);
 
     }else{
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on address %1").arg(address), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on address %1").arg(address), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on address %1").arg(address), this);
+        runToAddressAction        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to address %1").arg(address), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint on address %1").arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint on address %1").arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint on address %1").arg(address), this);
 
         runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);

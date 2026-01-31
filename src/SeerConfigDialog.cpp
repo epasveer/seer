@@ -314,6 +314,16 @@ QString SeerConfigDialog::externalEditorCommand () const {
     return _editorConfigPage->externalEditorCommand();
 }
 
+void SeerConfigDialog::setEditorAutoSourceReload (bool flag) {
+
+    _editorConfigPage->setAutoSourceReload(flag);
+}
+
+bool SeerConfigDialog::editorAutoSourceReload () const {
+
+    return _editorConfigPage->autoSourceReload();
+}
+
 void SeerConfigDialog::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     _sourceConfigPage->setAlternateDirectories(alternateDirectories);
