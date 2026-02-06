@@ -120,13 +120,111 @@ namespace Seer::PSV {
     const Frame& Thread::frame (int i) const {
         return _frames[i];
     }
+
+    const Frames& Thread::frames () const {
+        return _frames;
+    }
+
+    GraphNode::GraphNode (const QString& name, QObject* parent) : QObject(parent) {
+
+        _name = name;
+
+        qDebug() << "Creating node:" << _name;
+    }
+
+    GraphNode::~GraphNode () {
+
+         qDebug() << "Destroying node:" << _name;
+    }
+
+    QString GraphNode::name () const {
+
+        return _name;
+    }
+
+    void GraphNode::addChild (GraphNode* child) {
+
+        child->setParent(this);  // QObject handles parent-child relationship
+    }
+
+    GraphNode* GraphNode::getChild (int index) const {
+
+        const QObjectList &childList = children();
+
+        if (index >= 0 && index < childList.size()) {
+            return qobject_cast<GraphNode*>(childList.at(index));
+        }
+
+        return nullptr;
+    }
+
+    int GraphNode::childCount () const {
+
+        return children().size();
+    }
+
+    void GraphNode::addFrame (const Frame& frame) {
+
+        _frames.push_back(frame);
+    }
+
+    const Frames& GraphNode::frames () const {
+
+        return _frames;
+    }
+
+    int GraphNode::frameCount () const {
+
+        return _frames.size();
+    }
+
+    void GraphNode::addThreadId (int id) {
+
+        _threadIds.push_back(id);
+    }
+
+    const ThreadIds& GraphNode::threadIds () const {
+
+        return _threadIds;
+    }
+
+    int GraphNode::threadIdCount () const {
+
+        return _threadIds.size();
+    }
+
+    void GraphNode::printTree (int level) const {
+
+        {
+            QDebug dbg = qDebug().noquote().nospace();
+
+            QString indent(level * 2, ' ');
+            dbg << indent << "└─" << _name;
+            dbg << " ThreadCount: " << threadIdCount();
+            dbg << " Ids: ";
+            for (int id : threadIds()) {
+                dbg << id << ", ";
+            }
+            for (auto frame : frames()) {
+                dbg << indent << "  " << frame.function() << '\n';
+            }
+        }
+
+        for (QObject* child : children()) {
+            GraphNode* node = qobject_cast<GraphNode*>(child);
+            if (node) {
+                node->printTree(level + 1);
+            }
+        }
+    }
 };
 
 
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _id = Seer::createID(); // ID for parallelstacks command.
+    _id     = Seer::createID(); // ID for parallelstacks command.
+    _gnodes = 0;
 
     // Set up UI.
     setupUi(this);
@@ -326,5 +424,35 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     // Delete tmp files.
     QFile::remove("/tmp/xxx.gv");
     QFile::remove("/tmp/xxx.gv.svg");
+
+    //
+    // Make GraphNodes
+    //
+
+    if (_gnodes != 0) {
+        delete _gnodes;
+        _gnodes = 0;
+    }
+
+    _gnodes = new Seer::PSV::GraphNode("root");
+
+    // Loop through each stack and create the graph.
+    for (int t=0; t<_threads.size(); t++) {
+
+        Seer::PSV::GraphNode* gnode = new Seer::PSV::GraphNode(QString::number(t));
+
+        gnode->addThreadId(_threads[t].id());
+
+        for (int f=0; f<_threads[t].frameCount(); f++) {
+
+            const Seer::PSV::Frame& frame = _threads[t].frame(f);
+
+            gnode->addFrame(frame);
+        }
+
+        _gnodes->addChild(gnode);
+    }
+
+    _gnodes->printTree();
 }
 

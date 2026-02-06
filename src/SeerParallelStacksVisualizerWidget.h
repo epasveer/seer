@@ -36,7 +36,7 @@ namespace Seer::PSV {
             QString             _type;
     };
 
-    typedef QVector<Frame> FramesVector;
+    typedef QVector<Frame> Frames;
 
     class Thread {
         public:
@@ -52,6 +52,7 @@ namespace Seer::PSV {
 
             int                 frameCount      () const;
             const Frame&        frame           (int i) const;
+            const Frames&       frames          () const;
 
         private:
             int                 _id;
@@ -60,10 +61,43 @@ namespace Seer::PSV {
             QString             _state;
             int                 _current;
 
-            FramesVector        _frames;
+            Frames              _frames;
     };
 
-    typedef QVector<Thread> ThreadsVector;
+    typedef QVector<Thread> Threads;
+
+    typedef QVector<int>    ThreadIds;
+
+    class GraphNode : public QObject {
+
+        Q_OBJECT
+
+        public:
+            explicit GraphNode (const QString& name, QObject* parent = nullptr);
+           ~GraphNode ();
+
+            QString             name            () const;
+
+            void                addChild        (GraphNode* child);
+            GraphNode*          getChild        (int index) const;
+            int                 childCount      () const;
+
+            void                addFrame        (const Frame& frame);
+            const Frames&       frames          () const;
+            int                 frameCount      () const;
+
+            void                addThreadId     (int id);
+            const ThreadIds&    threadIds       () const;
+            int                 threadIdCount   () const;
+
+            void                printTree       (int level = 0) const;
+
+        private:
+            QString             _name;
+            ThreadIds           _threadIds;
+            Frames              _frames;
+    };
+
 };
 
 
@@ -97,6 +131,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        createDirectedGraph                 ();
 
         int                         _id;
-        Seer::PSV::ThreadsVector    _threads;
+        Seer::PSV::Threads          _threads;
+        Seer::PSV::GraphNode*       _gnodes;
 };
 
