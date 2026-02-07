@@ -82,6 +82,7 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     QObject::connect(logsTabWidget->tabBar(),           &QTabBar::currentChanged,                       this,   &SeerCommandLogsWidget::handleLogsTabChanged);
     QObject::connect(manualCommandComboBox->lineEdit(), &QLineEdit::returnPressed,                      this,   &SeerCommandLogsWidget::handleManualCommandExecute);
     QObject::connect(manualCommandComboBox,             QOverload<int>::of(&QComboBox::activated),      this,   &SeerCommandLogsWidget::handleManualCommandChanged);
+    QObject::connect(_messagesBrowserWidget,            &SeerMessagesBrowserWidget::showMessages,       this,   &SeerCommandLogsWidget::handleRaiseMessageTab);
     QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);
     QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logTimeStampChanged,            this,   &SeerCommandLogsWidget::handleLogOutputChanged);
     QObject::connect(_seerOutputLog,                    &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);

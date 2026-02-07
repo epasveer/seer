@@ -1,3 +1,10 @@
 icons/
-*.swp
+
+# Ignore .nfs files that occasionally show up
 .nfs*
+
+# Ignore Vim swap files
+*.swp
+*.swo
+*~
+
