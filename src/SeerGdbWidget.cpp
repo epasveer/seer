@@ -361,8 +361,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
 #if SEER_GDB_LOGOUT == 1
     // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
-    QObject::connect(this,                                                      &SeerGdbWidget::gdbCommandLogout,                                                           _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 _gdbOutputLog,                                                  &SeerGdbLogWidget::handleText);
+    QObject::connect(this,                                                      &SeerGdbWidget::gdbCommandLogout,                                                           commandLogsWidget->gdbOutputLog(),                              &SeerGdbLogWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::allTextOutput,                                                                 commandLogsWidget->gdbOutputLog(),                              &SeerGdbLogWidget::handleText);
 #endif
 
     QObject::connect(this,                                                      &SeerGdbWidget::stateChanged,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleGdbStateChanged);
@@ -789,7 +789,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("=thread-group-exited,")) {
 
-        handleGdbTerminateExecutable(false);
+        // handleGdbTerminateExecutable(false);
 
     // Scan the output for magic text to refresh the Signal tab.
     }else if (text.startsWith("~\"@refresh-signal-values\"")) {
@@ -3056,6 +3056,10 @@ void SeerGdbWidget::handleGdbAssemblySymbolDemangling () {
     if (_assemblySymbolDemangling != "") {
         handleGdbCommand(QString("-gdb-set print asm-demangle ") + _assemblySymbolDemangling);
     }
+}
+
+void SeerGdbWidget::handleGdbRestartProgram () {
+    handleGdbCommand("start");
 }
 
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {
