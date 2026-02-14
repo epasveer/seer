@@ -800,6 +800,8 @@ void SeerGdbWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^done"))
     {
+        if (_gotoDefinitionFlag <= 0)
+            return;
         if (text.startsWith("^done,symbols="))          // Handle Go to Definition
         {
             //^done,symbols={debug=[{filename=" ",fullname=" ",
@@ -831,7 +833,7 @@ void SeerGdbWidget::handleText (const QString& text) {
                     }
                 }
             }
-
+            _gotoDefinitionFlag --;
         }
     }
     else{
@@ -3899,7 +3901,7 @@ void SeerGdbWidget::delay (int seconds) {
 void SeerGdbWidget::handleGotoDefinition(const QString& identifier)
 {
     _identifier = identifier;
-    _gotoDefinitionFlag = true;
+    _gotoDefinitionFlag = 3;
     handleGdbCommand("-symbol-info-variables --name " + _identifier);
     handleGdbCommand("-symbol-info-functions --name " + _identifier);
     handleGdbCommand("-symbol-info-types --name " + _identifier);

@@ -443,7 +443,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // Go to Definition variables
-        bool                                _gotoDefinitionFlag = false;    // Whether we are currently seeking for an identifier for Go to Definition.
+        int                                 _gotoDefinitionFlag = 0;    // Whether we are currently seeking for an identifier for Go to Definition.
         QString                             _identifier;    // For Go to Definition, the identifier we are seeking for.
 };
 
