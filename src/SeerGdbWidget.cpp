@@ -135,6 +135,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::astrixTextOutput,                                                              this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::tildeTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleText);
 
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               threadManagerWidget->threadFramesBrowserWidget(),               &SeerThreadFramesBrowserWidget::handleText);
@@ -367,6 +368,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     QObject::connect(this,                                                      &SeerGdbWidget::stateChanged,                                                               editorManagerWidget,                                            &SeerEditorManagerWidget::handleGdbStateChanged);
 
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::gotoDefinitionForward,                                            this,                                                           &SeerGdbWidget::handleGotoDefinition);
     // Restore window settings.
     readSettings();
 }
@@ -796,7 +798,43 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         handleGdbSignalListValues("all");
 
-    }else{
+    }else if (text.startsWith("^done"))
+    {
+        if (text.startsWith("^done,symbols="))          // Handle Go to Definition
+        {
+            //^done,symbols={debug=[{filename=" ",fullname=" ",
+            // symbols=[{line=" ",name="uwTick",type="volatile uint32_t",description="volatile uint32_t uwTick;"},}]}]
+            QString debug_text = Seer::parseFirst(text, "debug=", '[', ']', false);
+            QStringList filenames_list = Seer::parse(debug_text, "", '{', '}', false);
+
+            for (const auto& filename_entry : filenames_list) {
+
+                QString filename_text = Seer::parseFirst(filename_entry, "filename=", '"', '"', false);
+                QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
+
+                // If that file is not in source browser, skip it
+                if (sourceLibraryManagerWidget->sourceBrowserWidget()->findFileWithRegrex(fullname_text).isEmpty())
+                    continue;
+
+                QString symbols_text = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
+                QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
+
+                for (const auto& symbol_entry : symbols_list) {
+
+                    QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
+                    QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
+                    name_text = name_text.section('(', 0, 0).trimmed();
+                    if (name_text == _identifier)           // you found it! signal to open file
+                    {
+                        editorManagerWidget->handleOpenFile(filename_text, fullname_text, line_text.toInt());
+                    }
+                }
+            }
+
+        }
+    }
+    else{
         // All other text is ignored by this widget.
     }
 }
@@ -3855,3 +3893,14 @@ void SeerGdbWidget::delay (int seconds) {
     }
 }
 
+/***********************************************************************************************************************
+ * Functions for handling tracing identifier                                                                           *
+ **********************************************************************************************************************/
+void SeerGdbWidget::handleGotoDefinition(const QString& identifier)
+{
+    _identifier = identifier;
+    _gotoDefinitionFlag = true;
+    handleGdbCommand("-symbol-info-variables --name " + _identifier);
+    handleGdbCommand("-symbol-info-functions --name " + _identifier);
+    handleGdbCommand("-symbol-info-types --name " + _identifier);
+}
