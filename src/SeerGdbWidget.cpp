@@ -789,7 +789,7 @@ void SeerGdbWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("=thread-group-exited,")) {
 
-        handleGdbTerminateExecutable(false);
+        // handleGdbTerminateExecutable(false);
 
     // Scan the output for magic text to refresh the Signal tab.
     }else if (text.startsWith("~\"@refresh-signal-values\"")) {
@@ -3056,6 +3056,10 @@ void SeerGdbWidget::handleGdbAssemblySymbolDemangling () {
     if (_assemblySymbolDemangling != "") {
         handleGdbCommand(QString("-gdb-set print asm-demangle ") + _assemblySymbolDemangling);
     }
+}
+
+void SeerGdbWidget::handleGdbRestartProgram () {
+    handleGdbCommand("start");
 }
 
 void SeerGdbWidget::handleGdbProcessFinished (int exitCode, QProcess::ExitStatus exitStatus) {

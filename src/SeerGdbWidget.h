@@ -356,6 +356,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleSplitterMoved                         (int pos, int index);
         void                                handleGdbAssemblyDisassemblyFlavor          ();
         void                                handleGdbAssemblySymbolDemangling           ();
+        void                                handleGdbRestartProgram                     ();
         void                                handleGdbSchedulerLockingMode               (QString mode);
         void                                handleGdbScheduleMultipleMode               (QString mode);
         void                                handleGdbForkFollowMode                     (QString mode);
