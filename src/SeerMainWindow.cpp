@@ -453,7 +453,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionRecordProcess->setVisible(true);
     actionRecordDirection->setVisible(true);
 
-    actionGdbRestart->setVisible(false);
+    actionGdbRestart->setVisible(true);
     actionGdbTerminate->setVisible(false);
     actionGdbLaunch->setVisible(false);
 
@@ -1024,7 +1024,7 @@ void SeerMainWindow::handleGdbStateChanged () {
 
         // Launch and Restart. Applies to all.
         actionGdbLaunch->setVisible(false);
-        actionGdbRestart->setVisible(false);
+        actionGdbRestart->setVisible(true);
         actionControlRestart->setVisible(true);
         actionControlTerminate->setVisible(true);
 
