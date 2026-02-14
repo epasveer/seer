@@ -1060,6 +1060,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -1124,6 +1125,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1633,4 +1635,10 @@ void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
     {
         QWidget::mousePressEvent(event);
     }
+}
+
+// Forwarder signal from SeerEditorWidgetSourceArea to GdbWidget
+void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier)
+{
+    emit gotoDefinitionForward(identifier);
 }

@@ -145,12 +145,14 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showReloadBar                       (bool flag);
         void                                        highlighterSettingsChanged          ();
         void                                        addToMouseNavigation                (const SeerCurrentFile& currentFile);
+        void                                        signalGotoDefinition                (const QString& identifier);
 
     public slots:
         void                                        handleText                          (const QString& text);
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
         void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
+        void                                        handleGotoDefinitionF12             ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
@@ -170,6 +172,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
     private:
         void                                        handleCursorPositionChanged         ();
+        bool                                        isValidIdentifier                   (const QString& text);
+
         QString                                     _fullname;
         QString                                     _file;
         QString                                     _alternateDirectory;
