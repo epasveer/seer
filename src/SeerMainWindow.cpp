@@ -216,6 +216,11 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
+
+    // This handle button state when target state changes
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleStatusChanged);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleStatusChanged);
+
     handleRecordSettingsChanged();
 
     //
@@ -2022,3 +2027,81 @@ void SeerMainWindow::refreshShortCuts () {
     gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 
+/***********************************************************************************************************************
+ * Change action button availability when status change
+ **********************************************************************************************************************/
+void SeerMainWindow::handleStatusChanged(QString message) {
+    // target halt
+    if (message.startsWith("*stopped,reason=") || message.startsWith("^done,stack=[frame="))
+    {
+        handleGdbTargetInterrupt();
+    }
+    else if (message.startsWith("*running"))      // target is running
+    {
+        handleGdbTargetRunning();
+    }
+}
+// Disable some button while target is running
+void SeerMainWindow::handleGdbTargetRunning()
+{
+    // Control Menu
+    actionControlInterrupt->setEnabled(true);
+    actionControlDirectionMenu->setEnabled(false);
+    actionControlContinue->setEnabled(false);
+    actionControlNext->setEnabled(false);
+    actionControlStep->setEnabled(false);
+    actionControlFinish->setEnabled(false);
+    actionControlNexti->setEnabled(false);
+    actionControlStepi->setEnabled(false);
+    actionControlRecordMenu->setEnabled(false);
+    actionControlReverseMenu->setEnabled(false);
+    actionControlRunToLine->setEnabled(false);
+    // Views Menu
+    actionViewMemoryVisualizer->setEnabled(false);
+    actionViewArrayVisualizer->setEnabled(false);
+    actionViewMatrixVisualizer->setEnabled(false);
+    actionViewStructVisualizer->setEnabled(false);
+    actionViewBasicStructVisualizer->setEnabled(false);
+    actionViewImageVisualizer->setEnabled(false);
+    actionViewAssembly->setEnabled(false);
+    // Action buttons
+    actionInterruptProcess->setEnabled(true);
+    actionGdbContinue->setEnabled(false);
+    actionGdbNext->setEnabled(false);
+    actionGdbStep->setEnabled(false);
+    actionGdbFinish->setEnabled(false);
+    actionGdbNexti->setEnabled(false);
+    actionGdbStepi->setEnabled(false);
+}
+// Enable some button while target is interrupted
+void SeerMainWindow::handleGdbTargetInterrupt()
+{
+    // Control Menu
+    actionControlInterrupt->setEnabled(false);
+    actionControlDirectionMenu->setEnabled(true);
+    actionControlContinue->setEnabled(true);
+    actionControlNext->setEnabled(true);
+    actionControlStep->setEnabled(true);
+    actionControlFinish->setEnabled(true);
+    actionControlNexti->setEnabled(true);
+    actionControlStepi->setEnabled(true);
+    actionControlRecordMenu->setEnabled(true);
+    actionControlReverseMenu->setEnabled(true);
+    actionControlRunToLine->setEnabled(true);
+    // Views Menu
+    actionViewMemoryVisualizer->setEnabled(true);
+    actionViewArrayVisualizer->setEnabled(true);
+    actionViewMatrixVisualizer->setEnabled(true);
+    actionViewStructVisualizer->setEnabled(true);
+    actionViewBasicStructVisualizer->setEnabled(true);
+    actionViewImageVisualizer->setEnabled(true);
+    actionViewAssembly->setEnabled(true);
+    // Action buttons
+    actionInterruptProcess->setEnabled(false);
+    actionGdbContinue->setEnabled(true);
+    actionGdbNext->setEnabled(true);
+    actionGdbStep->setEnabled(true);
+    actionGdbFinish->setEnabled(true);
+    actionGdbNexti->setEnabled(true);
+    actionGdbStepi->setEnabled(true);
+}
