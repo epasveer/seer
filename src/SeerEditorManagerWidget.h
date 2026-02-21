@@ -8,6 +8,7 @@
 #include "SeerEditorManagerEntry.h"
 #include "SeerHighlighterSettings.h"
 #include "SeerKeySettings.h"
+#include "SeerSourceBrowserWidget.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QWidget>
 #include <QtCore/QMap>
@@ -75,6 +76,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const QString&                                  editorExternalEditorCommand         () const;
         void                                            setEditorAutoSourceReload           (bool flag);
         bool                                            editorAutoSourceReload              () const;
+        void                                            setSourceBrowserWidget              (SeerSourceBrowserWidget* sourceBrowserWidget);
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -117,6 +119,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTextSearchToolButtonClicked   ();
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
+        void                                            gotoDefinitionForwarder             (const QString& identifier);
 
     signals:
         void                                            refreshBreakpointsList              ();
@@ -141,6 +144,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
+        void                                            gotoDefinitionForward               (const QString& identifier, bool ignoreErrors = false);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -155,6 +159,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
+        SeerSourceBrowserWidget*                        _sourceBrowserWidget;   // Point to source browser widget in SeerGdbWidget 
         bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
@@ -179,5 +184,11 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         // list of cursor positions for mouse navigation (back/forward)
         QList<SeerEditorWidgetSourceArea::SeerCurrentFile>                      _listForwardFiles;
         int                                             _forwardFilesIndex = -1;
+
+        // _id of identifier for Go to definition
+        QString                                         _idFunctionDefinition;
+        QString                                         _idVariableDefinition;
+        QString                                         _idTypeDefinition;
+        QString                                         _gotoDefIdentifier; 
 };
 
