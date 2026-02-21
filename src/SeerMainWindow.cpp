@@ -1024,16 +1024,27 @@ void SeerMainWindow::handleGdbStateChanged () {
 
         // Launch and Restart. Applies to all.
         actionGdbLaunch->setVisible(false);
-        actionGdbRestart->setVisible(false);
+        actionGdbRestart->setVisible(true);
         actionControlRestart->setVisible(true);
         actionControlTerminate->setVisible(true);
+
+
+        // Get the hotkey for the Terminate button.
+        QString hotkey = "";
+
+        if (_keySettings.has("Terminate")) {
+
+            SeerKeySetting setting = _keySettings.get("Terminate");
+
+            hotkey = " (" + setting._sequence.toString() + ")";
+        }
 
         // Run mode
         if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start" ||
             gdbWidget->executableLaunchMode() == "rr"  || gdbWidget->executableLaunchMode() == "corefile") {
             // Terminate
             actionGdbTerminate->setVisible(true);
-            actionGdbTerminate->setText("Terminate");
+            actionGdbTerminate->setText("Terminate" + hotkey);
             actionGdbTerminate->setToolTip("Terminate the current debugging session.");
             actionControlTerminate->setText("Terminate");
             actionControlTerminate->setToolTip("Terminate the current debugging session.");
@@ -1042,7 +1053,7 @@ void SeerMainWindow::handleGdbStateChanged () {
         }else if (gdbWidget->executableLaunchMode() == "attach") {
             // Detach
             actionGdbTerminate->setVisible(true);
-            actionGdbTerminate->setText("Detach");
+            actionGdbTerminate->setText("Detach" + hotkey);
             actionGdbTerminate->setToolTip("Detach from the current debugging session.");
             actionControlTerminate->setText("Detach");
             actionControlTerminate->setToolTip("Detach from the current debugging session.");
@@ -1051,7 +1062,7 @@ void SeerMainWindow::handleGdbStateChanged () {
         }else if (gdbWidget->executableLaunchMode() == "connect") {
             // Disconnect
             actionGdbTerminate->setVisible(true);
-            actionGdbTerminate->setText("Disconnect");
+            actionGdbTerminate->setText("Disconnect" + hotkey);
             actionGdbTerminate->setToolTip("Disconnect from the current debugging session.");
             actionControlTerminate->setText("Disconnect");
             actionControlTerminate->setToolTip("Disconnect from the current debugging session.");
@@ -1080,25 +1091,40 @@ void SeerMainWindow::handleGdbStateChanged () {
         actionControlRestart->setVisible(true);
         actionControlTerminate->setVisible(true);
 
+        // Get the hotkey for the Restart button.
+        QString hotkey = "";
+
+        if (_keySettings.has("Restart")) {
+
+            SeerKeySetting setting = _keySettings.get("Restart");
+
+            hotkey = " (" + setting._sequence.toString() + ")";
+        }
+
+        // Run mode
         if (gdbWidget->backupLaunchMode() == "run" || gdbWidget->backupLaunchMode() == "start" ||
             gdbWidget->backupLaunchMode() == "rr"  || gdbWidget->backupLaunchMode() == "corefile") {
-
+            // Restart
             actionGdbRestart->setVisible(true);
-            actionGdbRestart->setText("Restart");
+            actionGdbRestart->setText("Restart" + hotkey);
             actionGdbRestart->setToolTip("Restart the current debugging session.");
             actionControlRestart->setText("Restart");
             actionControlRestart->setToolTip("Restart the current debugging session.");
 
+        // Attach mode
         }else if (gdbWidget->backupLaunchMode() == "attach") {
+            // Reattach
             actionGdbRestart->setVisible(true);
-            actionGdbRestart->setText("Reattach");
+            actionGdbRestart->setText("Reattach" + hotkey);
             actionGdbRestart->setToolTip("Reattach the current debugging session.");
             actionControlRestart->setText("Reattach");
             actionControlRestart->setToolTip("Reattach the current debugging session.");
 
+        // Connect mode
         }else if (gdbWidget->backupLaunchMode() == "connect") {
+            // Reconnect
             actionGdbRestart->setVisible(true);
-            actionGdbRestart->setText("Reconnect");
+            actionGdbRestart->setText("Reconnect" + hotkey);
             actionGdbRestart->setToolTip("Reconnect the current debugging session.");
             actionControlRestart->setText("Reconnect");
             actionControlRestart->setToolTip("Reconnect the current debugging session.");
