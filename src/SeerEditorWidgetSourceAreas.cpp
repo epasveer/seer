@@ -66,7 +66,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     enableBreakPointArea(true);
 
     _ctrlHeldTimer = new QTimer(this);
-    _ctrlHeldTimer->setInterval(50);  // 50 ms interval
+    _ctrlHeldTimer->setInterval(25);  // 25 ms interval
     QObject::connect(_ctrlHeldTimer, &QTimer::timeout, this, [this]() {
         updateCursor(QCursor::pos());
     });
