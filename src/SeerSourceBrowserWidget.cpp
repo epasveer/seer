@@ -38,7 +38,7 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
 
-    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb"} ); // Default settings.
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb", "*.s", "*.S"} ); // Default settings.
     _headerFilePatterns = QStringList( {"*.hpp", "*.h", "*.ads"} );
     _miscFilePatterns   = QStringList( {"/usr/include/"} );
 
@@ -109,7 +109,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
 
         // Set up a map to look for duplicate entries.  QMap<fullname,file>
-        QMap<QString,QString> files;
 
         for (const auto& entry_text : files_list) {
 
@@ -117,13 +116,13 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
 
             //qDebug() << file_text << fullname_text;
-
+            
             // Skip duplicates
-            if (files.contains(fullname_text)) {
+            if (_files.contains(fullname_text)) {
                 continue;
             }
 
-            files.insert(fullname_text, file_text);
+            _files.insert(fullname_text, file_text);
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -171,6 +170,7 @@ void SeerSourceBrowserWidget::handleSessionTerminated () {
 
     // Delete previous files.
     deleteChildItems();
+    _files.clear();
 }
 
 void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
@@ -268,7 +268,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
         // Always expand the source items. Expanding the other
         // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-
+        
         //qDebug() << text << matches.size();
     }
 
@@ -296,3 +296,14 @@ void SeerSourceBrowserWidget::deleteChildItems () {
     }
 }
 
+const QString& SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression)
+{
+    QMap<QString, QString>::const_iterator it;
+    for (it = _files.constBegin(); it != _files.constEnd(); ++it) {
+        if (it.key().contains(expression)) {
+            return it.key();
+        }
+    }
+    static const QString empty;
+    return empty;
+}
