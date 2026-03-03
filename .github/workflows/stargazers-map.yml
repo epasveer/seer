@@ -1,4 +1,4 @@
-name: Generate Stargazer Map
+name: Create Stargazer Map
 
 on:
   workflow_dispatch:
