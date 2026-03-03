@@ -1,0 +1,28 @@
+name: Generate Stargazer Map
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Generate Map
+        uses: dyatko/worldstar@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: ${{ github.repository }}
+          output: "images/stargazers-map.svg"
+
+      - name: Commit Map
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Action"
+          git add images/stargazers-map.svg
+          git commit -m "Update stargazer map"
+          git push
+
