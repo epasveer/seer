@@ -358,6 +358,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceCommandLogsSplitter,                                 &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagerSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(commandLogsWidget->gdbOutputLog(),                         &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::gotoDefinitionForward,                                            this,                                                           &SeerGdbWidget::handleGdbCommand);
 
 #if SEER_GDB_LOGOUT == 1
     // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
@@ -369,6 +370,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
+
+    // Set source browser widget for editor manager widget, so that editor manager can check if a file is in source browser before opening it
+    editorManagerWidget->setSourceBrowserWidget(sourceLibraryManagerWidget->sourceBrowserWidget());
 }
 
 SeerGdbWidget::~SeerGdbWidget () {
@@ -3854,4 +3858,3 @@ void SeerGdbWidget::delay (int seconds) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
-
