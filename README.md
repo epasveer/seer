@@ -56,7 +56,11 @@ Flathub website. [Here](https://flathub.org/en/apps/io.github.epasveer.seer)
 
 ### Flatpak
 
-Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github. Download ```seer.flatpak```. Install it:
+Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github. 
+
+**Important**: `flatpak-spawn --host`, needed in `GDB Launcher`  to run gdb. See https://github.com/epasveer/seer/issues/377#issuecomment-3620844808.
+
+Download ```seer.flatpak```. Install it:
 
     $ flatpak install -y --bundle --user seer.flatpak
 
