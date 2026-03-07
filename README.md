@@ -258,5 +258,5 @@ in my GitHub project page.
 Stargazers
 ==========
 
-It's a wonderful world. [Map](https://github.com/epasveer/seer/images/stargazer-map.svg)
+It's a wonderful world. ![](images/stargazer-map.svg)
 
