@@ -86,6 +86,16 @@ Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 * If you want the latest stable Qt5 source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
 
 
+Starting Seer
+=============
+
+Seer is meant to easily start the program to debug from the command line. gdb has multiple
+methods for debugging a program. So Seer naturally does too.
+
+Go to the Wiki to see all the ways to run Seer.
+
+https://github.com/epasveer/seer/wiki/Starting-Seer
+
 GUI overview
 ============
 
@@ -239,15 +249,6 @@ When looking at the contents of raw memory that is an image, the Image Visualize
 
 ![](images/imagevisualizer.png)
 
-Starting Seer
-=============
-
-Seer is meant to easily start the program to debug from the command line. gdb has multiple
-methods for debugging a program. So Seer naturally does too.
-
-Go to the Wiki to see all the ways to run Seer.
-
-https://github.com/epasveer/seer/wiki/Starting-Seer
 
 Support/Contact
 ===============
@@ -258,5 +259,7 @@ in my GitHub project page.
 Stargazers
 ==========
 
-It's a wonderful world. ![](images/stargazer-map.svg)
+It's a wonderful world. 
+
+![](images/stargazer-map.svg)
 
