@@ -255,3 +255,8 @@ Support/Contact
 Send an email to epasveer@att.net for any bugs or features. Or create a [task](https://github.com/epasveer/seer/issues)
 in my GitHub project page.
 
+Stargazers
+==========
+
+It's a wonderful world. [Map](https://github.com/epasveer/seer/images/stargazer-map.svg)
+
