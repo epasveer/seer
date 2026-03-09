@@ -145,6 +145,9 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
         void                                            gotoDefinitionForward               (const QString& identifier, bool ignoreErrors = false);
+        void                                            refreshFunctionList                 (int id, const QString& functionRegex);
+        void                                            refreshVariableList                 (int id, const QString& staticNameRegex, const QString& staticTypeRegex);
+        void                                            refreshTypeList                     (int id, const QString& typeRegex);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -186,9 +189,9 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             _forwardFilesIndex = -1;
 
         // _id of identifier for Go to definition
-        QString                                         _idFunctionDefinition;
-        QString                                         _idVariableDefinition;
-        QString                                         _idTypeDefinition;
-        QString                                         _gotoDefIdentifier; 
+        int                                             _idFunctionDefinition;
+        int                                             _idVariableDefinition;
+        int                                             _idTypeDefinition;
+        QString                                         _gotoDefIdentifier;
 };
 

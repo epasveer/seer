@@ -70,11 +70,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
 
     // Connect cursor position changed signal.
-    QObject::connect(this,          &QPlainTextEdit::cursorPositionChanged,                 this, &SeerEditorWidgetSourceArea::handleCursorPositionChanged);
-
-    // Add F12 shortcut. F12 -> SeerEditorWidgetSourceArea::handleGotoDefinitionF12 -> emit gotoDefinition(wordUnderCursor)
-    QShortcut *shortcutF12 = new QShortcut(QKeySequence("F12"), this);
-    QObject::connect(shortcutF12,   &QShortcut::activated,                                  this, &SeerEditorWidgetSourceArea::handleGotoDefinitionF12);
+    QObject::connect(this, &QPlainTextEdit::cursorPositionChanged,                          this, &SeerEditorWidgetSourceArea::handleCursorPositionChanged);
 
     setCurrentLine(0);
 
@@ -2136,13 +2132,14 @@ bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text)
 }
 
 // When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit signalGotoDefinition
-void SeerEditorWidgetSourceArea::handleGotoDefinitionF12()
-{
+void SeerEditorWidgetSourceArea::handleGotoDefinition() {
+
     QTextCursor cursor = textCursor();
     cursor.select(QTextCursor::WordUnderCursor);
     QString wordUnderCursor = cursor.selectedText();
-    if (isValidIdentifier(wordUnderCursor))
-    {
+
+    if (isValidIdentifier(wordUnderCursor)) {
         emit signalGotoDefinition(wordUnderCursor);
     }
 }
+

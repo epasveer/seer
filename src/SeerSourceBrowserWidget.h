@@ -29,7 +29,7 @@ class SeerSourceBrowserWidget : public QWidget, protected Ui::SeerSourceBrowserW
         void                        setIgnoreFilePatterns       (const QStringList& patterns);
         const QStringList&          ignoreFilePatterns          () const;
 
-        const QString&              findFileWithRegrex          (const QString& expression);
+        QString                     findFileWithRegrex          (const QString& expression) const;
 
     public slots:
         void                        handleText                  (const QString& text);

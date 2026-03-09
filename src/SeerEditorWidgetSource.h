@@ -152,7 +152,7 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        handleHighlighterSettingsChanged    ();
         void                                        handleWatchFileModified             (const QString& path);
         void                                        handleBreakpointToolTip             (QPoint pos, const QString& text);
-        void                                        handleGotoDefinitionF12             ();
+        void                                        handleGotoDefinition                ();
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
@@ -303,5 +303,6 @@ class SeerEditorWidgetSource : public QWidget, protected Ui::SeerEditorWidgetSou
         QShortcut*                                  _lineSearchShortcut;
         QShortcut*                                  _alternateDirShortcut;
         QShortcut*                                  _toggleBreakpointShortcut;
+        QShortcut*                                  _gotoDefinitionShortcut;
 };
 

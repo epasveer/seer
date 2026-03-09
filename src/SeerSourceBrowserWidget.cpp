@@ -116,7 +116,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             QString fullname_text = Seer::parseFirst(entry_text, "fullname=", '"', '"', false);
 
             //qDebug() << file_text << fullname_text;
-            
+
             // Skip duplicates
             if (_files.contains(fullname_text)) {
                 continue;
@@ -296,14 +296,16 @@ void SeerSourceBrowserWidget::deleteChildItems () {
     }
 }
 
-const QString& SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression)
-{
+QString SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression) const {
+
     QMap<QString, QString>::const_iterator it;
+
     for (it = _files.constBegin(); it != _files.constEnd(); ++it) {
         if (it.key().contains(expression)) {
             return it.key();
         }
     }
-    static const QString empty;
-    return empty;
+
+    return QString();
 }
+
