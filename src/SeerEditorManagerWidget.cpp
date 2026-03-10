@@ -1692,7 +1692,8 @@ void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier)
     _gotoDefIdentifier = identifier;
 
     // Ask for identifier matches for Functions, Variables, and Types.
-    emit refreshFunctionList(_idFunctionDefinition, _gotoDefIdentifier);
+    // Searching for: "^functionName(.*)$" instead of "functionName" only, to eliminate noise as much as we could
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "(.*)$");
     emit refreshVariableList(_idVariableDefinition, _gotoDefIdentifier, "");
     emit refreshTypeList(_idTypeDefinition, _gotoDefIdentifier);
 }
