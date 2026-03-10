@@ -1876,8 +1876,6 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
         return;
     }
 
-    //qDebug() << id << functionRegex;
-
     QApplication::setOverrideCursor(Qt::BusyCursor);
     handleGdbCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
     QApplication::restoreOverrideCursor();
