@@ -41,6 +41,7 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         void                                            handleHelpToolButtonClicked     ();
         void                                            handleTabMoved                  (int from, int to);
         void                                            handleTabChanged                (int index);
+        void                                            handleContextMenuButtonClicked  ();
 
     private:
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;
@@ -50,5 +51,6 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         SeerLibraryBrowserWidget*                       _libraryBrowserWidget;
         SeerAdaExceptionsBrowserWidget*                 _adaExceptionsBrowserWidget;
         SeerSkipBrowserWidget*                          _skipBrowserWidget;
+        QTabWidget*                                     _dumpTab;
 };
 

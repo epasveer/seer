@@ -9,6 +9,9 @@
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <QMenu>
+#include <QCheckBox>
+#include <QWidgetAction>
 
 SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -28,6 +31,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     _libraryBrowserWidget       = new SeerLibraryBrowserWidget(this);
     _adaExceptionsBrowserWidget = new SeerAdaExceptionsBrowserWidget(this);
     _skipBrowserWidget          = new SeerSkipBrowserWidget(this);
+    _dumpTab                    = new QTabWidget(this);
 
     tabWidget->addTab(_sourceBrowserWidget,         "Source");
     tabWidget->addTab(_functionBrowserWidget,       "Functions");
@@ -36,6 +40,13 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     tabWidget->addTab(_libraryBrowserWidget,        "Libraries");
     tabWidget->addTab(_adaExceptionsBrowserWidget,  "AdaExceptions");
     tabWidget->addTab(_skipBrowserWidget,           "Skips");
+    tabWidget->addTab(_dumpTab,                     "");
+    tabWidget->setTabVisible(tabWidget->count() - 1, false);
+
+    QToolButton* contextMenuButton = new QToolButton(tabWidget);
+    contextMenuButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-down.svg"));
+    contextMenuButton->setToolTip("Show context menu.");
+    contextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -47,6 +58,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
+    hcontainer->addWidget(contextMenuButton);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 
@@ -56,6 +68,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     readSettings();
 
     // Connect things.
+    QObject::connect(contextMenuButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleContextMenuButtonClicked);
     QObject::connect(refreshToolButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,        this,  &SeerSourceSymbolLibraryManagerWidget::handleTabMoved);
@@ -200,3 +213,37 @@ void SeerSourceSymbolLibraryManagerWidget::readSettings () {
     }
 }
 
+void SeerSourceSymbolLibraryManagerWidget::handleContextMenuButtonClicked()
+{
+    QMenu contextMenu;
+    QWidget *container = new QWidget(&contextMenu);
+    QVBoxLayout *layout = new QVBoxLayout(container);
+
+    for (int i = 0; i < tabWidget->count() - 1; ++i) {
+        QString title = tabWidget->tabText(i);
+        QCheckBox *showTabCheckBox = new QCheckBox(title, container);
+        showTabCheckBox->setChecked(tabWidget->isTabVisible(i));
+        layout->addWidget(showTabCheckBox);
+        QObject::connect(showTabCheckBox, &QCheckBox::toggled, [this, i](bool checked){
+            tabWidget->setTabVisible(i, checked);
+            int cnt = 0;
+            for (int i = 0; i < tabWidget->count() - 1; ++i) {
+                if (!tabWidget->isTabVisible(i)) {
+                    cnt ++;
+                }
+            }
+            if (cnt == tabWidget->count() - 1)
+                tabWidget->setTabVisible(tabWidget->count() - 1, true);
+            else
+                tabWidget->setTabVisible(tabWidget->count() - 1, false);
+        });
+    }
+    container->setLayout(layout);
+
+    QWidgetAction *action = new QWidgetAction(&contextMenu);
+    action->setDefaultWidget(container);
+    contextMenu.addAction(action);
+
+    contextMenu.exec(QCursor::pos());
+    
+}
