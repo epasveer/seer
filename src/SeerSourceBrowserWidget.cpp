@@ -123,6 +123,8 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
                 continue;
             }
 
+            files.insert(fullname_text, file_text);
+
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, QFileInfo(file_text).fileName());
@@ -130,7 +132,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
-
             if (Seer::matchesWildcard(ignoreFilePatterns(), fullname_text)) {
                 continue;
             }else if (Seer::matchesWildcard(miscFilePatterns(), fullname_text)) {
@@ -266,7 +267,7 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
         // Always expand the source items. Expanding the other
         // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-        
+
         //qDebug() << text << matches.size();
     }
 
