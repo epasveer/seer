@@ -109,6 +109,7 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
 
         // Set up a map to look for duplicate entries.  QMap<fullname,file>
+        QMap<QString,QString> files;
 
         for (const auto& entry_text : files_list) {
 
@@ -118,11 +119,9 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             //qDebug() << file_text << fullname_text;
 
             // Skip duplicates
-            if (_files.contains(fullname_text)) {
+            if (files.contains(fullname_text)) {
                 continue;
             }
-
-            _files.insert(fullname_text, file_text);
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
@@ -170,7 +169,6 @@ void SeerSourceBrowserWidget::handleSessionTerminated () {
 
     // Delete previous files.
     deleteChildItems();
-    _files.clear();
 }
 
 void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
@@ -294,18 +292,5 @@ void SeerSourceBrowserWidget::deleteChildItems () {
     foreach (auto i, _miscFilesItems->takeChildren()) {
         delete i;
     }
-}
-
-QString SeerSourceBrowserWidget::findFileWithRegrex(const QString& expression) const {
-
-    QMap<QString, QString>::const_iterator it;
-
-    for (it = _files.constBegin(); it != _files.constEnd(); ++it) {
-        if (it.key().contains(expression)) {
-            return it.key();
-        }
-    }
-
-    return QString();
 }
 

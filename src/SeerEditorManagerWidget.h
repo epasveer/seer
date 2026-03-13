@@ -8,7 +8,6 @@
 #include "SeerEditorManagerEntry.h"
 #include "SeerHighlighterSettings.h"
 #include "SeerKeySettings.h"
-#include "SeerSourceBrowserWidget.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QWidget>
 #include <QtCore/QMap>
