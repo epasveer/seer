@@ -76,7 +76,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const QString&                                  editorExternalEditorCommand         () const;
         void                                            setEditorAutoSourceReload           (bool flag);
         bool                                            editorAutoSourceReload              () const;
-        void                                            setSourceBrowserWidget              (SeerSourceBrowserWidget* sourceBrowserWidget);
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -162,7 +161,6 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
-        SeerSourceBrowserWidget*                        _sourceBrowserWidget;   // Point to source browser widget in SeerGdbWidget 
         bool                                            _editorHighlighterEnabled;
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;

@@ -372,9 +372,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
 
     // Restore window settings.
     readSettings();
-
-    // Set source browser widget for editor manager widget, so that editor manager can check if a file is in source browser before opening it
-    editorManagerWidget->setSourceBrowserWidget(sourceLibraryManagerWidget->sourceBrowserWidget());
 }
 
 SeerGdbWidget::~SeerGdbWidget () {

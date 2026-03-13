@@ -484,10 +484,6 @@ bool SeerEditorManagerWidget::editorAutoSourceReload () const {
     return _editorAutoSourceReload;
 }
 
-void SeerEditorManagerWidget::setSourceBrowserWidget (SeerSourceBrowserWidget* sourceBrowserWidget) {
-    _sourceBrowserWidget = sourceBrowserWidget;
-}
-
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
     // Update the current line.
@@ -824,15 +820,8 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
                 QString filename_text = Seer::parseFirst(filename_entry, "filename=", '"', '"', false);
                 QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
+                QString symbols_text  = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
 
-                // If that file is not in source browser, skip it
-                if (_sourceBrowserWidget != nullptr) {
-                    if (_sourceBrowserWidget->findFileWithRegrex(fullname_text).isEmpty()) {
-                        continue;
-                    }
-                }
-
-                QString symbols_text = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
                 QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
 
                 for (const auto& symbol_entry : symbols_list) {
@@ -1692,7 +1681,12 @@ void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier)
     _gotoDefIdentifier = identifier;
 
     // Ask for identifier matches for Functions, Variables, and Types.
-    // Searching for: "^functionName(.*)$" "functionName$". Sometimes symbols have or don't have arguments.
+    //
+    // Sometimes symbols have or don't have arguments.
+    // Searching for: "^functionName(.*)$" "^functionName$".
+    // Searching for: "^functionName$".
+    //
+
     emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "$");
     emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "\\(.*\\)$");
     emit refreshVariableList(_idVariableDefinition, _gotoDefIdentifier, "");
