@@ -117,6 +117,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTextSearchToolButtonClicked   ();
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
+        void                                            gotoDefinitionForwarder             (const QString& identifier);
 
     signals:
         void                                            refreshBreakpointsList              ();
@@ -141,6 +142,10 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
+        void                                            gotoDefinitionForward               (const QString& identifier, bool ignoreErrors = false);
+        void                                            refreshFunctionList                 (int id, const QString& functionRegex);
+        void                                            refreshVariableList                 (int id, const QString& staticNameRegex, const QString& staticTypeRegex);
+        void                                            refreshTypeList                     (int id, const QString& typeRegex);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -179,5 +184,11 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         // list of cursor positions for mouse navigation (back/forward)
         QList<SeerEditorWidgetSourceArea::SeerCurrentFile>                      _listForwardFiles;
         int                                             _forwardFilesIndex = -1;
+
+        // _id of identifier for Go to definition
+        int                                             _idFunctionDefinition;
+        int                                             _idVariableDefinition;
+        int                                             _idTypeDefinition;
+        QString                                         _gotoDefIdentifier;
 };
 
