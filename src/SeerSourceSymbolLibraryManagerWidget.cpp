@@ -6,12 +6,12 @@
 #include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidgetAction>
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
-#include <QMenu>
-#include <QCheckBox>
-#include <QWidgetAction>
 
 SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -40,10 +40,10 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     tabWidget->addTab(_adaExceptionsBrowserWidget,  "AdaExceptions");
     tabWidget->addTab(_skipBrowserWidget,           "Skips");
 
-    QToolButton* contextMenuButton = new QToolButton(tabWidget);
-    contextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
-    contextMenuButton->setToolTip("Show/Hide tabs.");
-    contextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
+    QToolButton* tabsContextMenuButton = new QToolButton(tabWidget);
+    tabsContextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
+    tabsContextMenuButton->setToolTip("Show/Hide tabs.");
+    tabsContextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
@@ -55,7 +55,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
-    hcontainer->addWidget(contextMenuButton);
+    hcontainer->addWidget(tabsContextMenuButton);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 
@@ -65,7 +65,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     readSettings();
 
     // Connect things.
-    QObject::connect(contextMenuButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleShowTabsContextMenuButtonClicked);
+    QObject::connect(tabsContextMenuButton, &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleTabsContextMenuButtonClicked);
     QObject::connect(refreshToolButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,        this,  &SeerSourceSymbolLibraryManagerWidget::handleTabMoved);
@@ -234,7 +234,7 @@ void SeerSourceSymbolLibraryManagerWidget::readSettings () {
     }
 }
 
-void SeerSourceSymbolLibraryManagerWidget::handleShowTabsContextMenuButtonClicked() {
+void SeerSourceSymbolLibraryManagerWidget::handleTabsContextMenuButtonClicked() {
 
     // Build the menu and execute it.
     QMenu        contextMenu;

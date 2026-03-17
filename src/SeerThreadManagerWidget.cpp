@@ -7,6 +7,9 @@
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidgetAction>
 #include <QtGui/QIcon>
 #include <QtCore/QFile>
 #include <QtCore/QSettings>
@@ -33,6 +36,11 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     tabWidget->addTab(_threadGroupsBrowserWidget, "Groups");
     tabWidget->addTab(_adaTasksBrowserWidget,     "AdaTasks");
 
+    QToolButton* tabsContextMenuButton = new QToolButton(tabWidget);
+    tabsContextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
+    tabsContextMenuButton->setToolTip("Show/Hide tabs.");
+    tabsContextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
+
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the thread information.");
@@ -43,6 +51,7 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
+    hcontainer->addWidget(tabsContextMenuButton);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 
@@ -52,6 +61,7 @@ SeerThreadManagerWidget::SeerThreadManagerWidget (QWidget* parent) : QWidget(par
     readSettings();
 
     // Connect things.
+    QObject::connect(tabsContextMenuButton,    &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleTabsContextMenuButtonClicked);
     QObject::connect(refreshToolButton,        &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleRefreshToolButtonClicked);
     QObject::connect(helpToolButton,           &QToolButton::clicked,                                   this,  &SeerThreadManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(schedulerLockingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),     this,  &SeerThreadManagerWidget::handleSchedulerLockingComboBox);
@@ -164,13 +174,21 @@ void SeerThreadManagerWidget::handleTabChanged (int index) {
 
 void SeerThreadManagerWidget::writeSettings () {
 
-    // Write tab order to settings.
+    // Build up visible list.
+    QStringList visible;
+
+    for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+        visible.append(tabWidget->isTabVisible(i) ? "true" : "false");
+    }
+
+    // Build up tab order.
     QStringList tabs;
 
     for (int i=0; i<tabWidget->tabBar()->count(); i++) {
         tabs.append(tabWidget->tabBar()->tabText(i));
     }
 
+    // Build up current tab.
     QString current = tabWidget->tabBar()->tabText(tabWidget->tabBar()->currentIndex());
 
     //qDebug() << "Tabs"    << tabs;
@@ -180,6 +198,7 @@ void SeerThreadManagerWidget::writeSettings () {
 
     settings.beginGroup("threadmanagerwindow"); {
         settings.setValue("taborder", tabs.join(','));
+        settings.setValue("tabvisible", visible.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
 }
@@ -194,10 +213,12 @@ void SeerThreadManagerWidget::readSettings () {
     // Read tab order from settings.
     QSettings   settings;
     QStringList tabs;
+    QStringList visible;
     QString     current;
 
     settings.beginGroup("threadmanagerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
+        visible = settings.value("tabvisible").toString().split(',');
         current = settings.value("tabcurrent").toString();
     } settings.endGroup();
 
@@ -222,6 +243,18 @@ void SeerThreadManagerWidget::readSettings () {
         }
     }
 
+    // Show/Hide tabs.
+    for (int i=0; i<visible.count(); i++) {
+        QString flag = visible[i];
+        if (flag == "true") {
+            tabWidget->setTabVisible(i,true);
+        }else if (flag == "false") {
+            tabWidget->setTabVisible(i,false);
+        }else{
+            tabWidget->setTabVisible(i,true);
+        }
+    }
+
     // Make a tab current.
     if (current != "") {
         for (int i=0; i<tabWidget->tabBar()->count(); i++) {
@@ -233,5 +266,60 @@ void SeerThreadManagerWidget::readSettings () {
     }else{
         tabWidget->setCurrentIndex(0);
     }
+}
+
+void SeerThreadManagerWidget::handleTabsContextMenuButtonClicked() {
+
+    // Build the menu and execute it.
+    QMenu        contextMenu;
+    QWidget*     container = new QWidget(&contextMenu);
+    QVBoxLayout* layout    = new QVBoxLayout(container);
+
+    for (int i = 0; i < tabWidget->count(); i++) {
+
+        QString title = tabWidget->tabText(i);
+        QCheckBox* showTabCheckBox = new QCheckBox(title, container);
+        showTabCheckBox->setChecked(tabWidget->isTabVisible(i));
+        layout->addWidget(showTabCheckBox);
+
+        QObject::connect(showTabCheckBox, &QCheckBox::toggled, [this, showTabCheckBox, i](bool checked) {
+
+            // Count visible tabs.
+            int count=0;
+
+            for (int x=0; x<tabWidget->count(); x++) {
+                if (tabWidget->isTabVisible(x)) {
+                    count++;
+                }
+            }
+
+            // Adjust the count. The 'checked' is made before the UI is updated.
+            if (checked == true) {
+                count++;
+            }else{
+                count--;
+            }
+
+            // Reset the checkbox UI if the last visible tab was clicked.
+            if (checked == false and count == 0) {
+                showTabCheckBox->setChecked(true);
+            // Don't hide last visible tab.
+            }else if (checked == false and count > 1) {
+                tabWidget->setTabVisible(i, checked);
+            // Always show tabs when asked.
+            }else{
+                tabWidget->setTabVisible(i, checked);
+            }
+
+            writeSettings();
+        });
+    }
+    container->setLayout(layout);
+
+    QWidgetAction* action = new QWidgetAction(&contextMenu);
+    action->setDefaultWidget(container);
+    contextMenu.addAction(action);
+
+    contextMenu.exec(QCursor::pos());
 }
 

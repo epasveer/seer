@@ -44,6 +44,7 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleTabMoved                      (int from, int to);
         void                                            handleTabChanged                    (int index);
+        void                                            handleTabsContextMenuButtonClicked  ();
 
     private:
         SeerStackFramesBrowserWidget*                   _stackFramesBrowserWidget;
