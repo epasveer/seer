@@ -64,6 +64,7 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         void                                handleHelpToolButtonClicked     ();
         void                                handleMacroToolButtonClicked    (QAbstractButton* button);
         void                                handleAboutToQuit               ();
+        void                                handleTabsContextMenuButtonClicked      ();
 
     signals:
         void                                executeGdbCommand               (QString command);

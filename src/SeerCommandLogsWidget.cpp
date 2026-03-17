@@ -6,11 +6,14 @@
 #include "SeerMacroToolButton.h"
 #include "SeerLogWidget.h"
 #include "SeerHelpPageDialog.h"
+#include "QHContainerWidget.h"
 #include <QtGui/QFont>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidgetAction>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
 
@@ -66,6 +69,17 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     logsTabWidget->addTab(_seerOutputLog,            "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
+    QToolButton* tabsContextMenuButton = new QToolButton(logsTabWidget);
+    tabsContextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
+    tabsContextMenuButton->setToolTip("Show/Hide tabs.");
+    tabsContextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QHContainerWidget* hcontainer = new QHContainerWidget(this);
+    hcontainer->setSpacing(3);
+    hcontainer->addWidget(tabsContextMenuButton);
+
+    logsTabWidget->setCornerWidget(hcontainer, Qt::TopRightCorner);
+
     // Create the console tab.
     // Each RUN method will create and connect to the console's terminal.
     createConsole();
@@ -78,6 +92,7 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     manualCommandComboBox->lineEdit()->setClearButtonEnabled(true);
 
     // Connect things.
+    QObject::connect(tabsContextMenuButton,             &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleTabsContextMenuButtonClicked);
     QObject::connect(logsTabWidget->tabBar(),           &QTabBar::tabMoved,                             this,   &SeerCommandLogsWidget::handleLogsTabMoved);
     QObject::connect(logsTabWidget->tabBar(),           &QTabBar::currentChanged,                       this,   &SeerCommandLogsWidget::handleLogsTabChanged);
     QObject::connect(manualCommandComboBox->lineEdit(), &QLineEdit::returnPressed,                      this,   &SeerCommandLogsWidget::handleManualCommandExecute);
@@ -522,22 +537,32 @@ void SeerCommandLogsWidget::handleMacroToolButtonClicked (QAbstractButton* butto
 
 void SeerCommandLogsWidget::writeSettings () {
 
-    // Write tab order to settings.
+    // Build up visible list.
+    QStringList visible;
+
+    for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
+        visible.append(logsTabWidget->isTabVisible(i) ? "true" : "false");
+    }
+
+    // Build up tab order.
     QStringList tabs;
 
     for (int i=0; i<logsTabWidget->tabBar()->count(); i++) {
         tabs.append(logsTabWidget->tabBar()->tabText(i));
     }
 
+    // Build up current tab.
     QString current = logsTabWidget->tabBar()->tabText(logsTabWidget->tabBar()->currentIndex());
 
     //qDebug() << "Tabs"    << tabs;
     //qDebug() << "Current" << current;
 
+    // Write settings.
     QSettings settings;
 
     settings.beginGroup("logsmanagerwindow"); {
         settings.setValue("taborder",   tabs.join(','));
+        settings.setValue("tabvisible", visible.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
 }
@@ -548,9 +573,12 @@ void SeerCommandLogsWidget::readSettings () {
 
     // Read tab order from settings.
     QStringList tabs;
+    QStringList visible;
     QString     current;
+
     settings.beginGroup("logsmanagerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
+        visible = settings.value("tabvisible").toString().split(',');
         current = settings.value("tabcurrent").toString();
     } settings.endGroup();
 
@@ -558,20 +586,26 @@ void SeerCommandLogsWidget::readSettings () {
     //qDebug() << "Current" << current;
 
     // Move tabs to the requested order.
-    for (int i=0; i<tabs.count(); i++) {
+    // Ignore signals from the tabbar as these will call 'writeSettings'
+    // while we're in 'readSettings'.
+    {
+        QSignalBlocker blocker(logsTabWidget->tabBar());
 
-        QString tab = tabs[i];
-        int     tb  = -1;
+        for (int i=0; i<tabs.count(); i++) {
 
-        for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
-            if (logsTabWidget->tabBar()->tabText(j) == tab) {
-                tb = j;
-                break;
+            QString tab = tabs[i];
+            int     tb  = -1;
+
+            for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
+                if (logsTabWidget->tabBar()->tabText(j) == tab) {
+                    tb = j;
+                    break;
+                }
             }
-        }
 
-        if (tb != -1) {
-            logsTabWidget->tabBar()->moveTab(tb, i);
+            if (tb != -1) {
+                logsTabWidget->tabBar()->moveTab(tb, i);
+            }
         }
     }
 
@@ -586,6 +620,18 @@ void SeerCommandLogsWidget::readSettings () {
 
     if (_consoleIndex < 0) {
         qDebug() << "The console tab index is not in the settings.";
+    }
+
+    // Show/Hide tabs.
+    for (int i=0; i<visible.count(); i++) {
+        QString flag = visible[i];
+        if (flag == "true") {
+            logsTabWidget->setTabVisible(i,true);
+        }else if (flag == "false") {
+            logsTabWidget->setTabVisible(i,false);
+        }else{
+            logsTabWidget->setTabVisible(i,true);
+        }
     }
 
     // Make a tab current.
@@ -667,5 +713,60 @@ void SeerCommandLogsWidget::readLogSettings () {
 void SeerCommandLogsWidget::handleAboutToQuit () {
 
     _aboutToQuit = true;
+}
+
+void SeerCommandLogsWidget::handleTabsContextMenuButtonClicked() {
+
+    // Build the menu and execute it.
+    QMenu        contextMenu;
+    QWidget*     container = new QWidget(&contextMenu);
+    QVBoxLayout* layout    = new QVBoxLayout(container);
+
+    for (int i = 0; i < logsTabWidget->count(); i++) {
+
+        QString title = logsTabWidget->tabText(i);
+        QCheckBox* showTabCheckBox = new QCheckBox(title, container);
+        showTabCheckBox->setChecked(logsTabWidget->isTabVisible(i));
+        layout->addWidget(showTabCheckBox);
+
+        QObject::connect(showTabCheckBox, &QCheckBox::toggled, [this, showTabCheckBox, i](bool checked) {
+
+            // Count visible tabs.
+            int count=0;
+
+            for (int x=0; x<logsTabWidget->count(); x++) {
+                if (logsTabWidget->isTabVisible(x)) {
+                    count++;
+                }
+            }
+
+            // Adjust the count. The 'checked' is made before the UI is updated.
+            if (checked == true) {
+                count++;
+            }else{
+                count--;
+            }
+
+            // Reset the checkbox UI if the last visible tab was clicked.
+            if (checked == false and count == 0) {
+                showTabCheckBox->setChecked(true);
+            // Don't hide last visible tab.
+            }else if (checked == false and count > 1) {
+                logsTabWidget->setTabVisible(i, checked);
+            // Always show tabs when asked.
+            }else{
+                logsTabWidget->setTabVisible(i, checked);
+            }
+
+            writeSettings();
+        });
+    }
+    container->setLayout(layout);
+
+    QWidgetAction* action = new QWidgetAction(&contextMenu);
+    action->setDefaultWidget(container);
+    contextMenu.addAction(action);
+
+    contextMenu.exec(QCursor::pos());
 }
 

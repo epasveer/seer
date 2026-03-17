@@ -6,6 +6,9 @@
 #include "SeerHelpPageDialog.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidgetAction>
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -37,6 +40,11 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     tabWidget->addTab(_adaExceptionsBrowserWidget,  "AdaExceptions");
     tabWidget->addTab(_skipBrowserWidget,           "Skips");
 
+    QToolButton* tabsContextMenuButton = new QToolButton(tabWidget);
+    tabsContextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
+    tabsContextMenuButton->setToolTip("Show/Hide tabs.");
+    tabsContextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
+
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the source/symbol/library information.");
@@ -47,6 +55,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
+    hcontainer->addWidget(tabsContextMenuButton);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 
@@ -56,6 +65,7 @@ SeerSourceSymbolLibraryManagerWidget::SeerSourceSymbolLibraryManagerWidget (QWid
     readSettings();
 
     // Connect things.
+    QObject::connect(tabsContextMenuButton, &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleTabsContextMenuButtonClicked);
     QObject::connect(refreshToolButton,     &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleRefreshToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,     this,  &SeerSourceSymbolLibraryManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,        this,  &SeerSourceSymbolLibraryManagerWidget::handleTabMoved);
@@ -129,22 +139,32 @@ void SeerSourceSymbolLibraryManagerWidget::handleTabChanged (int index) {
 
 void SeerSourceSymbolLibraryManagerWidget::writeSettings () {
 
-    // Write tab order to settings.
+    // Build up visible list.
+    QStringList visible;
+
+    for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+        visible.append(tabWidget->isTabVisible(i) ? "true" : "false");
+    }
+
+    // Build up tab order.
     QStringList tabs;
 
     for (int i=0; i<tabWidget->tabBar()->count(); i++) {
         tabs.append(tabWidget->tabBar()->tabText(i));
     }
 
+    // Build up current tab.
     QString current = tabWidget->tabBar()->tabText(tabWidget->tabBar()->currentIndex());
 
     //qDebug() << "Tabs"    << tabs;
     //qDebug() << "Current" << current;
 
+    // Write settings.
     QSettings settings;
 
     settings.beginGroup("sourcemanagerwindow"); {
         settings.setValue("taborder",   tabs.join(','));
+        settings.setValue("tabvisible", visible.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
 }
@@ -159,10 +179,12 @@ void SeerSourceSymbolLibraryManagerWidget::readSettings () {
     // Read tab order from settings.
     QSettings   settings;
     QStringList tabs;
+    QStringList visible;
     QString     current;
 
     settings.beginGroup("sourcemanagerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
+        visible = settings.value("tabvisible").toString().split(',');
         current = settings.value("tabcurrent").toString();
     } settings.endGroup();
 
@@ -170,20 +192,38 @@ void SeerSourceSymbolLibraryManagerWidget::readSettings () {
     //qDebug() << "Current" << current;
 
     // Move tabs to the requested order.
-    for (int i=0; i<tabs.count(); i++) {
+    // Ignore signals from the tabbar as these will call 'writeSettings'
+    // while we're in 'readSettings'.
+    {
+        QSignalBlocker blocker(tabWidget->tabBar());
 
-        QString tab = tabs[i];
-        int     tb  = -1;
+        for (int i=0; i<tabs.count(); i++) {
 
-        for (int j=0; j<tabWidget->tabBar()->count(); j++) {
-            if (tabWidget->tabBar()->tabText(j) == tab) {
-                tb = j;
-                break;
+            QString tab = tabs[i];
+            int     tb  = -1;
+
+            for (int j=0; j<tabWidget->tabBar()->count(); j++) {
+                if (tabWidget->tabBar()->tabText(j) == tab) {
+                    tb = j;
+                    break;
+                }
+            }
+
+            if (tb != -1) {
+                tabWidget->tabBar()->moveTab(tb, i);
             }
         }
+    }
 
-        if (tb != -1) {
-            tabWidget->tabBar()->moveTab(tb, i);
+    // Show/Hide tabs.
+    for (int i=0; i<visible.count(); i++) {
+        QString flag = visible[i];
+        if (flag == "true") {
+            tabWidget->setTabVisible(i,true);
+        }else if (flag == "false") {
+            tabWidget->setTabVisible(i,false);
+        }else{
+            tabWidget->setTabVisible(i,true);
         }
     }
 
@@ -198,5 +238,60 @@ void SeerSourceSymbolLibraryManagerWidget::readSettings () {
     }else{
         tabWidget->setCurrentIndex(0);
     }
+}
+
+void SeerSourceSymbolLibraryManagerWidget::handleTabsContextMenuButtonClicked() {
+
+    // Build the menu and execute it.
+    QMenu        contextMenu;
+    QWidget*     container = new QWidget(&contextMenu);
+    QVBoxLayout* layout    = new QVBoxLayout(container);
+
+    for (int i = 0; i < tabWidget->count(); i++) {
+
+        QString title = tabWidget->tabText(i);
+        QCheckBox* showTabCheckBox = new QCheckBox(title, container);
+        showTabCheckBox->setChecked(tabWidget->isTabVisible(i));
+        layout->addWidget(showTabCheckBox);
+
+        QObject::connect(showTabCheckBox, &QCheckBox::toggled, [this, showTabCheckBox, i](bool checked) {
+
+            // Count visible tabs.
+            int count=0;
+
+            for (int x=0; x<tabWidget->count(); x++) {
+                if (tabWidget->isTabVisible(x)) {
+                    count++;
+                }
+            }
+
+            // Adjust the count. The 'checked' is made before the UI is updated.
+            if (checked == true) {
+                count++;
+            }else{
+                count--;
+            }
+
+            // Reset the checkbox UI if the last visible tab was clicked.
+            if (checked == false and count == 0) {
+                showTabCheckBox->setChecked(true);
+            // Don't hide last visible tab.
+            }else if (checked == false and count > 1) {
+                tabWidget->setTabVisible(i, checked);
+            // Always show tabs when asked.
+            }else{
+                tabWidget->setTabVisible(i, checked);
+            }
+
+            writeSettings();
+        });
+    }
+    container->setLayout(layout);
+
+    QWidgetAction* action = new QWidgetAction(&contextMenu);
+    action->setDefaultWidget(container);
+    contextMenu.addAction(action);
+
+    contextMenu.exec(QCursor::pos());
 }
 
