@@ -91,6 +91,11 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     manualCommandComboBox->lineEdit()->setToolTip("Manually enter a gdb/mi command.");
     manualCommandComboBox->lineEdit()->setClearButtonEnabled(true);
 
+    // Restore tab ordering and manual command history.
+    readSettings();
+    readHistorySettings();
+    readLogSettings();
+
     // Connect things.
     QObject::connect(tabsContextMenuButton,             &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleTabsContextMenuButtonClicked);
     QObject::connect(logsTabWidget->tabBar(),           &QTabBar::tabMoved,                             this,   &SeerCommandLogsWidget::handleLogsTabMoved);
@@ -107,12 +112,6 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleHelpToolButtonClicked);
     QObject::connect(macroButtonGroup,                  &QButtonGroup::buttonClicked,                   this,   &SeerCommandLogsWidget::handleMacroToolButtonClicked);
     QObject::connect(qApp,                              &QCoreApplication::aboutToQuit,                 this,   &SeerCommandLogsWidget::handleAboutToQuit);
-
-
-    // Restore tab ordering and manual command history.
-    readSettings();
-    readHistorySettings();
-    readLogSettings();
 }
 
 SeerCommandLogsWidget::~SeerCommandLogsWidget () {
@@ -586,26 +585,20 @@ void SeerCommandLogsWidget::readSettings () {
     //qDebug() << "Current" << current;
 
     // Move tabs to the requested order.
-    // Ignore signals from the tabbar as these will call 'writeSettings'
-    // while we're in 'readSettings'.
-    {
-        QSignalBlocker blocker(logsTabWidget->tabBar());
+    for (int i=0; i<tabs.count(); i++) {
 
-        for (int i=0; i<tabs.count(); i++) {
+        QString tab = tabs[i];
+        int     tb  = -1;
 
-            QString tab = tabs[i];
-            int     tb  = -1;
-
-            for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
-                if (logsTabWidget->tabBar()->tabText(j) == tab) {
-                    tb = j;
-                    break;
-                }
+        for (int j=0; j<logsTabWidget->tabBar()->count(); j++) {
+            if (logsTabWidget->tabBar()->tabText(j) == tab) {
+                tb = j;
+                break;
             }
+        }
 
-            if (tb != -1) {
-                logsTabWidget->tabBar()->moveTab(tb, i);
-            }
+        if (tb != -1) {
+            logsTabWidget->tabBar()->moveTab(tb, i);
         }
     }
 
