@@ -830,6 +830,99 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     return true;
 }
 
+//
+// openocd get and set functions
+//
+// ::Main
+const QString SeerDebugDialog::openOCDExePath()
+{
+    return executableOpenOCDPathLineEdit->text();
+}
+
+void SeerDebugDialog::setOpenOCDExePath(const QString& path)
+{
+    executableOpenOCDPathLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::openOCDCommand()
+{
+    QString tmp = openOCDCommandLineEdit->toPlainText();
+    tmp.replace("\n", " ");
+    return tmp;
+}
+
+void SeerDebugDialog::setOpenOCDCommand(const QString& command)
+{
+    openOCDCommandLineEdit->setPlainText(command);
+}
+
+// ::GDB Multiarch
+const QString SeerDebugDialog::gdbMultiarchExePath()
+{
+    return openOcdGdbMultiarchLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchExePath(const QString& path)
+{
+    openOcdGdbMultiarchLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::gdbMultiarchPort()
+{
+    return openOCD_GDB_Port_LineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchPort(const QString& port)
+{
+    openOCD_GDB_Port_LineEdit->setText(port);
+}
+
+const QString SeerDebugDialog::gdbMultiarchCommand()
+{
+    return openOCDGdbCommandLineEdit->text();
+}
+
+void SeerDebugDialog::setGdbMultiarchCommand(const QString& command)
+{
+    openOCDGdbCommandLineEdit->setText(command);
+}
+
+// ::Symbol Files
+const QString SeerDebugDialog::symbolFile()
+{
+    return symbolFileLineEdit->text();
+}
+
+void SeerDebugDialog::setSymbolFile(const QString& path)
+{
+    symbolFileLineEdit->setText(path);
+}
+
+const QString SeerDebugDialog::workingDirectory()
+{
+    return workingDirLineEdit->text();
+}
+
+void SeerDebugDialog::setWorkingDirectory(const QString& path)
+{
+    workingDirLineEdit->setText(path);
+}
+
+bool SeerDebugDialog::hasLoadAddress()
+{
+    return loadAddrCheckBox->isChecked();
+}
+
+const QString SeerDebugDialog::loadAddress()
+{
+    return loadAddrLineEdit->text();
+}
+
+void SeerDebugDialog::setLoadAddress(const QString& address)
+{
+    loadAddrLineEdit->setText(address);
+}
+
 void SeerDebugDialog::handleSaveProjectToolButton () {
 
     // Get the filename to save to.
