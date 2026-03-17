@@ -193,20 +193,26 @@ void SeerVariableManagerWidget::readSettings () {
     //qDebug() << "Current" << current;
 
     // Move tabs to the requested order.
-    for (int i=0; i<tabs.count(); i++) {
+    // Ignore signals from the tabbar as these will call 'writeSettings'
+    // while we're in 'readSettings'.
+    {
+        QSignalBlocker blocker(tabWidget->tabBar());
 
-        QString tab = tabs[i];
-        int     tb  = -1;
+        for (int i=0; i<tabs.count(); i++) {
 
-        for (int j=0; j<tabWidget->tabBar()->count(); j++) {
-            if (tabWidget->tabBar()->tabText(j) == tab) {
-                tb = j;
-                break;
+            QString tab = tabs[i];
+            int     tb  = -1;
+
+            for (int j=0; j<tabWidget->tabBar()->count(); j++) {
+                if (tabWidget->tabBar()->tabText(j) == tab) {
+                    tb = j;
+                    break;
+                }
             }
-        }
 
-        if (tb != -1) {
-            tabWidget->tabBar()->moveTab(tb, i);
+            if (tb != -1) {
+                tabWidget->tabBar()->moveTab(tb, i);
+            }
         }
     }
 
