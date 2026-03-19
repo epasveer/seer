@@ -322,10 +322,10 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       variableManagerWidget->signalValuesBrowserWidget(),             &SeerSignalValuesBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->breakpointsBrowser(),                        &SeerBreakpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->watchpointsBrowser(),                                      &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->catchpointsBrowser(),                                      &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->printpointsBrowser(),                                      &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
-    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->checkpointsBrowser(),                                      &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->checkpointsBrowser(),                        &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
 
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          editorManagerWidget,                                            &SeerEditorManagerWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          sourceLibraryManagerWidget->sourceBrowserWidget(),              &SeerSourceBrowserWidget::handleSessionTerminated);
@@ -358,6 +358,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceCommandLogsSplitter,                                 &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(stackThreadManagerSplitter,                                &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
     QObject::connect(commandLogsWidget->gdbOutputLog(),                         &SeerGdbLogWidget::refreshBreakpointsList,                                                  this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshFunctionList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableFunctions);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshVariableList,                                              this,                                                           &SeerGdbWidget::handleGdbExecutableVariables);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshTypeList,                                                  this,                                                           &SeerGdbWidget::handleGdbExecutableTypes);
 
 #if SEER_GDB_LOGOUT == 1
     // Direct all GdbWidget and GdbMonitor log to GDB Log, for debugging
@@ -1869,8 +1872,6 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
     if (functionRegex == "") {
         return;
     }
-
-    //qDebug() << id << functionRegex;
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
     handleGdbCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
@@ -3854,4 +3855,3 @@ void SeerGdbWidget::delay (int seconds) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
 }
-

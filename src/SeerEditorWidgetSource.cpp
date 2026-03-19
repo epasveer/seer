@@ -44,39 +44,41 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     _lineSearchShortcut       = new QShortcut(QKeySequence(tr("Ctrl+L")),       this);
     _alternateDirShortcut     = new QShortcut(QKeySequence(tr("Ctrl+O")),       this);
     _toggleBreakpointShortcut = new QShortcut(QKeySequence(tr("Ctrl+B")),       this);
+    _gotoDefinitionShortcut   = new QShortcut(QKeySequence(tr("F12")),          this);
 
     setKeySettings(SeerKeySettings::populate());
 
     // Connect things.
-    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::returnPressed,                       this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
-    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::escapePressed,                       this,  &SeerEditorWidgetSource::handleEscapePressed);
+    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::returnPressed,                       this,          &SeerEditorWidgetSource::handleSearchTextLineEdit);
+    QObject::connect(searchTextLineEdit,                &QHistoryLineEdit::escapePressed,                       this,          &SeerEditorWidgetSource::handleEscapePressed);
 #if QT_VERSION >= 0x060900
-    QObject::connect(matchCaseCheckBox,                 &QCheckBox::checkStateChanged,                          this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::checkStateChanged,                          this,          &SeerEditorWidgetSource::handleSearchTextLineEdit);
 #else
-    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                               this,  &SeerEditorWidgetSource::handleSearchTextLineEdit);
+    QObject::connect(matchCaseCheckBox,                 &QCheckBox::stateChanged,                               this,          &SeerEditorWidgetSource::handleSearchTextLineEdit);
 #endif
-    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
-    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
-    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::returnPressed,                       this,  &SeerEditorWidgetSource::handleSearchLineNumberLineEdit);
-    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::escapePressed,                       this,  &SeerEditorWidgetSource::handleEscapePressed);
-    QObject::connect(searchReloadToolButton,            &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
-    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleSearchCloseToolButton);
-    QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateCloseToolButton);
-    QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleAlternateFileOpenToolButton);
-    QObject::connect(alternateLineEdit,                 &QHistoryLineEdit::returnPressed,                       this,  &SeerEditorWidgetSource::handleAlternateLineEdit);
-    QObject::connect(reloadToolButton,                  &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
-    QObject::connect(reloadCloseToolButton,             &QToolButton::clicked,                                  this,  &SeerEditorWidgetSource::handleReloadCloseToolButton);
-    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,             this,  qOverload<bool>(&SeerEditorWidgetSource::showSearchBar));
-    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,          this,  &SeerEditorWidgetSource::showAlternateBar);
-    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showReloadBar,             this,  &SeerEditorWidgetSource::showReloadBar);
+    QObject::connect(searchDownToolButton,              &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleSearchDownToolButton);
+    QObject::connect(searchUpToolButton,                &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleSearchUpToolButton);
+    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::returnPressed,                       this,          &SeerEditorWidgetSource::handleSearchLineNumberLineEdit);
+    QObject::connect(searchLineNumberLineEdit,          &QHistoryLineEdit::escapePressed,                       this,          &SeerEditorWidgetSource::handleEscapePressed);
+    QObject::connect(searchReloadToolButton,            &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleReloadToolButton);
+    QObject::connect(searchCloseToolButton,             &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleSearchCloseToolButton);
+    QObject::connect(alternateCloseToolButton,          &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleAlternateCloseToolButton);
+    QObject::connect(alternateFileOpenToolButton,       &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleAlternateFileOpenToolButton);
+    QObject::connect(alternateLineEdit,                 &QHistoryLineEdit::returnPressed,                       this,          &SeerEditorWidgetSource::handleAlternateLineEdit);
+    QObject::connect(reloadToolButton,                  &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleReloadToolButton);
+    QObject::connect(reloadCloseToolButton,             &QToolButton::clicked,                                  this,          &SeerEditorWidgetSource::handleReloadCloseToolButton);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showSearchBar,             this,          qOverload<bool>(&SeerEditorWidgetSource::showSearchBar));
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showAlternateBar,          this,          &SeerEditorWidgetSource::showAlternateBar);
+    QObject::connect(sourceWidget,                      &SeerEditorWidgetSourceArea::showReloadBar,             this,          &SeerEditorWidgetSource::showReloadBar);
 
-    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleTextSearchShortcut);
-    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchDownToolButton);
-    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleSearchUpToolButton);
-    QObject::connect(_textSearchReloadShortcut,         &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleReloadToolButton);
-    QObject::connect(_lineSearchShortcut,               &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleLineSearchShortcut);
-    QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
-    QObject::connect(_toggleBreakpointShortcut,         &QShortcut::activated,                                  this,  &SeerEditorWidgetSource::handleToggleBreakpointShortcut);
+    QObject::connect(_textSearchShortcut,               &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleTextSearchShortcut);
+    QObject::connect(_textSearchNextShortcut,           &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleSearchDownToolButton);
+    QObject::connect(_textSearchPrevShortcut,           &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleSearchUpToolButton);
+    QObject::connect(_textSearchReloadShortcut,         &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleReloadToolButton);
+    QObject::connect(_lineSearchShortcut,               &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleLineSearchShortcut);
+    QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
+    QObject::connect(_toggleBreakpointShortcut,         &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleToggleBreakpointShortcut);
+    QObject::connect(_gotoDefinitionShortcut,           &QShortcut::activated,                                  sourceArea(),  &SeerEditorWidgetSourceArea::handleGotoDefinition);
 }
 
 SeerEditorWidgetSource::~SeerEditorWidgetSource () {
@@ -124,6 +126,10 @@ void SeerEditorWidgetSource::setKeySettings (const SeerKeySettings& settings) {
 
     if (_keySettings.has("ToggleBreakpoint") == true) {
         _toggleBreakpointShortcut->setKey(_keySettings.get("ToggleBreakpoint")._sequence);
+    }
+
+    if (_keySettings.has("GoToDefinition") == true) {
+        _gotoDefinitionShortcut->setKey(_keySettings.get("GoToDefinition")._sequence);
     }
 }
 

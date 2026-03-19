@@ -40,6 +40,9 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showOpcodeColumn               = false;
     _showSourceLines                = false;
     _notifyAssemblyTabShown         = true;
+    _idFunctionDefinition           = Seer::createID();
+    _idVariableDefinition           = Seer::createID();
+    _idTypeDefinition               = Seer::createID();
 
     // Setup UI
     setupUi(this);
@@ -801,8 +804,41 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 i->widget->sourceArea()->eraseColorCurrentLine(line_text.toInt());
             }
         }
-    }
-    else{
+
+    }else if ( text.contains(QRegularExpression("^([0-9]+)\\^done,symbols={"))) {
+
+        if (text.startsWith(QString::number(_idTypeDefinition)     + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idFunctionDefinition) + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idVariableDefinition) + "^done,symbols={")) { // Handle Go to Definition
+
+            //^10done,symbols={debug=[{filename=" ",fullname=" ",
+            // symbols=[{line=" ",name="uwTick",type="volatile uint32_t",description="volatile uint32_t uwTick;"},}]}]
+            QString debug_text = Seer::parseFirst(text, "debug=", '[', ']', false);
+            QStringList filenames_list = Seer::parse(debug_text, "", '{', '}', false);
+
+            for (const auto& filename_entry : filenames_list) {
+
+                QString filename_text = Seer::parseFirst(filename_entry, "filename=", '"', '"', false);
+                QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
+                QString symbols_text  = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
+
+                QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
+
+                for (const auto& symbol_entry : symbols_list) {
+
+                    QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
+                    QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
+                    name_text = name_text.section('(', 0, 0).trimmed();
+
+                    if (name_text == _gotoDefIdentifier) { // you found it! Open file
+                        handleOpenFile(filename_text, fullname_text, line_text.toInt());
+                    }
+                }
+            }
+        }
+    }else{
         // Ignore others.
         return;
     }
@@ -1060,6 +1096,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -1124,6 +1161,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1547,7 +1585,7 @@ void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetS
                 return;
             }
         }
-        
+
         // if _forwardFilesIndex is at the end of the list, just append
         if (_forwardFilesIndex >= _listForwardFiles.size() - 1)
         {
@@ -1569,13 +1607,13 @@ void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetS
             _listForwardFiles.append(currentFile);
             _forwardFilesIndex = _listForwardFiles.size() -1;
         }
-    }   
+    }
 }
 
 void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo) {
     // Get the EditorWidget for the file. Create one if needed.
     SeerEditorWidgetSource* editorWidget = editorWidgetTab(fileInfo.fullname);
-    
+
     if (editorWidget == 0) {
         editorWidget = createEditorWidgetTab(fileInfo.fullname, fileInfo.file);
     }
@@ -1629,8 +1667,29 @@ void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
         const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
         handleOpenForwardBackward(info);
     }
-    else 
+    else
     {
         QWidget::mousePressEvent(event);
     }
 }
+
+/***********************************************************************************************************************
+ * Functions for handling tracing identifier                                                                           *
+ **********************************************************************************************************************/
+void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier) {
+
+    _gotoDefIdentifier = identifier;
+
+    // Ask for identifier matches for Functions, Variables, and Types.
+    //
+    // Sometimes symbols have or don't have arguments.
+    // Searching for: "^functionName(.*)$" "^functionName$".
+    // Searching for: "^functionName$".
+    //
+
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "$");
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "\\(.*\\)$");
+    emit refreshVariableList(_idVariableDefinition, _gotoDefIdentifier, "");
+    emit refreshTypeList(_idTypeDefinition, _gotoDefIdentifier);
+}
+
