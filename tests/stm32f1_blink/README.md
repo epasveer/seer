@@ -5,13 +5,17 @@ This test for quick build and testing seer using stm32 smart v2.0j board, or ess
 + stm32 smart v2.0j board
 + J-Link, or you can use other hardware debugger if you're capable of doing
 # Prerequisite
-Install gdb-multiarch:
-```sudo apt install gcc-arm-none-eabi```
-and install openocd and openocd driver for J-link:
-```./install_openocd.sh```
-# Build 
-Connect hardware debugger to stm32f1 board
-run `./build.sh`, it will pull remote library, build and flash image to stm32f1 automatically for your
++ Install docker, makefile
++ Install openocd: `./install_openocd.sh`
+# Instruction
++ Build STM32 firmware: (run in docker container)
+	+ Build docker image: `make build_docker`
+	+ Run docker image: `make docker`
+	+ Build image in docker: `./build.sh` <br>
+Final image is located at: stm32f1_blink/build/main.elf<br>
++ Flash image to STM32 board: (run in host terminal)
+	+ make flash JLINK_CFG=interface/jlink.cfg <br>
+You'll see the STM32 led blinks
 # Troubleshoot:
 + Install Jlink driver
 + Proper connection
