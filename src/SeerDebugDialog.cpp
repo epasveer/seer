@@ -75,6 +75,17 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(buttonBox,                            &QDialogButtonBox::accepted,         this, &SeerDebugDialog::handleLaunchButtonClicked);
     QObject::connect(buttonBox,                            &QDialogButtonBox::clicked,          this, &SeerDebugDialog::handleResetButtonClicked);
 
+    // OpenOCD
+    QObject::connect(openOCDMainDefaultSettingButton,      &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDDefaultButtonClicked);
+    QObject::connect(executableOpenOCDButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableOpenOCDButtonClicked);
+    QObject::connect(openOCDMainHelpButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainHelpButtonClicked);
+
+    QObject::connect(openOcdGdbMultiarchExeButton,         &QToolButton::clicked,               this, &SeerDebugDialog::handleGdbMultiarchButton);
+    QObject::connect(openocdSymbolFileButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleSymbolFileButton);
+    QObject::connect(openocdSourceDirButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleSourceDirectoryButton);
+
+    QObject::connect(loadAddrCheckBox,                     &QCheckBox::stateChanged,             this, &SeerDebugDialog::handleLoadAddrCheckBox);
+
 
     // Set initial run mode.
     handleRunModeChanged(0);
@@ -360,6 +371,10 @@ void SeerDebugDialog::setLaunchMode (const QString& mode) {
 
         runModeTabWidget->setCurrentIndex(4);
 
+    } else if (mode == "openocd") {
+
+        runModeTabWidget->setCurrentIndex(5);
+
     }else if (mode == "") {
 
         runModeTabWidget->setCurrentIndex(0);
@@ -405,6 +420,9 @@ QString SeerDebugDialog::launchMode () const {
     }else if (runModeTabWidget->currentIndex() == 4) {
 
         return "corefile";
+    }else if (runModeTabWidget->currentIndex() == 5) {
+
+        return "openocd";
     }
 
     qWarning() << "Unknown launch mode of:" << runModeTabWidget->currentIndex();
@@ -653,6 +671,27 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
         seerProjectJson["corefilemode"] = modeJson;
     }
 
+    // Save OpenOCD project.
+    if (launchMode() == "openocd") {
+        QJsonObject modeJson;
+        // Main Tab
+        modeJson["openocdExe"]                  = executableOpenOCDPathLineEdit->text();
+        modeJson["openocdCommand"]              = openOCDCommandLineEdit->toPlainText();
+
+        // GDB Multiarch Tab
+        modeJson["gdbMultiarchExe"]             = openOcdGdbMultiarchLineEdit->text();
+        modeJson["gdbPort"]                     = openOCD_GDB_Port_LineEdit->text();
+        modeJson["gdbMultiarchCommand"]         = openOCDGdbCommandLineEdit->text();
+
+        // Symbol File Tab
+        modeJson["symbolFile"]                  = symbolFileLineEdit->text();
+        modeJson["sourceDirectory"]             = workingDirLineEdit->text();
+        modeJson["hasLoadAddress"]              = loadAddrCheckBox->isChecked();
+        modeJson["loadAddress"]                 = loadAddrLineEdit->text();
+
+        seerProjectJson["openocdmode"] = modeJson;
+    }
+
     rootJson["seerproject"] = seerProjectJson;
 
     jsonDoc.setObject(rootJson);
@@ -683,6 +722,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     QJsonObject   connectModeJson;
     QJsonObject   rrModeJson;
     QJsonObject   corefileModeJson;
+    QJsonObject   openocdModeJson;
     QJsonArray    preConnectCommands;
     QJsonArray    postConnectCommands;
 
@@ -699,6 +739,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     connectModeJson     = seerProjectJson.value("connectmode").toObject();
     rrModeJson          = seerProjectJson.value("rrmode").toObject();
     corefileModeJson    = seerProjectJson.value("corefilemode").toObject();
+    openocdModeJson     = seerProjectJson.value("openocdmode").toObject();
     preConnectCommands  = seerProjectJson.value("pregdbcommands").toArray();
     postConnectCommands = seerProjectJson.value("postgdbcommands").toArray();
 
@@ -825,6 +866,31 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
         loadCoreFilenameLineEdit->setText(corefileModeJson["corefile"].toString());
 
         setLaunchMode("corefile");
+    }
+
+    // Load OPENOCD project
+    if (openocdModeJson.isEmpty() == false) {
+        // Main Tab
+        executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
+        openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
+
+        // GDB Multiarch Tab
+        openOcdGdbMultiarchLineEdit             ->setText(openocdModeJson["gdbMultiarchExe"].toString());
+        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
+        openOCDGdbCommandLineEdit               ->setText(openocdModeJson["gdbMultiarchCommand"].toString());
+
+        // Symbol file Tab
+        symbolFileLineEdit                      ->setText(openocdModeJson["symbolFile"].toString());
+        workingDirLineEdit                      ->setText(openocdModeJson["sourceDirectory"].toString());
+        loadAddrCheckBox                        ->setChecked(openocdModeJson["hasLoadAddress"].toBool());
+        loadAddrLineEdit                        ->setText(openocdModeJson["loadAddress"].toString());
+
+        if (loadAddrCheckBox->isChecked() == false)
+            loadAddrLineEdit->setDisabled(true);
+        else
+            loadAddrLineEdit->setEnabled(true);
+
+        setLaunchMode("openocd");
     }
 
     return true;
@@ -1166,3 +1232,63 @@ void SeerDebugDialog::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
+/***********************************************************************************************************************
+ * OpenOCD Slots                                                                                                       *
+ **********************************************************************************************************************/
+// Do this when OpenOCD Tab -> Main -> Default Button clicked
+void SeerDebugDialog::handleOpenOCDDefaultButtonClicked() {
+    QString defaultOpenOCDPath = "/usr/local/bin/openocd";
+    QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
+    QString defaultGDBPort = "3333";
+    executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
+    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
+    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
+}
+
+void SeerDebugDialog::handleExecutableOpenOCDButtonClicked () {
+    QString name = QFileDialog::getOpenFileName(this, "Select OpenOCD executable.", openOCDExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (name != "") {
+        setOpenOCDExePath(name);
+    }
+}
+
+void SeerDebugDialog::handleOpenOCDMainHelpButtonClicked()
+{
+    SeerHelpPageDialog* help = new SeerHelpPageDialog;
+    help->loadFile(":/seer/resources/help/OpenOCDHelp.md");
+    help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
+    help->exec();
+}
+
+void SeerDebugDialog::handleGdbMultiarchButton () {
+    QString path = QFileDialog::getOpenFileName(this, "Select GDB Multiarch Executable", gdbMultiarchExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (path != "") {
+        setGdbMultiarchExePath(path);
+    }
+}
+
+void SeerDebugDialog::handleSymbolFileButton () {
+    QString path = QFileDialog::getOpenFileName(this, "Select Symbol File", symbolFile(), "", nullptr, QFileDialog::DontUseNativeDialog);
+
+    if (path != "") {
+        setSymbolFile(path);
+    }
+}
+
+void SeerDebugDialog::handleSourceDirectoryButton () {
+    QString path = QFileDialog::getExistingDirectory(this, "Select source code directory.", workingDirectory(), QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
+
+    if (path != "") {
+        setWorkingDirectory(path);
+    }
+}
+
+void SeerDebugDialog::handleLoadAddrCheckBox (int state) {
+    if (state == Qt::Checked) {
+        loadAddrLineEdit->setEnabled(true);
+    } else {
+        loadAddrLineEdit->setDisabled(true);
+    }
+}

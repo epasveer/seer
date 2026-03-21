@@ -136,6 +136,15 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleHelpRRToolButtonClicked                   ();
         void                    handleHelpCorefileToolButtonClicked             ();
 
+        // OpenOCD slots
+        void                    handleOpenOCDDefaultButtonClicked               ();
+        void                    handleExecutableOpenOCDButtonClicked            ();
+        void                    handleOpenOCDMainHelpButtonClicked              ();
+        void                    handleSymbolFileButton                          ();
+        void                    handleSourceDirectoryButton                     ();
+        void                    handleGdbMultiarchButton                        ();
+        void                    handleLoadAddrCheckBox                          (int state);
+
     protected:
         void                    writeSettings                                   ();
         void                    readSettings                                    ();

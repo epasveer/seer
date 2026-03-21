@@ -1168,38 +1168,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item>
-                    <widget class="QToolButton" name="executableOpenOCDButton_3">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>24</width>
-                       <height>23</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>24</width>
-                       <height>23</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>Open a dialog to select an executable.</string>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="icon">
-                      <iconset resource="resource.qrc">
-                       <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
-                     </property>
-                    </widget>
-                   </item>
                   </layout>
                  </item>
                 </layout>
@@ -1301,7 +1269,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="openOcdGdbMultiarchHelpButton">
+                    <widget class="QToolButton" name="openOcdGdbMultiarchExeButton">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1470,7 +1438,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="executableOpenOCDButton_2">
+                    <widget class="QToolButton" name="openocdSymbolFileButton">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1585,7 +1553,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QToolButton" name="executableOpenOCDButton_5">
+                    <widget class="QToolButton" name="openocdSourceDirButton">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                        <horstretch>0</horstretch>

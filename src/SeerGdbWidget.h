@@ -15,6 +15,7 @@
 #include "SeerPrintpointsBrowserWidget.h"
 #include "SeerCheckpointsBrowserWidget.h"
 #include "GdbMonitor.h"
+#include "SeerOpenOCDWidget.h"
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
 #include <QtWidgets/QWidget>
@@ -225,6 +226,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         // ::Symbol Files
         void                                setSymbolFile                       (const QString& file);
         const QString&                      symbolFile                          (void);
+        void                                setLoadAddressEnabled               (bool flag);
+        bool                                loadAddressEnabled                  (void);
+        void                                setLoadAddress                      (const QString& address);
+        const QString&                      loadAddress                         (void);
+        void                                setSourcePath                       (const QString& path);
+        const QString&                      sourcePath                          (void);
 
         void                                handleGdbMultiarchOpenOCDExecutable ();
 
@@ -462,6 +469,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // OpenOCD variables
+        SeerOpenOCDWidget*                   _openOCDWidget;
         // OpenOCD
         QString                             _openOCDExePath;
         QString                             _openOCDCommands;
@@ -475,5 +483,6 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _loadAddressEnabled;
         QString                             _loadAddress;
         QString                             _symbolFile;
+        QString                             _sourcePath;
 };
 

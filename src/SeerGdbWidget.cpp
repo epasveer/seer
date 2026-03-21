@@ -3927,17 +3927,45 @@ const QString& SeerGdbWidget::symbolFile (void)
     return _symbolFile;
 }
 
- /***********************************************************************************************************************
+void SeerGdbWidget::setLoadAddressEnabled (bool flag)
+{
+    _loadAddressEnabled = flag;
+}
+
+bool SeerGdbWidget::loadAddressEnabled (void)
+{
+    return _loadAddressEnabled;
+}
+
+void SeerGdbWidget::setLoadAddress (const QString& address)
+{
+    _loadAddress = address;
+}
+
+const QString& SeerGdbWidget::loadAddress (void)
+{
+    return _loadAddress;
+}
+
+void SeerGdbWidget::setSourcePath (const QString& path)
+{
+    _sourcePath = path;
+}
+
+const QString& SeerGdbWidget::sourcePath (void)
+{
+    return _sourcePath;
+}
+
+/***********************************************************************************************************************
  * handleGdbMultiarchOpenOCDExecutable
  **********************************************************************************************************************/
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 {
     // Create the OpenOCD console tab, add to the log tabs
-    openocdWidget->newOpenOCDWidget();
-    openocdWidget->createOpenOCDConsole(logsTabWidget);
-    openocdWidget->setOpenOCDTarget(_openOCDTarget);
+    _openOCDWidget->newOpenOCDWidget();
     // Start OpenOCD with the given path and command
-    bool foo = openocdWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
+    bool foo = _openOCDWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
     if (foo == false) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the OpenOCD program.\n\n") +
@@ -3948,7 +3976,6 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     }
     // Now, set _gdbProgram as gdb-multiarch, provided by openocd launch mode
     setGdbProgram(gdbMultiarchExePath());
-    setGdbMultiarchRunningState(true);          // always assume that target is running
     // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
     qCDebug(LC) << "Starting 'openocd gdb-multiarch connect'";
 
@@ -3988,8 +4015,6 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         setExecutableLaunchMode("openocd");
         saveLaunchMode();
         setGdbRecordMode("auto");
-        setGdbMultiarchPid(_gdbProcess->processId());
-        reattachConsole();
 
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
@@ -4005,37 +4030,24 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         handleGdbCommand(QString("%1").arg(gdbMultiarchCommand()));
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
-            for (auto it = _symbolFiles.constBegin(); it != _symbolFiles.constEnd(); ++it) {
-                const auto &tuple = it.value();
-                const bool enableLoadAddress = std::get<1>(tuple);
-                const QString &loadAddress = std::get<2>(tuple);
-                QString loadSymbolCmd = "add-symbol-file " + it.key();
-                if (enableLoadAddress)
-                {
-                    loadSymbolCmd += " " + loadAddress;
-                }
-                handleGdbCommand(loadSymbolCmd);
+            QString loadSymbolCmd = "add-symbol-file " + _symbolFile;
+            if (_loadAddressEnabled && _loadAddress != "")
+            {
+                loadSymbolCmd += " " + _loadAddress;
             }
-            
+            handleGdbCommand(loadSymbolCmd);
+
+            handleGdbCommand("-environment-directory \"" + sourcePath() + "\"");
+
             handleGdbExecutableSources();           // Load the program source files. gdb-multiarch keeps
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running. gdb-multiarch keeps
 
             setNewExecutableFlag(false);
         }
 
-        for (auto it = _symbolFiles.constBegin(); it != _symbolFiles.constEnd(); ++it) {
-            const auto &tuple = it.value();
-            const QString &sourcePath = std::get<0>(tuple);
-            QString loadSourceCmd = "-environment-directory \"" + sourcePath + "\"";
-            handleGdbCommand(loadSourceCmd);
-        }
         // Set or reset some things.
         handleGdbAssemblyDisassemblyFlavor();   // Set the disassembly flavor to use.
         handleGdbAssemblySymbolDemangling();    // Set the symbol demangling.
-
-        if (assemblyShowAssemblyTabOnStartup()) {
-            editorManager()->showAssembly();
-        }
 
         if (gdbHandleTerminatingException()) {
             handleGdbCommand("-gdb-set unwind-on-terminating-exception on"); // Turn on terminating exceptions when gdb calls the program's functions.
@@ -4044,7 +4056,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         }
 
         // Connect to the remote gdbserver using the proper remote type. Only do this when all symbol and source code is loaded
-        handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(gdbPort()));
+        handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(gdbMultiarchPort()));
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));
