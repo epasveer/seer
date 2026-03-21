@@ -20,7 +20,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QPoint>
-
+#include <QMouseEvent>
 
 class SeerEditorWidgetSourceLineNumberArea;
 class SeerEditorWidgetSourceBreakPointArea;
@@ -162,6 +162,8 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         void                                        showExpressionTooltip               ();
         void                                        hideExpressionTooltip               ();
         void                                        mousePressEvent                     (QMouseEvent *event) override;
+        void                                        keyPressEvent                       (QKeyEvent* event) override;
+        void                                        keyReleaseEvent                     (QKeyEvent* event) override;
 
     private slots:
         void                                        refreshExtraSelections              ();
@@ -172,6 +174,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
 
     private:
         void                                        handleCursorPositionChanged         ();
+        void                                        updateCursor                        (const QPoint &pos);
+        bool                                        isOverWord                          (const QPoint &pos);
+        QString                                     wordUnderCursor                     (const QPoint &pos) const;
         bool                                        isValidIdentifier                   (const QString& text);
 
         QString                                     _fullname;
@@ -207,6 +212,11 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         QString                                     _externalEditorCommand;
         bool                                        _autoSourceReload;
         int                                         _ignoreThumbMouseEvent = 0;
+
+        // Variables for Goto Definition (Ctrl + Click)
+        static QTimer*                              _ctrlHeldTimer;
+        static bool                                 _ctrlHeld;
+        QString                                     _wordUnderCursor;
 };
 
 class SeerEditorWidgetSourceLineNumberArea : public QWidget {

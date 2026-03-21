@@ -44,9 +44,20 @@ The easiest method for logging a variable to the Variable Logger is to double-cl
       Ctrl+Shift    Prepend '*&' to variable              '*&argc'
 ```
 
-Using ^F will bring up a search bar in the source window.
-
-Using ^O will bring up a file bar to help locate the file for the source (in case it isn't in the directory that GDB thinks it is).
+Other key sequences.
+```
+      Keys          Description
+      ------------  ------------------------------------
+      Ctrl+LMB      Goto function defintion identified by
+                    text under cursor.
+      ^F            Bring up a text search bar in the
+                    source window.
+      ^L            Bring up a line number search bar in
+                    the source window.
+      ^O            Bring up a file bar to help locate the file
+                    for the source (in case it isn't in the
+                    directory that GDB thinks it is).
+```
 
 ### Buttons
 
