@@ -213,9 +213,9 @@ class SeerEditorWidgetSourceArea : public SeerPlainTextEdit {
         bool                                        _autoSourceReload;
         int                                         _ignoreThumbMouseEvent = 0;
 
-        // Variables for Goto Definition (Ctrl + Click)
-        static QTimer*                              _ctrlHeldTimer;
-        static bool                                 _ctrlHeld;
+        // Variables for Goto Definition (Alt + Click)
+        static QTimer*                              _altHeldTimer;
+        static bool                                 _altHeld;
         QString                                     _wordUnderCursor;
 };
 

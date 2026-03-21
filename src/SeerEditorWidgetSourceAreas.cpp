@@ -34,8 +34,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 
-bool SeerEditorWidgetSourceArea::_ctrlHeld = false;
-QTimer* SeerEditorWidgetSourceArea::_ctrlHeldTimer = new QTimer();
+bool SeerEditorWidgetSourceArea::_altHeld = false;
+QTimer* SeerEditorWidgetSourceArea::_altHeldTimer = new QTimer();
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
@@ -67,8 +67,8 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     enableLineNumberArea(true);
     enableBreakPointArea(true);
 
-    _ctrlHeldTimer->setInterval(40);  // 40 ms interval = 25Hz update rate
-    QObject::connect(_ctrlHeldTimer, &QTimer::timeout, this, [this]() {
+    _altHeldTimer->setInterval(40);  // 40 ms interval = 25Hz update rate
+    QObject::connect(_altHeldTimer, &QTimer::timeout, this, [this]() {
         updateCursor(QCursor::pos());
     });
 
@@ -91,7 +91,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
 
-    _ctrlHeldTimer->start();
+    _altHeldTimer->start();
 
     // Calling close() will clear the text document.
     close();
@@ -2077,7 +2077,7 @@ void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
         } );
     }
     // This part is for Go to definition (Ctrl + Click) feature
-    if (event->button() == Qt::LeftButton && _ctrlHeld) {
+    if (event->button() == Qt::LeftButton && _altHeld) {
         if (_wordUnderCursor != "")
         {
             QApplication::restoreOverrideCursor();
@@ -2099,7 +2099,7 @@ void SeerEditorWidgetSourceArea::handleCursorPositionChanged()
         _ignoreThumbMouseEvent --;
         return;
     }
-        
+
     QTimer::singleShot(2000, this, [this, firstInfo]() {
         SeerCurrentFile secondInfo = readCurrentPosition();
         if (firstInfo == secondInfo) {
@@ -2113,18 +2113,18 @@ void SeerEditorWidgetSourceArea::handleCursorPositionChanged()
  **********************************************************************************************************************/
 void SeerEditorWidgetSourceArea::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Control)
+    if (event->key() == Qt::Key_Alt)
     {
-        _ctrlHeld = true;
+        _altHeld = true;
     }
     QPlainTextEdit::keyPressEvent(event);
 }
 
 void SeerEditorWidgetSourceArea::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Control)
+    if (event->key() == Qt::Key_Alt)
     {
-        _ctrlHeld = false;
+        _altHeld = false;
     }
     QPlainTextEdit::keyReleaseEvent(event);
 }
@@ -2158,7 +2158,7 @@ void SeerEditorWidgetSourceArea::updateCursor(const QPoint &pos)
     // In short, QApplication::setOverrideCursor is global and not real time
     // In contrary, viewport()->setCursor() is local and real time, apply only for that widget, in this case, the text area 
     QPoint localPos = mapFromGlobal(pos);
-    if (!_ctrlHeld) {
+    if (!_altHeld) {
         viewport()->setCursor(Qt::IBeamCursor);
         _wordUnderCursor = "";
         return;
