@@ -3963,6 +3963,8 @@ const QString& SeerGdbWidget::sourcePath (void)
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 {
     // Create the OpenOCD console tab, add to the log tabs
+    _openOCDWidget = new SeerOpenOCDWidget();
+    _openOCDWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     _openOCDWidget->newOpenOCDWidget();
     // Start OpenOCD with the given path and command
     bool foo = _openOCDWidget->startOpenOCD(openOCDExePath(), openOCDCommand());

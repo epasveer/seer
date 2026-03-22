@@ -19,7 +19,6 @@ SeerOpenOCDWidget::~SeerOpenOCDWidget (){
 void SeerOpenOCDWidget::newOpenOCDWidget (){
     if (!_openocdProcess)
         _openocdProcess = new QProcess(this);
-    _openocdLogsTabWidget = nullptr;
 }
 
 QProcess* SeerOpenOCDWidget::openocdProcess()
