@@ -500,7 +500,7 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     for (int i = 0; i < nv_pairs.size(); ++i) {
         QString nv      = nv_pairs[i];
         QString nv_old  = nv_old_pairs[i];
-            
+
         QStringPair pair        = Seer::parseNameValue(nv, '=');
         QStringPair old_pair    = Seer::parseNameValue(nv_old, '=');
         // Look for the existing child, if any so we can reuse it.
@@ -586,12 +586,11 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* deleteAction    = menu.addAction("Delete selected");
-    QAction* deleteAllAction = menu.addAction("Delete all");
-
-    QAction* copyAction    = menu.addAction("Copy selected");
-	QAction* copyValueOnlyAction    = menu.addAction("Copy selected value");
-    QAction* copyAllAction = menu.addAction("Copy all");
+    QAction* deleteAction        = menu.addAction("Delete selected");
+    QAction* deleteAllAction     = menu.addAction("Delete all");
+    QAction* copyAction          = menu.addAction("Copy selected");
+    QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
+    QAction* copyAllAction       = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -676,11 +675,11 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
                 text += '\n';
             }
 
-			if (action != copyValueOnlyAction) {
-				text += items[i]->text(0) + ":" + items[i]->text(1);
-			} else {
-				text += items[i]->text(1);
-			}
+            if (action != copyValueOnlyAction) {
+                text += items[i]->text(0) + ":" + items[i]->text(1);
+            } else {
+                text += items[i]->text(1);
+            }
         }
 
         clipboard->setText(text, QClipboard::Clipboard);

@@ -338,12 +338,11 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* deleteAction    = menu.addAction("Delete selected");
-    QAction* deleteAllAction = menu.addAction("Delete all");
-
-    QAction* copyAction      = menu.addAction("Copy selected");
-	QAction* copyValueOnlyAction      = menu.addAction("Copy selected value");
-    QAction* copyAllAction   = menu.addAction("Copy all");
+    QAction* deleteAction        = menu.addAction("Delete selected");
+    QAction* deleteAllAction     = menu.addAction("Delete all");
+    QAction* copyAction          = menu.addAction("Copy selected");
+    QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
+    QAction* copyAllAction       = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -428,12 +427,12 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
             if (i != 0) {
                 text += '\n';
             }
-			if (action != copyValueOnlyAction) {
-				text += items[i]->text(1) + ":" + items[i]->text(2);
-			} else {
-				text += items[i]->text(2);
-			}
 
+            if (action != copyValueOnlyAction) {
+                text += items[i]->text(1) + ":" + items[i]->text(2);
+            } else {
+                text += items[i]->text(2);
+            }
         }
 
         clipboard->setText(text, QClipboard::Clipboard);
