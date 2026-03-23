@@ -338,11 +338,11 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* deleteAction    = menu.addAction("Delete selected");
-    QAction* deleteAllAction = menu.addAction("Delete all");
-
-    QAction* copyAction      = menu.addAction("Copy selected");
-    QAction* copyAllAction   = menu.addAction("Copy all");
+    QAction* deleteAction        = menu.addAction("Delete selected");
+    QAction* deleteAllAction     = menu.addAction("Delete all");
+    QAction* copyAction          = menu.addAction("Copy selected");
+    QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
+    QAction* copyAllAction       = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -359,6 +359,9 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
             i = i->parent();
         }
     }
+
+    // Remove potential '&' and '*' characters at start of string.
+    variable.remove(QRegularExpression("^[\\*\\&]*"));
 
     addMemoryVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addMemoryAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
@@ -399,12 +402,12 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
         handleDeleteAllToolButton();
     }
 
-    if (action == copyAction || action == copyAllAction) {
+    if (action == copyAction || action == copyAllAction || action == copyValueOnlyAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
         // Get list of 'select' items.
-        if (action == copyAction) {
+        if (action == copyAction || action == copyValueOnlyAction) {
             items = variablesTreeWidget->selectedItems();
         }
 
@@ -428,7 +431,11 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
                 text += '\n';
             }
 
-            text += items[i]->text(1) + ":" + items[i]->text(2);
+            if (action != copyValueOnlyAction) {
+                text += items[i]->text(1) + ":" + items[i]->text(2);
+            } else {
+                text += items[i]->text(2);
+            }
         }
 
         clipboard->setText(text, QClipboard::Clipboard);
