@@ -590,6 +590,7 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* deleteAllAction = menu.addAction("Delete all");
 
     QAction* copyAction    = menu.addAction("Copy selected");
+	QAction* copyValueOnlyAction    = menu.addAction("Copy selected value");
     QAction* copyAllAction = menu.addAction("Copy all");
 
     QString actionText;
@@ -646,12 +647,12 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
         handleDeleteAllToolButton();
     }
 
-    if (action == copyAction || action == copyAllAction) {
+    if (action == copyAction || action == copyAllAction || action == copyValueOnlyAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
         // Get list of 'select' items.
-        if (action == copyAction) {
+        if (action == copyAction || copyValueOnlyAction) {
             items = variablesTreeWidget->selectedItems();
         }
 
@@ -675,7 +676,11 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
                 text += '\n';
             }
 
-            text += items[i]->text(0) + ":" + items[i]->text(1);
+			if (action != copyValueOnlyAction) {
+				text += items[i]->text(0) + ":" + items[i]->text(1);
+			} else {
+				text += items[i]->text(1);
+			}
         }
 
         clipboard->setText(text, QClipboard::Clipboard);
