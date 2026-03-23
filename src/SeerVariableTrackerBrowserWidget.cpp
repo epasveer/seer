@@ -608,6 +608,9 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
         }
     }
 
+    // Remove potential '&' and '*' characters at start of string.
+    variable.remove(QRegularExpression("^[\\*\\&]*"));
+
     addMemoryVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addMemoryAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addMemoryAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
