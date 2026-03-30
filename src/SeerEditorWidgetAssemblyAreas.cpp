@@ -42,6 +42,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableOpcodeArea     = false;
     _enableSourceLines    = false;
     _sourceTabSize        = 4;
+    _convertUppercase     = false;
 
     _addressLineMap.clear();
     _offsetLineMap.clear();
@@ -67,6 +68,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     enableBreakPointArea(true);
     enableOpcodeArea(true);
     enableSourceLines(true);
+    setConvertUppercase(false);
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
@@ -223,7 +225,11 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 sourceLine = sourceLine.simplified(); // Remove blank spaces at front and end of line.
 
                 // Write source line to the document.
-                appendPlainText(sourceLine);
+                if (convertUppercase()) {
+                    appendPlainText(sourceLine.toUpper());
+                }else{
+                    appendPlainText(sourceLine);
+                }
 
                 // Highlight it.
                 QTextCharFormat sourceLinesFormat = highlighterSettings().get("Text");
@@ -263,7 +269,11 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
                 // Write assembly line to the document.
-                appendPlainText(inst_text);
+                if (convertUppercase()) {
+                    appendPlainText(inst_text.toUpper());
+                }else{
+                    appendPlainText(inst_text);
+                }
 
                 // Highlight it.
                 QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
@@ -312,7 +322,12 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
             inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
             // Write assembly line to the document.
-            appendPlainText(QString(" ") + inst_text);
+            qDebug() << "Convert to Uppercase?" << convertUppercase();
+            if (convertUppercase()) {
+                appendPlainText(QString(" ") + inst_text.toUpper());
+            }else{
+                appendPlainText(QString(" ") + inst_text);
+            }
 
             // Highlight it.
             QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
@@ -549,7 +564,11 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
             QString address;
 
             if (_lineAddressMap.contains(blockNumber+1)) {
-                address = _lineAddressMap[blockNumber+1];
+                if (convertUppercase()) {
+                    address = _lineAddressMap[blockNumber+1].toUpper();
+                }else{
+                    address = _lineAddressMap[blockNumber+1];
+                }
             }
 
             painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(), Qt::AlignLeft, address);
@@ -703,7 +722,11 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
             QString opcode;
 
             if (_lineOpcodeMap.contains(blockNumber+1)) {
-                opcode = _lineOpcodeMap[blockNumber+1];
+                if (convertUppercase()) {
+                    opcode = _lineOpcodeMap[blockNumber+1].toUpper();
+                }else{
+                    opcode = _lineOpcodeMap[blockNumber+1];
+                }
             }
 
             painter.drawText(0, top, _opcodeArea->width(), fontMetrics().height(), Qt::AlignLeft, opcode);
@@ -1450,6 +1473,16 @@ void SeerEditorWidgetAssemblyArea::setEditorTabSize (int spaces) {
 int SeerEditorWidgetAssemblyArea::editorTabSize () const {
 
     return _sourceTabSize;
+}
+
+void SeerEditorWidgetAssemblyArea::setConvertUppercase (bool flag) {
+
+    _convertUppercase = flag;
+}
+
+bool SeerEditorWidgetAssemblyArea::convertUppercase () const {
+
+    return _convertUppercase;
 }
 
 void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
