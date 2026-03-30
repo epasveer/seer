@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>703</height>
+    <height>861</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,19 @@
        <property name="icon">
         <iconset resource="resource.qrc">
          <normaloff>:/seer/resources/icons-icons/font.png</normaloff>:/seer/resources/icons-icons/font.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="fontMonoRadioButton">
+       <property name="toolTip">
+        <string>Show only Mono Spaced fonts.</string>
+       </property>
+       <property name="text">
+        <string>Mono</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -336,6 +349,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Text&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Assembly Text&lt;/li&gt;
 &lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Current Line&lt;/li&gt;&lt;/ul&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A note about fonts. Sometimes Qt will not list some Mono Spaced fonts even though they are. If this is the case for you, disable the Mono button. All fonts will then be listed.&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Syntax highlighting can be enabled or disabled. The list of suffixes for supported source files can be changed. For example, C/C++ source files:&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&amp;quot;.h|.cpp|.c&amp;quot;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The tab size, in spaces, can be set to properly display source files that contain tab characters.&lt;/p&gt;
