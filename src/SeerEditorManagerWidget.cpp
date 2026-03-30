@@ -1348,16 +1348,30 @@ void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
-    SeerEditorWidgetSource* w = currentEditorWidgetTab();
+    QWidget* tab = tabWidget->currentWidget();
 
-    if (w == 0) {
+    SeerEditorWidgetSource* sourcew = dynamic_cast<SeerEditorWidgetSource*>(tab);
+    if (sourcew != 0) {
+
+        if (sourcew->isSearchBarShown() == true) {
+            sourcew->showSearchBar(false);
+        }else{
+            sourcew->showSearchBar(true);
+        }
+
         return;
     }
 
-    if (w->isSearchBarShown() == true) {
-        w->showSearchBar(false);
-    }else{
-        w->showSearchBar(true);
+    SeerEditorWidgetAssembly* assemblyw = dynamic_cast<SeerEditorWidgetAssembly*>(tab);
+    if (assemblyw != 0) {
+
+        if (assemblyw->isSearchBarShown() == true) {
+            assemblyw->showSearchBar(false);
+        }else{
+            assemblyw->showSearchBar(true);
+        }
+
+        return;
     }
 }
 
