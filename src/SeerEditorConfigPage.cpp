@@ -21,6 +21,7 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     //
 
     // Connect things.
+    QObject::connect(fontMonoRadioButton,         &QRadioButton::clicked,                   this, &SeerEditorConfigPage::handleFontMonoChanged);
     QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,           this, &SeerEditorConfigPage::handleFontSizeChanged);
     QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,       this, &SeerEditorConfigPage::handleFontChanged);
     QObject::connect(fontDialogButton,            &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleFontDialog);
@@ -199,6 +200,15 @@ void SeerEditorConfigPage::reset () {
     setAutoSourceReload(false);
 }
 
+void SeerEditorConfigPage::handleFontMonoChanged () {
+
+    if (fontMonoRadioButton->isChecked()) {
+        fontNameComboBox->setFontFilters(QFontComboBox::MonospacedFonts);
+    }else{
+        fontNameComboBox->setFontFilters(QFontComboBox::AllFonts);
+    }
+}
+
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
 
     // Convert the text size to a number.
@@ -246,7 +256,13 @@ void SeerEditorConfigPage::handleFontDialog () {
 
     bool ok;
 
-    QFont font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors", QFontDialog::MonospacedFonts);
+    QFont font;
+
+    if (fontMonoRadioButton->isChecked()) {
+        font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors", QFontDialog::MonospacedFonts);
+    }else{
+        font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors");
+    }
 
     if (ok) {
         handleFontChanged(font);

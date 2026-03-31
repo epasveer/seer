@@ -964,7 +964,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
         // Set a breakpoint for start up if "infunction".
         if (_executableBreakMode == "infunction" && executableBreakpointFunctionName() != "") {
 
-            if (executableBreakpointFunctionName().contains("^0[xX][0-9a-fA-F]+")) {
+            if (executableBreakpointFunctionName().contains(QRegularExpression("^0[xX][0-9a-fA-F]+"))) {
                 handleGdbBreakpointInsert("*" + executableBreakpointFunctionName());
             }else{
                 handleGdbBreakpointInsert("-f --function " + executableBreakpointFunctionName());
@@ -2136,6 +2136,8 @@ void SeerGdbWidget::handleGdbBreakpointsInsert (QString breakpoints) {
 }
 
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
+
+    qDebug() << breakpoint;
 
     if (executableLaunchMode() == "") {
         return;

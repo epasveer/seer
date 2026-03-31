@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>300</height>
+    <width>357</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -152,6 +152,25 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Assembly Text</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="convertUppercaseRadioButton">
+        <property name="toolTip">
+         <string>Convert Assembly text to uppercase letters.</string>
+        </property>
+        <property name="text">
+         <string>Convert To Uppercase</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -178,6 +197,7 @@
   <zorder>groupBox_2</zorder>
   <zorder>buttonBox</zorder>
   <zorder>groupBox_1</zorder>
+  <zorder>groupBox_3</zorder>
  </widget>
  <tabstops>
   <tabstop>pcLineEdit</tabstop>
