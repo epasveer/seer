@@ -236,17 +236,24 @@ void SeerFunctionBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     // Create the menu actions.
     QAction* createBreakpointAction;
+    QAction* createSkipAction;
 
     createBreakpointAction = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),
                                          QString("Create breakpoint in function: \"%1\"").arg(item->text(0)),
                                          this);
 
+    createSkipAction = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),
+                                   QString("Create skip for function: \"%1\"").arg(item->text(0)),
+                                   this);
+
+
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
     menu.addAction(createBreakpointAction);
+    menu.addAction(createSkipAction);
 
     // Launch the menu. Get the response.
-    QAction* action = menu.exec(functionTreeWidget->mapToGlobal(pos));
+    QAction* action = menu.exec(functionTreeWidget->mapToGlobal(pos + QPoint(0,20)));
 
     // Do nothing.
     if (action == 0) {
@@ -268,6 +275,14 @@ void SeerFunctionBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the create breakpoint signal.
         emit insertBreakpoint(dlg.breakpointText());
+
+        return;
+    }
+
+    if (action == createSkipAction) {
+
+        // Emit the create skip signal.
+        emit addSkip("function", item->text(0));
 
         return;
     }

@@ -170,6 +170,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(sourceLibraryManagerWidget->sourceBrowserWidget(),         &SeerSourceBrowserWidget::selectedFile,                                                     editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::refreshFunctionList,                                            this,                                                           &SeerGdbWidget::handleGdbExecutableFunctions);
     QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::insertBreakpoint,                                               this,                                                           &SeerGdbWidget::handleGdbBreakpointInsert);
+    QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::addSkip,                                                        this,                                                           &SeerGdbWidget::handleGdbSkipAdd);
     QObject::connect(sourceLibraryManagerWidget->functionBrowserWidget(),       &SeerFunctionBrowserWidget::selectedFile,                                                   editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
     QObject::connect(sourceLibraryManagerWidget->typeBrowserWidget(),           &SeerTypeBrowserWidget::refreshTypeList,                                                    this,                                                           &SeerGdbWidget::handleGdbExecutableTypes);
     QObject::connect(sourceLibraryManagerWidget->typeBrowserWidget(),           &SeerTypeBrowserWidget::selectedFile,                                                       editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
@@ -912,6 +913,7 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
 
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
+            handleGdbLoadSkips();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -1052,6 +1054,7 @@ void SeerGdbWidget::handleGdbAttachExecutable (bool loadSessionBreakpoints) {
 
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
+            handleGdbLoadSkips();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -1155,6 +1158,7 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
 
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
+            handleGdbLoadSkips();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -1276,6 +1280,7 @@ void SeerGdbWidget::handleGdbRRExecutable (bool loadSessionBreakpoints) {
 
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
+            handleGdbLoadSkips();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -1395,6 +1400,7 @@ void SeerGdbWidget::handleGdbCoreFileExecutable () {
 
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
+            handleGdbLoadSkips();
         }
 
         // Set the program's tty device for stdin and stdout.
@@ -2403,18 +2409,14 @@ void SeerGdbWidget::handleGdbAdaListExceptions () {
 
 void SeerGdbWidget::handleGdbSkipList () {
 
-    if (executableLaunchMode() == "") {
-        return;
-    }
+    // This option can work when GDB is running.
 
     handleGdbCommand("-skip-list");
 }
 
 void SeerGdbWidget::handleGdbSkipAdd (QString skipmode, QString skipparameters) {
 
-    if (executableLaunchMode() == "") {
-        return;
-    }
+    // This option can work when GDB is running.
 
     if (skipmode == "file") {
         handleGdbCommand("-skip-create-file " + skipparameters);
@@ -3731,6 +3733,23 @@ void SeerGdbWidget::handleGdbSourceScripts () {
         handleGdbCommand(command);
     }
     qDebug() << "Done.";
+}
+
+void SeerGdbWidget::handleGdbLoadSkips () {
+
+    qDebug() << "Here.";
+
+    // Don't do anything, if isn't running.
+    if (isGdbRuning() == false) {
+        return;
+    }
+
+    // Guard agains the remote possibility of no Skip browser
+    if (sourceLibraryManagerWidget->skipBrowserWidget() == nullptr) {
+        return;
+    }
+
+    sourceLibraryManagerWidget->skipBrowserWidget()->loadSkips();
 }
 
 void SeerGdbWidget::handleGdbSetArchitectureType () {
