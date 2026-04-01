@@ -3737,8 +3737,6 @@ void SeerGdbWidget::handleGdbSourceScripts () {
 
 void SeerGdbWidget::handleGdbLoadSkips () {
 
-    qDebug() << "Here.";
-
     // Don't do anything, if isn't running.
     if (isGdbRuning() == false) {
         return;
