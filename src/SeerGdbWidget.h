@@ -361,6 +361,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbForkFollowMode                     (QString mode);
         void                                handleGdbLoadMICommands                     ();
         void                                handleGdbSourceScripts                      ();
+        void                                handleGdbLoadSkips                          ();
         void                                handleGdbSetArchitectureType                ();
 
         void                                handleGdbProcessFinished                    (int exitCode, QProcess::ExitStatus exitStatus);

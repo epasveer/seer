@@ -39,6 +39,11 @@ SeerSkipBrowserWidget::SeerSkipBrowserWidget (QWidget* parent) : QWidget(parent)
 SeerSkipBrowserWidget::~SeerSkipBrowserWidget () {
 }
 
+void SeerSkipBrowserWidget::loadSkips () {
+
+    handleLoadToolButton(false);
+}
+
 void SeerSkipBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
@@ -206,10 +211,10 @@ void SeerSkipBrowserWidget::handleSaveToolButton () {
     } settings.endArray();
 }
 
-void SeerSkipBrowserWidget::handleLoadToolButton () {
+void SeerSkipBrowserWidget::handleLoadToolButton (bool askIfAlreadyLoaded) {
 
     // Warn only if there are existing skips in the view.
-    if (skipTreeWidget->topLevelItemCount() > 0) {
+    if (askIfAlreadyLoaded == true && skipTreeWidget->topLevelItemCount() > 0) {
         int result = QMessageBox::warning(this, "Seer",
                 QString("Load the previously saved skips from settings?\n\nThe existing skips in the view will be deleted first."),
                 QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);

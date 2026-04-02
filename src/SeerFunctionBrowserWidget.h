@@ -31,6 +31,7 @@ class SeerFunctionBrowserWidget : public QWidget, protected Ui::SeerFunctionBrow
         void                refreshFunctionList         (int id, const QString& functionRegex);
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                insertBreakpoint            (QString breakpoint);
+        void                addSkip                     (const QString& skipMode, const QString& skipParameters);
 
     protected:
     private:

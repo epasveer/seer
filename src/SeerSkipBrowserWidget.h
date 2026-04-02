@@ -16,6 +16,8 @@ class SeerSkipBrowserWidget : public QWidget, protected Ui::SeerSkipBrowserWidge
         explicit SeerSkipBrowserWidget (QWidget* parent = 0);
        ~SeerSkipBrowserWidget ();
 
+        void                loadSkips                   ();
+
     public slots:
         void                handleText                  (const QString& text);
         void                handleSessionTerminated     ();
@@ -27,7 +29,7 @@ class SeerSkipBrowserWidget : public QWidget, protected Ui::SeerSkipBrowserWidge
         void                handleEnableToolButton      ();
         void                handleDisableToolButton     ();
         void                handleSaveToolButton        ();
-        void                handleLoadToolButton        ();
+        void                handleLoadToolButton        (bool askIfAlreadyLoaded=true);
 
     signals:
         void                refreshSkipList             ();
