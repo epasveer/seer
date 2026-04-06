@@ -1,7 +1,7 @@
 
 # Seer Change Log
 
-## [2.7beta] - 2025-MM-DD
+## [2.7] - 2026-04-06
 * Starting version 2.7 development cycle.
 * SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)
 * VariableTracker: Add 'deleteselect' and 'deleteall' to RMB context menu.
