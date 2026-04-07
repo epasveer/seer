@@ -1,0 +1,3 @@
+break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf_fortran.cpp -line 13
+break -source /nas/erniep/Development/seer/tests/hellodprintf/hellodprintf_fortran.cpp -line 17
+dprintf -source /nas/erniep/Development/seer/tests/hellodprintf/fortran_function.f -line 11,"FORT: n=%d count=%d\n",n,count

@@ -107,8 +107,13 @@
       <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
      <property name="columnCount">
-      <number>13</number>
+      <number>14</number>
      </property>
+     <column>
+      <property name="text">
+       <string>Active</string>
+      </property>
+     </column>
      <column>
       <property name="text">
        <string>Thread Id</string>

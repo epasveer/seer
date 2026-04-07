@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -15,6 +19,7 @@ class SeerAdaTasksBrowserWidget : public QWidget, protected Ui::SeerAdaTasksBrow
     public slots:
         void                handleText                      (const QString& text);
         void                handleStoppingPointReached      ();
+        void                handleSessionTerminated         ();
         void                refresh                         ();
 
     protected slots:

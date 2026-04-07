@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerConsoleWidget.h"
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QCheckBox>
@@ -22,9 +26,9 @@
 SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _ttyDeviceName = "";
-    _ptsFD         = -1;
-    _ptsListener   = 0;
+    _terminalDeviceName = "";
+    _ttyFD         = -1;
+    _ttyListener   = 0;
     _enableStdout  = false;
     _enableWrap    = false;
 
@@ -32,7 +36,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Console");
 
     textEdit->setReadOnly(true);
@@ -53,10 +57,6 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 
     wrapTextCheckBox->setCheckState(Qt::Unchecked); // No wrap
 
-    // Create psuedo terminal for console.
-    createConsole();
-    connectConsole();
-
     // Connect things.
     QObject::connect(clearButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handleClearButton);
     QObject::connect(printButton,       &QPushButton::clicked,      this,  &SeerConsoleWidget::handlePrintButton);
@@ -71,12 +71,7 @@ SeerConsoleWidget::SeerConsoleWidget (QWidget* parent) : QWidget(parent) {
 }
 
 SeerConsoleWidget::~SeerConsoleWidget () {
-    disconnectConsole();
-    deleteConsole();
-}
-
-const QString& SeerConsoleWidget::ttyDeviceName () const {
-    return _ttyDeviceName;
+    deleteTerminal(); // Will disconnect terminal first befor deleting.
 }
 
 void SeerConsoleWidget::handleText (const char* buffer, int count) {
@@ -85,9 +80,13 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
         return;
     }
 
-     // Write text to stdout on terminal that started Seer..
+    // Write text to stdout on terminal that started Seer..
+    // Ignore errors.
     if (isStdoutEnabled()) {
-        write (STDOUT_FILENO, buffer, count);
+        ssize_t n = ::write (STDOUT_FILENO, buffer, count);
+        if (n < count) {
+            qDebug("Can't write stdout to terminal");
+        }
     }
 
     // Write text to Ansi widget.
@@ -95,6 +94,11 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
 
     textEdit->insertAnsiText(str);
     textEdit->ensureCursorVisible();
+
+    // Send signal of new text if this widget is not visable.
+    if (isVisible() == false) {
+        emit newTextAdded();
+    }
 
     return;
 }
@@ -246,32 +250,28 @@ void SeerConsoleWidget::handleStdinLineEdit () {
 
     QString str = stdinLineEdit->text();
 
-    if (str == "") {
-        return;
-    }
-
     stdinLineEdit->clear();
 
     str += '\n';
 
     std::string s = str.toStdString();
 
-    if (_ptsFD < 0) {
+    if (isTerminalCreated() == false) {
         return;
     }
 
-    int n = write(_ptsFD, s.c_str(), s.length());
+    int n = write(_ttyFD, s.c_str(), s.length());
 
     if (n != (signed long int)s.length()) {
         qWarning() << "Not able to process stdin of" << s.length() << "bytes.";
     }
 
-    fsync(_ptsFD);
+    fsync(_ttyFD);
 }
 
-void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
+void SeerConsoleWidget::handleTerminalOutput (int socketfd) {
 
-    if (_ptsFD < 0) {
+    if (isTerminalCreated() == false) {
         return;
     }
 
@@ -280,7 +280,7 @@ void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
     char buffer[1024];
 
     while (1) {
-        int n = read(_ptsFD, buffer, sizeof(buffer));
+        int n = read(_ttyFD, buffer, sizeof(buffer));
 
         if (n < 0) {
             if (errno == EAGAIN) {
@@ -288,9 +288,9 @@ void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
             }
 
             if (errno == EIO) {
-                // Disconnect console if tty has an I/O error.
+                // Disconnect terminal if tty has an I/O error.
                 // Can be reconnected later just before gdb restarts it's target program.
-                disconnectConsole();
+                disconnectTerminal();
                 break;
             }
 
@@ -302,30 +302,36 @@ void SeerConsoleWidget::handleConsoleOutput (int socketfd) {
     }
 }
 
-void SeerConsoleWidget::createConsole () {
+void SeerConsoleWidget::createTerminal () {
+
+    // Is terminal already created?
+    if (isTerminalCreated()) {
+        qDebug() << "Terminal already created!";
+        return;
+    }
 
     // Create tty and its permissions.
-    _ptsFD = posix_openpt(O_RDWR | O_NOCTTY);
+    _ttyFD = posix_openpt(O_RDWR | O_NOCTTY);
 
-    if (_ptsFD < 0) {
+    if (_ttyFD < 0) {
         qDebug() << "Failed to create tty" << strerror(errno);
         return;
     }
 
-    if (grantpt(_ptsFD)) {
+    if (grantpt(_ttyFD)) {
         qDebug() << "Failed to grant pt" << strerror(errno);
-        ::close(_ptsFD); _ptsFD = -1;
+        ::close(_ttyFD); _ttyFD = -1;
         return;
     }
 
-    if  (unlockpt(_ptsFD)) {
+    if  (unlockpt(_ttyFD)) {
         qDebug() << "Failed to unlock pt" << strerror(errno);
-        ::close(_ptsFD); _ptsFD = -1;
+        ::close(_ttyFD); _ttyFD = -1;
         return;
     }
 
     // Turn off blocking.
-    fcntl(_ptsFD, F_SETFL, O_NDELAY);
+    fcntl(_ttyFD, F_SETFL, O_NDELAY);
 
     // Set window size
     struct winsize term_winsize;
@@ -335,56 +341,99 @@ void SeerConsoleWidget::createConsole () {
     term_winsize.ws_xpixel = 80 * 8;
     term_winsize.ws_ypixel = 20 * 8;
 
-    if (ioctl(_ptsFD, TIOCSWINSZ, &term_winsize) < 0) {
+    if (ioctl(_ttyFD, TIOCSWINSZ, &term_winsize) < 0) {
         qDebug() << "ioctl TIOCSWINSZ failed" << strerror(errno);
     }
 
     // Set controlling
-    if (ioctl(_ptsFD, TIOCSCTTY, (char *)0) < 0) {
+    if (ioctl(_ttyFD, TIOCSCTTY, (char *)0) < 0) {
         // Seems to work even though this fails.
         // qDebug() << "ioctl TIOCSCTTY failed" << strerror(errno);
     }
 
     // Save the device name.
-    _ttyDeviceName = ptsname(_ptsFD);
+    _terminalDeviceName = ptsname(_ttyFD);
 
     // Set maximum blocks to 0 (unlimited).
-    // The createConsole can be followed with a setScrollLines() call.
+    // The createTerminal can be followed with a setScrollLines() call.
     setScrollLines(0);
 }
 
-void SeerConsoleWidget::connectConsole () {
+void SeerConsoleWidget::deleteTerminal () {
 
-    disconnectConsole();
+    disconnectTerminal();
 
-    if (_ptsFD < 0) {
+    _terminalDeviceName = "";
+
+    if (isTerminalCreated() == false) {
         return;
     }
 
-    _ptsListener = new QSocketNotifier(_ptsFD, QSocketNotifier::Read);
-
-    QObject::connect(_ptsListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleConsoleOutput);
+    ::close(_ttyFD); _ttyFD = -1;
 }
 
-void SeerConsoleWidget::disconnectConsole () {
+void SeerConsoleWidget::connectTerminal () {
 
-    if (_ptsListener) {
-
-        QObject::disconnect(_ptsListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleConsoleOutput);
-
-        delete _ptsListener; _ptsListener = 0;
-    }
-}
-
-void SeerConsoleWidget::deleteConsole () {
-
-    if (_ptsFD < 0) {
+    if (isTerminalConnected()) {
+        //qDebug() << "Terminal is already connected!";
         return;
     }
 
-    _ttyDeviceName = "";
+    if (isTerminalCreated() == false) {
+        qDebug() << "Can't connect Terminal. No _ttyFD!";
+        return;
+    }
 
-    ::close(_ptsFD); _ptsFD = -1;
+    _ttyListener = new QSocketNotifier(_ttyFD, QSocketNotifier::Read);
+
+    QObject::connect(_ttyListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleTerminalOutput);
+}
+
+void SeerConsoleWidget::disconnectTerminal () {
+
+    if (isTerminalConnected() == false) {
+        //qDebug() << "Terminal is already disconnected!";
+        return;
+    }
+
+    QObject::disconnect(_ttyListener, &QSocketNotifier::activated, this, &SeerConsoleWidget::handleTerminalOutput);
+
+    delete _ttyListener; _ttyListener = 0;
+}
+
+bool SeerConsoleWidget::isTerminalCreated () const {
+
+    if (_ttyFD >= 0) {
+        return true;
+    }
+
+    return false;
+}
+
+bool SeerConsoleWidget::isTerminalConnected () const {
+
+    if (_ttyListener != nullptr) {
+        return true;
+    }
+
+    return false;
+}
+
+void SeerConsoleWidget::resetTerminal () {
+
+    if (isTerminalConnected()) {
+        disconnectTerminal();
+    }
+
+    if (isTerminalCreated() == true) {
+        deleteTerminal();
+    }
+
+    createTerminal();
+}
+
+const QString& SeerConsoleWidget::terminalDeviceName () const {
+    return _terminalDeviceName;
 }
 
 void SeerConsoleWidget::setScrollLines (int count) {
@@ -510,5 +559,17 @@ void SeerConsoleWidget::resizeEvent (QResizeEvent* event) {
     writeSizeSettings();
 
     QWidget::resizeEvent(event);
+}
+
+void SeerConsoleWidget::showEvent (QShowEvent* event) {
+
+    // Handle the event as normal.
+    QWidget::showEvent(event);
+
+    // Set focus on the text input.
+    stdinLineEdit->setFocus();
+
+    // Announce we are now visable.
+    emit newTextViewed();
 }
 

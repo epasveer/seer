@@ -1,8 +1,15 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerStackManagerWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include <QtWidgets/QToolButton>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidgetAction>
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -28,6 +35,11 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     tabWidget->addTab(_stackLocalsBrowserWidget,    "Locals");
     tabWidget->addTab(_stackDumpBrowserWidget,      "Stack");
 
+    QToolButton* tabsContextMenuButton = new QToolButton(tabWidget);
+    tabsContextMenuButton->setIcon(QIcon(":/seer/resources/thenounproject/preferences.svg"));
+    tabsContextMenuButton->setToolTip("Show/Hide tabs.");
+    tabsContextMenuButton->setContextMenuPolicy(Qt::CustomContextMenu);
+
     QToolButton* refreshToolButton = new QToolButton(tabWidget);
     refreshToolButton->setIcon(QIcon(":/seer/resources/RelaxLightIcons/view-refresh.svg"));
     refreshToolButton->setToolTip("Refresh the stack information.");
@@ -38,6 +50,7 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
 
     QHContainerWidget* hcontainer = new QHContainerWidget(this);
     hcontainer->setSpacing(3);
+    hcontainer->addWidget(tabsContextMenuButton);
     hcontainer->addWidget(refreshToolButton);
     hcontainer->addWidget(helpToolButton);
 
@@ -47,10 +60,11 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     readSettings();
 
     // Connect things.
-    QObject::connect(refreshToolButton,    &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleRefreshToolButtonClicked);
-    QObject::connect(helpToolButton,       &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleHelpToolButtonClicked);
-    QObject::connect(tabWidget->tabBar(),  &QTabBar::tabMoved,            this,  &SeerStackManagerWidget::handleTabMoved);
-    QObject::connect(tabWidget->tabBar(),  &QTabBar::currentChanged,      this,  &SeerStackManagerWidget::handleTabChanged);
+    QObject::connect(tabsContextMenuButton, &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleTabsContextMenuButtonClicked);
+    QObject::connect(refreshToolButton,     &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleRefreshToolButtonClicked);
+    QObject::connect(helpToolButton,        &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,            this,  &SeerStackManagerWidget::handleTabMoved);
+    QObject::connect(tabWidget->tabBar(),   &QTabBar::currentChanged,      this,  &SeerStackManagerWidget::handleTabChanged);
 }
 
 SeerStackManagerWidget::~SeerStackManagerWidget () {
@@ -107,13 +121,21 @@ void SeerStackManagerWidget::handleTabChanged (int index) {
 
 void SeerStackManagerWidget::writeSettings () {
 
-    // Write tab order to settings.
+    // Build up visible list.
+    QStringList visible;
+
+    for (int i=0; i<tabWidget->tabBar()->count(); i++) {
+        visible.append(tabWidget->isTabVisible(i) ? "true" : "false");
+    }
+
+    // Build up tab order.
     QStringList tabs;
 
     for (int i=0; i<tabWidget->tabBar()->count(); i++) {
         tabs.append(tabWidget->tabBar()->tabText(i));
     }
 
+    // Build up current tab.
     QString current = tabWidget->tabBar()->tabText(tabWidget->tabBar()->currentIndex());
 
     //qDebug() << "Tabs"    << tabs;
@@ -123,6 +145,7 @@ void SeerStackManagerWidget::writeSettings () {
 
     settings.beginGroup("stackmanagerwindow"); {
         settings.setValue("taborder",   tabs.join(','));
+        settings.setValue("tabvisible", visible.join(','));
         settings.setValue("tabcurrent", current);
     } settings.endGroup();
 }
@@ -137,10 +160,12 @@ void SeerStackManagerWidget::readSettings () {
     // Read tab order from settings.
     QSettings   settings;
     QStringList tabs;
+    QStringList visible;
     QString     current;
 
     settings.beginGroup("stackmanagerwindow"); {
         tabs    = settings.value("taborder").toString().split(',');
+        visible = settings.value("tabvisible").toString().split(',');
         current = settings.value("tabcurrent").toString();
     } settings.endGroup();
 
@@ -162,6 +187,18 @@ void SeerStackManagerWidget::readSettings () {
 
         if (tb != -1) {
             tabWidget->tabBar()->moveTab(tb, i);
+        }
+    }
+
+    // Show/Hide tabs.
+    for (int i=0; i<visible.count(); i++) {
+        QString flag = visible[i];
+        if (flag == "true") {
+            tabWidget->setTabVisible(i,true);
+        }else if (flag == "false") {
+            tabWidget->setTabVisible(i,false);
+        }else{
+            tabWidget->setTabVisible(i,true);
         }
     }
 
@@ -200,22 +237,27 @@ void SeerStackManagerWidget::handleText (const QString& text) {
 
         QString currentthreadid_text = Seer::parseFirst(newtext,   "current-thread-id=", '"', '"', false);
 
-        label->setText("Stack Info for Thread Id : " + currentthreadid_text);
+        if (currentthreadid_text == "") {
+            label->setText("Stack Info - No Thread Selected");
+        }else{
+            label->setText("Stack Info - Thread Id " + currentthreadid_text);
+        }
 
         stackFramesBrowserWidget()->refresh();
         stackArgumentsBrowserWidget()->refresh();
         stackLocalsBrowserWidget()->refresh();
         stackDumpBrowserWidget()->refresh();
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-
-        label->setText("Stack Info");
-
     }else{
         // Ignore others.
     }
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerStackManagerWidget::handleSessionTerminated () {
+
+    label->setText("Stack Info");
 }
 
 void SeerStackManagerWidget::handleStoppingPointReached () {
@@ -231,6 +273,61 @@ void SeerStackManagerWidget::handleStoppingPointReached () {
 void SeerStackManagerWidget::refresh () {
 
     emit refreshThreadFrames();
+}
+
+void SeerStackManagerWidget::handleTabsContextMenuButtonClicked() {
+
+    // Build the menu and execute it.
+    QMenu        contextMenu;
+    QWidget*     container = new QWidget(&contextMenu);
+    QVBoxLayout* layout    = new QVBoxLayout(container);
+
+    for (int i = 0; i < tabWidget->count(); i++) {
+
+        QString title = tabWidget->tabText(i);
+        QCheckBox* showTabCheckBox = new QCheckBox(title, container);
+        showTabCheckBox->setChecked(tabWidget->isTabVisible(i));
+        layout->addWidget(showTabCheckBox);
+
+        QObject::connect(showTabCheckBox, &QCheckBox::toggled, [this, showTabCheckBox, i](bool checked) {
+
+            // Count visible tabs.
+            int count=0;
+
+            for (int x=0; x<tabWidget->count(); x++) {
+                if (tabWidget->isTabVisible(x)) {
+                    count++;
+                }
+            }
+
+            // Adjust the count. The 'checked' is made before the UI is updated.
+            if (checked == true) {
+                count++;
+            }else{
+                count--;
+            }
+
+            // Reset the checkbox UI if the last visible tab was clicked.
+            if (checked == false and count == 0) {
+                showTabCheckBox->setChecked(true);
+            // Don't hide last visible tab.
+            }else if (checked == false and count > 1) {
+                tabWidget->setTabVisible(i, checked);
+            // Always show tabs when asked.
+            }else{
+                tabWidget->setTabVisible(i, checked);
+            }
+
+            writeSettings();
+        });
+    }
+    container->setLayout(layout);
+
+    QWidgetAction* action = new QWidgetAction(&contextMenu);
+    action->setDefaultWidget(container);
+    contextMenu.addAction(action);
+
+    contextMenu.exec(QCursor::pos());
 }
 
 

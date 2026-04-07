@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorConfigPage.h"
 #include "QColorButton.h"
 #include <QtGui/QFontDatabase>
@@ -16,25 +20,18 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     // Setup the widgets
     //
 
-    // Set example text.
-    editorWidget->sourceArea()->openText("/*\n"
-                                         " * Seer, Copyright 2021 (c)\n"
-                                         " * Ernie Pasveer (epasveer@att.net)\n"
-                                         " */\n"
-                                         "int main(int argc, char* argv[]) {\n"
-                                         "\n"
-                                         "    std::cout << \"Hello, Seer!\"; // Greetings\n"
-                                         "\n"
-                                         "    return 0;\n"
-                                         "}",
-                                         "sample.cpp");
-
     // Connect things.
+    QObject::connect(fontMonoRadioButton,         &QRadioButton::clicked,                   this, &SeerEditorConfigPage::handleFontMonoChanged);
     QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,           this, &SeerEditorConfigPage::handleFontSizeChanged);
     QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,       this, &SeerEditorConfigPage::handleFontChanged);
     QObject::connect(fontDialogButton,            &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleFontDialog);
     QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleEnabledChanged);
-    QObject::connect(highlighterSuffixesLineEdit, &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleCppSuffixFocusIn);
+    QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleRustSuffixFocusIn);
+    QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleOdinSuffixFocusIn);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
     // Set the defaults.
@@ -42,6 +39,9 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
 
     // Fill in the available theme names.
     themeComboBox->addItems(SeerHighlighterSettings::themeNames());
+
+    // Set example text.
+    handleCppSuffixFocusIn();
 }
 
 SeerEditorConfigPage::~SeerEditorConfigPage() {
@@ -141,12 +141,16 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     highlighterTableWidget->resizeColumnToContents(2); // Foreground color
     highlighterTableWidget->resizeColumnToContents(3); // Background color
 
-    highlighterSuffixesLineEdit->setText(_highlighterSettings.sourceSuffixes());
-    highlighterSuffixesLineEdit->setCursorPosition(0);
+    cppSuffixesLineEdit->setText(_highlighterSettings.cppSourceSuffixes());
+    cppSuffixesLineEdit->setCursorPosition(0);
+    rustSuffixesLineEdit->setText(_highlighterSettings.rustSourceSuffixes());
+    rustSuffixesLineEdit->setCursorPosition(0);
+    odinSuffixesLineEdit->setText(_highlighterSettings.odinSourceSuffixes());
+    odinSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
-    editorWidget->sourceArea()->setCurrentLine(9);
+    editorWidget->sourceArea()->setCurrentLine(0);
 }
 
 const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const {
@@ -176,13 +180,33 @@ QString SeerEditorConfigPage::externalEditorCommand () const {
     return externalEditorCommandLineEdit->text();
 }
 
+void SeerEditorConfigPage::setAutoSourceReload (bool flag) {
+
+    autoReloadSourceFileCheckBox->setChecked(flag);
+}
+
+bool SeerEditorConfigPage::autoSourceReload () const {
+
+    return autoReloadSourceFileCheckBox->isChecked();
+}
+
 void SeerEditorConfigPage::reset () {
 
     setEditorFont(QFont("monospace", 10));
     setEditorTabSize(4);
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
+    setHighlighterSettings(SeerHighlighterSettings::populate(""));
     setHighlighterEnabled(true);
     setExternalEditorCommand("");
+    setAutoSourceReload(false);
+}
+
+void SeerEditorConfigPage::handleFontMonoChanged () {
+
+    if (fontMonoRadioButton->isChecked()) {
+        fontNameComboBox->setFontFilters(QFontComboBox::MonospacedFonts);
+    }else{
+        fontNameComboBox->setFontFilters(QFontComboBox::AllFonts);
+    }
 }
 
 void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
@@ -204,15 +228,12 @@ void SeerEditorConfigPage::handleFontSizeChanged (const QString& text) {
 
 void SeerEditorConfigPage::handleFontChanged (const QFont& font) {
 
-    // Create a font database.
-    QFontDatabase fontDatabase;
-
     // Clear the font size list.
     QStringList sizes;
     fontSizeComboBox->clear();
 
     // Populate the font size list from the given font.
-    foreach (int points, fontDatabase.smoothSizes(font.family(), font.styleName())) {
+    foreach (int points, QFontDatabase::smoothSizes(font.family(), font.styleName())) {
         sizes.append(QString::number(points));
     }
 
@@ -235,7 +256,13 @@ void SeerEditorConfigPage::handleFontDialog () {
 
     bool ok;
 
-    QFont font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors", QFontDialog::MonospacedFonts);
+    QFont font;
+
+    if (fontMonoRadioButton->isChecked()) {
+        font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors", QFontDialog::MonospacedFonts);
+    }else{
+        font = QFontDialog::getFont(&ok, _font, this,  "Select a font for the editors");
+    }
 
     if (ok) {
         handleFontChanged(font);
@@ -244,7 +271,7 @@ void SeerEditorConfigPage::handleFontDialog () {
 
 void SeerEditorConfigPage::handleHighlighterChanged () {
 
-    SeerHighlighterSettings cppSettings;
+    SeerHighlighterSettings languageSettings;
 
     for (int r=0; r<highlighterTableWidget->rowCount(); r++) {
 
@@ -283,14 +310,16 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
         format.setBackground(backgroundColorButton->color());
 
         // Add the format to our settings.
-        cppSettings.add(key, format);
+        languageSettings.add(key, format);
     }
 
     // Get list of source suffixes.
-    cppSettings.setSourceSuffixes(highlighterSuffixesLineEdit->text());
+    languageSettings.setCppSourceSuffixes(cppSuffixesLineEdit->text());
+    languageSettings.setRustSourceSuffixes(rustSuffixesLineEdit->text());
+    languageSettings.setOdinSourceSuffixes(odinSuffixesLineEdit->text());
 
     // Update our view.
-    setHighlighterSettings(cppSettings);
+    setHighlighterSettings(languageSettings);
 }
 
 void SeerEditorConfigPage::handleEnabledChanged () {
@@ -300,6 +329,64 @@ void SeerEditorConfigPage::handleEnabledChanged () {
 
 void SeerEditorConfigPage::handleApplyTheme () {
 
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(themeComboBox->currentText()));
+    setHighlighterSettings(SeerHighlighterSettings::populate(themeComboBox->currentText()));
+}
+
+void SeerEditorConfigPage::handleCppSuffixFocusIn () {
+
+    // Set example text.
+    editorWidget->sourceArea()->openText("/*\n"
+                                         " * Seer, Copyright 2021 (c)\n"
+                                         " * Ernie Pasveer (epasveer@att.net)\n"
+                                         " * C/C++ example\n"
+                                         " */\n"
+                                         "\n"
+                                         "// This is the main function.\n"
+                                         "int main(int argc, char* argv[]) {\n"
+                                         "\n"
+                                         "    std::cout << \"Hello, Seer!\"; // Greetings\n"
+                                         "\n"
+                                         "    return 0;\n"
+                                         "}",
+                                         "sample.cpp");
+    editorWidget->sourceArea()->setCurrentLine(0);
+}
+
+void SeerEditorConfigPage::handleRustSuffixFocusIn () {
+
+    // Set example text.
+    editorWidget->sourceArea()->openText("/*\n"
+                                         " * Seer, Copyright 2021 (c)\n"
+                                         " * Ernie Pasveer (epasveer@att.net)\n"
+                                         " * Rust example\n"
+                                         " */\n"
+                                         "\n"
+                                         "// This is the main function.\n"
+                                         "fn main() {\n"
+                                         "   // Print text to the console.\n"
+                                         "   println!(\"Hello World!\");\n"
+                                         "}",
+                                         "sample.rs");
+    editorWidget->sourceArea()->setCurrentLine(0);
+}
+
+void SeerEditorConfigPage::handleOdinSuffixFocusIn () {
+
+    // Set example text.
+    editorWidget->sourceArea()->openText("/*\n"
+                                         " * Seer, Copyright 2021 (c)\n"
+                                         " * Ernie Pasveer (epasveer@att.net)\n"
+                                         " * Odin example\n"
+                                         " */\n"
+                                         "package main\n"
+                                         "\n"
+                                         "import \"core:fmt\"\n"
+                                         "\n"
+                                         "// This is the main function.\n"
+                                         "main :: proc() {\n"
+                                         "    fmt.println(\"Hello, World!\")\n"
+                                         "}",
+                                         "sample.odin");
+    editorWidget->sourceArea()->setCurrentLine(0);
 }
 

@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 3.10.0)
 
-project(seergdb VERSION 2.5.0 LANGUAGES CXX)
+project(seergdb VERSION 2.8.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 
@@ -32,6 +32,7 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED PrintSupport)
     find_package(Qt6 COMPONENTS REQUIRED Charts)
     find_package(Qt6 COMPONENTS REQUIRED Svg)
+    find_package(Qt6 COMPONENTS REQUIRED OpenGL)
 
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,8 +50,26 @@ elseif(${QTVERSION} STREQUAL "QT5")
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
+# Define the source location of header files
 set(HEADER_FILES
     GdbMonitor.h
+    QProcessInfo.h
+    QProcessInfoWidget.h
+    QProgressIndicator.h
+    QColorButton.h
+    QColorSwatch.h
+    QDetachTabWidget.h
+    QZoomChartView.h
+    QZoomChart.h
+    QClearLineEdit.h
+    QIndexTreeWidget.h
+    QStringPair.h
+    QHistoryLineEdit.h
+    QEditDelegate.h
+    QHContainerWidget.h
+    QImageViewer.h
+    QAnsiTextEdit.h
+    SeerUtl.h
     SeerArgumentsDialog.h
     SeerBreakpointCreateDialog.h
     SeerMessagesBrowserWidget.h
@@ -59,6 +78,8 @@ set(HEADER_FILES
     SeerCatchpointsBrowserWidget.h
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
+    SeerCheckpointsBrowserWidget.h
+    SeerCommandLogsWidget.h
     SeerSeerLogWidget.h
     SeerConsoleWidget.h
     SeerConfigDialog.h
@@ -81,9 +102,11 @@ set(HEADER_FILES
     SeerHexWidget.h
     SeerAsmWidget.h
     SeerArrayWidget.h
+    SeerMarixWidget.h
     SeerLogWidget.h
     SeerMainWindow.h
     SeerArrayVisualizerWidget.h
+    SeerMatrixVisualizerWidget.h
     SeerMemoryVisualizerWidget.h
     SeerStructVisualizerWidget.h
     SeerVarVisualizerWidget.h
@@ -93,12 +116,17 @@ set(HEADER_FILES
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
     SeerRegisterTreeWidgetItem.h
+    SeerSignalValuesBrowserWidget.h
+    SeerSignalProfileDialog.h
+    SeerSignalEditValueDialog.h
     SeerRunStatusIndicator.h
     SeerLibraryBrowserWidget.h
     SeerSourceBrowserWidget.h
     SeerFunctionBrowserWidget.h
     SeerTypeBrowserWidget.h
     SeerStaticBrowserWidget.h
+    SeerSkipBrowserWidget.h
+    SeerSkipCreateDialog.h
     SeerSourceSymbolLibraryManagerWidget.h
     SeerStackArgumentsBrowserWidget.h
     SeerStackFramesBrowserWidget.h
@@ -115,13 +143,15 @@ set(HEADER_FILES
     SeerCudaDevicesBrowserWidget.h
     SeerGdbLogWidget.h
     SeerTildeLogWidget.h
-    SeerUtl.h
     SeerVariableLoggerBrowserWidget.h
     SeerVariableManagerWidget.h
     SeerVariableTrackerBrowserWidget.h
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
+    SeerSourceHighlighter.h
     SeerCppSourceHighlighter.h
+    SeerOdinSourceHighlighter.h
+    SeerRustSourceHighlighter.h
     SeerAboutDialog.h
     SeerSlashProcDialog.h
     SeerHighlighterSettings.h
@@ -131,27 +161,30 @@ set(HEADER_FILES
     SeerProgressIndicator.h
     SeerMessagesDialog.h
     SeerAssemblyPreferenceDialog.h
-    QProcessInfo.h
-    QProcessInfoWidget.h
-    QProgressIndicator.h
-    QColorButton.h
-    QColorSwatch.h
-    QDetachTabWidget.h
-    QZoomChartView.h
-    QZoomChart.h
-    QClearLineEdit.h
-    QIndexTreeWidget.h
-    QStringPair.h
-    QHistoryLineEdit.h
-    QEditDelegate.h
-    QHContainerWidget.h
-    QImageViewer.h
-    QAnsiTextEdit.h
+    SeerHistoryLineEdit.h
+    SeerMacroEditorDialog.h
+    SeerMacroToolButton.h
     )
 
+# Define the source location of source files
 set(SOURCE_FILES
-    seergdb.cpp
     GdbMonitor.cpp
+    QProcessInfo.cpp
+    QProcessInfoWidget.cpp
+    QProgressIndicator.cpp
+    QColorButton.cpp
+    QColorSwatch.cpp
+    QDetachTabWidget.cpp
+    QZoomChartView.cpp
+    QZoomChart.cpp
+    QClearLineEdit.cpp
+    QIndexTreeWidget.cpp
+    QHistoryLineEdit.cpp
+    QEditDelegate.cpp
+    QHContainerWidget.cpp
+    QImageViewer.cpp
+    QAnsiTextEdit.cpp
+    SeerUtl.cpp
     SeerArgumentsDialog.cpp
     SeerBreakpointCreateDialog.cpp
     SeerMessagesBrowserWidget.cpp
@@ -160,6 +193,8 @@ set(SOURCE_FILES
     SeerCatchpointsBrowserWidget.cpp
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
+    SeerCheckpointsBrowserWidget.cpp
+    SeerCommandLogsWidget.cpp
     SeerSeerLogWidget.cpp
     SeerConsoleWidget.cpp
     SeerConfigDialog.cpp
@@ -181,9 +216,11 @@ set(SOURCE_FILES
     SeerHexWidget.cpp
     SeerAsmWidget.cpp
     SeerArrayWidget.cpp
+    SeerMatrixWidget.cpp
     SeerLogWidget.cpp
     SeerMainWindow.cpp
     SeerArrayVisualizerWidget.cpp
+    SeerMatrixVisualizerWidget.cpp
     SeerMemoryVisualizerWidget.cpp
     SeerStructVisualizerWidget.cpp
     SeerVarVisualizerWidget.cpp
@@ -193,12 +230,17 @@ set(SOURCE_FILES
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp
     SeerRegisterTreeWidgetItem.cpp
+    SeerSignalValuesBrowserWidget.cpp
+    SeerSignalProfileDialog.cpp
+    SeerSignalEditValueDialog.cpp
     SeerRunStatusIndicator.cpp
     SeerLibraryBrowserWidget.cpp
     SeerSourceBrowserWidget.cpp
     SeerFunctionBrowserWidget.cpp
     SeerTypeBrowserWidget.cpp
     SeerStaticBrowserWidget.cpp
+    SeerSkipBrowserWidget.cpp
+    SeerSkipCreateDialog.cpp
     SeerSourceSymbolLibraryManagerWidget.cpp
     SeerStackArgumentsBrowserWidget.cpp
     SeerStackFramesBrowserWidget.cpp
@@ -215,13 +257,15 @@ set(SOURCE_FILES
     SeerCudaDevicesBrowserWidget.cpp
     SeerGdbLogWidget.cpp
     SeerTildeLogWidget.cpp
-    SeerUtl.cpp
     SeerVariableLoggerBrowserWidget.cpp
     SeerVariableManagerWidget.cpp
     SeerVariableTrackerBrowserWidget.cpp
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
+    SeerSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
+    SeerOdinSourceHighlighter.cpp
+    SeerRustSourceHighlighter.cpp
     SeerAboutDialog.cpp
     SeerSlashProcDialog.cpp
     SeerHighlighterSettings.cpp
@@ -231,21 +275,10 @@ set(SOURCE_FILES
     SeerProgressIndicator.cpp
     SeerMessagesDialog.cpp
     SeerAssemblyPreferenceDialog.cpp
-    QProcessInfo.cpp
-    QProcessInfoWidget.cpp
-    QProgressIndicator.cpp
-    QColorButton.cpp
-    QColorSwatch.cpp
-    QDetachTabWidget.cpp
-    QZoomChartView.cpp
-    QZoomChart.cpp
-    QClearLineEdit.cpp
-    QIndexTreeWidget.cpp
-    QHistoryLineEdit.cpp
-    QEditDelegate.cpp
-    QHContainerWidget.cpp
-    QImageViewer.cpp
-    QAnsiTextEdit.cpp
+    SeerHistoryLineEdit.cpp
+    SeerMacroEditorDialog.cpp
+    SeerMacroToolButton.cpp
+    seergdb.cpp
     )
 
 if(${QTVERSION} STREQUAL "QT6")
@@ -268,15 +301,67 @@ if(UNIX AND NOT APPLE)
     add_compile_options(-Wall -Wextra -Wunused-result -pedantic)   # -Werror -Wdeprecated-copy
 endif()
 
-add_definitions(-DQT_DEPRECATED_WARNINGS)
+add_definitions(-DQT_DISABLE_DEPRECATED_UP_TO=0x060300)
 
 add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 if(${QTVERSION} STREQUAL "QT6")
-    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg)
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL)
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
+endif()
+
+# Handle gdb logout debugging. Turn CONFIG_SEER_GDB_LOGOUT=1 to enable gdb logout
+# -DCONFIG_SEER_GDB_LOGOUT=1
+if(NOT DEFINED CONFIG_SEER_GDB_LOGOUT)
+    set(CONFIG_SEER_GDB_LOGOUT 0)
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_LOGOUT=${CONFIG_SEER_GDB_LOGOUT}
+)
+
+# Handle default gdb binary name and location.
+# -DCONFIG_SEER_GDB_NAME=/app/bin/gdb
+if(NOT DEFINED CONFIG_SEER_GDB_NAME)
+    set(CONFIG_SEER_GDB_NAME "/usr/bin/gdb")
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_NAME=${CONFIG_SEER_GDB_NAME}
+)
+
+# Handle default gdb binary launcher (for flatpak, et al)
+# -DCONFIG_SEER_GDB_LAUNCHER="flatpak-spawn --host"
+if(NOT DEFINED CONFIG_SEER_GDB_LAUNCHER)
+    set(CONFIG_SEER_GDB_LAUNCHER "")
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    SEER_GDB_LAUNCHER=${CONFIG_SEER_GDB_LAUNCHER}
+)
+
+# Install icons to standard XDG icon directories
+# -DCONFIG_SEER_INSTALL_ICONS=1
+if(CONFIG_SEER_INSTALL_ICONS)
+    message("-- Will install icons to system")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/32x32/seergdb.png"   DESTINATION "share/icons/hicolor/32x32/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/64x64/seergdb.png"   DESTINATION "share/icons/hicolor/64x64/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/128x128/seergdb.png" DESTINATION "share/icons/hicolor/128x128/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/icons/hicolor/256x256/seergdb.png" DESTINATION "share/icons/hicolor/256x256/apps")
+endif()
+
+# Install flathub icons to standard XDG icon directories
+# -DCONFIG_SEER_INSTALL_FLATHUB_FILES=1
+if(CONFIG_SEER_INSTALL_FLATHUB_FILES)
+    message("-- Will install flathub icons+files to system")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/32x32/io.github.epasveer.seer.png"   DESTINATION "share/icons/hicolor/32x32/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/64x64/io.github.epasveer.seer.png"   DESTINATION "share/icons/hicolor/64x64/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/128x128/io.github.epasveer.seer.png" DESTINATION "share/icons/hicolor/128x128/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/icons/hicolor/256x256/io.github.epasveer.seer.png" DESTINATION "share/icons/hicolor/256x256/apps")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.metainfo.xml"              DESTINATION "share/metainfo")
+    install(FILES "${CMAKE_SOURCE_DIR}/resources/flathub/io.github.epasveer.seer.desktop"                   DESTINATION "share/applications")
 endif()
 

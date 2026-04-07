@@ -1,8 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerVariableTrackerBrowserWidget.h"
 #include "SeerVariableLoggerBrowserWidget.h"
 #include "SeerRegisterValuesBrowserWidget.h"
+#include "SeerSignalValuesBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
 
@@ -17,8 +22,9 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
        ~SeerVariableManagerWidget ();
 
         SeerVariableTrackerBrowserWidget*               variableTrackerBrowserWidget        ();
-        SeerVariableLoggerBrowserWidget*                variableLoggerBrowserWidget           ();
+        SeerVariableLoggerBrowserWidget*                variableLoggerBrowserWidget         ();
         SeerRegisterValuesBrowserWidget*                registerValuesBrowserWidget         ();
+        SeerSignalValuesBrowserWidget*                  signalValuesBrowserWidget           ();
 
     protected:
         void                                            writeSettings                       ();
@@ -29,10 +35,14 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleTabMoved                      (int from, int to);
         void                                            handleTabChanged                    (int index);
+        void                                            handleRaiseLoggerTab                ();
+        void                                            handleRaiseTrackerTab               ();
+        void                                            handleTabsContextMenuButtonClicked  ();
 
     private:
         SeerVariableTrackerBrowserWidget*               _variableTrackerBrowserWidget;
         SeerVariableLoggerBrowserWidget*                _variableLoggerBrowserWidget;
         SeerRegisterValuesBrowserWidget*                _registerValuesBrowserWidget;
+        SeerSignalValuesBrowserWidget*                  _signalValuesBrowserWidget;
 };
 

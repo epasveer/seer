@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerAssemblyPreferenceDialog.h"
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -86,6 +90,16 @@ void SeerAssemblyPreferenceDialog::setShowAssemblySource (bool flag) {
 bool SeerAssemblyPreferenceDialog::showAssemblySource () const {
 
     return showSourceCheckBox->isChecked();
+}
+
+void SeerAssemblyPreferenceDialog::setConvertUppercase (bool flag) {
+
+    convertUppercaseRadioButton->setChecked(flag);
+}
+
+bool SeerAssemblyPreferenceDialog::convertUppercase () const {
+
+    return convertUppercaseRadioButton->isChecked();
 }
 
 void SeerAssemblyPreferenceDialog::writeSettings() {

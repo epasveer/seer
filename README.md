@@ -21,7 +21,7 @@ Requirements
 * Linux
 * C++17
 * gdb with "mi" interpreter (check by running: `gdb --interpreter=mi`)
-* CMake (3.1.0 or newer)
+* CMake (3.5.0 or newer)
 * QT6
    * When building Seer from source, you will need the QT6 "devel" packages installed on your system for your distribution.
       * Core
@@ -42,11 +42,28 @@ Available through the following package managers:
 
 ### Pamac (Manjaro)
 
-    pamac install seer
+    $ pamac install seer
 
 ### zypper (openSUSE Tumbleweed)
 
-    zypper install seergdb
+    $ zypper install seergdb
+
+### Flathub
+
+Flathub website. [Here](https://flathub.org/en/apps/io.github.epasveer.seer)
+
+    $ flatpak install flathub io.github.epasveer.seer
+
+### Flatpak
+
+Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/flatpak-latest) on github. 
+
+**Important**: `flatpak-spawn --host`, needed in `GDB Launcher`  to run gdb. See https://github.com/epasveer/seer/issues/377#issuecomment-3620844808.
+
+Download ```seer.flatpak```. Install it:
+
+    $ flatpak install -y --bundle --user seer.flatpak
+
 
 Install from source
 ---------
@@ -68,6 +85,16 @@ Check out [Seer's Wiki page](https://github.com/epasveer/seer/wiki) on github.
 * The next release will be v2.0 and will be Qt6 based. However, for the time being, it's still able to be compiled with Qt5.
 * If you want the latest stable Qt5 source, grab v1.17 from here: https://github.com/epasveer/seer/releases/tag/v1.17
 
+
+Starting Seer
+=============
+
+Seer is meant to easily start the program to debug from the command line. gdb has multiple
+methods for debugging a program. So Seer naturally does too.
+
+Go to the Wiki to see all the ways to run Seer.
+
+https://github.com/epasveer/seer/wiki/Starting-Seer
 
 GUI overview
 ============
@@ -222,19 +249,17 @@ When looking at the contents of raw memory that is an image, the Image Visualize
 
 ![](images/imagevisualizer.png)
 
-Starting Seer
-=============
-
-Seer is meant to easily start the program to debug from the command line. gdb has multiple
-methods for debugging a program. So Seer naturally does too.
-
-Go to the Wiki to see all the ways to run Seer.
-
-https://github.com/epasveer/seer/wiki/Starting-Seer
 
 Support/Contact
 ===============
 
 Send an email to epasveer@att.net for any bugs or features. Or create a [task](https://github.com/epasveer/seer/issues)
 in my GitHub project page.
+
+Stargazers
+==========
+
+It's a wonderful world. 
+
+![](images/stargazer-map.svg)
 

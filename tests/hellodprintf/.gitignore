@@ -1,0 +1,5 @@
+hellodprintf
+hellodprintf_fortran
+hellodprintf_call_channel
+hellodprintf_call_nochannel
+*.o

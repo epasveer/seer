@@ -1,0 +1,29 @@
+app-id: io.github.epasveer.seer
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: seergdb
+
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --device=all # Needed for stdout/stdin to debug target
+  - --share=ipc
+  - --filesystem=host # Filesystem access for debugging programs
+  - --talk-name=org.freedesktop.Flatpak # Permission to `flatpak-spawn --host`
+
+modules:
+  - name: seergdb
+    buildsystem: cmake-ninja
+    builddir: true
+    subdir: src
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCONFIG_SEER_INSTALL_FLATHUB_FILES=1
+    sources:
+      - type: git
+        url: https://github.com/epasveer/seer.git
+        commit: 6f93e7eca6077faa2152a9130eb16d4b40a856a9
+        # tag: v2.7
+

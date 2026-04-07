@@ -1,0 +1,12 @@
+id = 2, b = \\\"\\\\000hildTest 2\\\\000\\\\377\\\\177\\\\000\\\\000P\\\\327\\\\377\\\\377\\\\377\\\\177\\\", '\\\\000' <repeats 11 times>, \\\"hildTest 2\\\\000\\\\377\\\\177\\\\000\\\\000\\\\001\\\\000\\\\000\\\\000\\\\000\\\\000\\\\000\\\\000x\\\\327\\\\377\\\\377\\\\377\\\\177\\\\000\\\\000\\\\004\\\\000\\\\000\\\\000\\\\000\\\\000\\\\000\\\\000test\\\", '\\\\000' <repeats 20 times>, \\\"\\\\240\\\\327\\\\377\\\\377\\\", child = {childId = -9864, childString = \\\"\\\"}
+id = 2, b = \"000hildTest 2000377177000000P327377377377177\", '000' <repeats 11 times>, \"hildTest 2000377177000000001", '0' <repeats 21 times>, "x327377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 20 times>, \"240327377377\", child = {childId = -9864, childString = \"\"}
+id = -2, b = \"test\", child = {childId = -1, childString = \"childTest\"}
+id = 2, b = \"000hildTest 2000377177000000P327377377377177\", '000' <repeats 11 times>, \"hildTest 2000377177000000001", '0' <repeats 21 times>, "x327377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 20 times>, \"240327377377\", child = {childId = -9864, childString = \"\"}
+child = {childId = -9864, childString = \"\"}, child = {childId = -9864, childString = \"\"}
+id = 1431674881, b = \"\", child = {childId = 1431667073, childString = \"\"}
+id = -2, b = \\\"test\\\", child = {childId = -1, childString = \\\"childTest\\\"}
+id = -2, b = \"test\", child = {childId = -1, childString = \"childTest\"}
+id = 1431674881, b = \"\", child = {childId = 1431667073, childString = \"\"}
+childId = -1, childString = \"childTest\"
+childId = 1431667073, childString = \"\", childId = 1431667073, childString = \"\"
+childId = -9864, childString = \\\"\\\"

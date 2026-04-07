@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorWidgetAssembly.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
@@ -36,9 +40,9 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableOffsetArea     = false;
     _enableBreakPointArea = false;
     _enableOpcodeArea     = false;
-    _enableMiniMapArea    = false;
     _enableSourceLines    = false;
     _sourceTabSize        = 4;
+    _convertUppercase     = false;
 
     _addressLineMap.clear();
     _offsetLineMap.clear();
@@ -58,22 +62,19 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _offsetArea     = new SeerEditorWidgetAssemblyOffsetArea(this);
     _breakPointArea = new SeerEditorWidgetAssemblyBreakPointArea(this);
     _opcodeArea     = new SeerEditorWidgetAssemblyOpcodeArea(this);
-    _miniMapArea    = new SeerEditorWidgetAssemblyMiniMapArea(this);
-    _miniMapPixmap  = 0;
 
     enableLineNumberArea(true);
     enableOffsetArea(true);
     enableBreakPointArea(true);
     enableOpcodeArea(true);
-    enableMiniMapArea(false);   // Doesn't work yet. Need to work on the "mini" part.
     enableSourceLines(true);
+    setConvertUppercase(false);
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOffsetArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOpcodeArea);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
     setCurrentLine("");
@@ -85,13 +86,11 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     SeerPlainTextWheelEventForwarder* offsetAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* opcodeAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
-    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _offsetArea->installEventFilter(offsetAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
     _opcodeArea->installEventFilter(opcodeAreaWheelForwarder);
-    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
     close();
@@ -157,18 +156,6 @@ void SeerEditorWidgetAssemblyArea::enableSourceLines (bool flag) {
 bool SeerEditorWidgetAssemblyArea::sourceLinesEnabled () const {
 
     return _enableSourceLines;
-}
-
-void SeerEditorWidgetAssemblyArea::enableMiniMapArea (bool flag) {
-
-    _enableMiniMapArea = flag;
-
-    updateMarginAreasWidth(0);
-}
-
-bool SeerEditorWidgetAssemblyArea::miniMapAreaEnabled () const {
-
-    return _enableMiniMapArea;
 }
 
 void SeerEditorWidgetAssemblyArea::updateTextArea () {
@@ -238,7 +225,11 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 sourceLine = sourceLine.simplified(); // Remove blank spaces at front and end of line.
 
                 // Write source line to the document.
-                appendPlainText(sourceLine);
+                if (convertUppercase()) {
+                    appendPlainText(sourceLine.toUpper());
+                }else{
+                    appendPlainText(sourceLine);
+                }
 
                 // Highlight it.
                 QTextCharFormat sourceLinesFormat = highlighterSettings().get("Text");
@@ -278,7 +269,11 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
                 inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
                 // Write assembly line to the document.
-                appendPlainText(inst_text);
+                if (convertUppercase()) {
+                    appendPlainText(inst_text.toUpper());
+                }else{
+                    appendPlainText(inst_text);
+                }
 
                 // Highlight it.
                 QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
@@ -327,7 +322,12 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
             inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
             // Write assembly line to the document.
-            appendPlainText(QString(" ") + inst_text);
+            qDebug() << "Convert to Uppercase?" << convertUppercase();
+            if (convertUppercase()) {
+                appendPlainText(QString(" ") + inst_text.toUpper());
+            }else{
+                appendPlainText(QString(" ") + inst_text);
+            }
 
             // Highlight it.
             QTextCharFormat sourceLinesFormat = highlighterSettings().get("Assembly Text");
@@ -379,7 +379,7 @@ void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
     Q_UNUSED(newBlockCount);
 
     int leftMarginWidth  = lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth() + opcodeAreaWidth();
-    int rightMarginWidth = miniMapAreaWidth();
+    int rightMarginWidth = 0;
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
 }
@@ -467,17 +467,6 @@ int SeerEditorWidgetAssemblyArea::opcodeAreaWidth () {
     return space;
 }
 
-int SeerEditorWidgetAssemblyArea::miniMapAreaWidth () {
-
-    if (miniMapAreaEnabled() == false) {
-        return 0;
-    }
-
-    int space = 3 + 75;
-
-    return space;
-}
-
 void SeerEditorWidgetAssemblyArea::updateLineNumberArea (const QRect& rect, int dy) {
 
     if (lineNumberAreaEnabled() == false) {
@@ -546,23 +535,6 @@ void SeerEditorWidgetAssemblyArea::updateOpcodeArea (const QRect& rect, int dy) 
     }
 }
 
-void SeerEditorWidgetAssemblyArea::updateMiniMapArea (const QRect& rect, int dy) {
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    if (dy) {
-        _miniMapArea->scroll(0, dy);
-    }else{
-        _miniMapArea->update(0, rect.y(), _miniMapArea->width(), rect.height());
-    }
-
-    if (rect.contains(viewport()->rect())) {
-        updateMarginAreasWidth(0);
-    }
-}
-
 void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event) {
 
     if (lineNumberAreaEnabled() == false) {
@@ -592,7 +564,11 @@ void SeerEditorWidgetAssemblyArea::lineNumberAreaPaintEvent (QPaintEvent* event)
             QString address;
 
             if (_lineAddressMap.contains(blockNumber+1)) {
-                address = _lineAddressMap[blockNumber+1];
+                if (convertUppercase()) {
+                    address = _lineAddressMap[blockNumber+1].toUpper();
+                }else{
+                    address = _lineAddressMap[blockNumber+1];
+                }
             }
 
             painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(), Qt::AlignLeft, address);
@@ -746,7 +722,11 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
             QString opcode;
 
             if (_lineOpcodeMap.contains(blockNumber+1)) {
-                opcode = _lineOpcodeMap[blockNumber+1];
+                if (convertUppercase()) {
+                    opcode = _lineOpcodeMap[blockNumber+1].toUpper();
+                }else{
+                    opcode = _lineOpcodeMap[blockNumber+1];
+                }
             }
 
             painter.drawText(0, top, _opcodeArea->width(), fontMetrics().height(), Qt::AlignLeft, opcode);
@@ -757,115 +737,6 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
         bottom = top + qRound(blockBoundingRect(block).height());
 
         blockNumber++;
-    }
-}
-
-void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
-
-    //
-    // This doesn't work yet.
-    // There is nothing 'mini' about the view. Need to shrink the text somehow.
-    // Then add a 'focus' box that can be interacted with to scroll through the text.
-    //
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
-
-    if (_miniMapPixmap == 0) {
-
-        int pixmapWidth  = 0;
-        int pixmapHeight = 0;
-
-        QFont font("monospace");
-        font.setStyleHint(QFont::Monospace);
-      //font.setPointSize(2);
-
-        QFontMetrics fm(font);
-
-        {
-            QTextBlock block = document()->begin();
-
-            while (block.isValid()) {
-
-                if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
-                    pixmapWidth = fm.horizontalAdvance(block.text());
-                }
-
-                pixmapHeight += fm.height();
-
-                block = block.next();
-            }
-        }
-
-        qDebug() << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
-
-        QTextCharFormat format = highlighterSettings().get("Margin");
-
-        _miniMapPixmap = new QPixmap(pixmapWidth, pixmapHeight);
-        _miniMapPixmap->fill(format.background().color());
-
-        QPainter painter(_miniMapPixmap);
-        painter.setPen(format.foreground().color());
-        painter.setFont(font);
-
-        QTextBlock block       = document()->begin();
-        int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-        int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-        while (block.isValid()) {
-
-            painter.drawText(0, top, block.text());
-
-            block = block.next();
-            top    = bottom;
-            bottom = top + qRound(blockBoundingRect(block).height());
-        }
-    }
-
-
-    /*
-    QRectF target(10.0, 20.0, 80.0, 60.0);
-    QRectF source(0.0, 0.0, 70.0, 40.0);
-
-    QRect target(event->rect());
-    QRect source(event->rect());
-
-    QPainter painter(_miniMapPixmap);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    //painter.drawPixmap(target, *_miniMapPixmap, source);
-
-    QPainter painter(_miniMapArea);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    */
-
-    QFont font("monospace");
-    font.setStyleHint(QFont::Monospace);
-  //font.setPointSize(2);
-
-    QTextCharFormat format = highlighterSettings().get("Margin");
-
-    QPainter painter(_miniMapArea);
-    painter.fillRect(event->rect(), format.background().color());
-    painter.setPen(format.foreground().color());
-    painter.setFont(font);
-
-    QTextBlock block       = firstVisibleBlock();
-    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-    while (block.isValid() && top <= event->rect().bottom()) {
-
-        if (block.isVisible() && bottom >= event->rect().top()) {
-            painter.drawText(0, top, _miniMapArea->width(), painter.fontMetrics().height(), Qt::AlignLeft, block.text());
-        }
-
-        block  = block.next();
-        top    = bottom;
-        bottom = top + qRound(blockBoundingRect(block).height());
-      //bottom = top + painter.fontMetrics().height();
     }
 }
 
@@ -898,10 +769,6 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
         _opcodeArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), opcodeAreaWidth(), cr.height()));
 
         leftbias += opcodeAreaWidth();
-    }
-
-    if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
 }
 
@@ -999,7 +866,8 @@ bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     }
 
     // Stop if no valid lineno.
-    if (lineno < 1) {
+    if (ok == false || lineno < 1) {
+        //qDebug() << "address is not in current assembly: '" << address << "'";
         return false;
     }
 
@@ -1030,6 +898,16 @@ bool SeerEditorWidgetAssemblyArea::setCurrentLine (const QString& address) {
     refreshExtraSelections();
 
     return true;
+}
+
+const QString SeerEditorWidgetAssemblyArea::currentLine () const {
+
+    // Get current lineno.
+    int lineno = textCursor().blockNumber() + 1;
+
+    QString address = _lineAddressMap[lineno];
+
+    return address;
 }
 
 void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
@@ -1116,6 +994,13 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
     setTextCursor(cursor);
 
     centerCursor();
+}
+
+void SeerEditorWidgetAssemblyArea::clearCurrentLines () {
+
+    _currentLinesExtraSelections.clear();
+
+    refreshExtraSelections();
 }
 
 int SeerEditorWidgetAssemblyArea::findText (const QString& text, QTextDocument::FindFlags flags) {
@@ -1221,6 +1106,36 @@ bool SeerEditorWidgetAssemblyArea::breakpointAddressEnabled (const QString& addr
     return _breakpointsEnableds[i];
 }
 
+void SeerEditorWidgetAssemblyArea::breakpointToggle () {
+
+    // Get current lineno.
+    int lineno = textCursor().blockNumber() + 1;
+
+    QString address = _lineAddressMap[lineno];
+
+    if (address == "") {
+        return;
+    }
+
+    // If there is a breakpoint on the line, toggle it.
+    if (hasBreakpointAddress(address)) {
+
+        // Toggle the breakpoint.
+        // Enable if disabled. Disable if enabled.
+        if (breakpointAddressEnabled(address) == false) {
+            // Emit the enable breakpoint signal.
+            emit enableBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+        }else{
+            // Emit the disable breakpoint signal.
+            emit deleteBreakpoints(QString("%1").arg(breakpointAddressToNumber(address)));
+        }
+
+    // Otherwise, do a quick create of a new breakpoint.
+    }else{
+        emit insertBreakpoint(QString("-f *%1").arg(address));
+    }
+}
+
 void SeerEditorWidgetAssemblyArea::showContextMenu (QMouseEvent* event) {
 
 #if QT_VERSION >= 0x060000
@@ -1245,13 +1160,14 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     QString address = _lineAddressMap[lineno];
 
     // Create the menu actions.
+    QAction* runToAddressAction;
     QAction* createBreakpointAction;
     QAction* deleteAction;
     QAction* enableAction;
     QAction* disableAction;
-    QAction* runToAddressAction;
     QAction* addMemoryAddressVisualizerAction;
     QAction* addArrayAddressVisualizerAction;
+    QAction* addMatrixAddressVisualizerAction;
     QAction* addStructAddressVisualizerAction;
 
     // Enable/disable them depending if the breakpoint already exists.
@@ -1259,43 +1175,44 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         int breakno = breakpointAddressToNumber(address);
 
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
+        runToAddressAction        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to address %1").arg(address), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint %1 on address %2").arg(breakno).arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint %1 on address %2").arg(breakno).arg(address), this);
 
+        runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
         deleteAction->setEnabled(true);
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
-        runToAddressAction->setEnabled(true);
 
     }else{
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on address %1").arg(address), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on address %1").arg(address), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on address %1").arg(address), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on address %1").arg(address), this);
-        runToAddressAction        = new QAction(QString("Run to address %1").arg(address), this);
+        runToAddressAction        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to address %1").arg(address), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on address %1").arg(address), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint on address %1").arg(address), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint on address %1").arg(address), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint on address %1").arg(address), this);
 
+        runToAddressAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
         deleteAction->setEnabled(false);
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
-        runToAddressAction->setEnabled(true);
     }
 
     addMemoryAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addArrayAddressVisualizerAction  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
+    addMatrixAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
     addStructAddressVisualizerAction = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
+    menu.addAction(runToAddressAction);
     menu.addAction(createBreakpointAction);
     menu.addAction(deleteAction);
     menu.addAction(enableAction);
     menu.addAction(disableAction);
-    menu.addAction(runToAddressAction);
 
     QMenu memoryVisualizerMenu("Add address to a Memory Visualizer");
     memoryVisualizerMenu.addAction(addMemoryAddressVisualizerAction);
@@ -1303,6 +1220,10 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     QMenu arrayVisualizerMenu("Add address to an Array Visualizer");
     arrayVisualizerMenu.addAction(addArrayAddressVisualizerAction);
+    menu.addMenu(&arrayVisualizerMenu);
+
+    QMenu matrixVisualizerMenu("Add address to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixAddressVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
     QMenu structVisualizerMenu("Add address to a Struct Visualizer");
@@ -1313,10 +1234,12 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
     if (textCursor().selectedText() == "") {
         addMemoryAddressVisualizerAction->setEnabled(false);
         addArrayAddressVisualizerAction->setEnabled(false);
+        addMatrixAddressVisualizerAction->setEnabled(false);
         addStructAddressVisualizerAction->setEnabled(false);
     }else{
         addMemoryAddressVisualizerAction->setEnabled(true);
         addArrayAddressVisualizerAction->setEnabled(true);
+        addMatrixAddressVisualizerAction->setEnabled(true);
         addStructAddressVisualizerAction->setEnabled(true);
     }
 
@@ -1325,6 +1248,15 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     // Do nothing.
     if (action == 0) {
+        return;
+    }
+
+    // Handle running to an address.
+    if (action == runToAddressAction) {
+
+        // Emit the runToLine signal.
+        emit runToAddress(address);
+
         return;
     }
 
@@ -1373,21 +1305,12 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
         return;
     }
 
-    // Handle running to an address.
-    if (action == runToAddressAction) {
-
-        // Emit the runToLine signal.
-        emit runToAddress(address);
-
-        return;
-    }
-
     // Handle adding memory to visualize.
     if (action == addMemoryAddressVisualizerAction) {
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(textCursor().selectedText());
+            emit addMemoryVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1398,7 +1321,18 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(textCursor().selectedText());
+            emit addArrayVisualizer(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAddressVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1409,7 +1343,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(textCursor().selectedText());
+            emit addStructVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1541,6 +1475,16 @@ int SeerEditorWidgetAssemblyArea::editorTabSize () const {
     return _sourceTabSize;
 }
 
+void SeerEditorWidgetAssemblyArea::setConvertUppercase (bool flag) {
+
+    _convertUppercase = flag;
+}
+
+bool SeerEditorWidgetAssemblyArea::convertUppercase () const {
+
+    return _convertUppercase;
+}
+
 void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -1628,7 +1572,14 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
         _asm_insns_text = text;
 
         updateTextArea(); // This function does all the work on _asm_insns_text.
+
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        QString error_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+        QMessageBox::warning(this, "Warning.", error_text);
     }
+
 }
 
 void SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged () {
@@ -1843,58 +1794,6 @@ void SeerEditorWidgetAssemblyOpcodeArea::mousePressEvent (QMouseEvent* event) {
 }
 
 void SeerEditorWidgetAssemblyOpcodeArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    QWidget::mouseReleaseEvent(event);
-}
-
-//
-// MiniMap Area
-//
-
-SeerEditorWidgetAssemblyMiniMapArea::SeerEditorWidgetAssemblyMiniMapArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
-}
-
-QSize SeerEditorWidgetAssemblyMiniMapArea::sizeHint () const {
-    return QSize(_editorWidget->miniMapAreaWidth(), 0);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::paintEvent (QPaintEvent* event) {
-    _editorWidget->miniMapAreaPaintEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseDoubleClickEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseMoveEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mousePressEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mousePressEvent(event);
-}
-
-void SeerEditorWidgetAssemblyMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
 
     QWidget::mouseReleaseEvent(event);
 }

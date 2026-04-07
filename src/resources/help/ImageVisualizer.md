@@ -30,6 +30,10 @@ Note, the variable name can be an address. Enter the address like:
 ```
     0xdeadbeaf
 ```
+It can be the result of a function in your program.
+```
+    myimage.pointer()
+```
 It can also be one of gdb' special variables. Like the program counter. Enter it like:
 ```
     $pc
@@ -42,9 +46,22 @@ Two supported formats are available. Others can be added easily.
 * RGBA8888
 * RGB888
 
-### Image format.
+### Image dimensions.
 
 The image width and height, in pixels.
+
+These fields can take a gdb expression that result with an integer.
+```
+    An integer value
+    A function that returns an integer value
+    A gdb special variable.
+```
+Examples are:
+```
+    256
+    myimage.width()
+    $r9
+```
 
 ### Refresh
 

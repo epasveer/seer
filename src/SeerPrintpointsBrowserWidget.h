@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -19,6 +23,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
 
     private slots:
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
@@ -29,6 +34,7 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         void                handleDisableToolButton     ();
         void                handleConditionToolButton   ();
         void                handleIgnoreToolButton      ();
+        void                handleCommandToolButton     ();
 
     signals:
         void                refreshPrintpointsList      ();
@@ -37,7 +43,8 @@ class SeerPrintpointsBrowserWidget : public QWidget, protected Ui::SeerPrintpoin
         void                disablePrintpoints          (QString printpoints);
         void                addBreakpointCondition      (QString printpoint, QString condition);
         void                addBreakpointIgnore         (QString printpoint, QString count);
-        void                insertPrintpoint            (QString printpoint);
+        void                addBreakpointCommand        (QString breakpoint, QString command);
+        void                insertPrintpoint            (QString type, QString function, QString channel, QString parameters);
         void                selectedFile                (QString file, QString fullname, int lineno);
 
     protected:

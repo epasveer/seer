@@ -1,7 +1,12 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerGdbLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
 #include <QRegularExpression>
+#include <QtCore/QTime>
 #include <QtCore/QDebug>
 
 SeerGdbLogWidget::SeerGdbLogWidget (QWidget* parent) : SeerLogWidget(parent) {
@@ -43,8 +48,15 @@ void SeerGdbLogWidget::processText (const QString& text) {
     // https://github.com/epasveer/seer/issues/238
     str = Seer::unescape(str);
 
-    // Write the string to the log.
-    textEdit->insertPlainText(str);
+    // Add timestamp.
+    if (isTimeStampEnabled()) {
+        QString text = QString("[") + QTime::currentTime().toString("hh:mm:ss.zz") + QString("] ") + str;
+        // Write the string to the log.
+        textEdit->insertPlainText(text);
+    }else{
+        // Write the string to the log.
+        textEdit->insertPlainText(str);
+    }
 
     // If there is breakpoint message (via a manual command), ask
     // for the breakpoint list to be refreshed.

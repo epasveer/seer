@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorManagerWidget.h"
 #include "SeerEditorWidgetSource.h"
 #include "SeerEditorWidgetAssembly.h"
@@ -13,23 +17,32 @@
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
+#include <QScrollBar>
+#include <QPlainTextEdit>
+#include <QMouseEvent>
+#include <QTimer>
 
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
     _editorFont                     = QFont("monospace", 10);                      // Default font.
-    _editorHighlighterSettings      = SeerHighlighterSettings::populateForCPP(""); // Default syntax highlighting.
+    _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
     _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
+    _editorAutoSourceReload         = false;
     _assemblyWidget                 = 0;
+    _showAssemblyTabOnStartupMode   = "never";
     _keepAssemblyTabOnTop           = true;
     _showAddressColumn              = true;
     _showOffsetColumn               = false;
     _showOpcodeColumn               = false;
     _showSourceLines                = false;
     _notifyAssemblyTabShown         = true;
+    _idFunctionDefinition           = Seer::createID();
+    _idVariableDefinition           = Seer::createID();
+    _idTypeDefinition               = Seer::createID();
 
     // Setup UI
     setupUi(this);
@@ -74,6 +87,18 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
     QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+
+    // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
+    QObject::connect(shortcut,              &QShortcut::activated,    [this] () {
+            if (!_stackClosedFiles.empty())
+            {
+                SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
+                _stackClosedFiles.pop();
+                handleOpenFileWithDetails(topValue.file, topValue.fullname, topValue.cursorRow, topValue.cursorCol, topValue.firstDisplayLine); 
+            }
+        }
+    );
 }
 
 SeerEditorManagerWidget::~SeerEditorManagerWidget () {
@@ -81,6 +106,14 @@ SeerEditorManagerWidget::~SeerEditorManagerWidget () {
     _notifyAssemblyTabShown = false;
 
     deleteAssemblyWidgetTab();
+}
+
+SeerEditorManagerEntries& SeerEditorManagerWidget::entries() {
+    return _entries;
+}
+
+const SeerEditorManagerEntries& SeerEditorManagerWidget::entries() const {
+    return _entries;
 }
 
 void SeerEditorManagerWidget::dumpEntries () const {
@@ -148,6 +181,13 @@ void SeerEditorManagerWidget::deleteEntry (SeerEditorManagerEntries::iterator i)
     _entries.erase(i);
 }
 
+void SeerEditorManagerWidget::maybeShowAssembly () {
+
+    if (showAssemblyTabOnStartupMode() == "always") {
+        showAssembly();
+    }
+}
+
 void SeerEditorManagerWidget::showAssembly () {
 
     // Create and show the assembly widget if it isn't already.
@@ -173,6 +213,17 @@ bool SeerEditorManagerWidget::keepAssemblyTabOnTop () const {
 
     return _keepAssemblyTabOnTop;
 }
+
+void SeerEditorManagerWidget::setShowAssemblyTabOnStartupMode (const QString& mode) {
+
+    _showAssemblyTabOnStartupMode = mode;
+}
+
+QString SeerEditorManagerWidget::showAssemblyTabOnStartupMode () const {
+
+    return _showAssemblyTabOnStartupMode;
+}
+
 
 void SeerEditorManagerWidget::setAssemblyShowAddressColumn (bool flag) {
 
@@ -414,6 +465,25 @@ const QString& SeerEditorManagerWidget::editorExternalEditorCommand () const {
     return _editorExternalEditorCommand;
 }
 
+void SeerEditorManagerWidget::setEditorAutoSourceReload (bool flag) {
+
+    _editorAutoSourceReload = flag;
+
+    // Update current editors.
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->setAutoSourceReload(_editorAutoSourceReload);
+        b++;
+    }
+}
+
+bool SeerEditorManagerWidget::editorAutoSourceReload () const {
+
+    return _editorAutoSourceReload;
+}
+
 void SeerEditorManagerWidget::handleText (const QString& text) {
 
     // Update the current line.
@@ -619,7 +689,9 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
 
             // Parse through the frame list and set the current lines that are in the frame list.
             QStringList frame_list = Seer::parse(newtext, "frame=", '{', '}', false);
-
+            _lastFrameList = frame_list;
+            SeerEditorManagerEntries::iterator i_later=endEntry();
+            int lineToPrintLater = -1;
             for ( const auto& frame_text : frame_list  ) {
                 QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
                 QString addr_text     = Seer::parseFirst(frame_text, "addr=",     '"', '"', false);
@@ -632,9 +704,18 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
                 SeerEditorManagerEntries::iterator e = endEntry();
 
-                if (i != e) {
-                    i->widget->sourceArea()->addCurrentLine(line_text.toInt());
+                if (level_text.toInt() == 0)    // if current line level = 0, save command and paint it later, fix recursive painting
+                {
+                    i_later = i;
+                    lineToPrintLater = line_text.toInt();
+                    continue;
                 }
+                if (i != e) {
+                    i->widget->sourceArea()->addCurrentLine(line_text.toInt(), level_text.toInt());
+                }
+            }
+            if (i_later != endEntry() && lineToPrintLater != -1) {
+                i_later->widget->sourceArea()->addCurrentLine(lineToPrintLater, 0);
             }
         }
 
@@ -655,6 +736,17 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             assemblyWidget->assemblyArea()->handleText(text);
             assemblyWidget->handleText(text);
         }
+
+    }else if (text.startsWith("^error,msg=\"-data-disassemble:")) {
+
+        // Get the AssemblyWidget.
+        SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+        if (assemblyWidget) {
+            assemblyWidget->assemblyArea()->handleText(text);
+            assemblyWidget->handleText(text);
+        }
+
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
@@ -698,6 +790,54 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
             static_cast<SeerEditorWidgetSource*>(w)->sourceArea()->handleText(text);
         }
 
+    }else if (text.startsWith("*running")) {
+        // target / program is running, should erase 'yellow' color is for the current line 
+        // _lastFrameList is invoked to erase previously "colored" line
+        for ( const auto& frame_text : _lastFrameList  ) {
+            QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+            QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
+
+            SeerEditorManagerEntries::iterator i = findEntry(fullname_text);
+            SeerEditorManagerEntries::iterator e = endEntry();
+
+            if (i != e) {
+                i->widget->sourceArea()->eraseColorCurrentLine(line_text.toInt());
+            }
+        }
+
+    }else if ( text.contains(QRegularExpression("^([0-9]+)\\^done,symbols={"))) {
+
+        if (text.startsWith(QString::number(_idTypeDefinition)     + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idFunctionDefinition) + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idVariableDefinition) + "^done,symbols={")) { // Handle Go to Definition
+
+            //^10done,symbols={debug=[{filename=" ",fullname=" ",
+            // symbols=[{line=" ",name="uwTick",type="volatile uint32_t",description="volatile uint32_t uwTick;"},}]}]
+            QString debug_text = Seer::parseFirst(text, "debug=", '[', ']', false);
+            QStringList filenames_list = Seer::parse(debug_text, "", '{', '}', false);
+
+            for (const auto& filename_entry : filenames_list) {
+
+                QString filename_text = Seer::parseFirst(filename_entry, "filename=", '"', '"', false);
+                QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
+                QString symbols_text  = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
+
+                QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
+
+                for (const auto& symbol_entry : symbols_list) {
+
+                    QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
+                    QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
+                    name_text = name_text.section('(', 0, 0).trimmed();
+
+                    if (name_text == _gotoDefIdentifier) { // you found it! Open file
+                        handleOpenFile(filename_text, fullname_text, line_text.toInt());
+                    }
+                }
+            }
+        }
     }else{
         // Ignore others.
         return;
@@ -711,6 +851,14 @@ void SeerEditorManagerWidget::handleTabCloseRequested (int index) {
     // If it is the place holder, don't delete it.
     if (tabWidget->tabText(index) == "") {
         return;
+    }
+
+    // Push to _stackClosedFiles before deleting
+    QString fullname = tabWidget->tabToolTip(index).section(" : ", 1, 1);
+    if (fullname != "") {                       // Don't push place holder or Assembly tab
+        SeerEditorManagerEntries::iterator i = findEntry(fullname);
+        SeerEditorWidgetSourceArea::SeerCurrentFile current = i->widget->sourceArea()->readCurrentPosition();
+        _stackClosedFiles.push(current);
     }
 
     // Delete the tab.
@@ -736,7 +884,11 @@ void SeerEditorManagerWidget::handleTabCurrentChanged (int index) {
 }
 
 void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString& fullname, int lineno) {
+    // Open file and scroll to lineno
+    handleOpenFileWithDetails(file, fullname, lineno, 0, 0);
+}
 
+void SeerEditorManagerWidget::handleOpenFileWithDetails (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine) {
     // Must have a valid filename.
     if (file == "" || fullname == "") {
         return;
@@ -767,10 +919,46 @@ void SeerEditorManagerWidget::handleOpenFile (const QString& file, const QString
         tabWidget->setCurrentWidget(editorWidget);
     }
 
-    // If lineno is > 0, set the line number of the editor widget
-    if (lineno > 0) {
-        editorWidget->sourceArea()->scrollToLine(lineno);
+    if (firstDisplayLine > 0) {
+        // firstDisplayLine is always > 0 
+        // this means the function is handling open closed files, set cursor position and first display line
+        QPlainTextEdit* textEdit = editorWidget->sourceArea();
+        // Create a small helper lambda that does the actual restoration
+        auto restoreView = [textEdit, cursorRow, cursorCol, firstDisplayLine, this]() {
+            QTextDocument* doc = textEdit->document();
+            int lineIndex = cursorRow - 1;  // 0-based
+
+            if (lineIndex >= doc->lineCount()) {
+                return;
+            }
+
+            QTextBlock block = doc->findBlockByLineNumber(lineIndex);
+            if (!block.isValid()) {
+                return;
+            }
+
+            QTextCursor cursor(block);
+            cursor.setPosition(block.position() + qMax(0, cursorCol - 1));
+
+            textEdit->setTextCursor(cursor);
+
+            if (firstDisplayLine > 0) {
+                QScrollBar* sb = textEdit->verticalScrollBar();
+                sb->setValue(firstDisplayLine * sb->singleStep() - sb->singleStep()/2 - 1);
+            }
+        };
+
+        QTimer::singleShot(0, textEdit, restoreView);
     }
+    else
+    {
+        // otherwise, just open file and scroll to cursorRow
+        if (cursorRow > 0) {
+            editorWidget->sourceArea()->scrollToLine(cursorRow);
+        }
+    }
+
+    handleAddToMouseNavigation({file, fullname, cursorRow, 1, editorWidget->sourceArea()->firstDisplayLine()});
 
     // Ask for the breakpoint list to be resent, in case this file has breakpoints.
     emit refreshBreakpointsList();
@@ -789,13 +977,47 @@ void SeerEditorManagerWidget::handleOpenAddress (const QString& address) {
     // Get the AssemblyWidget so the address can be loaded. Return if there is no widget.
     SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
+    // Create assembly widget, if allowed.
+    if (assemblyWidget == 0) {
+        assemblyWidget = createAssemblyWidgetTab();
+    }
+
+    // No assembly widget, return.
     if (assemblyWidget == 0) {
         return;
     }
 
-    //qDebug() << address;
-
+    // Update assembly widget.
     assemblyWidget->assemblyArea()->setAddress(address);
+    assemblyWidget->reloadRegisters();
+}
+
+void SeerEditorManagerWidget::handleMaybeOpenAddress (const QString& file, const QString& fullname, const QString& address) {
+
+    // Must have a valid address.
+    if (address == "") {
+        return;
+    }
+
+    // Don't open the assembly tab if told not to.
+    if (showAssemblyTabOnStartupMode() == "never") {
+        return;
+    }
+
+    // Open the assembly tab.
+    if (showAssemblyTabOnStartupMode() == "always") {
+        handleOpenAddress(address);
+        return;
+    }
+
+    // If the mode is 'auto', open the assembly tab if there's no source file for the address.
+    if (showAssemblyTabOnStartupMode() == "auto") {
+        if (file != "" && fullname != "") {
+            return;
+        }
+
+        handleOpenAddress(address);
+    }
 }
 
 SeerEditorWidgetSource* SeerEditorManagerWidget::currentEditorWidgetTab () {
@@ -818,6 +1040,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::editorWidgetTab (const QString&
         return 0;
     }
 
+    // Return the editor widget.
     return i->widget;
 }
 
@@ -843,6 +1066,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setEditorFont(editorFont());
     editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setExternalEditorCommand(editorExternalEditorCommand());
+    editorWidget->sourceArea()->setAutoSourceReload(editorAutoSourceReload());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
@@ -866,10 +1090,13 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualizer,           this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualizer,            this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -904,6 +1131,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setEditorFont(editorFont());
     editorWidget->sourceArea()->setEditorTabSize(editorTabSize());
     editorWidget->sourceArea()->setExternalEditorCommand(editorExternalEditorCommand());
+    editorWidget->sourceArea()->setAutoSourceReload(editorAutoSourceReload());
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
@@ -927,10 +1155,13 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addVariableTrackerExpression,  this, &SeerEditorManagerWidget::handleAddVariableTrackerExpression);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::refreshVariableTrackerValues,  this, &SeerEditorManagerWidget::handleRefreshVariableTrackerValues);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::evaluateVariableExpression,    this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualize,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualize,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualize,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMemoryVisualizer,           this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addArrayVisualizer,            this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addMatrixVisualizer,           this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1025,9 +1256,10 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::runToAddress,                   this, &SeerEditorManagerWidget::handleRunToAddress);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestAssembly,                this, &SeerEditorManagerWidget::handleRequestAssembly);
     QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::requestSourceAndAssembly,       this, &SeerEditorManagerWidget::handleRequestSourceAndAssembly);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualize,             this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualize,              this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
-    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualize,             this, &SeerEditorManagerWidget::handleAddStructVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMemoryVisualizer,            this, &SeerEditorManagerWidget::handleAddMemoryVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addArrayVisualizer,             this, &SeerEditorManagerWidget::handleAddArrayVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addMatrixVisualizer,            this, &SeerEditorManagerWidget::handleAddMatrixVisualizer);
+    QObject::connect(assemblyWidget->assemblyArea(), &SeerEditorWidgetAssemblyArea::addStructVisualizer,            this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(assemblyWidget,                 &SeerEditorWidgetAssembly::evaluateVariableExpression,         this, &SeerEditorManagerWidget::handleEvaluateVariableExpression);
 
     // Load the file.
@@ -1116,16 +1348,30 @@ void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
-    SeerEditorWidgetSource* w = currentEditorWidgetTab();
+    QWidget* tab = tabWidget->currentWidget();
 
-    if (w == 0) {
+    SeerEditorWidgetSource* sourcew = dynamic_cast<SeerEditorWidgetSource*>(tab);
+    if (sourcew != 0) {
+
+        if (sourcew->isSearchBarShown() == true) {
+            sourcew->showSearchBar(false);
+        }else{
+            sourcew->showSearchBar(true);
+        }
+
         return;
     }
 
-    if (w->isSearchBarShown() == true) {
-        w->showSearchBar(false);
-    }else{
-        w->showSearchBar(true);
+    SeerEditorWidgetAssembly* assemblyw = dynamic_cast<SeerEditorWidgetAssembly*>(tab);
+    if (assemblyw != 0) {
+
+        if (assemblyw->isSearchBarShown() == true) {
+            assemblyw->showSearchBar(false);
+        }else{
+            assemblyw->showSearchBar(true);
+        }
+
+        return;
     }
 }
 
@@ -1168,10 +1414,10 @@ void SeerEditorManagerWidget::handleInsertBreakpoint (QString breakpoint) {
     emit insertBreakpoint (breakpoint);
 }
 
-void SeerEditorManagerWidget::handleInsertPrintpoint (QString printpoint) {
+void SeerEditorManagerWidget::handleInsertPrintpoint (QString type, QString function, QString channel, QString parameters) {
 
     // rethrow
-    emit insertPrintpoint (printpoint);
+    emit insertPrintpoint (type, function, channel, parameters);
 }
 
 void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {
@@ -1216,7 +1462,26 @@ void SeerEditorManagerWidget::handleRunToLine (QString fullname, int lineno) {
 void SeerEditorManagerWidget::handleRunToAddress (QString address) {
 
     // rethrow
-    emit runToAddress (address);
+    if (address != "") {
+        emit runToAddress (address);
+    }
+}
+
+void SeerEditorManagerWidget::handleRunToSelectedLine () {
+
+    SeerEditorWidgetSource*   sourceTab   = currentEditorWidgetTab();
+    SeerEditorWidgetAssembly* assemblyTab = assemblyWidgetTab();
+
+    if (sourceTab) {
+        emit runToLine (sourceTab->sourceArea()->fullname(), sourceTab->sourceArea()->currentLine());
+    }
+
+    if (assemblyTab) {
+        QString address = assemblyTab->assemblyArea()->currentLine();
+        if (address != "") {
+            emit runToAddress (address);
+        }
+    }
 }
 
 void SeerEditorManagerWidget::handleAddVariableLoggerExpression (QString expression) {
@@ -1246,19 +1511,25 @@ void SeerEditorManagerWidget::handleEvaluateVariableExpression (int expressionid
 void SeerEditorManagerWidget::handleAddMemoryVisualizer (QString expression) {
 
     // rethrow
-    emit addMemoryVisualize (expression);
+    emit addMemoryVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleAddArrayVisualizer (QString expression) {
 
     // rethrow
-    emit addArrayVisualize (expression);
+    emit addArrayVisualizer (expression);
+}
+
+void SeerEditorManagerWidget::handleAddMatrixVisualizer (QString expression) {
+
+    // rethrow
+    emit addMatrixVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleAddStructVisualizer (QString expression) {
 
     // rethrow
-    emit addStructVisualize (expression);
+    emit addStructVisualizer (expression);
 }
 
 void SeerEditorManagerWidget::handleRequestAssembly (QString address) {
@@ -1289,4 +1560,150 @@ void SeerEditorManagerWidget::handleAssemblyConfigChanged () {
     }
 }
 
+void SeerEditorManagerWidget::handleSessionTerminated () {
+
+    // Clear current editors.
+    for (auto entry : entries()) {
+        entry.widget->sourceArea()->clearCurrentLines();
+    }
+
+    // Clear assembly editor.
+    if (assemblyWidgetTab() != 0) {
+        assemblyWidgetTab()->assemblyArea()->clearCurrentLines();
+    }
+}
+
+// Clear the stack of recently closed files backward/forward list whenever a new gdb session starts
+void SeerEditorManagerWidget::handleGdbStateChanged()
+{
+    while (!_stackClosedFiles.empty()) {
+        _stackClosedFiles.pop();
+    }
+    _listForwardFiles.clear();
+    _forwardFilesIndex = -1;
+}
+/***********************************************************************************************************************
+ * Function for handling mouse navigation
+ **********************************************************************************************************************/
+void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
+{
+    // Record this file in the forward list.
+    if (currentFile.file != "")
+    {
+        // Check if the last added file is the same as currentFile
+        if (!_listForwardFiles.empty())
+        {
+            const SeerEditorWidgetSourceArea::SeerCurrentFile& lastFile = _listForwardFiles[_listForwardFiles.size() -1];
+            if (currentFile == lastFile)
+            {
+                return;
+            }
+        }
+
+        // if _forwardFilesIndex is at the end of the list, just append
+        if (_forwardFilesIndex >= _listForwardFiles.size() - 1)
+        {
+            _listForwardFiles.append(currentFile);
+            _forwardFilesIndex ++;
+        }
+        else    // else remove all entries after _forwardFilesIndex and then append
+        {
+            int removeCount = _listForwardFiles.size() - 1 - _forwardFilesIndex;
+            if ((currentFile == _listForwardFiles[_listForwardFiles.size() -1]) || (currentFile == _listForwardFiles[0]) 
+                || (currentFile == _listForwardFiles[_listForwardFiles.size() - 1 - removeCount]) )
+            {
+                return;
+            }
+            for (int i=0; i < removeCount; i++)
+            {
+                _listForwardFiles.removeLast();
+            }
+            _listForwardFiles.append(currentFile);
+            _forwardFilesIndex = _listForwardFiles.size() -1;
+        }
+    }
+}
+
+void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo) {
+    // Get the EditorWidget for the file. Create one if needed.
+    SeerEditorWidgetSource* editorWidget = editorWidgetTab(fileInfo.fullname);
+
+    if (editorWidget == 0) {
+        editorWidget = createEditorWidgetTab(fileInfo.fullname, fileInfo.file);
+    }
+
+    // Can still be null, if the file is ignored.
+    if (editorWidget == 0) {
+        return;
+    }
+
+    // Push this tab to the top only if the current one in not the "Assembly" tab.
+    QString tabtext = "";
+
+    if (tabWidget->currentIndex() >= 0) {
+        tabtext = tabWidget->tabText(tabWidget->currentIndex());
+    }
+
+    if (keepAssemblyTabOnTop() && tabtext == "Assembly") {
+        // Do nothing. The "Assembly" tab is already on top.
+    }else{
+        tabWidget->setCurrentWidget(editorWidget);
+    }
+
+    if (fileInfo.firstDisplayLine > 0) {            // scroll to the previous first display line
+        QScrollBar *scrollBar = editorWidget->sourceArea()->verticalScrollBar();
+        int step = scrollBar->singleStep();
+        scrollBar->setValue(fileInfo.firstDisplayLine * step - 1);
+
+        // Set cursor position
+        QTextBlock  block  = editorWidget->sourceArea()->document()->findBlockByLineNumber(fileInfo.cursorRow-1);
+        QTextCursor cursor = editorWidget->sourceArea()->textCursor();
+        cursor.setPosition(block.position() + fileInfo.cursorCol - 1);
+        editorWidget->sourceArea()->setTextCursor(cursor);
+    }
+}
+// Handle mouse press events for navigation
+void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
+{
+    // Back button (XButton1) clicked
+    if (event->button() == Qt::XButton1) {
+        if (_forwardFilesIndex - 1 < 0)
+            return;
+        --_forwardFilesIndex;
+        const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
+        handleOpenForwardBackward(info);
+    }
+    // Forward button (XButton2) clicked
+    else if (event->button() == Qt::XButton2) {
+        if (_forwardFilesIndex + 1 > _listForwardFiles.size() - 1)
+            return;
+        ++ _forwardFilesIndex;
+        const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
+        handleOpenForwardBackward(info);
+    }
+    else
+    {
+        QWidget::mousePressEvent(event);
+    }
+}
+
+/***********************************************************************************************************************
+ * Functions for handling tracing identifier                                                                           *
+ **********************************************************************************************************************/
+void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier) {
+
+    _gotoDefIdentifier = identifier;
+
+    // Ask for identifier matches for Functions, Variables, and Types.
+    //
+    // Sometimes symbols have or don't have arguments.
+    // Searching for: "^functionName(.*)$" "^functionName$".
+    // Searching for: "^functionName$".
+    //
+
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "$");
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "\\(.*\\)$");
+    emit refreshVariableList(_idVariableDefinition, _gotoDefIdentifier, "");
+    emit refreshTypeList(_idTypeDefinition, _gotoDefIdentifier);
+}
 

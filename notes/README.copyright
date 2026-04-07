@@ -1,0 +1,28 @@
+This is how to add proper copyright and license to each file.
+
+https://community.kde.org/Guidelines_and_HOWTOs/Licensing
+
+
+The goal is to have a header at the top of each source file (.h or .cpp). Something like:
+
+
+    $ more GdbMonitor.cpp
+    // SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+    //
+    // SPDX-License-Identifier: GPL-3.0-or-later
+
+    #include "GdbMonitor.h"
+    #include <QtCore/QtCore>
+    #include <QtCore/QProcess>
+    #include <QtCore/QLoggingCategory>
+    #include <QtCore/QDebug>
+    #include <iostream>
+    ...
+
+There are 2 typical licenses. GPL3.0 or MIT. At least for me.
+
+Run this command:
+
+    $ reuse addheader --year 2021 --copyright "Ernie Pasveer <epasveer@att.net>" --license GPL-3.0-or-later --merge-copyrights seergdb.cpp
+    $ reuse addheader --year 2021 --copyright "Ernie Pasveer <epasveer@att.net>" --license MIT --merge-copyrights QZoomChart.cpp
+

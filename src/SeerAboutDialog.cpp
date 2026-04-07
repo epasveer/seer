@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerAboutDialog.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
@@ -13,7 +17,11 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
 
     // Get the About text from the resource.
     QFile file(":/seer/resources/ABOUT.md");
-    file.open(QFile::ReadOnly | QFile::Text);
+
+    bool f = file.open(QFile::ReadOnly | QFile::Text);
+    if (f == false) {
+        return;
+    }
 
     QTextStream stream(&file);
 

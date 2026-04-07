@@ -1,0 +1,24 @@
+{
+    "seerproject": {
+        "executable": "hellofft",
+        "postgdbcommands": [
+            "b 126"
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytab": false
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

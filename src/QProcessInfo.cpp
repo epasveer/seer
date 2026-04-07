@@ -1,10 +1,7 @@
+// SPDX-FileCopyrightText: 2016 Baldur Karlsson
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
 //
-// My version is based on this person's code.
-//
-// Copyright (c) 2016, Baldur Karlsson
-// Licensed under BSD 2-Clause License, see LICENSE file.
-// Obtained from https://github.com/baldurk/qprocessinfo
-//
+// SPDX-License-Identifier: MIT
 
 #include "QProcessInfo.h"
 #include <QtCore/QDir>

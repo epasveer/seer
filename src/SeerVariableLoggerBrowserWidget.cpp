@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerVariableLoggerBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -45,72 +49,87 @@ void SeerVariableLoggerBrowserWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
+    while (1) {
+        if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
 
-        // "6^done,value=\"\\\"abc\\\"\""
+            // "6^done,value=\"\\\"abc\\\"\""
 
-        QString id_text    = text.section('^', 0,0);
-        QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
+            QString id_text    = text.section('^', 0,0);
+            QString value_text = Seer::parseFirst(text, "value=", '"', '"', false);
 
-        if (_ids.contains(id_text.toInt()) == false) {
-            QApplication::restoreOverrideCursor();
-            return;
-        }
+            if (_ids.contains(id_text.toInt()) == false) {
+                break;
+            }
 
-        QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
-
-        if (matches.size() > 0) {
-
-            QTreeWidgetItem* match = matches[0];
-
-            Q_ASSERT(match->parent() == NULL);
-
-            QString timestamp_text = match->text(0);
-            QString name_text      = match->text(1);
-
-            // Populate the tree.
-            handleItemCreate(match, id_text, timestamp_text, name_text, value_text);
-        }
-
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
-
-        // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
-
-        QString id_text  = text.section('^', 0,0);
-        QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
-
-        if (_ids.contains(id_text.toInt()) == true) {
+            // If with brackets (a structure), filter out excess '\n'
+            // in case pretty-print-on is used.
+            if (value_text.front() == '{' && value_text.back() == '}') {
+                value_text = Seer::filterBareNewLines(value_text);
+            }
 
             QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
 
             if (matches.size() > 0) {
-                matches.first()->setText(1, ""); // Overwrite "name" with "" because it's not a valid "name".
-                matches.first()->setText(2, Seer::filterEscapes(msg_text));
+
+                QTreeWidgetItem* match = matches[0];
+
+                Q_ASSERT(match->parent() == NULL);
+
+                QString timestamp_text = match->text(0);
+                QString name_text      = match->text(1);
+
+                // Populate the tree.
+                handleItemCreate(match, id_text, timestamp_text, name_text, value_text);
+
+                emit raiseTab();
             }
+
+        }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
+
+            // "1^error,msg=\"No symbol \\\"j\\\" in current context.\""
+
+            QString id_text  = text.section('^', 0,0);
+            QString msg_text = Seer::parseFirst(text, "msg=", '"', '"', false);
+
+            if (_ids.contains(id_text.toInt()) == true) {
+
+                QList<QTreeWidgetItem*> matches = variablesTreeWidget->findItems(id_text, Qt::MatchExactly, 3);
+
+                if (matches.size() > 0) {
+                    matches.first()->setText(1, ""); // Overwrite "name" with "" because it's not a valid "name".
+                    matches.first()->setText(2, Seer::filterEscapes(msg_text));
+                }
+
+                emit raiseTab();
+            }
+
+        }else{
+            // Ignore others.
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+        // Resize columns.
+        variablesTreeWidget->resizeColumnToContents(0);
+        variablesTreeWidget->resizeColumnToContents(1);
+        variablesTreeWidget->resizeColumnToContents(2);
+        variablesTreeWidget->resizeColumnToContents(3);
 
-        variablesTreeWidget->clear();
+        // Scroll to the bottom.
+        QTreeWidgetItem* lastItem = variablesTreeWidget->topLevelItem(variablesTreeWidget->topLevelItemCount()-1);
+        if (lastItem) {
+            variablesTreeWidget->scrollToItem(lastItem);
+        }
 
-    }else{
-        // Ignore others.
-    }
-
-    // Resize columns.
-    variablesTreeWidget->resizeColumnToContents(0);
-    variablesTreeWidget->resizeColumnToContents(1);
-    variablesTreeWidget->resizeColumnToContents(2);
-    variablesTreeWidget->resizeColumnToContents(3);
-
-    // Scroll to the bottom.
-    QTreeWidgetItem* lastItem = variablesTreeWidget->topLevelItem(variablesTreeWidget->topLevelItemCount()-1);
-    if (lastItem) {
-        variablesTreeWidget->scrollToItem(lastItem);
+        break;
     }
 
     // Set the cursor back.
     QApplication::restoreOverrideCursor();
+}
+
+void SeerVariableLoggerBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    variablesTreeWidget->clear();
 }
 
 void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expressionid, QString expression) {
@@ -169,7 +188,7 @@ void SeerVariableLoggerBrowserWidget::handleDeleteToolButton () {
     QList<QTreeWidgetItem*> items = variablesTreeWidget->selectedItems();
 
     // Remove them.
-    for(int i=0; i<items.size(); i++){
+    for (int i=0; i<items.size(); i++) {
         delete items[i];
     }
 
@@ -239,7 +258,17 @@ void SeerVariableLoggerBrowserWidget::handleItemCreate (QTreeWidgetItem* parentI
         parentItem->setText(3, id_text);
 
         // Convert to a list of name/value pairs.
-        QStringList nv_pairs = Seer::parseCommaList(text, '{', '}');
+        QStringList nv_pairs;
+        if (text.startsWith("{"))
+        {
+            // String might describe an array: {a=1, b=1},{a=1, b=1},{a=1, b=1},{a=1, b=1}
+            // parentItem->text(0) is timestamp -> parent name should be parentItem->text(1)
+            nv_pairs = Seer::parseArray(parentItem->text(1), text);         
+        }
+        else
+        {
+            nv_pairs = Seer::parseCommaList(text, '{', '}');
+        }
 
         // Go through each pair and add the name and its value to the tree.
         for (const auto& nv : nv_pairs) {
@@ -276,6 +305,9 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* addArrayVisualizerAction            = new QAction();
     QAction* addArrayAsteriskVisualizerAction    = new QAction();
     QAction* addArrayAmpersandVisualizerAction   = new QAction();
+    QAction* addMatrixVisualizerAction           = new QAction();
+    QAction* addMatrixAsteriskVisualizerAction   = new QAction();
+    QAction* addMatrixAmpersandVisualizerAction  = new QAction();
     QAction* addStructVisualizerAction           = new QAction();
     QAction* addStructAsteriskVisualizerAction   = new QAction();
     QAction* addStructAmpersandVisualizerAction  = new QAction();
@@ -294,14 +326,23 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
     structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* copyAction    = menu.addAction("Copy selected");
-    QAction* copyAllAction = menu.addAction("Copy all");
+    QAction* deleteAction        = menu.addAction("Delete selected");
+    QAction* deleteAllAction     = menu.addAction("Delete all");
+    QAction* copyAction          = menu.addAction("Copy selected");
+    QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
+    QAction* copyAllAction       = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -319,22 +360,30 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
         }
     }
 
+    // Remove potential '&' and '*' characters at start of string.
+    variable.remove(QRegularExpression("^[\\*\\&]*"));
+
     addMemoryVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addMemoryAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addMemoryAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
     addArrayVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addArrayAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addArrayAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
+    addMatrixVisualizerAction->setText(QString("\"%1\"").arg(actionText));
+    addMatrixAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
+    addMatrixAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
     addStructVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addStructAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
     addStructAmpersandVisualizerAction->setText(QString("\"&&%1\"").arg(actionText));
 
 
-    // If no selected item, disable everything but allow 'copyall'.
+    // If no selected item, disable everything but allow 'copyall' and 'deleteall'.
     if (item == 0) {
         memoryVisualizerMenu.setEnabled(false);
         arrayVisualizerMenu.setEnabled(false);
+        matrixVisualizerMenu.setEnabled(false);
         structVisualizerMenu.setEnabled(false);
+        deleteAction->setEnabled(false);
         copyAction->setEnabled(false);
     }
 
@@ -345,12 +394,20 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
         return;
     }
 
-    if (action == copyAction || action == copyAction) {
+    if (action == deleteAction) {
+        handleDeleteToolButton();
+    }
+
+    if (action == deleteAllAction) {
+        handleDeleteAllToolButton();
+    }
+
+    if (action == copyAction || action == copyAllAction || action == copyValueOnlyAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
         // Get list of 'select' items.
-        if (action == copyAction) {
+        if (action == copyAction || action == copyValueOnlyAction) {
             items = variablesTreeWidget->selectedItems();
         }
 
@@ -374,7 +431,11 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
                 text += '\n';
             }
 
-            text += items[i]->text(1) + ":" + items[i]->text(2);
+            if (action != copyValueOnlyAction) {
+                text += items[i]->text(1) + ":" + items[i]->text(2);
+            } else {
+                text += items[i]->text(2);
+            }
         }
 
         clipboard->setText(text, QClipboard::Clipboard);
@@ -386,7 +447,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(variable);
+            emit addMemoryVisualizer(variable);
         }
 
         return;
@@ -397,7 +458,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("*") + variable);
+            emit addMemoryVisualizer(QString("*") + variable);
         }
 
         return;
@@ -408,7 +469,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addMemoryVisualize(QString("&") + variable);
+            emit addMemoryVisualizer(QString("&") + variable);
         }
 
         return;
@@ -419,7 +480,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(variable);
+            emit addArrayVisualizer(variable);
         }
 
         return;
@@ -430,7 +491,7 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("*") + variable);
+            emit addArrayVisualizer(QString("*") + variable);
         }
 
         return;
@@ -441,7 +502,40 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addArrayVisualize(QString("&") + variable);
+            emit addArrayVisualizer(QString("&") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("*") + variable);
+        }
+
+        return;
+    }
+
+    // Handle adding matrix to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (variable != "") {
+            emit addMatrixVisualizer(QString("&") + variable);
         }
 
         return;
@@ -452,29 +546,29 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(variable);
+            emit addStructVisualizer(variable);
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAsteriskVisualizerAction) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("*") + variable);
+            emit addStructVisualizer(QString("*") + variable);
         }
 
         return;
     }
 
-    // Handle adding array to visualize.
+    // Handle adding struct to visualize.
     if (action == addStructAmpersandVisualizerAction) {
 
         // Emit the signals.
         if (variable != "") {
-            emit addStructVisualize(QString("&") + variable);
+            emit addStructVisualizer(QString("&") + variable);
         }
 
         return;

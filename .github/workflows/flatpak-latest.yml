@@ -1,0 +1,56 @@
+name: flatpak-latest Development Build
+
+on:
+  workflow_dispatch:
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  flatpak:
+    name: Build Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:kde-6.10
+      options: --privileged
+
+    steps:
+    - name: Where Am I
+      run: |
+        pwd
+        ls -l
+        lscpu
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+
+    - name: Create/update tag
+      uses: rickstaa/action-create-tag@v1
+      with:
+        tag: flatpak-latest
+        message: Tag from latest ${{ github.ref_name }} branch.
+        force_push_tag: true
+
+    - name: Build Flatpak
+      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      with:
+        branch: main
+        bundle: seer.flatpak
+        manifest-path: src/resources/flathub/io.github.epasveer.seer.github.yml # Always uses 'main'!
+        cache-key: flatpak-builder-${{ github.sha }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Flatpak Development Release
+        body: Build from latest ${{ github.ref_name }} branch.
+        files: |
+          seer.flatpak
+        tag_name: flatpak-latest
+        draft: false
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

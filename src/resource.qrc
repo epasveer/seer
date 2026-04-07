@@ -1,11 +1,11 @@
 <RCC>
   <qresource prefix="/seer">
-    <file>resources/seergdb_32x32.png</file>
-    <file>resources/seergdb_64x64.png</file>
-    <file>resources/seergdb_128x128.png</file>
-    <file>resources/seergdb_256x256.png</file>
-    <file>resources/seergdb_512x512.png</file>
-    <file>resources/rr_256x256.png</file>
+    <file>resources/icons/hicolor/32x32/seergdb.png</file>
+    <file>resources/icons/hicolor/64x64/seergdb.png</file>
+    <file>resources/icons/hicolor/128x128/seergdb.png</file>
+    <file>resources/icons/hicolor/256x256/seergdb.png</file>
+    <file>resources/icons/hicolor/512x512/seergdb.png</file>
+    <file>resources/icons/hicolor/256x256/rr.png</file>
     <file>resources/ABOUT.md</file>
     <file>resources/thenounproject/memory.svg</file>
     <file>resources/thenounproject/source.svg</file>
@@ -14,6 +14,7 @@
     <file>resources/thenounproject/configure.svg</file>
     <file>resources/thenounproject/stop.svg</file>
     <file>resources/thenounproject/fortune-teller.svg</file>
+    <file>resources/thenounproject/preferences.svg</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
     <file>resources/icons-icons/font.png</file>
@@ -58,15 +59,19 @@
     <file>resources/RelaxLightIcons/data-information.svg</file>
     <file>resources/RelaxLightIcons/data-warning.svg</file>
     <file>resources/RelaxLightIcons/dialog-question.svg</file>
+    <file>resources/RelaxLightIcons/system-shutdown.svg</file>
+    <file>resources/RelaxLightIcons/pin.svg</file>
+    <file>resources/RelaxLightIcons/lock.svg</file>
     <file>resources/help/ThreadProcessInfoBrowser.md</file>
     <file>resources/help/seergdb.hlp</file>
     <file>resources/help/StructVisualizer.md</file>
     <file>resources/help/BasicStructVisualizer.md</file>
     <file>resources/help/MemoryVisualizer.md</file>
     <file>resources/help/ArrayVisualizer.md</file>
+    <file>resources/help/MatrixVisualizer.md</file>
     <file>resources/help/ImageVisualizer.md</file>
     <file>resources/help/StackInfoBrowser.md</file>
-    <file>resources/help/VariableRegisterInfoBrowser.md</file>
+    <file>resources/help/VariableRegisterSignalInfoBrowser.md</file>
     <file>resources/help/SourceSymbolLibraryInfoBrowser.md</file>
     <file>resources/help/CodeManager.md</file>
     <file>resources/help/BreakpointGdbSeerManager.md</file>
@@ -78,6 +83,15 @@
     <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/CudaInfoBrowser.md</file>
+    <file>resources/help/Printpoints.md</file>
+    <file>resources/help/Skips.md</file>
+    <file>resources/mi-python/MIEcho.py</file>
+    <file>resources/mi-python/MISkip.py</file>
+    <file>resources/mi-python/MIKill.py</file>
+    <file>resources/mi-python/MICheckpoint.py</file>
+    <file>resources/mi-python/MICatchpoint.py</file>
+    <file>resources/mi-python/MIObjectiveC.py</file>
+    <file>resources/mi-python/MISignals.py</file>
   </qresource>
 </RCC>
 

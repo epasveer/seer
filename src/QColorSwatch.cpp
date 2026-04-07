@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: MIT
+
 #include "QColorSwatch.h"
 #include <QtGui/QPalette>
 #include <QtGui/QPainter>

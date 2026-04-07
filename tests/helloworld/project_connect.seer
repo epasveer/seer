@@ -1,0 +1,18 @@
+{
+    "seerproject": {
+        "connectmode": {
+            "gdbserver": ":1234",
+            "gdbserverdebug": false,
+            "targettype": "extended-remote"
+        },
+        "executable": "/nas/erniep/Development/seer/tests/helloworld/helloworld",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "symbolfile": "",
+        "workingdirectory": "/nas/erniep/Development/seer/tests/helloworld"
+    }
+}

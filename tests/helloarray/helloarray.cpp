@@ -57,11 +57,13 @@ int main (void) {
     float  phaseIncrement = two_pi/table_size;
     float  currentPhase   = 0.0;
 
-    float* sine_array = (float*)malloc(table_size*sizeof(float));
+    float* sin_array = (float*)malloc(table_size*sizeof(float));
+    float* cos_array = (float*)malloc(table_size*sizeof(float));
 
     for (int i = 0; i < 512; i ++){
 
-        sine_array[i] = sin(currentPhase);
+        sin_array[i] = sin(currentPhase);
+        cos_array[i] = cos(currentPhase);
 
         currentPhase += phaseIncrement;
     }
@@ -79,7 +81,8 @@ int main (void) {
     free(array);
     free(int_array);
     free(float_array);
-    free(sine_array);
+    free(sin_array);
+    free(cos_array);
     free(x);
 
     return 0;

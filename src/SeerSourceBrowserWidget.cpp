@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerSourceBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -34,7 +38,7 @@ SeerSourceBrowserWidget::SeerSourceBrowserWidget (QWidget* parent) : QWidget(par
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
 
-    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb"} ); // Default settings.
+    _sourceFilePatterns = QStringList( {"*.cpp", "*.c", "*.C", "*.f", "*.f90", ".F90", "*.rs", "*.go", "*.ada", "*.adb", "*.s", "*.S"} ); // Default settings.
     _headerFilePatterns = QStringList( {"*.hpp", "*.h", "*.ads"} );
     _miscFilePatterns   = QStringList( {"/usr/include/"} );
 
@@ -93,23 +97,13 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
     if (text.startsWith("^done,files=[") && text.endsWith("]")) {
 
-        // Delete previous files.
-        foreach (auto i, _sourceFilesItems->takeChildren()) {
-            delete i;
-        }
-
-        foreach (auto i, _headerFilesItems->takeChildren()) {
-            delete i;
-        }
-
-        foreach (auto i, _miscFilesItems->takeChildren()) {
-            delete i;
-        }
-
         // ^done,files=[
         //     {file=\"../sysdeps/x86_64/start.S\",fullname=\"/home/abuild/rpmbuild/BUILD/glibc-2.26/csu/../sysdeps/x86_64/start.S\"},
         //     {file=\"helloworld.cpp\",fullname=\"/home/erniep/Development/Peak/src/Seer/helloworld/helloworld.cpp\"}
         // ]
+
+        // Delete previous files.
+        deleteChildItems();
 
         QString files_text     = Seer::parseFirst(text, "files=", '[', ']', false);
         QStringList files_list = Seer::parse(files_text, "", '{', '}', false);
@@ -138,7 +132,6 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
-
             if (Seer::matchesWildcard(ignoreFilePatterns(), fullname_text)) {
                 continue;
             }else if (Seer::matchesWildcard(miscFilePatterns(), fullname_text)) {
@@ -152,22 +145,31 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
             }
         }
 
+        // Always expand the source items. Expanding the other
+        // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-        _headerFilesItems->setExpanded(false);
-        _miscFilesItems->setExpanded(false);
 
     }else{
         // Ignore others.
     }
 
+    // Sort each item separately.
+    _sourceFilesItems->sortChildren(0, Qt::AscendingOrder);
+    _headerFilesItems->sortChildren(0, Qt::AscendingOrder);
+    _miscFilesItems->sortChildren(0, Qt::AscendingOrder);
+
     sourceTreeWidget->resizeColumnToContents(0);
     sourceTreeWidget->resizeColumnToContents(1);
-    sourceTreeWidget->sortByColumn(0, Qt::AscendingOrder);
-    sourceTreeWidget->setSortingEnabled(true);
 
     sourceSearchLineEdit->clear();
 
     QApplication::restoreOverrideCursor();
+}
+
+void SeerSourceBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous files.
+    deleteChildItems();
 }
 
 void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
@@ -262,9 +264,9 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
             }
         }
 
+        // Always expand the source items. Expanding the other
+        // items are under the user's control.
         _sourceFilesItems->setExpanded(true);
-        _headerFilesItems->setExpanded(false);
-        _miscFilesItems->setExpanded(false);
 
         //qDebug() << text << matches.size();
     }
@@ -275,5 +277,21 @@ void SeerSourceBrowserWidget::handleSearchLineEdit (const QString& text) {
 
 void SeerSourceBrowserWidget::refresh () {
     emit refreshSourceList();
+}
+
+void SeerSourceBrowserWidget::deleteChildItems () {
+
+    // Delete child items. Leave top-level 'Source', 'Header', and 'Misc'.
+    foreach (auto i, _sourceFilesItems->takeChildren()) {
+        delete i;
+    }
+
+    foreach (auto i, _headerFilesItems->takeChildren()) {
+        delete i;
+    }
+
+    foreach (auto i, _miscFilesItems->takeChildren()) {
+        delete i;
+    }
 }
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -15,6 +19,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
     public slots:
         void                handleText                      (const QString& text);
         void                handleStoppingPointReached      ();
+        void                handleSessionTerminated         ();
         void                refresh                         ();
         void                refreshValues                   ();
 
@@ -26,22 +31,27 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleItemExpanded              (QTreeWidgetItem* item);
         void                handleItemCollapsed             (QTreeWidgetItem* item);
         void                handleContextMenu               (const QPoint& pos);
+        void                handleRememberToolButton        (bool checked);
 
     signals:
         void                refreshVariableTrackerNames     ();
         void                refreshVariableTrackerValues    ();
         void                addVariableExpression           (QString expression);
         void                deleteVariableExpressions       (QString expressionids);
-        void                addMemoryVisualize              (QString expression);
-        void                addArrayVisualize               (QString expression);
-        void                addStructVisualize              (QString expression);
+        void                addMemoryVisualizer             (QString expression);
+        void                addArrayVisualizer              (QString expression);
+        void                addMatrixVisualizer             (QString expression);
+        void                addStructVisualizer             (QString expression);
+        void                raiseTab                        ();
 
     protected:
-        void                handleItemCreate                (QTreeWidgetItem* item,       const QString& value_text);
-        void                handleItemCreate                (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text);
+        void                handleItemCreate                (QTreeWidgetItem* item, const QString& value_text, const QString& old_text);
+        void                handleItemCreate                (QTreeWidgetItem* parentItem, const QString& id_text, const QString& name_text, const QString& value_text, const QString& old_text);
         void                showEvent                       (QShowEvent* event);
 
     private:
+        void                readSettings                    ();
+        void                writeSettings                   ();
 
 };
 

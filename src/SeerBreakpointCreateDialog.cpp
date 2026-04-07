@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerBreakpointCreateDialog.h"
 #include <QtCore/QDebug>
 
@@ -24,6 +28,8 @@ SeerBreakpointCreateDialog::SeerBreakpointCreateDialog (QWidget* parent) : QDial
     setConditionalText ("");
     setIgnoreCountText ("");
     setThreadIdText ("");
+
+    filenameLineEdit->setFocus();
 
     // Connect things.
     QObject::connect(conditionalCheckBox, &QCheckBox::clicked,    conditionalLineEdit,  &QLineEdit::setEnabled);
@@ -204,7 +210,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
     }
 
     if (functionNameText() != "") {
-        breakpointParameters += " --function " + functionNameText();
+        breakpointParameters += " --function \"" + functionNameText() + "\"";
     }
 
     if (labelNameText() != "") {

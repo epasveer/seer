@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerConfigDialog.h"
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
@@ -59,7 +63,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
 
     // Create icons.
     QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
-    configSeerButton->setIcon(QIcon(":/seer/resources/seergdb_128x128.png"));
+    configSeerButton->setIcon(QIcon(":/seer/resources/icons/hicolor/128x128/seergdb.png"));
     configSeerButton->setText(tr("Seer"));
     configSeerButton->setTextAlignment(Qt::AlignHCenter);
     configSeerButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -95,7 +99,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configKeysButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configRRButton = new QListWidgetItem(contentsListWidget);
-    configRRButton->setIcon(QIcon(":/seer/resources/rr_256x256.png"));
+    configRRButton->setIcon(QIcon(":/seer/resources/icons/hicolor/256x256/rr.png"));
     configRRButton->setText(tr("RR"));
     configRRButton->setTextAlignment(Qt::AlignHCenter);
     configRRButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -158,6 +162,16 @@ void SeerConfigDialog::setSeerClearManualCommandHistory (bool flag) {
 bool SeerConfigDialog::seerClearManualCommandHistory () const {
 
     return _seerConfigPage->clearManualCommandHistory();
+}
+
+void SeerConfigDialog::setGdbLauncher (const QString& launcher) {
+
+    _gdbConfigPage->setGdbLauncher(launcher);
+}
+
+QString SeerConfigDialog::gdbLauncher () const {
+
+    return _gdbConfigPage->gdbLauncher();
 }
 
 void SeerConfigDialog::setGdbProgram (const QString& program) {
@@ -230,34 +244,24 @@ bool SeerConfigDialog::gdbEnablePrettyPrinting () const {
     return _gdbConfigPage->gdbEnablePrettyPrinting();
 }
 
-void SeerConfigDialog::setDprintfStyle (const QString& style) {
+void SeerConfigDialog::setGdbRemoteTargetType (const QString& type) {
 
-    _gdbConfigPage->setDprintfStyle(style);
+    _gdbConfigPage->setGdbRemoteTargetType(type);
 }
 
-QString SeerConfigDialog::dprintfStyle () const {
+QString SeerConfigDialog::gdbRemoteTargetType () const {
 
-    return _gdbConfigPage->dprintfStyle();
+    return _gdbConfigPage->gdbRemoteTargetType();
 }
 
-void SeerConfigDialog::setDprintfFunction (const QString& function) {
+void SeerConfigDialog::setGdbArchitectureType (const QString& type) {
 
-    _gdbConfigPage->setDprintfFunction(function);
+    _gdbConfigPage->setGdbArchitectureType(type);
 }
 
-QString SeerConfigDialog::dprintfFunction () const {
+QString SeerConfigDialog::gdbArchitectureType () const {
 
-    return _gdbConfigPage->dprintfFunction();
-}
-
-void SeerConfigDialog::setDprintfChannel (const QString& channel) {
-
-    _gdbConfigPage->setDprintfChannel(channel);
-}
-
-QString SeerConfigDialog::dprintfChannel () const {
-
-    return _gdbConfigPage->dprintfChannel();
+    return _gdbConfigPage->gdbArchitectureType();
 }
 
 void SeerConfigDialog::setEditorFont (const QFont& font) {
@@ -310,6 +314,16 @@ QString SeerConfigDialog::externalEditorCommand () const {
     return _editorConfigPage->externalEditorCommand();
 }
 
+void SeerConfigDialog::setEditorAutoSourceReload (bool flag) {
+
+    _editorConfigPage->setAutoSourceReload(flag);
+}
+
+bool SeerConfigDialog::editorAutoSourceReload () const {
+
+    return _editorConfigPage->autoSourceReload();
+}
+
 void SeerConfigDialog::setSourceAlternateDirectories (const QStringList& alternateDirectories) {
 
     _sourceConfigPage->setAlternateDirectories(alternateDirectories);
@@ -360,14 +374,14 @@ QStringList SeerConfigDialog::sourceHeaderFilePatterns () const {
     return _sourceConfigPage->headerFilePatterns();
 }
 
-void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartup (bool flag) {
+void SeerConfigDialog::setAssemblyShowAssemblyTabOnStartupMode (const QString& mode) {
 
-    _assemblyConfigPage->setShowAssemblyTabOnStartup(flag);
+    _assemblyConfigPage->setShowAssemblyTabOnStartupMode(mode);
 }
 
-bool SeerConfigDialog::assemblyShowAssemblyTabOnStartup () const {
+QString SeerConfigDialog::assemblyShowAssemblyTabOnStartupMode () const {
 
-    return _assemblyConfigPage->showAssemblyTabOnStartup();
+    return _assemblyConfigPage->showAssemblyTabOnStartupMode();
 }
 
 void SeerConfigDialog::setAssemblyKeepAssemblyTabOnTop (bool flag) {

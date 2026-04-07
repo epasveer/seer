@@ -8,6 +8,7 @@ This part of Seer shows Breakpoints, GDB log, and Seer log information. In detai
 * Watchpoints
 * Catchpoints
 * Printpoints
+* Checkpoints
 * GDB output
 * Seer output
 * Save and load breakpoints
@@ -60,6 +61,19 @@ There are other types of catchpoints but GDB/mi only supports the above list at 
 
 A printpoint is a type of breakpoint that will print the value of a variable at a certain line of a function. It relies on gdb's ```dprintf``` feature.
 
+### Checkpoints
+
+A checkpoint is a simple form of time-travel debugging. You can create a checkpoint at any point where the program you're debugging
+is stopped. This checkpoint is listed in the Checkpoints tab. You can continue to debug your program. At any time, you can return
+back to the checkpoint (go back in time) and continue debugging again from that point.
+
+You can create as many checkpoints as you want and switch between them.
+
+A couple things to note:
+
+* This is not supported on all platforms.
+* Switching to a previous checkpoint does not undo any I/O. You can't unwrite data written to a file or unprint text sent to a printer.
+
 
 ### Modifying existing breakpoints.
 
@@ -105,6 +119,15 @@ This input field allows GDB and GDB/mi commands to be manually entered. The resu
 
 Seer maintains a history of N commands, as set in the Seer Config dialogs. This history is remembered for the next time Seer is used.
 
+### Macro gdb commands
+
+There are 10 macros you can create for custom commands. They are labelled "M1" through "M0". Think of your keyboard with numeric
+keys 1 through 0. They have hotkeys mapped from Ctrl+Shift+1 through Ctrl+Shift+0. Clicking the button or using the hotkey will
+execute the commands in the macro. Holding down the button will bring up an editor to edit the contents of the macro.
+
+Typically the macro contains gdb commands. Output will go to the GDB output tab. The macro is executed using gdb's
+"source" command, which can handle a lot off unique cases.
+
 ### References
 
 Consult these gdb references
@@ -112,5 +135,6 @@ Consult these gdb references
 1. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Breaks.html#Set-Breaks) Using Breakpoints.
 2. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Watchpoints.html#Set-Watchpoints) Using Watchpoints.
 3. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Set-Catchpoints.html#Set-Catchpoints) Using Catchpoints.
-4. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Dynamic-Printf.html#Dynamic-Printf) Using DPrintf.
+4. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Dynamic-Printf.html#Dynamic-Printf) Using DPrintf for Printpoints.
+5. [Link](https://sourceware.org/gdb/current/onlinedocs/gdb.html/Checkpoint_002fRestart.html#Checkpoint_002fRestart) Using Checkpoints.
 

@@ -1,14 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerCppSourceHighlighter.h"
 
-SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {
+SeerCppSourceHighlighter::SeerCppSourceHighlighter (QTextDocument* parent) : SeerSourceHighlighter(parent) {
 
     // Set to default formats.
-    setHighlighterSettings(SeerHighlighterSettings::populateForCPP(""));
-}
-
-const SeerHighlighterSettings& SeerCppSourceHighlighter::highlighterSettings() {
-
-    return _highlighterSettings;
+    setHighlighterSettings(SeerHighlighterSettings::populate(""));
 }
 
 void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSettings& settings) {
@@ -75,14 +74,6 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
 
     HighlightingRule rule;
 
-    for (const QString& pattern : keywordPatterns) {
-
-        rule.pattern = QRegularExpression(pattern);
-        rule.format  = _keywordFormat;
-
-        _highlightingRules.append(rule);
-    }
-
     // Set class format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\\bQ[A-Za-z]+\\b"));
     rule.format = _classFormat;
@@ -94,9 +85,16 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     _highlightingRules.append(rule);
 
     // Set function format and expression.
-    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\()"));
+    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\s*\\()"));
     rule.format = _functionFormat;
     _highlightingRules.append(rule);
+
+    // Set keywords format and expression (must have precedence over functions)
+    for (const QString& pattern : keywordPatterns) {
+        rule.pattern = QRegularExpression(pattern);
+        rule.format  = _keywordFormat;
+        _highlightingRules.append(rule);
+    }
 
     // Set single line comment format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("//[^\n]*"));
@@ -106,45 +104,5 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     // Set multi-line comment expression. Format is defined later.
     _commentStartExpression = QRegularExpression(QStringLiteral("/\\*"));
     _commentEndExpression   = QRegularExpression(QStringLiteral("\\*/"));
-}
-
-void SeerCppSourceHighlighter::highlightBlock (const QString& text) {
-
-    for (const HighlightingRule& rule : std::as_const(_highlightingRules)) {
-
-        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-
-        while (matchIterator.hasNext()) {
-            QRegularExpressionMatch match = matchIterator.next();
-            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
-        }
-    }
-
-    setCurrentBlockState(0);
-
-    int startIndex = 0;
-
-    if (previousBlockState() != 1) {
-        startIndex = text.indexOf(_commentStartExpression);
-    }
-
-    while (startIndex >= 0) {
-
-        QRegularExpressionMatch match = _commentEndExpression.match(text, startIndex);
-
-        int endIndex      = match.capturedStart();
-        int commentLength = 0;
-
-        if (endIndex == -1) {
-            setCurrentBlockState(1);
-            commentLength = text.length() - startIndex;
-
-        }else{
-            commentLength = endIndex - startIndex + match.capturedLength();
-        }
-
-        setFormat(startIndex, commentLength, _multiLineCommentFormat);
-        startIndex = text.indexOf(_commentStartExpression, startIndex + commentLength);
-    }
 }
 

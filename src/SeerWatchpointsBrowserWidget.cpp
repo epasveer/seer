@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerWatchpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -150,7 +154,7 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
                 QString cond_text              = Seer::parseFirst(bkpt_text, "cond=",              '"', '"', false);
                 QString times_text             = Seer::parseFirst(bkpt_text, "times=",             '"', '"', false);
                 QString ignore_text            = Seer::parseFirst(bkpt_text, "ignore=",            '"', '"', false);
-                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '{', '}', false);
+                QString script_text            = Seer::parseFirst(bkpt_text, "script=",            '[', ']', false);
                 QString original_location_text = Seer::parseFirst(bkpt_text, "original-location=", '"', '"', false);
 
                 // Only look for 'watchpoint' type break points.
@@ -313,9 +317,6 @@ void SeerWatchpointsBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
-
     }else{
         // Ignore others.
     }
@@ -350,6 +351,12 @@ void SeerWatchpointsBrowserWidget::handleStoppingPointReached () {
     }
 
     emit refreshWatchpointsList();
+}
+
+void SeerWatchpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    watchpointsTreeWidget->clear();
 }
 
 void SeerWatchpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {

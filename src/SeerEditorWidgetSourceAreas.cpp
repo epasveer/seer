@@ -1,7 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerEditorWidgetSource.h"
+#include "SeerHighlighterSettings.h"
 #include "SeerPlainTextEdit.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerSourceHighlighter.h"
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPainter>
@@ -12,14 +18,13 @@
 #include <QtGui/QHelpEvent>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGuiApplication>
-#include <QtGui/QHelpEvent>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QMenu>
-#include <QAction>
 #include <QtWidgets/QToolTip>
 #include <QtWidgets/QMessageBox>
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
+#include <QtGui/QAction>
 #include <QtCore/QList>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
@@ -29,16 +34,18 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 
+bool SeerEditorWidgetSourceArea::_altHeld = false;
+QTimer* SeerEditorWidgetSourceArea::_altHeldTimer = new QTimer();
 
 SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPlainTextEdit(parent) {
 
     _fileWatcher                = 0;
     _enableLineNumberArea       = false;
     _enableBreakPointArea       = false;
-    _enableMiniMapArea          = false;
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
+    _autoSourceReload           = false;
     _selectedExpressionId       = Seer::createID();
     _selectedBreakpointId       = Seer::createID();
 
@@ -56,19 +63,22 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _lineNumberArea = new SeerEditorWidgetSourceLineNumberArea(this);
     _breakPointArea = new SeerEditorWidgetSourceBreakPointArea(this);
     _breakPointArea->setMouseTracking(true);
-    _miniMapArea    = new SeerEditorWidgetSourceMiniMapArea(this);
-    _miniMapPixmap  = 0;
-
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
-    enableMiniMapArea(false);  // Doesn't work yet. Need to work on the "mini" part.
+
+    _altHeldTimer->setInterval(40);  // 40 ms interval = 25Hz update rate
+    QObject::connect(_altHeldTimer, &QTimer::timeout, this, [this]() {
+        updateCursor(QCursor::pos());
+    });
 
     QObject::connect(this, &SeerEditorWidgetSourceArea::blockCountChanged,                  this, &SeerEditorWidgetSourceArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateBreakPointArea);
-    QObject::connect(this, &SeerEditorWidgetSourceArea::updateRequest,                      this, &SeerEditorWidgetSourceArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetSourceArea::highlighterSettingsChanged,         this, &SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged);
+
+    // Connect cursor position changed signal.
+    QObject::connect(this, &QPlainTextEdit::cursorPositionChanged,                          this, &SeerEditorWidgetSourceArea::handleCursorPositionChanged);
 
     setCurrentLine(0);
 
@@ -77,11 +87,11 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     // Forward the scroll events in the various areas to the text edit.
     SeerPlainTextWheelEventForwarder* lineNumberAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
-    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
-    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
+
+    _altHeldTimer->start();
 
     // Calling close() will clear the text document.
     close();
@@ -107,22 +117,12 @@ bool SeerEditorWidgetSourceArea::breakPointAreaEnabled () const {
     return _enableBreakPointArea;
 }
 
-void SeerEditorWidgetSourceArea::enableMiniMapArea (bool flag) {
-    _enableMiniMapArea = flag;
-
-    updateMarginAreasWidth(0);
-}
-
-bool SeerEditorWidgetSourceArea::miniMapAreaEnabled () const {
-    return _enableMiniMapArea;
-}
-
 void SeerEditorWidgetSourceArea::updateMarginAreasWidth (int newBlockCount) {
 
     Q_UNUSED(newBlockCount);
 
     int leftMarginWidth  = lineNumberAreaWidth() + breakPointAreaWidth();
-    int rightMarginWidth = miniMapAreaWidth();
+    int rightMarginWidth = 0;
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
 }
@@ -157,17 +157,6 @@ int SeerEditorWidgetSourceArea::breakPointAreaWidth () {
     return space;
 }
 
-int SeerEditorWidgetSourceArea::miniMapAreaWidth () {
-
-    if (miniMapAreaEnabled() == false) {
-        return 0;
-    }
-
-    int space = 3 + 75;
-
-    return space;
-}
-
 void SeerEditorWidgetSourceArea::updateLineNumberArea (const QRect& rect, int dy) {
 
     if (lineNumberAreaEnabled() == false) {
@@ -195,23 +184,6 @@ void SeerEditorWidgetSourceArea::updateBreakPointArea (const QRect& rect, int dy
         _breakPointArea->scroll(0, dy);
     }else{
         _breakPointArea->update(0, rect.y(), _breakPointArea->width(), rect.height());
-    }
-
-    if (rect.contains(viewport()->rect())) {
-        updateMarginAreasWidth(0);
-    }
-}
-
-void SeerEditorWidgetSourceArea::updateMiniMapArea (const QRect& rect, int dy) {
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    if (dy) {
-        _miniMapArea->scroll(0, dy);
-    }else{
-        _miniMapArea->update(0, rect.y(), _miniMapArea->width(), rect.height());
     }
 
     if (rect.contains(viewport()->rect())) {
@@ -322,115 +294,6 @@ void SeerEditorWidgetSourceArea::breakPointAreaPaintEvent (QPaintEvent* event) {
     }
 }
 
-void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
-
-    //
-    // This doesn't work yet.
-    // There is nothing 'mini' about the view. Need to shrink the text somehow.
-    // Then add a 'focus' box that can be interacted with to scroll through the text.
-    //
-
-    if (miniMapAreaEnabled() == false) {
-        return;
-    }
-
-    qDebug() << "Top:" << event->rect().top() << " Right:" << event->rect().right() << " Width:" << event->rect().width() << " Height:" << event->rect().height();
-
-    if (_miniMapPixmap == 0) {
-
-        int pixmapWidth  = 0;
-        int pixmapHeight = 0;
-
-        QFont font("monospace");
-        font.setStyleHint(QFont::Monospace);
-      //font.setPointSize(2);
-
-        QFontMetrics fm(font);
-
-        {
-            QTextBlock block = document()->begin();
-
-            while (block.isValid()) {
-
-                if (fm.horizontalAdvance(block.text()) > pixmapWidth) {
-                    pixmapWidth = fm.horizontalAdvance(block.text());
-                }
-
-                pixmapHeight += fm.height();
-
-                block = block.next();
-            }
-        }
-
-        qDebug() << "PIXMAP = " << pixmapWidth << " x " << pixmapHeight;
-
-        QTextCharFormat format = highlighterSettings().get("Margin");
-
-        _miniMapPixmap = new QPixmap(pixmapWidth, pixmapHeight);
-        _miniMapPixmap->fill(format.background().color());
-
-        QPainter painter(_miniMapPixmap);
-        painter.setPen(format.foreground().color());
-        painter.setFont(font);
-
-        QTextBlock block       = document()->begin();
-        int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-        int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-        while (block.isValid()) {
-
-            painter.drawText(0, top, block.text());
-
-            block = block.next();
-            top    = bottom;
-            bottom = top + qRound(blockBoundingRect(block).height());
-        }
-    }
-
-
-    /*
-    QRectF target(10.0, 20.0, 80.0, 60.0);
-    QRectF source(0.0, 0.0, 70.0, 40.0);
-
-    QRect target(event->rect());
-    QRect source(event->rect());
-
-    QPainter painter(_miniMapPixmap);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    //painter.drawPixmap(target, *_miniMapPixmap, source);
-
-    QPainter painter(_miniMapArea);
-    painter.drawPixmap(0, 0, *_miniMapPixmap);
-    */
-
-    QFont font("monospace");
-    font.setStyleHint(QFont::Monospace);
-  //font.setPointSize(2);
-
-    QTextCharFormat format = highlighterSettings().get("Margin");
-
-    QPainter painter(_miniMapArea);
-    painter.fillRect(event->rect(), format.background().color());
-    painter.setPen(format.foreground().color());
-    painter.setFont(font);
-
-    QTextBlock block       = firstVisibleBlock();
-    int        top         = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
-    int        bottom      = top + qRound(blockBoundingRect(block).height());
-
-    while (block.isValid() && top <= event->rect().bottom()) {
-
-        if (block.isVisible() && bottom >= event->rect().top()) {
-            painter.drawText(0, top, _miniMapArea->width(), painter.fontMetrics().height(), Qt::AlignLeft, block.text());
-        }
-
-        block  = block.next();
-        top    = bottom;
-        bottom = top + qRound(blockBoundingRect(block).height());
-      //bottom = top + painter.fontMetrics().height();
-    }
-}
-
 void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
 
     QPlainTextEdit::resizeEvent(e);
@@ -443,10 +306,6 @@ void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
 
     if (breakPointAreaEnabled()) {
         _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(), breakPointAreaWidth(), cr.height()));
-    }
-
-    if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() - verticalScrollBar()->width(), cr.top(), miniMapAreaWidth(), cr.height()));
     }
 }
 
@@ -509,14 +368,7 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
             QString word = cursor.selectedText();
 
             if (word.isEmpty() == true) {
-
-                QToolTip::hideText();
-
-                _selectedExpressionCursor   = QTextCursor();
-                _selectedExpressionPosition = QPoint();
-                _selectedExpressionName     = "";
-                _selectedExpressionValue    = "";
-
+                hideExpressionTooltip();
                 break;
             }
 
@@ -526,19 +378,30 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
                 // Same word as before? Display the tooltip value.
                 if (word == _selectedExpressionName) {
 
-                    QToolTip::showText(helpEvent->globalPos(), _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
+                    // If the tooltip is already visible, refreshen it with
+                    // the same value, possibly at a new postion.
+                    if (QToolTip::isVisible()) {
+                        _selectedExpressionPosition = helpEvent->globalPos();
+
+                        showExpressionTooltip();
+
+                    // If not already visible, refreshen its value.
+                    }else{
+                        emit evaluateVariableExpression(_selectedExpressionId, _selectedExpressionName); // For the tooltip.
+                    }
 
                 // Otherwise, hide any old one.
                 }else{
-                    QToolTip::hideText();
+                    hideExpressionTooltip();
                 }
 
             // Otherwise it's a different spot. Create a new request to get the variable's value.
             }else{
-                QToolTip::hideText();
+
+                hideExpressionTooltip();
 
                 _selectedExpressionCursor   = cursor;
-                _selectedExpressionPosition = helpEvent->pos();
+                _selectedExpressionPosition = helpEvent->globalPos();
                 _selectedExpressionName     = word;
                 _selectedExpressionValue    = "";
 
@@ -553,6 +416,24 @@ bool SeerEditorWidgetSourceArea::event(QEvent* event) {
 
     // Pass any others to the base class.
     return QPlainTextEdit::event(event);
+}
+
+void SeerEditorWidgetSourceArea::showExpressionTooltip () {
+
+    // qDebug() << "Tooltip:" << _selectedExpressionPosition << _selectedExpressionName << _selectedExpressionValue;
+
+    QToolTip::hideText();
+    QToolTip::showText(_selectedExpressionPosition, _selectedExpressionName + ": " + Seer::elideText(_selectedExpressionValue, Qt::ElideRight, 100));
+}
+
+void SeerEditorWidgetSourceArea::hideExpressionTooltip () {
+
+    QToolTip::hideText();
+
+    _selectedExpressionCursor   = QTextCursor();
+    _selectedExpressionPosition = QPoint();
+    _selectedExpressionName     = "";
+    _selectedExpressionValue    = "";
 }
 
 void SeerEditorWidgetSourceArea::refreshExtraSelections () {
@@ -606,14 +487,13 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     setDocumentTitle(_fullname);
 
-    // If the filename is null, don't do anything.
-    if (_fullname == "") {
-        return;
-    }
-
-    // If the file is null, don't do anything.
-    if (_file == "") {
-        qDebug() << "'file' is null. Skipping.";
+    // If the filename or file is null, it's a placeholder
+    // widget. Show the Seer icon!
+    if (_fullname == "" || _file == "") {
+        setStyleSheet("QPlainTextEdit {"
+            "background: url(:/seer/resources/icons/hicolor/512x512/seergdb.png) center no-repeat;"
+            "border: none;"
+            "}");
         return;
     }
 
@@ -634,9 +514,8 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
 
     QFile inputFile(filename);
 
-    inputFile.open(QIODevice::ReadOnly);
-
-    if (!inputFile.isOpen()) {
+    bool f = inputFile.open(QIODevice::ReadOnly);
+    if (f == false) {
 
         QMessageBox::critical(this, "Can't read source file.",  "Can't read : " + filename + "\nThe file is there but can't be opened.");
 
@@ -683,15 +562,15 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
     setTextCursor(cursor);
 
-    // Add a syntax highlighter for C++ files.
+    // Add a syntax highlighter.
     if (_sourceHighlighter) {
         delete _sourceHighlighter; _sourceHighlighter = 0;
     }
 
-    QRegularExpression cpp_re("(?:" + _sourceHighlighterSettings.sourceSuffixes() + ")$");
-    if (file.contains(cpp_re)) {
-        _sourceHighlighter = new SeerCppSourceHighlighter(0);
-
+    _file = file;
+    SeerSourceHighlighter* highlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
+    if (highlighter) {
+        _sourceHighlighter = highlighter;
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
         }else{
@@ -851,11 +730,11 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
         _currentLinesExtraSelections.clear();
 
-        QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+        QTextCharFormat lineFormat = highlighterSettings().get("Current Line");
 
         QTextEdit::ExtraSelection selection;
-        selection.format.setForeground(currentLineFormat.foreground());
-        selection.format.setBackground(currentLineFormat.background());
+        selection.format.setForeground(lineFormat.foreground());
+        selection.format.setBackground(lineFormat.background());
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -865,6 +744,31 @@ void SeerEditorWidgetSourceArea::setCurrentLine (int lineno) {
 
     // Refresh all the extra selections.
     refreshExtraSelections();
+}
+
+void SeerEditorWidgetSourceArea::setCurrentColumn (int colno) {
+    QTextCursor cursor = textCursor();
+
+    int lineStartPos = cursor.block().position();
+    int newPos       = lineStartPos + (colno - 1);
+
+    cursor.setPosition(newPos);
+    setTextCursor(cursor);
+}
+
+int SeerEditorWidgetSourceArea::currentLine () const {
+    QTextCursor cursor = textCursor();
+    return cursor.blockNumber() + 1;;
+}
+
+int SeerEditorWidgetSourceArea::currentColumn () const {
+    QTextCursor cursor = textCursor();
+    return cursor.positionInBlock() + 1;
+}
+
+int SeerEditorWidgetSourceArea::firstDisplayLine () const {
+    QTextBlock block = firstVisibleBlock();
+    return block.blockNumber() + 1;
 }
 
 void SeerEditorWidgetSourceArea::scrollToLine (int lineno) {
@@ -895,12 +799,17 @@ void SeerEditorWidgetSourceArea::clearCurrentLines () {
     refreshExtraSelections();
 }
 
-void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
+void SeerEditorWidgetSourceArea::addCurrentLine (int lineno, int level) {
 
     // Any line will be highlighted with a yellow line.
     // The 'yellow' color is for the current line of the most recent stack frame.
     // The 'grey' color is for older stack frames.
-    QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+    QTextCharFormat lineFormat;
+    if (level == 0) {
+        lineFormat = highlighterSettings().get("Current Line");
+    }else{
+        lineFormat = highlighterSettings().get("Calling Line");
+    }
 
     // Create a selection at the cursor.
     QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
@@ -909,8 +818,8 @@ void SeerEditorWidgetSourceArea::addCurrentLine (int lineno) {
     cursor.setPosition(block.position());
 
     QTextEdit::ExtraSelection selection;
-    selection.format.setForeground(currentLineFormat.foreground());
-    selection.format.setBackground(currentLineFormat.background());
+    selection.format.setForeground(lineFormat.foreground());
+    selection.format.setBackground(lineFormat.background());
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = cursor;
     selection.cursor.clearSelection();
@@ -1025,6 +934,37 @@ bool SeerEditorWidgetSourceArea::breakpointLineEnabled (int lineno) const {
     return _breakpointsEnableds[i];
 }
 
+void SeerEditorWidgetSourceArea::breakpointToggle () {
+
+    // Get current lineno.
+    int lineno = textCursor().blockNumber() + 1;
+
+    // If there is a breakpoint on the line, toggle it.
+    if (hasBreakpointLine(lineno)) {
+
+        // Toggle the breakpoint.
+        // Enable if disabled. Disable if enabled.
+        if (breakpointLineEnabled(lineno) == false) {
+            // Emit the enable breakpoint signal.
+            emit enableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }else{
+            // Emit the disable breakpoint signal.
+            emit deleteBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
+        }
+
+    // Otherwise, do a quick create of a new breakpoint.
+    }else{
+        emit insertBreakpoint(QString("-f --source \"%1\" --line %2").arg(fullname()).arg(lineno));
+    }
+}
+
+void SeerEditorWidgetSourceArea::runToSelectedLine () {
+
+    // Emit the runToLine signal.
+    emit runToLine(fullname(), currentLine());
+
+}
+
 void SeerEditorWidgetSourceArea::showContextMenu (QMouseEvent* event) {
 
 #if QT_VERSION >= 0x060000
@@ -1058,16 +998,21 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     QAction* addVariableLoggerAsteriskExpressionAction;
     QAction* addVariableLoggerAmpersandExpressionAction;
     QAction* addVariableLoggerAsteriskAmpersandExpressionAction;
+    QAction* addVariableLoggerObjcExpressionAction;
     QAction* addVariableTrackerExpressionAction;
     QAction* addVariableTrackerAsteriskExpressionAction;
     QAction* addVariableTrackerAmpersandExpressionAction;
     QAction* addVariableTrackerAsteriskAmpersandExpressionAction;
+    QAction* addVariableTrackerObjcExpressionAction;
     QAction* addMemoryVisualizerAction;
     QAction* addMemoryAsteriskVisualizerAction;
     QAction* addMemoryAmpersandVisualizerAction;
     QAction* addArrayVisualizerAction;
     QAction* addArrayAsteriskVisualizerAction;
     QAction* addArrayAmpersandVisualizerAction;
+    QAction* addMatrixVisualizerAction;
+    QAction* addMatrixAsteriskVisualizerAction;
+    QAction* addMatrixAmpersandVisualizerAction;
     QAction* addStructVisualizerAction;
     QAction* addStructAsteriskVisualizerAction;
     QAction* addStructAmpersandVisualizerAction;
@@ -1077,66 +1022,71 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         int breakno = breakpointLineToNumber(lineno);
 
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open external editor on line %1").arg(lineno), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint %1 on line %2").arg(breakno).arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open external editor on line %1").arg(lineno), this);
 
+        runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(false);
         createPrintpointAction->setEnabled(false);
         deleteAction->setEnabled(true);
         enableAction->setEnabled(true);
         disableAction->setEnabled(true);
-        runToLineAction->setEnabled(true);
         openExternalEditor->setEnabled(true);
 
     }else{
-        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create breakpoint on line %1").arg(lineno), this);
-        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Create printpoint on line %1").arg(lineno), this);
-        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),  QString("Delete breakpoint on line %1").arg(lineno), this);
-        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),     QString("Enable breakpoint on line %1").arg(lineno), this);
-        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),  QString("Disable breakpoint on line %1").arg(lineno), this);
-        runToLineAction           = new QAction(QString("Run to line %1").arg(lineno), this);
-        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"), QString("Open file in external editor"), this);
+        runToLineAction           = new QAction(QIcon(":/seer/resources/RelaxLightIcons/debug-execute-from-cursor.svg"), QString("Run to line %1").arg(lineno), this);
+        createBreakpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create breakpoint on line %1").arg(lineno), this);
+        createPrintpointAction    = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Create printpoint on line %1").arg(lineno), this);
+        deleteAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/edit-delete.svg"),               QString("Delete breakpoint on line %1").arg(lineno), this);
+        enableAction              = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-add.svg"),                  QString("Enable breakpoint on line %1").arg(lineno), this);
+        disableAction             = new QAction(QIcon(":/seer/resources/RelaxLightIcons/list-remove.svg"),               QString("Disable breakpoint on line %1").arg(lineno), this);
+        openExternalEditor        = new QAction(QIcon(":/seer/resources/RelaxLightIcons/document-new.svg"),              QString("Open file in external editor"), this);
 
+        runToLineAction->setEnabled(true);
         createBreakpointAction->setEnabled(true);
         createPrintpointAction->setEnabled(true);
         deleteAction->setEnabled(false);
         enableAction->setEnabled(false);
         disableAction->setEnabled(false);
-        runToLineAction->setEnabled(true);
         openExternalEditor->setEnabled(true);
     }
 
-    addVariableLoggerExpressionAction                   = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerExpressionAction                  = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("\"*&&%1\"").arg(textCursor().selectedText()));
-    addMemoryVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addMemoryAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addMemoryAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addArrayVisualizerAction                            = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addArrayAsteriskVisualizerAction                    = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addArrayAmpersandVisualizerAction                   = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
-    addStructVisualizerAction                           = new QAction(QString("\"%1\"").arg(textCursor().selectedText()));
-    addStructAsteriskVisualizerAction                   = new QAction(QString("\"*%1\"").arg(textCursor().selectedText()));
-    addStructAmpersandVisualizerAction                  = new QAction(QString("\"&&%1\"").arg(textCursor().selectedText()));
+    addVariableLoggerExpressionAction                   = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskExpressionAction           = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addVariableLoggerAmpersandExpressionAction          = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addVariableLoggerAsteriskAmpersandExpressionAction  = new QAction(QString("*&&%1").arg(textCursor().selectedText()));
+    addVariableLoggerObjcExpressionAction               = new QAction(QString("(objc)%1").arg(textCursor().selectedText()));
+    addVariableTrackerExpressionAction                  = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskExpressionAction          = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addVariableTrackerAmpersandExpressionAction         = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addVariableTrackerAsteriskAmpersandExpressionAction = new QAction(QString("*&&%1").arg(textCursor().selectedText()));
+    addVariableTrackerObjcExpressionAction              = new QAction(QString("(objc)%1").arg(textCursor().selectedText()));
+    addMemoryVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addMemoryAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addMemoryAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addArrayVisualizerAction                            = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addArrayAsteriskVisualizerAction                    = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addArrayAmpersandVisualizerAction                   = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addMatrixVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addMatrixAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addMatrixAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
+    addStructVisualizerAction                           = new QAction(QString("%1").arg(textCursor().selectedText()));
+    addStructAsteriskVisualizerAction                   = new QAction(QString("*%1").arg(textCursor().selectedText()));
+    addStructAmpersandVisualizerAction                  = new QAction(QString("&&%1").arg(textCursor().selectedText()));
 
     QMenu menu("Breakpoints", this);
     menu.setTitle("Breakpoints");
+    menu.addAction(runToLineAction);
     menu.addAction(createBreakpointAction);
     menu.addAction(createPrintpointAction);
     menu.addAction(deleteAction);
     menu.addAction(enableAction);
     menu.addAction(disableAction);
-    menu.addAction(runToLineAction);
     menu.addAction(openExternalEditor);
 
     QMenu loggerMenu("Add variable to Logger");
@@ -1144,6 +1094,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     loggerMenu.addAction(addVariableLoggerAsteriskExpressionAction);
     loggerMenu.addAction(addVariableLoggerAmpersandExpressionAction);
     loggerMenu.addAction(addVariableLoggerAsteriskAmpersandExpressionAction);
+    loggerMenu.addAction(addVariableLoggerObjcExpressionAction);
     menu.addMenu(&loggerMenu);
 
     QMenu trackerMenu("Add variable to Tracker");
@@ -1151,6 +1102,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     trackerMenu.addAction(addVariableTrackerAsteriskExpressionAction);
     trackerMenu.addAction(addVariableTrackerAmpersandExpressionAction);
     trackerMenu.addAction(addVariableTrackerAsteriskAmpersandExpressionAction);
+    trackerMenu.addAction(addVariableTrackerObjcExpressionAction);
     menu.addMenu(&trackerMenu);
 
     QMenu memoryVisualizerMenu("Add variable to a Memory Visualizer");
@@ -1165,6 +1117,12 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
     arrayVisualizerMenu.addAction(addArrayAmpersandVisualizerAction);
     menu.addMenu(&arrayVisualizerMenu);
 
+    QMenu matrixVisualizerMenu("Add variable to a Matrix Visualizer");
+    matrixVisualizerMenu.addAction(addMatrixVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAsteriskVisualizerAction);
+    matrixVisualizerMenu.addAction(addMatrixAmpersandVisualizerAction);
+    menu.addMenu(&matrixVisualizerMenu);
+
     QMenu structVisualizerMenu("Add variable to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructVisualizerAction);
     structVisualizerMenu.addAction(addStructAsteriskVisualizerAction);
@@ -1177,6 +1135,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addVariableLoggerAsteriskExpressionAction->setEnabled(false);
         addVariableLoggerAmpersandExpressionAction->setEnabled(false);
         addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(false);
+        addVariableLoggerObjcExpressionAction->setEnabled(false);
         addVariableTrackerExpressionAction->setEnabled(false);
         addVariableTrackerAsteriskExpressionAction->setEnabled(false);
         addVariableTrackerAmpersandExpressionAction->setEnabled(false);
@@ -1187,6 +1146,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(false);
         addArrayAsteriskVisualizerAction->setEnabled(false);
         addArrayAmpersandVisualizerAction->setEnabled(false);
+        addMatrixVisualizerAction->setEnabled(false);
+        addMatrixAsteriskVisualizerAction->setEnabled(false);
+        addMatrixAmpersandVisualizerAction->setEnabled(false);
         addStructVisualizerAction->setEnabled(false);
         addStructAsteriskVisualizerAction->setEnabled(false);
         addStructAmpersandVisualizerAction->setEnabled(false);
@@ -1195,6 +1157,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addVariableLoggerAsteriskExpressionAction->setEnabled(true);
         addVariableLoggerAmpersandExpressionAction->setEnabled(true);
         addVariableLoggerAsteriskAmpersandExpressionAction->setEnabled(true);
+        addVariableLoggerObjcExpressionAction->setEnabled(true);
         addVariableTrackerExpressionAction->setEnabled(true);
         addVariableTrackerAsteriskExpressionAction->setEnabled(true);
         addVariableTrackerAmpersandExpressionAction->setEnabled(true);
@@ -1205,6 +1168,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         addArrayVisualizerAction->setEnabled(true);
         addArrayAsteriskVisualizerAction->setEnabled(true);
         addArrayAmpersandVisualizerAction->setEnabled(true);
+        addMatrixVisualizerAction->setEnabled(true);
+        addMatrixAsteriskVisualizerAction->setEnabled(true);
+        addMatrixAmpersandVisualizerAction->setEnabled(true);
         addStructVisualizerAction->setEnabled(true);
         addStructAsteriskVisualizerAction->setEnabled(true);
         addStructAmpersandVisualizerAction->setEnabled(true);
@@ -1215,6 +1181,15 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
     // Do nothing.
     if (action == 0) {
+        return;
+    }
+
+    // Handle running to a line number.
+    if (action == runToLineAction) {
+
+        // Emit the runToLine signal.
+        emit runToLine(fullname(), lineno);
+
         return;
     }
 
@@ -1250,8 +1225,19 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
             return;
         }
 
+        // Build a printpoint specification.
+        QString type       = dlg.dprintfType();
+        QString function   = dlg.dprintfFunction();
+        QString channel    = dlg.dprintfChannel();
+        QString parameters = dlg.printpointParameters();
+
+        // If nothing, just return.
+        if (parameters == "" || type == "") {
+            return;
+        }
+
         // Emit the create breakpoint signal.
-        emit insertPrintpoint(dlg.printpointText());
+        emit insertPrintpoint(type, function, channel, parameters);
 
         return;
     }
@@ -1279,15 +1265,6 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the disable breakpoint signal.
         emit disableBreakpoints(QString("%1").arg(breakpointLineToNumber(lineno)));
-
-        return;
-    }
-
-    // Handle running to a line number.
-    if (action == runToLineAction) {
-
-        // Emit the runToLine signal.
-        emit runToLine(fullname(), lineno);
 
         return;
     }
@@ -1375,6 +1352,17 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
+    // Handle adding a variable to log.
+    if (action == addVariableLoggerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableLoggerExpression(QString("(objc)") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
     // Handle adding a variable to track.
     if (action == addVariableTrackerExpressionAction) {
 
@@ -1423,12 +1411,24 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         return;
     }
 
+    // Handle adding a variable to track.
+    if (action == addVariableTrackerObjcExpressionAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addVariableTrackerExpression(QString("(objc)") + textCursor().selectedText());
+            emit refreshVariableTrackerValues();
+        }
+
+        return;
+    }
+
     // Handle adding memory to visualize.
     if (action == addMemoryVisualizerAction) {
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(textCursor().selectedText());
+            emit addMemoryVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1439,7 +1439,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("*") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1450,7 +1450,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addMemoryVisualize(QString("&") + textCursor().selectedText());
+            emit addMemoryVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1461,7 +1461,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(textCursor().selectedText());
+            emit addArrayVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1472,7 +1472,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("*") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1483,7 +1483,40 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addArrayVisualize(QString("&") + textCursor().selectedText());
+            emit addArrayVisualizer(QString("&") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAsteriskVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("*") + textCursor().selectedText());
+        }
+
+        return;
+    }
+
+    // Handle adding array to visualize.
+    if (action == addMatrixAmpersandVisualizerAction) {
+
+        // Emit the signals.
+        if (textCursor().selectedText() != "") {
+            emit addMatrixVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1494,7 +1527,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(textCursor().selectedText());
+            emit addStructVisualizer(textCursor().selectedText());
         }
 
         return;
@@ -1505,7 +1538,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("*") + textCursor().selectedText());
+            emit addStructVisualizer(QString("*") + textCursor().selectedText());
         }
 
         return;
@@ -1516,7 +1549,7 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
 
         // Emit the signals.
         if (textCursor().selectedText() != "") {
-            emit addStructVisualize(QString("&") + textCursor().selectedText());
+            emit addStructVisualizer(QString("&") + textCursor().selectedText());
         }
 
         return;
@@ -1681,6 +1714,55 @@ const QString& SeerEditorWidgetSourceArea::externalEditorCommand () {
     return _externalEditorCommand;
 }
 
+void SeerEditorWidgetSourceArea::setAutoSourceReload (bool flag) {
+
+    _autoSourceReload = flag;
+}
+
+bool SeerEditorWidgetSourceArea::autoSourceReload () const {
+
+    return _autoSourceReload;
+}
+
+void SeerEditorWidgetSourceArea::eraseColorCurrentLine (int lineno) {
+
+    // Erase color of this line
+    QTextCharFormat lineFormat;
+    lineFormat = highlighterSettings().get("Text");
+
+    // Create a selection at the cursor.
+    QTextBlock  block  = document()->findBlockByLineNumber(lineno-1);
+    QTextCursor cursor = textCursor();
+
+    cursor.setPosition(block.position());
+
+    QTextEdit::ExtraSelection selection;
+    selection.format.setForeground(lineFormat.foreground());
+    selection.format.setBackground(lineFormat.background());
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = cursor;
+    selection.cursor.clearSelection();
+
+    // Add it to the extra selection list.
+    _currentLinesExtraSelections.append(selection);
+
+    // Refresh all the extra selections.
+    refreshExtraSelections();
+}
+
+// Read current position in the source area: file name, line, column of cursor and first displayed line
+SeerEditorWidgetSourceArea::SeerCurrentFile SeerEditorWidgetSourceArea::readCurrentPosition() {
+
+    SeerCurrentFile info;
+    info.file               = QFileInfo(file()).fileName();     // extract file name from full path
+    info.fullname           = fullname();
+    info.cursorRow          = currentLine();
+    info.cursorCol          = currentColumn();
+    info.firstDisplayLine   = firstDisplayLine();
+
+    return info;
+}
+
 void SeerEditorWidgetSourceArea::handleText (const QString& text) {
 
     if (text.startsWith("*stopped")) {
@@ -1733,6 +1815,8 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
         if (id_text.toInt() == _selectedExpressionId) {
 
             _selectedExpressionValue = Seer::filterEscapes(Seer::parseFirst(text, "value=", '"', '"', false));
+
+            showExpressionTooltip();
         }
 
         return;
@@ -1791,6 +1875,7 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
+    _sourceHighlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
 
         if (highlighterEnabled()) {
@@ -1971,55 +2056,174 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
     QWidget::mouseReleaseEvent(event);
 }
 
-//
-// MiniMap Area.
-//
-
-SeerEditorWidgetSourceMiniMapArea::SeerEditorWidgetSourceMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
+/***********************************************************************************************************************
+ *  Functions for mouse navigation feature                                                                             *
+ **********************************************************************************************************************/
+void SeerEditorWidgetSourceArea::mousePressEvent(QMouseEvent *event)
+{
+    // This part is for mouse navigation feature 
+    if (event->button() == Qt::XButton1 || event->button() == Qt::XButton2) {
+        // Avoid the default back/forward action
+        _ignoreThumbMouseEvent ++;
+        SeerCurrentFile firstInfo = readCurrentPosition();
+        // _ignoreThumbMouseEvent will incremented in mousePressEvent when thumb mouse button is pressed but it may not be decremented
+        // if user just click the thumb mouse button without moving the cursor. So here we check if the position is the same as last time, 
+        // which means cursor didn't move, then we reset _ignoreThumbMouseEvent to 0 to avoid blocking future events.
+        QTimer::singleShot(30, this, [this, firstInfo]() {      // let's give 30 ms for cursor to move to new position
+            SeerCurrentFile secondInfo = readCurrentPosition();
+            if (firstInfo == secondInfo) {                      // cursor didn't move
+                _ignoreThumbMouseEvent = 0;                     // reset to 0
+            }
+        } );
+    }
+    // This part is for Go to definition (Ctrl + Click) feature
+    if (event->button() == Qt::LeftButton && _altHeld) {
+        if (_wordUnderCursor != "")
+        {
+            QApplication::restoreOverrideCursor();
+            signalGotoDefinition(_wordUnderCursor);
+            event->ignore();        // If we don't ignore the event, the cursor will move to that position, which is not desired
+            return;
+        }
+    }
+    QPlainTextEdit::mousePressEvent(event);
 }
 
-QSize SeerEditorWidgetSourceMiniMapArea::sizeHint () const {
-    return QSize(_editorWidget->miniMapAreaWidth(), 0);
+void SeerEditorWidgetSourceArea::handleCursorPositionChanged()
+{
+    // Emit signal to SeerEditorManagerWidget.cpp and save position
+    // Read current position, deploy a timer
+    SeerCurrentFile firstInfo = readCurrentPosition();
+    if (_ignoreThumbMouseEvent > 0)
+    {
+        _ignoreThumbMouseEvent --;
+        return;
+    }
+
+    QTimer::singleShot(2000, this, [this, firstInfo]() {
+        SeerCurrentFile secondInfo = readCurrentPosition();
+        if (firstInfo == secondInfo) {
+            emit addToMouseNavigation(firstInfo);
+        }
+    } );
 }
 
-void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
-    _editorWidget->miniMapAreaPaintEvent(event);
+/***********************************************************************************************************************
+ * Go to definition (F12) feature                                                                                      *
+ **********************************************************************************************************************/
+void SeerEditorWidgetSourceArea::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Alt)
+    {
+        _altHeld = true;
+    }
+    QPlainTextEdit::keyPressEvent(event);
 }
 
-void SeerEditorWidgetSourceMiniMapArea::mouseDoubleClickEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseDoubleClickEvent(event);
+void SeerEditorWidgetSourceArea::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Alt)
+    {
+        _altHeld = false;
+    }
+    QPlainTextEdit::keyReleaseEvent(event);
 }
 
-void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
-
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mouseMoveEvent(event);
+bool SeerEditorWidgetSourceArea::isOverWord(const QPoint &pos)
+{
+    QTextCursor cursor = cursorForPosition(pos);
+    cursor.select(QTextCursor::WordUnderCursor);
+    return !cursor.selectedText().isEmpty();
 }
 
-void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
+QString SeerEditorWidgetSourceArea::wordUnderCursor(const QPoint &pos) const
+{
+    int leftMarginOffset = 0;
+    QMargins margins = viewportMargins();
+    QPoint adjustedPos = pos;
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
-
-    qDebug() << cursor.blockNumber()+1;
-
-    QWidget::mousePressEvent(event);
+    // The correct position to get the word under cursor should subtract the left margin 
+    // offset (breakpoint area and line number area)
+    leftMarginOffset = margins.left();
+    adjustedPos.setX(pos.x() - leftMarginOffset);
+    QTextCursor cursor = cursorForPosition(adjustedPos);
+    cursor.select(QTextCursor::WordUnderCursor);
+    return cursor.selectedText();
 }
 
-void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
+void SeerEditorWidgetSourceArea::updateCursor(const QPoint &pos)
+{
+    // Why not QApplication::setOverrideCursor()? Because QApplication::setOverrideCursor uses internal stack
+    // It causes delay and sometimes the cursor won't change back to normal when we want it to. 
+    // In short, QApplication::setOverrideCursor is global and not real time
+    // In contrary, viewport()->setCursor() is local and real time, apply only for that widget, in this case, the text area 
+    QPoint localPos = mapFromGlobal(pos);
+    if (!_altHeld) {
+        viewport()->setCursor(Qt::IBeamCursor);
+        _wordUnderCursor = "";
+        return;
+    }
+    if (!hasFocus())
+        return;
+    _wordUnderCursor = wordUnderCursor(localPos);
+    if (isValidIdentifier(_wordUnderCursor))
+    {
+        viewport()->setCursor(Qt::PointingHandCursor);
+    } else {
+        viewport()->setCursor(Qt::IBeamCursor);
+        _wordUnderCursor = "";
+    }
+}
 
-    QTextCursor  cursor = _editorWidget->cursorForPosition(event->pos());
+// Check text and decide if that text is valid identifier (function, variable, type name)
+bool SeerEditorWidgetSourceArea::isValidIdentifier(const QString& text) 
+{
+    static const QSet<QString> keywords = {
+        // Add your C and C++ keywords as QString literals here
+        "auto", "break", "case", "char", "const", "continue", "default", "do", "double",
+        "else", "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long",
+        "register", "restrict", "return", "short", "signed", "sizeof", "static", "struct",
+        "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "_Alignas",
+        "_Alignof", "_Atomic", "_Bool", "_Complex", "_Generic", "_Imaginary", "_Noreturn",
+        "_Static_assert", "_Thread_local",
 
-    qDebug() << cursor.blockNumber()+1;
+        "alignas", "alignof", "and", "and_eq", "asm", "bitand", "bitor", "bool", "catch",
+        "char16_t", "char32_t", "class", "compl", "const_cast", "constexpr", "decltype",
+        "delete", "dynamic_cast", "explicit", "export", "false", "friend", "mutable", "namespace",
+        "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", "or_eq", "private",
+        "protected", "public", "reinterpret_cast", "static_assert", "static_cast", "template",
+        "this", "thread_local", "throw", "true", "try", "typeid", "typename", "using",
+        "virtual", "wchar_t", "xor", "xor_eq"
+    };
 
-    QWidget::mouseReleaseEvent(event);
+    if (text.isEmpty())
+        return false;
+
+    if (keywords.contains(text))
+        return false;
+
+    QChar firstChar = text[0];
+    if (!firstChar.isLetter() && firstChar != '_')
+        return false;
+
+    for (int i = 1; i < text.size(); ++i) {
+        QChar ch = text[i];
+        if (!ch.isLetterOrNumber() && ch != '_')
+            return false;
+    }
+
+    return true;
+}
+
+// When F12 is pressed, try to look for the word under cursor, if it's a valid identifier then emit signalGotoDefinition
+void SeerEditorWidgetSourceArea::handleGotoDefinition() {
+
+    QTextCursor cursor = textCursor();
+    cursor.select(QTextCursor::WordUnderCursor);
+    QString wordUnderCursor = cursor.selectedText();
+
+    if (isValidIdentifier(wordUnderCursor)) {
+        emit signalGotoDefinition(wordUnderCursor);
+    }
 }
 

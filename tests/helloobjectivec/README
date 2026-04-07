@@ -1,0 +1,8 @@
+
+Setup the GNUStep environment.
+
+    $ source /usr/share/GNUstep/Makefiles/GNUstep.sh
+
+    $ export CC=/usr/bin/clang
+    $ export CXX=/usr/bin/clang++
+

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerRegisterValuesBrowserWidget.h"
 #include "SeerRegisterEditValueDialog.h"
 #include "SeerRegisterProfileDialog.h"
@@ -13,7 +17,6 @@
 #include <QtGui/QClipboard>
 #include <QtCore/QSettings>
 #include <QtCore/QVector>
-#include <QtCore/QByteArray>
 #include <QtCore/QDebug>
 
 
@@ -67,6 +70,7 @@ SeerRegisterValuesBrowserWidget::SeerRegisterValuesBrowserWidget (QWidget* paren
     preferencesToolButton->setPopupMode(QToolButton::InstantPopup);
 
     // Connect things.
+    QObject::connect(registersTreeWidget,               &QTreeWidget::itemDoubleClicked,                           this, &SeerRegisterValuesBrowserWidget::handleItemDoubleClicked);
     QObject::connect(registersTreeWidget,               &QTreeWidget::itemEntered,                                 this, &SeerRegisterValuesBrowserWidget::handleItemEntered);
     QObject::connect(registersTreeWidget,               &QTreeWidget::customContextMenuRequested,                  this, &SeerRegisterValuesBrowserWidget::handleContextMenu);
     QObject::connect(editDelegate,                      &QAllowEditDelegate::editingFinished,                      this, &SeerRegisterValuesBrowserWidget::handleIndexEditingFinished);
@@ -116,22 +120,22 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
         int i = 0;
         for ( const auto& name_text : name_list  ) {
 
-            // XXX Commenting this out will get extra registers.
-            // XXX Are they valid?
-            if (name_text == "") {
-                continue;
+            // Some register names come back as "". Not sure why or how.
+            // We'll skip them but we need to still increment the
+            // register id number. Otherwise we may update the wrong
+            // register because we search for the register by its id.
+            if (name_text != "") {
+                QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
+                topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
+                topItem->setText(0, QString::number(i));
+                topItem->setText(1, name_text);
+                topItem->setText(2, "");
+                topItem->setText(3, "new");
+
+                topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
+
+                registersTreeWidget->addTopLevelItem(topItem);
             }
-
-            QTreeWidgetItem* topItem = new SeerRegisterTreeWidgetItem;
-            topItem->setFlags(topItem->flags() | Qt::ItemIsEditable);
-            topItem->setText(0, QString::number(i));
-            topItem->setText(1, name_text);
-            topItem->setText(2, "");
-            topItem->setText(3, "new");
-
-            topItem->setFont(2, QFontDatabase::systemFont(QFontDatabase::FixedFont));
-
-            registersTreeWidget->addTopLevelItem(topItem);
 
             i++;
         }
@@ -204,11 +208,6 @@ void SeerRegisterValuesBrowserWidget::handleText (const QString& text) {
 
         qDeleteAll(matches);
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        registersTreeWidget->clear();
-
-        _needsRegisterNames = true;
-
     }else{
         // Ignore others.
     }
@@ -244,6 +243,14 @@ void SeerRegisterValuesBrowserWidget::handleStoppingPointReached () {
     emit refreshRegisterValues(fmt);
 }
 
+void SeerRegisterValuesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    registersTreeWidget->clear();
+
+    _needsRegisterNames = true;
+}
+
 void SeerRegisterValuesBrowserWidget::refresh () {
 
     // Force new names.
@@ -254,6 +261,13 @@ void SeerRegisterValuesBrowserWidget::refresh () {
 
     emit refreshRegisterNames();
     emit refreshRegisterValues(fmt);
+}
+
+void SeerRegisterValuesBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
+
+    Q_UNUSED(column);
+
+    _editItem(item);
 }
 
 void SeerRegisterValuesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
@@ -294,36 +308,8 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
     // Do register edit.
     if (action == editAction) {
 
-        // Bring up the register edit dialog.
-        SeerRegisterEditValueDialog dlg(this);
+        _editItem(item);
 
-        dlg.set(item->text(1), item->text(2));
-
-        int ret = dlg.exec();
-
-        if (ret == 0) {
-            return;
-        }
-
-        // The register name could be changed, as well as the value.
-        QString name  = dlg.nameText();
-        QString value = dlg.valueText();
-
-        if (name == "") {
-            return;
-        }
-
-        if (value == "") {
-            return;
-        }
-
-        // Get the format.
-        QString fmt = registerFormatComboBox->currentData().toString();
-
-        // Emit the signal to change the register to the new value.
-        emit setRegisterValue(fmt, name, value);
-
-        return;
     }
 
     // Get selected tree items.
@@ -350,11 +336,11 @@ void SeerRegisterValuesBrowserWidget::handleContextMenu (const QPoint& pos) {
 
     for (int i=0; i<items.size(); i++) {
 
-        if (i != 0) {
-            text += '\n';
+        if (items[i]->isHidden() == true) {
+            continue;
         }
 
-        text += items[i]->text(1) + ":" + items[i]->text(2);
+        text += items[i]->text(1) + ":" + items[i]->text(2) + '\n';
     }
 
     clipboard->setText(text, QClipboard::Clipboard);
@@ -692,7 +678,7 @@ bool SeerRegisterValuesBrowserWidget::readProfileSettings (const QString& profil
 
 void SeerRegisterValuesBrowserWidget::deleteProfileSettings (const QString& profileName) {
 
-    QSettings   settings;
+    QSettings settings;
 
     settings.beginGroup("registerprofile_" + profileName); {
         settings.remove(""); //removes the group, and all it keys
@@ -704,5 +690,39 @@ void SeerRegisterValuesBrowserWidget::showEvent (QShowEvent* event) {
     QWidget::showEvent(event);
 
     refresh();
+}
+
+void SeerRegisterValuesBrowserWidget::_editItem (QTreeWidgetItem* item) {
+
+        // Bring up the register edit dialog.
+        SeerRegisterEditValueDialog dlg(this);
+
+        dlg.set(item->text(1), item->text(2));
+
+        int ret = dlg.exec();
+
+        if (ret == 0) {
+            return;
+        }
+
+        // The register name could be changed, as well as the value.
+        QString name  = dlg.nameText();
+        QString value = dlg.valueText();
+
+        if (name == "") {
+            return;
+        }
+
+        if (value == "") {
+            return;
+        }
+
+        // Get the format.
+        QString fmt = registerFormatComboBox->currentData().toString();
+
+        // Emit the signal to change the register to the new value.
+        emit setRegisterValue(fmt, name, value);
+
+        return;
 }
 

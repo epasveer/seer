@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "ui_SeerRegisterValuesBrowserWidget.h"
@@ -22,9 +26,11 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
     public slots:
         void                        handleText                              (const QString& text);
         void                        handleStoppingPointReached              ();
+        void                        handleSessionTerminated                 ();
         void                        refresh                                 ();
 
     protected slots:
+        void                        handleItemDoubleClicked                 (QTreeWidgetItem* item, int column);
         void                        handleItemEntered                       (QTreeWidgetItem* item, int column);
         void                        handleContextMenu                       (const QPoint& pos);
         void                        handleIndexEditingFinished              (const QModelIndex& index);
@@ -50,12 +56,12 @@ class SeerRegisterValuesBrowserWidget : public QWidget, protected Ui::SeerRegist
         void                        deleteProfileSettings                   (const QString& profileName);
 
     private:
+        void                        _editItem                               (QTreeWidgetItem* item);
         bool                        _needsRegisterNames;
         QStringList                 _registerNames;
         QVector<bool>               _registerEnabled;
         QAction*                    _newProfileAction;
         QAction*                    _modifyProfileAction;
         QAction*                    _deleteProfileAction;
-
 };
 

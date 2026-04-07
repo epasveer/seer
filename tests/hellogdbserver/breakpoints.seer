@@ -1,0 +1,4 @@
+break -source /nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver.c -line 127
+break -source /nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver.c -line 116
+catch rethrow
+awatch x

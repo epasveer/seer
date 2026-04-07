@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -19,6 +23,7 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
 
     private slots:
         void                handleItemDoubleClicked     (QTreeWidgetItem* item, int column);
@@ -42,6 +47,7 @@ class SeerBreakpointsBrowserWidget : public QWidget, protected Ui::SeerBreakpoin
         void                insertBreakpoint            (QString breakpoint);
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedAddress             (QString address);
+        void                maybeSelectedAddress        (QString file, QString fullname, QString address);
 
     protected:
         void                showEvent                   (QShowEvent* event);

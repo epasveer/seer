@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerAdaExceptionsBrowserWidget.h"
 #include "SeerCatchpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -87,6 +91,12 @@ void SeerAdaExceptionsBrowserWidget::handleText (const QString& text) {
     QApplication::restoreOverrideCursor();
 }
 
+void SeerAdaExceptionsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    adaExceptionsTreeWidget->clear();
+}
+
 void SeerAdaExceptionsBrowserWidget::handleSearchLineEdit (const QString& text) {
 
     // Set everything to a normal font. If there is no search text, unhide everything.
@@ -154,7 +164,7 @@ void SeerAdaExceptionsBrowserWidget::handleAddCatchpointToolButtonClicked () {
     QTreeWidgetItem* item = adaExceptionsTreeWidget->currentItem();
 
     if (item != 0) {
-        dlg.setNameText(item->text(0));
+        dlg.setArguments(item->text(0));
     }
 
     int ret = dlg.exec();

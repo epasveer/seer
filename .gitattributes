@@ -8,6 +8,7 @@ images/         export-ignore
 notes/          export-ignore
 scripts/        export-ignore
 tests/          export-ignore
+flatpak/        export-ignore
 
 notes/Theme_dark.png   export-ignore
 notes/Theme_light.png  export-ignore

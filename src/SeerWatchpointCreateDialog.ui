@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>251</height>
+    <width>403</width>
+    <height>256</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Expression</string>
+         <string>Variable/Expression</string>
         </property>
        </widget>
       </item>

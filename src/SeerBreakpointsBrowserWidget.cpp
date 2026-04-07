@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerBreakpointsBrowserWidget.h"
 #include "SeerBreakpointCreateDialog.h"
 #include "SeerUtl.h"
@@ -130,7 +134,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 // Then morph that list into a map, delimited by a '='.
                 // Remove bookends.
                 //
-                QStringList items = Seer::parseCommaList(bkpt_text);
+                QStringList items = Seer::parseCommaList(bkpt_text, '[', ']');
 
                 QMap<QString,QString> keyValueMap = Seer::createKeyValueMap(items, '=');
 
@@ -147,7 +151,7 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 QString cond_text              = Seer::filterBookends(keyValueMap["cond"],              '"', '"');
                 QString times_text             = Seer::filterBookends(keyValueMap["times"],             '"', '"');
                 QString ignore_text            = Seer::filterBookends(keyValueMap["ignore"],            '"', '"');
-                QString script_text            = Seer::filterBookends(keyValueMap["script"],            '{', '}');
+                QString script_text            = Seer::filterBookends(keyValueMap["script"],            '[', ']');
                 QString original_location_text = Seer::filterBookends(keyValueMap["original-location"], '"', '"');
 
                 // Only look for 'breakpoint' type break points.
@@ -183,9 +187,6 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        // Ignore.
-
     }else{
         // Ignore others.
     }
@@ -219,6 +220,12 @@ void SeerBreakpointsBrowserWidget::handleStoppingPointReached () {
     emit refreshBreakpointsList();
 }
 
+void SeerBreakpointsBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    breakpointsTreeWidget->clear();
+}
+
 void SeerBreakpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
@@ -226,7 +233,7 @@ void SeerBreakpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
     int lineno = item->text(8).toInt();
 
     emit selectedFile(item->text(6), item->text(7), lineno);
-    emit selectedAddress(item->text(4));
+    emit maybeSelectedAddress(item->text(6), item->text(7), item->text(4));
 }
 
 void SeerBreakpointsBrowserWidget::handleRefreshToolButton () {

@@ -1,9 +1,14 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QButtonGroup>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtCore/QJsonDocument>
 
 #include "ui_SeerDebugDialog.h"
 
@@ -14,6 +19,9 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
     public:
         explicit SeerDebugDialog (QWidget* parent = 0);
        ~SeerDebugDialog ();
+
+        // Reset all
+        void                    reset                                           ();
 
         // For any run mode.
         void                    setExecutableName                               (const QString& executableName);
@@ -36,8 +44,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         QString                 breakpointFunctionName                          () const;
         void                    setBreakpointSourceName                         (const QString& sourceFilenameAndLineno);
         QString                 breakpointSourceName                            () const;
-        void                    setShowAssemblyTab                              (bool flag);
-        bool                    showAssemblyTab                                 () const;
+        void                    setShowAssemblyTabMode                          (const QString& mode);
+        QString                 showAssemblyTabMode                             () const;
         void                    setRandomizeStartAddress                        (bool flag);
         bool                    randomizeStartAddress                           () const;
         void                    setNonStopMode                                  (bool flag);
@@ -54,6 +62,11 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         // Connectect to a GDB server. "connect".
         void                    setConnectHostPort                              (const QString& connectHostPort);
         QString                 connectHostPort                                 () const;
+        void                    setConnectRemoteTargetType                      (const QString& type);
+        QString                 connectRemoteTargetType                         () const;
+        void                    setConnectGdbserverDebug                        (bool enable);
+        bool                    connectGdbserverDebug                           () const;
+
 
         // Connectect to a RR server. "rr".
         void                    setRRTraceDirectory                             (const QString& rrTraceDirectory);
@@ -72,6 +85,11 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    setProjectFilename                              (const QString& filename);
         QString                 projectFilename                                 () const;
         void                    loadProject                                     (const QString& filename, bool notify);
+        void                    loadDefaultProjectSettings                      ();
+
+        // Make a json document of the current debug dialog settings.
+        QJsonDocument           makeJsonDoc                                     () const;
+        bool                    loadJsonDoc                                     (const QJsonDocument& jsonDoc, const QString& filename);
 
     protected slots:
         void                    handleExecutableNameToolButton                  ();
@@ -85,6 +103,8 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleLoadProjectToolButton                     ();
         void                    handleSaveProjectToolButton                     ();
         void                    handleRunModeChanged                            (int id);
+        void                    handleLaunchButtonClicked                       ();
+        void                    handleResetButtonClicked                        (QAbstractButton* button);
 
     private slots:
         void                    handleHelpModeToolButtonClicked                 ();
@@ -97,6 +117,7 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
     protected:
         void                    writeSettings                                   ();
         void                    readSettings                                    ();
+        void                    writeDefaultProjectSettings                     (const QJsonDocument& document);
         void                    resizeEvent                                     (QResizeEvent* event);
 
     private:

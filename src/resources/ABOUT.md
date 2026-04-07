@@ -4,7 +4,7 @@ Version VERSIONNUMBER
 
 Seer, a simple and easy-to-use gui frontend to the GDB debugger, having many features.  
 
-Copyright (C) 2021-2024 &nbsp;&nbsp; Ernie Pasveer.  
+Copyright (C) 2021-2025 &nbsp;&nbsp; Ernie Pasveer.  
 &nbsp;  
 
 &nbsp;&nbsp;&nbsp;&nbsp;[https://github.com/epasveer/seer](https://github.com/epasveer/seer)  
@@ -31,7 +31,7 @@ The main Seer icon and other icons.
 |Icon <a href="https://icon-icons.com/icon/delete-remove/175783"                                         title="">hide.png</a>           |  Created by <a href="https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/"    title="">ferdi setiadi</a>           | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
 |Icon <a href="https://icon-icons.com/icon/resize-maximize/175765"                                       title="">maximize.png</a>       |  Created by <a href="https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/"    title="">ferdi setiadi</a>           | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
 |Icon <a href="https://icon-icons.com/icon/minimize-window/175768"                                       title="">minimize.png</a>       |  Created by <a href="https://icon-icons.com/users/sr18GsT8hXb37mrJn4kOU/icon-sets/"    title="">ferdi setiadi</a>           | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
-|Icon <a href="https://icon-icons.com/icon/attache-attached-attachement-clip-complement/113448"          title="">attach.png</a>         |  Created by <a href="https://icon-icons.com/users/NXDGlLPTpYrqHz13UzsZ4/icon-sets/"    title="">Unknown</a>                 | (License <a hreg="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
+|Icon <a href="https://icon-icons.com/icon/attache-attached-attachement-clip-complement/113448"          title="">attach.png</a>         |  Created by <a href="https://icon-icons.com/users/NXDGlLPTpYrqHz13UzsZ4/icon-sets/"    title="">Unknown</a>                 | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
 |Icon <a href="https://icon-icons.com/icon/face-glasses-sunglasses/107950"                               title="">style.png</a>          |  Created by <a href="https://icon-icons.com/users/7VZI9qW3el29z8Ka5fjmo/icon-sets/"    title="">Free Icons</a>              | (License <a href="https://creativecommons.org/licenses/by/4.0/legalcode" title="">CC4.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/asm-file-document-icon-2598539/"                          title="">assembly.svg</a>       |  Created by <a href="https://thenounproject.com/iyikon/"                               title="">iyikon</a>                  | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/configuration-1115171/"                                   title="">configuration.sgv</a>  |  Created by <a href="https://thenounproject.com/tomas.knopp/"                          title="">tomas.knopp</a>             | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
@@ -39,6 +39,7 @@ The main Seer icon and other icons.
 |Icon <a href="https://thenounproject.com/icon/binary-data-search-4065152/"                              title="">memory.svg</a>         |  Created by <a href="https://thenounproject.com/mudassar.hussain323/"                  title="">mudassar.hussain323</a>     | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/cpp-file-252779/"                                         title="">source.svg</a>         |  Created by <a href="https://thenounproject.com/kozinn/"                               title="">kozinn</a>                  | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/interruption-4417639/"                                    title="">stop.sgv</a>           |  Created by <a href="https://thenounproject.com/andre.buand10/"                        title="">andre.buand10</a>           | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
+|Icon <a href="https://thenounproject.com/icon/preference-2331720/"                                      title="">preferences.sgv</a>    |  Created by <a href="https://thenounproject.com/creator/blairwolf/"                    title="">blairwolf</a>               | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 
 &nbsp;  
 &nbsp;  

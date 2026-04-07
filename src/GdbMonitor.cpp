@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "GdbMonitor.h"
 #include <QtCore/QtCore>
 #include <QtCore/QProcess>
@@ -85,8 +89,10 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
         qCDebug(LC) << text;
 
-        // Start broadcasting it around.
-        emit allTextOutput(text);
+#if SEER_GDB_LOGOUT == 1
+        // Start broadcasting it around. For debugging
+        emit allTextOutput("From GdbMonitor: " + text + "\n");
+#endif
 
         if (text[0] == '~') {
             emit tildeTextOutput(text);

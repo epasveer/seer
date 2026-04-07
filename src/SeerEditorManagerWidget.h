@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerEditorWidgetAssembly.h"
@@ -9,6 +13,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QStack>
 
 #include "ui_SeerEditorManagerWidget.h"
 
@@ -21,6 +26,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
        ~SeerEditorManagerWidget ();
 
         void                                            dumpEntries                         () const;
+        SeerEditorManagerEntries&                       entries                             ();
+        const SeerEditorManagerEntries&                 entries                             () const;
         bool                                            hasEntry                            (const QString& fullname) const;
         SeerEditorManagerEntries::iterator              addEntry                            (const QString& fullname, const QString& file);
         SeerEditorManagerEntries::iterator              findEntry                           (const QString& fullname);
@@ -31,10 +38,13 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries::const_iterator        endEntry                            () const;
         void                                            deleteEntry                         (SeerEditorManagerEntries::iterator i);
 
+        void                                            maybeShowAssembly                   ();
         void                                            showAssembly                        ();
         SeerEditorWidgetAssembly*                       assemblyWidgetTab                   ();
         void                                            setKeepAssemblyTabOnTop             (bool flag);
         bool                                            keepAssemblyTabOnTop                () const;
+        void                                            setShowAssemblyTabOnStartupMode     (const QString& mode);
+        QString                                         showAssemblyTabOnStartupMode        () const;
         void                                            setAssemblyShowAddressColumn        (bool flag);
         bool                                            assemblyShowAddressColumn           () const;
         void                                            setAssemblyShowOffsetColumn         (bool flag);
@@ -63,6 +73,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         int                                             editorTabSize                       () const;
         void                                            setEditorExternalEditorCommand      (const QString& externalEditorCommand);
         const QString&                                  editorExternalEditorCommand         () const;
+        void                                            setEditorAutoSourceReload           (bool flag);
+        bool                                            editorAutoSourceReload              () const;
 
     public slots:
         void                                            handleText                          (const QString& text);
@@ -70,8 +82,9 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTabCurrentChanged             (int index);
         void                                            handleOpenFile                      (const QString& file, const QString& fullname, int lineno);
         void                                            handleOpenAddress                   (const QString& address);
+        void                                            handleMaybeOpenAddress              (const QString& file, const QString& fullname, const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
-        void                                            handleInsertPrintpoint              (QString printpoint);
+        void                                            handleInsertPrintpoint              (QString type, QString function, QString channel, QString parameters);
         void                                            handleDeleteBreakpoints             (QString breakpoints);
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
@@ -79,16 +92,24 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleRefreshBreakpointsStackFrames ();
         void                                            handleRunToLine                     (QString fullname, int lineno);
         void                                            handleRunToAddress                  (QString address);
+        void                                            handleRunToSelectedLine             ();
         void                                            handleAddVariableLoggerExpression   (QString expression);
         void                                            handleAddVariableTrackerExpression  (QString expression);
         void                                            handleRefreshVariableTrackerValues  ();
         void                                            handleEvaluateVariableExpression    (int expressionid, QString expression);
         void                                            handleAddMemoryVisualizer           (QString expression);
         void                                            handleAddArrayVisualizer            (QString expression);
+        void                                            handleAddMatrixVisualizer           (QString expression);
         void                                            handleAddStructVisualizer           (QString expression);
         void                                            handleRequestAssembly               (QString address);
         void                                            handleRequestSourceAndAssembly      (QString address);
         void                                            handleAssemblyConfigChanged         ();
+        void                                            handleSessionTerminated             ();
+        void                                            handleGdbStateChanged               ();
+        void                                            handleAddToMouseNavigation          (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
+
+    protected:
+        void                                            mousePressEvent                     (QMouseEvent *event) override;
 
     private slots:
         void                                            handleFileOpenToolButtonClicked     ();
@@ -96,12 +117,13 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleTextSearchToolButtonClicked   ();
         void                                            handleHelpToolButtonClicked         ();
         void                                            handleAddAlternateDirectory         (QString path);
+        void                                            gotoDefinitionForwarder             (const QString& identifier);
 
     signals:
         void                                            refreshBreakpointsList              ();
         void                                            refreshStackFrames                  ();
         void                                            insertBreakpoint                    (QString breakpoint);
-        void                                            insertPrintpoint                    (QString printpoint);
+        void                                            insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
         void                                            deleteBreakpoints                   (QString breakpoints);
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);
@@ -112,13 +134,18 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            addVariableTrackerExpression        (QString expression);
         void                                            refreshVariableTrackerValues        ();
         void                                            evaluateVariableExpression          (int expressionid, QString expression);
-        void                                            addMemoryVisualize                  (QString expression);
-        void                                            addArrayVisualize                   (QString expression);
-        void                                            addStructVisualize                  (QString expression);
+        void                                            addMemoryVisualizer                 (QString expression);
+        void                                            addArrayVisualizer                  (QString expression);
+        void                                            addMatrixVisualizer                 (QString expression);
+        void                                            addStructVisualizer                 (QString expression);
         void                                            requestAssembly                     (QString address);
         void                                            requestSourceAndAssembly            (QString address);
         void                                            showMessage                         (QString message, int time);
         void                                            assemblyTabShown                    (bool shown);
+        void                                            gotoDefinitionForward               (const QString& identifier, bool ignoreErrors = false);
+        void                                            refreshFunctionList                 (int id, const QString& functionRegex);
+        void                                            refreshVariableList                 (int id, const QString& staticNameRegex, const QString& staticTypeRegex);
+        void                                            refreshTypeList                     (int id, const QString& typeRegex);
 
     private:
         SeerEditorWidgetSource*                         currentEditorWidgetTab              ();
@@ -128,6 +155,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            deleteEditorWidgetTab               (int index);
         SeerEditorWidgetAssembly*                       createAssemblyWidgetTab             ();
         void                                            deleteAssemblyWidgetTab             ();
+        void                                            handleOpenFileWithDetails           (const QString& file, const QString& fullname, int cursorRow, int cursorCol, int firstDisplayLine);
+        void                                            handleOpenForwardBackward           (const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo);
 
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
@@ -138,13 +167,28 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerKeySettings                                 _editorKeySettings;
         int                                             _editorTabSize;
         QString                                         _editorExternalEditorCommand;
+        bool                                            _editorAutoSourceReload;
         SeerEditorWidgetAssembly*                       _assemblyWidget;
         int                                             _assemblyIndex;
+        QString                                         _showAssemblyTabOnStartupMode;
         bool                                            _keepAssemblyTabOnTop;
         bool                                            _showAddressColumn;
         bool                                            _showOffsetColumn;
         bool                                            _showOpcodeColumn;
         bool                                            _showSourceLines;
         bool                                            _notifyAssemblyTabShown;
+        QStringList                                     _lastFrameList;         // variable for saving previous backtrace
+
+        // list of recently closed files (Ctrl + Shift + T)
+        QStack<SeerEditorWidgetSourceArea::SeerCurrentFile>                     _stackClosedFiles;
+        // list of cursor positions for mouse navigation (back/forward)
+        QList<SeerEditorWidgetSourceArea::SeerCurrentFile>                      _listForwardFiles;
+        int                                             _forwardFilesIndex = -1;
+
+        // _id of identifier for Go to definition
+        int                                             _idFunctionDefinition;
+        int                                             _idVariableDefinition;
+        int                                             _idTypeDefinition;
+        QString                                         _gotoDefIdentifier;
 };
 

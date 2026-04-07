@@ -1,7 +1,12 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerSeerLogWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QScrollBar>
 #include <QRegularExpression>
+#include <QtCore/QTime>
 #include <QtCore/QDebug>
 
 SeerSeerLogWidget::SeerSeerLogWidget (QWidget* parent) : SeerLogWidget(parent) {
@@ -43,8 +48,12 @@ void SeerSeerLogWidget::processText (const QString& text) {
         return;
     }
 
-    // Filter escape characters.
-    QString str = Seer::filterEscapes(text);
+    // No filtering.
+    QString str = text;
+
+    if (isTimeStampEnabled()) {
+        str = QString("[") + QTime::currentTime().toString("hh:mm:ss.zz") + QString("] ") + str;
+    }
 
     // Write the string to the log.
     textEdit->append(str);

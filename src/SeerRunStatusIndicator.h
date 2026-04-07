@@ -1,7 +1,12 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QLabel>
 #include <QtCore/QString>
+#include <QLabel>
 
 class SeerRunStatusIndicator : public QLabel {
 
@@ -11,7 +16,8 @@ class SeerRunStatusIndicator : public QLabel {
         enum RunStatus {
             Idle    = 0,
             Stopped = 1,
-            Running = 2
+            Stop_By_Breakpoint = 2,
+            Running = 3,
         };
 
         explicit SeerRunStatusIndicator(QWidget* parent = 0);
@@ -25,10 +31,10 @@ class SeerRunStatusIndicator : public QLabel {
 
     public slots:
         void                                handleText                  (const QString& text);
+        void                                handleSessionTerminated     ();
 
     protected:
 
     private:
-        SeerRunStatusIndicator::RunStatus   _runStatus;
 };
 

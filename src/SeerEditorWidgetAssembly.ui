@@ -217,7 +217,10 @@
            <string>Scroll to a specific 0xAddress, +Offset, or line#.</string>
           </property>
           <property name="placeholderText">
-           <string>Go to a 0xAddress, +Offset, or line#.</string>
+           <string>Go to 0xAddress, +Offset, or line#.</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

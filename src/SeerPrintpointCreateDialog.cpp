@@ -1,4 +1,9 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerPrintpointCreateDialog.h"
+#include "SeerHelpPageDialog.h"
 #include <QtCore/QDebug>
 
 SeerPrintpointCreateDialog::SeerPrintpointCreateDialog (QWidget* parent) : QDialog(parent) {
@@ -26,10 +31,18 @@ SeerPrintpointCreateDialog::SeerPrintpointCreateDialog (QWidget* parent) : QDial
     setFormat("");
     setArguments("");
 
+    setDPrintfType ("gdb");
+    setDPrintfFunction ("");
+    setDPrintfChannel ("");
+
+    filenameLineEdit->setFocus();
+
     // Connect things.
-    QObject::connect(conditionalCheckBox, &QCheckBox::clicked,    conditionalLineEdit,  &QLineEdit::setEnabled);
-    QObject::connect(ignoreCountCheckBox, &QCheckBox::clicked,    ignoreCountLineEdit,  &QLineEdit::setEnabled);
-    QObject::connect(threadIdCheckBox,    &QCheckBox::clicked,    threadIdLineEdit,     &QLineEdit::setEnabled);
+    QObject::connect(conditionalCheckBox, &QCheckBox::clicked,              conditionalLineEdit,  &QLineEdit::setEnabled);
+    QObject::connect(ignoreCountCheckBox, &QCheckBox::clicked,              ignoreCountLineEdit,  &QLineEdit::setEnabled);
+    QObject::connect(threadIdCheckBox,    &QCheckBox::clicked,              threadIdLineEdit,     &QLineEdit::setEnabled);
+    QObject::connect(typeButtonGroup,     &QButtonGroup::buttonClicked,     this,                 &SeerPrintpointCreateDialog::handleDprintfTypeChanged);
+    QObject::connect(typeHelpToolButton,  &QToolButton::clicked,            this,                 &SeerPrintpointCreateDialog::handleHelpToolButtonClicked);
 }
 
 SeerPrintpointCreateDialog::~SeerPrintpointCreateDialog () {
@@ -158,7 +171,72 @@ QString SeerPrintpointCreateDialog::arguments () const {
     return argumentsLineEdit->text();
 }
 
-QString SeerPrintpointCreateDialog::printpointText () const {
+QString SeerPrintpointCreateDialog::dprintfType () const {
+
+    if (typeGdbRadioButton->isChecked()) {
+        return "gdb";
+    }else if (typeCallRadioButton->isChecked()) {
+        return "call";
+    }else if (typeAgentRadioButton->isChecked()) {
+        return "agent";
+    }
+
+    // Default.
+    return "gdb";
+}
+
+QString SeerPrintpointCreateDialog::dprintfFunction () const {
+
+    if (dprintfType() == "gdb") {
+        return "";
+    }
+
+    return dprintfFunctionLineEdit->text();
+}
+
+QString SeerPrintpointCreateDialog::dprintfChannel () const {
+
+    if (dprintfType() == "gdb") {
+        return "";
+    }
+
+    return dprintfChannelLineEdit->text();
+}
+
+void SeerPrintpointCreateDialog::setDPrintfType (const QString& text) {
+
+    if (text == "gdb") {
+        typeGdbRadioButton->setChecked(true);
+        dprintfFunctionLineEdit->setEnabled(false);
+        dprintfChannelLineEdit->setEnabled(false);
+        return;
+    }else if (text == "call") {
+        typeCallRadioButton->setChecked(true);
+        dprintfFunctionLineEdit->setEnabled(true);
+        dprintfChannelLineEdit->setEnabled(true);
+        return;
+    }else if (text == "agent") {
+        typeAgentRadioButton->setChecked(true);
+        dprintfFunctionLineEdit->setEnabled(false);
+        dprintfChannelLineEdit->setEnabled(false);
+        return;
+    }
+
+    // Default.
+    typeGdbRadioButton->setChecked(true);
+    dprintfFunctionLineEdit->setEnabled(false);
+    dprintfChannelLineEdit->setEnabled(false);
+}
+
+void SeerPrintpointCreateDialog::setDPrintfFunction (const QString& text) {
+    dprintfFunctionLineEdit->setText(text);
+}
+
+void SeerPrintpointCreateDialog::setDPrintfChannel (const QString& text) {
+    dprintfChannelLineEdit->setText(text);
+}
+
+QString SeerPrintpointCreateDialog::printpointParameters () const {
 
     // Build a printpoint specification.
     //
@@ -232,5 +310,17 @@ QString SeerPrintpointCreateDialog::printpointText () const {
     printpointParameters += " " + arguments();
 
     return printpointParameters;
+}
+
+void SeerPrintpointCreateDialog::handleDprintfTypeChanged () {
+    setDPrintfType(dprintfType());
+}
+
+void SeerPrintpointCreateDialog::handleHelpToolButtonClicked () {
+
+    SeerHelpPageDialog* help = new SeerHelpPageDialog(this);
+    help->loadFile(":/seer/resources/help/Printpoints.md");
+    help->show();
+    help->raise();
 }
 

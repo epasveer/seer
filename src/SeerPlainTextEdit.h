@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QPlainTextEdit>
@@ -5,6 +9,7 @@
 #include <QtCore/QString>
 #include <QtCore/QEvent>
 #include <QtCore/QObject>
+#include <QtCore/QTimer>
 
 class SeerPlainTextEdit : public QPlainTextEdit {
 
@@ -16,6 +21,18 @@ class SeerPlainTextEdit : public QPlainTextEdit {
        ~SeerPlainTextEdit ();
 
         void                    forwardViewportEvent        (QEvent* event);
+
+    protected:
+        void                    paintEvent                  (QPaintEvent* event);
+
+    private slots:
+        void                    blinkCursor                 ();
+        void                    handleCursorPositionChanged ();
+
+    private:
+        constexpr static int    CURSOR_WIDTH = 2;
+        QTimer*                 _cursorTimer;
+        bool                    _cursorVisible;
 };
 
 

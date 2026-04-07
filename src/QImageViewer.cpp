@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: MIT
+
 #include "QImageViewer.h"
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QVBoxLayout>

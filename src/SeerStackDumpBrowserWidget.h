@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -31,6 +35,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
         void                refresh                     ();
 
     protected slots:
@@ -42,7 +47,7 @@ class SeerStackDumpBrowserWidget : public QWidget, protected Ui::SeerStackDumpBr
     signals:
         void                refreshStackPointer         (int id, QString expression);
         void                refreshStackDump            (int id, QString address, int offset, int count);
-        void                addMemoryVisualize          (QString expression);
+        void                addMemoryVisualizer         (QString expression);
 
     protected:
         void                showEvent                   (QShowEvent* event);

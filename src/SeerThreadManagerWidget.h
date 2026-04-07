@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerThreadFramesBrowserWidget.h"
@@ -49,6 +53,7 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         void                                            handleForkFollowComboBox            (int index);
         void                                            handleTabMoved                      (int from, int to);
         void                                            handleTabChanged                    (int index);
+        void                                            handleTabsContextMenuButtonClicked  ();
 
     private:
         SeerThreadFramesBrowserWidget*                  _threadFramesBrowserWidget;

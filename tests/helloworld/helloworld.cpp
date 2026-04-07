@@ -9,7 +9,8 @@
 // message      == say hi to the world.
 // function1    == a function to call to simulate work.
 
-void function1 (const std::string& message);
+void function1   (const std::string& message);
+int  valueoflife ();
 
 int main (int argc, char** argv) {
 

@@ -1,8 +1,56 @@
 
 # Seer Change Log
 
-## [2.5beta] - 2024-XX-XX
-* Starting the 2.5 development cycle.
+## [2.8] - 2026-XX-XX
+* Starting version 2.8 development cycle.
+
+## [2.7] - 2026-04-06
+* SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)
+* VariableTracker: Add 'deleteselect' and 'deleteall' to RMB context menu.
+* VariableLogger: Add 'deleteselect' and 'deleteall' to RMB context menu.
+* EditorConfig: Show syntax highlighting for C/C++, Rust, and Odin.
+* Editor: ^F to focus on text search ^L to focus on line search.
+* Editor: ESC to hide search panel.
+* Editor: ^B to toggle breakpoint on current line.
+* Editor: Show cursor all the time.
+* Breakpoints: Allow multiple filename:line entries for the --break-source option.
+* Control: Add ^D to toggle record playback direction for RR, Undo, and gdb's Record.
+* Control: Add SHIFT+F5 (etal) to reverse step (etc.) during record playback for RR, Undo, and gdb's Record.
+* GDB: Add Seer config to set gdb architecture.
+* GDB: Add an optional 'launcher' program to start gdb. eg: flatpak-spawn.
+* Build: Add flatpak generation to github actions.
+* Assemby: An option to show assembly tab when there is no source file.
+* Signals: Add an window to show how GDB handles signals. And to set that behavior.
+* Macros: Add 10 macros for custom commands that are executed by clicking a button (or a hot key).
+
+## [2.6] - 2025-10-07
+* Watchpoints: Fixed regression when adding commands to a watchpoint.
+* Console: Create console once per Seer session. Instead of constant create/destroy.
+* EditorManager: Fixed regression when ignoring files to be opened in the EditorManager.
+* MessageTabs: Fixed regression when order of message tabs not being preserved between sessions.
+* RemoteMode: Connect mode to a gdb server now supports 'remote' and 'extended-remote'.
+* ConnectMode: Connect mode's 'pre' commands are executed before the 'target connect'.
+* MessageTabs: Optionally add a timestamp to the Seer and Gdb log widgets.
+* ConnectMode: Add 'gdbserver debug' checkbox to Connect launch tab. For showing
+  gdb and gdbserver communication debug information in gdb tab.
+* Skips: Manage gdb skip commands via a new Skip Browser.
+* LaunchMode: Revamp the "run/start" buttons on the menu bar to be a predominate
+  "terminate" that switches to a "restart".
+* VariableTracker: Fixed bug when adding variable to tracker. Sometimes would not refresh value.
+* VariableTracker: Raise Logger or Tracker tab when new variable is added.
+* CheckpointMode: Implment gdb's "checkpoint" feature. As simple time-travel feature.
+* Undo: Add preliminary support for Undo's udb time-traveling debugger.
+* CheckpointMode: Add support for remaining Catchpoint types.
+* Visualizers: Add a Matrix Visualizer for viewing 2D arrays.
+* Breakpoints: Add breakpoints from the Function tab.
+* DefaultProject: When using the Debug dialog, save the debug settings so they can be fast loaded
+  the next time the Debug dialog is used. Kind of a default project.
+* RR: When using the Debug dialog, check a couple standard locations for
+  the RR trace directory.
+* ObjectiveC: Add support for printing ObjectiveC object via a '(objc)' pretext.
+* Registers: Fix bug handling register names of "" in gdb's register list.
+
+## [2.5] - 2024-12-24
 * Console now supports a subset of ANSI color codes.
 * Console can be started in these modes:
     - Detached
@@ -13,6 +61,23 @@
   LMB and held down.
 * Add Cuda information. Very experimental.
 * Show stack as a hex dump, with options to view as short, int, long, ascii, ...
+* The "go to address" in the Assembly view now works if address it outside
+  current assembly view.
+* Visualizers can take a gdb expression for input fields for
+  length/size of something. The visualizers are:
+    - ArrayVisualizer
+    - ImageVisualizer
+    - MemoryVisualizer
+* Fixed regression when setting/saving the editor font setting.
+* Fixed bug when the Basic Struct visualizer display simple variable
+  types (non-structs).
+* Source all files in ~/.config/seergdb/scripts/ on startup.
+* Fixed regression handling ignoring of system header files.
+* Fixed regression when adding commands to a breakpoint.
+* Refactored/improved Printpoints. Added 'help' to the
+  Printpoint create dialog.
+* Fixed regression when display variable value when hovering over
+  the text in the editor window.
 
 ## [2.4] - 2024-03-18
 * Changed main icon to a more license friendly one.

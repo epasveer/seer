@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerCppSourceHighlighter.h"
@@ -21,7 +25,6 @@ class SeerEditorWidgetAssemblyLineNumberArea;
 class SeerEditorWidgetAssemblyOffsetArea;
 class SeerEditorWidgetAssemblyBreakPointArea;
 class SeerEditorWidgetAssemblyOpcodeArea;
-class SeerEditorWidgetAssemblyMiniMapArea;
 
 class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
@@ -45,9 +48,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        enableSourceLines                   (bool flag);
         bool                                        sourceLinesEnabled                  () const;
 
-        void                                        enableMiniMapArea                   (bool flag);
-        bool                                        miniMapAreaEnabled                  () const;
-
         void                                        lineNumberAreaPaintEvent            (QPaintEvent* event);
         int                                         lineNumberAreaWidth                 ();
 
@@ -60,14 +60,13 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        opcodeAreaPaintEvent                (QPaintEvent* event);
         int                                         opcodeAreaWidth                     ();
 
-        void                                        miniMapAreaPaintEvent               (QPaintEvent* event);
-        int                                         miniMapAreaWidth                    ();
-
         void                                        setAddress                          (const QString& address, bool force=false);
         const QString&                              address                             () const;
         bool                                        setCurrentLine                      (const QString& address);
+        const QString                               currentLine                         () const;
         void                                        scrollToLine                        (const QString& address);
 
+        void                                        clearCurrentLines                   ();
         int                                         findText                            (const QString& text, QTextDocument::FindFlags flags);
         void                                        clearFindText                       ();
 
@@ -80,6 +79,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         const QVector<bool>&                        breakpointEnableds                  () const;
         int                                         breakpointAddressToNumber           (const QString& address) const;
         bool                                        breakpointAddressEnabled            (const QString& address) const;
+        void                                        breakpointToggle                    ();
 
         void                                        showContextMenu                     (QMouseEvent* event);
         void                                        showContextMenu                     (QContextMenuEvent* event);
@@ -99,6 +99,9 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        setEditorTabSize                    (int spaces);
         int                                         editorTabSize                       () const;
 
+        void                                        setConvertUppercase                 (bool flag);
+        bool                                        convertUppercase                    () const;
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString printpoint);
@@ -107,9 +110,10 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        disableBreakpoints                  (QString breakpoints);
         void                                        refreshBreakpointsStackFrames       ();
         void                                        runToAddress                        (QString address);
-        void                                        addMemoryVisualize                  (QString expression);
-        void                                        addArrayVisualize                   (QString expression);
-        void                                        addStructVisualize                  (QString expression);
+        void                                        addMemoryVisualizer                 (QString expression);
+        void                                        addArrayVisualizer                  (QString expression);
+        void                                        addMatrixVisualizer                 (QString expression);
+        void                                        addStructVisualizer                 (QString expression);
         void                                        requestAssembly                     (QString address);
         void                                        requestSourceAndAssembly            (QString address);
         void                                        showSearchBar                       (bool flag);
@@ -132,7 +136,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        updateOffsetArea                    (const QRect& rect, int dy);
         void                                        updateBreakPointArea                (const QRect& rect, int dy);
         void                                        updateOpcodeArea                    (const QRect& rect, int dy);
-        void                                        updateMiniMapArea                   (const QRect& rect, int dy);
 
     private:
         bool                                        _enableLineNumberArea;
@@ -140,7 +143,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         bool                                        _enableBreakPointArea;
         bool                                        _enableOpcodeArea;
         bool                                        _enableSourceLines;
-        bool                                        _enableMiniMapArea;
         QVector<int>                                _breakpointsNumbers;
         QVector<QString>                            _breakpointsAddresses;
         QVector<bool>                               _breakpointsEnableds;
@@ -152,9 +154,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         SeerEditorWidgetAssemblyOffsetArea*         _offsetArea;
         SeerEditorWidgetAssemblyBreakPointArea*     _breakPointArea;
         SeerEditorWidgetAssemblyOpcodeArea*         _opcodeArea;
-        SeerEditorWidgetAssemblyMiniMapArea*        _miniMapArea;
 
-        QPixmap*                                    _miniMapPixmap;
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
 
@@ -174,6 +174,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         QString                                     _fileName;
 
         int                                         _sourceTabSize;
+        bool                                        _convertUppercase;
 };
 
 class SeerEditorWidgetAssemblyLineNumberArea : public QWidget {
@@ -256,26 +257,6 @@ class SeerEditorWidgetAssemblyOpcodeArea : public QWidget {
         SeerEditorWidgetAssemblyArea*               _editorWidget;
 };
 
-class SeerEditorWidgetAssemblyMiniMapArea : public QWidget {
-
-    Q_OBJECT
-
-    public:
-        SeerEditorWidgetAssemblyMiniMapArea (SeerEditorWidgetAssemblyArea* editorWidget);
-
-        QSize                                       sizeHint                            () const override;
-
-    protected:
-        void                                        paintEvent                          (QPaintEvent* event) override;
-        void                                        mouseDoubleClickEvent               (QMouseEvent* event) override;
-        void                                        mouseMoveEvent                      (QMouseEvent* event) override;
-        void                                        mousePressEvent                     (QMouseEvent* event) override;
-        void                                        mouseReleaseEvent                   (QMouseEvent* event) override;
-
-    private:
-        SeerEditorWidgetAssemblyArea*               _editorWidget;
-};
-
 #include "ui_SeerEditorWidgetAssembly.h"
 
 class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetAssemblyForm {
@@ -287,6 +268,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
        ~SeerEditorWidgetAssembly ();
 
         SeerEditorWidgetAssemblyArea*               assemblyArea                        ();
+        const SeerEditorWidgetAssemblyArea*         assemblyArea                        () const;
 
         bool                                        isSearchBarShown                    () const;
         bool                                        searchMatchCase                     () const;
@@ -297,6 +279,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         QString                                     regiserNamePC                       () const;
         QString                                     regiserNameFLAGS                    () const;
         QString                                     regiserNameSP                       () const;
+        bool                                        convertUppercase                    () const;
 
         void                                        setKeySettings                      (const SeerKeySettings& settings);
         const SeerKeySettings&                      keySettings                         () const;
@@ -305,6 +288,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        reloadAssembly                      ();
         void                                        reloadRegisters                     ();
         void                                        showSearchBar                       (bool flag);
+        void                                        showSearchBar                       (bool flag, QString field);
         void                                        setSearchMatchCase                  (bool flag);
         void                                        setShowAddressColumn                (bool flag);
         void                                        setShowOffsetColumn                 (bool flag);
@@ -313,6 +297,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        setRegiserNamePC                    (const QString& name);
         void                                        setRegiserNameFLAGS                 (const QString& name);
         void                                        setRegiserNameSP                    (const QString& name);
+        void                                        setConvertUppercase                 (bool flag);
         void                                        handleText                          (const QString& text);
 
     private slots:
@@ -322,11 +307,14 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        handleSearchUpToolButton            ();
         void                                        handleSearchCloseToolButton         ();
         void                                        handleTextSearchShortcut            ();
+        void                                        handleLineSearchShortcut            ();
+        void                                        handleToggleBreakpointShortcut      ();
         void                                        handleShowAddressColumn             ();
         void                                        handleShowOffsetColumn              ();
         void                                        handleShowOpcodeColumn              ();
         void                                        handleShowSourceLines               ();
         void                                        handleEditPreferences               ();
+        void                                        handleEscapePressed                 ();
 
     signals:
         void                                        evaluateVariableExpression          (int expressionid, QString expression);
@@ -343,6 +331,8 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         QShortcut*                                  _textSearchShortcut;
         QShortcut*                                  _textSearchNextShortcut;
         QShortcut*                                  _textSearchPrevShortcut;
+        QShortcut*                                  _lineSearchShortcut;
+        QShortcut*                                  _toggleBreakpointShortcut;
         QAction*                                    _editPreferencesAction;
         QString                                     _pcName;
         QString                                     _spName;

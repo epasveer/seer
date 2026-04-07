@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -15,6 +19,7 @@ class SeerStackFramesBrowserWidget : public QWidget, protected Ui::SeerStackFram
     public slots:
         void                handleText                  (const QString& text);
         void                handleStoppingPointReached  ();
+        void                handleSessionTerminated     ();
         void                refresh                     ();
 
     protected slots:
@@ -25,6 +30,7 @@ class SeerStackFramesBrowserWidget : public QWidget, protected Ui::SeerStackFram
         void                refreshStackFrames          ();
         void                selectedFile                (QString file, QString fullname, int lineno);
         void                selectedAddress             (QString address);
+        void                maybeSelectedAddress        (QString file, QString fullname, QString address);
         void                selectedFrame               (int frameno);
 
     protected:

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerHelpPageDialog.h"
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
@@ -13,7 +17,7 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/seergdb_64x64.png"));
+    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Help");
 
     textBrowser->setOpenExternalLinks(true);
@@ -33,7 +37,11 @@ void SeerHelpPageDialog::loadFile (const QString& filename) {
 
     // Get the Help text from the file.
     QFile file(filename);
-    file.open(QFile::ReadOnly|QFile::Text);
+
+    bool f = file.open(QFile::ReadOnly|QFile::Text);
+    if (f == false) {
+        return;
+    }
 
     QTextStream stream(&file);
 

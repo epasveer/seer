@@ -1,22 +1,82 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerUtl.h"
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QRegularExpressionMatch>
+#include <QtCore/QByteArray>
 
+// Comment out for now. I don't want to include boost because
+// that would impact people try to compile Seer. Qt6 offer
+// a 'stacktrace' function. OpenSuse may be slow in adoption.
+// For now, comment it out and use when needed.
+// #include <boost/stacktrace.hpp>
+
+#include <iostream>
 #include <mutex>
 
 //
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "2.5.beta"
+#define SEER_VERSION "2.8beta"
 
 namespace Seer {
 
     QString version () {
         return SEER_VERSION + QString(" (Qt") + QT_VERSION_STR + ")";
+    }
+
+    QString filterBareNewLines (const QString& str) {
+
+        // Remove bare (not inside quotes) '\n' substrings.
+        // Maybe extra spaces after '\n'.
+        // "{\n  B = 1,\n  C = 0,\n  D = \"asd\",\n  E = std::vector<bool> of length 1, capacity 64 = {true}\n}"
+        // "{B = 1, C = 0, D = \"asd\", E = std::vector<bool> of length 1, capacity 64 = {true}}"
+
+        QString   tmp;
+        qsizetype anchor=0;
+        qsizetype curr=0;
+        qsizetype end=str.length();
+
+        // Loop through string a character at a time.
+        while (curr < end) {
+
+            // Found a '\n' substring. Deal with it.
+            if (str.mid(curr,2) == "\\n") {
+
+                // Append the good bits before the '\n'.
+                tmp.append(str.mid(anchor,curr-anchor));
+                curr += 2;
+
+                // Skip trailing spaces, if any, after '\n'.
+                while (curr < end) {
+                    if (str.at(curr) == ' ') {
+                        curr++;
+                    }else{
+                        break;
+                    }
+                }
+
+                anchor = curr;
+
+            // Other character. Skip it.
+            }else{
+                curr++;
+            }
+        }
+
+        // Anything left to deal with?
+        if (curr > anchor) {
+            tmp.append(str.mid(anchor,curr-anchor));
+            anchor = curr;
+        }
+
+        return tmp;
     }
 
     QString filterEscapes (const QString& str) {
@@ -411,99 +471,124 @@ namespace Seer {
         // salary = 0.25
         // location = {city = "Houston", state = "Texas", zip = 77063}
         //
+        // special case: garbage value:
+        // {id = 2, b = \"000hildTest 2000377177000000260324377377377177\", '000' <repeats 11 times>, \"hildTest 2000-", '0' <repeats 11 times>, "1", '0' <repeats 21 times>, "330324377377377177000000004", '0' <repeats 21 times>, "test\", '000' <repeats 21 times>, \"325377377\", child = {childId = -9864, childString = \"\"}}
 
+        enum STATE{
+            START       = 0,
+            SCANNING    = 1,
+            FOUND       = 2,
+            IGNORE      = 3,
+        };
         QStringList list;
         int         index        = 0;
-        int         state        = 0;
         int         start        = 0;
         int         end          = 0;
-        bool        inquotes     = false;
-        int         bracketlevel = 0;
+        int         previousComma= 0;
+        STATE       state        = START;
 
-        while (index < str.length()) {
+        while (index < str.length())
+        {
+            // Handle "="
+            if (str[index] == '=') {
+                if (state == SCANNING)               // looking for 2nd '='
+                {
+                    // state = FOUND;
+                    end = previousComma;
+                    QString field = str.mid(start, end-start);
+                    list.append(field.trimmed());
+                    start = previousComma + 1;
+                }
+                if (state == START)               // looking for 2nd '='
+                {
+                    state = SCANNING;
 
-            // Handle start of field.
-            if (state == 0) {     // Start of field.
-                start = index;
-                end   = index;
-                state = 1; // Look for end of field (a command or eol).
-
-                continue;
+                }
             }
 
-            // Handle end of field.
-            if (state == 1) {
+            if (str[index] == startBracket)
+            {
+                state = IGNORE;
+            }
 
-                // Handle "{"
-                if (str[index] == startBracket) {
-                    if (inquotes == false) {
-                        bracketlevel++;
-                    }
+            if (str[index] == endBracket)
+            {
+                state = SCANNING;
+            }
 
-                    index++; continue;
-                }
+            if (str[index] == ',' && state != IGNORE) {
+                previousComma = index;
+            }
 
-                // Handle "}"
-                if (str[index] == endBracket) {
-                    if (inquotes == false) {
-                        bracketlevel--;
-                        if (bracketlevel < 0) {
-                            qDebug() << "BracketLevel is less than 0!";
+            // The last
+            if (index == str.length() - 1)
+            {
+                QString field = str.mid(start, index);
+                list.append(field.trimmed());
+            }
+            index++;
+        }
+        return list;
+    }
+
+    //
+    // Parse an array, turn it to QList
+    //
+
+    QStringList parseArray (const QString& parentName, const QString& str)
+    {
+        // Input: {age = 1, name = "1st_child"}, {age = 2, name = "2nd_child"}
+        // Output: QStringList : parentName[0] = {age = 1, name = "1st_child"}, parentName[1] = {age = 1, name = "1st_child"}
+
+        QStringList list;
+        int index = 0;
+        int cntStartBracket = 0;
+        int cntEndBracket = 0;
+        int start = 0;
+        int cnt = 0;
+
+        while (index < str.length())
+        {
+            if (str[index] == '{')
+            {
+                if (cntStartBracket == cntEndBracket)
+                    start = index;
+                cntStartBracket++;
+            }
+            if (str[index] == '}')
+            {
+                // Check to see if character after it is ",". Otherwise, it probably trash character.
+                if (index + 1 < str.length())
+                {
+                    if (str[index + 1] == '}' || str[index + 1] == ',' || index + 1 == str.length() )
+                    {
+                        cntEndBracket++;
+                        if (cntStartBracket == cntEndBracket)
+                        {
+                            QString field = str.mid(start, index + 1 - start);
+                            field = parentName + "[" + QString::number(cnt) + "] = " + field;
+                            list.append(field.trimmed());
+                            cntStartBracket = 0; cntEndBracket = 0;
+                            cnt++;
                         }
                     }
-
-                    index++; continue;
                 }
-
-                // Handle """
-                if (str[index] == '"') {
-                    if (inquotes == false) {
-                        inquotes = true;
-                    }else{
-                        inquotes = false;
-                    }
-
-                    index++; continue;
-                }
-
-                // Handle ","
-                if (str[index] == ',') {
-                    if (inquotes) {
-                        index++; continue;
-                    }
-
-                    // Extract field, only if the bracket level is at zero.
-                    // Otherwise, continue.
-                    if (bracketlevel == 0) {
-                        end = index;
-
-                        QString field = str.mid(start, end-start);
-
+                else if (index + 1 == str.length())
+                {
+                    // The last element
+                    cntEndBracket++;
+                    if (cntStartBracket == cntEndBracket)
+                    {
+                        QString field = str.mid(start, index + 1 - start);
+                        field = parentName + "[" + QString::number(cnt) + "] = " + field;
                         list.append(field.trimmed());
-
-                        state = 0; // Look for the next field.
+                        cntStartBracket = 0; cntEndBracket = 0;
+                        cnt++;
                     }
-
-                    index++; continue;
                 }
-
-                // Handle any other character.
-                index++; continue;
             }
-
-            qDebug() << "Bad state!";
-            index++; continue;
+            index ++;
         }
-
-        // Handle last field, if any.
-        if (state == 1) {
-            end = index;
-
-            QString field = str.mid(start, end-start);
-
-            list.append(field.trimmed());
-        }
-
         return list;
     }
 
@@ -710,7 +795,9 @@ namespace Seer {
         return false;
     }
 
-
+    bool hasWildcards (const QString& str) {
+        return (str.indexOf('*') >= 0) || (str.indexOf('?') >= 0);
+    }
 
     QString elideText (const QString& str, Qt::TextElideMode mode, int length) {
 
@@ -1254,6 +1341,12 @@ namespace Seer {
         }
 
         return result;
+    }
+
+    void printStackTrace () {
+        // Capture and print the stack trace using Boost.Stacktrace.
+        // See comments at top.
+        // std::cout << "Stack trace:\n" << boost::stacktrace::stacktrace() << std::endl;
     }
 }
 

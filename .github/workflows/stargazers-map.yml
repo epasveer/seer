@@ -1,0 +1,36 @@
+name: Create Stargazer Map
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-stargazer-map:
+    runs-on: ubuntu-latest
+    name: Generate Stargazer World Map
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests plotly pandas kaleido
+
+      - name: Generate stargazer map
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: python .github/scripts/generate_stargazer_map.py
+
+      - name: Commit and push map
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add images/stargazer-map.svg images/stargazer-map.html
+          git diff --staged --quiet || git commit -m "🌍 Update stargazer world map [skip ci]"
+          git push
+

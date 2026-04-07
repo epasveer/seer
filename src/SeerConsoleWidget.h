@@ -1,8 +1,13 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QWidget>
 #include <QtGui/QTextCursor>
 #include <QtGui/QResizeEvent>
+#include <QtGui/QShowEvent>
 #include <QtCore/QString>
 #include <QtCore/QSocketNotifier>
 #include "ui_SeerConsoleWidget.h"
@@ -15,9 +20,14 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         explicit SeerConsoleWidget (QWidget* parent = 0);
        ~SeerConsoleWidget ();
 
-        const QString&      ttyDeviceName               () const;
-        void                connectConsole              ();
-        void                disconnectConsole           ();
+        void                createTerminal              ();
+        void                deleteTerminal              ();
+        void                connectTerminal             ();
+        void                disconnectTerminal          ();
+        bool                isTerminalCreated           () const;
+        bool                isTerminalConnected         () const;
+        void                resetTerminal               ();
+        const QString&      terminalDeviceName          () const;
 
         void                setScrollLines              (int count);
         int                 scrollLines                 () const;
@@ -28,6 +38,10 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         bool                isWrapEnabled               () const;
 
         void                resetSize                   ();
+
+    signals:
+        void                newTextAdded                ();
+        void                newTextViewed               ();
 
     public slots:
         void                handleChangeWindowTitle     (QString title);
@@ -42,22 +56,21 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         void                handleWrapTextCheckBox      ();
         void                handleStdoutCheckBox        ();
         void                handleStdinLineEdit         ();
-        void                handleConsoleOutput         (int socketfd);
+        void                handleTerminalOutput        (int socketfd);
 
     protected:
         void                handleText                  (const char* buffer, int count);
-        void                createConsole               ();
-        void                deleteConsole               ();
         void                writeSettings               ();
         void                writeFontSettings           ();
         void                writeSizeSettings           ();
         void                readSettings                ();
         void                resizeEvent                 (QResizeEvent* event);
+        void                showEvent                   (QShowEvent*   event);
 
     private:
-        QString             _ttyDeviceName;
-        int                 _ptsFD;
-        QSocketNotifier*    _ptsListener;
+        QString             _terminalDeviceName;
+        int                 _ttyFD;
+        QSocketNotifier*    _ttyListener;
         bool                _enableStdout;
         bool                _enableWrap;
 };

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerWatchpointCreateDialog.h"
 #include <QtWidgets/QButtonGroup>
 
@@ -16,6 +20,8 @@ SeerWatchpointCreateDialog::SeerWatchpointCreateDialog (QWidget* parent) : QDial
     setReadAccessEnabled(false);
     setReadWriteAccessEnabled(false);
     setWriteAccessEnabled(true);
+
+    expressionLineEdit->setFocus();
 
     // Connect things.
 }

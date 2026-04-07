@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerLogWidget.h"
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QCheckBox>
@@ -8,6 +12,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
 #include <QtCore/QTextStream>
+#include <QtCore/QTime>
 #include <QtCore/QDebug>
 
 SeerLogWidget::SeerLogWidget (QWidget* parent) : QWidget(parent) {
@@ -31,6 +36,7 @@ SeerLogWidget::SeerLogWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(saveButton,        &QPushButton::clicked,      this,  &SeerLogWidget::handleSaveButton);
     QObject::connect(wrapTextCheckBox,  &QCheckBox::clicked,        this,  &SeerLogWidget::handleWrapTextCheckBox);
     QObject::connect(enableCheckBox,    &QCheckBox::clicked,        this,  &SeerLogWidget::handleEnableCheckBox);
+    QObject::connect(timeStampCheckBox, &QCheckBox::clicked,        this,  &SeerLogWidget::handleTimeStampCheckBox);
 }
 
 SeerLogWidget::~SeerLogWidget () {
@@ -58,6 +64,16 @@ bool SeerLogWidget::isLogEnabled () const {
 void SeerLogWidget::setLogEnabled (bool flag) {
 
     enableCheckBox->setChecked(flag);
+}
+
+bool SeerLogWidget::isTimeStampEnabled () const {
+
+    return timeStampCheckBox->isChecked();
+}
+
+void SeerLogWidget::setTimeStampEnabled (bool flag) {
+
+    timeStampCheckBox->setChecked(flag);
 }
 
 void SeerLogWidget::moveToEnd () {
@@ -152,8 +168,11 @@ void SeerLogWidget::handleWrapTextCheckBox () {
 
 void SeerLogWidget::handleEnableCheckBox () {
 
-    //qDebug() << "Enabled clicked!";
-
     emit logEnabledChanged(enableCheckBox->isChecked());
+}
+
+void SeerLogWidget::handleTimeStampCheckBox () {
+
+    emit logTimeStampChanged(timeStampCheckBox->isChecked());
 }
 

@@ -17,7 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QHistoryLineEdit" name="variableNameLineEdit">
+      <widget class="SeerHistoryLineEdit" name="variableNameLineEdit">
        <property name="toolTip">
         <string>Variable expression resulting in an address.</string>
        </property>
@@ -64,7 +64,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="widthLineEdit">
+      <widget class="SeerHistoryLineEdit" name="widthLineEdit">
        <property name="toolTip">
         <string>The image width (pixels)</string>
        </property>
@@ -77,7 +77,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="heightLineEdit">
+      <widget class="SeerHistoryLineEdit" name="heightLineEdit">
        <property name="toolTip">
         <string>The image height (pixels)</string>
        </property>
@@ -202,9 +202,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QHistoryLineEdit</class>
+   <class>SeerHistoryLineEdit</class>
    <extends>QLineEdit</extends>
-   <header location="global">QHistoryLineEdit.h</header>
+   <header location="global">SeerHistoryLineEdit.h</header>
   </customwidget>
   <customwidget>
    <class>QImageViewer</class>

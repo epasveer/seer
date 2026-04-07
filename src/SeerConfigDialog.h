@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerGdbConfigPage.h"
@@ -40,6 +44,10 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         bool                                seerClearManualCommandHistory                   () const;
 
         // Gdb settings.
+        // Program to launch gdb, rr, etc. Can be blank. Needed by flatpak.
+        void                                setGdbLauncher                                  (const QString& launcher);
+        QString                             gdbLauncher                                     () const;
+
         void                                setGdbProgram                                   (const QString& program);
         QString                             gdbProgram                                      () const;
 
@@ -61,14 +69,11 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setGdbEnablePrettyPrinting                      (bool flag);
         bool                                gdbEnablePrettyPrinting                         () const;
 
-        void                                setDprintfStyle                                 (const QString& style);
-        QString                             dprintfStyle                                    () const;
+        void                                setGdbRemoteTargetType                          (const QString& type);
+        QString                             gdbRemoteTargetType                             () const;
 
-        void                                setDprintfFunction                              (const QString& function);
-        QString                             dprintfFunction                                 () const;
-
-        void                                setDprintfChannel                               (const QString& channel);
-        QString                             dprintfChannel                                  () const;
+        void                                setGdbArchitectureType                          (const QString& type);
+        QString                             gdbArchitectureType                             () const;
 
         // Editor settings.
         void                                setEditorFont                                   (const QFont& font);
@@ -85,6 +90,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
 
         void                                setExternalEditorCommand                        (const QString& externalEditorCommand);
         QString                             externalEditorCommand                           () const;
+
+        void                                setEditorAutoSourceReload                       (bool flag);
+        bool                                editorAutoSourceReload                          () const;
 
         // Source settings.
         void                                setSourceAlternateDirectories                   (const QStringList& alternateDirectories);
@@ -103,8 +111,8 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         QStringList                         sourceHeaderFilePatterns                        () const;
 
         // Assembly settings.
-        void                                setAssemblyShowAssemblyTabOnStartup             (bool flag);
-        bool                                assemblyShowAssemblyTabOnStartup                () const;
+        void                                setAssemblyShowAssemblyTabOnStartupMode         (const QString& mode);
+        QString                             assemblyShowAssemblyTabOnStartupMode            () const;
 
         void                                setAssemblyKeepAssemblyTabOnTop                 (bool flag);
         bool                                assemblyKeepAssemblyTabOnTop                    () const;

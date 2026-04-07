@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include "SeerHighlighterSettings.h"
@@ -29,15 +33,22 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setExternalEditorCommand        (const QString& externalEditorCommand);
         QString                             externalEditorCommand           () const;
 
+        void                                setAutoSourceReload             (bool flag);
+        bool                                autoSourceReload                () const;
+
         void                                reset                           ();
 
     protected slots:
+        void                                handleFontMonoChanged           ();
         void                                handleFontSizeChanged           (const QString& text);
         void                                handleFontChanged               (const QFont& font);
         void                                handleFontDialog                ();
         void                                handleHighlighterChanged        ();
         void                                handleEnabledChanged            ();
         void                                handleApplyTheme                ();
+        void                                handleCppSuffixFocusIn          ();
+        void                                handleRustSuffixFocusIn         ();
+        void                                handleOdinSuffixFocusIn         ();
 
     private:
         QFont                               _font;

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #pragma once
 
 #include <QtWidgets/QDialog>
@@ -34,6 +38,9 @@ class SeerAssemblyPreferenceDialog : public QDialog, protected Ui::SeerAssemblyP
 
         void                        setShowAssemblySource       (bool flag);
         bool                        showAssemblySource          () const;
+
+        void                        setConvertUppercase         (bool flag);
+        bool                        convertUppercase            () const;
 
     public slots:
 

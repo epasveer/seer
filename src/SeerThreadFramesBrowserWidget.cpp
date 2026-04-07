@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerThreadFramesBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -14,19 +18,20 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     // Setup the widgets
     threadTreeWidget->setMouseTracking(true);
     threadTreeWidget->setSortingEnabled(false);
-    threadTreeWidget->resizeColumnToContents(0); // id
-    threadTreeWidget->resizeColumnToContents(1); // state
-    threadTreeWidget->resizeColumnToContents(2); // target-id
-    threadTreeWidget->resizeColumnToContents(3); // func
-    threadTreeWidget->resizeColumnToContents(4); // file
-    threadTreeWidget->resizeColumnToContents(5); // line
-    threadTreeWidget->resizeColumnToContents(6); // fullname
-    threadTreeWidget->resizeColumnToContents(7); // args
-    threadTreeWidget->resizeColumnToContents(8); // name
-    threadTreeWidget->resizeColumnToContents(9); // level
-    threadTreeWidget->resizeColumnToContents(10); // addr
-    threadTreeWidget->resizeColumnToContents(11); // arch
-    threadTreeWidget->resizeColumnToContents(12); // core
+    threadTreeWidget->resizeColumnToContents(0); // active
+    threadTreeWidget->resizeColumnToContents(1); // id
+    threadTreeWidget->resizeColumnToContents(2); // state
+    threadTreeWidget->resizeColumnToContents(3); // target-id
+    threadTreeWidget->resizeColumnToContents(4); // func
+    threadTreeWidget->resizeColumnToContents(5); // file
+    threadTreeWidget->resizeColumnToContents(6); // line
+    threadTreeWidget->resizeColumnToContents(7); // fullname
+    threadTreeWidget->resizeColumnToContents(8); // args
+    threadTreeWidget->resizeColumnToContents(9); // name
+    threadTreeWidget->resizeColumnToContents(10); // level
+    threadTreeWidget->resizeColumnToContents(11); // addr
+    threadTreeWidget->resizeColumnToContents(12); // arch
+    threadTreeWidget->resizeColumnToContents(13); // core
 
     threadTreeWidget->clear();
 
@@ -130,19 +135,26 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
 
                 // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
-                item->setText(0, id_text);
-                item->setText(1, state_text);
-                item->setText(2, targetid_text);
-                item->setText(3, func_text);
-                item->setText(4, QFileInfo(file_text).fileName());
-                item->setText(5, line_text);
-                item->setText(6, fullname_text);
-                item->setText(7, args_text);
-                item->setText(8, name_text);
-                item->setText(9, level_text);
-                item->setText(10, addr_text);
-                item->setText(11, arch_text);
-                item->setText(12, core_text);
+
+                if (id_text == currentthreadid_text) {
+                    item->setText(0, "*");
+                }else{
+                    item->setText(0, " ");
+                }
+
+                item->setText(1, id_text);
+                item->setText(2, state_text);
+                item->setText(3, targetid_text);
+                item->setText(4, func_text);
+                item->setText(5, QFileInfo(file_text).fileName());
+                item->setText(6, line_text);
+                item->setText(7, fullname_text);
+                item->setText(8, args_text);
+                item->setText(9, name_text);
+                item->setText(10, level_text);
+                item->setText(11, addr_text);
+                item->setText(12, arch_text);
+                item->setText(13, core_text);
 
                 // Add the frame to the tree.
                 threadTreeWidget->addTopLevelItem(item);
@@ -151,7 +163,7 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
             // Select the current thread id.
             threadTreeWidget->clearSelection();
 
-            QList<QTreeWidgetItem*> matches = threadTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 0);
+            QList<QTreeWidgetItem*> matches = threadTreeWidget->findItems(currentthreadid_text, Qt::MatchExactly, 1);
             if (matches.size() > 0) {
                 threadTreeWidget->setCurrentItem(matches.first());
             }
@@ -171,9 +183,6 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
         // =thread-exited,id="2",group-id="i2"
         refresh();
 
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        threadTreeWidget->clear();
-
     }else{
         // Ignore others.
     }
@@ -181,16 +190,17 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
     threadTreeWidget->resizeColumnToContents(0);
     threadTreeWidget->resizeColumnToContents(1);
     threadTreeWidget->resizeColumnToContents(2);
-  //threadTreeWidget->resizeColumnToContents(3); // Don't resize.
+    threadTreeWidget->resizeColumnToContents(3);
   //threadTreeWidget->resizeColumnToContents(4); // Don't resize.
-    threadTreeWidget->resizeColumnToContents(5);
-  //threadTreeWidget->resizeColumnToContents(6); // Don't resize.
+  //threadTreeWidget->resizeColumnToContents(5); // Don't resize.
+    threadTreeWidget->resizeColumnToContents(6);
   //threadTreeWidget->resizeColumnToContents(7); // Don't resize.
-    threadTreeWidget->resizeColumnToContents(8);
+  //threadTreeWidget->resizeColumnToContents(8); // Don't resize.
     threadTreeWidget->resizeColumnToContents(9);
     threadTreeWidget->resizeColumnToContents(10);
     threadTreeWidget->resizeColumnToContents(11);
     threadTreeWidget->resizeColumnToContents(12);
+    threadTreeWidget->resizeColumnToContents(13);
 
     QApplication::restoreOverrideCursor();
 }
@@ -198,6 +208,12 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
 void SeerThreadFramesBrowserWidget::handleStoppingPointReached () {
 
     refresh();
+}
+
+void SeerThreadFramesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents.
+    threadTreeWidget->clear();
 }
 
 void SeerThreadFramesBrowserWidget::refresh () {
@@ -219,12 +235,20 @@ void SeerThreadFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, in
 
     if (items.count() == 1) {
 
-        int lineno = item->text(5).toInt();
+        int lineno = item->text(6).toInt();
 
-        //qDebug() << "Emit selectedFile and selectedFrame";
+        // Select thread.
+        emit selectedThread(item->text(1).toInt());
 
-        emit selectedFile(item->text(4), item->text(6), lineno);
-        emit selectedThread(item->text(0).toInt());
+        // Select file if we can.
+        if (item->text(5) != "" && item->text(7) != "") {
+            emit selectedFile(item->text(5), item->text(7), lineno);
+        }
+
+        // Select address if we can.
+        if (item->text(11) != "") {
+            emit maybeSelectedAddress(item->text(5), item->text(7), item->text(11));
+        }
     }
 }
 
@@ -232,9 +256,9 @@ void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, in
 
     Q_UNUSED(column);
 
-    //qDebug() << item->text(0) << column;
+    //qDebug() << item->text(1) << column;
 
-    item->setToolTip(0, item->text(0) + " : " + item->text(1) + " : " + item->text(3) + " : " + item->text(4) + " : " + item->text(5));
+    item->setToolTip(0, item->text(1) + " : " + item->text(2) + " : " + item->text(3) + " : " + item->text(5) + " : " + item->text(6));
 
     for (int i=1; i<threadTreeWidget->columnCount(); i++) { // Copy tooltip to other columns.
         item->setToolTip(i, item->toolTip(0));
@@ -249,7 +273,7 @@ void SeerThreadFramesBrowserWidget::handleGdbNextToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit nextThreadId(threadid);
     }
@@ -263,7 +287,7 @@ void SeerThreadFramesBrowserWidget::handleGdbStepToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit stepThreadId(threadid);
     }
@@ -277,7 +301,7 @@ void SeerThreadFramesBrowserWidget::handleGdbFinishToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit finishThreadId(threadid);
     }
@@ -291,7 +315,7 @@ void SeerThreadFramesBrowserWidget::handleGdbContinueToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit continueThreadId(threadid);
     }
@@ -305,7 +329,7 @@ void SeerThreadFramesBrowserWidget::handleGdbInterruptToolButton () {
 
     for (i = items.begin(); i != items.end(); ++i) {
 
-        int threadid = (*i)->text(0).toInt();
+        int threadid = (*i)->text(1).toInt();
 
         emit interruptThreadId(threadid);
     }

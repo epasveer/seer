@@ -1,9 +1,33 @@
 Sites to announce new versions of Seer.
 
+https://www.reddit.com/r/cprogramming/
 https://www.reddit.com/r/cpp/
+https://www.reddit.com/r/fortran/
 https://www.reddit.com/r/ada/
-https://www.reddit.com/r/programming/
 https://www.reddit.com/r/gdb/
 https://www.reddit.com/r/linux/
 https://twitter.com/home
+
+
+Title:
+------
+
+Seergdb v2.7 released for Linux.
+
+
+Comments:
+---------
+
+A new version of Seergdb (frontend to gdb) has been released for linux.
+
+https://github.com/epasveer/seer  
+https://github.com/epasveer/seer/wiki  
+
+https://github.com/epasveer/seer/releases/tag/v2.7  
+https://github.com/epasveer/seer/releases/download/flatpak-latest/seer.flatpak  
+https://flathub.org/en-GB/apps/io.github.epasveer.seer  
+
+Give it a try.
+
+Thanks.
 

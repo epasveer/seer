@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerMainWindow.h"
 #include "SeerDebugDialog.h"
 #include "SeerConfigDialog.h"
@@ -103,6 +107,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QAction* visualizerMemoryAction = menuVisualizer->addAction("Memory");
     menuVisualizer->addSeparator();
     QAction* visualizerArrayAction  = menuVisualizer->addAction("Array");
+    QAction* visualizerMatrixAction = menuVisualizer->addAction("Matrix");
     QAction* visualizerVarAction    = menuVisualizer->addAction("Struct");
     QAction* visualizerStructAction = menuVisualizer->addAction("Basic Struct");
     QAction* visualizerImageAction  = menuVisualizer->addAction("Image");
@@ -119,14 +124,18 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     setKeySettings(SeerKeySettings::populate());
     setProjectFilename("");
 
+    // Set the default shotcut key to toggle record direction.
+    actionRecordDirection->setShortcut(QKeySequence::fromString("Ctrl+D"));
+
     //
     // Set up signals/slots.
     //
-    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebug);
+    QObject::connect(actionFileDebug,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
     QObject::connect(actionFileArguments,               &QAction::triggered,                            this,           &SeerMainWindow::handleFileArguments);
     QObject::connect(actionFileQuit,                    &QAction::triggered,                            this,           &SeerMainWindow::handleFileQuit);
     QObject::connect(actionViewMemoryVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMemoryVisualizer);
     QObject::connect(actionViewArrayVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewArrayVisualizer);
+    QObject::connect(actionViewMatrixVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewMatrixVisualizer);
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewVarVisualizer);
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
@@ -137,25 +146,33 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionConsoleDetachedMinimized,    &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetachedMinimized);
     QObject::connect(actionHelpAbout,                   &QAction::triggered,                            this,           &SeerMainWindow::handleHelpAbout);
 
-    QObject::connect(actionControlRun,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
-    QObject::connect(actionControlStart,                &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
-    QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
-    QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
-    QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStep);
-    QObject::connect(actionControlNexti,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNexti);
-    QObject::connect(actionControlStepi,                &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStepi);
-    QObject::connect(actionControlFinish,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbFinish);
-    QObject::connect(actionControlRecordStart,          &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordStart);
-    QObject::connect(actionControlRecordForward,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordForward);
-    QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordReverse);
-    QObject::connect(actionControlRecordStop,           &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbRecordStop);
-    QObject::connect(actionControlInterrupt,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionControlRestart,              &QAction::triggered,                            this,                           &SeerMainWindow::handleRestartExecutable);
+    QObject::connect(actionControlTerminate,            &QAction::triggered,                            this,                           &SeerMainWindow::handleTerminateExecutable);
+    QObject::connect(actionControlContinue,             &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbContinue);
+    QObject::connect(actionControlNext,                 &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbNext);
+    QObject::connect(actionControlStep,                 &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbStep);
+    QObject::connect(actionControlNexti,                &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbNexti);
+    QObject::connect(actionControlStepi,                &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbStepi);
+    QObject::connect(actionControlFinish,               &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbFinish);
+    QObject::connect(actionControlRunToLine,            &QAction::triggered,                            gdbWidget->editorManager(),     &SeerEditorManagerWidget::handleRunToSelectedLine);
+    QObject::connect(actionControlReverseContinue,      &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseContinue);
+    QObject::connect(actionControlReverseNext,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseNext);
+    QObject::connect(actionControlReverseStep,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseStep);
+    QObject::connect(actionControlReverseNexti,         &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseNexti);
+    QObject::connect(actionControlReverseStepi,         &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseStepi);
+    QObject::connect(actionControlReverseFinish,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbReverseFinish);
+    QObject::connect(actionControlRecordStart,          &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordStart);
+    QObject::connect(actionControlRecordForward,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordForward);
+    QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordReverse);
+    QObject::connect(actionControlRecordStop,           &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordStop);
+    QObject::connect(actionControlInterrupt,            &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbInterrupt);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,           &SeerMainWindow::handleSettingsSaveConfiguration);
 
-    QObject::connect(actionGdbRun,                      &QAction::triggered,                            this,           &SeerMainWindow::handleRunExecutable);
-    QObject::connect(actionGdbStart,                    &QAction::triggered,                            this,           &SeerMainWindow::handleStartExecutable);
+    QObject::connect(actionGdbLaunch,                   &QAction::triggered,                            this,           &SeerMainWindow::handleFileDebugWithOutDefaultProject);
+    QObject::connect(actionGdbTerminate,                &QAction::triggered,                            this,           &SeerMainWindow::handleTerminateExecutable);
+    QObject::connect(actionGdbRestart,                  &QAction::triggered,                            this,           &SeerMainWindow::handleRestartExecutable);
     QObject::connect(_styleMenuActionGroup,             &QActionGroup::triggered,                       this,           &SeerMainWindow::handleStyleMenuChanged);
     QObject::connect(actionGdbContinue,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbContinue);
     QObject::connect(actionGdbNext,                     &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbNext);
@@ -178,12 +195,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionVisualizers,                 &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerMemoryAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMemoryVisualizer);
     QObject::connect(visualizerArrayAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbArrayVisualizer);
+    QObject::connect(visualizerMatrixAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMatrixVisualizer);
     QObject::connect(visualizerVarAction,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
     QObject::connect(visualizerCudaAction,              &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbCudaVisualizer);
 
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicator::handleText);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   this,           &SeerMainWindow::handleText);
@@ -191,12 +210,19 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->editorManager(),        &SeerEditorManagerWidget::assemblyTabShown,     this,           &SeerMainWindow::handleViewAssemblyShown);
 
     QObject::connect(gdbWidget,                         &SeerGdbWidget::recordSettingsChanged,          this,           &SeerMainWindow::handleRecordSettingsChanged);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::stateChanged,                   this,           &SeerMainWindow::handleGdbStateChanged);
 
     QObject::connect(runStatus,                         &SeerRunStatusIndicator::statusChanged,         this,           &SeerMainWindow::handleRunStatusChanged);
-    QObject::connect(gdbWidget,                         &SeerGdbWidget::changeWindowTitle,              this,           &SeerMainWindow::handleChangeWindowTitle);
     QObject::connect(qApp,                              &QApplication::aboutToQuit,                     gdbWidget,      &SeerGdbWidget::handleGdbShutdown);
 
     QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,           &SeerMainWindow::handleHelpToolButtonClicked);
+
+    QObject::connect(gdbWidget,                         &SeerGdbWidget::sessionTerminated,              runStatus,      &SeerRunStatusIndicator::handleSessionTerminated);
+
+    // This handle button state when target state changes
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  this,           &SeerMainWindow::handleStatusChanged);
+    QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,           &SeerMainWindow::handleStatusChanged);
 
     handleRecordSettingsChanged();
 
@@ -305,12 +331,12 @@ const QString& SeerMainWindow::executableBreakpointSourceName () const {
     return gdbWidget->executableBreakpointSourceName();
 }
 
-void SeerMainWindow::setExecutableShowAssemblyTab (bool flag) {
-    gdbWidget->setAssemblyShowAssemblyTabOnStartup(flag);
+void SeerMainWindow::setExecutableShowAssemblyTabMode (const QString& mode) {
+    gdbWidget->setAssemblyShowAssemblyTabOnStartupMode(mode);
 }
 
-bool SeerMainWindow::executableShowAssemblyTab () const {
-    return gdbWidget->assemblyShowAssemblyTabOnStartup();
+QString SeerMainWindow::executableShowAssemblyTabMode () const {
+    return gdbWidget->assemblyShowAssemblyTabOnStartupMode();
 }
 
 void SeerMainWindow::setExecutableRandomizeStartAddress (bool flag) {
@@ -343,6 +369,22 @@ void SeerMainWindow::setExecutableConnectHostPort (const QString& executableConn
 
 const QString& SeerMainWindow::executableConnectHostPort () const {
     return gdbWidget->executableConnectHostPort();
+}
+
+void SeerMainWindow::setExecutableConnectRemoteTargetType (const QString& type) {
+    gdbWidget->setGdbRemoteTargetType(type);
+}
+
+QString SeerMainWindow::executableConnectRemoteTargetType () const {
+    return gdbWidget->gdbRemoteTargetType();
+}
+
+void SeerMainWindow::setExecutableConnectGdbserverDebug (bool enable) {
+    gdbWidget->setGdbServerDebug(enable);
+}
+
+bool SeerMainWindow::executableConnectGdbserverDebug () const {
+    return gdbWidget->gdbServerDebug();
 }
 
 void SeerMainWindow::setExecutableRRTraceDirectory (const QString& executableRRTraceDirectory) {
@@ -404,45 +446,46 @@ QString SeerMainWindow::gdbArgumentsOverride () const {
 void SeerMainWindow::launchExecutable (const QString& launchMode, const QString& breakMode) {
 
     // Show all buttons by default. Turn some off depending on debug mode.
-    actionGdbRun->setVisible(true);
-    actionGdbStart->setVisible(true);
     actionGdbContinue->setVisible(true);
     actionGdbNext->setVisible(true);
     actionGdbNexti->setVisible(true);
     actionGdbStep->setVisible(true);
     actionGdbStepi->setVisible(true);
     actionGdbFinish->setVisible(true);
+    actionInterruptProcess->setVisible(true);
+    actionRecordProcess->setVisible(true);
+    actionRecordDirection->setVisible(true);
+
+    actionGdbRestart->setVisible(false);
+    actionGdbTerminate->setVisible(false);
+    actionGdbLaunch->setVisible(false);
+
+    actionControlRestart->setVisible(true);
+    actionControlTerminate->setVisible(true);
+    actionControlInterrupt->setVisible(true);
 
     if (launchMode == "run") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "start") {
 
-        gdbWidget->handleGdbRunExecutable(breakMode);
+        gdbWidget->handleGdbRunExecutable(breakMode, false);
 
     }else if (launchMode == "attach") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
-
-        gdbWidget->handleGdbAttachExecutable();
+        gdbWidget->handleGdbAttachExecutable(false);
 
     }else if (launchMode == "connect") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
-
-        gdbWidget->handleGdbConnectExecutable();
+        gdbWidget->handleGdbConnectExecutable(false);
 
     }else if (launchMode == "rr") {
 
-        gdbWidget->handleGdbRRExecutable();
+        gdbWidget->handleGdbRRExecutable(false);
 
     }else if (launchMode == "corefile") {
 
-        actionGdbRun->setVisible(false);
-        actionGdbStart->setVisible(false);
         actionGdbContinue->setVisible(false);
         actionGdbNext->setVisible(false);
         actionGdbNexti->setVisible(false);
@@ -450,25 +493,35 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbStepi->setVisible(false);
         actionGdbFinish->setVisible(false);
 
+        actionInterruptProcess->setVisible(false);
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
+
         gdbWidget->handleGdbCoreFileExecutable();
 
     }else if (launchMode == "project") {
 
+        actionGdbLaunch->setVisible(true);
+
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "none") {
 
+        actionGdbLaunch->setVisible(true);
+
         // If no mode, schedule the opening of the debug dialog.
-        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebug);
+        QTimer::singleShot(200, this, &SeerMainWindow::handleFileDebugWithDefaultProject);
 
     }else if (launchMode == "configdialog") {
+
+        actionGdbLaunch->setVisible(true);
 
         // Launch the config dialog.
         QTimer::singleShot(200, this, &SeerMainWindow::handleSettingsConfiguration);
 
     }else{
-        qWarning() << "Bad launchMode:" << launchMode;
+        qDebug() << "UNKNOWN launch mode:" << launchMode;
     }
 }
 
@@ -491,7 +544,12 @@ void SeerMainWindow::setStyleName (const QString& name) {
             return;
         }
 
-        s.open(QFile::ReadOnly | QFile::Text);
+        bool f = s.open(QFile::ReadOnly | QFile::Text);
+        if (f == false) {
+            qDebug() << "Can't open Stylesheet '" + name + "'!";
+            return;
+        }
+
         QTextStream ts(&s);
         qApp->setStyleSheet(ts.readAll());
 
@@ -510,7 +568,15 @@ const QString& SeerMainWindow::styleName () {
     return _styleName;
 }
 
-void SeerMainWindow::handleFileDebug () {
+void SeerMainWindow::handleFileDebugWithDefaultProject () {
+    handleFileDebug(true);
+}
+
+void SeerMainWindow::handleFileDebugWithOutDefaultProject () {
+    handleFileDebug(false);
+}
+
+void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
 
     SeerDebugDialog dlg(this);
 
@@ -523,16 +589,27 @@ void SeerMainWindow::handleFileDebug () {
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
     dlg.setBreakpointSourceName(executableBreakpointSourceName());
-    dlg.setShowAssemblyTab(executableShowAssemblyTab());
+    dlg.setShowAssemblyTabMode(executableShowAssemblyTabMode());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
     dlg.setAttachPid(executablePid());
     dlg.setConnectHostPort(executableConnectHostPort());
+    dlg.setConnectRemoteTargetType(executableConnectRemoteTargetType());
+    dlg.setConnectGdbserverDebug(executableConnectGdbserverDebug());
     dlg.setRRTraceDirectory(executableRRTraceDirectory());
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
-    dlg.setProjectFilename(projectFilename());
+
+    // If there's a project, use it.
+    if (projectFilename() != "") {
+        dlg.setProjectFilename(projectFilename());
+    // Otherwise use the default project, if there is one.
+    }else{
+        if (loadDefaultProject) {
+            dlg.loadDefaultProjectSettings();
+        }
+    }
 
     setProjectFilename(""); // Clear project name here. No need to have it anymore.
 
@@ -556,11 +633,13 @@ void SeerMainWindow::handleFileDebug () {
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
     setExecutableBreakpointSourceName(dlg.breakpointSourceName());
-    setExecutableShowAssemblyTab(dlg.showAssemblyTab());
+    setExecutableShowAssemblyTabMode(dlg.showAssemblyTabMode());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
     setExecutablePid(dlg.attachPid());
     setExecutableConnectHostPort(dlg.connectHostPort());
+    setExecutableConnectRemoteTargetType(dlg.connectRemoteTargetType());
+    setExecutableConnectGdbserverDebug(dlg.connectGdbserverDebug());
     setExecutableRRTraceDirectory(dlg.rrTraceDirectory());
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
@@ -599,6 +678,11 @@ void SeerMainWindow::handleViewMemoryVisualizer () {
 void SeerMainWindow::handleViewArrayVisualizer () {
 
     gdbWidget->handleGdbArrayVisualizer();
+}
+
+void SeerMainWindow::handleViewMatrixVisualizer () {
+
+    gdbWidget->handleGdbMatrixVisualizer();
 }
 
 void SeerMainWindow::handleViewStructVisualizer () {
@@ -669,6 +753,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setSeerConsoleMode(gdbWidget->consoleMode());
     dlg.setSeerConsoleScrollLines(gdbWidget->consoleScrollLines());
     dlg.setSeerRememberManualCommandCount(gdbWidget->rememberManualCommandCount());
+    dlg.setGdbLauncher(gdbWidget->gdbLauncher());
     dlg.setGdbProgram(gdbWidget->gdbProgram());
     dlg.setGdbArguments(gdbWidget->gdbArguments());
     dlg.setGdbAsyncMode(gdbWidget->gdbAsyncMode());
@@ -676,21 +761,21 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setGdbHandleTerminatingException(gdbWidget->gdbHandleTerminatingException());
     dlg.setGdbRandomizeStartAddress(gdbWidget->gdbRandomizeStartAddress());
     dlg.setGdbEnablePrettyPrinting(gdbWidget->gdbEnablePrettyPrinting());
-    dlg.setDprintfStyle(gdbWidget->dprintfStyle());
-    dlg.setDprintfFunction(gdbWidget->dprintfFunction());
-    dlg.setDprintfChannel(gdbWidget->dprintfChannel());
+    dlg.setGdbRemoteTargetType(gdbWidget->gdbRemoteTargetType());
+    dlg.setGdbArchitectureType(gdbWidget->gdbArchitectureType());
     dlg.setEditorFont(gdbWidget->editorManager()->editorFont());
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
     dlg.setExternalEditorCommand(gdbWidget->editorManager()->editorExternalEditorCommand());
+    dlg.setEditorAutoSourceReload(gdbWidget->editorManager()->editorAutoSourceReload());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
     dlg.setSourceIgnoreFilePatterns(gdbWidget->sourceIgnoreFilePatterns());
     dlg.setSourceMiscFilePatterns(gdbWidget->sourceMiscFilePatterns());
     dlg.setSourceSourceFilePatterns(gdbWidget->sourceSourceFilePatterns());
     dlg.setSourceHeaderFilePatterns(gdbWidget->sourceHeaderFilePatterns());
-    dlg.setAssemblyShowAssemblyTabOnStartup(gdbWidget->assemblyShowAssemblyTabOnStartup());
+    dlg.setAssemblyShowAssemblyTabOnStartupMode(gdbWidget->assemblyShowAssemblyTabOnStartupMode());
     dlg.setAssemblyKeepAssemblyTabOnTop(gdbWidget->assemblyKeepAssemblyTabOnTop());
     dlg.setAssemblyDisassemblyFlavor(gdbWidget->assemblyDisassemblyFlavor());
     dlg.setAssemblySymbolDemagling(gdbWidget->assemblySymbolDemagling());
@@ -715,6 +800,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setConsoleMode(dlg.seerConsoleMode());
     gdbWidget->setConsoleScrollLines(dlg.seerConsoleScrollLines());
     gdbWidget->setRememberManualCommandCount(dlg.seerRememberManualCommandCount());
+    gdbWidget->setGdbLauncher(dlg.gdbLauncher());
     gdbWidget->setGdbProgram(dlg.gdbProgram());
     gdbWidget->setGdbArguments(dlg.gdbArguments());
     gdbWidget->setGdbAsyncMode(dlg.gdbAsyncMode());
@@ -722,19 +808,20 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setGdbHandleTerminatingException(dlg.gdbHandleTerminatingException());
     gdbWidget->setGdbRandomizeStartAddress(dlg.gdbRandomizeStartAddress());
     gdbWidget->setGdbEnablePrettyPrinting(dlg.gdbEnablePrettyPrinting());
-    gdbWidget->setDprintfStyle(dlg.dprintfStyle());
-    gdbWidget->setDprintfFunction(dlg.dprintfFunction());
-    gdbWidget->setDprintfChannel(dlg.dprintfChannel());
+    gdbWidget->setGdbRemoteTargetType(dlg.gdbRemoteTargetType());
+    gdbWidget->setGdbArchitectureType(dlg.gdbArchitectureType());
+    gdbWidget->editorManager()->setEditorFont(dlg.editorFont());
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
     gdbWidget->editorManager()->setEditorExternalEditorCommand(dlg.externalEditorCommand());
+    gdbWidget->editorManager()->setEditorAutoSourceReload(dlg.editorAutoSourceReload());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
     gdbWidget->setSourceIgnoreFilePatterns(dlg.sourceIgnoreFilePatterns());
     gdbWidget->setSourceMiscFilePatterns(dlg.sourceMiscFilePatterns());
     gdbWidget->setSourceSourceFilePatterns(dlg.sourceSourceFilePatterns());
     gdbWidget->setSourceHeaderFilePatterns(dlg.sourceHeaderFilePatterns());
-    gdbWidget->setAssemblyShowAssemblyTabOnStartup(dlg.assemblyShowAssemblyTabOnStartup());
+    gdbWidget->setAssemblyShowAssemblyTabOnStartupMode(dlg.assemblyShowAssemblyTabOnStartupMode());
     gdbWidget->setAssemblyKeepAssemblyTabOnTop(dlg.assemblyKeepAssemblyTabOnTop());
     gdbWidget->setAssemblyDisassemblyFlavor(dlg.assemblyDisassemblyFlavor());
     gdbWidget->setAssemblySymbolDemagling(dlg.assemblySymbolDemagling());
@@ -755,27 +842,18 @@ void SeerMainWindow::handleSettingsConfiguration () {
         gdbWidget->clearManualCommandHistory();
     }
 
-    // Reset the dprintf, in case it was changed.
-    gdbWidget->resetDprintf();
-
     // Set the key shortcuts.
     setKeySettings(dlg.keySettings());
 }
 
 void SeerMainWindow::handleSettingsSaveConfiguration () {
-
-    int result = QMessageBox::warning(this, "Seer - Settings",
-                                      QString("Write the configuration settings?"),
-                                      QMessageBox::Ok|QMessageBox::Cancel, QMessageBox::Cancel);
-
-    if (result == QMessageBox::Cancel) {
-        return;
-    }
-
     writeConfigSettings();
     gdbWidget->writeSettings();
 
-    QMessageBox::information(this, "Seer", "Saved.");
+    QMessageBox m(QMessageBox::Information, "Seer", "Configuration saved!");
+    m.setStandardButtons(QMessageBox::NoButton);
+    QTimer::singleShot(1000, &m, SLOT(hide()));
+    m.exec();
 }
 
 void SeerMainWindow::handleHelpAbout () {
@@ -785,25 +863,102 @@ void SeerMainWindow::handleHelpAbout () {
     dlg.exec();
 }
 
-void SeerMainWindow::handleRunExecutable () {
+void SeerMainWindow::handleTerminateExecutable () {
 
-    if (gdbWidget->executableLaunchMode() == "rr") {
+    if (gdbWidget->isGdbRuning() == true) {
 
-        gdbWidget->handleGdbRRExecutable();
+        QSettings settings;
+        bool      prompt = true;
 
-    }else{
+        settings.beginGroup("mainwindow"); {
+            prompt = settings.value("promptterminate", prompt).toBool();
+        } settings.endGroup();
 
-        gdbWidget->handleGdbRunExecutable("none");
+        if (prompt) {
+
+            QMessageBox msgBox(this);
+            msgBox.setWindowTitle("Seer");
+            msgBox.setText("Terminate current session?");
+            msgBox.setIcon(QMessageBox::Question);
+
+            // Add "Don't ask again" checkbox
+            QCheckBox* dontAskAgainBox = new QCheckBox("Don't ask again", &msgBox);
+            msgBox.setCheckBox(dontAskAgainBox);
+
+            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+
+            int result = msgBox.exec();
+
+            // Save preference if checked
+            if (dontAskAgainBox->isChecked()) {
+                settings.beginGroup("mainwindow"); {
+                    settings.setValue("promptterminate", false);
+                } settings.endGroup();
+            }
+
+            if (result == QMessageBox::Cancel) {
+                return;
+            }
+        }
+
+        gdbWidget->handleGdbTerminateExecutable(false);
     }
 }
 
-void SeerMainWindow::handleStartExecutable () {
+void SeerMainWindow::handleRestartExecutable () {
 
-    if (gdbWidget->executableLaunchMode() == "rr") {
+    // Prompt if there's already a gdb running.
+    if (gdbWidget->isGdbRuning() == true) {
 
-        gdbWidget->handleGdbRRExecutable();
+        QSettings settings;
+        bool      prompt = true;
 
-    }else{
+        settings.beginGroup("mainwindow"); {
+            prompt = settings.value("promptrestart", prompt).toBool();
+        } settings.endGroup();
+
+        if (prompt) {
+
+            // This QMessageBox with a checkbox and load/save from QSettings
+            // is begging for a helper object!
+
+            QMessageBox msgBox(this);
+            msgBox.setWindowTitle("Seer");
+            msgBox.setText("Restart current session?");
+            msgBox.setIcon(QMessageBox::Question);
+
+            // Add "Don't ask again" checkbox
+            QCheckBox* dontAskAgainBox = new QCheckBox("Don't ask again", &msgBox);
+            msgBox.setCheckBox(dontAskAgainBox);
+
+            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+
+            int result = msgBox.exec();
+
+            // Save preference if checked
+            if (dontAskAgainBox->isChecked()) {
+                settings.beginGroup("mainwindow"); {
+                    settings.setValue("promptrestart", false);
+                } settings.endGroup();
+            }
+
+            if (result == QMessageBox::Cancel) {
+                return;
+            }
+        }
+    }
+
+    if (gdbWidget->isGdbRuning() == true) {
+        gdbWidget->handleGdbTerminateExecutable(false);
+    }
+
+    if (gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode()) {
+        gdbWidget->restoreLaunchMode();
+    }
+
+    if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start") {
 
         QString breakfunction = gdbWidget->executableBreakpointFunctionName();
         QString breaksource   = gdbWidget->executableBreakpointSourceName();
@@ -811,17 +966,36 @@ void SeerMainWindow::handleStartExecutable () {
         // Stop in function?
         if (breakfunction != "") {
 
-            gdbWidget->handleGdbRunExecutable("infunction");
+            gdbWidget->handleGdbRunExecutable("infunction", true);
 
         // Stop at source:line?
         }else if (breaksource != "") {
 
-            gdbWidget->handleGdbRunExecutable("insource");
+            gdbWidget->handleGdbRunExecutable("insource", true);
 
         // Otherwise, attempt to stop in "main".
         }else{
-            gdbWidget->handleGdbRunExecutable("inmain");
+            gdbWidget->handleGdbRunExecutable("inmain", true);
         }
+
+    }else if (gdbWidget->executableLaunchMode() == "attach") {
+
+        gdbWidget->handleGdbAttachExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "connect") {
+
+        gdbWidget->handleGdbConnectExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "rr") {
+
+        gdbWidget->handleGdbRRExecutable(true);
+
+    }else if (gdbWidget->executableLaunchMode() == "corefile") {
+
+        gdbWidget->handleGdbCoreFileExecutable();
+
+    }else{
+        qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
     }
 }
 
@@ -839,6 +1013,138 @@ void SeerMainWindow::handleStyleMenuChanged () {
 void SeerMainWindow::handleShowMessage (QString message, int time) {
 
     statusBar()->showMessage(message, time);
+}
+
+void SeerMainWindow::handleGdbStateChanged () {
+
+    // qDebug() << "MODE:" << gdbWidget->executableLaunchMode() << "GDBRUNNING:" << gdbWidget->isGdbRuning() << "HASBACKUPLAUNCH:" << gdbWidget->hasBackupLaunchMode();
+
+    //
+    // We are currently debugging a program. Allow for Terminate/Detach/Disconnect...
+    //
+    // mode: "run" gdbrunning: true hasbackuplaunch: false
+    // terminate: show  debug: hide  retart: hide
+    //
+    // mode: "run" gdbrunning: true hasbackuplaunch: true
+    // terminate: show  debug: hide  retart: hide
+    //
+    if (gdbWidget->executableLaunchMode() != "" && gdbWidget->isGdbRuning() == true) {
+
+        // Launch and Restart. Applies to all.
+        actionGdbLaunch->setVisible(false);
+        actionGdbRestart->setVisible(true);
+        actionControlRestart->setVisible(true);
+        actionControlTerminate->setVisible(true);
+
+
+        // Get the hotkey for the Terminate button.
+        QString hotkey = "";
+
+        if (_keySettings.has("Terminate")) {
+
+            SeerKeySetting setting = _keySettings.get("Terminate");
+
+            hotkey = " (" + setting._sequence.toString() + ")";
+        }
+
+        // Run mode
+        if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start" ||
+            gdbWidget->executableLaunchMode() == "rr"  || gdbWidget->executableLaunchMode() == "corefile") {
+            // Terminate
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Terminate" + hotkey);
+            actionGdbTerminate->setToolTip("Terminate the current debugging session.");
+            actionControlTerminate->setText("Terminate");
+            actionControlTerminate->setToolTip("Terminate the current debugging session.");
+
+        // Attach mode
+        }else if (gdbWidget->executableLaunchMode() == "attach") {
+            // Detach
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Detach" + hotkey);
+            actionGdbTerminate->setToolTip("Detach from the current debugging session.");
+            actionControlTerminate->setText("Detach");
+            actionControlTerminate->setToolTip("Detach from the current debugging session.");
+
+        // Connect mode
+        }else if (gdbWidget->executableLaunchMode() == "connect") {
+            // Disconnect
+            actionGdbTerminate->setVisible(true);
+            actionGdbTerminate->setText("Disconnect" + hotkey);
+            actionGdbTerminate->setToolTip("Disconnect from the current debugging session.");
+            actionControlTerminate->setText("Disconnect");
+            actionControlTerminate->setToolTip("Disconnect from the current debugging session.");
+
+        }else{
+            qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
+        }
+
+        return;
+    }
+
+    //
+    // We are debugging a program but gdb has been killed. Allow for Launch and for Restart/Reattach/Reconnect...
+    //
+    // mode: "" gdbrunning: false hasbackuplaunch: true
+    // terminate: hide  debug: show  retart: show
+    //
+    if (gdbWidget->executableLaunchMode() == "" && gdbWidget->isGdbRuning() == false && gdbWidget->hasBackupLaunchMode() == true) {
+
+        // Allow a new debugging session.
+        actionGdbLaunch->setVisible(true);
+        actionGdbLaunch->setToolTip("Start a new debugging session.");
+
+        // Hide terminate. Applies to all.
+        actionGdbTerminate->setVisible(false);
+        actionControlRestart->setVisible(true);
+        actionControlTerminate->setVisible(true);
+
+        // Get the hotkey for the Restart button.
+        QString hotkey = "";
+
+        if (_keySettings.has("Restart")) {
+
+            SeerKeySetting setting = _keySettings.get("Restart");
+
+            hotkey = " (" + setting._sequence.toString() + ")";
+        }
+
+        // Run mode
+        if (gdbWidget->backupLaunchMode() == "run" || gdbWidget->backupLaunchMode() == "start" ||
+            gdbWidget->backupLaunchMode() == "rr"  || gdbWidget->backupLaunchMode() == "corefile") {
+            // Restart
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Restart" + hotkey);
+            actionGdbRestart->setToolTip("Restart the current debugging session.");
+            actionControlRestart->setText("Restart");
+            actionControlRestart->setToolTip("Restart the current debugging session.");
+
+        // Attach mode
+        }else if (gdbWidget->backupLaunchMode() == "attach") {
+            // Reattach
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Reattach" + hotkey);
+            actionGdbRestart->setToolTip("Reattach the current debugging session.");
+            actionControlRestart->setText("Reattach");
+            actionControlRestart->setToolTip("Reattach the current debugging session.");
+
+        // Connect mode
+        }else if (gdbWidget->backupLaunchMode() == "connect") {
+            // Reconnect
+            actionGdbRestart->setVisible(true);
+            actionGdbRestart->setText("Reconnect" + hotkey);
+            actionGdbRestart->setToolTip("Reconnect the current debugging session.");
+            actionControlRestart->setText("Reconnect");
+            actionControlRestart->setToolTip("Reconnect the current debugging session.");
+
+        }else{
+            qDebug() << "UNKNOWN launch mode:" << gdbWidget->backupLaunchMode();
+        }
+
+        return;
+    }
+
+    qDebug() << "BAD STATE!";
 }
 
 void SeerMainWindow::handleText (const QString& text) {
@@ -898,6 +1204,26 @@ void SeerMainWindow::handleText (const QString& text) {
         }
 
         if (msg_text == "\"No symbol \"disassembly\" in current context.\"") {
+            return;
+        }
+
+        if (msg_text.startsWith("\"A syntax error in expression, near")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Invalid character ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"No symbol ")) {
+            return;
+        }
+
+        if (msg_text.startsWith("\"Problem parsing arguments: data-evaluate-expression")) {
+            return;
+        }
+
+        if (msg_text == "\"Attempt to use a type name as an expression\"") {
             return;
         }
 
@@ -981,6 +1307,18 @@ void SeerMainWindow::handleText (const QString& text) {
     }else if (text.startsWith("^done,InfoCudaDevicesTable={") && text.endsWith("}")) {
         return;
 
+    }else if (text.startsWith("^done,skips=[") && text.endsWith("]")) {
+        return;
+
+    }else if (text.startsWith("^done,signal-values=[") && text.endsWith("]")) {
+        return;
+
+    }else if (text.startsWith("^done,signal-names=[") && text.endsWith("]")) {
+        return;
+
+    }else if (text.startsWith("^done,checkpoints=[") && text.endsWith("]")) {
+        return;
+
     }else if (text.contains(QRegularExpression("^([0-9]+)\\^done"))) {
         return;
 
@@ -1004,10 +1342,13 @@ void SeerMainWindow::handleText (const QString& text) {
 
         return;
 
+    }else if (text == "^connected") {
+        //^connected
+        return;
+
     }else if (text.startsWith("^connected,frame=")) {
         //^connected,frame={level=\"0\",addr=\"0x00007f48351f80c1\",func=\"read\",args=[],from=\"/lib64/libc.so.6\",arch=\"i386:x86-64\"}"
         return;
-
 
     }else if (text.startsWith("*stopped")) {
 
@@ -1103,9 +1444,10 @@ void SeerMainWindow::handleText (const QString& text) {
             // Don't bother showing this.
             // Attaching to a pid will generate an unknown *stopped message that is useless.
 
-            //qDebug() << "Text=" << text;
+            // qDebug() << "Text=" << text;
+            // qDebug() << "Reason=" << reason_text;
 
-            gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
+            // gdbWidget->addMessage("Program encountered an unknown problem. See the Gdb output tab for messages.", QMessageBox::Warning);
         }
 
         return;
@@ -1158,9 +1500,16 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordReverse->setEnabled(false);
         actionControlRecordForward->setChecked(false);
         actionControlRecordReverse->setChecked(false);
+        actionControlReverseContinue->setEnabled(false);
+        actionControlReverseNext->setEnabled(false);
+        actionControlReverseStep->setEnabled(false);
+        actionControlReverseFinish->setEnabled(false);
+        actionControlReverseNexti->setEnabled(false);
+        actionControlReverseStepi->setEnabled(false);
 
         // Toolbar
         actionRecordProcess->setText("Record");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(false);
         actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
@@ -1172,6 +1521,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordStop->setEnabled(true);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
 
@@ -1194,6 +1549,7 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("Recording");
+        actionRecordProcess->setToolTip("Toggle Record mode.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
@@ -1204,6 +1560,12 @@ void SeerMainWindow::handleRecordSettingsChanged () {
         actionControlRecordStop->setEnabled(false);
         actionControlRecordForward->setEnabled(true);
         actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
 
         if (gdbWidget->gdbRecordDirection() == "") {
 
@@ -1226,11 +1588,51 @@ void SeerMainWindow::handleRecordSettingsChanged () {
 
         // Toolbar
         actionRecordProcess->setText("RR");
+        actionRecordProcess->setToolTip("Using RR debugger.");
+        actionRecordProcess->setEnabled(true);
+        actionRecordDirection->setEnabled(true);
+
+    }else if (gdbWidget->gdbRecordMode() == "udb") {
+
+        // Menu Control
+        actionControlRecordStart->setEnabled(false);
+        actionControlRecordStop->setEnabled(false);
+        actionControlRecordForward->setEnabled(true);
+        actionControlRecordReverse->setEnabled(true);
+        actionControlReverseContinue->setEnabled(true);
+        actionControlReverseNext->setEnabled(true);
+        actionControlReverseStep->setEnabled(true);
+        actionControlReverseFinish->setEnabled(true);
+        actionControlReverseNexti->setEnabled(true);
+        actionControlReverseStepi->setEnabled(true);
+
+        if (gdbWidget->gdbRecordDirection() == "") {
+
+            actionControlRecordForward->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+        }else if (gdbWidget->gdbRecordDirection() == "--reverse") {
+
+            actionControlRecordReverse->setChecked(true);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-previous.svg"));
+
+        }else{
+
+            actionControlRecordForward->setChecked(false);
+            actionControlRecordReverse->setChecked(false);
+            actionRecordDirection->setIcon(QIcon(":/seer/resources/RelaxLightIcons/go-next.svg"));
+
+            qDebug() << "Bad record direction of '" << gdbWidget->gdbRecordDirection() << "'";
+        }
+
+        // Toolbar
+        actionRecordProcess->setText("UDB");
+        actionRecordProcess->setToolTip("Using UDB debugger.");
         actionRecordProcess->setEnabled(true);
         actionRecordDirection->setEnabled(true);
 
     }else{
-        qDebug() << "Bad record mode of '" << gdbWidget->gdbRecordMode() << "'";
+        qDebug() << "Bad record mode of:" << gdbWidget->gdbRecordMode();
     }
 }
 
@@ -1279,6 +1681,7 @@ void SeerMainWindow::writeConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
+        settings.setValue("launcher",                   gdbWidget->gdbLauncher());
         settings.setValue("program",                    gdbWidget->gdbProgram());
         settings.setValue("arguments",                  gdbWidget->gdbArguments());
         settings.setValue("asyncmode",                  gdbWidget->gdbAsyncMode());
@@ -1286,6 +1689,8 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("handleterminatingexception", gdbWidget->gdbHandleTerminatingException());
         settings.setValue("randomizestartaddress",      gdbWidget->gdbRandomizeStartAddress());
         settings.setValue("enableprettyprinting",       gdbWidget->gdbEnablePrettyPrinting());
+        settings.setValue("remotetargettype",           gdbWidget->gdbRemoteTargetType());
+        settings.setValue("architecturetype",           gdbWidget->gdbArchitectureType());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
@@ -1294,17 +1699,12 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("gdbarguments",               gdbWidget->rrGdbArguments());
     } settings.endGroup();
 
-    settings.beginGroup("printpoints"); {
-        settings.setValue("style",    gdbWidget->dprintfStyle());
-        settings.setValue("function", gdbWidget->dprintfFunction());
-        settings.setValue("channel",  gdbWidget->dprintfChannel());
-    } settings.endGroup();
-
     settings.beginGroup("editor"); {
 
-        settings.setValue("font",    gdbWidget->editorManager()->editorFont().toString());
-        settings.setValue("tabsize", gdbWidget->editorManager()->editorTabSize());
+        settings.setValue("font",                  gdbWidget->editorManager()->editorFont().toString());
+        settings.setValue("tabsize",               gdbWidget->editorManager()->editorTabSize());
         settings.setValue("externaleditorcommand", gdbWidget->editorManager()->editorExternalEditorCommand());
+        settings.setValue("autosourcereload",      gdbWidget->editorManager()->editorAutoSourceReload());
 
         settings.beginGroup("highlighter"); {
 
@@ -1323,7 +1723,9 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
-            settings.setValue("suffixes", highlighter.sourceSuffixes());
+            settings.setValue("cppsuffixes",  highlighter.cppSourceSuffixes());
+            settings.setValue("odinsuffixes", highlighter.odinSourceSuffixes());
+            settings.setValue("rustsuffixes", highlighter.rustSourceSuffixes());
         } settings.endGroup();
 
     } settings.endGroup();
@@ -1361,25 +1763,31 @@ void SeerMainWindow::readConfigSettings () {
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
+#ifdef SEER_GDB_LAUNCHER
+        gdbWidget->setGdbLauncher(settings.value("launcher", STRINGIFY(SEER_GDB_LAUNCHER)).toString());
+#else
+        gdbWidget->setGdbLauncher(settings.value("launcher", "").toString());
+#endif
+
+#ifdef SEER_GDB_NAME
+        gdbWidget->setGdbProgram(settings.value("program", STRINGIFY(SEER_GDB_NAME)).toString());
+#else
         gdbWidget->setGdbProgram(settings.value("program", "/usr/bin/gdb").toString());
+#endif
         gdbWidget->setGdbArguments(settings.value("arguments", "--interpreter=mi").toString());
         gdbWidget->setGdbAsyncMode(settings.value("asyncmode", true).toBool());
         gdbWidget->setGdbNonStopMode(settings.value("nonstopmode", false).toBool());
         gdbWidget->setGdbHandleTerminatingException(settings.value("handleterminatingexception", true).toBool());
         gdbWidget->setGdbRandomizeStartAddress(settings.value("randomizestartaddress", false).toBool());
         gdbWidget->setGdbEnablePrettyPrinting(settings.value("enableprettyprinting", true).toBool());
+        gdbWidget->setGdbRemoteTargetType(settings.value("remotetargettype", "extended-remote").toString());
+        gdbWidget->setGdbArchitectureType(settings.value("architecturetype", "auto").toString());
     } settings.endGroup();
 
     settings.beginGroup("rr"); {
         gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
         gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
         gdbWidget->setRRGdbArguments(settings.value("gdbarguments", "").toString());
-    } settings.endGroup();
-
-    settings.beginGroup("printpoints"); {
-        gdbWidget->setDprintfStyle(settings.value("style", "gdb").toString());
-        gdbWidget->setDprintfFunction(settings.value("function", "printf").toString());
-        gdbWidget->setDprintfChannel(settings.value("channel", "").toString());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {
@@ -1394,6 +1802,7 @@ void SeerMainWindow::readConfigSettings () {
 
         gdbWidget->editorManager()->setEditorTabSize(settings.value("tabsize", 4).toInt());
         gdbWidget->editorManager()->setEditorExternalEditorCommand(settings.value("externaleditorcommand").toString());
+        gdbWidget->editorManager()->setEditorAutoSourceReload(settings.value("autosourcereload").toBool());
 
         settings.beginGroup("highlighter"); {
 
@@ -1427,9 +1836,9 @@ void SeerMainWindow::readConfigSettings () {
                 } settings.endGroup();
             }
 
-            if (settings.contains("suffixes")) {
-                highlighter.setSourceSuffixes(settings.value("suffixes").toString());
-            }
+            if (settings.contains("cppsuffixes"))  highlighter.setCppSourceSuffixes(settings.value("cppsuffixes").toString());
+            if (settings.contains("odinsuffixes")) highlighter.setOdinSourceSuffixes(settings.value("odinsuffixes").toString());
+            if (settings.contains("rustsuffixes")) highlighter.setRustSourceSuffixes(settings.value("rustsuffixes").toString());
 
             gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);
 
@@ -1489,22 +1898,24 @@ const SeerKeySettings SeerMainWindow::keySettings () const {
 
 void SeerMainWindow::refreshShortCuts () {
 
-    if (_keySettings.has("Run")) {
+    // Dynamically change tool tip for 'Restart' depending on debug mode.
 
-        SeerKeySetting setting = _keySettings.get("Run");
+    if (_keySettings.has("Restart")) {
 
-        actionGdbRun->setToolTip(setting._description);
-        actionGdbRun->setText(setting._action + " (" + setting._sequence.toString() + ")");
-        actionControlRun->setShortcut(setting._sequence);
+        SeerKeySetting setting = _keySettings.get("Restart");
+
+        actionGdbRestart->setToolTip(setting._description);
+        actionGdbRestart->setText(setting._action + " (" + setting._sequence.toString() + ")");
+        actionControlRestart->setShortcut(setting._sequence);
     }
 
-    if (_keySettings.has("Start")) {
+    if (_keySettings.has("Terminate")) {
 
-        SeerKeySetting setting = _keySettings.get("Start");
+        SeerKeySetting setting = _keySettings.get("Terminate");
 
-        actionGdbStart->setToolTip(setting._description);
-        actionGdbStart->setText(setting._action + " (" + setting._sequence.toString() + ")");
-        actionControlStart->setShortcut(setting._sequence);
+        actionGdbTerminate->setToolTip(setting._description);
+        actionGdbTerminate->setText(setting._action + " (" + setting._sequence.toString() + ")");
+        actionControlTerminate->setShortcut(setting._sequence);
     }
 
     if (_keySettings.has("Next")) {
@@ -1561,6 +1972,48 @@ void SeerMainWindow::refreshShortCuts () {
         actionControlContinue->setShortcut(setting._sequence);
     }
 
+    if (_keySettings.has("ReverseNext")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseNext");
+
+        actionControlReverseNext->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseNexti")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseNexti");
+
+        actionControlReverseNexti->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseStep")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseStep");
+
+        actionControlReverseStep->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseStepi")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseStepi");
+
+        actionControlReverseStepi->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseFinish")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseFinish");
+
+        actionControlReverseFinish->setShortcut(setting._sequence);
+    }
+
+    if (_keySettings.has("ReverseContinue")) {
+
+        SeerKeySetting setting = _keySettings.get("ReverseContinue");
+
+        actionControlReverseContinue->setShortcut(setting._sequence);
+    }
+
     if (_keySettings.has("Interrupt")) {
 
         SeerKeySetting setting = _keySettings.get("Interrupt");
@@ -1590,6 +2043,80 @@ void SeerMainWindow::refreshShortCuts () {
         actionFileQuit->setShortcut(setting._sequence);
     }
 
+    if (_keySettings.has("ToggleRecordDirection")) {
+
+        SeerKeySetting setting = _keySettings.get("ToggleRecordDirection");
+
+        actionRecordDirection->setText(QString("Direction") + " (" + setting._sequence.toString() + ")");
+        actionRecordDirection->setShortcut(setting._sequence);
+
+        actionControlDirectionMenu->setTitle(QString("Direction") + "   (Toggle " + setting._sequence.toString() + ")");
+    }
+
+    if (_keySettings.has("RunToLine")) {
+
+        SeerKeySetting setting = _keySettings.get("RunToLine");
+
+        actionControlRunToLine->setShortcut(setting._sequence);
+    }
+
+    // Notify the editor manager of changes.
     gdbWidget->editorManager()->setEditorKeySettings(keySettings());
 }
 
+/***********************************************************************************************************************
+ * Change action button availability when status change
+ **********************************************************************************************************************/
+void SeerMainWindow::handleStatusChanged(QString message) {
+    // target halt
+    if (message.startsWith("*stopped,reason=") || message.startsWith("^done,stack=[frame="))
+    {
+        handleGdbTargetInterrupt();
+    }
+    else if (message.startsWith("*running"))      // target is running
+    {
+        handleGdbTargetRunning();
+    }
+}
+// Disable some button while target is running
+void SeerMainWindow::handleGdbTargetRunning()
+{
+    // Control Menu
+    actionControlInterrupt->setEnabled(true);
+    actionControlContinue->setEnabled(false);
+    actionControlNext->setEnabled(false);
+    actionControlStep->setEnabled(false);
+    actionControlFinish->setEnabled(false);
+    actionControlNexti->setEnabled(false);
+    actionControlStepi->setEnabled(false);
+    actionControlRunToLine->setEnabled(false);
+    // Action buttons
+    actionInterruptProcess->setEnabled(true);
+    actionGdbContinue->setEnabled(false);
+    actionGdbNext->setEnabled(false);
+    actionGdbStep->setEnabled(false);
+    actionGdbFinish->setEnabled(false);
+    actionGdbNexti->setEnabled(false);
+    actionGdbStepi->setEnabled(false);
+}
+// Enable some button while target is interrupted
+void SeerMainWindow::handleGdbTargetInterrupt()
+{
+    // Control Menu
+    actionControlInterrupt->setEnabled(false);
+    actionControlContinue->setEnabled(true);
+    actionControlNext->setEnabled(true);
+    actionControlStep->setEnabled(true);
+    actionControlFinish->setEnabled(true);
+    actionControlNexti->setEnabled(true);
+    actionControlStepi->setEnabled(true);
+    actionControlRunToLine->setEnabled(true);
+    // Action buttons
+    actionInterruptProcess->setEnabled(false);
+    actionGdbContinue->setEnabled(true);
+    actionGdbNext->setEnabled(true);
+    actionGdbStep->setEnabled(true);
+    actionGdbFinish->setEnabled(true);
+    actionGdbNexti->setEnabled(true);
+    actionGdbStepi->setEnabled(true);
+}

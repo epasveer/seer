@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include "SeerStackFramesBrowserWidget.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QTreeWidget>
@@ -72,6 +76,9 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 QString firstLiveFrameFullname  = "";
                 QString firstLiveFrameLine      = "";
 
+                QString firstFrameLevel         = "";
+                QString firstFrameAddr          = "";
+
                 for ( const auto& frame_text : frame_list  ) {
 
                     QString level_text    = Seer::parseFirst(frame_text, "level=",    '"', '"', false);
@@ -110,14 +117,27 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                         item->setFlags(Qt::NoItemFlags);
                     }
 
+                    // Get the address of the first entry of the frame.
+                    if (addr_text != "") {
+                        if (firstFrameLevel == "") {
+                            firstFrameLevel = level_text;
+                            firstFrameAddr  = addr_text;
+                        }
+                    }
+
                     // Add the frame to the tree.
                     stackTreeWidget->addTopLevelItem(item);
                 }
 
                 // Automatically bring up the file for the first live frame.
                 if (firstLiveFrameLevel != "") {
-                    emit selectedFile(firstLiveFrameFile, firstLiveFrameFullname, firstLiveFrameLine.toInt());
+                    if (firstLiveFrameFile != "" && firstLiveFrameFullname != "") {
+                        emit selectedFile(firstLiveFrameFile, firstLiveFrameFullname, firstLiveFrameLine.toInt());
+                    }
                 }
+
+                // Automatically bring up the assembly for the first frame.
+                emit maybeSelectedAddress(firstLiveFrameFile, firstLiveFrameFullname, firstFrameAddr);
             }
 
             // Select the first frame level.
@@ -129,9 +149,6 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                 stackTreeWidget->setCurrentItem(matches.first());
             }
         }
-
-    }else if (text.startsWith("^error,msg=\"No registers.\"")) {
-        stackTreeWidget->clear();
 
     }else{
         // Ignore others.
@@ -160,6 +177,14 @@ void SeerStackFramesBrowserWidget::handleStoppingPointReached () {
     refresh();
 }
 
+void SeerStackFramesBrowserWidget::handleSessionTerminated () {
+
+    // Delete previous contents and remembered state.
+    stackTreeWidget->clear();
+
+    _previousStackFrameText = "";
+}
+
 void SeerStackFramesBrowserWidget::refresh () {
 
     // Don't do any work if the widget is hidden.
@@ -176,9 +201,18 @@ void SeerStackFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int
 
     int lineno = item->text(3).toInt();
 
-    emit selectedFile(item->text(2), item->text(4), lineno);
+    // Select frame.
     emit selectedFrame(item->text(0).toInt());
-    emit selectedAddress(item->text(5));
+
+    // Select file if we can.
+    if (item->text(2) != "" && item->text(4) != "") {
+        emit selectedFile(item->text(2), item->text(4), lineno);
+    }
+
+    // Select address if we can.
+    if (item->text(5) != "") {
+        emit maybeSelectedAddress(item->text(2), item->text(4), item->text(5));
+    }
 }
 
 void SeerStackFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {

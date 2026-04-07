@@ -186,6 +186,10 @@ void QHistoryLineEdit::keyPressEvent (QKeyEvent* ev) {
         }
     }
 
+    if ( ev->key() == Qt::Key_Escape ) {
+        emit escapePressed();
+    }
+
     QLineEdit::keyPressEvent(ev);
 
     if (_completer) {
@@ -248,6 +252,13 @@ void QHistoryLineEdit::focusOutEvent (QFocusEvent* ev) {
     QLineEdit::focusOutEvent(ev);
 
     emit lostFocus();
+}
+
+void QHistoryLineEdit::focusInEvent (QFocusEvent* ev) {
+
+    QLineEdit::focusInEvent(ev);
+
+    emit gainedFocus();
 }
 
 void QHistoryLineEdit::previousLine () {
