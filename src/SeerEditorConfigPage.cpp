@@ -32,6 +32,8 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleCppSuffixFocusIn);
     QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleRustSuffixFocusIn);
     QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleOdinSuffixFocusIn);
+    QObject::connect(adaSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(adaSuffixesLineEdit,         &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleAdaSuffixFocusIn);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
     // Set the defaults.
@@ -147,6 +149,8 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     rustSuffixesLineEdit->setCursorPosition(0);
     odinSuffixesLineEdit->setText(_highlighterSettings.odinSourceSuffixes());
     odinSuffixesLineEdit->setCursorPosition(0);
+    adaSuffixesLineEdit->setText(_highlighterSettings.adaSourceSuffixes());
+    adaSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
@@ -317,6 +321,7 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
     languageSettings.setCppSourceSuffixes(cppSuffixesLineEdit->text());
     languageSettings.setRustSourceSuffixes(rustSuffixesLineEdit->text());
     languageSettings.setOdinSourceSuffixes(odinSuffixesLineEdit->text());
+    languageSettings.setAdaSourceSuffixes(adaSuffixesLineEdit->text());
 
     // Update our view.
     setHighlighterSettings(languageSettings);
@@ -387,6 +392,26 @@ void SeerEditorConfigPage::handleOdinSuffixFocusIn () {
                                          "    fmt.println(\"Hello, World!\")\n"
                                          "}",
                                          "sample.odin");
+    editorWidget->sourceArea()->setCurrentLine(0);
+}
+
+void SeerEditorConfigPage::handleAdaSuffixFocusIn () {
+
+    // Set example text.
+    editorWidget->sourceArea()->openText("--\n"
+                                         "-- Seer, Copyright 2021 (c)\n"
+                                         "-- Ernie Pasveer (epasveer@att.net)\n"
+                                         "-- Ada example\n"
+                                         "--\n"
+                                         "with Ada.Text_IO;\n"
+                                         "use Ada.Text_IO;\n"
+                                         "\n"
+                                         "-- This is the main procedure.\n"
+                                         "procedure Main is\n"
+                                         "begin\n"
+                                         "   Put_Line (\"Hello, Seer!\"); -- Greetings\n"
+                                         "end Main;",
+                                         "sample.adb");
     editorWidget->sourceArea()->setCurrentLine(0);
 }
 

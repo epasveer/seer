@@ -49,6 +49,7 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                handleCppSuffixFocusIn          ();
         void                                handleRustSuffixFocusIn         ();
         void                                handleOdinSuffixFocusIn         ();
+        void                                handleAdaSuffixFocusIn          ();
 
     private:
         QFont                               _font;
