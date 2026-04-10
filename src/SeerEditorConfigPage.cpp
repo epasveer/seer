@@ -29,11 +29,8 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
-    QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleCppSuffixFocusIn);
-    QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleRustSuffixFocusIn);
-    QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleOdinSuffixFocusIn);
     QObject::connect(adaSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
-    QObject::connect(adaSuffixesLineEdit,         &QHistoryLineEdit::gainedFocus,           this, &SeerEditorConfigPage::handleAdaSuffixFocusIn);
+    QObject::connect(languageTabWidget,           &QTabWidget::currentChanged,              this, &SeerEditorConfigPage::handleLanguageTabChanged);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
     // Set the defaults.
@@ -43,7 +40,7 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     themeComboBox->addItems(SeerHighlighterSettings::themeNames());
 
     // Set example text.
-    handleCppSuffixFocusIn();
+    handleLanguageTabChanged(0);
 }
 
 SeerEditorConfigPage::~SeerEditorConfigPage() {
@@ -337,81 +334,68 @@ void SeerEditorConfigPage::handleApplyTheme () {
     setHighlighterSettings(SeerHighlighterSettings::populate(themeComboBox->currentText()));
 }
 
-void SeerEditorConfigPage::handleCppSuffixFocusIn () {
+void SeerEditorConfigPage::handleLanguageTabChanged (int index) {
 
-    // Set example text.
-    editorWidget->sourceArea()->openText("/*\n"
-                                         " * Seer, Copyright 2021 (c)\n"
-                                         " * Ernie Pasveer (epasveer@att.net)\n"
-                                         " * C/C++ example\n"
-                                         " */\n"
-                                         "\n"
-                                         "// This is the main function.\n"
-                                         "int main(int argc, char* argv[]) {\n"
-                                         "\n"
-                                         "    std::cout << \"Hello, Seer!\"; // Greetings\n"
-                                         "\n"
-                                         "    return 0;\n"
-                                         "}",
-                                         "sample.cpp");
-    editorWidget->sourceArea()->setCurrentLine(0);
-}
-
-void SeerEditorConfigPage::handleRustSuffixFocusIn () {
-
-    // Set example text.
-    editorWidget->sourceArea()->openText("/*\n"
-                                         " * Seer, Copyright 2021 (c)\n"
-                                         " * Ernie Pasveer (epasveer@att.net)\n"
-                                         " * Rust example\n"
-                                         " */\n"
-                                         "\n"
-                                         "// This is the main function.\n"
-                                         "fn main() {\n"
-                                         "   // Print text to the console.\n"
-                                         "   println!(\"Hello World!\");\n"
-                                         "}",
-                                         "sample.rs");
-    editorWidget->sourceArea()->setCurrentLine(0);
-}
-
-void SeerEditorConfigPage::handleOdinSuffixFocusIn () {
-
-    // Set example text.
-    editorWidget->sourceArea()->openText("/*\n"
-                                         " * Seer, Copyright 2021 (c)\n"
-                                         " * Ernie Pasveer (epasveer@att.net)\n"
-                                         " * Odin example\n"
-                                         " */\n"
-                                         "package main\n"
-                                         "\n"
-                                         "import \"core:fmt\"\n"
-                                         "\n"
-                                         "// This is the main function.\n"
-                                         "main :: proc() {\n"
-                                         "    fmt.println(\"Hello, World!\")\n"
-                                         "}",
-                                         "sample.odin");
-    editorWidget->sourceArea()->setCurrentLine(0);
-}
-
-void SeerEditorConfigPage::handleAdaSuffixFocusIn () {
-
-    // Set example text.
-    editorWidget->sourceArea()->openText("--\n"
-                                         "-- Seer, Copyright 2021 (c)\n"
-                                         "-- Ernie Pasveer (epasveer@att.net)\n"
-                                         "-- Ada example\n"
-                                         "--\n"
-                                         "with Ada.Text_IO;\n"
-                                         "use Ada.Text_IO;\n"
-                                         "\n"
-                                         "-- This is the main procedure.\n"
-                                         "procedure Main is\n"
-                                         "begin\n"
-                                         "   Put_Line (\"Hello, Seer!\"); -- Greetings\n"
-                                         "end Main;",
-                                         "sample.adb");
+    if (index == 0) { // C/C++
+        editorWidget->sourceArea()->openText("/*\n"
+                                             " * Seer, Copyright 2021 (c)\n"
+                                             " * Ernie Pasveer (epasveer@att.net)\n"
+                                             " * C/C++ example\n"
+                                             " */\n"
+                                             "\n"
+                                             "// This is the main function.\n"
+                                             "int main(int argc, char* argv[]) {\n"
+                                             "\n"
+                                             "    std::cout << \"Hello, Seer!\"; // Greetings\n"
+                                             "\n"
+                                             "    return 0;\n"
+                                             "}",
+                                             "sample.cpp");
+    } else if (index == 1) { // Rust
+        editorWidget->sourceArea()->openText("/*\n"
+                                             " * Seer, Copyright 2021 (c)\n"
+                                             " * Ernie Pasveer (epasveer@att.net)\n"
+                                             " * Rust example\n"
+                                             " */\n"
+                                             "\n"
+                                             "// This is the main function.\n"
+                                             "fn main() {\n"
+                                             "   // Print text to the console.\n"
+                                             "   println!(\"Hello World!\");\n"
+                                             "}",
+                                             "sample.rs");
+    } else if (index == 2) { // Odin
+        editorWidget->sourceArea()->openText("/*\n"
+                                             " * Seer, Copyright 2021 (c)\n"
+                                             " * Ernie Pasveer (epasveer@att.net)\n"
+                                             " * Odin example\n"
+                                             " */\n"
+                                             "package main\n"
+                                             "\n"
+                                             "import \"core:fmt\"\n"
+                                             "\n"
+                                             "// This is the main function.\n"
+                                             "main :: proc() {\n"
+                                             "    fmt.println(\"Hello, World!\")\n"
+                                             "}",
+                                             "sample.odin");
+    } else if (index == 3) { // Ada
+        editorWidget->sourceArea()->openText("--\n"
+                                             "-- Seer, Copyright 2021 (c)\n"
+                                             "-- Ernie Pasveer (epasveer@att.net)\n"
+                                             "-- Ada example\n"
+                                             "--\n"
+                                             "with Ada.Text_IO;\n"
+                                             "use Ada.Text_IO;\n"
+                                             "\n"
+                                             "-- This is the main procedure.\n"
+                                             "procedure Main is\n"
+                                             "begin\n"
+                                             "   Put_Line (\"Hello, Seer!\"); -- Greetings\n"
+                                             "end Main;",
+                                             "sample.adb");
+    }
+    
     editorWidget->sourceArea()->setCurrentLine(0);
 }
 
