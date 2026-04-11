@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerSourceHighlighter.h"
+#include "SeerAdaSourceHighlighter.h"
 #include "SeerOdinSourceHighlighter.h"
 #include "SeerCppSourceHighlighter.h"
 #include "SeerRustSourceHighlighter.h"
@@ -14,6 +15,11 @@ const SeerHighlighterSettings& SeerSourceHighlighter::highlighterSettings() {
 }
 
 SeerSourceHighlighter* SeerSourceHighlighter::getSourceHighlighter(QString const& file, SeerHighlighterSettings settings) {
+
+    QRegularExpression ada_re("(?:" + settings.adaSourceSuffixes() + ")$");
+    if (file.contains(ada_re)) {
+      return new SeerAdaSourceHighlighter(0);
+    }
 
     QRegularExpression cpp_re("(?:" + settings.cppSourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {

@@ -23,9 +23,11 @@ class SeerHighlighterSettings {
         QTextCharFormat                         get                     (const QString& name) const;
         void                                    add                     (const QString& name, QTextCharFormat& format);
         int                                     count                   () const;
+        void                                    setAdaSourceSuffixes    (const QString& suffixes);
         void                                    setCppSourceSuffixes    (const QString& suffixes);
         void                                    setOdinSourceSuffixes   (const QString& suffixes);
         void                                    setRustSourceSuffixes   (const QString& suffixes);
+        const QString&                          adaSourceSuffixes       ();
         const QString&                          cppSourceSuffixes       ();
         const QString&                          odinSourceSuffixes      ();
         const QString&                          rustSourceSuffixes      ();
@@ -38,6 +40,7 @@ class SeerHighlighterSettings {
     private:
         QList<QString>                          _keys;
         QList<QTextCharFormat>                  _formats;
+        QString                                 _adaSourceSuffixes;
         QString                                 _cppSourceSuffixes;
         QString                                 _odinSourceSuffixes;
         QString                                 _rustSourceSuffixes;

@@ -147,6 +147,7 @@ set(HEADER_FILES
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
     SeerSourceHighlighter.h
+    SeerAdaSourceHighlighter.h
     SeerCppSourceHighlighter.h
     SeerOdinSourceHighlighter.h
     SeerRustSourceHighlighter.h
@@ -259,6 +260,7 @@ set(SOURCE_FILES
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
     SeerSourceHighlighter.cpp
+    SeerAdaSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
     SeerOdinSourceHighlighter.cpp
     SeerRustSourceHighlighter.cpp

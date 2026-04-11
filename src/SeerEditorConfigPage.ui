@@ -150,68 +150,119 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="cppLabel">
-       <property name="text">
-        <string>C/C++</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QHistoryLineEdit" name="cppSuffixesLineEdit">
-       <property name="toolTip">
-        <string>C/C++ source suffixes. Separated by '|'.</string>
-       </property>
-       <property name="placeholderText">
-        <string>C/C++ source suffixes.</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="rustLabel">
-       <property name="text">
-        <string>Rust</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QHistoryLineEdit" name="rustSuffixesLineEdit">
-       <property name="toolTip">
-        <string>Rust source suffixes. Separated by '|'.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Rust source suffixes.</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="odinLabel">
-       <property name="text">
-        <string>Odin</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QHistoryLineEdit" name="odinSuffixesLineEdit">
-       <property name="toolTip">
-        <string>Odin source suffixes. Separated by '|'.</string>
-       </property>
-       <property name="placeholderText">
-        <string>Odin source suffixes.</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QTabWidget" name="languageTabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabCpp">
+      <attribute name="title">
+       <string>C/C++</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayoutCpp">
+       <item>
+        <widget class="QLabel" name="cppLabel">
+         <property name="text">
+          <string>Suffixes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QHistoryLineEdit" name="cppSuffixesLineEdit">
+         <property name="toolTip">
+          <string>C/C++ source suffixes. Separated by '|'.</string>
+         </property>
+         <property name="placeholderText">
+          <string>C/C++ source suffixes.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabRust">
+      <attribute name="title">
+       <string>Rust</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayoutRust">
+       <item>
+        <widget class="QLabel" name="rustLabel">
+         <property name="text">
+          <string>Suffixes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QHistoryLineEdit" name="rustSuffixesLineEdit">
+         <property name="toolTip">
+          <string>Rust source suffixes. Separated by '|'.</string>
+         </property>
+         <property name="placeholderText">
+          <string>Rust source suffixes.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOdin">
+      <attribute name="title">
+       <string>Odin</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayoutOdin">
+       <item>
+        <widget class="QLabel" name="odinLabel">
+         <property name="text">
+          <string>Suffixes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QHistoryLineEdit" name="odinSuffixesLineEdit">
+         <property name="toolTip">
+          <string>Odin source suffixes. Separated by '|'.</string>
+         </property>
+         <property name="placeholderText">
+          <string>Odin source suffixes.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabAda">
+      <attribute name="title">
+       <string>Ada</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayoutAda">
+       <item>
+        <widget class="QLabel" name="adaLabel">
+         <property name="text">
+          <string>Suffixes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QHistoryLineEdit" name="adaSuffixesLineEdit">
+         <property name="toolTip">
+          <string>Ada source suffixes. Separated by '|'.</string>
+         </property>
+         <property name="placeholderText">
+          <string>Ada source suffixes.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
    <item row="3" column="0">
     <widget class="SeerEditorWidgetSource" name="editorWidget" native="true">
