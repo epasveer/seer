@@ -322,7 +322,6 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
             inst_text = Seer::expandTabs(inst_text, editorTabSize(), true); // Expand tabs.
 
             // Write assembly line to the document.
-            qDebug() << "Convert to Uppercase?" << convertUppercase();
             if (convertUppercase()) {
                 appendPlainText(QString(" ") + inst_text.toUpper());
             }else{

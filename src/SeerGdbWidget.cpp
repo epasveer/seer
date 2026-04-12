@@ -47,6 +47,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableWorkingDirectory             = "";
     _executableBreakpointsFilename          = "";
     _executableBreakpointFunctionName       = "";
+    _executableBreakpointFirstInstruction   = false;
     _executableConnectHostPort              = "";
     _executableRRTraceDirectory             = "";
     _executableCoreFilename                 = "";
@@ -469,6 +470,15 @@ void SeerGdbWidget::setExecutableBreakpointSourceName (const QString& sourceFile
 
 const QString& SeerGdbWidget::executableBreakpointSourceName () const {
     return _executableBreakpointSourceName;
+}
+
+void SeerGdbWidget::setExecutableBreakpointFirstInstruction (bool flag) {
+    qDebug() << flag;
+    _executableBreakpointFirstInstruction = flag;
+}
+
+bool SeerGdbWidget::executableBreakpointFirstInstruction () const {
+    return _executableBreakpointFirstInstruction;
 }
 
 void SeerGdbWidget::setExecutablePid (int pid) {
@@ -986,7 +996,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
 
         // Run the executable.
         if (_executableBreakMode == "inmain") {
-            handleGdbCommand("-exec-run --all --start"); // Stop in main
+            handleGdbCommand("-exec-run --all --start"); // Stop in main.
+        }else if (_executableBreakMode == "firstinstruction") {
+            handleGdbCommand("-exec-starti"); // Stop at first instruction.
         }else{
             handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
         }
