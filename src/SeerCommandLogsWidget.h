@@ -48,6 +48,7 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         void                                setRememberManualCommandCount   (int count);
         int                                 rememberManualCommandCount      () const;
         void                                clearManualCommandHistory       ();
+        QDetachTabWidget*                   logsTabWidgetInstance           ();
 
     protected slots:
         void                                handleLogsTabMoved              (int to, int from);

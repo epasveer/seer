@@ -496,6 +496,16 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
 
         gdbWidget->handleGdbCoreFileExecutable();
 
+    } else if (launchMode == "openocd") {
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
+        actionGdbNexti->setVisible(false);
+        actionGdbStepi->setVisible(false);
+        actionControlNexti->setVisible(false);
+        actionControlStepi->setVisible(false);
+        // launch gdb-multiarch and openocd
+        gdbWidget->handleGdbMultiarchOpenOCDExecutable();
+
     }else if (launchMode == "project") {
 
         actionGdbLaunch->setVisible(true);
@@ -597,6 +607,13 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
+    // OpenOCD
+    dlg.setOpenOCDExePath(openOCDExePath());
+    dlg.setOpenOCDCommand(openOCDCommand());
+    dlg.setGdbMultiarchExePath(gdbMultiarchExePath());
+    dlg.setGdbMultiarchPort(gdbMultiarchPort());
+    dlg.setGdbMultiarchCommand(gdbMultiarchCommand());
+    dlg.setSymbolFile(symbolFile());
 
     // If there's a project, use it.
     if (projectFilename() != "") {
@@ -641,6 +658,14 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     setExecutableCoreFilename(dlg.coreFilename());
     setExecutablePreGdbCommands(dlg.preGdbCommands());
     setExecutablePostGdbCommands(dlg.postGdbCommands());
+
+    // read openocd variables
+    setOpenOCDExePath(dlg.openOCDExePath());
+    setOpenOCDCommand(dlg.openOCDCommand());
+    setGdbMultiarchExePath(dlg.gdbMultiarchExePath());
+    setGdbMultiarchPort(dlg.gdbMultiarchPort());
+    setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
+    setSymbolFile(dlg.symbolFile());
 
     launchExecutable(launchMode, breakMode);
 }
@@ -986,7 +1011,17 @@ void SeerMainWindow::handleRestartExecutable () {
 
         gdbWidget->handleGdbCoreFileExecutable();
 
-    }else{
+    }else if (gdbWidget->executableLaunchMode() == "openocd") {
+        actionRecordProcess->setVisible(false);
+        actionRecordDirection->setVisible(false);
+        actionGdbNexti->setVisible(false);
+        actionGdbStepi->setVisible(false);
+        actionControlNexti->setVisible(false);
+        actionControlStepi->setVisible(false);
+        gdbWidget->handleGdbMultiarchOpenOCDExecutable();
+
+    }
+    else{
         qDebug() << "UNKNOWN launch mode:" << gdbWidget->executableLaunchMode();
     }
 }
@@ -2110,4 +2145,59 @@ void SeerMainWindow::handleGdbTargetInterrupt()
     actionGdbFinish->setEnabled(true);
     actionGdbNexti->setEnabled(true);
     actionGdbStepi->setEnabled(true);
+}
+
+/***********************************************************************************************************************
+ * OpenOCD getter and setter
+ **********************************************************************************************************************/
+const QString& SeerMainWindow::openOCDExePath() {
+    return gdbWidget->openOCDExePath();
+}
+
+void SeerMainWindow::setOpenOCDExePath (const QString& path) {
+    gdbWidget->setOpenOCDExePath(path);
+}
+
+const QString& SeerMainWindow::openOCDCommand() {
+    return gdbWidget->openOCDCommand();
+}
+
+void SeerMainWindow::setOpenOCDCommand (const QString& command){
+    gdbWidget->setOpenOCDCommand(command);
+}
+
+// ::GDB Multiarch
+const QString& SeerMainWindow::gdbMultiarchExePath () {
+    return gdbWidget->gdbMultiarchExePath();
+}
+
+void SeerMainWindow::setGdbMultiarchExePath (const QString& path) {
+    gdbWidget->setGdbMultiarchExePath(path);
+}
+
+const QString& SeerMainWindow::gdbMultiarchPort() {
+    return gdbWidget->gdbMultiarchPort();
+}
+
+void SeerMainWindow::setGdbMultiarchPort (const QString& port){
+    gdbWidget->setGdbMultiarchPort(port);
+}
+
+const QString& SeerMainWindow::gdbMultiarchCommand () {
+    return gdbWidget->gdbMultiarchCommand();
+}
+
+void SeerMainWindow::setGdbMultiarchCommand (const QString& command) {
+    gdbWidget->setGdbMultiarchCommand(command);
+}
+
+// ::Symbol Files
+const QString& SeerMainWindow::symbolFile (void)
+{
+    return gdbWidget->symbolFile();
+}
+
+void SeerMainWindow::setSymbolFile (const QString& symbolFile)
+{
+    gdbWidget->setSymbolFile(symbolFile);
 }

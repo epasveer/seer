@@ -163,6 +163,7 @@ set(HEADER_FILES
     SeerHistoryLineEdit.h
     SeerMacroEditorDialog.h
     SeerMacroToolButton.h
+    SeerOpenOCDWidget.h
     )
 
 # Define the source location of source files
@@ -276,6 +277,7 @@ set(SOURCE_FILES
     SeerHistoryLineEdit.cpp
     SeerMacroEditorDialog.cpp
     SeerMacroToolButton.cpp
+    SeerOpenOCDWidget.cpp
     seergdb.cpp
     )
 
