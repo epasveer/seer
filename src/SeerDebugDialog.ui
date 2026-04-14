@@ -292,26 +292,16 @@
           </item>
           <item row="2" column="0">
            <layout class="QGridLayout" name="gridLayout_9" rowstretch="0,0,0,0,0">
-            <item row="3" column="0">
-             <widget class="QRadioButton" name="breakpointAtFirstInstructionRadioButton">
+            <item row="4" column="0">
+             <widget class="QRadioButton" name="noBreakpointRadioButton">
               <property name="toolTip">
-               <string>Break at first instruction of program.</string>
+               <string>No initial breakpoint.</string>
               </property>
               <property name="text">
-               <string>Break at</string>
+               <string>No breakpoint</string>
               </property>
-              <attribute name="buttonGroup">
-               <string notr="true">breakpointButtonGroup</string>
-              </attribute>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QRadioButton" name="breakpointInFunctionRadioButton">
-              <property name="toolTip">
-               <string>Set a breakpoint in a function or at an address.</string>
-              </property>
-              <property name="text">
-               <string>Break in</string>
+              <property name="checked">
+               <bool>true</bool>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">breakpointButtonGroup</string>
@@ -331,6 +321,45 @@
               </attribute>
              </widget>
             </item>
+            <item row="3" column="0">
+             <widget class="QRadioButton" name="breakpointAtFirstInstructionRadioButton">
+              <property name="toolTip">
+               <string>Break at first instruction of program.</string>
+              </property>
+              <property name="text">
+               <string>Break at</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">breakpointButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="breakpointInMainRadioButton">
+              <property name="toolTip">
+               <string>Set a breakpoint in &quot;main&quot;.</string>
+              </property>
+              <property name="text">
+               <string>Break in</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">breakpointButtonGroup</string>
+              </attribute>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="breakpointAtFirstInstructionLabel">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string/>
+              </property>
+              <property name="text">
+               <string>First CPU instruction</string>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="1">
              <widget class="QLineEdit" name="breakpointAtSourceLineEdit">
               <property name="toolTip">
@@ -345,19 +374,6 @@
               <property name="clearButtonEnabled">
                <bool>true</bool>
               </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QRadioButton" name="breakpointInMainRadioButton">
-              <property name="toolTip">
-               <string>Set a breakpoint in &quot;main&quot;.</string>
-              </property>
-              <property name="text">
-               <string>Break in &quot;main&quot;</string>
-              </property>
-              <attribute name="buttonGroup">
-               <string notr="true">breakpointButtonGroup</string>
-              </attribute>
              </widget>
             </item>
             <item row="1" column="1">
@@ -376,32 +392,23 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QRadioButton" name="noBreakpointRadioButton">
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="breakpointInFunctionRadioButton">
               <property name="toolTip">
-               <string>No initial breakpoint.</string>
+               <string>Set a breakpoint in a function or at an address.</string>
               </property>
               <property name="text">
-               <string>No breakpoint</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+               <string>Break in</string>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">breakpointButtonGroup</string>
               </attribute>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="breakpointAtFirstInstructionLabel">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string/>
-              </property>
+            <item row="0" column="1">
+             <widget class="QLabel" name="breakpointMainLabel">
               <property name="text">
-               <string>First CPU instruction</string>
+               <string>&quot;main&quot;</string>
               </property>
              </widget>
             </item>
