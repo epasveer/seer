@@ -91,6 +91,7 @@
     <file>resources/mi-python/MICatchpoint.py</file>
     <file>resources/mi-python/MIObjectiveC.py</file>
     <file>resources/mi-python/MISignals.py</file>
+    <file>resources/mi-python/MIStart.py</file>
   </qresource>
 </RCC>
 

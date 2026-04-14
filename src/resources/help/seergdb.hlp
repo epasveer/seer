@@ -19,6 +19,12 @@ Launch Options (pick one):
                                                                 'sym' is optional if the debugging info is in a separate file.
                                                                 'executable' is the name of the executable file.
 
+  -si, --starti [--sym <symbolfile>] <executable> <arguments>   Load the executable, break at the first cpu instruction, and run it.
+                                                                Common for debugging Assembly programs.
+
+                                                                'sym' is optional if the debugging info is in a separate file.
+                                                                'executable' is the name of the executable file.
+
   --attach <pid> [--sym <symbolfile>] [<executable>]            Attach to a locally running process.
 
                                                                 'pid' is the id of the running process.

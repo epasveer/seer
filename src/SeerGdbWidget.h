@@ -56,6 +56,9 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutableBreakpointSourceName           (const QString& sourceFilenameAndLineno);
         const QString&                      executableBreakpointSourceName              () const;
 
+        void                                setExecutableBreakpointFirstInstruction     (bool flag);
+        bool                                executableBreakpointFirstInstruction        () const;
+
         void                                setExecutablePid                            (int pid);
         int                                 executablePid                               () const;
 
@@ -422,6 +425,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _executableBreakpointsFilename;
         QString                             _executableBreakpointFunctionName;
         QString                             _executableBreakpointSourceName;
+        bool                                _executableBreakpointFirstInstruction;
         int                                 _executablePid;
         QString                             _executableConnectHostPort;
         QString                             _executableRRTraceDirectory;
