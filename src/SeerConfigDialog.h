@@ -11,6 +11,7 @@
 #include "SeerAssemblyConfigPage.h"
 #include "SeerKeysConfigPage.h"
 #include "SeerSeerConfigPage.h"
+#include "SeerOpenocdConfigPage.h"
 #include <QtWidgets/QDialog>
 
 #include "ui_SeerConfigDialog.h"
@@ -156,6 +157,19 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setRRGdbArguments                               (const QString& arguments);
         QString                             rrGdbArguments                                  () const;
 
+        // OpenOCD settings
+        QString                             openocdExe                                      () const;
+        void                                setOpenocdExe                                   (const QString& path);
+
+        QString                             openocdGdbExe                                   () const;
+        void                                setOpenocdGdbExe                                (const QString& path);
+
+        QString                             openocdGdbPort                                  () const;
+        void                                setOpenocdGdbPort                               (const QString& port);
+
+        QString                             openocdTelnetPort                               () const;
+        void                                setOpenocdTelnetPort                            (const QString& port);
+
     public slots:
         void                                handleChangePage                                (QListWidgetItem* current, QListWidgetItem* previous);
         void                                handleButtonClicked                             (QAbstractButton* button);
@@ -168,5 +182,6 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         SeerAssemblyConfigPage*             _assemblyConfigPage;
         SeerKeysConfigPage*                 _keysConfigPage;
         SeerSeerConfigPage*                 _seerConfigPage;
+        SeerOpenocdConfigPage*              _openocdConfigPage;
 };
 
