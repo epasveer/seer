@@ -80,10 +80,6 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbRecordMode                          = "";
     _gdbRecordDirection                     = "";
 
-    // for openOCD gdb-multiarch support
-    _gdbMultiarchProgram                = "/usr/bin/gdb-multiarch";
-    _gdbMultiarchArguments              = "--interpreter=mi";
-
     setIsQuitting(false);
     setNewExecutableFlag(true);
 
@@ -3884,55 +3880,65 @@ void SeerGdbWidget::delay (int seconds) {
  * OpenOCD getter and setter
  **********************************************************************************************************************/
 // ::Main
-const QString& SeerGdbWidget::openOCDExePath ()
+const QString& SeerGdbWidget::openocdExe ()
 {
-    return _openOCDExePath;
+    return _openocdExe;
 }
 
-void SeerGdbWidget::setOpenOCDExePath (const QString& path)
+void SeerGdbWidget::setOpenocdExe (const QString& path)
 {
-    _openOCDExePath = path;
+    _openocdExe = path;
 }
 
-const QString& SeerGdbWidget::openOCDCommand ()
+const QString& SeerGdbWidget::openocdCommand ()
 {
-    return _openOCDCommands;
+    return _openocdCommands;
 }
 
-void SeerGdbWidget::setOpenOCDCommand (const QString& command)
+void SeerGdbWidget::setOpenocdCommand (const QString& command)
 {
-    _openOCDCommands = command;
+    _openocdCommands = command;
 }
 
 // ::GDB Multiarch
-const QString& SeerGdbWidget::gdbMultiarchExePath ()
+const QString& SeerGdbWidget::openocdGdbExe ()
 {
-    return _gdbMultiarchExePath;
+    return _openocdGdbExe;
 }
 
-void SeerGdbWidget::setGdbMultiarchExePath (const QString& path)
+void SeerGdbWidget::setOpenocdGdbExe (const QString& path)
 {
-    _gdbMultiarchExePath = path;
+    _openocdGdbExe = path;
 }
 
-const QString& SeerGdbWidget::gdbMultiarchPort ()
+const QString& SeerGdbWidget::openocdGdbPort ()
 {
-    return _gdbMultiarchPort;
+    return _openocdGdbPort;
 }
 
-void SeerGdbWidget::setGdbMultiarchPort (const QString& port)
+void SeerGdbWidget::setOpenocdGdbPort (const QString& port)
 {
-    _gdbMultiarchPort = port;
+    _openocdGdbPort = port;
 }
 
-const QString& SeerGdbWidget::gdbMultiarchCommand ()
+const QString& SeerGdbWidget::openocdTelnetPort ()
 {
-    return _gdbMultiarchCommand;
+    return _openocdTelnetPort;
 }
 
-void SeerGdbWidget::setGdbMultiarchCommand (const QString& command)
+void SeerGdbWidget::setOpenocdTelnetPort (const QString& port)
 {
-    _gdbMultiarchCommand = command;
+    _openocdTelnetPort = port;
+}
+
+const QString& SeerGdbWidget::openocdGdbCommand ()
+{
+    return _openocdGdbCommand;
+}
+
+void SeerGdbWidget::setOpenocdGdbCommand (const QString& command)
+{
+    _openocdGdbCommand = command;
 }
 
 // ::Symbol Files
@@ -3982,21 +3988,21 @@ const QString& SeerGdbWidget::sourcePath (void)
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 {
     // Create the OpenOCD console tab, add to the log tabs
-    _openOCDWidget = new SeerOpenOCDWidget();
-    _openOCDWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
-    _openOCDWidget->newOpenOCDWidget();
+    _openocdWidget = new SeerOpenOCDWidget();
+    _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
+    _openocdWidget->newOpenOCDWidget();
     // Start OpenOCD with the given path and command
-    bool foo = _openOCDWidget->startOpenOCD(openOCDExePath(), openOCDCommand());
+    bool foo = _openocdWidget->startOpenOCD(openocdExe(), openocdCommand());
     if (foo == false) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the OpenOCD program.\n\n") +
-                                   QString("'%1 %2'").arg(SeerGdbWidget::openOCDExePath()).arg(SeerGdbWidget::openOCDCommand()) + "\n\n" +
+                                   QString("'%1 %2'").arg(SeerGdbWidget::openocdExe()).arg(SeerGdbWidget::openocdCommand()) + "\n\n" +
                                    QString("Please check your OpenOCD configuration."),
                                    QMessageBox::Ok);
         return;
     }
     // Now, set _gdbProgram as gdb-multiarch, provided by openocd launch mode
-    setGdbProgram(gdbMultiarchExePath());
+    setGdbProgram(openocdGdbExe());
     // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
     qCDebug(LC) << "Starting 'openocd gdb-multiarch connect'";
 
@@ -4048,7 +4054,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         setGdbRemoteTargetType("extended-remote");
         
         // Handle additional gdb-multiarch command
-        handleGdbCommand(QString("%1").arg(gdbMultiarchCommand()));
+        handleGdbCommand(QString("%1").arg(openocdGdbExe()));
         // Load the executable, if needed.
         if (newExecutableFlag() == true) {
             QString loadSymbolCmd = "add-symbol-file " + _symbolFile;
@@ -4077,7 +4083,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         }
 
         // Connect to the remote gdbserver using the proper remote type. Only do this when all symbol and source code is loaded
-        handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(gdbMultiarchPort()));
+        handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(openocdGdbPort()));
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));

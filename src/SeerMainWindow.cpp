@@ -608,11 +608,8 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
     // OpenOCD
-    dlg.setOpenOCDExePath(openOCDExePath());
-    dlg.setOpenOCDCommand(openOCDCommand());
-    dlg.setGdbMultiarchExePath(gdbMultiarchExePath());
-    dlg.setGdbMultiarchPort(gdbMultiarchPort());
-    dlg.setGdbMultiarchCommand(gdbMultiarchCommand());
+    dlg.setOpenocdExe(openocdExe());
+    dlg.setOpenocdCommand(openocdCommand());
     dlg.setSymbolFile(symbolFile());
 
     // If there's a project, use it.
@@ -660,11 +657,8 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     setExecutablePostGdbCommands(dlg.postGdbCommands());
 
     // read openocd variables
-    setOpenOCDExePath(dlg.openOCDExePath());
-    setOpenOCDCommand(dlg.openOCDCommand());
-    setGdbMultiarchExePath(dlg.gdbMultiarchExePath());
-    setGdbMultiarchPort(dlg.gdbMultiarchPort());
-    setGdbMultiarchCommand(dlg.gdbMultiarchCommand());
+    setOpenocdExe(dlg.openocdExe());
+    setOpenocdCommand(dlg.openocdCommand());
     setSymbolFile(dlg.symbolFile());
 
     launchExecutable(launchMode, breakMode);
@@ -806,6 +800,10 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setRRProgram(gdbWidget->rrProgram());
     dlg.setRRArguments(gdbWidget->rrArguments());
     dlg.setRRGdbArguments(gdbWidget->rrGdbArguments());
+    dlg.setOpenocdExe(gdbWidget->openocdExe());
+    dlg.setOpenocdGdbExe(gdbWidget->openocdGdbExe());
+    dlg.setOpenocdGdbPort(gdbWidget->openocdGdbPort());
+    dlg.setOpenocdTelnetPort(gdbWidget->openocdTelnetPort());
 
     int ret = dlg.exec();
 
@@ -851,6 +849,10 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->setRRProgram(dlg.rrProgram());
     gdbWidget->setRRArguments(dlg.rrArguments());
     gdbWidget->setRRGdbArguments(dlg.rrGdbArguments());
+    gdbWidget->setOpenocdExe(dlg.openocdExe());
+    gdbWidget->setOpenocdGdbExe(dlg.openocdGdbExe());
+    gdbWidget->setOpenocdGdbPort(dlg.openocdGdbPort());
+    gdbWidget->setOpenocdTelnetPort(dlg.openocdTelnetPort());
 
     // Clear history, if we need to.
     bool clearManualCommandHistory = dlg.seerClearManualCommandHistory();
@@ -1723,6 +1725,13 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("gdbarguments",               gdbWidget->rrGdbArguments());
     } settings.endGroup();
 
+    settings.beginGroup("openocd"); {
+        settings.setValue("openocdGdbExe",              gdbWidget->openocdGdbExe());
+        settings.setValue("openocdExe",                 gdbWidget->openocdExe());
+        settings.setValue("openocdGdbPort",             gdbWidget->openocdGdbPort());
+        settings.setValue("openocdTelnetPort",          gdbWidget->openocdTelnetPort());
+    } settings.endGroup();
+
     settings.beginGroup("editor"); {
 
         settings.setValue("font",                  gdbWidget->editorManager()->editorFont().toString());
@@ -1813,6 +1822,13 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->setRRProgram(settings.value("program", "/usr/bin/rr").toString());
         gdbWidget->setRRArguments(settings.value("arguments", "replay --interpreter=mi").toString());
         gdbWidget->setRRGdbArguments(settings.value("gdbarguments", "").toString());
+    } settings.endGroup();
+
+    settings.beginGroup("openocd"); {
+        gdbWidget->setOpenocdGdbExe(settings.value("openocdGdbExe", "/usr/bin/gdb-multiarch").toString());
+        gdbWidget->setOpenocdExe(settings.value("openocdExe", "/usr/local/bin/openocd").toString());
+        gdbWidget->setOpenocdGdbPort(settings.value("openocdGdbPort", "3333").toString());
+        gdbWidget->setOpenocdTelnetPort(settings.value("openocdTelnetPort", "4444").toString());
     } settings.endGroup();
 
     settings.beginGroup("editor"); {
@@ -2150,45 +2166,45 @@ void SeerMainWindow::handleGdbTargetInterrupt()
 /***********************************************************************************************************************
  * OpenOCD getter and setter
  **********************************************************************************************************************/
-const QString& SeerMainWindow::openOCDExePath() {
-    return gdbWidget->openOCDExePath();
+const QString& SeerMainWindow::openocdExe() {
+    return gdbWidget->openocdExe();
 }
 
-void SeerMainWindow::setOpenOCDExePath (const QString& path) {
-    gdbWidget->setOpenOCDExePath(path);
+void SeerMainWindow::setOpenocdExe (const QString& path) {
+    gdbWidget->setOpenocdExe(path);
 }
 
-const QString& SeerMainWindow::openOCDCommand() {
-    return gdbWidget->openOCDCommand();
+const QString& SeerMainWindow::openocdCommand() {
+    return gdbWidget->openocdCommand();
 }
 
-void SeerMainWindow::setOpenOCDCommand (const QString& command){
-    gdbWidget->setOpenOCDCommand(command);
+void SeerMainWindow::setOpenocdCommand (const QString& command){
+    gdbWidget->setOpenocdCommand(command);
 }
 
 // ::GDB Multiarch
-const QString& SeerMainWindow::gdbMultiarchExePath () {
-    return gdbWidget->gdbMultiarchExePath();
+const QString& SeerMainWindow::openocdGdbExe () {
+    return gdbWidget->openocdGdbExe();
 }
 
-void SeerMainWindow::setGdbMultiarchExePath (const QString& path) {
-    gdbWidget->setGdbMultiarchExePath(path);
+void SeerMainWindow::setOpenocdGdbExe (const QString& path) {
+    gdbWidget->setOpenocdGdbExe(path);
 }
 
-const QString& SeerMainWindow::gdbMultiarchPort() {
-    return gdbWidget->gdbMultiarchPort();
+const QString& SeerMainWindow::openocdGdbPort() {
+    return gdbWidget->openocdGdbPort();
 }
 
-void SeerMainWindow::setGdbMultiarchPort (const QString& port){
-    gdbWidget->setGdbMultiarchPort(port);
+void SeerMainWindow::setOpenocdGdbPort (const QString& port){
+    gdbWidget->setOpenocdGdbPort(port);
 }
 
-const QString& SeerMainWindow::gdbMultiarchCommand () {
-    return gdbWidget->gdbMultiarchCommand();
+const QString& SeerMainWindow::openocdGdbCommand () {
+    return gdbWidget->openocdGdbCommand();
 }
 
-void SeerMainWindow::setGdbMultiarchCommand (const QString& command) {
-    gdbWidget->setGdbMultiarchCommand(command);
+void SeerMainWindow::setOpenocdGdbCommand (const QString& command) {
+    gdbWidget->setOpenocdGdbCommand(command);
 }
 
 // ::Symbol Files

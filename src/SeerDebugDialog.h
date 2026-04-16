@@ -93,17 +93,17 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
 
         // openocd get and set functions
         // ::Main
-        const QString                       openOCDExePath                      ();
-        void                                setOpenOCDExePath                   (const QString& path);
-        const QString                       openOCDCommand                      ();
-        void                                setOpenOCDCommand                   (const QString& command);
+        const QString                       openocdExe                          ();
+        void                                setOpenocdExe                       (const QString& path);
+        const QString                       openocdCommand                      ();
+        void                                setOpenocdCommand                   (const QString& command);
         // ::GDB Multiarch
-        const QString                       gdbMultiarchExePath                 ();
-        void                                setGdbMultiarchExePath              (const QString& path);
-        const QString                       gdbMultiarchPort                    ();
-        void                                setGdbMultiarchPort                 (const QString& port);
-        const QString                       gdbMultiarchCommand                 ();
-        void                                setGdbMultiarchCommand              (const QString& command);
+        const QString                       openocdGdbExe                       ();
+        void                                setOpenocdGdbExe                    (const QString& path);
+        const QString                       openocdGdbPort                      ();
+        void                                setOpenocdGdbPort                   (const QString& port);
+        const QString                       openocdGdbCommand                   ();
+        void                                setOpenocdGdbCommand                (const QString& command);
         // ::Symbol Files
         const QString                       symbolFile                          ();
         void                                setSymbolFile                       (const QString& path);
@@ -142,7 +142,6 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
         void                    handleOpenOCDMainHelpButtonClicked              ();
         void                    handleSymbolFileButton                          ();
         void                    handleSourceDirectoryButton                     ();
-        void                    handleGdbMultiarchButton                        ();
         void                    handleLoadAddrCheckBox                          (int state);
 
     protected:

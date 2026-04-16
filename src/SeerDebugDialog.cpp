@@ -80,7 +80,6 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(executableOpenOCDButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleExecutableOpenOCDButtonClicked);
     QObject::connect(openOCDMainHelpButton,                &QToolButton::clicked,               this, &SeerDebugDialog::handleOpenOCDMainHelpButtonClicked);
 
-    QObject::connect(openOcdGdbMultiarchExeButton,         &QToolButton::clicked,               this, &SeerDebugDialog::handleGdbMultiarchButton);
     QObject::connect(openocdSymbolFileButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleSymbolFileButton);
     QObject::connect(openocdSourceDirButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleSourceDirectoryButton);
 
@@ -678,11 +677,6 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
         modeJson["openocdExe"]                  = executableOpenOCDPathLineEdit->text();
         modeJson["openocdCommand"]              = openOCDCommandLineEdit->toPlainText();
 
-        // GDB Multiarch Tab
-        modeJson["gdbMultiarchExe"]             = openOcdGdbMultiarchLineEdit->text();
-        modeJson["gdbPort"]                     = openOCD_GDB_Port_LineEdit->text();
-        modeJson["gdbMultiarchCommand"]         = openOCDGdbCommandLineEdit->text();
-
         // Symbol File Tab
         modeJson["symbolFile"]                  = symbolFileLineEdit->text();
         modeJson["sourceDirectory"]             = workingDirLineEdit->text();
@@ -874,11 +868,6 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
         executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
         openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
 
-        // GDB Multiarch Tab
-        openOcdGdbMultiarchLineEdit             ->setText(openocdModeJson["gdbMultiarchExe"].toString());
-        openOCD_GDB_Port_LineEdit               ->setText(openocdModeJson["gdbPort"].toString());
-        openOCDGdbCommandLineEdit               ->setText(openocdModeJson["gdbMultiarchCommand"].toString());
-
         // Symbol file Tab
         symbolFileLineEdit                      ->setText(openocdModeJson["symbolFile"].toString());
         workingDirLineEdit                      ->setText(openocdModeJson["sourceDirectory"].toString());
@@ -900,57 +889,26 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
 // openocd get and set functions
 //
 // ::Main
-const QString SeerDebugDialog::openOCDExePath()
+const QString SeerDebugDialog::openocdExe()
 {
     return executableOpenOCDPathLineEdit->text();
 }
 
-void SeerDebugDialog::setOpenOCDExePath(const QString& path)
+void SeerDebugDialog::setOpenocdExe(const QString& path)
 {
     executableOpenOCDPathLineEdit->setText(path);
 }
 
-const QString SeerDebugDialog::openOCDCommand()
+const QString SeerDebugDialog::openocdCommand()
 {
     QString tmp = openOCDCommandLineEdit->toPlainText();
     tmp.replace("\n", " ");
     return tmp;
 }
 
-void SeerDebugDialog::setOpenOCDCommand(const QString& command)
+void SeerDebugDialog::setOpenocdCommand(const QString& command)
 {
     openOCDCommandLineEdit->setPlainText(command);
-}
-
-// ::GDB Multiarch
-const QString SeerDebugDialog::gdbMultiarchExePath()
-{
-    return openOcdGdbMultiarchLineEdit->text();
-}
-
-void SeerDebugDialog::setGdbMultiarchExePath(const QString& path)
-{
-    openOcdGdbMultiarchLineEdit->setText(path);
-}
-
-const QString SeerDebugDialog::gdbMultiarchPort()
-{
-    return openOCD_GDB_Port_LineEdit->text();
-}
-
-void SeerDebugDialog::setGdbMultiarchPort(const QString& port)
-{
-    openOCD_GDB_Port_LineEdit->setText(port);
-}
-
-const QString SeerDebugDialog::gdbMultiarchCommand()
-{
-    return openOCDGdbCommandLineEdit->text();
-}
-
-void SeerDebugDialog::setGdbMultiarchCommand(const QString& command)
-{
-    openOCDGdbCommandLineEdit->setText(command);
 }
 
 // ::Symbol Files
@@ -1241,15 +1199,13 @@ void SeerDebugDialog::handleOpenOCDDefaultButtonClicked() {
     QString defaultGdbMultiarch = "/usr/bin/gdb-multiarch";
     QString defaultGDBPort = "3333";
     executableOpenOCDPathLineEdit->setText(defaultOpenOCDPath);
-    openOcdGdbMultiarchLineEdit->setText(defaultGdbMultiarch);
-    openOCD_GDB_Port_LineEdit->setText(defaultGDBPort);
 }
 
 void SeerDebugDialog::handleExecutableOpenOCDButtonClicked () {
-    QString name = QFileDialog::getOpenFileName(this, "Select OpenOCD executable.", openOCDExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+    QString name = QFileDialog::getOpenFileName(this, "Select OpenOCD executable.", openocdExe(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
-        setOpenOCDExePath(name);
+        setOpenocdExe(name);
     }
 }
 
@@ -1259,14 +1215,6 @@ void SeerDebugDialog::handleOpenOCDMainHelpButtonClicked()
     help->loadFile(":/seer/resources/help/OpenOCDHelp.md");
     help->setWindowFlags(help->windowFlags() | Qt::WindowStaysOnTopHint);
     help->exec();
-}
-
-void SeerDebugDialog::handleGdbMultiarchButton () {
-    QString path = QFileDialog::getOpenFileName(this, "Select GDB Multiarch Executable", gdbMultiarchExePath(), "", nullptr, QFileDialog::DontUseNativeDialog);
-
-    if (path != "") {
-        setGdbMultiarchExePath(path);
-    }
 }
 
 void SeerDebugDialog::handleSymbolFileButton () {
