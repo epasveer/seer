@@ -107,7 +107,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configRRButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     QListWidgetItem* configOpenOCDButton = new QListWidgetItem(contentsListWidget);
-    configOpenOCDButton->setIcon(QIcon(":/seer/resources/icons/hicolor/256x256/embedded.png"));
+    configOpenOCDButton->setIcon(QIcon(":/seer/resources/thenounproject/embedded.png"));
     configOpenOCDButton->setText(tr("OpenOCD"));
     configOpenOCDButton->setTextAlignment(Qt::AlignHCenter);
     configOpenOCDButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

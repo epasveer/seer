@@ -6,7 +6,6 @@
     <file>resources/icons/hicolor/256x256/seergdb.png</file>
     <file>resources/icons/hicolor/512x512/seergdb.png</file>
     <file>resources/icons/hicolor/256x256/rr.png</file>
-    <file>resources/icons/hicolor/256x256/embedded.png</file>
     <file>resources/ABOUT.md</file>
     <file>resources/thenounproject/memory.svg</file>
     <file>resources/thenounproject/source.svg</file>
@@ -16,6 +15,7 @@
     <file>resources/thenounproject/stop.svg</file>
     <file>resources/thenounproject/fortune-teller.svg</file>
     <file>resources/thenounproject/preferences.svg</file>
+    <file>resources/thenounproject/embedded.png</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
     <file>resources/icons-icons/font.png</file>
