@@ -211,17 +211,19 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         // OpenOCD
         // ::Main
-        const QString&                      openOCDExePath                      ();
-        void                                setOpenOCDExePath                   (const QString& path);
-        const QString&                      openOCDCommand                      ();
-        void                                setOpenOCDCommand                   (const QString& command);
+        const QString&                      openocdExe                          ();
+        void                                setOpenocdExe                       (const QString& path);
+        const QString&                      openocdCommand                      ();
+        void                                setOpenocdCommand                   (const QString& command);
         // ::GDB Multiarch
-        const QString&                      gdbMultiarchExePath                 ();
-        void                                setGdbMultiarchExePath              (const QString& path);
-        const QString&                      gdbMultiarchPort                    ();
-        void                                setGdbMultiarchPort                 (const QString& port);
-        const QString&                      gdbMultiarchCommand                 ();
-        void                                setGdbMultiarchCommand              (const QString& command);
+        const QString&                      openocdGdbExe                       ();
+        void                                setOpenocdGdbExe                    (const QString& path);
+        const QString&                      openocdGdbPort                      ();
+        void                                setOpenocdGdbPort                   (const QString& port);
+        const QString&                      openocdTelnetPort                ();
+        void                                setOpenocdTelnetPort             (const QString& port);
+        const QString&                      openocdGdbCommand                   ();
+        void                                setOpenocdGdbCommand                (const QString& command);
 
         // ::Symbol Files
         void                                setSymbolFile                       (const QString& file);
@@ -470,16 +472,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // OpenOCD variables
-        SeerOpenOCDWidget*                   _openOCDWidget;
+        SeerOpenOCDWidget*                   _openocdWidget;
         // OpenOCD
-        QString                             _openOCDExePath;
-        QString                             _openOCDCommands;
+        QString                             _openocdExe;
+        QString                             _openocdCommands;
         // GDB Multiarch
-        QString                             _gdbMultiarchExePath;
-        QString                             _gdbMultiarchPort;
-        QString                             _gdbMultiarchCommand;
-        QString                             _gdbMultiarchProgram;
-        QString                             _gdbMultiarchArguments;
+        QString                             _openocdGdbExe;
+        QString                             _openocdGdbPort;
+        QString                             _openocdTelnetPort;
+        QString                             _openocdGdbCommand;
         // Symbol Files
         bool                                _loadAddressEnabled;
         QString                             _loadAddress;

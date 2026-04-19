@@ -51,6 +51,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     _assemblyConfigPage = new SeerAssemblyConfigPage;
     _keysConfigPage     = new SeerKeysConfigPage;
     _rrConfigPage       = new SeerRRConfigPage;
+    _openocdConfigPage  = new SeerOpenocdConfigPage;
 
     // Add the pages to the stacked widget.
     pagesStackedWidget->addWidget(_seerConfigPage);
@@ -60,6 +61,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     pagesStackedWidget->addWidget(_assemblyConfigPage);
     pagesStackedWidget->addWidget(_keysConfigPage);
     pagesStackedWidget->addWidget(_rrConfigPage);
+    pagesStackedWidget->addWidget(_openocdConfigPage);
 
     // Create icons.
     QListWidgetItem* configSeerButton = new QListWidgetItem(contentsListWidget);
@@ -103,6 +105,12 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     configRRButton->setText(tr("RR"));
     configRRButton->setTextAlignment(Qt::AlignHCenter);
     configRRButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    QListWidgetItem* configOpenOCDButton = new QListWidgetItem(contentsListWidget);
+    configOpenOCDButton->setIcon(QIcon(":/seer/resources/thenounproject/embedded.png"));
+    configOpenOCDButton->setText(tr("OpenOCD"));
+    configOpenOCDButton->setTextAlignment(Qt::AlignHCenter);
+    configOpenOCDButton->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     // Connect things.
     connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::handleChangePage);
@@ -519,6 +527,46 @@ QString SeerConfigDialog::rrGdbArguments () const {
     return _rrConfigPage->gdbArguments();
 }
 
+void SeerConfigDialog::setOpenocdExe(const QString& path) {
+
+    _openocdConfigPage->setOpenocdExe(path);
+}
+
+QString SeerConfigDialog::openocdExe() const {
+
+    return _openocdConfigPage->openocdExe();
+}
+
+void SeerConfigDialog::setOpenocdGdbExe(const QString& path) {
+
+    _openocdConfigPage->setOpenocdGdbExe(path);
+}
+
+QString SeerConfigDialog::openocdGdbExe() const {
+
+    return _openocdConfigPage->openocdGdbExe();
+}
+
+void SeerConfigDialog::setOpenocdGdbPort(const QString& port) {
+
+    _openocdConfigPage->setOpenocdGdbPort(port);
+}
+
+QString SeerConfigDialog::openocdGdbPort() const {
+
+    return _openocdConfigPage->openocdGdbPort();
+}
+
+void SeerConfigDialog::setOpenocdTelnetPort(const QString& port) {
+
+    _openocdConfigPage->setOpenocdTelnetPort(port);
+}
+
+QString SeerConfigDialog::openocdTelnetPort() const {
+
+    return _openocdConfigPage->openocdTelnetPort();
+}
+
 void SeerConfigDialog::handleChangePage(QListWidgetItem* current, QListWidgetItem* previous) {
 
     if (!current) {
@@ -570,6 +618,9 @@ void SeerConfigDialog::handleButtonClicked (QAbstractButton* button) {
         }else if (itemLabel == "RR") {
 
             _rrConfigPage->reset();
+        }else if (itemLabel == "OpenOCD") {
+
+            _openocdConfigPage->reset();
         }
     }
 }
