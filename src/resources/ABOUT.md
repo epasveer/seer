@@ -40,6 +40,7 @@ The main Seer icon and other icons.
 |Icon <a href="https://thenounproject.com/icon/cpp-file-252779/"                                         title="">source.svg</a>         |  Created by <a href="https://thenounproject.com/kozinn/"                               title="">kozinn</a>                  | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/interruption-4417639/"                                    title="">stop.sgv</a>           |  Created by <a href="https://thenounproject.com/andre.buand10/"                        title="">andre.buand10</a>           | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 |Icon <a href="https://thenounproject.com/icon/preference-2331720/"                                      title="">preferences.sgv</a>    |  Created by <a href="https://thenounproject.com/creator/blairwolf/"                    title="">blairwolf</a>               | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
+|Icon <a href="https://thenounproject.com/icon/embedded-8315774/"                                        title="">embedded.sgv</a>       |  Created by <a href="https://thenounproject.com/creator/yuniarti79/"                    title="">blairwolf</a>               | (License <a href="https://creativecommons.org/licenses/by/3.0/legalcode" title="">CC3.0)</a>  |
 
 &nbsp;  
 &nbsp;  
