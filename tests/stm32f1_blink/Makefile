@@ -119,6 +119,20 @@ flash: $(BUILD_DIR)/$(TARGET).elf
 	openocd -f $(JLINK_CFG) -f $(OPENOCD_TARGET) \
 		-c "program $< verify reset exit"
 
+build_docker:
+	docker build -t docker_stm32 Docker
+
+docker:
+	docker run --rm -it --user $(id -u):$(id -g) \
+	--name "docker_build_stm32" \
+	--mount type=bind,source="${HOME}/.bash_history",target=/home/user/.bash_history \
+	--mount type=bind,source="${HOME}/.bashrc",target=/home/user/.bashrc \
+	--mount type=bind,source="${HOME}/.gitconfig",target=/home/user/.gitconfig \
+	--mount type=bind,source="${HOME}/.ssh",target=/home/user/.ssh \
+	--mount type=bind,source="${PWD}",target=/workdir \
+	--workdir=/workdir \
+	docker_stm32
+
 clean:
 	@echo "[RM]      $(BUILD_DIR)"; $(RM) -r $(BUILD_DIR)
 
