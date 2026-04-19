@@ -1078,7 +1078,8 @@ void SeerMainWindow::handleGdbStateChanged () {
 
         // Run mode
         if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start" ||
-            gdbWidget->executableLaunchMode() == "rr"  || gdbWidget->executableLaunchMode() == "corefile") {
+            gdbWidget->executableLaunchMode() == "rr"  || gdbWidget->executableLaunchMode() == "corefile" ||
+            gdbWidget->executableLaunchMode() == "openocd") {
             // Terminate
             actionGdbTerminate->setVisible(true);
             actionGdbTerminate->setText("Terminate" + hotkey);

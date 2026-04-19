@@ -3988,7 +3988,9 @@ const QString& SeerGdbWidget::sourcePath (void)
 void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 {
     // Create the OpenOCD console tab, add to the log tabs
-    _openocdWidget = new SeerOpenOCDWidget();
+    _openocdWidget = new SeerOpenOCDWidget(this);
+    QObject::connect(this, &SeerGdbWidget::sessionTerminated, _openocdWidget, &SeerOpenOCDWidget::terminate, Qt::UniqueConnection);
+
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     _openocdWidget->newOpenOCDWidget();
     // Start OpenOCD with the given path and command

@@ -16,7 +16,7 @@ class SeerOpenOCDWidget: public SeerLogWidget{
         void                                newOpenOCDWidget                ();
         // Start & kill OpenOCD process 
         bool                                startOpenOCD                    (const QString &openocdExe, const QString &command);
-        void                                killOpenOCD                     ();
+        void                                terminate                       ();
         bool                                isOpenocdRunning                ();
         // Create & kill Console displaying OpenOCD process logs    
         void                                createOpenOCDConsole            (QDetachTabWidget* parent);
