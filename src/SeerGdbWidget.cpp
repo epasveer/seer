@@ -480,6 +480,10 @@ int SeerGdbWidget::executablePid () const {
     return _executablePid;
 }
 
+int SeerGdbWidget::gdbPid () const {
+    return _gdbProcess->processId();
+}
+
 void SeerGdbWidget::setExecutableConnectHostPort (const QString& connectHostPort) {
     _executableConnectHostPort = connectHostPort;
 }
@@ -1726,6 +1730,11 @@ void SeerGdbWidget::handleGdbRecordDirectionToggle () {
 }
 
 void SeerGdbWidget::handleGdbInterrupt () {
+
+    if (executableLaunchMode() == "openocd") {
+        sendGdbInterrupt(SIGINT);
+        return;
+    }
 
     sendGdbInterrupt(-1);
 }
@@ -3846,6 +3855,18 @@ void SeerGdbWidget::sendGdbInterrupt (int signal) {
         return;
     }
 
+    // If mode = "openocd" -> Send SIGINT to Gdb
+
+    if (executableLaunchMode() == "openocd" && signal == SIGINT) {
+        int stat = kill(gdbPid(), SIGINT);
+        if (stat < 0) {
+            QMessageBox::warning(this, "Seer",
+                                       QString("Unable to send signal '%1' to pid %2.\nError = '%3'").arg(strsignal(SIGINT)).arg(gdbPid()).arg(strerror(errno)),
+                                       QMessageBox::Ok);
+        }
+        return;
+    }
+
     // Use kill() to send the signal to the inferior.
     // -exec-interrupt does not work for -exec-until when the line
     // number is not in the current function. In this case, -exec-until
@@ -3992,7 +4013,6 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     QObject::connect(this, &SeerGdbWidget::sessionTerminated, _openocdWidget, &SeerOpenOCDWidget::terminate, Qt::UniqueConnection);
 
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
-    _openocdWidget->newOpenOCDWidget();
     // Start OpenOCD with the given path and command
     bool foo = _openocdWidget->startOpenOCD(openocdExe(), openocdCommand());
     if (foo == false) {
@@ -4001,8 +4021,20 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
                                    QString("'%1 %2'").arg(SeerGdbWidget::openocdExe()).arg(SeerGdbWidget::openocdCommand()) + "\n\n" +
                                    QString("Please check your OpenOCD configuration."),
                                    QMessageBox::Ok);
+        _openocdWidget->terminate();
         return;
     }
+
+    // foo = _openocdWidget->startTelnet(openocdTelnetPort());
+    // if (foo == false) {
+    //     QMessageBox::warning(this, "Seer",
+    //                            QString("Unable to launch the Telnet session.\n\n") +
+    //                            QString("Please check your OpenOCD configuration."),
+    //                            QMessageBox::Ok);
+    //     // Telnet will be killed along with OpenOCD
+    //     _openocdWidget->terminate();
+    //     return;
+    // }
     // Now, set _gdbProgram as gdb-multiarch, provided by openocd launch mode
     setGdbProgram(openocdGdbExe());
     // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
@@ -4017,13 +4049,6 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         // Always say a new executable.
         // This causes a new gdb each time. The same console, though.
         setNewExecutableFlag(true);
-
-        // Disconnect from the terminal and delete the old gdb if there is a new executable.
-        // Is this really needed? -> Comment out
-        // if (newExecutableFlag() == true) {
-        //     console()->deleteTerminal();
-        //     killGdb();
-        // }
 
         // If gdb isn't running, start it.
         // No need to connect to the console in this mode.

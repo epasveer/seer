@@ -60,6 +60,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                setExecutablePid                            (int pid);
         int                                 executablePid                               () const;
 
+        int                                 gdbPid                                      () const;
+
         void                                setExecutableConnectHostPort                (const QString& connectHostPort);
         const QString&                      executableConnectHostPort                   () const;
 

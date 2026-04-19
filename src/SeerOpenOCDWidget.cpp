@@ -3,34 +3,29 @@
 #include <QtCore/QProcess>
 #include <QMessageBox>
 #include <QStringLiteral>
+#include <iostream>
+using namespace std;
 /***********************************************************************************************************************
  * Constructor & Destructor                                                                                            *
  **********************************************************************************************************************/
 SeerOpenOCDWidget::SeerOpenOCDWidget (QWidget* parent) : SeerLogWidget(parent) {
     Q_UNUSED(parent);
-    _openocdProcess = new QProcess(this);
-    _openocdLogsTabWidget = nullptr;
+    _openocdProcess         = nullptr;
+    _openocdLogsTabWidget   = nullptr;
+    _telnetSocket           = nullptr;
 }
 
 SeerOpenOCDWidget::~SeerOpenOCDWidget (){
     terminate();
 }
-
-void SeerOpenOCDWidget::newOpenOCDWidget (){
-    if (!_openocdProcess)
-        _openocdProcess = new QProcess(this);
-}
-
-QProcess* SeerOpenOCDWidget::openocdProcess()
-{
-    return _openocdProcess;
-}
-
 /***********************************************************************************************************************
  * OpenOCD process                                                                                                     *
  **********************************************************************************************************************/
 bool SeerOpenOCDWidget::startOpenOCD (const QString &openocdExe, const QString &command)
 {
+    if (!_openocdProcess) {
+        _openocdProcess = new QProcess(this);
+    }
     if (_openocdProcess->state() == QProcess::Running) {
         QMessageBox::warning(nullptr, QObject::tr("Seer"), QObject::tr("OpenOCD is already running."));
         return false;
@@ -66,6 +61,83 @@ bool SeerOpenOCDWidget::isOpenocdRunning ()
             return true;
         }
     return false;
+}
+
+/***********************************************************************************************************************
+ * Telnet process                                                                                                      *
+ **********************************************************************************************************************/
+bool SeerOpenOCDWidget::startTelnet(const QString &port)
+{
+    if (_telnetSocket) {
+        return false;
+    }
+
+    _telnetSocket = new QTcpSocket(this);
+    _telnetPort = port;
+
+    _telnetSocket->connectToHost("127.0.0.1", port.toUInt());
+
+    if (!_telnetSocket->waitForConnected(2000)) {
+        qWarning() << "Failed to connect to OpenOCD telnet port:"
+                   << _telnetSocket->errorString();
+        delete _telnetSocket;
+        _telnetSocket = nullptr;
+        return false;
+    }
+    return true;
+}
+
+void SeerOpenOCDWidget::terminateTelnet()
+{
+    if (_telnetSocket) {
+        _telnetSocket->disconnectFromHost();
+
+        if (_telnetSocket->state() != QAbstractSocket::UnconnectedState) {
+            _telnetSocket->waitForDisconnected(1000);
+        }
+
+        delete _telnetSocket;
+        _telnetSocket = nullptr;
+    }
+}
+
+qint64 SeerOpenOCDWidget::telnetRunCmd(const QString& cmd)
+{
+    if (!_telnetSocket) {
+        QMessageBox::warning(this, "Seer", "Socket not connected.");
+        return 0;
+    }
+
+    // 1. Clear any old data
+    _telnetSocket->readAll();
+
+    // 2. Send command
+    QByteArray data = (cmd + "\n").toUtf8();
+    qint64 bytesWritten = _telnetSocket->write(data);
+
+    if (!_telnetSocket->waitForBytesWritten(1000)) {
+        QMessageBox::warning(this, "Seer", "Write failed.");
+        return 0;
+    }
+
+    // 3. Wait until OpenOCD finishes and returns prompt ">"
+    QByteArray response;
+    int timeout = 2000;
+
+    while (timeout > 0) {
+        if (_telnetSocket->waitForReadyRead(200)) {
+            response += _telnetSocket->readAll();
+
+            if (response.contains("\n>") || response.endsWith("> ")) {
+                break;
+            }
+        }
+        timeout -= 200;
+    }
+
+    qDebug() << "Response:" << response;
+
+    return bytesWritten;
 }
 /***********************************************************************************************************************
  * Create a new console display for displaying openOCD log                                                             *
@@ -119,10 +191,6 @@ void SeerOpenOCDWidget::handleReadError ()
         Text.contains("Error: Receiving data from device timed out") || \
         Text.contains("Error: attempted 'gdb' connection rejected"))
     {
-        if (_isFailed == true)
-            return;
-        _isFailed = true;
-        // killOpenOCD();
         emit openocdStartFailed();
         QMessageBox::warning(this, "Seer", "OpenOCD failed to start. \nCheck openOCD output for details.", QMessageBox::Ok);
     }
