@@ -116,8 +116,7 @@ $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).elf
 	$Q$(OBJCOPY) -O ihex -R .eeprom $< $@
 
 flash: $(BUILD_DIR)/$(TARGET).elf
-	openocd -f $(JLINK_CFG) -f $(OPENOCD_TARGET) \
-		-c "program $< verify reset exit"
+	openocd -f $(JLINK_CFG) -f $(OPENOCD_TARGET) -c "program $< verify reset exit"
 
 build_docker:
 	docker build -t docker_stm32 Docker
