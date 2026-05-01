@@ -474,7 +474,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QStringList                         _ignoreFilePatterns;
 
         // OpenOCD variables
-        SeerOpenOCDWidget*                   _openocdWidget;
+        SeerOpenOCDWidget*                  _openocdWidget;
+        QString                             _openocdRunningState;
         // OpenOCD
         QString                             _openocdExe;
         QString                             _openocdCommands;
