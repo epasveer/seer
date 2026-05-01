@@ -52,6 +52,10 @@ void SeerOpenOCDWidget::terminate ()
             _openocdProcess->waitForFinished(500);          // Brief wait to ensure kill completes
         }
     }
+    if (_openocdLogsTabWidget) {
+        delete _openocdLogsTabWidget;
+        _openocdLogsTabWidget = nullptr;
+    }
 }
 
 bool SeerOpenOCDWidget::isOpenocdRunning ()
@@ -158,12 +162,6 @@ void SeerOpenOCDWidget::createOpenOCDConsole (QDetachTabWidget* parent)
 SeerLogWidget* SeerOpenOCDWidget::openocdConsole()
 {
     return _openocdLogsTabWidget;
-}
-
-void SeerOpenOCDWidget::killConsole ()
-{
-    delete _openocdLogsTabWidget;
-    _openocdLogsTabWidget = nullptr;
 }
 
 void SeerOpenOCDWidget::setConsoleVisible (bool flag)

@@ -24,7 +24,6 @@ class SeerOpenOCDWidget: public SeerLogWidget{
         qint64                              telnetRunCmd                    (const QString &command);
         // Create & kill Console displaying OpenOCD process logs
         void                                createOpenOCDConsole            (QDetachTabWidget* parent);
-        void                                killConsole                     ();
         void                                setConsoleVisible               (bool flag);
         // Getters & Setters
         SeerLogWidget*                      openocdConsole                  ();
