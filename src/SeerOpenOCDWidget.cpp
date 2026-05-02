@@ -3,14 +3,14 @@
 #include <QtCore/QProcess>
 #include <QMessageBox>
 #include <QStringLiteral>
-#include <iostream>
-using namespace std;
+#include "SeerUtl.h"
 /***********************************************************************************************************************
  * Constructor & Destructor                                                                                            *
  **********************************************************************************************************************/
 SeerOpenOCDWidget::SeerOpenOCDWidget (QWidget* parent) : SeerLogWidget(parent) {
     Q_UNUSED(parent);
     _openocdProcess         = nullptr;
+    _gdbLiveWatchProcess    = nullptr;
     _openocdLogsTabWidget   = nullptr;
     _telnetSocket           = nullptr;
 }
@@ -35,8 +35,24 @@ bool SeerOpenOCDWidget::startOpenOCD (const QString &openocdExe, const QString &
         return false;
     }
     if (_openocdProcess->state() == QProcess::NotRunning) {
-        QStringList _command = QProcess::splitCommand(command);
-        _openocdProcess->start(openocdExe, _command);
+        QFile resource(":/seer/resources/openocd-helpers.tcl");
+        if (!resource.open(QIODevice::ReadOnly))
+            return false;
+
+        if (!_tempDir.isValid())
+            return false;
+
+        QString scriptPath = _tempDir.filePath("openocd-helpers.tcl");
+        QFile out(scriptPath);
+        if (!out.open(QIODevice::WriteOnly))
+            return false;
+        out.write(resource.readAll());
+        out.close();
+
+
+        QString final_cmd = command + QString(" -f %1").arg(scriptPath) + QString(" -c CDLiveWatchSetup");
+        QStringList args = QProcess::splitCommand(final_cmd);
+        _openocdProcess->start(openocdExe, args);
         return true;
     }
     return false;
@@ -143,6 +159,80 @@ qint64 SeerOpenOCDWidget::telnetRunCmd(const QString& cmd)
 
     return bytesWritten;
 }
+/***********************************************************************************************************************
+ * Openocd GDB process, for Live watch                                                                                 *
+ **********************************************************************************************************************/
+bool SeerOpenOCDWidget::startGdbLiveWatch (const QString &gdbExe)
+{
+    if (!_gdbLiveWatchProcess) {
+        _gdbLiveWatchProcess = new QProcess(this);
+        _gdbLiveWatchProcess->start(gdbExe, QStringList() << "-q" << "--interpreter=mi");
+    }
+    connect(_gdbLiveWatchProcess, &QProcess::readyReadStandardOutput,   this, &SeerOpenOCDWidget::handleGdbOutput);
+    connect(_gdbLiveWatchProcess, &QProcess::readyReadStandardError,    this, &SeerOpenOCDWidget::handleGdbOutput);
+    return true;
+}
+
+void SeerOpenOCDWidget::gdbLiveWatchRunCommand(const QString &cmd)
+{
+    if (_gdbLiveWatchProcess) {
+        QString str = cmd + "\n";
+        QByteArray bytes = str.toUtf8();
+        _gdbLiveWatchProcess->write(bytes);
+    }
+}
+
+void SeerOpenOCDWidget::terminateGdbLiveWatch()
+{
+    if (_gdbLiveWatchProcess) {
+        _gdbLiveWatchProcess->terminate();
+        _gdbLiveWatchProcess->waitForFinished();
+        delete _gdbLiveWatchProcess;
+        _gdbLiveWatchProcess = nullptr;
+    }
+}
+
+void SeerOpenOCDWidget::handleGdbOutput()
+{
+    QString output = _gdbLiveWatchProcess->readAllStandardOutput() + _gdbLiveWatchProcess->readAllStandardError();
+
+    if (output.startsWith("^done,live_watch_results=[")) {
+        // Format: ^done,live_watch_results=[{id="ID1",value="VALUE1"},{id="ID2",value="VALUE2"}]
+        QString list_text = Seer::parseFirst(output, "done,live_watch_results=", '[', ']', false);
+
+        QRegularExpression re(R"re(\{id="(\d+)",value="([^"]*)"\})re");
+        QRegularExpressionMatchIterator it = re.globalMatch(list_text);
+        while (it.hasNext()) {
+            QRegularExpressionMatch match = it.next();
+            QString id    = match.captured(1);
+            QString value = match.captured(2);
+            emit toTracker(id + "^done,value=\"" + value + "\"");
+        }
+    }
+}
+
+void SeerOpenOCDWidget::handleText(const QString& text)
+{
+    if (text.startsWith("^done,DataExpressionAdded={") && text.endsWith("}"))
+    {
+        // Handle add variable to live watch
+        // Format: ^done,DataExpressionAdded={id="18",expression="i1"}
+        QString frame_text      = Seer::parseFirst(text,       "DataExpressionAdded=", '{', '}', false);
+        QString id_text         = Seer::parseFirst(frame_text, "id=",                  '"', '"', false);
+        QString expression_text = Seer::parseFirst(frame_text, "expression=",          '"', '"', false);
+        gdbLiveWatchRunCommand("-var-create-live-watch " + expression_text + " @ " + "\"" + expression_text + "\" " + id_text);
+    }
+    else if (text.startsWith("^done,DataExpressionDeleted={") && text.endsWith("}"))
+    {
+        // Handle delete variable to live watch
+        // Format: ^done,DataExpressionDeleted={entry={id="20",expression="i2"}}
+        QString frame_text      = Seer::parseFirst(text,       "DataExpressionDeleted=", '{', '}', false);
+        QString id_text         = Seer::parseFirst(frame_text, "id=",                  '"', '"', false);
+        QString expression_text = Seer::parseFirst(frame_text, "expression=",          '"', '"', false);
+        gdbLiveWatchRunCommand("-var-delete-live-watch " + id_text);
+    }
+}
+
 /***********************************************************************************************************************
  * Create a new console display for displaying openOCD log                                                             *
  **********************************************************************************************************************/

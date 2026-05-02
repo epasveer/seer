@@ -4050,7 +4050,10 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 {
     // Create the OpenOCD console tab, add to the log tabs
     _openocdWidget = new SeerOpenOCDWidget(this);
-    QObject::connect(this, &SeerGdbWidget::sessionTerminated, _openocdWidget, &SeerOpenOCDWidget::terminate, Qt::UniqueConnection);
+    QObject::connect(this,          &SeerGdbWidget::sessionTerminated,  _openocdWidget, &SeerOpenOCDWidget::terminate, Qt::UniqueConnection);
+    // Openocd Live watch
+    QObject::connect(_gdbMonitor,   &GdbMonitor::caretTextOutput,       _openocdWidget, &SeerOpenOCDWidget::handleText,Qt::UniqueConnection);
+    QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toTracker,      variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText,Qt::UniqueConnection);
 
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     // Start OpenOCD with the given path and command
@@ -4080,6 +4083,8 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     // OpenOCD works in connect mode, so use code of handleGdbConnectExecutable()
     qCDebug(LC) << "Starting 'openocd gdb-multiarch connect'";
 
+    _openocdWidget->startGdbLiveWatch(gdbProgram());
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     while (1) {
@@ -4101,6 +4106,7 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
             }
             
             handleGdbCommand("-gdb-set non-stop off");
+            _openocdWidget->gdbLiveWatchRunCommand("set mi-async on");
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
         }
@@ -4130,8 +4136,10 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
                 loadSymbolCmd += " " + _loadAddress;
             }
             handleGdbCommand(loadSymbolCmd);
+            _openocdWidget->gdbLiveWatchRunCommand(loadSymbolCmd);
 
             handleGdbCommand("-environment-directory \"" + sourcePath() + "\"");
+            _openocdWidget->gdbLiveWatchRunCommand("-environment-directory \"" + sourcePath() + "\"");
 
             handleGdbExecutableSources();           // Load the program source files. gdb-multiarch keeps
             handleGdbExecutableLoadBreakpoints();   // Set the program's breakpoints (if any) before running. gdb-multiarch keeps
@@ -4150,7 +4158,12 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         }
 
         // Connect to the remote gdbserver using the proper remote type. Only do this when all symbol and source code is loaded
+        
         handleGdbCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(openocdGdbPort()));
+
+        // Source LiveWatch
+        _openocdWidget->gdbLiveWatchRunCommand("source /tmp/MILiveWatch.py");
+        _openocdWidget->gdbLiveWatchRunCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(openocdGdbPort()));
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));
