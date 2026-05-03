@@ -776,11 +776,15 @@ void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messag
 
 void SeerGdbWidget::handleText (const QString& text) {
 
-    if (text.startsWith("*running,thread-id=\"all\"")) {
+    if (text.startsWith("*running")) {
+        _openocdRunningState = "running";
+    // Probably a better way to handle all these types of stops.
+    }else if (text.startsWith("*running,thread-id=\"all\"")) {
 
     // Probably a better way to handle all these types of stops.
     }else if (text.startsWith("*stopped")) {
 
+        _openocdRunningState = "stopped";
         emit stoppingPointReached();
 
     }else if (text.startsWith("=breakpoint-created,")) {
@@ -2101,6 +2105,23 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
         return;
     }
 
+    if (executableLaunchMode() == "openocd") {
+        // Step 1: SIGINT to stop target
+        // Step 2: Delete the breakpoint.
+        // Step 3: Continue the target.
+        if (_openocdRunningState == "running") {
+            handleGdbInterruptSIGINT();
+            handleGdbCommand("-break-delete " + breakpoints);
+            handleGdbGenericpointList();
+            handleGdbContinue();
+        } else if (_openocdRunningState == "stopped") {
+            // Do nothing. Just delete the breakpoint.
+            handleGdbCommand("-break-delete " + breakpoints);
+            handleGdbGenericpointList();
+        }
+        return;
+    }
+
     handleGdbCommand("-break-delete " + breakpoints);
     handleGdbGenericpointList();
 }
@@ -2156,6 +2177,23 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
     qDebug() << breakpoint;
 
     if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (executableLaunchMode() == "openocd") {
+        // Step 1: SIGINT to stop target
+        // Step 2: Insert the breakpoint.
+        // Step 3: Continue the target.
+        if (_openocdRunningState == "running") {
+            handleGdbInterruptSIGINT();
+            handleGdbCommand("-break-insert -h " + breakpoint);
+            handleGdbGenericpointList();
+            handleGdbContinue();
+        } else if (_openocdRunningState == "stopped") {
+            // Do nothing. Just insert the breakpoint.
+            handleGdbCommand("-break-insert -h " + breakpoint);
+            handleGdbGenericpointList();
+        }
         return;
     }
 
