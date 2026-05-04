@@ -2110,6 +2110,7 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
         // Step 2: Delete the breakpoint.
         // Step 3: Continue the target.
         if (_openocdRunningState == "running") {
+            gdbMonitor()->setBlockSignals(true);
             handleGdbInterruptSIGINT();
             handleGdbCommand("-break-delete " + breakpoints);
             handleGdbGenericpointList();
@@ -2185,6 +2186,7 @@ void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
         // Step 2: Insert the breakpoint.
         // Step 3: Continue the target.
         if (_openocdRunningState == "running") {
+            gdbMonitor()->setBlockSignals(true);
             handleGdbInterruptSIGINT();
             handleGdbCommand("-break-insert -h " + breakpoint);
             handleGdbGenericpointList();

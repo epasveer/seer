@@ -63,6 +63,10 @@ void GdbMonitor::handleReadyReadStandardError () {
     }
 }
 
+void GdbMonitor::setBlockSignals (bool block) {
+    _blockSignals = block;
+}
+
 void GdbMonitor::handleReadyReadStandardOutput () {
 
     qCDebug(LC) << "Ready to read stdout";
@@ -99,8 +103,21 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         }else if (text[0] == '=') {
             emit equalTextOutput(text);
         }else if (text[0] == '*') {
+            if (text.startsWith("*running") && _blockSignals) {
+                _blockSignals = false;
+                continue;
+            }
+            if (_blockSignals) {
+                continue;
+            }
             emit astrixTextOutput(text);
         }else if (text[0] == '^') {
+            if (text.startsWith("^done,BreakpointTable")) {
+                emit caretTextOutput(text);
+                continue;
+            }
+            if (_blockSignals)
+                continue;
             emit caretTextOutput(text);
         }else if (text[0] == '&') {
             emit ampersandTextOutput(text);

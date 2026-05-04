@@ -18,6 +18,7 @@ class GdbMonitor : public QObject {
 
         void            setProcess                      (QProcess* process);
         QProcess*       process                         ();
+        void            setBlockSignals                 (bool block);
 
     signals:
         void            allTextOutput                   (const QString& text);
@@ -40,6 +41,7 @@ class GdbMonitor : public QObject {
 
     private:
         QProcess*       _process;
+        bool            _blockSignals = false;
 };
 
 #endif
