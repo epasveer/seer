@@ -75,6 +75,9 @@ int main (int argc, char* argv[]) {
     QCommandLineOption startOption(QStringList() << "s" << "start");
     parser.addOption(startOption);
 
+    QCommandLineOption startiOption(QStringList() << "si" << "starti");
+    parser.addOption(startiOption);
+
     QCommandLineOption attachOption(QStringList() << "attach", "", "pid");
     parser.addOption(attachOption);
 
@@ -214,6 +217,11 @@ int main (int argc, char* argv[]) {
     if (parser.isSet(startOption)) {
         launchMode = "run";
         breakMode  = "inmain";
+    }
+
+    if (parser.isSet(startiOption)) {
+        launchMode = "run";
+        breakMode  = "firstinstruction";
     }
 
     if (parser.isSet(workingdirOption)) {

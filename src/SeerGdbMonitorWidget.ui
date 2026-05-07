@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SeerCommandLogsWidgetForm</class>
- <widget class="QWidget" name="SeerCommandLogsWidgetForm">
+ <class>SeerGdbMonitorWidgetForm</class>
+ <widget class="QWidget" name="SeerGdbMonitorWidgetForm">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>975</width>
-    <height>384</height>
+    <width>823</width>
+    <height>634</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Seer - Commands and Logs</string>
+   <string>Seer - Gdb Monitor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
+   <item>
+    <widget class="QPlainTextEdit" name="textEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>[output from gdb monitor]</string>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="SeerMacroToolButton" name="m1ToolButton">
        <property name="text">
         <string>M1</string>
-       </property>
-       <property name="arrowType">
-        <enum>Qt::NoArrow</enum>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">macroButtonGroup</string>
@@ -138,44 +133,85 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>578</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QToolButton" name="breakpointsLoadToolButton">
-       <property name="toolTip">
-        <string>Load previously saved breakpoints.</string>
-       </property>
+      <widget class="QLabel" name="monitorCommandLabel">
        <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</normaloff>:/seer/resources/RelaxLightIcons/document-open.svg</iconset>
+        <string>Monitor Command:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="breakpointsSaveToolButton">
+      <widget class="QHistoryLineEdit" name="monitorCommandLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>100</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
-        <string>Save breakpoints to a file.</string>
+        <string>Enter a GDB monitor command.</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="clearToolButton">
+       <property name="toolTip">
+        <string>Clear monitor output.</string>
        </property>
        <property name="text">
         <string>...</string>
        </property>
        <property name="icon">
         <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save.svg</iconset>
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="printToolButton">
+       <property name="toolTip">
+        <string>Print the monitor contents.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="saveToolButton">
+       <property name="toolTip">
+        <string>Save the monitor contents.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</iconset>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QToolButton" name="helpToolButton">
        <property name="toolTip">
-        <string>Help on Breakpoint/Logs/Commands information.</string>
+        <string>Help for the GDB monitor.</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -188,46 +224,37 @@
      </item>
     </layout>
    </item>
-   <item>
-    <widget class="QComboBox" name="manualCommandComboBox">
-     <property name="toolTip">
-      <string extracomment="Enter a gdb/gdbmi command to execute."/>
-     </property>
-     <property name="editable">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDetachTabWidget" name="logsTabWidget">
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <property name="movable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="tabWidget">
-      <attribute name="title">
-       <string>Tab 1</string>
-      </attribute>
-     </widget>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>QDetachTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header location="global">QDetachTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>SeerMacroToolButton</class>
    <extends>QToolButton</extends>
    <header>SeerMacroToolButton.h</header>
   </customwidget>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QHistoryLineEdit.h</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>monitorCommandLineEdit</tabstop>
+  <tabstop>m1ToolButton</tabstop>
+  <tabstop>m2ToolButton</tabstop>
+  <tabstop>m3ToolButton</tabstop>
+  <tabstop>m4ToolButton</tabstop>
+  <tabstop>m5ToolButton</tabstop>
+  <tabstop>m6ToolButton</tabstop>
+  <tabstop>m7ToolButton</tabstop>
+  <tabstop>m8ToolButton</tabstop>
+  <tabstop>m9ToolButton</tabstop>
+  <tabstop>m0ToolButton</tabstop>
+  <tabstop>clearToolButton</tabstop>
+  <tabstop>printToolButton</tabstop>
+  <tabstop>helpToolButton</tabstop>
+  <tabstop>textEdit</tabstop>
+ </tabstops>
  <resources>
   <include location="resource.qrc"/>
  </resources>

@@ -3,6 +3,8 @@
 
 ## [2.8] - 2026-XX-XX
 * Starting version 2.8 development cycle.
+* Add a 'starti' mode to start debugging at the first instruction.
+  Helpful for debugging programs written in assembly.
 
 ## [2.7] - 2026-04-06
 * SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)

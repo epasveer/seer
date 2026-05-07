@@ -2,7 +2,7 @@
     "seerproject": {
         "connectmode": {
             "gdbserver": ":1234",
-            "gdbserverdebug": true,
+            "gdbserverdebug": false,
             "targettype": "extended-remote"
         },
         "executable": "/nas/erniep/Development/seer/tests/hellogdbserver/hellogdbserver",

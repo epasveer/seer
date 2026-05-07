@@ -104,13 +104,14 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 
     // Set up Visualizer menu.
     QMenu* menuVisualizer = new QMenu(this);
-    QAction* visualizerMemoryAction = menuVisualizer->addAction("Memory");
+    QAction* visualizerMemoryAction     = menuVisualizer->addAction("Memory");
     menuVisualizer->addSeparator();
-    QAction* visualizerArrayAction  = menuVisualizer->addAction("Array");
-    QAction* visualizerMatrixAction = menuVisualizer->addAction("Matrix");
-    QAction* visualizerVarAction    = menuVisualizer->addAction("Struct");
-    QAction* visualizerStructAction = menuVisualizer->addAction("Basic Struct");
-    QAction* visualizerImageAction  = menuVisualizer->addAction("Image");
+    QAction* visualizerArrayAction      = menuVisualizer->addAction("Array");
+    QAction* visualizerMatrixAction     = menuVisualizer->addAction("Matrix");
+    QAction* visualizerVarAction        = menuVisualizer->addAction("Struct");
+    QAction* visualizerStructAction     = menuVisualizer->addAction("Basic Struct");
+    QAction* visualizerImageAction      = menuVisualizer->addAction("Image");
+    QAction* visualizerGdbMonitorAction = menuVisualizer->addAction("GDB Monitor");
 
     actionVisualizers->setMenu(menuVisualizer);
 
@@ -138,6 +139,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionViewStructVisualizer,        &QAction::triggered,                            this,           &SeerMainWindow::handleViewVarVisualizer);
     QObject::connect(actionViewBasicStructVisualizer,   &QAction::triggered,                            this,           &SeerMainWindow::handleViewStructVisualizer);
     QObject::connect(actionViewImageVisualizer,         &QAction::triggered,                            this,           &SeerMainWindow::handleViewImageVisualizer);
+    QObject::connect(actionViewGdbMonitor,              &QAction::triggered,                            this,           &SeerMainWindow::handleViewGdbMonitor);
     QObject::connect(actionViewAssembly,                &QAction::triggered,                            this,           &SeerMainWindow::handleViewAssembly);
     QObject::connect(actionConsoleAttached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleAttached);
     QObject::connect(actionConsoleDetached,             &QAction::triggered,                            this,           &SeerMainWindow::handleViewConsoleDetached);
@@ -197,6 +199,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(visualizerVarAction,               &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbVarVisualizer);
     QObject::connect(visualizerStructAction,            &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbStructVisualizer);
     QObject::connect(visualizerImageAction,             &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbImageVisualizer);
+    QObject::connect(visualizerGdbMonitorAction,        &QAction::triggered,                            gdbWidget,      &SeerGdbWidget::handleGdbMonitor);
 
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::astrixTextOutput,                  runStatus,      &SeerRunStatusIndicator::handleText);
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::equalTextOutput,                   runStatus,      &SeerRunStatusIndicator::handleText);
@@ -326,6 +329,14 @@ void  SeerMainWindow::setExecutableBreakpointSourceName (const QString& sourceFi
 
 const QString& SeerMainWindow::executableBreakpointSourceName () const {
     return gdbWidget->executableBreakpointSourceName();
+}
+
+void SeerMainWindow::setExecutableBreakpointFirstInstruction (bool flag) {
+    gdbWidget->setExecutableBreakpointFirstInstruction(flag);
+}
+
+bool SeerMainWindow::executableBreakpointFirstInstruction () const {
+    return gdbWidget->executableBreakpointFirstInstruction();
 }
 
 void SeerMainWindow::setExecutableShowAssemblyTabMode (const QString& mode) {
@@ -596,6 +607,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     dlg.setBreakpointsFilename(executableBreakpointsFilename());
     dlg.setBreakpointFunctionName(executableBreakpointFunctionName());
     dlg.setBreakpointSourceName(executableBreakpointSourceName());
+    dlg.setBreakpointFirstInstruction(executableBreakpointFirstInstruction());
     dlg.setShowAssemblyTabMode(executableShowAssemblyTabMode());
     dlg.setRandomizeStartAddress(executableRandomizeStartAddress());
     dlg.setNonStopMode(executableNonStopMode());
@@ -644,6 +656,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     setExecutableBreakpointsFilename(dlg.breakpointsFilename());
     setExecutableBreakpointFunctionName(dlg.breakpointFunctionName());
     setExecutableBreakpointSourceName(dlg.breakpointSourceName());
+    setExecutableBreakpointFirstInstruction(dlg.breakpointFirstInstruction());
     setExecutableShowAssemblyTabMode(dlg.showAssemblyTabMode());
     setExecutableRandomizeStartAddress(dlg.randomizeStartAddress());
     setExecutableNonStopMode(dlg.nonStopMode());
@@ -714,6 +727,11 @@ void SeerMainWindow::handleViewVarVisualizer () {
 void SeerMainWindow::handleViewImageVisualizer () {
 
     gdbWidget->handleGdbImageVisualizer();
+}
+
+void SeerMainWindow::handleViewGdbMonitor() {
+
+    gdbWidget->handleGdbMonitor();
 }
 
 void SeerMainWindow::handleViewAssembly () {
@@ -979,8 +997,9 @@ void SeerMainWindow::handleRestartExecutable () {
 
     if (gdbWidget->executableLaunchMode() == "run" || gdbWidget->executableLaunchMode() == "start") {
 
-        QString breakfunction = gdbWidget->executableBreakpointFunctionName();
-        QString breaksource   = gdbWidget->executableBreakpointSourceName();
+        QString breakfunction     = gdbWidget->executableBreakpointFunctionName();
+        QString breaksource       = gdbWidget->executableBreakpointSourceName();
+        bool    firstinstruction  = gdbWidget->executableBreakpointFirstInstruction();
 
         // Stop in function?
         if (breakfunction != "") {
@@ -991,6 +1010,11 @@ void SeerMainWindow::handleRestartExecutable () {
         }else if (breaksource != "") {
 
             gdbWidget->handleGdbRunExecutable("insource", true);
+
+        // Stop at first instruction?
+        }else if (firstinstruction == true) {
+
+            gdbWidget->handleGdbRunExecutable("firstinstruction", true);
 
         // Otherwise, attempt to stop in "main".
         }else{
@@ -2112,18 +2136,16 @@ void SeerMainWindow::refreshShortCuts () {
  **********************************************************************************************************************/
 void SeerMainWindow::handleStatusChanged(QString message) {
     // target halt
-    if (message.startsWith("*stopped,reason=") || message.startsWith("^done,stack=[frame="))
-    {
+    if (message.startsWith("*stopped,reason=") || message.startsWith("^done,stack=[frame=")) {
         handleGdbTargetInterrupt();
-    }
-    else if (message.startsWith("*running"))      // target is running
-    {
+    }else if (message.startsWith("*running")) {  // target is running
         handleGdbTargetRunning();
     }
 }
+
 // Disable some button while target is running
-void SeerMainWindow::handleGdbTargetRunning()
-{
+void SeerMainWindow::handleGdbTargetRunning() {
+
     // Control Menu
     actionControlInterrupt->setEnabled(true);
     actionControlContinue->setEnabled(false);
@@ -2142,9 +2164,10 @@ void SeerMainWindow::handleGdbTargetRunning()
     actionGdbNexti->setEnabled(false);
     actionGdbStepi->setEnabled(false);
 }
+
 // Enable some button while target is interrupted
-void SeerMainWindow::handleGdbTargetInterrupt()
-{
+void SeerMainWindow::handleGdbTargetInterrupt() {
+
     // Control Menu
     actionControlInterrupt->setEnabled(false);
     actionControlContinue->setEnabled(true);
@@ -2218,3 +2241,4 @@ void SeerMainWindow::setSymbolFile (const QString& symbolFile)
 {
     gdbWidget->setSymbolFile(symbolFile);
 }
+

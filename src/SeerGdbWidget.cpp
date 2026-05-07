@@ -10,6 +10,7 @@
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
 #include "SeerImageVisualizerWidget.h"
+#include "SeerGdbMonitorWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
@@ -48,6 +49,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableWorkingDirectory             = "";
     _executableBreakpointsFilename          = "";
     _executableBreakpointFunctionName       = "";
+    _executableBreakpointFirstInstruction   = false;
     _executableConnectHostPort              = "";
     _executableRRTraceDirectory             = "";
     _executableCoreFilename                 = "";
@@ -472,6 +474,15 @@ const QString& SeerGdbWidget::executableBreakpointSourceName () const {
     return _executableBreakpointSourceName;
 }
 
+void SeerGdbWidget::setExecutableBreakpointFirstInstruction (bool flag) {
+    qDebug() << flag;
+    _executableBreakpointFirstInstruction = flag;
+}
+
+bool SeerGdbWidget::executableBreakpointFirstInstruction () const {
+    return _executableBreakpointFirstInstruction;
+}
+
 void SeerGdbWidget::setExecutablePid (int pid) {
     _executablePid = pid;
 }
@@ -863,6 +874,10 @@ void SeerGdbWidget::handleGdbCommands (const QStringList& commands) {
     }
 }
 
+void SeerGdbWidget::handleGdbMonitorCommand (int id, const QString& command) {
+    handleGdbCommand(QString::number(id)+"-monitor-exec " + command);
+}
+
 void SeerGdbWidget::handleGdbExit () {
 
     handleGdbCommand("-gdb-exit");
@@ -995,7 +1010,9 @@ void SeerGdbWidget::handleGdbRunExecutable (const QString& breakMode, bool loadS
 
         // Run the executable.
         if (_executableBreakMode == "inmain") {
-            handleGdbCommand("-exec-run --all --start"); // Stop in main
+            handleGdbCommand("-exec-run --all --start"); // Stop in main.
+        }else if (_executableBreakMode == "firstinstruction") {
+            handleGdbCommand("-exec-starti"); // Stop at first instruction.
         }else{
             handleGdbCommand("-exec-run --all"); // Do not stop in main. But honor other breakpoints that may have been previously set.
         }
@@ -3087,6 +3104,21 @@ void SeerGdbWidget::handleGdbVarVisualizer () {
 void SeerGdbWidget::handleGdbImageVisualizer () {
 
     handleGdbImageAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbMonitor () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerGdbMonitorWidget* w = new SeerGdbMonitorWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                        w,      &SeerGdbMonitorWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                         w,      &SeerGdbMonitorWidget::handleText);
+    QObject::connect(w,            &SeerGdbMonitorWidget::executeGdbMonitorCommand,      this,   &SeerGdbWidget::handleGdbMonitorCommand);
 }
 
 void SeerGdbWidget::handleSplitterMoved (int pos, int index) {

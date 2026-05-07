@@ -21,7 +21,7 @@
    <item>
     <widget class="QPlainTextEdit" name="textEditor">
      <property name="placeholderText">
-      <string>Insert gdb commands on multiple lines</string>
+      <string>Insert commands on multiple lines</string>
      </property>
     </widget>
    </item>
