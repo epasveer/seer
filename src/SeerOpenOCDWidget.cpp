@@ -13,6 +13,7 @@ SeerOpenOCDWidget::SeerOpenOCDWidget (QWidget* parent) : SeerLogWidget(parent) {
     _gdbLiveWatchProcess    = nullptr;
     _openocdLogsTabWidget   = nullptr;
     _telnetSocket           = nullptr;
+    _liveWatchTimer         = new QTimer(this);
 }
 
 SeerOpenOCDWidget::~SeerOpenOCDWidget (){
@@ -72,6 +73,7 @@ void SeerOpenOCDWidget::terminate ()
         delete _openocdLogsTabWidget;
         _openocdLogsTabWidget = nullptr;
     }
+    terminateGdbLiveWatch();
 }
 
 bool SeerOpenOCDWidget::isOpenocdRunning ()
@@ -168,6 +170,10 @@ bool SeerOpenOCDWidget::startGdbLiveWatch (const QString &gdbExe)
         _gdbLiveWatchProcess = new QProcess(this);
         _gdbLiveWatchProcess->start(gdbExe, QStringList() << "-q" << "--interpreter=mi");
     }
+    connect(_liveWatchTimer, &QTimer::timeout, [this](){
+        gdbLiveWatchRunCommand("-var-update-live-watch");
+    });
+    _liveWatchTimer->start(500);       // Hard code Refresh rate = 2Hz
     connect(_gdbLiveWatchProcess, &QProcess::readyReadStandardOutput,   this, &SeerOpenOCDWidget::handleGdbOutput);
     connect(_gdbLiveWatchProcess, &QProcess::readyReadStandardError,    this, &SeerOpenOCDWidget::handleGdbOutput);
     return true;
@@ -189,25 +195,19 @@ void SeerOpenOCDWidget::terminateGdbLiveWatch()
         _gdbLiveWatchProcess->waitForFinished();
         delete _gdbLiveWatchProcess;
         _gdbLiveWatchProcess = nullptr;
+        _liveWatchTimer->stop();
     }
 }
 
 void SeerOpenOCDWidget::handleGdbOutput()
 {
     QString output = _gdbLiveWatchProcess->readAllStandardOutput() + _gdbLiveWatchProcess->readAllStandardError();
-
-    if (output.startsWith("^done,live_watch_results=[")) {
-        // Format: ^done,live_watch_results=[{id="ID1",value="VALUE1"},{id="ID2",value="VALUE2"}]
-        QString list_text = Seer::parseFirst(output, "done,live_watch_results=", '[', ']', false);
-
-        QRegularExpression re(R"re(\{id="(\d+)",value="([^"]*)"\})re");
-        QRegularExpressionMatchIterator it = re.globalMatch(list_text);
-        while (it.hasNext()) {
-            QRegularExpressionMatch match = it.next();
-            QString id    = match.captured(1);
-            QString value = match.captured(2);
-            emit toTracker(id + "^done,value=\"" + value + "\"");
-        }
+    if (output.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
+        // Format: 16^done,value="435"
+        //       18^done,value="870"
+        for (const QString& line : output.split('\n', Qt::SkipEmptyParts))
+            if (line.contains("^done,value="))
+                    emit toTracker(line);
     }
 }
 
@@ -220,7 +220,7 @@ void SeerOpenOCDWidget::handleText(const QString& text)
         QString frame_text      = Seer::parseFirst(text,       "DataExpressionAdded=", '{', '}', false);
         QString id_text         = Seer::parseFirst(frame_text, "id=",                  '"', '"', false);
         QString expression_text = Seer::parseFirst(frame_text, "expression=",          '"', '"', false);
-        gdbLiveWatchRunCommand("-var-create-live-watch " + expression_text + " @ " + "\"" + expression_text + "\" " + id_text);
+        gdbLiveWatchRunCommand("-var-create-live-watch " + expression_text + " " + id_text);
     }
     else if (text.startsWith("^done,DataExpressionDeleted={") && text.endsWith("}"))
     {

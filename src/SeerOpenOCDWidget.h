@@ -4,6 +4,7 @@
 #include <QtCore/QProcess>
 #include <QtWidgets/QWidget>
 #include <QTcpSocket>
+#include <QTimer>
 #include "QDetachTabWidget.h"
 #include "SeerLogWidget.h"
 /***********************************************************************************************************************
@@ -51,4 +52,5 @@ class SeerOpenOCDWidget: public SeerLogWidget{
         SeerLogWidget*                      _openocdLogsTabWidget;
         QString                             _telnetPort;
         QTemporaryDir                       _tempDir;
+        QTimer*                             _liveWatchTimer;
 };

@@ -319,7 +319,7 @@ endif()
 # Handle gdb logout debugging. Turn CONFIG_SEER_GDB_LOGOUT=1 to enable gdb logout
 # -DCONFIG_SEER_GDB_LOGOUT=1
 if(NOT DEFINED CONFIG_SEER_GDB_LOGOUT)
-    set(CONFIG_SEER_GDB_LOGOUT 0)
+    set(CONFIG_SEER_GDB_LOGOUT 1)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
