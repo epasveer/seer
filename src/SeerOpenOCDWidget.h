@@ -4,6 +4,7 @@
 #include <QtCore/QProcess>
 #include <QtWidgets/QWidget>
 #include <QTcpSocket>
+#include <QTimer>
 #include "QDetachTabWidget.h"
 #include "SeerLogWidget.h"
 /***********************************************************************************************************************
@@ -18,6 +19,10 @@ class SeerOpenOCDWidget: public SeerLogWidget{
         bool                                startOpenOCD                    (const QString &openocdExe, const QString &command);
         void                                terminate                       ();
         bool                                isOpenocdRunning                ();
+        // Start & kill GDB process for live watch
+        bool                                startGdbLiveWatch               (const QString &gdbExe);
+        void                                gdbLiveWatchRunCommand          (const QString &cmd);
+        void                                terminateGdbLiveWatch           ();
         // Start & kill Telnet process
         bool                                startTelnet                     (const QString &port);
         void                                terminateTelnet                 ();
@@ -30,15 +35,22 @@ class SeerOpenOCDWidget: public SeerLogWidget{
 
     signals:
         void                                openocdStartFailed              ();
+        void                                toTracker                       (const QString& text);
 
     private slots:
         void                                handleReadOutput                ();
         void                                handleReadError                 ();
+        void                                handleGdbOutput                 ();
+    
+    public slots:
+        void                                handleText                      (const QString& text);
 
     private:
         QProcess*                           _openocdProcess;
+        QProcess*                           _gdbLiveWatchProcess;
         QTcpSocket*                         _telnetSocket;
         SeerLogWidget*                      _openocdLogsTabWidget;
         QString                             _telnetPort;
-        
+        QTemporaryDir                       _tempDir;
+        QTimer*                             _liveWatchTimer;
 };
