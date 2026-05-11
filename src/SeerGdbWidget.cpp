@@ -4150,6 +4150,9 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
+            if (executablePreGdbCommands().isEmpty() == false)
+                handleGdbExecutablePreCommands();               // Run any 'pre' commands before program is loaded.
+
             if (gdbServerDebug()) {
                 handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
             }else{
@@ -4196,6 +4199,10 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         // Source LiveWatch
         _openocdWidget->gdbLiveWatchRunCommand("source /tmp/MILiveWatch.py");
         _openocdWidget->gdbLiveWatchRunCommand(QString("-target-select %1 :%2").arg(gdbRemoteTargetType()).arg(openocdGdbPort()));
+
+        // Run any 'post' commands after program is loaded.
+        if (executablePostGdbCommands().isEmpty() == false)
+            handleGdbExecutablePostCommands();
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));
