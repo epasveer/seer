@@ -1095,6 +1095,12 @@ void SeerDebugDialog::handleRunModeChanged (int id) {
         preCommandsPlainTextEdit->setPlaceholderText("gdb commands before loading \"corefile\"");
         postCommandsPlainTextEdit->setPlaceholderText("gdb commands after loading \"corefile\"");
     }
+
+    // ID == 5   Openocd
+    if (id == 5) {
+        preCommandsPlainTextEdit->setPlaceholderText("gdb commands before running \"openocd\"");
+        postCommandsPlainTextEdit->setPlaceholderText("gdb commands after running \"openocd\"");
+    }
 }
 
 void SeerDebugDialog::handleLaunchButtonClicked () {
