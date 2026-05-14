@@ -404,6 +404,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessErrored                     (QProcess::ProcessError errorStatus);
 
         void                                handleAboutToQuit                           ();
+        void                                handleDebugOnInit                           ();
 
     signals:
         void                                stoppingPointReached                        ();

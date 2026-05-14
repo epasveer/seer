@@ -193,6 +193,8 @@
    <addaction name="actionInterruptProcess"/>
    <addaction name="separator"/>
    <addaction name="actionVisualizers"/>
+   <addaction name="separator"/>
+   <addaction name="actionDebugOnInit"/>
   </widget>
   <action name="actionFileQuit">
    <property name="icon">
@@ -821,6 +823,15 @@
    </property>
    <property name="text">
     <string>GDB Monitor</string>
+   </property>
+  </action>
+  <action name="actionDebugOnInit">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/seer/resources/icons-icons/debug.png</normaloff>:/seer/resources/icons-icons/debug.png</iconset>
+   </property>
+   <property name="text">
+    <string>Debug On Init</string>
    </property>
   </action>
  </widget>
