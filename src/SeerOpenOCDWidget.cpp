@@ -26,6 +26,8 @@ bool SeerOpenOCDWidget::startOpenOCD (const QString &openocdExe, const QString &
 {
     if (!_openocdProcess) {
         _openocdProcess = new QProcess(this);
+        connect(_openocdProcess, &QProcess::readyReadStandardOutput, this, &SeerOpenOCDWidget::handleReadOutput);
+        connect(_openocdProcess, &QProcess::readyReadStandardError,  this, &SeerOpenOCDWidget::handleReadError);
     }
     if (_openocdProcess->state() == QProcess::Running) {
         QMessageBox::warning(nullptr, QObject::tr("Seer"), QObject::tr("OpenOCD is already running."));
@@ -245,8 +247,6 @@ void SeerOpenOCDWidget::createOpenOCDConsole (QDetachTabWidget* parent)
     parent->addTab(_openocdLogsTabWidget, "OpenOCD output");
     _openocdLogsTabWidget->setPlaceholderText("[OpenOCD output]");
     _openocdLogsTabWidget->setLogEnabled(true);
-    connect(_openocdProcess, &QProcess::readyReadStandardOutput, this, &SeerOpenOCDWidget::handleReadOutput);
-    connect(_openocdProcess, &QProcess::readyReadStandardError, this, &SeerOpenOCDWidget::handleReadError);
 }
 
 SeerLogWidget* SeerOpenOCDWidget::openocdConsole()
