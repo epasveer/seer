@@ -111,6 +111,9 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     actionGdbStepi->setVisible(false);
     actionGdbFinish->setVisible(true);
 
+    // OpenOCD disable Debug On Init by default
+    actionDebugOnInit->setVisible(false);
+
     // Set up Interrupt menu.
     QMenu* menuInterrupt = new QMenu(this);
     _interruptAction = menuInterrupt->addAction("Interrupt");
@@ -188,6 +191,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(actionControlRecordReverse,        &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordReverse);
     QObject::connect(actionControlRecordStop,           &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbRecordStop);
     QObject::connect(actionControlInterrupt,            &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleGdbInterrupt);
+    QObject::connect(actionDebugOnInit,                 &QAction::triggered,                            gdbWidget,                      &SeerGdbWidget::handleDebugOnInit);
 
     QObject::connect(actionSettingsConfiguration,       &QAction::triggered,                            this,                           &SeerMainWindow::handleSettingsConfiguration);
     QObject::connect(actionSettingsSaveConfiguration,   &QAction::triggered,                            this,                           &SeerMainWindow::handleSettingsSaveConfiguration);
@@ -502,6 +506,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
     actionControlRestart->setVisible(true);
     actionControlTerminate->setVisible(true);
     actionControlInterrupt->setVisible(true);
+    actionDebugOnInit->setVisible(false);
 
     if (launchMode == "run") {
 
@@ -545,6 +550,7 @@ void SeerMainWindow::launchExecutable (const QString& launchMode, const QString&
         actionGdbStepi->setVisible(false);
         actionControlNexti->setVisible(false);
         actionControlStepi->setVisible(false);
+        actionDebugOnInit->setVisible(true);
         // launch gdb-multiarch and openocd
         gdbWidget->handleGdbMultiarchOpenOCDExecutable();
 
@@ -1087,6 +1093,7 @@ void SeerMainWindow::handleRestartExecutable () {
         actionGdbStepi->setVisible(false);
         actionControlNexti->setVisible(false);
         actionControlStepi->setVisible(false);
+        actionDebugOnInit->setVisible(true);
         gdbWidget->handleGdbMultiarchOpenOCDExecutable();
 
     }
@@ -1206,6 +1213,7 @@ void SeerMainWindow::handleGdbStateChanged () {
         actionGdbTerminate->setVisible(false);
         actionControlRestart->setVisible(true);
         actionControlTerminate->setVisible(true);
+        actionDebugOnInit->setVisible(false);
 
         // Get the hotkey for the Restart button.
         QString hotkey = "";

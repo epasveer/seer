@@ -4220,3 +4220,10 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 
     qCDebug(LC) << "Finishing 'gdb-multiarch connect'.";
 }
+
+/***********************************************************************************************************************
+ * Start of handle Debug On Init
+ **********************************************************************************************************************/
+void SeerGdbWidget::handleDebugOnInit () {
+
+}
