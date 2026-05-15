@@ -15,6 +15,7 @@
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include "SeerOpenOCDWidget.h"
+#include "SeerOpenOCDDebugOnInit.h"
 #include <QtGui/QFont>
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
@@ -822,6 +823,10 @@ void SeerGdbWidget::handleText (const QString& text) {
     }else{
         // All other text is ignored by this widget.
     }
+}
+
+void SeerGdbWidget::handleTextDebugOnInit (const QString& text) {
+        qCDebug(LC) << "DebugOnInit: " << text;
 }
 
 void SeerGdbWidget::handleManualCommandExecute (QString command) {
@@ -4219,5 +4224,49 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
  * Start of handle Debug On Init
  **********************************************************************************************************************/
 void SeerGdbWidget::handleDebugOnInit () {
+    // Promtp a dialog, tell user to input kernel module that they want to debug
+    SeerOpenOCDDebugOnInit dlg(this);
+    int ret = dlg.exec();
+    if (ret == 0)
+        return;
+    
+    _moduleName                 = dlg.moduleName();
+    _commandToTerm              = dlg.commandToTerm();
+    _kernelModuleSymbolPath     = dlg.kernelModuleSymbolPath();
+    _kernelModuleSourceCodePath = dlg.kernelModuleSourceCodePath();
+    _serialPortPath             = dlg.serialPortPath();
 
+    // Checkpoint
+    if (_kernelModuleSymbolPath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module symbol is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+    if (_kernelModuleSourceCodePath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module source code is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+    if ( Seer::isFileExistNotify(_kernelModuleSymbolPath) == false)
+        return;
+    if ( Seer::isDirExistNotify(_kernelModuleSourceCodePath) == false)
+        return;
+    if ( Seer::isFileExistNotify(_serialPortPath) == false)
+        return;
+    if (_moduleName == "" || _commandToTerm == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Command to terminal is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+
+    // Disconnect all signals from _gdbMonitor to this, SeerGdbWidget::handleText
+    QObject::disconnect(_gdbMonitor, &GdbMonitor::astrixTextOutput, this, &SeerGdbWidget::handleText);
+    QObject::disconnect(_gdbMonitor, &GdbMonitor::equalTextOutput,  this, &SeerGdbWidget::handleText);
+    QObject::disconnect(_gdbMonitor, &GdbMonitor::tildeTextOutput,  this, &SeerGdbWidget::handleText);
+
+    // Instead, connect _gdbMonitor signal to SeerGdbWidget::handleTextDebugOnInit
+    QObject::connect(_gdbMonitor, &GdbMonitor::astrixTextOutput, this, &SeerGdbWidget::handleTextDebugOnInit);
+    QObject::connect(_gdbMonitor, &GdbMonitor::equalTextOutput,  this, &SeerGdbWidget::handleTextDebugOnInit);
+    QObject::connect(_gdbMonitor, &GdbMonitor::tildeTextOutput,  this, &SeerGdbWidget::handleTextDebugOnInit);
+    // Checkpoint
 }
