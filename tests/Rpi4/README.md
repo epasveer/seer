@@ -1,6 +1,5 @@
 # Rpi4
 This example is for testing OpenOCD capablility of debugging Linux kernel and kerel module.<br>
-Debugging hardware will be more laborious than debugging PC application.
 # Prerequisite
 + Hardware debugger: JLink, Olimex, .... any hardware debugger supported by OpenOCD. In this case, Jlink has been used.
 + Rasberry Pi 4, micros SD card, micros SD card reader
@@ -9,8 +8,8 @@ Debugging hardware will be more laborious than debugging PC application.
 # Build Rpi4 image
 + `make build_docker` to build docker
 + `make docker` to enter docker container
-+ `make` inside docker to automatically build image for Rpi4. Wait for 1 or 2 hours, depends on your internet speed and PC specs
-+ Final image will be: openwrt-bcm27xx-bcm2711-rpi-4-squashfs-factory.img
++ `make owrt` to build owrt image. Final image will be: openwrt-bcm27xx-bcm2711-rpi-4-squashfs-factory.img
++ `make yocto` to build yocto image. Final image will be: temp.wic
 # Flash image to your microSD card
 Please read this carefully before deployment
 + Run following command in other terminal (not in docker)
@@ -19,6 +18,10 @@ Please read this carefully before deployment
 + Flash Rpi4 image, modify path to Rpi4 image and microSD card partition sdX:
 ```
 sudo dd if=openwrt-bcm27xx-bcm2711-rpi-4-squashfs-factory.img of=/dev/sdX bs=4M status=progress
+```
+or
+```
+sudo dd if=temp.wic of=/dev/sdX bs=4M status=progress
 ```
 + Sync and eject
 ```
