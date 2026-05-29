@@ -1,3 +1,4 @@
 openwrt
 *.img.gz
 *.img
+yocto-rpi
