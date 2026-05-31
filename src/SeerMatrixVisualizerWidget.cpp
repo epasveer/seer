@@ -9,7 +9,8 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QToolTip>
 #include <QtGui/QIntValidator>
-#include <QtGui/QIcon>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QRegularExpression>
@@ -33,7 +34,6 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Matrix Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -58,6 +58,10 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(matrixStrideLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerMatrixVisualizerWidget::handleElementStrideLineEdit);
     QObject::connect(matrixDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerMatrixVisualizerWidget::handleMatrixDisplayFormatComboBox);
     QObject::connect(matrixTableWidget,             &SeerMatrixWidget::dataChanged,                            this,            &SeerMatrixVisualizerWidget::handleDataChanged);
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerMatrixVisualizerWidget::handleThemeChanged);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();
@@ -634,6 +638,12 @@ void SeerMatrixVisualizerWidget::handleDataChanged () {
     medianLineEdit->setText(QString::number(med));
 
     return;
+}
+
+void SeerMatrixVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 void SeerMatrixVisualizerWidget::writeSettings() {

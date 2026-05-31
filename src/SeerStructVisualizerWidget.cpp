@@ -9,7 +9,8 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
 #include <QAction>
-#include <QtGui/QIcon>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
@@ -24,7 +25,6 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Basic Struct Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -39,13 +39,17 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     variableTreeWidget->clear();
 
     // Connect things.
-    QObject::connect(refreshToolButton,      &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleRefreshButton);
-    QObject::connect(helpToolButton,         &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleHelpButton);
-    QObject::connect(variableNameLineEdit,   &QLineEdit::returnPressed,                   this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::customContextMenuRequested,    this,  &SeerStructVisualizerWidget::handleContextMenu);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemEntered,                   this,  &SeerStructVisualizerWidget::handleItemEntered);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemExpanded,                  this,  &SeerStructVisualizerWidget::handleItemExpanded);
-    QObject::connect(variableTreeWidget,     &QTreeWidget::itemCollapsed,                 this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(refreshToolButton,             &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                       this,  &SeerStructVisualizerWidget::handleHelpButton);
+    QObject::connect(variableNameLineEdit,          &QLineEdit::returnPressed,                   this,  &SeerStructVisualizerWidget::handleVariableNameLineEdit);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::customContextMenuRequested,    this,  &SeerStructVisualizerWidget::handleContextMenu);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemEntered,                   this,  &SeerStructVisualizerWidget::handleItemEntered);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemExpanded,                  this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(variableTreeWidget,            &QTreeWidget::itemCollapsed,                 this,  &SeerStructVisualizerWidget::handleItemExpanded);
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,            this,  &SeerStructVisualizerWidget::handleThemeChanged);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();
@@ -498,6 +502,12 @@ void SeerStructVisualizerWidget::handleVariableNameLineEdit () {
     }
 
     setVariableName (variableNameLineEdit->text());
+}
+
+void SeerStructVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 void SeerStructVisualizerWidget::writeSettings () {

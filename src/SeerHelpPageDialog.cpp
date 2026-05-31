@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerHelpPageDialog.h"
+#include "SeerUtl.h"
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtWidgets/QToolButton>
@@ -17,7 +18,6 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Help");
 
     textBrowser->setOpenExternalLinks(true);
@@ -25,6 +25,9 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
     // Connect things.
     QObject::connect(printToolButton,  &QToolButton::clicked,          this,  &SeerHelpPageDialog::handlePrintToolButton);
     QObject::connect(okPushButton,     &QPushButton::clicked,          this,  &SeerHelpPageDialog::handleOkPushButton);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();

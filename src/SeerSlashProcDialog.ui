@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Seer - System Processes</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="resource.qrc">
-    <normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</iconset>
-  </property>
   <property name="toolTip">
    <string>Select a process pid.</string>
   </property>

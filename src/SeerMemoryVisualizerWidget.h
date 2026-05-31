@@ -40,6 +40,7 @@ class SeerMemoryVisualizerWidget : public QWidget, protected Ui::SeerMemoryVisua
         void                handleColumnCountSpinBox            (int value);
         void                handlePrintButton                   ();
         void                handleSaveButton                    ();
+        void                handleThemeChanged                  ();
 
     protected:
         void                writeSettings                       ();

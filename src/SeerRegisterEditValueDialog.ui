@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Seer - Edit a Register Value</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>resources/icons/hicolor/32x32/seergdb.png</normaloff>resources/icons/hicolor/32x32/seergdb.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="breakpointLocationGroupBox">

@@ -107,6 +107,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleSessionTerminated             ();
         void                                            handleGdbStateChanged               ();
         void                                            handleAddToMouseNavigation          (const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile);
+        void                                            handleThemeChanged                  ();
 
     protected:
         void                                            mousePressEvent                     (QMouseEvent *event) override;
