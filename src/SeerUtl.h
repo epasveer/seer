@@ -4,6 +4,11 @@
 
 #pragma once
 #include "QStringPair.h"
+#include <QtCharts/QChartView>
+#include <QtWidgets/QListWidgetItem>
+#include <QtGui/QColor>
+#include <QtGui/QIcon>
+#include <QtGui/QPixmap>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QMap>
@@ -62,5 +67,11 @@ namespace Seer {
     void                        printStackTrace     ();
     bool                        isFileExistNotify   (const QString& filename);
     bool                        isDirExistNotify    (const QString& dirname);
+
+    void                        colorizeAllIcons            (QWidget* parent, const QSize& size = QSize(32,32));
+    void                        colorizeListWidgetItemIcon  (QListWidgetItem* item, const QSize& size = QSize(32,32));
+    void                        colorizeChartViewItem       (QChartView* item);
+    QIcon                       colorizeIcon                (const QIcon& icon, const QSize& size = QSize(32,32));
+    QIcon                       colorizeIcon                (const QIcon& icon, const QColor& color, const QSize& size = QSize(32,32));
 }
 

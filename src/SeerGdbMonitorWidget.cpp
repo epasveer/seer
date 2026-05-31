@@ -11,6 +11,8 @@
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtCore/QTextStream>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
@@ -25,7 +27,6 @@ SeerGdbMonitorWidget::SeerGdbMonitorWidget (QWidget* parent) : QWidget(parent) {
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer - GDB Monitor");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -59,6 +60,10 @@ SeerGdbMonitorWidget::SeerGdbMonitorWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handlePrintButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handleHelpButton);
     QObject::connect(macroButtonGroup,              &QButtonGroup::buttonClicked,                              this,            &SeerGdbMonitorWidget::handleMacroToolButtonClicked);
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerGdbMonitorWidget::handleThemeChanged);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();
@@ -182,6 +187,12 @@ void SeerGdbMonitorWidget::handleMacroToolButtonClicked (QAbstractButton* button
 
         emit executeGdbMonitorCommand(_monitorId, command);
     }
+}
+
+void SeerGdbMonitorWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 void SeerGdbMonitorWidget::writeSettings() {

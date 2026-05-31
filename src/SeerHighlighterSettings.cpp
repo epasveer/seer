@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerHighlighterSettings.h"
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 
 SeerHighlighterSettings::SeerHighlighterSettings () {
 }
@@ -117,14 +119,26 @@ QStringList SeerHighlighterSettings::themeNames() {
 
     QStringList names;
 
-    names << "light" << "dark";
+    names << "auto" << "light" << "dark";
 
     return names;
 }
 
 SeerHighlighterSettings SeerHighlighterSettings::populate (const QString& themeName) {
 
-    if (themeName == "light") {
+
+    if (themeName == "auto") {
+
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            return SeerHighlighterSettings::populate_dark();
+        }else{
+            return SeerHighlighterSettings::populate_light();
+        }
+
+    }else if (themeName == "light") {
         return SeerHighlighterSettings::populate_light();
     }else if (themeName == "dark") {
         return SeerHighlighterSettings::populate_dark();

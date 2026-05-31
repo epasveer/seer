@@ -46,6 +46,7 @@ class SeerMatrixVisualizerWidget : public QWidget, protected Ui::SeerMatrixVisua
         void                handleElementStrideLineEdit             ();
         void                handleMatrixDisplayFormatComboBox       (int index);
         void                handleDataChanged                       ();
+        void                handleThemeChanged                      ();
 
     protected:
         void                writeSettings                           ();

@@ -474,7 +474,6 @@ const QString& SeerGdbWidget::executableBreakpointSourceName () const {
 }
 
 void SeerGdbWidget::setExecutableBreakpointFirstInstruction (bool flag) {
-    qDebug() << flag;
     _executableBreakpointFirstInstruction = flag;
 }
 
@@ -2159,8 +2158,6 @@ void SeerGdbWidget::handleGdbBreakpointsInsert (QString breakpoints) {
 }
 
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
-
-    qDebug() << breakpoint;
 
     if (executableLaunchMode() == "") {
         return;

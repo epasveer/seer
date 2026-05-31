@@ -12,6 +12,8 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -25,10 +27,10 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
-    _editorFont                     = QFont("monospace", 10);                      // Default font.
+    _editorFont                     = QFont("monospace", 10);                // Default font.
     _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
-    _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
+    _editorKeySettings              = SeerKeySettings::populate();           // Default key settings.
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
     _editorAutoSourceReload         = false;
@@ -81,12 +83,13 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     createEditorWidgetTab("", "");
 
     // Connect things.
-    QObject::connect(tabWidget,             &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
-    QObject::connect(tabWidget,             &QTabWidget::currentChanged,       this, &SeerEditorManagerWidget::handleTabCurrentChanged);
-    QObject::connect(fileOpenToolButton,    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
-    QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
-    QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
-    QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget,                     &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
+    QObject::connect(tabWidget,                     &QTabWidget::currentChanged,       this, &SeerEditorManagerWidget::handleTabCurrentChanged);
+    QObject::connect(fileOpenToolButton,            &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
+    QObject::connect(fileCloseToolButton,           &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
+    QObject::connect(textSearchToolButton,          &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,  this, &SeerEditorManagerWidget::handleThemeChanged);
 
     // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
@@ -1662,6 +1665,33 @@ void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSo
         editorWidget->sourceArea()->setTextCursor(cursor);
     }
 }
+
+void SeerEditorManagerWidget::handleThemeChanged () {
+
+    //
+    // Normally, we would colorize all the icons in this widget and its
+    // childred, however, this is already handled in SeerMainWindow.
+    //
+    // Instead, we change the editor's color scheme here.
+    //
+
+    // Get the current color scheme
+    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+    // Switch to the right scheme.
+    SeerHighlighterSettings settings;
+
+    if (colorScheme == Qt::ColorScheme::Dark) {
+        settings = SeerHighlighterSettings::populate_dark();
+    }else{
+        settings = SeerHighlighterSettings::populate_light();
+    }
+
+    // Set the new color scheme for the editor manager.
+    // This updates all existing editors.
+    setEditorHighlighterSettings(settings);
+}
+
 // Handle mouse press events for navigation
 void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
 {

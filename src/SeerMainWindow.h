@@ -111,6 +111,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleGdbTargetRunning                  ();
         void                        handleGdbTargetInterrupt                ();
         void                        handleStatusChanged                     (QString message);
+        void                        handleThemeChanged                      ();
 
     protected:
         void                        writeSettings                           ();

@@ -75,6 +75,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(buttonBox,                            &QDialogButtonBox::accepted,         this, &SeerDebugDialog::handleLaunchButtonClicked);
     QObject::connect(buttonBox,                            &QDialogButtonBox::clicked,          this, &SeerDebugDialog::handleResetButtonClicked);
 
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Set initial run mode.
     handleRunModeChanged(0);

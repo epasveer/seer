@@ -35,6 +35,7 @@ class SeerStructVisualizerWidget : public QWidget, protected Ui::SeerStructVisua
         void                handleContextMenu                   (const QPoint&    pos);
         void                handleItemEntered                   (QTreeWidgetItem* item, int column);
         void                handleItemExpanded                  (QTreeWidgetItem* item);
+        void                handleThemeChanged                  ();
 
     protected:
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& value_text);

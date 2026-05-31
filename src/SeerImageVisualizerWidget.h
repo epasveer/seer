@@ -41,6 +41,7 @@ class SeerImageVisualizerWidget : public QWidget, protected Ui::SeerImageVisuali
         void                handlePrintButton                   ();
         void                handleSaveButton                    ();
         void                handleCreateImage                   (const QByteArray& array);
+        void                handleThemeChanged                  ();
 
     protected:
         void                writeSettings                       ();
