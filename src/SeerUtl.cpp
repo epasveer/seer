@@ -13,7 +13,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -1385,7 +1385,7 @@ namespace Seer {
 
     void colorizeAllIcons (QWidget* parent, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         if (parent == nullptr) {
             return;
         }
@@ -1442,7 +1442,7 @@ namespace Seer {
 
     void colorizeListWidgetItemIcon (QListWidgetItem* item, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         if (item == nullptr) {
             return;
         }
@@ -1460,7 +1460,7 @@ namespace Seer {
 
     void colorizeChartViewItem (QChartView* item) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         if (item == nullptr) {
             return;
         }
@@ -1484,7 +1484,7 @@ namespace Seer {
 
     QIcon colorizeIcon (const QIcon& icon, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         // Get the current color scheme
         Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
 
@@ -1500,7 +1500,7 @@ namespace Seer {
 
     QIcon colorizeIcon (const QIcon& icon, const QColor& color, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         // Get the pixmap from the icon
         QPixmap pixmap = icon.pixmap(size);
 

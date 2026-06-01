@@ -11,7 +11,7 @@
 #include <QtWidgets/QMenu>
 #include <QAction>
 #include <QtWidgets/QMessageBox>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -85,7 +85,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     QObject::connect(collapseSelectedToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseSelected);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,            this,  &SeerVarVisualizerWidget::handleThemeChanged);
 #endif
 

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerHighlighterSettings.h"
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -131,7 +131,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populate (const QString& themeN
 
     if (themeName == "auto") {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
         // Get the current color scheme
         Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
 

@@ -8,7 +8,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -49,7 +49,7 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(formatComboBox,                QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerImageVisualizerWidget::handleFormatComboBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleSaveButton);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,  &SeerImageVisualizerWidget::handleThemeChanged);
 #endif
 
