@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Seer - Macro Editor</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="resource.qrc">
-    <normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QPlainTextEdit" name="textEditor">

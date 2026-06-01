@@ -83,8 +83,10 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(openocdSymbolFileButton,              &QToolButton::clicked,               this, &SeerDebugDialog::handleSymbolFileButton);
     QObject::connect(openocdSourceDirButton,               &QToolButton::clicked,               this, &SeerDebugDialog::handleSourceDirectoryButton);
 
-    QObject::connect(loadAddrCheckBox,                     &QCheckBox::stateChanged,             this, &SeerDebugDialog::handleLoadAddrCheckBox);
+    QObject::connect(loadAddrCheckBox,                     &QCheckBox::stateChanged,            this, &SeerDebugDialog::handleLoadAddrCheckBox);
 
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Set initial run mode.
     handleRunModeChanged(0);

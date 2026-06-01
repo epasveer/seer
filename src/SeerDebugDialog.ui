@@ -1074,9 +1074,9 @@
              <attribute name="title">
               <string>Main</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
+             <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_25">
+               <layout class="QHBoxLayout" name="horizontalLayout_15">
                 <item>
                  <widget class="QLabel" name="openOCDMainSettingLabel">
                   <property name="text">
@@ -1147,7 +1147,7 @@
                   <property name="flat">
                    <bool>false</bool>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_16">
                    <item>
                     <widget class="QLabel" name="executableOpenOCDPathLabel">
                      <property name="text">

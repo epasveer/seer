@@ -17,7 +17,9 @@ class SeerAboutDialog : public QDialog, protected Ui::SeerAboutDialogForm {
         explicit SeerAboutDialog (QWidget* parent = 0);
        ~SeerAboutDialog ();
 
-    public slots:
+    public  slots:
+    private slots:
+        void        handleThemeChanged ();
 
     private:
 };

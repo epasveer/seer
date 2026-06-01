@@ -18,16 +18,7 @@ SeerMessagesBrowserWidget::SeerMessagesBrowserWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    QString style = "QTreeWidget::item:!selected "          // Items in tree widget will have a border.
-                    "{ "
-                       "border: 1px solid gainsboro; "
-                       "border-left: none; "
-                       "border-top: none; "
-                    "}"
-                    "QTreeWidget::item:selected {}";
-
     messagesTreeWidget->setRootIsDecorated(false);
-    messagesTreeWidget->setStyleSheet(style);
     messagesTreeWidget->setSortingEnabled(false);
     messagesTreeWidget->resizeColumnToContents(0); // timestamp
     messagesTreeWidget->resizeColumnToContents(1); // message type icon

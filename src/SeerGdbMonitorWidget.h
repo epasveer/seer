@@ -28,6 +28,7 @@ class SeerGdbMonitorWidget : public QWidget, protected Ui::SeerGdbMonitorWidgetF
         void                handlePrintButton                   ();
         void                handleHelpButton                    ();
         void                handleMacroToolButtonClicked        (QAbstractButton* button);
+        void                handleThemeChanged                  ();
 
     protected:
         void                writeSettings                       ();

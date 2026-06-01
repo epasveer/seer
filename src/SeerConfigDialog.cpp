@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerConfigDialog.h"
+#include "SeerUtl.h"
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QListWidgetItem>
 #include <QtWidgets/QStackedWidget>
@@ -115,6 +116,16 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     // Connect things.
     connect(contentsListWidget, &QListWidget::currentItemChanged,   this, &SeerConfigDialog::handleChangePage);
     connect(buttonBox,          &QDialogButtonBox::clicked,         this, &SeerConfigDialog::handleButtonClicked);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
+    Seer::colorizeListWidgetItemIcon(configSeerButton,     QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configGdbButton,      QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configEditorButton,   QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configSourceButton,   QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configAssemblyButton, QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configKeysButton,     QSize(128,128));
+    // Seer::colorizeListWidgetItemIcon(configRRButton,       QSize(128,128)); // Don't change. It's a multi-colored icon.
 
     // Set to first page.
     contentsListWidget->setCurrentRow(0);

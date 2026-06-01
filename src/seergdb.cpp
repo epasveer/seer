@@ -315,7 +315,6 @@ int main (int argc, char* argv[]) {
     //
     SeerMainWindow seer;
 
-    seer.setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     seer.setExecutableName(executableName);
     seer.setExecutableWorkingDirectory(executableWorkingDirectory);
     seer.setExecutableSymbolName(executableSymbolFilename);
