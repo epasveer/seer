@@ -9,7 +9,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QToolTip>
 #include <QtGui/QIntValidator>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -60,7 +60,7 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(matrixStrideLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerMatrixVisualizerWidget::handleElementStrideLineEdit);
     QObject::connect(matrixDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerMatrixVisualizerWidget::handleMatrixDisplayFormatComboBox);
     QObject::connect(matrixTableWidget,             &SeerMatrixWidget::dataChanged,                            this,            &SeerMatrixVisualizerWidget::handleDataChanged);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerMatrixVisualizerWidget::handleThemeChanged);
 #endif
 

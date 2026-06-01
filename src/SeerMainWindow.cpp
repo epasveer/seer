@@ -16,7 +16,7 @@
 #include <QtWidgets/QToolTip>
 #include <QtGui/QKeySequence>
 #include <QtGui/QPalette>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -229,7 +229,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
     QObject::connect(gdbWidget->gdbMonitor(),           &GdbMonitor::caretTextOutput,                   this,                           &SeerMainWindow::handleStatusChanged);
 
     // Handle when theme is changed. Change the color of all icons.
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(),     &QStyleHints::colorSchemeChanged,               this,                           &SeerMainWindow::handleThemeChanged);
 #endif
 

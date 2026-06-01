@@ -6,7 +6,7 @@
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -20,7 +20,7 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
     setupUi(this);
 
     // Handle when theme is changed. Change the color of all icons.
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(),  &QStyleHints::colorSchemeChanged,         this, &SeerAboutDialog::handleThemeChanged);
 #endif
 

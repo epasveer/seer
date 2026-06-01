@@ -13,7 +13,7 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QToolTip>
 #include <QtGui/QIntValidator>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -108,7 +108,7 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handleLabelsCheckBox);
     QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
     QObject::connect(printPushButton,               &QPushButton::clicked,                                     arrayChartView,  &QZoomChartView::printView);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerArrayVisualizerWidget::handleThemeChanged);
 #endif
 

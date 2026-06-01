@@ -11,7 +11,7 @@
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
 #endif
@@ -62,7 +62,7 @@ SeerGdbMonitorWidget::SeerGdbMonitorWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handlePrintButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handleHelpButton);
     QObject::connect(macroButtonGroup,              &QButtonGroup::buttonClicked,                              this,            &SeerGdbMonitorWidget::handleMacroToolButtonClicked);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerGdbMonitorWidget::handleThemeChanged);
 #endif
 
