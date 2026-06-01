@@ -8,8 +8,10 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QSettings>
@@ -47,7 +49,9 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(formatComboBox,                QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerImageVisualizerWidget::handleFormatComboBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleSaveButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,  &SeerImageVisualizerWidget::handleThemeChanged);
+#endif
 
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this);

@@ -13,10 +13,8 @@
 #include <QtGui/QIcon>
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
-#endif
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QString>
@@ -1385,7 +1383,6 @@ namespace Seer {
 
     void colorizeAllIcons (QWidget* parent, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
         if (parent == nullptr) {
             return;
         }
@@ -1437,12 +1434,10 @@ namespace Seer {
         }else{
             QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
         }
-#endif
     }
 
     void colorizeListWidgetItemIcon (QListWidgetItem* item, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
         if (item == nullptr) {
             return;
         }
@@ -1455,12 +1450,10 @@ namespace Seer {
         }else{
             item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
         }
-#endif
     }
 
     void colorizeChartViewItem (QChartView* item) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
         if (item == nullptr) {
             return;
         }
@@ -1479,12 +1472,10 @@ namespace Seer {
         }else{
             chart->setTheme(QChart::ChartThemeLight);
         }
-#endif
     }
 
     QIcon colorizeIcon (const QIcon& icon, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
         // Get the current color scheme
         Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
 
@@ -1493,36 +1484,29 @@ namespace Seer {
         }else{
             return Seer::colorizeIcon(icon, QColor("black"), size);
         }
-#else
-        return icon;
-#endif
     }
 
     QIcon colorizeIcon (const QIcon& icon, const QColor& color, const QSize& size) {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
         // Get the pixmap from the icon
         QPixmap pixmap = icon.pixmap(size);
 
         // Create a new pixmap with the same size and format (preserves alpha)
-        QPixmap coloredPixmap(pixmap.size());
-        coloredPixmap.fill(Qt::transparent);
+        QPixmap whitePixmap(pixmap.size());
+        whitePixmap.fill(Qt::transparent);
 
-        QPainter painter(&coloredPixmap);
+        QPainter painter(&whitePixmap);
 
         // Draw the original pixmap
         painter.drawPixmap(0, 0, pixmap);
 
         // Use CompositionMode_SourceIn to colorize while keeping alpha
         painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-        painter.fillRect(coloredPixmap.rect(), color);
+        painter.fillRect(whitePixmap.rect(), color);
 
         painter.end();
 
-        return QIcon(coloredPixmap);
-#else
-        return icon;
-#endif
+        return QIcon(whitePixmap);
     }
 }
 

@@ -11,8 +11,10 @@
 #include <QtWidgets/QMenu>
 #include <QAction>
 #include <QtWidgets/QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtGui/QIcon>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QTimer>
@@ -83,7 +85,9 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     QObject::connect(collapseSelectedToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseSelected);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,            this,  &SeerVarVisualizerWidget::handleThemeChanged);
+#endif
 
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this);
