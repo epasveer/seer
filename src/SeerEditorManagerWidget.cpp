@@ -12,8 +12,10 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -89,7 +91,9 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     QObject::connect(fileCloseToolButton,           &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
     QObject::connect(textSearchToolButton,          &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
     QObject::connect(helpToolButton,                &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,  this, &SeerEditorManagerWidget::handleThemeChanged);
+#endif
 
     // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);

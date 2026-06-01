@@ -9,8 +9,10 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QMenu>
 #include <QAction>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtCore/QRegularExpression>
 #include <QtCore/QTime>
 #include <QtCore/QSettings>
@@ -46,7 +48,9 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(variableTreeWidget,            &QTreeWidget::itemEntered,                   this,  &SeerStructVisualizerWidget::handleItemEntered);
     QObject::connect(variableTreeWidget,            &QTreeWidget::itemExpanded,                  this,  &SeerStructVisualizerWidget::handleItemExpanded);
     QObject::connect(variableTreeWidget,            &QTreeWidget::itemCollapsed,                 this,  &SeerStructVisualizerWidget::handleItemExpanded);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,            this,  &SeerStructVisualizerWidget::handleThemeChanged);
+#endif
 
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this);

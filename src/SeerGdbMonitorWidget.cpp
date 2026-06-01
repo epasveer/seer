@@ -11,8 +11,10 @@
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtGui/QFont>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtCore/QTextStream>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
@@ -60,7 +62,9 @@ SeerGdbMonitorWidget::SeerGdbMonitorWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handlePrintButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                                     this,            &SeerGdbMonitorWidget::handleHelpButton);
     QObject::connect(macroButtonGroup,              &QButtonGroup::buttonClicked,                              this,            &SeerGdbMonitorWidget::handleMacroToolButtonClicked);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerGdbMonitorWidget::handleThemeChanged);
+#endif
 
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this);

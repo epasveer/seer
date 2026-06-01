@@ -13,8 +13,10 @@
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QToolTip>
 #include <QtGui/QIntValidator>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
+#endif
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QRegularExpression>
@@ -106,7 +108,9 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(labelsCheckBox,                &QCheckBox::clicked,                                       this,            &SeerArrayVisualizerWidget::handleLabelsCheckBox);
     QObject::connect(lineTypeButtonGroup,           QOverload<int>::of(&QButtonGroup::idClicked),              this,            &SeerArrayVisualizerWidget::handleLineTypeButtonGroup);
     QObject::connect(printPushButton,               &QPushButton::clicked,                                     arrayChartView,  &QZoomChartView::printView);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerArrayVisualizerWidget::handleThemeChanged);
+#endif
 
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this);
