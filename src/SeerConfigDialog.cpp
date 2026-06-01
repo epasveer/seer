@@ -126,6 +126,7 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     Seer::colorizeListWidgetItemIcon(configAssemblyButton, QSize(128,128));
     Seer::colorizeListWidgetItemIcon(configKeysButton,     QSize(128,128));
     // Seer::colorizeListWidgetItemIcon(configRRButton,       QSize(128,128)); // Don't change. It's a multi-colored icon.
+    Seer::colorizeListWidgetItemIcon(configOpenOCDButton,  QSize(128,128));
 
     // Set to first page.
     contentsListWidget->setCurrentRow(0);

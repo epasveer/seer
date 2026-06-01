@@ -1064,7 +1064,7 @@
          <attribute name="title">
           <string>OpenOCD</string>
          </attribute>
-         <layout class="QGridLayout" name="gridLayout">
+         <layout class="QGridLayout" name="gridLayout_12">
           <item row="0" column="0">
            <widget class="QTabWidget" name="openOCDTabWidget">
             <property name="currentIndex">
@@ -1114,7 +1114,7 @@
                </layout>
               </item>
               <item>
-               <layout class="QGridLayout" name="gridLayout_18">
+               <layout class="QGridLayout" name="gridLayout_10">
                 <item row="0" column="0">
                  <widget class="QGroupBox" name="executableNameGroupBox_2">
                   <property name="enabled">
@@ -1485,7 +1485,7 @@
                   <property name="flat">
                    <bool>false</bool>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_16">
+                  <layout class="QHBoxLayout" name="horizontalLayout_18">
                    <item>
                     <widget class="QLabel" name="executableOpenOCDPathLabel_5">
                      <property name="text">
