@@ -76,6 +76,8 @@ void SeerOpenOCDWidget::terminate ()
         _openocdLogsTabWidget = nullptr;
     }
     terminateGdbLiveWatch();
+    disconnect(this,    &SeerOpenOCDWidget::toEditorManagerWidget,  nullptr,    nullptr);
+    disconnect(this,    &SeerOpenOCDWidget::toTracker,              nullptr,    nullptr);
 }
 
 bool SeerOpenOCDWidget::isOpenocdRunning ()
@@ -210,6 +212,9 @@ void SeerOpenOCDWidget::handleGdbOutput()
         for (const QString& line : output.split('\n', Qt::SkipEmptyParts))
             if (line.contains("^done,value="))
                     emit toTracker(line);
+    } else if (output.contains(QRegularExpression("^([0-9]+)\\^done,symbols="))) {
+        // Throw to SeerEditorManagerWidget
+        emit toEditorManagerWidget(output);
     }
 }
 

@@ -1495,6 +1495,9 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
                 }
             }
 
+            if (executableLaunchMode() == "openocd")
+                QObject::disconnect(_openocdWidget, nullptr, nullptr, nullptr);
+
             handleGdbCommand(QString("save breakpoints /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()), true);
             delay(2);
 
@@ -4083,6 +4086,23 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     // Openocd Live watch
     QObject::connect(_gdbMonitor,   &GdbMonitor::caretTextOutput,       _openocdWidget, &SeerOpenOCDWidget::handleText,Qt::UniqueConnection);
     QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toTracker,      variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText,Qt::UniqueConnection);
+    QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toEditorManagerWidget,     editorManagerWidget,   &SeerEditorManagerWidget::handleText, Qt::UniqueConnection);
+
+    QObject::connect(editorManagerWidget,   &SeerEditorManagerWidget::refreshFunctionList,  _openocdWidget, [openocdWidget = _openocdWidget](int id, const QString& cmd) {
+        // 4-symbol-info-functions --include-nondebug --name ^cpu_do_idle$
+        QString command = QString::number(id) + "-symbol-info-functions --include-nondebug --name " + cmd;
+        openocdWidget->gdbLiveWatchRunCommand(command);
+    }, Qt::UniqueConnection);
+    QObject::connect(editorManagerWidget,   &SeerEditorManagerWidget::refreshVariableList,  _openocdWidget, [openocdWidget = _openocdWidget](int id, const QString& cmd, const QString&) {
+        // 5-symbol-info-variables --name cpu_do_idle
+        QString command = QString::number(id) + "-symbol-info-variables --name " + cmd;
+        openocdWidget->gdbLiveWatchRunCommand(command);
+    }, Qt::UniqueConnection);
+    QObject::connect(editorManagerWidget,   &SeerEditorManagerWidget::refreshTypeList,      _openocdWidget, [openocdWidget = _openocdWidget](int id, const QString& cmd) {
+        // 6-symbol-info-types --name cpu_do_idle
+        QString command = QString::number(id) + "-symbol-info-types --name " + cmd;
+        openocdWidget->gdbLiveWatchRunCommand(command);
+    }, Qt::UniqueConnection);
 
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     // Start OpenOCD with the given path and command
@@ -4148,7 +4168,12 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         // Load any 'pre' commands.
         if (newExecutableFlag() == true) {
             if (executablePreGdbCommands().isEmpty() == false)
+            {
                 handleGdbExecutablePreCommands();               // Run any 'pre' commands before program is loaded.
+                for (const auto& i : _executablePreGdbCommands) {
+                    _openocdWidget->gdbLiveWatchRunCommand(i);
+                }
+            }
 
             if (gdbServerDebug()) {
                 handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
@@ -4199,7 +4224,12 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 
         // Run any 'post' commands after program is loaded.
         if (executablePostGdbCommands().isEmpty() == false)
+        {
             handleGdbExecutablePostCommands();
+            for (const auto& i : _executablePostGdbCommands) {
+                _openocdWidget->gdbLiveWatchRunCommand(i);
+            }
+        }
 
         // Set window titles with name of program.
         emit changeWindowTitle(QString("OpenOCD - Gdb-multiarch Debugging session (GDB pid = %1)").arg(_gdbProcess->processId()));
