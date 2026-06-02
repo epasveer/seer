@@ -1679,17 +1679,21 @@ void SeerEditorManagerWidget::handleThemeChanged () {
     // Instead, we change the editor's color scheme here.
     //
 
-    // Get the current color scheme
-    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
     // Switch to the right scheme.
     SeerHighlighterSettings settings;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    // Get the current color scheme
+    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
 
     if (colorScheme == Qt::ColorScheme::Dark) {
         settings = SeerHighlighterSettings::populate_dark();
     }else{
         settings = SeerHighlighterSettings::populate_light();
     }
+#else
+    settings = SeerHighlighterSettings::populate_light();
+#endif
 
     // Set the new color scheme for the editor manager.
     // This updates all existing editors.
