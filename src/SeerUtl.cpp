@@ -1437,6 +1437,9 @@ namespace Seer {
         }else{
             QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
         }
+#else
+        Q_UNUSED(parent);
+        Q_UNUSED(size);
 #endif
     }
 
@@ -1455,6 +1458,9 @@ namespace Seer {
         }else{
             item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
         }
+#else
+        Q_UNUSED(item);
+        Q_UNUSED(size);
 #endif
     }
 
@@ -1479,6 +1485,8 @@ namespace Seer {
         }else{
             chart->setTheme(QChart::ChartThemeLight);
         }
+#else
+        Q_UNUSED(item);
 #endif
     }
 
@@ -1494,6 +1502,8 @@ namespace Seer {
             return Seer::colorizeIcon(icon, QColor("black"), size);
         }
 #else
+        Q_UNUSED(size);
+
         return icon;
 #endif
     }
@@ -1521,6 +1531,9 @@ namespace Seer {
 
         return QIcon(coloredPixmap);
 #else
+        Q_UNUSED(color);
+        Q_UNUSED(size);
+
         return icon;
 #endif
     }

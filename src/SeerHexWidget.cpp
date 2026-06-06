@@ -63,7 +63,7 @@ double toQFloat64 (const QByteArray& data, const QDataStream::ByteOrder order=QD
     byteArrayToType(data, order, QDataStream::DoublePrecision, double)
 }
 
-SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(NULL) {
+SeerHexWidget::SeerHexWidget(QWidget* parent) : QWidget(parent), _pdata(nullptr), _pdataPrevious(nullptr) {
 
     // Construct the UI.
     setupUi(this);
@@ -101,6 +101,12 @@ SeerHexWidget::~SeerHexWidget() {
 
     if (_pdata) {
         delete _pdata;
+        _pdata = nullptr;
+    }
+
+    if (_pdataPrevious) {
+        delete _pdataPrevious;
+        _pdataPrevious = nullptr;
     }
 }
 
@@ -247,10 +253,17 @@ QString SeerHexWidget::toPlainText () {
 
 void SeerHexWidget::setData(SeerHexWidget::DataStorage* pData) {
 
-    if (_pdata) {
-        delete _pdata;
+    // Delete previous data, if any.
+    if (_pdataPrevious) {
+        delete _pdataPrevious;
+        _pdataPrevious = nullptr;
     }
 
+    // Save away the current data as the previous so we can use it for comparisons.
+    _pdataPrevious = _pdata;
+    _pdata = nullptr;
+
+    // Save the current data;
     _pdata = pData;
 
     // Repaint the widget.
@@ -558,6 +571,8 @@ void SeerHexWidget::handleByteOffsetChanged (int byte) {
 
 void SeerHexWidget::create () {
 
+    createDiffMap();
+
     // Ignore changing of cursor positions.
     QObject::disconnect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged,    this,  &SeerHexWidget::handleCursorPositionChanged);
 
@@ -640,11 +655,11 @@ void SeerHexWidget::create () {
     }
 
     // Set text formats.
-    QTextCharFormat defaultFormat = plainTextEdit->currentCharFormat();
-    QTextCharFormat grayFormat    = defaultFormat;
+    QTextCharFormat defaultFormat      = plainTextEdit->currentCharFormat();
+    QTextCharFormat grayFormat         = defaultFormat;
     grayFormat.setBackground(QBrush(Qt::lightGray));
-    QTextCharFormat greenFormat   = defaultFormat;
-    greenFormat.setBackground(QBrush(Qt::green));
+    QTextCharFormat underlineFormat    = defaultFormat;
+    underlineFormat.setUnderlineStyle(QTextCharFormat::SingleUnderline);
 
     // Get a cursor
     QTextCursor cursor(plainTextEdit->textCursor());
@@ -687,7 +702,13 @@ void SeerHexWidget::create () {
                 val = "??";
             }
 
-            cursor.insertText (val, defaultFormat);
+            if (_diffMap[i+b]) {
+                cursor.setCharFormat(underlineFormat);
+                cursor.insertText (val);
+                cursor.setCharFormat(defaultFormat);
+            }else{
+                cursor.insertText (val, defaultFormat);
+            }
 
             // Write spacer to document.
             cursor.insertText (QString(" "), defaultFormat);
@@ -749,6 +770,46 @@ void SeerHexWidget::create () {
 
     // Re-enable notification of changing of cursor positions.
     QObject::connect(plainTextEdit, &QPlainTextEdit::cursorPositionChanged, this,  &SeerHexWidget::handleCursorPositionChanged);
+}
+
+void SeerHexWidget::createDiffMap() {
+
+    qsizetype pdata_size         = 0;
+    qsizetype pdataPrevious_size = 0;
+    qsizetype len                = 0;
+
+    if (_pdata) {
+        pdata_size = _pdata->getData().size();
+    }
+
+    if (_pdataPrevious) {
+        pdataPrevious_size = _pdataPrevious->getData().size();
+    }
+
+    // Allocate diff map. Set it to zeros.
+    len = qMax(pdata_size, pdataPrevious_size);
+
+    _diffMap.fill(0, len);
+
+    // Create diff map if we can.
+    if (_pdata && _pdataPrevious) {
+        for (qsizetype i = 0; i < len; ++i) {
+
+            // Positions beyond the shorter array always differ
+            bool outOfBounds;
+            bool bytesDiffer;
+
+            outOfBounds = (i >= _pdata->getData().size()) || (i >= _pdataPrevious->getData().size());
+
+            if (outOfBounds) {
+                bytesDiffer = true;
+            }else{
+                bytesDiffer = _pdata->getData()[i] != _pdataPrevious->getData()[i];
+            }
+
+            _diffMap[i] = bytesDiffer;
+        }
+    }
 }
 
 SeerHexWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {
