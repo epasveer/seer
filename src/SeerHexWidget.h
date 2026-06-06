@@ -99,8 +99,12 @@ class SeerHexWidget: public QWidget, protected Ui::SeerHexWidgetForm {
 
     private:
         void                        create                              ();
+        void                        createDiffMap                       ();
 
         DataStorage*                _pdata;
+        DataStorage*                _pdataPrevious;
+        QByteArray                  _diffMap;
+
         int                         _charWidth;
         int                         _charHeight;
         int                         _highlightByte;
