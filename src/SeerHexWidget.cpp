@@ -789,7 +789,7 @@ void SeerHexWidget::createDiffMap() {
     // Allocate diff map. Set it to zeros.
     len = qMax(pdata_size, pdataPrevious_size);
 
-    _diffMap.resize(len, 0);
+    _diffMap.fill(0, len);
 
     // Create diff map if we can.
     if (_pdata && _pdataPrevious) {
