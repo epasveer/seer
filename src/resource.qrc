@@ -14,6 +14,7 @@
     <file>resources/thenounproject/configure.svg</file>
     <file>resources/thenounproject/stop.svg</file>
     <file>resources/thenounproject/fortune-teller.svg</file>
+    <file>resources/thenounproject/preferences.svg</file>
     <file>resources/icons-icons/gdb.png</file>
     <file>resources/icons-icons/editor.png</file>
     <file>resources/icons-icons/font.png</file>
@@ -83,6 +84,7 @@
     <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/Printpoints.md</file>
+    <file>resources/help/GdbMonitor.md</file>
     <file>resources/help/Skips.md</file>
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>
@@ -92,6 +94,8 @@
     <file>resources/mi-python/MIObjectiveC.py</file>
     <file>resources/mi-python/MIFrames.py</file>
     <file>resources/mi-python/MISignals.py</file>
+    <file>resources/mi-python/MIStart.py</file>
+    <file>resources/mi-python/MIMonitor.py</file>
   </qresource>
 </RCC>
 

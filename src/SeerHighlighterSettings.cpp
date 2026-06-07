@@ -3,6 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerHighlighterSettings.h"
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 
 SeerHighlighterSettings::SeerHighlighterSettings () {
 }
@@ -19,6 +23,7 @@ SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlight
 
     _keys               = rhs._keys;
     _formats            = rhs._formats;
+    _adaSourceSuffixes  = rhs._adaSourceSuffixes;
     _cppSourceSuffixes  = rhs._cppSourceSuffixes;
     _rustSourceSuffixes = rhs._rustSourceSuffixes;
     _odinSourceSuffixes = rhs._odinSourceSuffixes;
@@ -72,6 +77,11 @@ int SeerHighlighterSettings::count () const {
     return _keys.size();
 }
 
+void SeerHighlighterSettings::setAdaSourceSuffixes (const QString& suffixes) {
+
+    _adaSourceSuffixes = suffixes;
+}
+
 void SeerHighlighterSettings::setCppSourceSuffixes (const QString& suffixes) {
 
     _cppSourceSuffixes = suffixes;
@@ -102,18 +112,39 @@ const QString& SeerHighlighterSettings::rustSourceSuffixes () {
     return _rustSourceSuffixes;
 }
 
+const QString& SeerHighlighterSettings::adaSourceSuffixes () {
+
+    return _adaSourceSuffixes;
+}
+
 QStringList SeerHighlighterSettings::themeNames() {
 
     QStringList names;
 
-    names << "light" << "dark";
+    names << "auto" << "light" << "dark";
 
     return names;
 }
 
 SeerHighlighterSettings SeerHighlighterSettings::populate (const QString& themeName) {
 
-    if (themeName == "light") {
+
+    if (themeName == "auto") {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            return SeerHighlighterSettings::populate_dark();
+        }else{
+            return SeerHighlighterSettings::populate_light();
+        }
+#else
+        return SeerHighlighterSettings::populate_light();
+#endif
+
+    }else if (themeName == "light") {
         return SeerHighlighterSettings::populate_light();
     }else if (themeName == "dark") {
         return SeerHighlighterSettings::populate_dark();
@@ -212,6 +243,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_light () {
     f.setBackground(QColor("#ffffff"));
     languageSettings.add("Keyword", f);
 
+    languageSettings.setAdaSourceSuffixes(".ada|.adb|.ads");
     languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
     languageSettings.setOdinSourceSuffixes(".odin");
     languageSettings.setRustSourceSuffixes(".rs");
@@ -309,6 +341,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_dark () {
     f.setBackground(QColor("#232629"));
     languageSettings.add("Keyword", f);
 
+    languageSettings.setAdaSourceSuffixes(".ada|.adb|.ads");
     languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
     languageSettings.setOdinSourceSuffixes(".odin");
     languageSettings.setRustSourceSuffixes(".rs");

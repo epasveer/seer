@@ -92,6 +92,16 @@ bool SeerAssemblyPreferenceDialog::showAssemblySource () const {
     return showSourceCheckBox->isChecked();
 }
 
+void SeerAssemblyPreferenceDialog::setConvertUppercase (bool flag) {
+
+    convertUppercaseRadioButton->setChecked(flag);
+}
+
+bool SeerAssemblyPreferenceDialog::convertUppercase () const {
+
+    return convertUppercaseRadioButton->isChecked();
+}
+
 void SeerAssemblyPreferenceDialog::writeSettings() {
 
     QSettings settings;

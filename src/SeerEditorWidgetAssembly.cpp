@@ -101,6 +101,7 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     setShowOffsetColumn(false);
     setShowOpcodeColumn(false);
     setShowSourceLines(false);
+    setConvertUppercase(false);
 
     setRegiserNamePC("$pc");
     setRegiserNameSP("$sp");
@@ -113,6 +114,11 @@ SeerEditorWidgetAssembly::~SeerEditorWidgetAssembly () {
 }
 
 SeerEditorWidgetAssemblyArea* SeerEditorWidgetAssembly::assemblyArea () {
+
+    return assemblyWidget;
+}
+
+const SeerEditorWidgetAssemblyArea* SeerEditorWidgetAssembly::assemblyArea () const {
 
     return assemblyWidget;
 }
@@ -160,6 +166,11 @@ QString SeerEditorWidgetAssembly::regiserNameFLAGS () const {
 QString SeerEditorWidgetAssembly::regiserNameSP () const {
 
     return _spName;
+}
+
+bool SeerEditorWidgetAssembly::convertUppercase () const {
+
+    return assemblyArea()->convertUppercase();
 }
 
 void SeerEditorWidgetAssembly::setKeySettings (const SeerKeySettings& settings) {
@@ -294,6 +305,11 @@ void SeerEditorWidgetAssembly::setRegiserNameFLAGS (const QString& name) {
 void SeerEditorWidgetAssembly::setRegiserNameSP (const QString& name) {
 
     _spName = name;
+}
+
+void SeerEditorWidgetAssembly::setConvertUppercase (bool flag) {
+
+    assemblyArea()->setConvertUppercase(flag);
 }
 
 void SeerEditorWidgetAssembly::handleText (const QString& text) {
@@ -506,6 +522,7 @@ void SeerEditorWidgetAssembly::handleEditPreferences () {
     dlg.setShowAssemblyOffset(showOffsetColumn());
     dlg.setShowAssemblyOpcode(showOpcodeColumn());
     dlg.setShowAssemblySource(showSourceLines());
+    dlg.setConvertUppercase(convertUppercase());
 
     if (dlg.exec()) {
 
@@ -516,6 +533,7 @@ void SeerEditorWidgetAssembly::handleEditPreferences () {
         setShowOffsetColumn(dlg.showAssemblyOffset());
         setShowOpcodeColumn(dlg.showAssemblyOpcode());
         setShowSourceLines(dlg.showAssemblySource());
+        setConvertUppercase(dlg.convertUppercase());
 
         reloadRegisters();
 
@@ -540,6 +558,7 @@ void SeerEditorWidgetAssembly::writeSettings () {
         settings.setValue("assemblyshowoffsetcolumn",    showOffsetColumn());
         settings.setValue("assemblyshowopcodecolumn",    showOpcodeColumn());
         settings.setValue("assemblyshowsourcelines",     showSourceLines());
+        settings.setValue("assemblyconvertuppercase",    convertUppercase());
     } settings.endGroup();
 }
 
@@ -555,6 +574,7 @@ void SeerEditorWidgetAssembly::readSettings () {
         setShowOffsetColumn  (settings.value("assemblyshowoffsetcolumn",  false).toBool());
         setShowOpcodeColumn  (settings.value("assemblyshowopcodecolumn",  false).toBool());
         setShowSourceLines   (settings.value("assemblyshowsourcelines",   false).toBool());
+        setConvertUppercase  (settings.value("assemblyconvertuppercase",  false).toBool());
     } settings.endGroup();
 }
 

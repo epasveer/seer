@@ -3,6 +3,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerUtl.h"
+#include <QtCharts/QChartView>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QAbstractButton>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QApplication>
+#include <QtGui/QColor>
+#include <QtGui/QIcon>
+#include <QtGui/QPainter>
+#include <QtGui/QPixmap>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
+#include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
@@ -23,7 +38,7 @@
 // Increment this with every release on GitHub.
 // See scripts/change_versionnumber
 //
-#define SEER_VERSION "2.7beta"
+#define SEER_VERSION "2.8beta"
 
 namespace Seer {
 
@@ -1347,6 +1362,180 @@ namespace Seer {
         // Capture and print the stack trace using Boost.Stacktrace.
         // See comments at top.
         // std::cout << "Stack trace:\n" << boost::stacktrace::stacktrace() << std::endl;
+    }
+
+    // Check if directory and file exist, otherwise, raise a notification
+    bool isFileExistNotify (const QString& filename) {
+        if (QFile::exists(filename)) {
+            return true;
+        } else {
+            QMessageBox::warning(nullptr, "Seer", QString("File %1 doesn't exist.").arg(filename), QMessageBox::Ok);
+            return false;
+        }
+    }
+
+    bool isDirExistNotify (const QString& dirname) {
+        if (QDir(dirname).exists()) {
+            return true;
+        } else {
+            QMessageBox::warning(nullptr, "Seer", QString("Directory %1 doesn't exist.").arg(dirname), QMessageBox::Ok);
+            return false;
+        }
+    }
+
+    void colorizeAllIcons (QWidget* parent, const QSize& size) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        if (parent == nullptr) {
+            return;
+        }
+
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        // Look for all button types.
+        const auto buttons = parent->findChildren<QAbstractButton*>();
+
+        for (QAbstractButton* button : buttons) {
+
+            if (colorScheme == Qt::ColorScheme::Dark) {
+                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("white"), size));
+            }else{
+                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("black"), size));
+            }
+        }
+
+        // Look for all menu types.
+        const auto menus = parent->findChildren<QMenu*>();
+
+        for (QMenu* menu : menus) {
+
+            if (colorScheme == Qt::ColorScheme::Dark) {
+                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("white"), size));
+            }else{
+                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("black"), size));
+            }
+        }
+
+        // Look for all action types.
+        const auto actions = parent->findChildren<QAction*>();
+
+        for (QAction* action : actions) {
+
+            if (colorScheme == Qt::ColorScheme::Dark) {
+                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("white"), size));
+            }else{
+                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("black"), size));
+            }
+        }
+
+        // Look for the app's titlebar icon.
+        // XXX Doesn't work!
+        // XXX Titlebar icon remains the same. It doesn't change. Don't know why.
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("white"), size));
+        }else{
+            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
+        }
+#else
+        Q_UNUSED(parent);
+        Q_UNUSED(size);
+#endif
+    }
+
+    void colorizeListWidgetItemIcon (QListWidgetItem* item, const QSize& size) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        if (item == nullptr) {
+            return;
+        }
+
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
+        }else{
+            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
+        }
+#else
+        Q_UNUSED(item);
+        Q_UNUSED(size);
+#endif
+    }
+
+    void colorizeChartViewItem (QChartView* item) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        if (item == nullptr) {
+            return;
+        }
+
+        QChart* chart = item->chart();
+
+        if (chart == nullptr) {
+            return;
+        }
+
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            chart->setTheme(QChart::ChartThemeDark);
+        }else{
+            chart->setTheme(QChart::ChartThemeLight);
+        }
+#else
+        Q_UNUSED(item);
+#endif
+    }
+
+    QIcon colorizeIcon (const QIcon& icon, const QSize& size) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        // Get the current color scheme
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            return Seer::colorizeIcon(icon, QColor("white"), size);
+        }else{
+            return Seer::colorizeIcon(icon, QColor("black"), size);
+        }
+#else
+        Q_UNUSED(size);
+
+        return icon;
+#endif
+    }
+
+    QIcon colorizeIcon (const QIcon& icon, const QColor& color, const QSize& size) {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        // Get the pixmap from the icon
+        QPixmap pixmap = icon.pixmap(size);
+
+        // Create a new pixmap with the same size and format (preserves alpha)
+        QPixmap coloredPixmap(pixmap.size());
+        coloredPixmap.fill(Qt::transparent);
+
+        QPainter painter(&coloredPixmap);
+
+        // Draw the original pixmap
+        painter.drawPixmap(0, 0, pixmap);
+
+        // Use CompositionMode_SourceIn to colorize while keeping alpha
+        painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+        painter.fillRect(coloredPixmap.rect(), color);
+
+        painter.end();
+
+        return QIcon(coloredPixmap);
+#else
+        Q_UNUSED(color);
+        Q_UNUSED(size);
+
+        return icon;
+#endif
     }
 }
 

@@ -500,7 +500,7 @@ void SeerVariableTrackerBrowserWidget::handleItemCreate (QTreeWidgetItem* parent
     for (int i = 0; i < nv_pairs.size(); ++i) {
         QString nv      = nv_pairs[i];
         QString nv_old  = nv_old_pairs[i];
-            
+
         QStringPair pair        = Seer::parseNameValue(nv, '=');
         QStringPair old_pair    = Seer::parseNameValue(nv_old, '=');
         // Look for the existing child, if any so we can reuse it.
@@ -586,11 +586,11 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     structVisualizerMenu.addAction(addStructAmpersandVisualizerAction);
     menu.addMenu(&structVisualizerMenu);
 
-    QAction* deleteAction    = menu.addAction("Delete selected");
-    QAction* deleteAllAction = menu.addAction("Delete all");
-
-    QAction* copyAction    = menu.addAction("Copy selected");
-    QAction* copyAllAction = menu.addAction("Copy all");
+    QAction* deleteAction        = menu.addAction("Delete selected");
+    QAction* deleteAllAction     = menu.addAction("Delete all");
+    QAction* copyAction          = menu.addAction("Copy selected");
+    QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
+    QAction* copyAllAction       = menu.addAction("Copy all");
 
     QString actionText;
     if (item != 0) {
@@ -607,6 +607,9 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
             i = i->parent();
         }
     }
+
+    // Remove potential '&' and '*' characters at start of string.
+    variable.remove(QRegularExpression("^[\\*\\&]*"));
 
     addMemoryVisualizerAction->setText(QString("\"%1\"").arg(actionText));
     addMemoryAsteriskVisualizerAction->setText(QString("\"*%1\"").arg(actionText));
@@ -646,12 +649,12 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
         handleDeleteAllToolButton();
     }
 
-    if (action == copyAction || action == copyAllAction) {
+    if (action == copyAction || action == copyAllAction || action == copyValueOnlyAction) {
         // Get selected tree items.
         QList<QTreeWidgetItem*> items;
 
         // Get list of 'select' items.
-        if (action == copyAction) {
+        if (action == copyAction || copyValueOnlyAction) {
             items = variablesTreeWidget->selectedItems();
         }
 
@@ -675,7 +678,11 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
                 text += '\n';
             }
 
-            text += items[i]->text(0) + ":" + items[i]->text(1);
+            if (action != copyValueOnlyAction) {
+                text += items[i]->text(0) + ":" + items[i]->text(1);
+            } else {
+                text += items[i]->text(1);
+            }
         }
 
         clipboard->setText(text, QClipboard::Clipboard);

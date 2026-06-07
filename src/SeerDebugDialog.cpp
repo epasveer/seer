@@ -75,6 +75,8 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(buttonBox,                            &QDialogButtonBox::accepted,         this, &SeerDebugDialog::handleLaunchButtonClicked);
     QObject::connect(buttonBox,                            &QDialogButtonBox::clicked,          this, &SeerDebugDialog::handleResetButtonClicked);
 
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Set initial run mode.
     handleRunModeChanged(0);
@@ -102,6 +104,7 @@ void SeerDebugDialog::reset () {
     setBreakpointsFilename("");
     setBreakpointFunctionName("");
     setBreakpointSourceName("");
+    setBreakpointFirstInstruction(false);
     setBreakpointMode("inmain");
     setShowAssemblyTabMode("never");
     setRandomizeStartAddress(false);
@@ -190,6 +193,9 @@ void SeerDebugDialog::setBreakpointMode (const QString& mode) {
     }else if (mode == "insource") {
         breakpointAtSourceRadioButton->setChecked(true);
         return;
+    }else if (mode == "firstinstruction") {
+        breakpointAtFirstInstructionRadioButton->setChecked(true);
+        return;
     }
 
     // Default of "inmain".
@@ -206,6 +212,8 @@ QString SeerDebugDialog::breakpointMode () const {
         return "infunction";
     }else if (breakpointAtSourceRadioButton->isChecked()) {
         return "insource";
+    }else if (breakpointAtFirstInstructionRadioButton->isChecked()) {
+        return "firstinstruction";
     }
 
     return "inmain";
@@ -235,6 +243,14 @@ void SeerDebugDialog::setBreakpointSourceName (const QString& sourceFilenameAndL
 
 QString SeerDebugDialog::breakpointSourceName () const {
     return breakpointAtSourceLineEdit->text();
+}
+
+void SeerDebugDialog::setBreakpointFirstInstruction (bool flag) {
+    breakpointAtFirstInstructionRadioButton->setChecked(flag);
+}
+
+bool SeerDebugDialog::breakpointFirstInstruction () const {
+    return breakpointAtFirstInstructionRadioButton->isChecked();
 }
 
 void SeerDebugDialog::setShowAssemblyTabMode (const QString& mode) {
@@ -382,6 +398,8 @@ QString SeerDebugDialog::launchMode () const {
 
         if (breakpointMode() == "inmain") {
             return "start";
+        }else if (breakpointMode() == "firstinstruction") {
+            return "run";
         }else if (breakpointMode() == "infunction") {
             return "run";
         }else if (breakpointMode() == "none") {
@@ -579,17 +597,18 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
 
         QJsonObject modeJson;
 
-        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
-        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
-        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
-        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
-        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
-        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytabmode"]   = showAssemblyTabComboBox->currentText();
-        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
-        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+        modeJson["arguments"]               = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]         = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]                 = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]             = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]         = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]     = breakpointInFunctionLineEdit->text();
+        modeJson["breakatfirstinstruction"] = breakpointAtFirstInstructionRadioButton->isChecked();
+        modeJson["showassemblytabmode"]     = showAssemblyTabComboBox->currentText();
+        modeJson["nonstopmode"]             = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"]   = randomizeStartAddressCheckBox->isChecked();
 
-        seerProjectJson["runmode"]        = modeJson;
+        seerProjectJson["runmode"]          = modeJson;
     }
 
     // Save START project.
@@ -597,17 +616,18 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
 
         QJsonObject modeJson;
 
-        modeJson["arguments"]             = runProgramArgumentsLineEdit->text();
-        modeJson["breakpointsfile"]       = loadBreakpointsFilenameLineEdit->text();
-        modeJson["nobreak"]               = noBreakpointRadioButton->isChecked();
-        modeJson["breakinmain"]           = breakpointInMainRadioButton->isChecked();
-        modeJson["breakinfunction"]       = breakpointInFunctionRadioButton->isChecked();
-        modeJson["breakinfunctionname"]   = breakpointInFunctionLineEdit->text();
-        modeJson["showassemblytabmode"]   = showAssemblyTabComboBox->currentText();
-        modeJson["nonstopmode"]           = nonStopModeCheckBox->isChecked();
-        modeJson["randomizestartaddress"] = randomizeStartAddressCheckBox->isChecked();
+        modeJson["arguments"]               = runProgramArgumentsLineEdit->text();
+        modeJson["breakpointsfile"]         = loadBreakpointsFilenameLineEdit->text();
+        modeJson["nobreak"]                 = noBreakpointRadioButton->isChecked();
+        modeJson["breakinmain"]             = breakpointInMainRadioButton->isChecked();
+        modeJson["breakinfunction"]         = breakpointInFunctionRadioButton->isChecked();
+        modeJson["breakinfunctionname"]     = breakpointInFunctionLineEdit->text();
+        modeJson["breakatfirstinstruction"] = breakpointAtFirstInstructionRadioButton->isChecked();
+        modeJson["showassemblytabmode"]     = showAssemblyTabComboBox->currentText();
+        modeJson["nonstopmode"]             = nonStopModeCheckBox->isChecked();
+        modeJson["randomizestartaddress"]   = randomizeStartAddressCheckBox->isChecked();
 
-        seerProjectJson["startmode"]      = modeJson;
+        seerProjectJson["startmode"]        = modeJson;
     }
 
     // Save ATTACH project.
@@ -748,6 +768,10 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
                 breakpointInFunctionRadioButton->setChecked(true);
             }
 
+            if (runModeJson["breakatfirstinstruction"].toBool()) {
+                breakpointAtFirstInstructionRadioButton->setChecked(true);
+            }
+
             breakpointInFunctionLineEdit->setText(runModeJson["breakinfunctionname"].toString());
             showAssemblyTabComboBox->setCurrentText(runModeJson["showassemblytabmode"].toString());
             nonStopModeCheckBox->setChecked(runModeJson["nonstopmode"].toBool());
@@ -771,6 +795,10 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
 
             if (startModeJson["breakinfunction"].toBool()) {
                 breakpointInFunctionRadioButton->setChecked(true);
+            }
+
+            if (runModeJson["breakatfirstinstruction"].toBool()) {
+                breakpointAtFirstInstructionRadioButton->setChecked(true);
             }
 
             breakpointInFunctionLineEdit->setText(startModeJson["breakinfunctionname"].toString());

@@ -8,7 +8,10 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
-#include <QtGui/QIcon>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QSettings>
@@ -31,7 +34,6 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Image Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -47,6 +49,12 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
     QObject::connect(formatComboBox,                QOverload<int>::of(&QComboBox::currentIndexChanged),       this,  &SeerImageVisualizerWidget::handleFormatComboBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,  &SeerImageVisualizerWidget::handleSaveButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,  &SeerImageVisualizerWidget::handleThemeChanged);
+#endif
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();
@@ -408,6 +416,12 @@ void SeerImageVisualizerWidget::handleCreateImage (const QByteArray& array) {
     QImage image = QImage((const uchar*)array.data(), _width, _height, _format);
 
     imageViewer->setImage(image);
+}
+
+void SeerImageVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 void SeerImageVisualizerWidget::writeSettings() {

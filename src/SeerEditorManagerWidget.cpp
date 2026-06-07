@@ -12,6 +12,10 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -25,10 +29,10 @@
 SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(parent) {
 
     // Initialize private data
-    _editorFont                     = QFont("monospace", 10);                      // Default font.
+    _editorFont                     = QFont("monospace", 10);                // Default font.
     _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
-    _editorKeySettings              = SeerKeySettings::populate();                 // Default key settings.
+    _editorKeySettings              = SeerKeySettings::populate();           // Default key settings.
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
     _editorAutoSourceReload         = false;
@@ -40,6 +44,9 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _showOpcodeColumn               = false;
     _showSourceLines                = false;
     _notifyAssemblyTabShown         = true;
+    _idFunctionDefinition           = Seer::createID();
+    _idVariableDefinition           = Seer::createID();
+    _idTypeDefinition               = Seer::createID();
 
     // Setup UI
     setupUi(this);
@@ -78,12 +85,15 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     createEditorWidgetTab("", "");
 
     // Connect things.
-    QObject::connect(tabWidget,             &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
-    QObject::connect(tabWidget,             &QTabWidget::currentChanged,       this, &SeerEditorManagerWidget::handleTabCurrentChanged);
-    QObject::connect(fileOpenToolButton,    &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
-    QObject::connect(fileCloseToolButton,   &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
-    QObject::connect(textSearchToolButton,  &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
-    QObject::connect(helpToolButton,        &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+    QObject::connect(tabWidget,                     &QTabWidget::tabCloseRequested,    this, &SeerEditorManagerWidget::handleTabCloseRequested);
+    QObject::connect(tabWidget,                     &QTabWidget::currentChanged,       this, &SeerEditorManagerWidget::handleTabCurrentChanged);
+    QObject::connect(fileOpenToolButton,            &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileOpenToolButtonClicked);
+    QObject::connect(fileCloseToolButton,           &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleFileCloseToolButtonClicked);
+    QObject::connect(textSearchToolButton,          &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleTextSearchToolButtonClicked);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,             this, &SeerEditorManagerWidget::handleHelpToolButtonClicked);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,  this, &SeerEditorManagerWidget::handleThemeChanged);
+#endif
 
     // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
@@ -801,8 +811,41 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
                 i->widget->sourceArea()->eraseColorCurrentLine(line_text.toInt());
             }
         }
-    }
-    else{
+
+    }else if ( text.contains(QRegularExpression("^([0-9]+)\\^done,symbols={"))) {
+
+        if (text.startsWith(QString::number(_idTypeDefinition)     + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idFunctionDefinition) + "^done,symbols={")  ||
+            text.startsWith(QString::number(_idVariableDefinition) + "^done,symbols={")) { // Handle Go to Definition
+
+            //^10done,symbols={debug=[{filename=" ",fullname=" ",
+            // symbols=[{line=" ",name="uwTick",type="volatile uint32_t",description="volatile uint32_t uwTick;"},}]}]
+            QString debug_text = Seer::parseFirst(text, "debug=", '[', ']', false);
+            QStringList filenames_list = Seer::parse(debug_text, "", '{', '}', false);
+
+            for (const auto& filename_entry : filenames_list) {
+
+                QString filename_text = Seer::parseFirst(filename_entry, "filename=", '"', '"', false);
+                QString fullname_text = Seer::parseFirst(filename_entry, "fullname=", '"', '"', false);
+                QString symbols_text  = Seer::parseFirst(filename_entry, "symbols=", '[', ']', false);
+
+                QStringList symbols_list = Seer::parse(symbols_text, "", '{', '}', false);
+
+                for (const auto& symbol_entry : symbols_list) {
+
+                    QString line_text = Seer::parseFirst(symbol_entry, "line=", '"', '"', false);
+                    QString name_text = Seer::parseFirst(symbol_entry, "name=", '"', '"', false);
+
+                    // name_text may be st like: function_name(params...) , so only extract function_name part
+                    name_text = name_text.section('(', 0, 0).trimmed();
+
+                    if (name_text == _gotoDefIdentifier) { // you found it! Open file
+                        handleOpenFile(filename_text, fullname_text, line_text.toInt());
+                    }
+                }
+            }
+        }
+    }else{
         // Ignore others.
         return;
     }
@@ -1060,6 +1103,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Send the Editor widget the command to load the file. ??? Do better than this.
     editorWidget->sourceArea()->handleText(text);
@@ -1124,6 +1168,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addStructVisualizer,           this, &SeerEditorManagerWidget::handleAddStructVisualizer);
     QObject::connect(editorWidget,               &SeerEditorWidgetSource::addAlternateDirectory,             this, &SeerEditorManagerWidget::handleAddAlternateDirectory);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::addToMouseNavigation,          this, &SeerEditorManagerWidget::handleAddToMouseNavigation);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::signalGotoDefinition,          this, &SeerEditorManagerWidget::gotoDefinitionForwarder);
 
     // Load the file.
     editorWidget->sourceArea()->open(fullname, QFileInfo(file).fileName());
@@ -1310,16 +1355,30 @@ void SeerEditorManagerWidget::handleFileCloseToolButtonClicked () {
 
 void SeerEditorManagerWidget::handleTextSearchToolButtonClicked () {
 
-    SeerEditorWidgetSource* w = currentEditorWidgetTab();
+    QWidget* tab = tabWidget->currentWidget();
 
-    if (w == 0) {
+    SeerEditorWidgetSource* sourcew = dynamic_cast<SeerEditorWidgetSource*>(tab);
+    if (sourcew != 0) {
+
+        if (sourcew->isSearchBarShown() == true) {
+            sourcew->showSearchBar(false);
+        }else{
+            sourcew->showSearchBar(true);
+        }
+
         return;
     }
 
-    if (w->isSearchBarShown() == true) {
-        w->showSearchBar(false);
-    }else{
-        w->showSearchBar(true);
+    SeerEditorWidgetAssembly* assemblyw = dynamic_cast<SeerEditorWidgetAssembly*>(tab);
+    if (assemblyw != 0) {
+
+        if (assemblyw->isSearchBarShown() == true) {
+            assemblyw->showSearchBar(false);
+        }else{
+            assemblyw->showSearchBar(true);
+        }
+
+        return;
     }
 }
 
@@ -1547,7 +1606,7 @@ void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetS
                 return;
             }
         }
-        
+
         // if _forwardFilesIndex is at the end of the list, just append
         if (_forwardFilesIndex >= _listForwardFiles.size() - 1)
         {
@@ -1569,13 +1628,13 @@ void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetS
             _listForwardFiles.append(currentFile);
             _forwardFilesIndex = _listForwardFiles.size() -1;
         }
-    }   
+    }
 }
 
 void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSourceArea::SeerCurrentFile& fileInfo) {
     // Get the EditorWidget for the file. Create one if needed.
     SeerEditorWidgetSource* editorWidget = editorWidgetTab(fileInfo.fullname);
-    
+
     if (editorWidget == 0) {
         editorWidget = createEditorWidgetTab(fileInfo.fullname, fileInfo.file);
     }
@@ -1610,6 +1669,37 @@ void SeerEditorManagerWidget::handleOpenForwardBackward(const SeerEditorWidgetSo
         editorWidget->sourceArea()->setTextCursor(cursor);
     }
 }
+
+void SeerEditorManagerWidget::handleThemeChanged () {
+
+    //
+    // Normally, we would colorize all the icons in this widget and its
+    // childred, however, this is already handled in SeerMainWindow.
+    //
+    // Instead, we change the editor's color scheme here.
+    //
+
+    // Switch to the right scheme.
+    SeerHighlighterSettings settings;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    // Get the current color scheme
+    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+    if (colorScheme == Qt::ColorScheme::Dark) {
+        settings = SeerHighlighterSettings::populate_dark();
+    }else{
+        settings = SeerHighlighterSettings::populate_light();
+    }
+#else
+    settings = SeerHighlighterSettings::populate_light();
+#endif
+
+    // Set the new color scheme for the editor manager.
+    // This updates all existing editors.
+    setEditorHighlighterSettings(settings);
+}
+
 // Handle mouse press events for navigation
 void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
 {
@@ -1629,8 +1719,29 @@ void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
         const SeerEditorWidgetSourceArea::SeerCurrentFile &info = _listForwardFiles.at(_forwardFilesIndex);
         handleOpenForwardBackward(info);
     }
-    else 
+    else
     {
         QWidget::mousePressEvent(event);
     }
 }
+
+/***********************************************************************************************************************
+ * Functions for handling tracing identifier                                                                           *
+ **********************************************************************************************************************/
+void SeerEditorManagerWidget::gotoDefinitionForwarder(const QString& identifier) {
+
+    _gotoDefIdentifier = identifier;
+
+    // Ask for identifier matches for Functions, Variables, and Types.
+    //
+    // Sometimes symbols have or don't have arguments.
+    // Searching for: "^functionName(.*)$" "^functionName$".
+    // Searching for: "^functionName$".
+    //
+
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "$");
+    emit refreshFunctionList(_idFunctionDefinition, "^" + _gotoDefIdentifier + "\\(.*\\)$");
+    emit refreshVariableList(_idVariableDefinition, _gotoDefIdentifier, "");
+    emit refreshTypeList(_idTypeDefinition, _gotoDefIdentifier);
+}
+

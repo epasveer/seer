@@ -6,6 +6,10 @@
 #include "SeerUtl.h"
 #include <QtGui/QColor>
 #include <QtGui/QPalette>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QDebug>
@@ -14,6 +18,11 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
 
     // Set up the UI.
     setupUi(this);
+
+    // Handle when theme is changed. Change the color of all icons.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(),  &QStyleHints::colorSchemeChanged,         this, &SeerAboutDialog::handleThemeChanged);
+#endif
 
     // Get the About text from the resource.
     QFile file(":/seer/resources/ABOUT.md");
@@ -34,14 +43,19 @@ SeerAboutDialog::SeerAboutDialog (QWidget* parent) : QDialog(parent) {
     textBrowser->setMarkdown(text);
     textBrowser->moveCursor (QTextCursor::Start);
 
-    // Set the TextBrowser's background to the same as the window's.
-    QColor windowColor = palette().color(QWidget::backgroundRole());
-
-    QPalette p = textBrowser->palette();
-    p.setColor(QPalette::Base, windowColor);
-    textBrowser->setPalette(p);
+    // Set the label's icon.
+    handleThemeChanged();
 }
 
 SeerAboutDialog::~SeerAboutDialog () {
+}
+
+void SeerAboutDialog::handleThemeChanged () {
+
+    // Get the colorized icon.
+    QIcon icon = Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/256x256/seergdb.png"), QSize(256,256));
+
+    // Set the label's pixmap
+    label->setPixmap(icon.pixmap(QSize(256,256)));
 }
 

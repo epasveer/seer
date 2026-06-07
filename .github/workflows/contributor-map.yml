@@ -1,0 +1,16 @@
+name: Create Contributor Map
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Contributor Map
+        uses: tunaitis/contributor-map@v1
+        with:
+          repository: epasveer/seer
+          output: images/contributor-map.svg
+

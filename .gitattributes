@@ -3,7 +3,6 @@
 .gitignore      export-ignore
 
 debian/         export-ignore
-icons/          export-ignore
 images/         export-ignore
 notes/          export-ignore
 scripts/        export-ignore

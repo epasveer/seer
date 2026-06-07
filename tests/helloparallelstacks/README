@@ -1,8 +1,10 @@
 
-Start seer with breakpoints and 'continue' a few times until there are 10 threads.
-Then run 'parallel-stacks'.
+Start seer with breakpoints and click 'continue'. This will stop after the program
+launches a few threads.
 
-    $ seergdb -s --bl=breakpoints.seer hellothreads5
+Then run 'parallel-stacks' using the M0 macro or type the (gdb) command below.
+
+    $ seergdb -s --bl=breakpoints.seer helloparallelstacks
 
 $ dot -Tpdf xxx.gv -o xxx.gv.pdf
 $ xview xxx.gv.pdf

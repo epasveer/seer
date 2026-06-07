@@ -39,6 +39,9 @@ class SeerAssemblyPreferenceDialog : public QDialog, protected Ui::SeerAssemblyP
         void                        setShowAssemblySource       (bool flag);
         bool                        showAssemblySource          () const;
 
+        void                        setConvertUppercase         (bool flag);
+        bool                        convertUppercase            () const;
+
     public slots:
 
     private slots:

@@ -99,6 +99,9 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        setEditorTabSize                    (int spaces);
         int                                         editorTabSize                       () const;
 
+        void                                        setConvertUppercase                 (bool flag);
+        bool                                        convertUppercase                    () const;
+
     signals:
         void                                        insertBreakpoint                    (QString breakpoint);
         void                                        insertPrintpoint                    (QString printpoint);
@@ -171,6 +174,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         QString                                     _fileName;
 
         int                                         _sourceTabSize;
+        bool                                        _convertUppercase;
 };
 
 class SeerEditorWidgetAssemblyLineNumberArea : public QWidget {
@@ -264,6 +268,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
        ~SeerEditorWidgetAssembly ();
 
         SeerEditorWidgetAssemblyArea*               assemblyArea                        ();
+        const SeerEditorWidgetAssemblyArea*         assemblyArea                        () const;
 
         bool                                        isSearchBarShown                    () const;
         bool                                        searchMatchCase                     () const;
@@ -274,6 +279,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         QString                                     regiserNamePC                       () const;
         QString                                     regiserNameFLAGS                    () const;
         QString                                     regiserNameSP                       () const;
+        bool                                        convertUppercase                    () const;
 
         void                                        setKeySettings                      (const SeerKeySettings& settings);
         const SeerKeySettings&                      keySettings                         () const;
@@ -291,6 +297,7 @@ class SeerEditorWidgetAssembly : public QWidget, protected Ui::SeerEditorWidgetA
         void                                        setRegiserNamePC                    (const QString& name);
         void                                        setRegiserNameFLAGS                 (const QString& name);
         void                                        setRegiserNameSP                    (const QString& name);
+        void                                        setConvertUppercase                 (bool flag);
         void                                        handleText                          (const QString& text);
 
     private slots:

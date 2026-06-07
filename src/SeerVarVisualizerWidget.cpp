@@ -11,6 +11,10 @@
 #include <QtWidgets/QMenu>
 #include <QAction>
 #include <QtWidgets/QMessageBox>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtGui/QIcon>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QTimer>
@@ -26,7 +30,6 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Struct Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -69,7 +72,6 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     variableTreeWidget->setItemDelegateForColumn(8, new QNoEditDelegate(this));
     variableTreeWidget->setItemDelegateForColumn(9, new QNoEditDelegate(this));
 
-
     // Connect things.
     QObject::connect(refreshToolButton,             &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleRefreshButton);
     QObject::connect(helpToolButton,                &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleHelpButton);
@@ -83,6 +85,12 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
     QObject::connect(collapseSelectedToolButton,    &QToolButton::clicked,                       this,  &SeerVarVisualizerWidget::handleCollapseSelected);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingStarted,         this,  &SeerVarVisualizerWidget::handleIndexEditingStarted);
     QObject::connect(editDelegate,                  &QAllowEditDelegate::editingFinished,        this,  &SeerVarVisualizerWidget::handleIndexEditingFinished);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,            this,  &SeerVarVisualizerWidget::handleThemeChanged);
+#endif
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Show/hide columns.
     handleDebugCheckBox();
@@ -933,6 +941,12 @@ void SeerVarVisualizerWidget::handleIndexEditingFinished (const QModelIndex& ind
 
     // Emit the signal to change the varobj to the new value.
     emit varObjAssign(_variableId, item->text(3), value);
+}
+
+void SeerVarVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 QTreeWidgetItem* SeerVarVisualizerWidget::findItem (const QString& text, Qt::MatchFlags flags, int column) {

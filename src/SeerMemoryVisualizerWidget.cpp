@@ -8,7 +8,10 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
-#include <QtGui/QIcon>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QRegularExpression>
@@ -28,7 +31,6 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
     setWindowTitle("Seer Memory Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -72,6 +74,12 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(columnCountSpinBox,            QOverload<int>::of(&QSpinBox::valueChanged),               this,                    &SeerMemoryVisualizerWidget::handleColumnCountSpinBox);
     QObject::connect(printToolButton,               &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                                     this,                    &SeerMemoryVisualizerWidget::handleSaveButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,                    &SeerMemoryVisualizerWidget::handleThemeChanged);
+#endif
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 
     // Restore window settings.
     readSettings();
@@ -484,6 +492,12 @@ void SeerMemoryVisualizerWidget::handleSaveButton () {
         QMessageBox::critical(this, tr("Error"), tr("Cannot save display to file."));
         return;
     }
+}
+
+void SeerMemoryVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this);
 }
 
 void SeerMemoryVisualizerWidget::writeSettings() {

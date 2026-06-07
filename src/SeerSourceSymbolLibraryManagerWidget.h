@@ -24,23 +24,24 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         explicit SeerSourceSymbolLibraryManagerWidget (QWidget* parent = 0);
        ~SeerSourceSymbolLibraryManagerWidget ();
 
-        SeerSourceBrowserWidget*                        sourceBrowserWidget             ();
-        SeerFunctionBrowserWidget*                      functionBrowserWidget           ();
-        SeerTypeBrowserWidget*                          typeBrowserWidget               ();
-        SeerStaticBrowserWidget*                        staticBrowserWidget             ();
-        SeerLibraryBrowserWidget*                       libraryBrowserWidget            ();
-        SeerAdaExceptionsBrowserWidget*                 adaExceptionsBrowserWidget      ();
-        SeerSkipBrowserWidget*                          skipBrowserWidget               ();
+        SeerSourceBrowserWidget*                        sourceBrowserWidget                     ();
+        SeerFunctionBrowserWidget*                      functionBrowserWidget                   ();
+        SeerTypeBrowserWidget*                          typeBrowserWidget                       ();
+        SeerStaticBrowserWidget*                        staticBrowserWidget                     ();
+        SeerLibraryBrowserWidget*                       libraryBrowserWidget                    ();
+        SeerAdaExceptionsBrowserWidget*                 adaExceptionsBrowserWidget              ();
+        SeerSkipBrowserWidget*                          skipBrowserWidget                       ();
 
     protected:
-        void                                            writeSettings                   ();
-        void                                            readSettings                    ();
+        void                                            writeSettings                           ();
+        void                                            readSettings                            ();
 
     private slots:
-        void                                            handleRefreshToolButtonClicked  ();
-        void                                            handleHelpToolButtonClicked     ();
-        void                                            handleTabMoved                  (int from, int to);
-        void                                            handleTabChanged                (int index);
+        void                                            handleRefreshToolButtonClicked          ();
+        void                                            handleHelpToolButtonClicked             ();
+        void                                            handleTabMoved                          (int from, int to);
+        void                                            handleTabChanged                        (int index);
+        void                                            handleTabsContextMenuButtonClicked      ();
 
     private:
         SeerSourceBrowserWidget*                        _sourceBrowserWidget;
@@ -50,5 +51,6 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         SeerLibraryBrowserWidget*                       _libraryBrowserWidget;
         SeerAdaExceptionsBrowserWidget*                 _adaExceptionsBrowserWidget;
         SeerSkipBrowserWidget*                          _skipBrowserWidget;
+        QTabWidget*                                     _dumpTab;
 };
 

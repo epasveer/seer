@@ -3,6 +3,7 @@
   <id>io.github.epasveer.seer</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
+  <url type="vcs-browser">https://github.com/epasveer/seer</url>
   <name>seer</name>
   <summary>A GUI frontend to GDB debugger</summary>
   <icon type="stock">io.github.epasveer.seer</icon>

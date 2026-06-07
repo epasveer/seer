@@ -39,6 +39,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         const QString&              executableBreakpointFunctionName        () const;
         void                        setExecutableBreakpointSourceName       (const QString& sourceFilenameAndLineno);
         const QString&              executableBreakpointSourceName          () const;
+        void                        setExecutableBreakpointFirstInstruction (bool flag);
+        bool                        executableBreakpointFirstInstruction    () const;
         void                        setExecutableShowAssemblyTabMode        (const QString& mode);
         QString                     executableShowAssemblyTabMode           () const;
         void                        setExecutableRandomizeStartAddress      (bool flag);
@@ -88,6 +90,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleViewVarVisualizer                 ();
         void                        handleViewImageVisualizer               ();
         void                        handleViewParallelStacksVisualizer      ();
+        void                        handleViewGdbMonitor                    ();
         void                        handleViewAssembly                      ();
         void                        handleViewAssemblyShown                 (bool shown);
         void                        handleViewConsoleAttached               ();
@@ -109,6 +112,7 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleGdbTargetRunning                  ();
         void                        handleGdbTargetInterrupt                ();
         void                        handleStatusChanged                     (QString message);
+        void                        handleThemeChanged                      ();
 
     protected:
         void                        writeSettings                           ();

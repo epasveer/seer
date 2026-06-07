@@ -66,6 +66,7 @@ CONFIG_CORESIGHT_CPU_DEBUG=y
 CONFIG_KALLSYMS_ALL=y
 CONFIG_DEBUG_KERNEL=y
 CONFIG_PACKAGE_kmod-helloworld=y
+CONFIG_PACKAGE_kmod-myplatform=y
 EOF
 make defconfig
 
@@ -79,16 +80,24 @@ echo 'CONFIG_CORESIGHT_CPU_DEBUG=y' >> .config
 echo 'CONFIG_KALLSYMS_ALL=y' >> .config
 echo 'CONFIG_DEBUG_KERNEL=y' >> .config
 echo 'CONFIG_PACKAGE_kmod-helloworld=y' >> .config
+echo 'CONFIG_PACKAGE_kmod-myplatform=y' >> .config
 echo 'CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=n' >> .config
 
 sed -i 's|CONFIG_KERNEL_DEBUG_INFO_REDUCED=y|CONFIG_KERNEL_DEBUG_INFO_REDUCED=n|g' .config
 
 # add hello world module
-cp -rf $TOPDIR/helloworld $HELLO_WORLD_DIR
+rm -rf $HELLO_WORLD_DIR/helloworld
+cp -rfT $TOPDIR/helloworld_owrt $HELLO_WORLD_DIR/helloworld
+# add myplatform module
+rm -rf $HELLO_WORLD_DIR/myplatform
+cp -rfT $TOPDIR/myplatform_owrt $HELLO_WORLD_DIR/myplatform
 # Path config.txt
 cp -f $TOPDIR/patches/config.txt $TOPDIR/openwrt/target/linux/bcm27xx/image/config.txt
+# Apply patched DTS with myplatform node
+cp -f $TOPDIR/patches/bcm2711-rpi-4-b.dts $OPENWRT_DIR/target/linux/bcm27xx/files-5.15/arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dts
 # FIrst build
-make -j"$MAKE_JOBS" V=cs > first_build.log 2>&1
+export FORCE_UNSAFE_CONFIGURE=1
+make -j4
 # Modify kernel config on the build_dir
 sed -i 's|# CONFIG_PID_IN_CONTEXTIDR is not set|CONFIG_PID_IN_CONTEXTIDR=y|g' \
             $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/.config
@@ -104,7 +113,7 @@ if grep -q "KBUILD_HOSTCFLAGS   := " $OPENWRT_DIR/build_dir/target-aarch64_corte
             $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/Makefile
 fi
 # And recompile
-make -j"$MAKE_JOBS"
+make -j4
 ########################################################################################################################
 # Check build result
 ########################################################################################################################

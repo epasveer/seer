@@ -23,6 +23,8 @@ The main one, though, is the initial breakpoint, which there are four ways:
 * Break in 'function'. The program is started and breaks in a named function or at an address.
 * Break at 'source'. The program is started and breaks at a line number of a source file.
     eg: myprog.cpp:36
+* Break at first instruction. The program is started and breaks at the first cpu instruction.
+  This is usually before 'main'. This mode is useful for programs written in Assembly.
 * No initial breakpoint. The program is started and executes without any breakpoints unless
   they are specified in the optional breakpoint file. The program will run til the end or when it
   encounters a signal or breakpoint. No source files will be loaded until a signal or breakpoint

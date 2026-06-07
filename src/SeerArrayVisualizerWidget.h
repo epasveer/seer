@@ -68,6 +68,7 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                handlePointsCheckBox                ();
         void                handleLabelsCheckBox                ();
         void                handleLineTypeButtonGroup           ();
+        void                handleThemeChanged                  ();
 
     protected:
         void                writeSettings                       ();

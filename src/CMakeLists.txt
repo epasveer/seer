@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(seergdb VERSION 2.7.0 LANGUAGES CXX)
+project(seergdb VERSION 2.8.0 LANGUAGES CXX)
 
 set(PROJECT_NAME seergdb)
 
@@ -112,6 +112,7 @@ set(HEADER_FILES
     SeerVarVisualizerWidget.h
     SeerImageVisualizerWidget.h
     SeerParallelStacksVisualizerWidget.h
+    SeerGdbMonitorWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
     SeerRegisterProfileDialog.h
@@ -148,6 +149,7 @@ set(HEADER_FILES
     SeerWatchpointCreateDialog.h
     SeerWatchpointsBrowserWidget.h
     SeerSourceHighlighter.h
+    SeerAdaSourceHighlighter.h
     SeerCppSourceHighlighter.h
     SeerOdinSourceHighlighter.h
     SeerRustSourceHighlighter.h
@@ -225,6 +227,7 @@ set(SOURCE_FILES
     SeerVarVisualizerWidget.cpp
     SeerImageVisualizerWidget.cpp
     SeerParallelStacksVisualizerWidget.cpp
+    SeerGdbMonitorWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp
     SeerRegisterProfileDialog.cpp
@@ -261,6 +264,7 @@ set(SOURCE_FILES
     SeerWatchpointCreateDialog.cpp
     SeerWatchpointsBrowserWidget.cpp
     SeerSourceHighlighter.cpp
+    SeerAdaSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
     SeerOdinSourceHighlighter.cpp
     SeerRustSourceHighlighter.cpp

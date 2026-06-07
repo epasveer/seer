@@ -39,15 +39,14 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                reset                           ();
 
     protected slots:
+        void                                handleFontMonoChanged           ();
         void                                handleFontSizeChanged           (const QString& text);
         void                                handleFontChanged               (const QFont& font);
         void                                handleFontDialog                ();
         void                                handleHighlighterChanged        ();
         void                                handleEnabledChanged            ();
         void                                handleApplyTheme                ();
-        void                                handleCppSuffixFocusIn          ();
-        void                                handleRustSuffixFocusIn         ();
-        void                                handleOdinSuffixFocusIn         ();
+        void                                handleLanguageTabChanged        (int index);
 
     private:
         QFont                               _font;

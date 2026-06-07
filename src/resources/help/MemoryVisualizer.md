@@ -21,6 +21,9 @@ The memory displayed in 3 views.
 
 A CRC16 checksum of the memory region is also displayed. Useful for quickly determining if different memory regions have the same contents.
 
+Changes with the memory contents between step/next/breakpoints will show changed bytes with an underline. This requires 'Auto
+Refresh' on.
+
 ### Operation
 
 There are various things to control how the memory is display.

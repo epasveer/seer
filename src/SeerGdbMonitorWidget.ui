@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerGdbMonitorWidgetForm</class>
+ <widget class="QWidget" name="SeerGdbMonitorWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>823</width>
+    <height>634</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Seer - Gdb Monitor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QPlainTextEdit" name="textEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>[output from gdb monitor]</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="SeerMacroToolButton" name="m1ToolButton">
+       <property name="text">
+        <string>M1</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m2ToolButton">
+       <property name="text">
+        <string>M2</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m3ToolButton">
+       <property name="text">
+        <string>M3</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m4ToolButton">
+       <property name="text">
+        <string>M4</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m5ToolButton">
+       <property name="text">
+        <string>M5</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m6ToolButton">
+       <property name="text">
+        <string>M6</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m7ToolButton">
+       <property name="text">
+        <string>M7</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m8ToolButton">
+       <property name="text">
+        <string>M8</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m9ToolButton">
+       <property name="text">
+        <string>M9</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="SeerMacroToolButton" name="m0ToolButton">
+       <property name="text">
+        <string>M0</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">macroButtonGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="monitorCommandLabel">
+       <property name="text">
+        <string>Monitor Command:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QHistoryLineEdit" name="monitorCommandLineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>100</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Enter a GDB monitor command.</string>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="clearToolButton">
+       <property name="toolTip">
+        <string>Clear monitor output.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="printToolButton">
+       <property name="toolTip">
+        <string>Print the monitor contents.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</normaloff>:/seer/resources/RelaxLightIcons/document-print.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="saveToolButton">
+       <property name="toolTip">
+        <string>Save the monitor contents.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</normaloff>:/seer/resources/RelaxLightIcons/document-save-as.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="helpToolButton">
+       <property name="toolTip">
+        <string>Help for the GDB monitor.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeerMacroToolButton</class>
+   <extends>QToolButton</extends>
+   <header>SeerMacroToolButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>QHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>monitorCommandLineEdit</tabstop>
+  <tabstop>m1ToolButton</tabstop>
+  <tabstop>m2ToolButton</tabstop>
+  <tabstop>m3ToolButton</tabstop>
+  <tabstop>m4ToolButton</tabstop>
+  <tabstop>m5ToolButton</tabstop>
+  <tabstop>m6ToolButton</tabstop>
+  <tabstop>m7ToolButton</tabstop>
+  <tabstop>m8ToolButton</tabstop>
+  <tabstop>m9ToolButton</tabstop>
+  <tabstop>m0ToolButton</tabstop>
+  <tabstop>clearToolButton</tabstop>
+  <tabstop>printToolButton</tabstop>
+  <tabstop>helpToolButton</tabstop>
+  <tabstop>textEdit</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="macroButtonGroup"/>
+ </buttongroups>
+</ui>

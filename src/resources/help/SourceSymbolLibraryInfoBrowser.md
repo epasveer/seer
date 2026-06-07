@@ -47,6 +47,8 @@ This information is shown for each Function:
 ```
 Double-clicking on an entry will load the source file in the Code Manager.
 
+Using RMB on a selected etry will allow that function to be added to the breakpoint list or added to the skip list.
+
 ### Types
 
 This browser lists all the class/struct types that match a Regex wildcard the program being debugged uses.

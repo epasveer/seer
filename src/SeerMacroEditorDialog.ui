@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Seer - Macro Editor</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="resource.qrc">
-    <normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</normaloff>:/seer/resources/icons/hicolor/32x32/seergdb.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -42,7 +38,7 @@
    <item>
     <widget class="QPlainTextEdit" name="textEditor">
      <property name="placeholderText">
-      <string>Insert gdb commands on multiple lines</string>
+      <string>Insert commands on multiple lines</string>
      </property>
     </widget>
    </item>

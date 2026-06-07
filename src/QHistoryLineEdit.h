@@ -34,50 +34,50 @@ class QHistoryLineEdit : public QLineEdit {
         QHistoryLineEdit(const QString& contents, QWidget* parent = 0);
         QHistoryLineEdit(QWidget* parent = 0);
 
-        void        enableReturnPressedOnClear          ();
+        void            enableReturnPressedOnClear          ();
 
-        int         lineCount                           () const;
+        int             lineCount                           () const;
 
-        void        setHistory                          (const QStringList& history);
-        QStringList history() const;
+        void            setHistory                          (const QStringList& history);
+        QStringList     history                             () const;
 
-        void        setWordCompleter                    (QCompleter* completer);
-        void        setWordCompleterPrefix              (const QString& prefix);
-        void        setWordCompleterMinChars            (int minChars);
-        void        setWordCompleterMaxSuggestions      (int max);
+        void            setWordCompleter                    (QCompleter* completer);
+        void            setWordCompleterPrefix              (const QString& prefix);
+        void            setWordCompleterMinChars            (int minChars);
+        void            setWordCompleterMaxSuggestions      (int max);
 
     public slots:
-        void        execute                             ();
+        void            execute                             ();
 
     signals:
-        void        lineExecuted                        (QString text);
-        void        lostFocus                           ();
-        void        gainedFocus                         ();
-        void        escapePressed                       ();
+        void            lineExecuted                        (QString text);
+        void            lostFocus                           ();
+        void            gainedFocus                         ();
+        void            escapePressed                       ();
 
     protected:
-        void        keyPressEvent                       (QKeyEvent*   event) Q_DECL_OVERRIDE;
-        void        wheelEvent                          (QWheelEvent* event) Q_DECL_OVERRIDE;
-        void        focusOutEvent                       (QFocusEvent* event) Q_DECL_OVERRIDE;
-        void        focusInEvent                        (QFocusEvent* event) Q_DECL_OVERRIDE;
+        void            keyPressEvent                       (QKeyEvent*   event) Q_DECL_OVERRIDE;
+        void            wheelEvent                          (QWheelEvent* event) Q_DECL_OVERRIDE;
+        void            focusOutEvent                       (QFocusEvent* event) Q_DECL_OVERRIDE;
+        void            focusInEvent                        (QFocusEvent* event) Q_DECL_OVERRIDE;
 
-        void        previousLine                        ();
-        void        nextLine                            ();
+        void            previousLine                        ();
+        void            nextLine                            ();
 
-        QString     current_word                        () const;
+        QString         current_word                        () const;
 
     private slots:
-        void        autoComplete                        (const QString& completion);
+        void            autoComplete                        (const QString& completion);
 
     private:
-        int         _wordStart                          () const;
+        int             _wordStart                          () const;
 
-        int         _currentLine;
-        QStringList _lines;
-        QString     _unfinished;
-        QCompleter* _completer;
-        QString     _completionPrefix;
-        int         _completionMinchars;
-        int         _completionMax;
+        int             _currentLine;
+        QStringList     _lines;
+        QString         _unfinished;
+        QCompleter*     _completer;
+        QString         _completionPrefix;
+        int             _completionMinchars;
+        int             _completionMax;
 };
 

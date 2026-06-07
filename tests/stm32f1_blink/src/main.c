@@ -1,8 +1,34 @@
 #include <stm32f1xx_hal.h>
-
+#include "advanced.h"
 #define LED_PIN GPIO_PIN_13
 #define LED_GPIO_PORT GPIOC
 #define LED_GPIO_CLK_ENABLE() __HAL_RCC_GPIOC_CLK_ENABLE()
+int i1 = 0;
+int i2 = 0;
+int i3 = 0;
+
+familyStruct globalStruct = {
+    // DAD
+    {
+        50,
+        "DAD_NAME",
+        {
+            1,
+            "1st_child"
+        }
+    },
+    4, "FAMILY",
+    // MOM
+    {
+        45,
+        "MOM_NAME",
+        {
+            {'a',
+            "a_child"},
+        }
+
+    }
+};
 
 void init_clock() {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -48,8 +74,17 @@ int main(void) {
     init();
 
     while (1) {
+        globalStruct.numberOfMember++;
+        globalStruct.dad.age ++;
+        globalStruct.familyName[1] ++;
+        globalStruct.dad.name[0] ++;
+        globalStruct.mom.child.name[0] ++;
+        globalStruct.dad.child.name[1] ++;
+        i1 ++;
+        i2 += 2;
+        i3 += 3;
         HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
-        HAL_Delay(1000);
+        HAL_Delay(500);
     }
 }
 

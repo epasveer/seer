@@ -53,6 +53,7 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         void                                            handleForkFollowComboBox            (int index);
         void                                            handleTabMoved                      (int from, int to);
         void                                            handleTabChanged                    (int index);
+        void                                            handleTabsContextMenuButtonClicked  ();
 
     private:
         SeerThreadFramesBrowserWidget*                  _threadFramesBrowserWidget;
