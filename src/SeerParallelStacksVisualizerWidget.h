@@ -5,102 +5,8 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
-#include <QtCore/QVector>
+#include <QString>
 #include "ui_SeerParallelStacksVisualizerWidget.h"
-
-namespace Seer::PSV {
-
-    class Frame {
-        public:
-            Frame ();
-            Frame (const QString& text);
-           ~Frame ();
-
-            int                 level           () const;
-            const QString&      addr            () const;
-            const QString&      function        () const;
-            const QString&      arch            () const;
-            const QString&      file            () const;
-            const QString&      fullname        () const;
-            int                 line            () const;
-            const QString&      type            () const;
-
-        private:
-            int                 _level;
-            QString             _addr;
-            QString             _function;
-            QString             _arch;
-            QString             _file;
-            QString             _fullname;
-            int                 _line;
-            QString             _type;
-    };
-
-    typedef QVector<Frame> Frames;
-
-    class Thread {
-        public:
-            Thread ();
-            Thread (const QString& text);
-           ~Thread ();
-
-            int                 id              () const;
-            const QString&      target_id       () const;
-            const QString&      name            () const;
-            const QString&      state           () const;
-            int                 current         () const;
-
-            int                 frameCount      () const;
-            const Frame&        frame           (int i) const;
-            const Frames&       frames          () const;
-
-        private:
-            int                 _id;
-            QString             _target_id;
-            QString             _name;
-            QString             _state;
-            int                 _current;
-
-            Frames              _frames;
-    };
-
-    typedef QVector<Thread> Threads;
-
-    typedef QVector<int>    ThreadIds;
-
-    class GraphNode : public QObject {
-
-        Q_OBJECT
-
-        public:
-            explicit GraphNode (const QString& name, QObject* parent = nullptr);
-           ~GraphNode ();
-
-            QString             name            () const;
-
-            void                addChild        (GraphNode* child);
-            GraphNode*          getChild        (int index) const;
-            int                 childCount      () const;
-
-            void                addFrame        (const Frame& frame);
-            const Frames&       frames          () const;
-            int                 frameCount      () const;
-
-            void                addThreadId     (int id);
-            const ThreadIds&    threadIds       () const;
-            int                 threadIdCount   () const;
-
-            void                printTree       (int level = 0) const;
-
-        private:
-            QString             _name;
-            ThreadIds           _threadIds;
-            Frames              _frames;
-    };
-
-};
-
-
 
 class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerParallelStacksVisualizerWidgetForm {
 
@@ -132,6 +38,5 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
 
         int                         _id;
         Seer::PSV::Threads          _threads;
-        Seer::PSV::GraphNode*       _gnodes;
 };
 

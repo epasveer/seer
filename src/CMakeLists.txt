@@ -50,6 +50,7 @@ elseif(${QTVERSION} STREQUAL "QT5")
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
+
 # Define the source location of header files
 set(HEADER_FILES
     GdbMonitor.h
@@ -112,6 +113,8 @@ set(HEADER_FILES
     SeerVarVisualizerWidget.h
     SeerImageVisualizerWidget.h
     SeerParallelStacksVisualizerWidget.h
+    SeerParallelStacksGraphicsView.h
+    SeerParallelStacksCommon.h
     SeerGdbMonitorWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
@@ -227,6 +230,8 @@ set(SOURCE_FILES
     SeerVarVisualizerWidget.cpp
     SeerImageVisualizerWidget.cpp
     SeerParallelStacksVisualizerWidget.cpp
+    SeerParallelStacksGraphicsView.cpp
+    SeerParallelStacksCommon.cpp
     SeerGdbMonitorWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp

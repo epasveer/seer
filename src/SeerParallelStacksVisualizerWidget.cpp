@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerParallelStacksVisualizerWidget.h"
+#include "SeerParallelStacksCommon.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
@@ -17,214 +18,10 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-namespace Seer::PSV {
-
-    Frame::Frame() {
-    }
-
-    Frame::Frame(const QString& text) {
-
-        _level     = Seer::parseFirst(text, "level=",    '"', '"', false).toInt();
-        _addr      = Seer::parseFirst(text, "addr=",     '"', '"', false);
-        _function  = Seer::parseFirst(text, "func=",     '"', '"', false);
-        _arch      = Seer::parseFirst(text, "arch=",     '"', '"', false);
-        _file      = Seer::parseFirst(text, "file=",     '"', '"', false);
-        _fullname  = Seer::parseFirst(text, "fullname=", '"', '"', false);
-        _line      = Seer::parseFirst(text, "line=",     '"', '"', false).toInt();
-        _type      = Seer::parseFirst(text, "type=",     '"', '"', false);
-    }
-
-    Frame::~Frame() {
-    }
-
-    int Frame::level () const {
-        return _level;
-    }
-
-    const QString& Frame::addr () const {
-        return _addr;
-    }
-
-    const QString& Frame::function () const {
-        return _function;
-    }
-
-    const QString& Frame::arch () const {
-        return _arch;
-    }
-
-    const QString& Frame::file () const {
-        return _file;
-    }
-
-    const QString& Frame::fullname () const {
-        return _fullname;
-    }
-
-    int Frame::line () const {
-        return _line;
-    }
-
-    const QString& Frame::type () const {
-        return _type;
-    }
-
-    Thread::Thread () {
-    }
-
-    Thread::Thread (const QString& text) {
-
-        _id        = Seer::parseFirst(text, "thread-id=", '"', '"', false).toInt();
-        _target_id = Seer::parseFirst(text, "target-id=", '"', '"', false);
-        _name      = Seer::parseFirst(text, "name=",      '"', '"', false);
-        _current   = Seer::parseFirst(text, "current=",   '"', '"', false).toInt();
-
-        QString frames_text = Seer::parseFirst(text, "frames=", '[', ']', false);
-
-        QStringList frame_list  = Seer::parse(frames_text, "", '{', '}', false);
-
-        // Loop through each thread.
-        for (const auto& frame_text : frame_list) {
-            Frame frame(frame_text);
-            _frames.push_back(frame);
-        }
-    }
-
-    Thread::~Thread () {
-    }
-
-    int Thread::id () const {
-        return _id;
-    }
-
-    const QString& Thread::target_id () const {
-        return _target_id;
-    }
-
-    const QString& Thread::name () const {
-        return _name;
-    }
-
-    const QString& Thread::state () const {
-        return _state;
-    }
-
-    int Thread::current () const {
-        return _current;
-    }
-
-    int Thread::frameCount () const {
-        return _frames.size();
-    }
-
-    const Frame& Thread::frame (int i) const {
-        return _frames[i];
-    }
-
-    const Frames& Thread::frames () const {
-        return _frames;
-    }
-
-    GraphNode::GraphNode (const QString& name, QObject* parent) : QObject(parent) {
-
-        _name = name;
-
-        qDebug() << "Creating node:" << _name;
-    }
-
-    GraphNode::~GraphNode () {
-
-         qDebug() << "Destroying node:" << _name;
-    }
-
-    QString GraphNode::name () const {
-
-        return _name;
-    }
-
-    void GraphNode::addChild (GraphNode* child) {
-
-        child->setParent(this);  // QObject handles parent-child relationship
-    }
-
-    GraphNode* GraphNode::getChild (int index) const {
-
-        const QObjectList &childList = children();
-
-        if (index >= 0 && index < childList.size()) {
-            return qobject_cast<GraphNode*>(childList.at(index));
-        }
-
-        return nullptr;
-    }
-
-    int GraphNode::childCount () const {
-
-        return children().size();
-    }
-
-    void GraphNode::addFrame (const Frame& frame) {
-
-        _frames.push_back(frame);
-    }
-
-    const Frames& GraphNode::frames () const {
-
-        return _frames;
-    }
-
-    int GraphNode::frameCount () const {
-
-        return _frames.size();
-    }
-
-    void GraphNode::addThreadId (int id) {
-
-        _threadIds.push_back(id);
-    }
-
-    const ThreadIds& GraphNode::threadIds () const {
-
-        return _threadIds;
-    }
-
-    int GraphNode::threadIdCount () const {
-
-        return _threadIds.size();
-    }
-
-    void GraphNode::printTree (int level) const {
-
-        {
-            QDebug dbg = qDebug().noquote().nospace();
-
-            QString indent(level * 2, ' ');
-            dbg << indent << "└─" << _name;
-            dbg << " ThreadCount: " << threadIdCount();
-            dbg << " Ids: ";
-            for (int id : threadIds()) {
-                dbg << id << ", ";
-            }
-            for (auto frame : frames()) {
-                dbg << indent << "  " << frame.function() << '\n';
-            }
-        }
-
-        for (QObject* child : children()) {
-            GraphNode* node = qobject_cast<GraphNode*>(child);
-            if (node) {
-                node->printTree(level + 1);
-            }
-        }
-    }
-};
-
-
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _id     = Seer::createID(); // ID for parallelstacks command.
-    _gnodes = 0;
+    _id = Seer::createID(); // ID for parallelstacks command.
 
     // Set up UI.
     setupUi(this);
@@ -294,7 +91,10 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
 
-        imageViewer->clearImage();
+        // Clear old scene.
+        if (QGraphicsScene* scene = graphicsView->scene()) {
+            scene->clear();
+        }
 
     // At a stopping point, refresh.
     }else if (text.startsWith("*stopped,reason=\"")) {
@@ -328,12 +128,16 @@ void SeerParallelStacksVisualizerWidget::handleHelpButton () {
 
 void SeerParallelStacksVisualizerWidget::handlePrintButton () {
 
+    /* XXX Implement PRINT logic on Scene.
     imageViewer->print();
+    */
 }
 
 void SeerParallelStacksVisualizerWidget::handleSaveButton () {
 
+    /* XXX Implement SAVE logic on Scene.
     imageViewer->saveFileDialog("/tmp/temp.png");
+    */
 }
 
 void SeerParallelStacksVisualizerWidget::writeSettings() {
@@ -363,96 +167,15 @@ void SeerParallelStacksVisualizerWidget::resizeEvent (QResizeEvent* event) {
 
 void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
-    // Clear old image.
-    imageViewer->clearImage();
-
-    // Create the 'gv' file.
-    QFile file("/tmp/xxx.gv");
-
-    if (file.open(QFile::WriteOnly|QFile::Text|QFile::Truncate) == false) {
-        qDebug() << "Can't create 'gv' file!";
+    // Clear old scene.
+    if (QGraphicsScene* scene = graphicsView->scene()) {
+        scene->clear();
     }
 
-    QTextStream out(&file);
-
-    // Write 'gv' header.
-    out << "digraph {\n";
-
-    out << "\tgraph [rankdir=BT]\n";
-    out << "\tnode [shape=plaintext]\n";
-
-    // Loop through each stack and create the graph.
-    for (int t=0; t<_threads.size(); t++) {
-
-        out << "\t" << QString::number(t) << " [label=<<table BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\"><tr><td align=\"right\"><b>1 Threads</b></td></tr>";
-
-        for (int f=0; f<_threads[t].frameCount(); f++) {
-
-            const Seer::PSV::Frame& frame = _threads[t].frame(f);
-
-            out << "<tr><td align=\"left\"><font color=\"darkgreen\">" << frame.function().toHtmlEscaped() << "</font></td></tr>";
-        }
-
-        out << "</table>>]\n";
-    }
-
-    // Write 'gv' footer.
-    out << "}\n";
-
-    // Close 'gv' file.
-    file.close();
-
-    // Now create the pdf file.
-    // dot -Tpdf xxx.gv -o xxx.gv.pdf
-    QString     program = "dot";
-    QStringList arguments;
-
-    arguments << "-Tsvg";
-    arguments << "/tmp/xxx.gv";
-    arguments << "-o";
-    arguments << "/tmp/xxx.gv.svg";
-
-    int exitCode = QProcess::execute(program, arguments);
-    if (exitCode != 0) {
-        qDebug() << "Command failed with exit code:" << exitCode;
-        return;
-    }
-
-    // View the image.
-    imageViewer->loadFile("/tmp/xxx.gv.svg");
-
-    // Delete tmp files.
-    QFile::remove("/tmp/xxx.gv");
-    QFile::remove("/tmp/xxx.gv.svg");
-
-    //
-    // Make GraphNodes
-    //
-
-    if (_gnodes != 0) {
-        delete _gnodes;
-        _gnodes = 0;
-    }
-
-    _gnodes = new Seer::PSV::GraphNode("root");
-
-    // Loop through each stack and create the graph.
-    for (int t=0; t<_threads.size(); t++) {
-
-        Seer::PSV::GraphNode* gnode = new Seer::PSV::GraphNode(QString::number(t));
-
-        gnode->addThreadId(_threads[t].id());
-
-        for (int f=0; f<_threads[t].frameCount(); f++) {
-
-            const Seer::PSV::Frame& frame = _threads[t].frame(f);
-
-            gnode->addFrame(frame);
-        }
-
-        _gnodes->addChild(gnode);
-    }
-
-    _gnodes->printTree();
+    // Build parallel-stacks tree
+    QVector<Seer::PSV::Thread> local = _threads; // mutable copy for ptr stability
+    auto root  = Seer::PSV::buildParallelStacks(local);
+    auto stack = Seer::PSV::fillStack(root);
+    graphicsView->setStack(stack);
 }
 
