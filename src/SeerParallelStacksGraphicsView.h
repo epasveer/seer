@@ -99,6 +99,12 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
 
+    private slots:
+        // Grows the scene rect (and thus the scrollbar range) if items have
+        // been dragged outside the current bounds. Connected to
+        // QGraphicsScene::changed, which fires on item moves/repaints.
+        void            handleGrowSceneRectToFitItems   ();
+
     private:
         struct PlacedNode {
             std::shared_ptr<Seer::PSV::Stack>   stack;

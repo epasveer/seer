@@ -250,6 +250,11 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
     setDragMode(QGraphicsView::ScrollHandDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setBackgroundBrush(QColor(0xF0, 0xF0, 0xF0));
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    // Connect things.
+    QObject::connect(_scene, &QGraphicsScene::changed,      this, &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
 }
 
 void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
@@ -265,8 +270,7 @@ void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::S
 
     if (!root) return;
 
-    auto* rootPN = new PlacedNode;
-
+    auto *rootPN = new PlacedNode;
     buildPlacedTree(rootPN, root, nullptr);
 
     qreal xCursor = 0;
@@ -288,8 +292,20 @@ void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::S
     addEdges(rootPN);
     deleteTree(rootPN);
 
-    _scene->setSceneRect(_scene->itemsBoundingRect().adjusted(-40, -40, 40, 40));
-    fitInView(_scene->sceneRect(), Qt::KeepAspectRatio);
+    // Let the scene rect track item bounds dynamically (Qt recomputes it
+    // automatically as items move/grow). A fixed rect set once here would
+    // go stale once items are dragged via Ctrl+LMB, leaving the scrollbar
+    // range clamped to the original extents at the original zoom level.
+    _scene->setSceneRect(QRectF());
+
+    // Fit the (current) scene contents into the viewport once, then capture
+    // that as the explicit scene rect with some padding so scrollbars have
+    // a stable, generously-sized range to work with at any zoom level.
+    QRectF bounds = _scene->itemsBoundingRect().adjusted(-40, -40, 40, 40);
+
+    _scene->setSceneRect(bounds);
+
+    fitInView(bounds, Qt::KeepAspectRatio);
 }
 
 // Recursively find the maximum bottom edge (item->y() + item->height()) in the tree.
@@ -399,5 +415,21 @@ void SeerParallelStacksGraphicsView::deleteTree(PlacedNode* pn) {
     }
 
     delete pn;
+}
+
+void SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems() {
+
+    if (_scene->items().isEmpty()) {
+        return;
+    }
+
+    const QRectF current = _scene->sceneRect();
+    const QRectF needed  = _scene->itemsBoundingRect().adjusted(-40, -40, 40, 40);
+
+    // Only grow — never shrink on every change, to avoid jitter — and only
+    // when the items actually fall outside the current rect.
+    if (!current.contains(needed)) {
+        _scene->setSceneRect(current.united(needed));
+    }
 }
 
