@@ -3,22 +3,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerParallelStacksVisualizerWidget.h"
-#include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QFileDialog>
-#include <QtGui/QIntValidator>
-#include <QtGui/QIcon>
-#include <QtPrintSupport/QPrinter>
-#include <QtPrintSupport/QPrintDialog>
-#include <QtCore/QSettings>
-#include <QtCore/QProcess>
 #include <QtCore/QStringList>
-#include <QtCore/QFile>
 #include <QtCore/QDebug>
 
-namespace Seer {
-namespace PSV {
+namespace Seer::PSV {
 
     Frame::Frame() {
     }
@@ -135,13 +124,13 @@ namespace PSV {
 
         QString result = QString("Thread %1").arg(_id);
 
-        for (const auto &f : _frames)
+        for (const auto& f : _frames)
             result += "\n  " + f.toString();
 
         return result;
     }
 
-    static std::shared_ptr<StackNode> buildImpl( QVector<Thread *> &threadPtrs, const QString &currentFunction, int depth) {
+    static std::shared_ptr<StackNode> buildImpl( QVector<Thread*>& threadPtrs, const QString& currentFunction, int depth) {
 
         auto node      = std::make_shared<StackNode>();
         node->depth    = depth;
@@ -149,14 +138,14 @@ namespace PSV {
         node->threads  = threadPtrs;
 
         // Group threads by the function at position [-depth-1] (bottom-up).
-        QMap<QString, QVector<Thread *>> functionThreads;
+        QMap<QString, QVector<Thread*>> functionThreads;
         int level = -depth - 1;
 
-        for (Thread *t : threadPtrs) {
+        for (Thread* t : threadPtrs) {
             int idx = t->frames().size() + level; // convert negative index
             if (idx < 0 || idx >= t->frames().size())
                 continue;
-            const QString &fn = t->frames()[idx].function();
+            const QString& fn = t->frames()[idx].function();
             functionThreads[fn].append(t);
         }
 
@@ -168,12 +157,12 @@ namespace PSV {
         return node;
     }
 
-    std::shared_ptr<StackNode> buildParallelStacks(QVector<Thread> &threads) {
+    std::shared_ptr<StackNode> buildParallelStacks(QVector<Thread>& threads) {
 
-        QVector<Thread *> ptrs;
+        QVector<Thread*> ptrs;
         ptrs.reserve(threads.size());
 
-        for (auto &t : threads)
+        for (auto& t : threads)
             ptrs.append(&t);
 
         return buildImpl(ptrs, QString(), 0);
@@ -182,13 +171,13 @@ namespace PSV {
     // ---------------------------------------------------------------
     // fillStack — flatten StackNode tree into Stack tree for graphing
     // ---------------------------------------------------------------
-    std::shared_ptr<Stack> fillStack(const std::shared_ptr<StackNode> &node) {
+    std::shared_ptr<Stack> fillStack(const std::shared_ptr<StackNode>& node) {
 
         auto stack         = std::make_shared<Stack>();
         stack->threadCount = static_cast<int>(node->threads.size());
 
         // Collect thread IDs for this node
-        for (const Thread *t : node->threads)
+        for (const Thread* t : node->threads)
             stack->threadIds.append(QString::number(t->id()));
 
         if (!node->function.isEmpty())
@@ -203,13 +192,12 @@ namespace PSV {
             stack->threadCount = child->threadCount;
             stack->threadIds   = child->threadIds;
         } else {
-            for (const auto &childNode : node->children) {
+            for (const auto& childNode : node->children) {
                 stack->stacks.append(fillStack(childNode));
             }
         }
 
         return stack;
     }
+}
 
-} // namespace PSV
-} // namespace Seer

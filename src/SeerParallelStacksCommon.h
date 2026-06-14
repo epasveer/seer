@@ -6,13 +6,9 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QVector>
-#include <QWidget>
-#include <QGraphicsItem>
-#include <QPointF>
-#include <QString>
+#include <QtCore/QString>
 
-namespace Seer {
-namespace PSV {
+namespace Seer::PSV {
 
     class Frame {
         public:
@@ -72,28 +68,22 @@ namespace PSV {
 
     typedef QVector<Thread> Threads;
 
-    typedef QVector<int>    ThreadIds;
-
     struct StackNode {
-        QString               function;    // empty == root
-        int                   depth  = 0;
-        QVector<Thread *>     threads;     // non-owning pointers
-        QVector<std::shared_ptr<StackNode>> children;
+        QString                                 function;    // empty == root
+        int                                     depth  = 0;
+        QVector<Thread*>                        threads;     // non-owning pointers
+        QVector<std::shared_ptr<StackNode>>     children;
     };
-
-    // Build the parallel-stacks tree from a flat list of threads.
-    std::shared_ptr<StackNode> buildParallelStacks(QVector<Thread> &threads);
 
     // Flat "Stack" representation used when building the graph.
     struct Stack {
-        QVector<QString>              functions;
-        QVector<std::shared_ptr<Stack>> stacks;
-        int                           threadCount = 0;
-        QVector<QString>              threadIds;   // IDs of every thread in this node
+        QVector<QString>                        functions;
+        QVector<std::shared_ptr<Stack>>         stacks;
+        int                                     threadCount = 0;
+        QVector<QString>                        threadIds;   // IDs of every thread in this node
     };
 
-    std::shared_ptr<Stack> fillStack(const std::shared_ptr<StackNode> &node);
-
-} // namespace PSV
-} // namespace Seer
+    std::shared_ptr<StackNode>      buildParallelStacks     (QVector<Thread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
+    std::shared_ptr<Stack>          fillStack               (const std::shared_ptr<StackNode>& node);
+}
 
