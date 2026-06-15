@@ -21,6 +21,7 @@ namespace Seer::PSV {
 
         public:
             explicit StackBoxItem(const Stack& stack, QGraphicsItem* parent = nullptr);
+           ~StackBoxItem() override;
 
             QRectF                  boundingRect        () const override;
             void                    paint               (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
@@ -76,6 +77,12 @@ namespace Seer::PSV {
 
             QRectF boundingRect     () const override;
             void   paint            (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+            // Called by StackBoxItem's destructor so this edge stops referencing
+            // an endpoint that is about to be (or has been) destroyed. After this,
+            // the edge renders nothing and its own destructor won't touch `box`.
+            void   detachEndpoint   (StackBoxItem* box);
+
 
         private:
             StackBoxItem*           _from;   // child  (bottom anchor)

@@ -22,11 +22,22 @@ namespace Seer::PSV {
         _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
         if (!stack.threadIds.isEmpty()) {
-            QStringList ids = stack.threadIds;
-            if (ids.size() > 8)
-                _headerRight = QString("[%1 … +%2]") .arg(ids.mid(0, 8).join(", ")) .arg(ids.size() - 8);
-            else
-                _headerRight = "[" + ids.join(", ") + "]";
+
+            const QVector<QString> &ids = stack.threadIds;
+            const int shown = std::min<qsizetype>(ids.size(), 8);
+
+            QStringList parts;
+            parts.reserve(shown);
+
+            for (int i = 0; i < shown; ++i) {
+                parts.append(ids[i]);
+            }
+
+            if (ids.size() > 8) {
+                _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(ids.size() - 8);
+            }else{
+                _headerRight = "[" + parts.join(", ") + "]";
+            }
         }
 
         for (int i = stack.functions.size() - 1; i >= 0; --i) {
@@ -49,6 +60,21 @@ namespace Seer::PSV {
 
         _width  = maxTextW + 2 * kPadX;
         _height = kPadY + kRowH * (1 + (int)_rows.size()) + kPadY;
+    }
+
+    StackBoxItem::~StackBoxItem() {
+
+        // Tell every edge that still points at us to forget about it.
+        // This must run BEFORE this object's memory is freed, regardless of
+        // whether the scene destroys this box or its edges first — it prevents
+        // the edges' own destructors (and any pending itemChange callbacks)
+        // from dereferencing a dangling pointer back to this item.
+
+        for (LiveEdge *e : _edges) {
+            e->detachEndpoint(this);
+        }
+
+        _edges.clear();
     }
 
     QRectF StackBoxItem::boundingRect() const {
@@ -174,9 +200,19 @@ namespace Seer::PSV {
     }
 
     LiveEdge::~LiveEdge() {
-        // Guard against half-destroyed scenes
+
+        // If our endpoints are still alive, tell them to forget about us so
+        // they don't later call update() on a dangling LiveEdge* during
+        // itemChange(). detachEndpoint() is a no-op if the endpoint has
+        // already nulled itself out via StackBoxItem::~StackBoxItem().
         if (_from) _from->unregisterEdge(this);
         if (_to)   _to->unregisterEdge(this);
+    }
+
+    void LiveEdge::detachEndpoint(StackBoxItem *box) {
+
+        if (_from == box) _from = nullptr;
+        if (_to   == box) _to   = nullptr;
     }
 
     QRectF LiveEdge::boundingRect() const {

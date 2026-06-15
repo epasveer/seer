@@ -42,6 +42,10 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 }
 
 SeerParallelStacksVisualizerWidget::~SeerParallelStacksVisualizerWidget () {
+
+    if (QGraphicsScene* scene = graphicsView->scene()) {
+        scene->clear();
+    }
 }
 
 void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {

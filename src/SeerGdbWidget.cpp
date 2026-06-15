@@ -3073,9 +3073,9 @@ void SeerGdbWidget::handleGdbParallelStacksVisualizer () {
     w->show();
 
     // Connect things.
-    QObject::connect(w,            &SeerParallelStacksVisualizerWidget::refreshParallelStackFrames,     this,    &SeerGdbWidget::handleGdbParallelStackFrames);
     QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                                       w,       &SeerParallelStacksVisualizerWidget::handleText);
     QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                                        w,       &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerParallelStacksVisualizerWidget::refreshParallelStackFrames,     this,    &SeerGdbWidget::handleGdbParallelStackFrames);
 }
 
 void SeerGdbWidget::handleGdbMonitor () {
