@@ -48,6 +48,11 @@ SeerParallelStacksVisualizerWidget::~SeerParallelStacksVisualizerWidget () {
     }
 }
 
+void SeerParallelStacksVisualizerWidget::refresh () {
+
+    handleRefreshButton();
+}
+
 void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
@@ -86,9 +91,9 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
                 //qDebug() << thread_id_text << target_id_text << name_text << current_text;
             }
 
-            for (const auto& thread : _threads ) {
-                qDebug() << "Thread" << thread.id() << "has" << thread.frameCount() << "frames.";
-            }
+            //for (const auto& thread : _threads ) {
+            //    qDebug() << "Thread" << thread.id() << "has" << thread.frameCount() << "frames.";
+            //}
 
             createDirectedGraph();
         }

@@ -27,7 +27,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
     setupUi(this);
 
     // Setup the widgets
-    setWindowTitle("Seer Basic Struct Visualizer");
+    setWindowTitle("Seer BasicStruct Visualizer");
     setAttribute(Qt::WA_DeleteOnClose);
 
     variableTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -64,7 +64,7 @@ SeerStructVisualizerWidget::~SeerStructVisualizerWidget () {
 
 void SeerStructVisualizerWidget::setVariableName (const QString& name) {
 
-    setWindowTitle("Seer Basic Struct Visualizer - '" + name + "'");
+    setWindowTitle("Seer BasicStruct Visualizer - '" + name + "'");
 
     variableNameLineEdit->setText(name);
 

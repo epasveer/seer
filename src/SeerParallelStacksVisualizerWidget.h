@@ -20,6 +20,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        refreshParallelStackFrames          (int id);
 
     public slots:
+        void                        refresh                             ();
         void                        handleText                          (const QString& text);
 
     protected slots:

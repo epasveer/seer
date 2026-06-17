@@ -43,6 +43,8 @@ namespace Seer::PSV {
             void                    mousePressEvent     (QGraphicsSceneMouseEvent* event) override;
             void                    mouseMoveEvent      (QGraphicsSceneMouseEvent* event) override;
             void                    mouseReleaseEvent   (QGraphicsSceneMouseEvent* event) override;
+            void                    hoverEnterEvent     (QGraphicsSceneHoverEvent* event) override;
+            void                    hoverLeaveEvent     (QGraphicsSceneHoverEvent* event) override;
 
         private:
             enum RowKind { Function };
@@ -105,6 +107,8 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
+        void            keyPressEvent                   (QKeyEvent* event) override;
+        void            keyReleaseEvent                 (QKeyEvent* event) override;
 
     private slots:
         // Grows the scene rect (and thus the scrollbar range) if items have

@@ -672,10 +672,10 @@
      <normaloff>:/seer/resources/thenounproject/memory.svg</normaloff>:/seer/resources/thenounproject/memory.svg</iconset>
    </property>
    <property name="text">
-    <string>Basic Struct Visualizer</string>
+    <string>BasicStruct Visualizer</string>
    </property>
    <property name="statusTip">
-    <string>Launch a blank Basic Struct Visualizer.</string>
+    <string>Launch a blank BasicStruct Visualizer.</string>
    </property>
   </action>
   <action name="actionViewExecutionMessages">

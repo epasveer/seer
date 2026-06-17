@@ -18,6 +18,7 @@ namespace Seer::PSV {
 
         // Enable geometry-change notifications so itemChange() fires on setPos()
         setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+        setAcceptHoverEvents(true);
 
         _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
@@ -49,9 +50,7 @@ namespace Seer::PSV {
         QFont        normFont;
         QFontMetrics normFm(normFont);
 
-        qreal headerW = boldFm.horizontalAdvance(_headerLeft)
-            + boldFm.horizontalAdvance(_headerRight)
-            + kHeaderGap;
+        qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
         qreal maxTextW = headerW;
 
         for (const auto& row : _rows) {
@@ -78,6 +77,7 @@ namespace Seer::PSV {
     }
 
     QRectF StackBoxItem::boundingRect() const {
+
         return QRectF(0, 0, _width, _height);
     }
 
@@ -124,10 +124,12 @@ namespace Seer::PSV {
     }
 
     QPointF StackBoxItem::sceneBottom() const {
+
         return mapToScene(QPointF(_width / 2.0, _height));
     }
 
     QPointF StackBoxItem::sceneTop() const {
+
         return mapToScene(QPointF(_width / 2.0, 0));
     }
 
@@ -144,51 +146,66 @@ namespace Seer::PSV {
 
     void StackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
 
-        if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier) {
+        if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier) {
 
             _dragging   = true;
             _dragOffset = event->pos();
 
-            setCursor(Qt::ClosedHandCursor);
             setZValue(10);
             update();
 
             event->accept();
 
-        }else{
-            QGraphicsItem::mousePressEvent(event);
+            return;
         }
+
+        QGraphicsItem::mousePressEvent(event);
     }
 
     void StackBoxItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+
         if (_dragging) {
+
             setPos(mapToScene(event->pos() - _dragOffset));
             event->accept();
-        }else{
-            QGraphicsItem::mouseMoveEvent(event);
+
+            return;
         }
+
+        QGraphicsItem::mouseMoveEvent(event);
     }
 
     void StackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+
         if (_dragging && event->button() == Qt::LeftButton) {
 
             _dragging = false;
 
-            setCursor(Qt::ArrowCursor);
             setZValue(0);
             update();
 
             event->accept();
 
-        }else{
-            QGraphicsItem::mouseReleaseEvent(event);
+            return;
         }
+
+        QGraphicsItem::mouseReleaseEvent(event);
     }
+
+    void StackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
+
+        QGraphicsItem::hoverEnterEvent(event);
+    }
+
+    void StackBoxItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
+
+        QGraphicsItem::hoverLeaveEvent(event);
+    }
+
 
     // ================================================================
     // LiveEdge — redraws itself each paint() from current endpoint positions
     // ================================================================
-
     LiveEdge::LiveEdge(StackBoxItem* from, StackBoxItem* to, QGraphicsItem* parent) : QGraphicsItem(parent) , _from(from) , _to(to) {
 
         setZValue(-1);
@@ -279,11 +296,12 @@ using Seer::PSV::LiveEdge;
 constexpr qreal kHGap = 30.0;
 constexpr qreal kVGap = 60.0;
 
-SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) : QGraphicsView(parent) , _scene(new QGraphicsScene(this)) {
+SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) : QGraphicsView(parent), _scene(new QGraphicsScene(this)) {
 
     setScene(_scene);
     setRenderHint(QPainter::Antialiasing);
-    setDragMode(QGraphicsView::ScrollHandDrag);
+    // XXX setDragMode(QGraphicsView::ScrollHandDrag);
+    setDragMode(QGraphicsView::NoDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setBackgroundBrush(QColor(0xF0, 0xF0, 0xF0));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -298,6 +316,24 @@ void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
     const double factor = event->angleDelta().y() > 0 ? 1.15 : 1.0 / 1.15;
 
     scale(factor, factor);
+}
+
+void SeerParallelStacksGraphicsView::keyPressEvent(QKeyEvent *event) {
+
+    if (event->key() == Qt::Key_Shift) {
+        setDragMode(QGraphicsView::ScrollHandDrag);
+    }
+
+    QGraphicsView::keyPressEvent(event);
+}
+
+void SeerParallelStacksGraphicsView::keyReleaseEvent(QKeyEvent *event) {
+
+    if (event->key() == Qt::Key_Shift) {
+        setDragMode(QGraphicsView::NoDrag);
+    }
+
+    QGraphicsView::keyReleaseEvent(event);
 }
 
 void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::Stack>& root) {
