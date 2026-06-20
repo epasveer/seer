@@ -288,10 +288,9 @@ namespace Seer::PSV {
 }
 
 // ================================================================
-// MiniMapWidget
+// SeerParallelStacksMiniMapWidget
 // ================================================================
-
-MiniMapWidget::MiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent) : QWidget(parent) , _view(view) {
+SeerParallelStacksMiniMapWidget::SeerParallelStacksMiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent) : QWidget(parent) , _view(view) {
 
     setAttribute(Qt::WA_NoSystemBackground, false);
     setCursor(Qt::PointingHandCursor);
@@ -299,19 +298,19 @@ MiniMapWidget::MiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* pare
     resize(sizeHint());
 }
 
-QRectF MiniMapWidget::contentRect() const {
+QRectF SeerParallelStacksMiniMapWidget::contentRect() const {
 
     // Inset by a small margin so the border isn't drawn flush against
     // the widget edge.
     return QRectF(rect()).adjusted(2, 2, -2, -2);
 }
 
-void MiniMapWidget::refresh() {
+void SeerParallelStacksMiniMapWidget::refresh() {
 
     update();
 }
 
-void MiniMapWidget::paintEvent(QPaintEvent* ) {
+void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
@@ -326,6 +325,7 @@ void MiniMapWidget::paintEvent(QPaintEvent* ) {
     }
 
     const QRectF sceneRect = _view->sceneRect();
+
     if (sceneRect.isEmpty()) {
         return;
     }
@@ -350,6 +350,7 @@ void MiniMapWidget::paintEvent(QPaintEvent* ) {
     // of the graph is recognisable at a glance.
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0x5A, 0x8F, 0xD6));
+
     for (QGraphicsItem* item : _view->scene()->items()) {
         if (auto* box = dynamic_cast<Seer::PSV::StackBoxItem*>(item)) {
             QRectF r(sceneToWidget(box->sceneBoundingRect().topLeft()), sceneToWidget(box->sceneBoundingRect().bottomRight()));
@@ -360,21 +361,21 @@ void MiniMapWidget::paintEvent(QPaintEvent* ) {
     }
 
     // Draw the main view's current visible region as an outlined box.
-    const QRectF visibleScene =
-        _view->mapToScene(_view->viewport()->rect()).boundingRect();
-    QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()),
-                          sceneToWidget(visibleScene.bottomRight()));
+    const QRectF visibleScene = _view->mapToScene(_view->viewport()->rect()).boundingRect();
+
+    QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()), sceneToWidget(visibleScene.bottomRight()));
 
     painter.setBrush(QColor(0x1A, 0x52, 0xA8, 40));
     painter.setPen(QPen(QColor(0x1A, 0x52, 0xA8), 1.5));
     painter.drawRect(viewportMarker);
 }
 
-void MiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
+void SeerParallelStacksMiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
 
     if (!_view || !_view->scene()) return;
 
     const QRectF sceneRect = _view->sceneRect();
+
     if (sceneRect.isEmpty()) return;
 
     const QRectF avail = contentRect();
@@ -384,19 +385,17 @@ void MiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
 
     const qreal drawW = sceneRect.width()  * s;
     const qreal drawH = sceneRect.height() * s;
-    const QPointF origin(avail.left() + (avail.width()  - drawW) / 2.0,
-                         avail.top()  + (avail.height() - drawH) / 2.0);
+    const QPointF origin(avail.left() + (avail.width() - drawW) / 2.0, avail.top() + (avail.height() - drawH) / 2.0);
 
     // Inverse of sceneToWidget()
-    const QPointF scenePos(
-        sceneRect.left() + (widgetPos.x() - origin.x()) / s,
-        sceneRect.top()  + (widgetPos.y() - origin.y()) / s);
+    const QPointF scenePos( sceneRect.left() + (widgetPos.x() - origin.x()) / s, sceneRect.top()  + (widgetPos.y() - origin.y()) / s);
 
     _view->centerOn(scenePos);
+
     refresh();
 }
 
-void MiniMapWidget::mousePressEvent(QMouseEvent* event) {
+void SeerParallelStacksMiniMapWidget::mousePressEvent(QMouseEvent* event) {
 
     if (event->button() == Qt::LeftButton) {
         _dragging = true;
@@ -404,26 +403,29 @@ void MiniMapWidget::mousePressEvent(QMouseEvent* event) {
         event->accept();
         return;
     }
+
     QWidget::mousePressEvent(event);
 }
 
-void MiniMapWidget::mouseMoveEvent(QMouseEvent* event)
-{
+void SeerParallelStacksMiniMapWidget::mouseMoveEvent(QMouseEvent* event) {
+
     if (_dragging) {
         jumpToWidgetPos(event->pos());
         event->accept();
         return;
     }
+
     QWidget::mouseMoveEvent(event);
 }
 
-void MiniMapWidget::mouseReleaseEvent(QMouseEvent* event)
-{
+void SeerParallelStacksMiniMapWidget::mouseReleaseEvent(QMouseEvent* event) {
+
     if (_dragging && event->button() == Qt::LeftButton) {
         _dragging = false;
         event->accept();
         return;
     }
+
     QWidget::mouseReleaseEvent(event);
 }
 
@@ -447,13 +449,13 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    _miniMap = new MiniMapWidget(this, this);
+    _miniMap = new SeerParallelStacksMiniMapWidget(this, this);
     _miniMap->raise();
 
 
     // Connect things.
     QObject::connect(_scene, &QGraphicsScene::changed,      this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
-    QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &MiniMapWidget::refresh);
+    QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &SeerParallelStacksMiniMapWidget::refresh);
 }
 
 void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {

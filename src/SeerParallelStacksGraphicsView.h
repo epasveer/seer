@@ -103,12 +103,12 @@ class SeerParallelStacksGraphicsView;
 // rectangle marking the main view's current visible region. Click or
 // drag inside it to jump/pan the main view there.
 // ---------------------------------------------------------------
-class MiniMapWidget : public QWidget {
+class SeerParallelStacksMiniMapWidget : public QWidget {
 
     Q_OBJECT
 
     public:
-        explicit MiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent = nullptr);
+        explicit SeerParallelStacksMiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent = nullptr);
 
         QSize   sizeHint                () const override { return QSize(180, 140); }
 
@@ -179,12 +179,11 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            deleteTree                      (PlacedNode* pn);
         void            repositionMiniMap               (); // keeps it pinned to bottom-right corner
 
-        QGraphicsScene* _scene;
-        MiniMapWidget*  _miniMap;
+        QGraphicsScene*                   _scene;
+        SeerParallelStacksMiniMapWidget*  _miniMap;
+        bool                              _panning = false;
+        QPoint                            _panStartPos;  // viewport coords at pan start
 
-        bool            _panning = false;
-        QPoint          _panStartPos;  // viewport coords at pan start
-
-        friend class MiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
+        friend class SeerParallelStacksMiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
 
