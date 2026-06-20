@@ -96,6 +96,45 @@ namespace Seer::PSV {
 
 }
 
+class SeerParallelStacksGraphicsView;
+
+// ---------------------------------------------------------------
+// Small overlay widget showing the entire scene at a glance, with a
+// rectangle marking the main view's current visible region. Click or
+// drag inside it to jump/pan the main view there.
+// ---------------------------------------------------------------
+class MiniMapWidget : public QWidget {
+
+    Q_OBJECT
+
+    public:
+        explicit MiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent = nullptr);
+
+        QSize   sizeHint                () const override { return QSize(180, 140); }
+
+    public slots:
+        void    refresh                 ();   // call whenever the scene or the main view's viewport changes
+
+    protected:
+        void    paintEvent              (QPaintEvent* event) override;
+        void    mousePressEvent         (QMouseEvent* event) override;
+        void    mouseMoveEvent          (QMouseEvent* event) override;
+        void    mouseReleaseEvent       (QMouseEvent* event) override;
+
+    private:
+        // Maps a point in this widget to a scene position, and centers the
+        // main view there.
+        void    jumpToWidgetPos         (const QPoint& widgetPos);
+
+        // The scaled rect (within this widget) that the minimap content is
+        // drawn into, preserving the scene's aspect ratio.
+        QRectF  contentRect             () const;
+
+        SeerParallelStacksGraphicsView* _view;
+        bool                            _dragging = false;
+};
+
+
 class SeerParallelStacksGraphicsView : public QGraphicsView {
 
     Q_OBJECT
@@ -109,6 +148,12 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            wheelEvent                      (QWheelEvent* event) override;
         void            keyPressEvent                   (QKeyEvent* event) override;
         void            keyReleaseEvent                 (QKeyEvent* event) override;
+        void            mousePressEvent                 (QMouseEvent* event) override;
+        void            mouseMoveEvent                  (QMouseEvent* event) override;
+        void            mouseReleaseEvent               (QMouseEvent* event) override;
+        void            resizeEvent                     (QResizeEvent* event) override;
+        void            scrollContentsBy                (int dx, int dy) override;
+
 
     private slots:
         // Grows the scene rect (and thus the scrollbar range) if items have
@@ -132,7 +177,14 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            alignParentlessToBottom         (PlacedNode* pn, qreal maxBottom);
         void            addEdges                        (PlacedNode* pn);
         void            deleteTree                      (PlacedNode* pn);
+        void            repositionMiniMap               (); // keeps it pinned to bottom-right corner
 
         QGraphicsScene* _scene;
+        MiniMapWidget*  _miniMap;
+
+        bool            _panning = false;
+        QPoint          _panStartPos;  // viewport coords at pan start
+
+        friend class MiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
 

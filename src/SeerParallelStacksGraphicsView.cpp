@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QWheelEvent>
+#include <QScrollBar>
 #include <QFontMetrics>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
@@ -24,7 +25,7 @@ namespace Seer::PSV {
 
         if (!stack.threadIds.isEmpty()) {
 
-            const QVector<QString> &ids = stack.threadIds;
+            const QVector<QString>& ids = stack.threadIds;
             const int shown = std::min<qsizetype>(ids.size(), 8);
 
             QStringList parts;
@@ -69,7 +70,7 @@ namespace Seer::PSV {
         // the edges' own destructors (and any pending itemChange callbacks)
         // from dereferencing a dangling pointer back to this item.
 
-        for (LiveEdge *e : _edges) {
+        for (LiveEdge* e : _edges) {
             e->detachEndpoint(this);
         }
 
@@ -226,7 +227,7 @@ namespace Seer::PSV {
         if (_to)   _to->unregisterEdge(this);
     }
 
-    void LiveEdge::detachEndpoint(StackBoxItem *box) {
+    void LiveEdge::detachEndpoint(StackBoxItem* box) {
 
         if (_from == box) _from = nullptr;
         if (_to   == box) _to   = nullptr;
@@ -287,6 +288,146 @@ namespace Seer::PSV {
 }
 
 // ================================================================
+// MiniMapWidget
+// ================================================================
+
+MiniMapWidget::MiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent) : QWidget(parent) , _view(view) {
+
+    setAttribute(Qt::WA_NoSystemBackground, false);
+    setCursor(Qt::PointingHandCursor);
+    setToolTip(QStringLiteral("Click or drag to jump around the graph"));
+    resize(sizeHint());
+}
+
+QRectF MiniMapWidget::contentRect() const {
+
+    // Inset by a small margin so the border isn't drawn flush against
+    // the widget edge.
+    return QRectF(rect()).adjusted(2, 2, -2, -2);
+}
+
+void MiniMapWidget::refresh() {
+
+    update();
+}
+
+void MiniMapWidget::paintEvent(QPaintEvent* ) {
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    // Panel background
+    painter.setBrush(QColor(0xFF, 0xFF, 0xFF, 230));
+    painter.setPen(QPen(QColor(0x88, 0x88, 0x88), 1.5));
+    painter.drawRoundedRect(rect().adjusted(0, 0, -1, -1), 6, 6);
+
+    if (!_view || !_view->scene()) {
+        return;
+    }
+
+    const QRectF sceneRect = _view->sceneRect();
+    if (sceneRect.isEmpty()) {
+        return;
+    }
+
+    const QRectF avail = contentRect();
+
+    // Compute a uniform scale that fits the whole scene into the
+    // available area while preserving aspect ratio, then centre it.
+    const qreal sx = avail.width()  / sceneRect.width();
+    const qreal sy = avail.height() / sceneRect.height();
+    const qreal s  = std::min(sx, sy);
+
+    const qreal drawW = sceneRect.width()  * s;
+    const qreal drawH = sceneRect.height() * s;
+    const QPointF origin(avail.left() + (avail.width() - drawW) / 2.0, avail.top() + (avail.height() - drawH) / 2.0);
+
+    auto sceneToWidget = [&](const QPointF& p) -> QPointF {
+        return origin + QPointF((p.x() - sceneRect.left()) * s, (p.y() - sceneRect.top()) * s);
+    };
+
+    // Draw a small marker for every StackBoxItem so the overall shape
+    // of the graph is recognisable at a glance.
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(0x5A, 0x8F, 0xD6));
+    for (QGraphicsItem* item : _view->scene()->items()) {
+        if (auto* box = dynamic_cast<Seer::PSV::StackBoxItem*>(item)) {
+            QRectF r(sceneToWidget(box->sceneBoundingRect().topLeft()), sceneToWidget(box->sceneBoundingRect().bottomRight()));
+            if (r.width() < 2) r.setWidth(2);
+            if (r.height() < 2) r.setHeight(2);
+            painter.drawRoundedRect(r, 1, 1);
+        }
+    }
+
+    // Draw the main view's current visible region as an outlined box.
+    const QRectF visibleScene =
+        _view->mapToScene(_view->viewport()->rect()).boundingRect();
+    QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()),
+                          sceneToWidget(visibleScene.bottomRight()));
+
+    painter.setBrush(QColor(0x1A, 0x52, 0xA8, 40));
+    painter.setPen(QPen(QColor(0x1A, 0x52, 0xA8), 1.5));
+    painter.drawRect(viewportMarker);
+}
+
+void MiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
+
+    if (!_view || !_view->scene()) return;
+
+    const QRectF sceneRect = _view->sceneRect();
+    if (sceneRect.isEmpty()) return;
+
+    const QRectF avail = contentRect();
+    const qreal sx = avail.width()  / sceneRect.width();
+    const qreal sy = avail.height() / sceneRect.height();
+    const qreal s  = std::min(sx, sy);
+
+    const qreal drawW = sceneRect.width()  * s;
+    const qreal drawH = sceneRect.height() * s;
+    const QPointF origin(avail.left() + (avail.width()  - drawW) / 2.0,
+                         avail.top()  + (avail.height() - drawH) / 2.0);
+
+    // Inverse of sceneToWidget()
+    const QPointF scenePos(
+        sceneRect.left() + (widgetPos.x() - origin.x()) / s,
+        sceneRect.top()  + (widgetPos.y() - origin.y()) / s);
+
+    _view->centerOn(scenePos);
+    refresh();
+}
+
+void MiniMapWidget::mousePressEvent(QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _dragging = true;
+        jumpToWidgetPos(event->pos());
+        event->accept();
+        return;
+    }
+    QWidget::mousePressEvent(event);
+}
+
+void MiniMapWidget::mouseMoveEvent(QMouseEvent* event)
+{
+    if (_dragging) {
+        jumpToWidgetPos(event->pos());
+        event->accept();
+        return;
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
+void MiniMapWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (_dragging && event->button() == Qt::LeftButton) {
+        _dragging = false;
+        event->accept();
+        return;
+    }
+    QWidget::mouseReleaseEvent(event);
+}
+
+// ================================================================
 // SeerParallelStacksGraphicsView
 // ================================================================
 
@@ -300,15 +441,19 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
 
     setScene(_scene);
     setRenderHint(QPainter::Antialiasing);
-    // XXX setDragMode(QGraphicsView::ScrollHandDrag);
     setDragMode(QGraphicsView::NoDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setBackgroundBrush(QColor(0xF0, 0xF0, 0xF0));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+    _miniMap = new MiniMapWidget(this, this);
+    _miniMap->raise();
+
+
     // Connect things.
-    QObject::connect(_scene, &QGraphicsScene::changed,      this, &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
+    QObject::connect(_scene, &QGraphicsScene::changed,      this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
+    QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &MiniMapWidget::refresh);
 }
 
 void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
@@ -316,9 +461,11 @@ void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
     const double factor = event->angleDelta().y() > 0 ? 1.15 : 1.0 / 1.15;
 
     scale(factor, factor);
+
+    if (_miniMap) _miniMap->refresh();
 }
 
-void SeerParallelStacksGraphicsView::keyPressEvent(QKeyEvent *event) {
+void SeerParallelStacksGraphicsView::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_Shift) {
         setDragMode(QGraphicsView::ScrollHandDrag);
@@ -327,7 +474,7 @@ void SeerParallelStacksGraphicsView::keyPressEvent(QKeyEvent *event) {
     QGraphicsView::keyPressEvent(event);
 }
 
-void SeerParallelStacksGraphicsView::keyReleaseEvent(QKeyEvent *event) {
+void SeerParallelStacksGraphicsView::keyReleaseEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_Shift) {
         setDragMode(QGraphicsView::NoDrag);
@@ -336,13 +483,84 @@ void SeerParallelStacksGraphicsView::keyReleaseEvent(QKeyEvent *event) {
     QGraphicsView::keyReleaseEvent(event);
 }
 
+
+void SeerParallelStacksGraphicsView::resizeEvent(QResizeEvent* event) {
+
+    QGraphicsView::resizeEvent(event);
+
+    repositionMiniMap();
+}
+
+void SeerParallelStacksGraphicsView::scrollContentsBy(int dx, int dy) {
+
+    QGraphicsView::scrollContentsBy(dx, dy);
+
+    if (_miniMap) _miniMap->refresh();
+}
+
+void SeerParallelStacksGraphicsView::repositionMiniMap() {
+
+    if (!_miniMap) return;
+    const QSize s = _miniMap->sizeHint();
+    const int margin = 10;
+    _miniMap->setGeometry(width() - s.width() - margin,
+                           height() - s.height() - margin,
+                           s.width(), s.height());
+}
+
+void SeerParallelStacksGraphicsView::mousePressEvent(QMouseEvent* event) {
+
+    // Background panning only kicks in for Ctrl+LMB on empty space.
+    // If the click landed on an item (e.g. a StackBoxItem), let the base
+    // class dispatch it to that item — StackBoxItem handles its own
+    // Ctrl+LMB grab-and-move behavior.
+    if (event->button() == Qt::LeftButton &&
+        event->modifiers() & Qt::ControlModifier &&
+        itemAt(event->pos()) == nullptr) {
+        _panning     = true;
+        _panStartPos = event->pos();
+        setCursor(Qt::ClosedHandCursor);
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mousePressEvent(event);
+}
+
+void SeerParallelStacksGraphicsView::mouseMoveEvent(QMouseEvent* event) {
+
+    if (_panning) {
+        const QPoint delta = event->pos() - _panStartPos;
+        _panStartPos = event->pos();
+        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - delta.x());
+        verticalScrollBar()->setValue(verticalScrollBar()->value() - delta.y());
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
+
+    if (_panning && event->button() == Qt::LeftButton) {
+        _panning = false;
+        setCursor(Qt::ArrowCursor);
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+
 void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::Stack>& root) {
 
     _scene->clear();
 
     if (!root) return;
 
-    auto *rootPN = new PlacedNode;
+    auto* rootPN = new PlacedNode;
     buildPlacedTree(rootPN, root, nullptr);
 
     qreal xCursor = 0;
@@ -378,6 +596,9 @@ void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::S
     _scene->setSceneRect(bounds);
 
     fitInView(bounds, Qt::KeepAspectRatio);
+
+    repositionMiniMap();
+    if (_miniMap) _miniMap->refresh();
 }
 
 // Recursively find the maximum bottom edge (item->y() + item->height()) in the tree.
