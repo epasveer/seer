@@ -137,16 +137,95 @@ void SeerParallelStacksVisualizerWidget::handleHelpButton () {
 
 void SeerParallelStacksVisualizerWidget::handlePrintButton () {
 
-    /* XXX Implement PRINT logic on Scene.
-    imageViewer->print();
-    */
+    QGraphicsScene* scene = graphicsView->scene();
+    if (scene == nullptr) {
+        return;
+    }
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setPageOrientation(QPageLayout::Landscape);
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle("Seer - Print ParallelStacks");
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QRectF sceneRect = scene->sceneRect();
+
+    // Render the scene to a high-resolution image first.
+    // Use a decent multiplier so text/shapes stay crisp when scaled up to page size.
+    const qreal renderScale = 4.0; // tweak for quality vs memory/time
+    QSize imageSize = (sceneRect.size() * renderScale).toSize();
+
+    QImage image(imageSize, QImage::Format_ARGB32);
+    image.fill(Qt::white);
+
+    QPainter imagePainter(&image);
+    imagePainter.setRenderHint(QPainter::Antialiasing);
+    imagePainter.setRenderHint(QPainter::TextAntialiasing);
+    imagePainter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    scene->render(&imagePainter, QRectF(QPointF(0, 0), image.size()), sceneRect);
+    imagePainter.end();
+
+    // Now print the rasterized image, scaled to fit the page.
+    QPainter printPainter(&printer);
+    printPainter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    QRectF pageRect = printer.pageRect(QPrinter::DevicePixel);
+
+    QRectF target(QPointF(0, 0), image.size());
+    target.setSize(target.size().scaled(pageRect.size(), Qt::KeepAspectRatio));
+    target.moveCenter(pageRect.center());
+
+    printPainter.drawImage(target, image, image.rect());
+    printPainter.end();
+
+    QMessageBox::information(this, "Done", "Scene sent to printer.");
 }
 
 void SeerParallelStacksVisualizerWidget::handleSaveButton () {
 
-    /* XXX Implement SAVE logic on Scene.
-    imageViewer->saveFileDialog("/tmp/temp.png");
-    */
+    QGraphicsScene* scene = graphicsView->scene();
+    if (scene == nullptr) {
+        return;
+    }
+
+    QString fileName = QFileDialog::getSaveFileName(this, "Seer - Save ParallelStacks As Image", "parallelstacks.png", "PNG Image (*.png)");
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    // Make sure the file has a .png extension, in case the user typed one without it.
+    if (!fileName.endsWith(".png", Qt::CaseInsensitive)) {
+        fileName += ".png";
+    }
+
+    QRectF sceneRect = scene->sceneRect();
+
+    // Render at a higher resolution than the scene's native size for crisper output.
+    const qreal renderScale = 4.0; // tweak for quality vs file size
+    QSize imageSize = (sceneRect.size() * renderScale).toSize();
+
+    QImage image(imageSize, QImage::Format_ARGB32);
+    image.fill(Qt::white); // use Qt::transparent if you want a transparent background
+
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::TextAntialiasing);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+
+    scene->render(&painter, QRectF(QPointF(0, 0), image.size()), sceneRect);
+    painter.end();
+
+    if (!image.save(fileName, "PNG")) {
+        QMessageBox::warning(this, "Save Failed", "Could not save the image to:\n" + fileName);
+        return;
+    }
+
+    QMessageBox::information(this, "Done", "Scene saved to:\n" + fileName);
 }
 
 void SeerParallelStacksVisualizerWidget::writeSettings() {
