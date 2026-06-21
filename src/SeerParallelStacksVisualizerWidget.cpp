@@ -83,7 +83,7 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
             // Loop through each thread.
             for (const auto& thread_text : thread_list) {
 
-                Seer::PSV::Thread thread(thread_text);
+                SeerParallelStacksThread thread(thread_text);
 
                 _threads.push_back(thread);
 
@@ -261,10 +261,10 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     }
 
     // Build parallel-stacks tree
-    QVector<Seer::PSV::Thread> local = _threads; // mutable copy for ptr stability
+    QVector<SeerParallelStacksThread> local = _threads; // mutable copy for ptr stability
 
-    auto root  = Seer::PSV::buildParallelStacks(local);
-    auto stack = Seer::PSV::fillStack(root);
+    auto root  = SeerParallelStacksBuildParallelStacks(local);
+    auto stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack);
 }

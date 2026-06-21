@@ -38,6 +38,6 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        createDirectedGraph                 ();
 
         int                         _id;
-        Seer::PSV::Threads          _threads;
+        SeerParallelStacksThreads   _threads;
 };
 

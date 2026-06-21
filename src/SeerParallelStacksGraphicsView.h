@@ -5,96 +5,102 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QTableWidget>
 #include <QPointF>
 #include <QVector>
 
-namespace Seer::PSV {
+class SeerParallelStacksPopupTableWidget;
 
-    class LiveEdge;   // forward — StackBoxItem needs to know it
+class SeerParallelStacksLiveEdge;   // forward — SeerParallelStacksStackBoxItem needs to know it
 
-    // ---------------------------------------------------------------
-    // A single box in the graph: shows thread count + IDs + call frames.
-    // Ctrl+LMB grabs and moves the item freely within the scene.
-    // Moving the item automatically redraws all connected LiveEdges.
-    // ---------------------------------------------------------------
-    class StackBoxItem : public QGraphicsItem {
+// ---------------------------------------------------------------
+// A single box in the graph: shows thread count + IDs + call frames.
+// Ctrl+LMB grabs and moves the item freely within the scene.
+// Moving the item automatically redraws all connected LiveEdges.
+// ---------------------------------------------------------------
+class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
 
-        public:
-            explicit StackBoxItem(const Stack& stack, QGraphicsItem* parent = nullptr);
-           ~StackBoxItem() override;
+    Q_OBJECT
 
-            QRectF                  boundingRect        () const override;
-            void                    paint               (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    public:
+        explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, QGraphicsItem* parent = nullptr);
+        ~SeerParallelStacksStackBoxItem() override;
 
-            qreal                   width               () const { return _width;  }
-            qreal                   height              () const { return _height; }
+        QRectF                  boundingRect        () const override;
+        void                    paint               (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-            // Edge registry — called by LiveEdge on construction/destruction
-            void                    registerEdge        (LiveEdge* e) { _edges.append(e); }
-            void                    unregisterEdge      (LiveEdge* e) { _edges.removeAll(e); }
+        qreal                   width               () const { return _width;  }
+        qreal                   height              () const { return _height; }
 
-            // Bottom-centre and top-centre in scene coordinates (edge attach points)
-            QPointF                 sceneBottom         () const;
-            QPointF                 sceneTop            () const;
+        // Edge registry — called by LiveEdge on construction/destruction
+        void                    registerEdge        (SeerParallelStacksLiveEdge* e) { _edges.append(e); }
+        void                    unregisterEdge      (SeerParallelStacksLiveEdge* e) { _edges.removeAll(e); }
 
-        protected:
-            QVariant                itemChange          (GraphicsItemChange change, const QVariant& value) override;
+        // Bottom-centre and top-centre in scene coordinates (edge attach points)
+        QPointF                 sceneBottom         () const;
+        QPointF                 sceneTop            () const;
 
-            void                    mousePressEvent     (QGraphicsSceneMouseEvent* event) override;
-            void                    mouseMoveEvent      (QGraphicsSceneMouseEvent* event) override;
-            void                    mouseReleaseEvent   (QGraphicsSceneMouseEvent* event) override;
-            void                    hoverEnterEvent     (QGraphicsSceneHoverEvent* event) override;
-            void                    hoverLeaveEvent     (QGraphicsSceneHoverEvent* event) override;
+    protected:
+        QVariant                itemChange          (GraphicsItemChange change, const QVariant& value) override;
 
-        private:
-            enum RowKind { Function };
-            struct Row { QString text; RowKind kind; };
+        void                    mousePressEvent     (QGraphicsSceneMouseEvent* event) override;
+        void                    mouseMoveEvent      (QGraphicsSceneMouseEvent* event) override;
+        void                    mouseReleaseEvent   (QGraphicsSceneMouseEvent* event) override;
+        void                    hoverEnterEvent     (QGraphicsSceneHoverEvent* event) override;
+        void                    hoverLeaveEvent     (QGraphicsSceneHoverEvent* event) override;
 
-            QString                 _headerLeft;
-            QString                 _headerRight;
-            QVector<Row>            _rows;
-            qreal                   _width  = 0;
-            qreal                   _height = 0;
+    private slots:
+        void                    handleDeletePopup   ();
 
-            bool                    _dragging  = false;
-            QPointF                 _dragOffset;
+    private:
+        enum RowKind { Function };
+        struct Row { QString text; RowKind kind; };
 
-            QVector<LiveEdge*>      _edges;   // non-owning
+        QString                                 _headerLeft;
+        QString                                 _headerRight;
+        QVector<Row>                            _rows;
+        qreal                                   _width  = 0;
+        qreal                                   _height = 0;
+        SeerParallelStacksPopupTableWidget*     _popup  = 0;
 
-            static constexpr qreal  kPadX      = 12;
-            static constexpr qreal  kPadY      =  8;
-            static constexpr qreal  kRowH      = 20;
-            static constexpr qreal  kHeaderGap = 16;
-    };
+        bool                                    _dragging  = false;
+        QPointF                                 _dragOffset;
 
-    // ---------------------------------------------------------------
-    // A live bezier edge between two StackBoxItems.
-    // It redraws itself whenever either endpoint moves.
-    // ---------------------------------------------------------------
-    class LiveEdge : public QGraphicsItem {
+        QVector<SeerParallelStacksLiveEdge*>                      _edges;   // non-owning
 
-        public:
-            LiveEdge(StackBoxItem* from, StackBoxItem* to, QGraphicsItem* parent = nullptr);
-           ~LiveEdge() override;
+        static constexpr qreal  kPadX      = 12;
+        static constexpr qreal  kPadY      =  8;
+        static constexpr qreal  kRowH      = 20;
+        static constexpr qreal  kHeaderGap = 16;
+};
 
-            QRectF boundingRect     () const override;
-            void   paint            (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+// ---------------------------------------------------------------
+// A live bezier edge between two StackBoxItems.
+// It redraws itself whenever either endpoint moves.
+// ---------------------------------------------------------------
+class SeerParallelStacksLiveEdge : public QGraphicsItem {
 
-            // Called by StackBoxItem's destructor so this edge stops referencing
-            // an endpoint that is about to be (or has been) destroyed. After this,
-            // the edge renders nothing and its own destructor won't touch `box`.
-            void   detachEndpoint   (StackBoxItem* box);
+    public:
+        SeerParallelStacksLiveEdge(SeerParallelStacksStackBoxItem* from, SeerParallelStacksStackBoxItem* to, QGraphicsItem* parent = nullptr);
+        ~SeerParallelStacksLiveEdge() override;
+
+        QRectF boundingRect     () const override;
+        void   paint            (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+
+        // Called by StackBoxItem's destructor so this edge stops referencing
+        // an endpoint that is about to be (or has been) destroyed. After this,
+        // the edge renders nothing and its own destructor won't touch `box`.
+        void   detachEndpoint   (SeerParallelStacksStackBoxItem* box);
 
 
-        private:
-            StackBoxItem*           _from;   // child  (bottom anchor)
-            StackBoxItem*           _to;     // parent (top anchor)
+    private:
+        SeerParallelStacksStackBoxItem*           _from;   // child  (bottom anchor)
+        SeerParallelStacksStackBoxItem*           _to;     // parent (top anchor)
 
-            static constexpr qreal  kArrow = 8.0;
-            static constexpr qreal  kVCtrl = 60.0 * 0.4;   // bezier control-point stretch
-    };
+        static constexpr qreal  kArrow = 8.0;
+        static constexpr qreal  kVCtrl = 60.0 * 0.4;   // bezier control-point stretch
+};
 
-}
 
 class SeerParallelStacksGraphicsView;
 
@@ -134,6 +140,24 @@ class SeerParallelStacksMiniMapWidget : public QWidget {
         bool                            _dragging = false;
 };
 
+// A frameless popup window that wraps a QTableWidget inside a small
+// bordered frame, and closes/deletes itself when the mouse leaves it.
+class SeerParallelStacksPopupTableWidget : public QFrame {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
+
+    protected:
+        void            leaveEvent                      (QEvent* event) override;
+
+    signals:
+        void            mouseLeftPopup                  ();
+
+    private:
+        QTableWidget*   _table;
+};
 
 class SeerParallelStacksGraphicsView : public QGraphicsView {
 
@@ -142,7 +166,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     public:
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
-        void            setStack                        (const std::shared_ptr<Seer::PSV::Stack>& root);
+        void            setStack                        (const std::shared_ptr<SeerParallelStacksStack>& root);
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
@@ -163,15 +187,15 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
     private:
         struct PlacedNode {
-            std::shared_ptr<Seer::PSV::Stack>   stack;
-            Seer::PSV::StackBoxItem*            item   = nullptr;
+            std::shared_ptr<SeerParallelStacksStack>   stack;
+            SeerParallelStacksStackBoxItem*            item   = nullptr;
             PlacedNode*                         parent = nullptr;
             QVector<PlacedNode*>                children;
             qreal                               cx     = 0;
             qreal                               cy     = 0;
         };
 
-        void            buildPlacedTree                 (PlacedNode* pn, const std::shared_ptr<Seer::PSV::Stack>& stack, PlacedNode* parentPN);
+        void            buildPlacedTree                 (PlacedNode* pn, const std::shared_ptr<SeerParallelStacksStack>& stack, PlacedNode* parentPN);
         void            layoutTree                      (PlacedNode* pn, qreal& xCursor, qreal yTop);
         void            collectMaxBottom                (PlacedNode* pn, qreal& maxBottom);
         void            alignParentlessToBottom         (PlacedNode* pn, qreal maxBottom);

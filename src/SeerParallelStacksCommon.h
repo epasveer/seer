@@ -8,82 +8,79 @@
 #include <QtCore/QVector>
 #include <QtCore/QString>
 
-namespace Seer::PSV {
+class SeerParallelStacksFrame {
+    public:
+        SeerParallelStacksFrame ();
+        SeerParallelStacksFrame (const QString& text);
+        ~SeerParallelStacksFrame ();
 
-    class Frame {
-        public:
-            Frame ();
-            Frame (const QString& text);
-           ~Frame ();
+        int                 level           () const;
+        const QString&      addr            () const;
+        const QString&      function        () const;
+        const QString&      arch            () const;
+        const QString&      file            () const;
+        const QString&      fullname        () const;
+        int                 line            () const;
+        const QString&      type            () const;
+        QString             toString        () const;
 
-            int                 level           () const;
-            const QString&      addr            () const;
-            const QString&      function        () const;
-            const QString&      arch            () const;
-            const QString&      file            () const;
-            const QString&      fullname        () const;
-            int                 line            () const;
-            const QString&      type            () const;
-            QString             toString        () const;
+    private:
+        int                 _level;
+        QString             _addr;
+        QString             _function;
+        QString             _arch;
+        QString             _file;
+        QString             _fullname;
+        int                 _line;
+        QString             _type;
+};
 
-        private:
-            int                 _level;
-            QString             _addr;
-            QString             _function;
-            QString             _arch;
-            QString             _file;
-            QString             _fullname;
-            int                 _line;
-            QString             _type;
-    };
+typedef QVector<SeerParallelStacksFrame> SeerParallelStacksFrames;
 
-    typedef QVector<Frame> Frames;
+class SeerParallelStacksThread {
+    public:
+        SeerParallelStacksThread ();
+        SeerParallelStacksThread (const QString& text);
+        ~SeerParallelStacksThread ();
 
-    class Thread {
-        public:
-            Thread ();
-            Thread (const QString& text);
-           ~Thread ();
+        int                 id              () const;
+        const QString&      target_id       () const;
+        const QString&      name            () const;
+        const QString&      state           () const;
+        int                 current         () const;
+        QString             toString        () const;
 
-            int                 id              () const;
-            const QString&      target_id       () const;
-            const QString&      name            () const;
-            const QString&      state           () const;
-            int                 current         () const;
-            QString             toString        () const;
+        int                 frameCount      () const;
+        const SeerParallelStacksFrame&        frame           (int i) const;
+        const SeerParallelStacksFrames&       frames          () const;
 
-            int                 frameCount      () const;
-            const Frame&        frame           (int i) const;
-            const Frames&       frames          () const;
+    private:
+        int                 _id;
+        QString             _target_id;
+        QString             _name;
+        QString             _state;
+        int                 _current;
 
-        private:
-            int                 _id;
-            QString             _target_id;
-            QString             _name;
-            QString             _state;
-            int                 _current;
+        SeerParallelStacksFrames              _frames;
+};
 
-            Frames              _frames;
-    };
+typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 
-    typedef QVector<Thread> Threads;
+struct SeerParallelStacksStackNode {
+    QString                                 function;    // empty == root
+    int                                     depth  = 0;
+    QVector<SeerParallelStacksThread*>                        threads;     // non-owning pointers
+    QVector<std::shared_ptr<SeerParallelStacksStackNode>>     children;
+};
 
-    struct StackNode {
-        QString                                 function;    // empty == root
-        int                                     depth  = 0;
-        QVector<Thread*>                        threads;     // non-owning pointers
-        QVector<std::shared_ptr<StackNode>>     children;
-    };
+// Flat "Stack" representation used when building the graph.
+struct SeerParallelStacksStack {
+    QVector<QString>                        functions;
+    QVector<std::shared_ptr<SeerParallelStacksStack>>         stacks;
+    int                                     threadCount = 0;
+    QVector<QString>                        threadIds;   // IDs of every thread in this node
+};
 
-    // Flat "Stack" representation used when building the graph.
-    struct Stack {
-        QVector<QString>                        functions;
-        QVector<std::shared_ptr<Stack>>         stacks;
-        int                                     threadCount = 0;
-        QVector<QString>                        threadIds;   // IDs of every thread in this node
-    };
-
-    std::shared_ptr<StackNode>      buildParallelStacks     (QVector<Thread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
-    std::shared_ptr<Stack>          fillStack               (const std::shared_ptr<StackNode>& node);
-}
+std::shared_ptr<SeerParallelStacksStackNode>      SeerParallelStacksBuildParallelStacks     (QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
+std::shared_ptr<SeerParallelStacksStack>          SeerParallelStacksFillStack               (const std::shared_ptr<SeerParallelStacksStackNode>& node);
 

@@ -6,285 +6,309 @@
 #include <QFontMetrics>
 #include <QGraphicsSceneMouseEvent>
 #include <QCursor>
+#include <QHeaderView>
+#include <QVBoxLayout>
 #include <algorithm>
 #include <cmath>
 
-namespace Seer::PSV {
+class SeerParallelStacksPopupTableWidget;
 
-    // ================================================================
-    // StackBoxItem
-    // ================================================================
+// ================================================================
+// SeerParallelStacksStackBoxItem
+// ================================================================
+SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, QGraphicsItem* parent) : QGraphicsItem(parent) {
 
-    StackBoxItem::StackBoxItem(const Stack& stack, QGraphicsItem* parent) : QGraphicsItem(parent) {
+    // Enable geometry-change notifications so itemChange() fires on setPos()
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
+    setAcceptHoverEvents(true);
 
-        // Enable geometry-change notifications so itemChange() fires on setPos()
-        setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-        setAcceptHoverEvents(true);
+    _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
-        _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
+    if (!stack.threadIds.isEmpty()) {
 
-        if (!stack.threadIds.isEmpty()) {
+        const QVector<QString>& ids = stack.threadIds;
+        const int shown = std::min<qsizetype>(ids.size(), 8);
 
-            const QVector<QString>& ids = stack.threadIds;
-            const int shown = std::min<qsizetype>(ids.size(), 8);
+        QStringList parts;
+        parts.reserve(shown);
 
-            QStringList parts;
-            parts.reserve(shown);
-
-            for (int i = 0; i < shown; ++i) {
-                parts.append(ids[i]);
-            }
-
-            if (ids.size() > 8) {
-                _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(ids.size() - 8);
-            }else{
-                _headerRight = "[" + parts.join(", ") + "]";
-            }
+        for (int i = 0; i < shown; ++i) {
+            parts.append(ids[i]);
         }
 
-        for (int i = stack.functions.size() - 1; i >= 0; --i) {
-            _rows.append({ stack.functions[i], Function });
+        if (ids.size() > 8) {
+            _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(ids.size() - 8);
+        }else{
+            _headerRight = "[" + parts.join(", ") + "]";
         }
-
-        QFont        boldFont;  boldFont.setBold(true);
-        QFontMetrics boldFm(boldFont);
-        QFont        normFont;
-        QFontMetrics normFm(normFont);
-
-        qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
-        qreal maxTextW = headerW;
-
-        for (const auto& row : _rows) {
-            maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(row.text));
-        }
-
-        _width  = maxTextW + 2 * kPadX;
-        _height = kPadY + kRowH * (1 + (int)_rows.size()) + kPadY;
     }
 
-    StackBoxItem::~StackBoxItem() {
-
-        // Tell every edge that still points at us to forget about it.
-        // This must run BEFORE this object's memory is freed, regardless of
-        // whether the scene destroys this box or its edges first — it prevents
-        // the edges' own destructors (and any pending itemChange callbacks)
-        // from dereferencing a dangling pointer back to this item.
-
-        for (LiveEdge* e : _edges) {
-            e->detachEndpoint(this);
-        }
-
-        _edges.clear();
+    for (int i = stack.functions.size() - 1; i >= 0; --i) {
+        _rows.append({ stack.functions[i], Function });
     }
 
-    QRectF StackBoxItem::boundingRect() const {
+    QFont        boldFont;  boldFont.setBold(true);
+    QFontMetrics boldFm(boldFont);
+    QFont        normFont;
+    QFontMetrics normFm(normFont);
 
-        return QRectF(0, 0, _width, _height);
+    qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
+    qreal maxTextW = headerW;
+
+    for (const auto& row : _rows) {
+        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(row.text));
     }
 
-    void StackBoxItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+    _width  = maxTextW + 2 * kPadX;
+    _height = kPadY + kRowH * (1 + (int)_rows.size()) + kPadY;
+}
 
-        painter->setRenderHint(QPainter::Antialiasing);
+SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem() {
 
-        painter->setBrush(QColor(0xFA, 0xFA, 0xFA));
-        painter->setPen(QPen(QColor(0x88, 0x88, 0x88), 1.5));
-        painter->drawRoundedRect(boundingRect(), 6, 6);
+    // Tell every edge that still points at us to forget about it.
+    // This must run BEFORE this object's memory is freed, regardless of
+    // whether the scene destroys this box or its edges first — it prevents
+    // the edges' own destructors (and any pending itemChange callbacks)
+    // from dereferencing a dangling pointer back to this item.
 
-        QFont boldFont;  boldFont.setBold(true);
-        QFont normFont;
-        const qreal innerW = _width - 2 * kPadX;
-        qreal y = kPadY;
+    for (SeerParallelStacksLiveEdge* e : _edges) {
+        e->detachEndpoint(this);
+    }
 
-        painter->setFont(boldFont);
-        painter->setPen(QColor(0x22, 0x22, 0x22));
-        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
+    _edges.clear();
+}
 
-        if (!_headerRight.isEmpty()) {
-            painter->setPen(QColor(0x1A, 0x52, 0xA8));
-            painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
-        }
+QRectF SeerParallelStacksStackBoxItem::boundingRect() const {
 
+    return QRectF(0, 0, _width, _height);
+}
+
+void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    painter->setBrush(QColor(0xFA, 0xFA, 0xFA));
+    painter->setPen(QPen(QColor(0x88, 0x88, 0x88), 1.5));
+    painter->drawRoundedRect(boundingRect(), 6, 6);
+
+    QFont boldFont;  boldFont.setBold(true);
+    QFont normFont;
+    const qreal innerW = _width - 2 * kPadX;
+    qreal y = kPadY;
+
+    painter->setFont(boldFont);
+    painter->setPen(QColor(0x22, 0x22, 0x22));
+    painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
+
+    if (!_headerRight.isEmpty()) {
+        painter->setPen(QColor(0x1A, 0x52, 0xA8));
+        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
+    }
+
+    y += kRowH;
+
+    painter->setPen(QPen(QColor(0xCC, 0xCC, 0xCC), 1));
+    painter->drawLine(QPointF(0, y), QPointF(_width, y));
+
+    painter->setFont(normFont);
+    painter->setPen(QColor(0x00, 0x7A, 0x33));
+
+    for (const auto& row : _rows) {
+        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, row.text);
         y += kRowH;
-
-        painter->setPen(QPen(QColor(0xCC, 0xCC, 0xCC), 1));
-        painter->drawLine(QPointF(0, y), QPointF(_width, y));
-
-        painter->setFont(normFont);
-        painter->setPen(QColor(0x00, 0x7A, 0x33));
-
-        for (const auto& row : _rows) {
-            painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, row.text);
-            y += kRowH;
-        }
-
-        if (_dragging) {
-            painter->setBrush(Qt::NoBrush);
-            painter->setPen(QPen(QColor(0x1A, 0x52, 0xA8), 2.0, Qt::DashLine));
-            painter->drawRoundedRect(boundingRect().adjusted(1, 1, -1, -1), 6, 6);
-        }
     }
 
-    QPointF StackBoxItem::sceneBottom() const {
-
-        return mapToScene(QPointF(_width / 2.0, _height));
-    }
-
-    QPointF StackBoxItem::sceneTop() const {
-
-        return mapToScene(QPointF(_width / 2.0, 0));
-    }
-
-    QVariant StackBoxItem::itemChange(GraphicsItemChange change, const QVariant& value) {
-
-        if (change == ItemPositionHasChanged) {
-            for (LiveEdge* e : _edges) {
-                e->update();   // ask each connected edge to repaint
-            }
-        }
-
-        return QGraphicsItem::itemChange(change, value);
-    }
-
-    void StackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
-
-        if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier) {
-
-            _dragging   = true;
-            _dragOffset = event->pos();
-
-            setZValue(10);
-            update();
-
-            event->accept();
-
-            return;
-        }
-
-        QGraphicsItem::mousePressEvent(event);
-    }
-
-    void StackBoxItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
-
-        if (_dragging) {
-
-            setPos(mapToScene(event->pos() - _dragOffset));
-            event->accept();
-
-            return;
-        }
-
-        QGraphicsItem::mouseMoveEvent(event);
-    }
-
-    void StackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-
-        if (_dragging && event->button() == Qt::LeftButton) {
-
-            _dragging = false;
-
-            setZValue(0);
-            update();
-
-            event->accept();
-
-            return;
-        }
-
-        QGraphicsItem::mouseReleaseEvent(event);
-    }
-
-    void StackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
-
-        QGraphicsItem::hoverEnterEvent(event);
-    }
-
-    void StackBoxItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-
-        QGraphicsItem::hoverLeaveEvent(event);
-    }
-
-
-    // ================================================================
-    // LiveEdge — redraws itself each paint() from current endpoint positions
-    // ================================================================
-    LiveEdge::LiveEdge(StackBoxItem* from, StackBoxItem* to, QGraphicsItem* parent) : QGraphicsItem(parent) , _from(from) , _to(to) {
-
-        setZValue(-1);
-        // Position the edge item at the scene origin; all coordinates are scene-space.
-        setPos(0, 0);
-
-        _from->registerEdge(this);
-        _to->registerEdge(this);
-    }
-
-    LiveEdge::~LiveEdge() {
-
-        // If our endpoints are still alive, tell them to forget about us so
-        // they don't later call update() on a dangling LiveEdge* during
-        // itemChange(). detachEndpoint() is a no-op if the endpoint has
-        // already nulled itself out via StackBoxItem::~StackBoxItem().
-        if (_from) _from->unregisterEdge(this);
-        if (_to)   _to->unregisterEdge(this);
-    }
-
-    void LiveEdge::detachEndpoint(StackBoxItem* box) {
-
-        if (_from == box) _from = nullptr;
-        if (_to   == box) _to   = nullptr;
-    }
-
-    QRectF LiveEdge::boundingRect() const {
-
-        // Return the bounding rect of the two endpoints plus generous padding
-        // so the bezier and arrowhead are never clipped.
-        if (!_from || !_to) return QRectF();
-
-        QPointF f = _from->sceneBottom();
-        QPointF t = _to->sceneTop();
-
-        qreal pad = kArrow + kVCtrl + 4;
-
-        return QRectF(f, t).normalized().adjusted(-pad, -pad, pad, pad);
-    }
-
-    void LiveEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
-
-        if (!_from || !_to) return;
-
-        painter->setRenderHint(QPainter::Antialiasing);
-
-        QPointF from = _from->sceneBottom();
-        QPointF to   = _to->sceneTop();
-
-        // Bezier: control points pull vertically toward each other
-        QPainterPath path;
-        path.moveTo(from);
-        path.cubicTo(from + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
-
-        painter->setPen(QPen(QColor(0x55, 0x55, 0x55), 1.5));
+    if (_dragging) {
         painter->setBrush(Qt::NoBrush);
-        painter->drawPath(path);
-
-        // Arrowhead at `to` pointing downward (into the parent box)
-        // The tangent direction at the end of the cubic is (to - cp2)
-        QPointF cp2  = to + QPointF(0, -kVCtrl);
-        QPointF dir  = to - cp2;
-        double  len  = std::hypot(dir.x(), dir.y());
-        if (len < 1e-6) return;
-        dir /= len;   // normalise
-
-        // Perpendicular
-        QPointF perp(-dir.y(), dir.x());
-
-        QPointF a1 = to - dir * kArrow + perp * (kArrow * 0.5);
-        QPointF a2 = to - dir * kArrow - perp * (kArrow * 0.5);
-
-        QPolygonF arrowHead;
-        arrowHead << to << a1 << a2;
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(QColor(0x55, 0x55, 0x55));
-        painter->drawPolygon(arrowHead);
+        painter->setPen(QPen(QColor(0x1A, 0x52, 0xA8), 2.0, Qt::DashLine));
+        painter->drawRoundedRect(boundingRect().adjusted(1, 1, -1, -1), 6, 6);
     }
+}
+
+QPointF SeerParallelStacksStackBoxItem::sceneBottom() const {
+
+    return mapToScene(QPointF(_width / 2.0, _height));
+}
+
+QPointF SeerParallelStacksStackBoxItem::sceneTop() const {
+
+    return mapToScene(QPointF(_width / 2.0, 0));
+}
+
+QVariant SeerParallelStacksStackBoxItem::itemChange(GraphicsItemChange change, const QVariant& value) {
+
+    if (change == ItemPositionHasChanged) {
+        for (SeerParallelStacksLiveEdge* e : _edges) {
+            e->update();   // ask each connected edge to repaint
+        }
+    }
+
+    return QGraphicsItem::itemChange(change, value);
+}
+
+void SeerParallelStacksStackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier) {
+
+        _dragging   = true;
+        _dragOffset = event->pos();
+
+        setZValue(10);
+        update();
+
+        event->accept();
+
+        return;
+    }
+
+    QGraphicsItem::mousePressEvent(event);
+}
+
+void SeerParallelStacksStackBoxItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+
+    if (_dragging) {
+
+        setPos(mapToScene(event->pos() - _dragOffset));
+        event->accept();
+
+        return;
+    }
+
+    QGraphicsItem::mouseMoveEvent(event);
+}
+
+void SeerParallelStacksStackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+
+    if (_dragging && event->button() == Qt::LeftButton) {
+
+        _dragging = false;
+
+        setZValue(0);
+        update();
+
+        event->accept();
+
+        return;
+    }
+
+    QGraphicsItem::mouseReleaseEvent(event);
+}
+
+void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
+
+    qDebug() << "Hover Enter";
+
+    QGraphicsItem::hoverEnterEvent(event);
+
+    if (_popup == nullptr) {
+
+        _popup = new SeerParallelStacksPopupTableWidget();
+
+        QPoint pos = event->screenPos();
+
+        _popup->move(pos);
+        _popup->show();
+
+        // Connect things.
+        QObject::connect(_popup, &SeerParallelStacksPopupTableWidget::mouseLeftPopup,      this, &SeerParallelStacksStackBoxItem::handleDeletePopup);
+    }
+}
+
+void SeerParallelStacksStackBoxItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
+
+    qDebug() << "Hover Leave";
+
+    QGraphicsItem::hoverLeaveEvent(event);
+}
+
+void SeerParallelStacksStackBoxItem::handleDeletePopup() {
+
+    if (_popup) {
+        delete _popup;
+        _popup = nullptr;
+    }
+}
+
+// ================================================================
+// SeerParallelStacksLiveEdge — redraws itself each paint() from current endpoint positions
+// ================================================================
+SeerParallelStacksLiveEdge::SeerParallelStacksLiveEdge(SeerParallelStacksStackBoxItem* from, SeerParallelStacksStackBoxItem* to, QGraphicsItem* parent) : QGraphicsItem(parent) , _from(from) , _to(to) {
+
+    setZValue(-1);
+    // Position the edge item at the scene origin; all coordinates are scene-space.
+    setPos(0, 0);
+
+    _from->registerEdge(this);
+    _to->registerEdge(this);
+}
+
+SeerParallelStacksLiveEdge::~SeerParallelStacksLiveEdge() {
+
+    // If our endpoints are still alive, tell them to forget about us so
+    // they don't later call update() on a dangling SeerParallelStacksLiveEdge* during
+    // itemChange(). detachEndpoint() is a no-op if the endpoint has
+    // already nulled itself out via SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem().
+    if (_from) _from->unregisterEdge(this);
+    if (_to)   _to->unregisterEdge(this);
+}
+
+void SeerParallelStacksLiveEdge::detachEndpoint(SeerParallelStacksStackBoxItem* box) {
+
+    if (_from == box) _from = nullptr;
+    if (_to   == box) _to   = nullptr;
+}
+
+QRectF SeerParallelStacksLiveEdge::boundingRect() const {
+
+    // Return the bounding rect of the two endpoints plus generous padding
+    // so the bezier and arrowhead are never clipped.
+    if (!_from || !_to) return QRectF();
+
+    QPointF f = _from->sceneBottom();
+    QPointF t = _to->sceneTop();
+
+    qreal pad = kArrow + kVCtrl + 4;
+
+    return QRectF(f, t).normalized().adjusted(-pad, -pad, pad, pad);
+}
+
+void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
+
+    if (!_from || !_to) return;
+
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    QPointF from = _from->sceneBottom();
+    QPointF to   = _to->sceneTop();
+
+    // Bezier: control points pull vertically toward each other
+    QPainterPath path;
+    path.moveTo(from);
+    path.cubicTo(from + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
+
+    painter->setPen(QPen(QColor(0x55, 0x55, 0x55), 1.5));
+    painter->setBrush(Qt::NoBrush);
+    painter->drawPath(path);
+
+    // Arrowhead at `to` pointing downward (into the parent box)
+    // The tangent direction at the end of the cubic is (to - cp2)
+    QPointF cp2  = to + QPointF(0, -kVCtrl);
+    QPointF dir  = to - cp2;
+    double  len  = std::hypot(dir.x(), dir.y());
+    if (len < 1e-6) return;
+    dir /= len;   // normalise
+
+    // Perpendicular
+    QPointF perp(-dir.y(), dir.x());
+
+    QPointF a1 = to - dir * kArrow + perp * (kArrow * 0.5);
+    QPointF a2 = to - dir * kArrow - perp * (kArrow * 0.5);
+
+    QPolygonF arrowHead;
+    arrowHead << to << a1 << a2;
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(QColor(0x55, 0x55, 0x55));
+    painter->drawPolygon(arrowHead);
 }
 
 // ================================================================
@@ -346,13 +370,13 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
         return origin + QPointF((p.x() - sceneRect.left()) * s, (p.y() - sceneRect.top()) * s);
     };
 
-    // Draw a small marker for every StackBoxItem so the overall shape
+    // Draw a small marker for every SeerParallelStacksStackBoxItem so the overall shape
     // of the graph is recognisable at a glance.
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0x5A, 0x8F, 0xD6));
 
     for (QGraphicsItem* item : _view->scene()->items()) {
-        if (auto* box = dynamic_cast<Seer::PSV::StackBoxItem*>(item)) {
+        if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
             QRectF r(sceneToWidget(box->sceneBoundingRect().topLeft()), sceneToWidget(box->sceneBoundingRect().bottomRight()));
             if (r.width() < 2) r.setWidth(2);
             if (r.height() < 2) r.setHeight(2);
@@ -430,12 +454,72 @@ void SeerParallelStacksMiniMapWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 // ================================================================
-// SeerParallelStacksGraphicsView
+// SeerParallelStacksMiniMapWidget
 // ================================================================
+SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* parent) : QFrame(parent) {
 
-using Seer::PSV::StackBoxItem;
-using Seer::PSV::LiveEdge;
+    // Frameless, no taskbar entry. Using Qt::Window instead of Qt::Popup
+    // here because Qt::Popup grabs the mouse and can interfere with
+    // leaveEvent delivery on some platforms.
+    setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
+    // Visible frame around the table
+    setFrameShape(QFrame::Box);
+    setFrameShadow(QFrame::Plain);
+    setLineWidth(1);
+    setStyleSheet(
+            "SeerParallelStacksPopupTableWidget {"
+            "  background-color: palette(window);"
+            "  border: 1px solid #888;"
+            "  border-radius: 4px;"
+            "}"
+            );
+
+    // Ensure leaveEvent fires reliably even without buttons held
+    setMouseTracking(true);
+
+    _table = new QTableWidget(this);
+    _table->setMouseTracking(true);
+    _table->viewport()->setMouseTracking(true);
+
+    _table->setRowCount(5);
+    _table->setColumnCount(3);
+    _table->setHorizontalHeaderLabels({"Name", "Score", "Status"});
+
+    const QStringList names  = {"Alice", "Bob", "Carol", "Dave", "Eve"};
+    const QStringList scores = {"92", "85", "77", "64", "99"};
+    const QStringList status = {"Pass", "Pass", "Pass", "Fail", "Pass"};
+
+    for (int row = 0; row < 5; ++row) {
+        _table->setItem(row, 0, new QTableWidgetItem(names[row]));
+        _table->setItem(row, 1, new QTableWidgetItem(scores[row]));
+        _table->setItem(row, 2, new QTableWidgetItem(status[row]));
+    }
+
+    _table->horizontalHeader()->setStretchLastSection(true);
+    _table->verticalHeader()->setVisible(false);
+    _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _table->setFrameShape(QFrame::NoFrame); // outer QFrame provides the border
+
+    // Small padding between the outer frame border and the table itself
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->setContentsMargins(6, 6, 6, 6);
+    layout->addWidget(_table);
+
+    resize(320, 180);
+}
+
+void SeerParallelStacksPopupTableWidget::leaveEvent(QEvent* event) {
+
+    QFrame::leaveEvent(event);
+
+    emit mouseLeftPopup();
+}
+
+// ================================================================
+// SeerParallelStacksPopupTableWidget
+// ================================================================
 constexpr qreal kHGap = 30.0;
 constexpr qreal kVGap = 60.0;
 
@@ -503,22 +587,20 @@ void SeerParallelStacksGraphicsView::scrollContentsBy(int dx, int dy) {
 void SeerParallelStacksGraphicsView::repositionMiniMap() {
 
     if (!_miniMap) return;
+
     const QSize s = _miniMap->sizeHint();
     const int margin = 10;
-    _miniMap->setGeometry(width() - s.width() - margin,
-                           height() - s.height() - margin,
-                           s.width(), s.height());
+
+    _miniMap->setGeometry(width() - s.width() - margin, height() - s.height() - margin, s.width(), s.height());
 }
 
 void SeerParallelStacksGraphicsView::mousePressEvent(QMouseEvent* event) {
 
     // Background panning only kicks in for Ctrl+LMB on empty space.
-    // If the click landed on an item (e.g. a StackBoxItem), let the base
-    // class dispatch it to that item — StackBoxItem handles its own
+    // If the click landed on an item (e.g. a SeerParallelStacksStackBoxItem), let the base
+    // class dispatch it to that item — SeerParallelStacksStackBoxItem handles its own
     // Ctrl+LMB grab-and-move behavior.
-    if (event->button() == Qt::LeftButton &&
-        event->modifiers() & Qt::ControlModifier &&
-        itemAt(event->pos()) == nullptr) {
+    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier && itemAt(event->pos()) == nullptr) {
         _panning     = true;
         _panStartPos = event->pos();
         setCursor(Qt::ClosedHandCursor);
@@ -556,7 +638,7 @@ void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 
-void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::Stack>& root) {
+void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<SeerParallelStacksStack>& root) {
 
     _scene->clear();
 
@@ -600,6 +682,7 @@ void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<Seer::PSV::S
     fitInView(bounds, Qt::KeepAspectRatio);
 
     repositionMiniMap();
+
     if (_miniMap) _miniMap->refresh();
 }
 
@@ -632,13 +715,13 @@ void SeerParallelStacksGraphicsView::alignParentlessToBottom(PlacedNode* pn, qre
     }
 }
 
-void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const std::shared_ptr<Seer::PSV::Stack>& stack, PlacedNode* parentPN) {
+void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const std::shared_ptr<SeerParallelStacksStack>& stack, PlacedNode* parentPN) {
 
     pn->stack  = stack;
     pn->parent = parentPN;
 
     if (!stack->functions.isEmpty()) {
-        pn->item = new StackBoxItem(*stack);
+        pn->item = new SeerParallelStacksStackBoxItem(*stack);
         _scene->addItem(pn->item);
     }
 
@@ -694,9 +777,9 @@ void SeerParallelStacksGraphicsView::addEdges(PlacedNode* pn) {
 
     for (auto* child : pn->children) {
         if (pn->item && child->item) {
-            // LiveEdge registers itself with both endpoints on construction.
+            // SeerParallelStacksLiveEdge registers itself with both endpoints on construction.
             // The scene takes ownership via addItem.
-            auto* edge = new LiveEdge(child->item, pn->item);
+            auto* edge = new SeerParallelStacksLiveEdge(child->item, pn->item);
             _scene->addItem(edge);
         }
         addEdges(child);
