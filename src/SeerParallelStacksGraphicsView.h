@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QTableWidget>
+#include <QTimer>
 #include <QPointF>
 #include <QVector>
 
@@ -21,6 +22,7 @@ class SeerParallelStacksLiveEdge;   // forward — SeerParallelStacksStackBoxIte
 class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
 
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 
     public:
         explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, QGraphicsItem* parent = nullptr);
@@ -150,13 +152,18 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
         explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
 
     protected:
+        void            enterEvent                      (QEnterEvent* event) override;
         void            leaveEvent                      (QEvent* event) override;
+
+    protected slots:
+        void            handleCloseTimer                ();
 
     signals:
         void            mouseLeftPopup                  ();
 
     private:
         QTableWidget*   _table;
+        QTimer*         _closeTimer;
 };
 
 class SeerParallelStacksGraphicsView : public QGraphicsView {

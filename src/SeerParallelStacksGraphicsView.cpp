@@ -196,17 +196,20 @@ void SeerParallelStacksStackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*
 
 void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* event) {
 
-    qDebug() << "Hover Enter";
-
     QGraphicsItem::hoverEnterEvent(event);
 
     if (_popup == nullptr) {
 
         _popup = new SeerParallelStacksPopupTableWidget();
 
-        QPoint pos = event->screenPos();
+        QGraphicsView* view = scene()->views().first(); // scene() is always valid here
 
-        _popup->move(pos);
+        // Position below the item, aligned to its left edge
+        QRectF sceneRect  = mapToScene(boundingRect()).boundingRect();
+        QPoint viewportPt = view->mapFromScene(sceneRect.bottomLeft());
+        QPoint globalPt   = view->viewport()->mapToGlobal(viewportPt);
+        _popup->move(globalPt);
+
         _popup->show();
 
         // Connect things.
@@ -215,8 +218,6 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
 }
 
 void SeerParallelStacksStackBoxItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
-
-    qDebug() << "Hover Leave";
 
     QGraphicsItem::hoverLeaveEvent(event);
 }
@@ -454,7 +455,7 @@ void SeerParallelStacksMiniMapWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 // ================================================================
-// SeerParallelStacksMiniMapWidget
+// SeerParallelStacksPopupTableWidget
 // ================================================================
 SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* parent) : QFrame(parent) {
 
@@ -507,13 +508,40 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     layout->setContentsMargins(6, 6, 6, 6);
     layout->addWidget(_table);
 
+    _closeTimer = new QTimer(this);
+    _closeTimer->setSingleShot(true); // Ensures it only fires once
+    _closeTimer->setInterval(1500);   // Delay
+
+    // Connect things.
+    QObject::connect(_closeTimer, &QTimer::timeout,      this, &SeerParallelStacksPopupTableWidget::handleCloseTimer);
+
+    _closeTimer->start();
+
     resize(320, 180);
+}
+
+void SeerParallelStacksPopupTableWidget::enterEvent(QEnterEvent* event) {
+
+    // If the user moves the cursor into the table, cancel the timer.
+    if (_closeTimer->isActive()) {
+        _closeTimer->stop();
+    }
+
+    QFrame::enterEvent(event);
 }
 
 void SeerParallelStacksPopupTableWidget::leaveEvent(QEvent* event) {
 
+    // If the user leaves the table, ask for the table to be closed.
     QFrame::leaveEvent(event);
 
+    emit mouseLeftPopup();
+}
+
+void SeerParallelStacksPopupTableWidget::handleCloseTimer() {
+
+    // If the user doesn't move the cursor into the table in the default time,
+    // ask the table to be closed.
     emit mouseLeftPopup();
 }
 
