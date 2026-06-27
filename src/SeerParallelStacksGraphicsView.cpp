@@ -202,6 +202,10 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
 
         _popup = new SeerParallelStacksPopupTableWidget();
 
+        for (const auto& row : _rows) {
+            _popup->addRow(row.text);
+        }
+
         QGraphicsView* view = scene()->views().first(); // scene() is always valid here
 
         // Position below the item, aligned to its left edge
@@ -480,28 +484,23 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     setMouseTracking(true);
 
     _table = new QTableWidget(this);
+    _table->setRowCount(0);
+    _table->setColumnCount(2);
+    _table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
+    _table->setHorizontalHeaderLabels({"Function","Length"});
+    _table->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    _table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    _table->horizontalScrollBar()->setSingleStep(5);
+    _table->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     _table->setMouseTracking(true);
     _table->viewport()->setMouseTracking(true);
-
-    _table->setRowCount(5);
-    _table->setColumnCount(3);
-    _table->setHorizontalHeaderLabels({"Name", "Score", "Status"});
-
-    const QStringList names  = {"Alice", "Bob", "Carol", "Dave", "Eve"};
-    const QStringList scores = {"92", "85", "77", "64", "99"};
-    const QStringList status = {"Pass", "Pass", "Pass", "Fail", "Pass"};
-
-    for (int row = 0; row < 5; ++row) {
-        _table->setItem(row, 0, new QTableWidgetItem(names[row]));
-        _table->setItem(row, 1, new QTableWidgetItem(scores[row]));
-        _table->setItem(row, 2, new QTableWidgetItem(status[row]));
-    }
-
     _table->horizontalHeader()->setStretchLastSection(true);
-    _table->verticalHeader()->setVisible(false);
-    _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    _table->verticalHeader()->setVisible(true);
+    _table->setEditTriggers(QAbstractItemView::DoubleClicked); // NoEditTriggers
     _table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _table->setFrameShape(QFrame::NoFrame); // outer QFrame provides the border
+    _table->resizeColumnToContents(0);
+    _table->resizeColumnToContents(1);
 
     // Small padding between the outer frame border and the table itself
     QVBoxLayout* layout = new QVBoxLayout(this);
@@ -517,7 +516,28 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
 
     _closeTimer->start();
 
-    resize(320, 180);
+    // resize(320, 180);
+}
+
+void SeerParallelStacksPopupTableWidget::addRow (const QString& text) {
+
+    int nrows = _table->rowCount();
+
+    _table->setRowCount(nrows+1);
+
+    QTableWidgetItem* item0 = new QTableWidgetItem(text);
+    item0->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    item0->setFlags(item0->flags()|Qt::ItemIsEditable);
+
+    QTableWidgetItem* item1 = new QTableWidgetItem(QString::number(text.length()));
+    item1->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    item1->setFlags(item1->flags()|Qt::ItemIsEditable);
+
+    _table->setItem(nrows, 0, item0);
+    _table->setItem(nrows, 1, item1);
+
+    _table->resizeColumnToContents(0);
+    _table->resizeColumnToContents(1);
 }
 
 void SeerParallelStacksPopupTableWidget::enterEvent(QEnterEvent* event) {

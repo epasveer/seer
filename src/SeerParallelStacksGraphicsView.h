@@ -151,6 +151,8 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
     public:
         explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
 
+        void            addRow                          (const QString& text);
+
     protected:
         void            enterEvent                      (QEnterEvent* event) override;
         void            leaveEvent                      (QEvent* event) override;
