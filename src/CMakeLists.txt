@@ -34,6 +34,7 @@ if(${QTVERSION} STREQUAL "QT6")
     find_package(Qt6 COMPONENTS REQUIRED Svg)
     find_package(Qt6 COMPONENTS REQUIRED OpenGL)
     find_package(Qt6 COMPONENTS REQUIRED Network)
+    find_package(Qt6 COMPONENTS REQUIRED SerialPort)
 
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -167,6 +168,7 @@ set(HEADER_FILES
     SeerMacroToolButton.h
     SeerOpenOCDWidget.h
     SeerOpenocdConfigPage.h
+    SeerOpenOCDDebugOnInit.h
     )
 
 # Define the source location of source files
@@ -283,6 +285,7 @@ set(SOURCE_FILES
     SeerMacroToolButton.cpp
     SeerOpenOCDWidget.cpp
     SeerOpenocdConfigPage.cpp
+    SeerOpenOCDDebugOnInit.cpp
     seergdb.cpp
     )
 
@@ -313,7 +316,7 @@ add_executable(${PROJECT_NAME} ${SYSTEM_TYPE} ${SOURCE_FILES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 if(${QTVERSION} STREQUAL "QT6")
-    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL Qt6::Network)
+    target_link_libraries(${PROJECT_NAME} Qt6::Widgets Qt6::Gui Qt6::Core Qt6::PrintSupport Qt6::Charts Qt6::Svg Qt6::OpenGL Qt6::Network Qt6::SerialPort)
 elseif(${QTVERSION} STREQUAL "QT5")
     target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Core Qt5::PrintSupport Qt5::Charts)
 endif()

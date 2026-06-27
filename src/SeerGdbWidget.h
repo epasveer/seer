@@ -244,6 +244,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
     public slots:
         void                                handleText                                  (const QString& text);
+        void                                handleTextDebugOnInit                       (const QString& text);
         void                                handleManualCommandExecute                  (QString command);
         void                                handleGdbCommand                            (const QString& command, bool ignoreErrors=false);
         void                                handleGdbCommands                           (const QStringList& commands);
@@ -404,6 +405,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbProcessErrored                     (QProcess::ProcessError errorStatus);
 
         void                                handleAboutToQuit                           ();
+        void                                handleDebugOnInit                           ();
 
     signals:
         void                                stoppingPointReached                        ();
@@ -495,5 +497,12 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _loadAddress;
         QString                             _symbolFile;
         QString                             _sourcePath;
+
+        // Openocd Debug On Init
+        QString                             _moduleName;
+        QString                             _commandToTerm;
+        QString                             _kernelModuleSymbolPath;
+        QString                             _kernelModuleSourceCodePath;
+        QString                             _serialPortPath;
 };
 
