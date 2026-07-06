@@ -24,20 +24,24 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
 
     _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
+    _threadIds.resize(0);
+    _rows.resize(0);
+
     if (!stack.threadIds.isEmpty()) {
 
-        const QVector<QString>& ids = stack.threadIds;
-        const int shown = std::min<qsizetype>(ids.size(), 8);
+        _threadIds = stack.threadIds;
+
+        int shown = std::min<qsizetype>(_threadIds.size(), 8);
 
         QStringList parts;
         parts.reserve(shown);
 
         for (int i = 0; i < shown; ++i) {
-            parts.append(ids[i]);
+            parts.append(_threadIds[i]);
         }
 
-        if (ids.size() > 8) {
-            _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(ids.size() - 8);
+        if (_threadIds.size() > 8) {
+            _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(_threadIds.size() - 8);
         }else{
             _headerRight = "[" + parts.join(", ") + "]";
         }
@@ -240,8 +244,18 @@ void SeerParallelStacksStackBoxItem::handleDeletePopup() {
 SeerParallelStacksLiveEdge::SeerParallelStacksLiveEdge(SeerParallelStacksStackBoxItem* from, SeerParallelStacksStackBoxItem* to, QGraphicsItem* parent) : QGraphicsItem(parent) , _from(from) , _to(to) {
 
     setZValue(-1);
+
     // Position the edge item at the scene origin; all coordinates are scene-space.
     setPos(0, 0);
+
+    // Edges are purely decorative and must never intercept mouse input.
+    // Without this, QGraphicsView::itemAt() / scene hit-testing uses the
+    // default shape() (== boundingRect(), which includes generous padding
+    // for the bezier + arrowhead) and would report a LiveEdge under the
+    // cursor for most clicks near/between boxes — silently swallowing
+    // both box-grab and background-pan attempts before they ever reach
+    // StackBoxItem or the view's own mousePressEvent.
+    setAcceptedMouseButtons(Qt::NoButton);
 
     _from->registerEdge(this);
     _to->registerEdge(this);
@@ -277,6 +291,16 @@ QRectF SeerParallelStacksLiveEdge::boundingRect() const {
     return QRectF(f, t).normalized().adjusted(-pad, -pad, pad, pad);
 }
 
+QPainterPath SeerParallelStacksLiveEdge::shape() const {
+
+    // Empty path == this item is never returned by hit-testing
+    // (QGraphicsScene::itemAt, collidingItems, etc.). boundingRect()
+    // above is intentionally large (it just needs to avoid clipping the
+    // curve/arrowhead during paint), so without this override the edge
+    // would otherwise swallow clicks meant for boxes or the background.
+    return QPainterPath();
+}
+
 void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 
     if (!_from || !_to) return;
@@ -286,6 +310,7 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
     QPointF from = _from->sceneBottom();
     QPointF to   = _to->sceneTop();
 
+    /*
     // Bezier: control points pull vertically toward each other
     QPainterPath path;
     path.moveTo(from);
@@ -311,6 +336,40 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
 
     QPolygonF arrowHead;
     arrowHead << to << a1 << a2;
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(QColor(0x55, 0x55, 0x55));
+    painter->drawPolygon(arrowHead);
+    */
+
+    // --- Arrowhead: tip touches the child box bottom (`from`),
+    //     base is kArrow further along toward `to`.
+    //     The bezier starts at the base so the line never overlaps the head.
+    QPointF delta = to - from;
+    double  len   = std::hypot(delta.x(), delta.y());
+
+    if (len < 1e-6) return;
+
+    QPointF dir  = delta / len;           // unit vector from→to
+    QPointF perp(-dir.y(), dir.x());      // perpendicular
+
+    QPointF tip  = from;                  // touches child box
+    QPointF base = from + dir * kArrow;   // where the line begins
+
+    QPointF a1 = base + perp * (kArrow * 0.5);
+    QPointF a2 = base - perp * (kArrow * 0.5);
+
+    // Bezier runs from the arrowhead base to the parent box top.
+    QPainterPath path;
+
+    path.moveTo(base);
+    path.cubicTo(base + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
+
+    painter->setPen(QPen(QColor(0x55, 0x55, 0x55), 1.5));
+    painter->setBrush(Qt::NoBrush);
+    painter->drawPath(path);
+
+    QPolygonF arrowHead;
+    arrowHead << tip << a1 << a2;
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0x55, 0x55, 0x55));
     painter->drawPolygon(arrowHead);

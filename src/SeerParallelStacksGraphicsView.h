@@ -64,6 +64,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         qreal                                   _width  = 0;
         qreal                                   _height = 0;
         SeerParallelStacksPopupTableWidget*     _popup  = 0;
+        QVector<QString>                        _threadIds;
 
         bool                                    _dragging  = false;
         QPointF                                 _dragOffset;
@@ -86,13 +87,14 @@ class SeerParallelStacksLiveEdge : public QGraphicsItem {
         SeerParallelStacksLiveEdge(SeerParallelStacksStackBoxItem* from, SeerParallelStacksStackBoxItem* to, QGraphicsItem* parent = nullptr);
         ~SeerParallelStacksLiveEdge() override;
 
-        QRectF boundingRect     () const override;
-        void   paint            (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+        QRectF          boundingRect     () const override;
+        QPainterPath    shape            () const override;
+        void            paint            (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
         // Called by StackBoxItem's destructor so this edge stops referencing
         // an endpoint that is about to be (or has been) destroyed. After this,
         // the edge renders nothing and its own destructor won't touch `box`.
-        void   detachEndpoint   (SeerParallelStacksStackBoxItem* box);
+        void            detachEndpoint   (SeerParallelStacksStackBoxItem* box);
 
 
     private:
