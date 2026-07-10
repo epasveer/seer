@@ -75,7 +75,7 @@ typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 struct SeerParallelStacksStackNode {
     QString                                                   function;    // empty == root
     int                                                       depth  = 0;
-    QVector<SeerParallelStacksThread*>                        threads;     // non-owning pointers
+    QVector<SeerParallelStacksThread>                         threads;
     QVector<std::shared_ptr<SeerParallelStacksStackNode>>     children;
 };
 
@@ -88,6 +88,6 @@ struct SeerParallelStacksStack {
     int                                                       threadCount = 0;
 };
 
-std::shared_ptr<SeerParallelStacksStackNode>      SeerParallelStacksBuildParallelStacks     (QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
+std::shared_ptr<SeerParallelStacksStackNode>      SeerParallelStacksBuildParallelStacks     (const QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
 std::shared_ptr<SeerParallelStacksStack>          SeerParallelStacksFillStack               (const std::shared_ptr<SeerParallelStacksStackNode>& node);
 

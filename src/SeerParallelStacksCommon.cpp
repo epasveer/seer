@@ -144,22 +144,27 @@ QString SeerParallelStacksThread::toString() const {
     return result;
 }
 
-static std::shared_ptr<SeerParallelStacksStackNode> buildImpl( QVector<SeerParallelStacksThread*>& threadPtrs, const QString& currentFunction, int depth) {
+static std::shared_ptr<SeerParallelStacksStackNode> buildImpl(const QVector<SeerParallelStacksThread>& threads, const QString& currentFunction, int depth) {
 
     auto node      = std::make_shared<SeerParallelStacksStackNode>();
     node->depth    = depth;
     node->function = currentFunction;
-    node->threads  = threadPtrs;
+    node->threads  = threads;
 
     // Group threads by the function at position [-depth-1] (bottom-up).
-    QMap<QString, QVector<SeerParallelStacksThread*>> functionThreads;
+    QMap<QString, QVector<SeerParallelStacksThread>> functionThreads;
+
     int level = -depth - 1;
 
-    for (SeerParallelStacksThread* t : threadPtrs) {
-        int idx = t->frames().size() + level; // convert negative index
-        if (idx < 0 || idx >= t->frames().size())
+    for (const SeerParallelStacksThread& t : threads) {
+        int idx = t.frames().size() + level; // convert negative index
+
+        if (idx < 0 || idx >= t.frames().size()) {
             continue;
-        const QString& fn = t->frames()[idx].function();
+        }
+
+        const QString& fn = t.frames()[idx].function();
+
         functionThreads[fn].append(t);
     }
 
@@ -171,16 +176,9 @@ static std::shared_ptr<SeerParallelStacksStackNode> buildImpl( QVector<SeerParal
     return node;
 }
 
-std::shared_ptr<SeerParallelStacksStackNode> SeerParallelStacksBuildParallelStacks(QVector<SeerParallelStacksThread>& threads) {
+std::shared_ptr<SeerParallelStacksStackNode> SeerParallelStacksBuildParallelStacks(const QVector<SeerParallelStacksThread>& threads) {
 
-    QVector<SeerParallelStacksThread*> ptrs;
-    ptrs.reserve(threads.size());
-
-    for (auto& t : threads) {
-        ptrs.append(&t);
-    }
-
-    return buildImpl(ptrs, QString(), 0);
+    return buildImpl(threads, QString(), 0);
 }
 
 // ---------------------------------------------------------------
@@ -192,8 +190,8 @@ std::shared_ptr<SeerParallelStacksStack> SeerParallelStacksFillStack(const std::
     stack->threadCount = static_cast<int>(node->threads.size());
 
     // Collect thread IDs for this node
-    for (const SeerParallelStacksThread* t : node->threads) {
-        stack->threadIds.append(t->id());
+    for (const SeerParallelStacksThread& t : node->threads) {
+        stack->threadIds.append(t.id());
     }
 
     if (!node->function.isEmpty()) {

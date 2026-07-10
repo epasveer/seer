@@ -561,7 +561,7 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     _table->viewport()->setMouseTracking(true);
     _table->horizontalHeader()->setStretchLastSection(true);
     _table->verticalHeader()->setVisible(false);
-    _table->setEditTriggers(QAbstractItemView::DoubleClicked); // NoEditTriggers
+    _table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _table->setFrameShape(QFrame::NoFrame); // outer QFrame provides the border
     _table->resizeColumnToContents(0);

@@ -260,9 +260,7 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     }
 
     // Build parallel-stacks tree
-    QVector<SeerParallelStacksThread> local = _threads; // mutable copy for ptr stability
-
-    auto root  = SeerParallelStacksBuildParallelStacks(local);
+    auto root  = SeerParallelStacksBuildParallelStacks(_threads);
     auto stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack);
