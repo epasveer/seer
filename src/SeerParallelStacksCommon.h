@@ -75,10 +75,11 @@ struct SeerParallelStacksStackNode {
 
 // Flat "Stack" representation used when building the graph.
 struct SeerParallelStacksStack {
-    QVector<QString>                        functions;
+    QVector<int>                                              threadIds;   // IDs of every thread in this node
+    QVector<QString>                                          functions;
+
     QVector<std::shared_ptr<SeerParallelStacksStack>>         stacks;
-    int                                     threadCount = 0;
-    QVector<QString>                        threadIds;   // IDs of every thread in this node
+    int                                                       threadCount = 0;
 };
 
 std::shared_ptr<SeerParallelStacksStackNode>      SeerParallelStacksBuildParallelStacks     (QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.

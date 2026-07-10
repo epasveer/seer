@@ -64,7 +64,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         qreal                                   _width  = 0;
         qreal                                   _height = 0;
         SeerParallelStacksPopupTableWidget*     _popup  = 0;
-        QVector<QString>                        _threadIds;
+        QVector<int>                            _threadIds;
 
         bool                                    _dragging  = false;
         QPointF                                 _dragOffset;
@@ -153,7 +153,7 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
     public:
         explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
 
-        void            addRow                          (const QString& text);
+        void            addRow                          (int threadid, const QString& function);
 
     protected:
         void            enterEvent                      (QEnterEvent* event) override;
@@ -200,10 +200,10 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         struct PlacedNode {
             std::shared_ptr<SeerParallelStacksStack>   stack;
             SeerParallelStacksStackBoxItem*            item   = nullptr;
-            PlacedNode*                         parent = nullptr;
-            QVector<PlacedNode*>                children;
-            qreal                               cx     = 0;
-            qreal                               cy     = 0;
+            PlacedNode*                                parent = nullptr;
+            QVector<PlacedNode*>                       children;
+            qreal                                      cx     = 0;
+            qreal                                      cy     = 0;
         };
 
         void            buildPlacedTree                 (PlacedNode* pn, const std::shared_ptr<SeerParallelStacksStack>& stack, PlacedNode* parentPN);

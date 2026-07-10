@@ -176,7 +176,7 @@ std::shared_ptr<SeerParallelStacksStack> SeerParallelStacksFillStack(const std::
 
     // Collect thread IDs for this node
     for (const SeerParallelStacksThread* t : node->threads)
-        stack->threadIds.append(QString::number(t->id()));
+        stack->threadIds.append(t->id());
 
     if (!node->function.isEmpty())
         stack->functions.append(node->function);

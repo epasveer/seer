@@ -37,7 +37,7 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
         parts.reserve(shown);
 
         for (int i = 0; i < shown; ++i) {
-            parts.append(_threadIds[i]);
+            parts.append(QString::number(_threadIds[i]));
         }
 
         if (_threadIds.size() > 8) {
@@ -204,10 +204,16 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
 
     if (_popup == nullptr) {
 
+        QString function;
+
+        if (_rows.size() > 0) {
+            function = _rows[0].text;
+        }
+
         _popup = new SeerParallelStacksPopupTableWidget();
 
-        for (const auto& row : _rows) {
-            _popup->addRow(row.text);
+        for (const auto& id : _threadIds) {
+            _popup->addRow(id, function);
         }
 
         QGraphicsView* view = scene()->views().first(); // scene() is always valid here
@@ -546,7 +552,7 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     _table->setRowCount(0);
     _table->setColumnCount(2);
     _table->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
-    _table->setHorizontalHeaderLabels({"Function","Length"});
+    _table->setHorizontalHeaderLabels({"ThreadID","Function"});
     _table->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     _table->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     _table->horizontalScrollBar()->setSingleStep(5);
@@ -554,7 +560,7 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     _table->setMouseTracking(true);
     _table->viewport()->setMouseTracking(true);
     _table->horizontalHeader()->setStretchLastSection(true);
-    _table->verticalHeader()->setVisible(true);
+    _table->verticalHeader()->setVisible(false);
     _table->setEditTriggers(QAbstractItemView::DoubleClicked); // NoEditTriggers
     _table->setSelectionBehavior(QAbstractItemView::SelectRows);
     _table->setFrameShape(QFrame::NoFrame); // outer QFrame provides the border
@@ -574,22 +580,20 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     QObject::connect(_closeTimer, &QTimer::timeout,      this, &SeerParallelStacksPopupTableWidget::handleCloseTimer);
 
     _closeTimer->start();
-
-    // resize(320, 180);
 }
 
-void SeerParallelStacksPopupTableWidget::addRow (const QString& text) {
+void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& function) {
 
     int nrows = _table->rowCount();
 
     _table->setRowCount(nrows+1);
 
-    QTableWidgetItem* item0 = new QTableWidgetItem(text);
-    item0->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    QTableWidgetItem* item0 = new QTableWidgetItem(QString::number(threadid));
+    item0->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     item0->setFlags(item0->flags()|Qt::ItemIsEditable);
 
-    QTableWidgetItem* item1 = new QTableWidgetItem(QString::number(text.length()));
-    item1->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QTableWidgetItem* item1 = new QTableWidgetItem(function);
+    item1->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     item1->setFlags(item1->flags()|Qt::ItemIsEditable);
 
     _table->setItem(nrows, 0, item0);
