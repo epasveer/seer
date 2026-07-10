@@ -12,17 +12,23 @@ SeerParallelStacksFrame::SeerParallelStacksFrame() {
 
 SeerParallelStacksFrame::SeerParallelStacksFrame(const QString& text) {
 
+    parse(text);
+}
+
+SeerParallelStacksFrame::~SeerParallelStacksFrame() {
+}
+
+void SeerParallelStacksFrame::parse (const QString& text) {
+
     _level     = Seer::parseFirst(text, "level=",    '"', '"', false).toInt();
     _addr      = Seer::parseFirst(text, "addr=",     '"', '"', false);
     _function  = Seer::parseFirst(text, "func=",     '"', '"', false);
     _arch      = Seer::parseFirst(text, "arch=",     '"', '"', false);
+    _from      = Seer::parseFirst(text, "from=",     '"', '"', false);
     _file      = Seer::parseFirst(text, "file=",     '"', '"', false);
     _fullname  = Seer::parseFirst(text, "fullname=", '"', '"', false);
     _line      = Seer::parseFirst(text, "line=",     '"', '"', false).toInt();
     _type      = Seer::parseFirst(text, "type=",     '"', '"', false);
-}
-
-SeerParallelStacksFrame::~SeerParallelStacksFrame() {
 }
 
 int SeerParallelStacksFrame::level () const {
@@ -39,6 +45,10 @@ const QString& SeerParallelStacksFrame::function () const {
 
 const QString& SeerParallelStacksFrame::arch () const {
     return _arch;
+}
+
+const QString& SeerParallelStacksFrame::from () const {
+    return _from;
 }
 
 const QString& SeerParallelStacksFrame::file () const {
@@ -66,9 +76,18 @@ SeerParallelStacksThread::SeerParallelStacksThread () {
 
 SeerParallelStacksThread::SeerParallelStacksThread (const QString& text) {
 
+    parse(text);
+}
+
+SeerParallelStacksThread::~SeerParallelStacksThread () {
+}
+
+void SeerParallelStacksThread::parse (const QString& text) {
+
     _id        = Seer::parseFirst(text, "thread-id=", '"', '"', false).toInt();
     _target_id = Seer::parseFirst(text, "target-id=", '"', '"', false);
     _name      = Seer::parseFirst(text, "name=",      '"', '"', false);
+    _state     = Seer::parseFirst(text, "state=",     '"', '"', false);
     _current   = Seer::parseFirst(text, "current=",   '"', '"', false).toInt();
 
     QString frames_text = Seer::parseFirst(text, "frames=", '[', ']', false);
@@ -80,9 +99,6 @@ SeerParallelStacksThread::SeerParallelStacksThread (const QString& text) {
         SeerParallelStacksFrame frame(frame_text);
         _frames.push_back(frame);
     }
-}
-
-SeerParallelStacksThread::~SeerParallelStacksThread () {
 }
 
 int SeerParallelStacksThread::id () const {
@@ -121,8 +137,9 @@ QString SeerParallelStacksThread::toString() const {
 
     QString result = QString("Thread %1").arg(_id);
 
-    for (const auto& f : _frames)
+    for (const auto& f : _frames) {
         result += "\n  " + f.toString();
+    }
 
     return result;
 }
@@ -175,11 +192,13 @@ std::shared_ptr<SeerParallelStacksStack> SeerParallelStacksFillStack(const std::
     stack->threadCount = static_cast<int>(node->threads.size());
 
     // Collect thread IDs for this node
-    for (const SeerParallelStacksThread* t : node->threads)
+    for (const SeerParallelStacksThread* t : node->threads) {
         stack->threadIds.append(t->id());
+    }
 
-    if (!node->function.isEmpty())
+    if (!node->function.isEmpty()) {
         stack->functions.append(node->function);
+    }
 
     if (node->children.size() == 1) {
         // Merge single child into this stack (chain of frames).

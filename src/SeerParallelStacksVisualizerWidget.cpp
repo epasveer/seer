@@ -88,7 +88,6 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
                 _threads.push_back(thread);
 
                 //qDebug().noquote() << thread_text;
-                //qDebug() << thread_id_text << target_id_text << name_text << current_text;
             }
 
             //for (const auto& thread : _threads ) {

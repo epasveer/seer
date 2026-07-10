@@ -12,12 +12,15 @@ class SeerParallelStacksFrame {
     public:
         SeerParallelStacksFrame ();
         SeerParallelStacksFrame (const QString& text);
-        ~SeerParallelStacksFrame ();
+       ~SeerParallelStacksFrame ();
+
+        void                parse           (const QString& text);
 
         int                 level           () const;
         const QString&      addr            () const;
         const QString&      function        () const;
         const QString&      arch            () const;
+        const QString&      from            () const;
         const QString&      file            () const;
         const QString&      fullname        () const;
         int                 line            () const;
@@ -29,6 +32,7 @@ class SeerParallelStacksFrame {
         QString             _addr;
         QString             _function;
         QString             _arch;
+        QString             _from;
         QString             _file;
         QString             _fullname;
         int                 _line;
@@ -41,34 +45,36 @@ class SeerParallelStacksThread {
     public:
         SeerParallelStacksThread ();
         SeerParallelStacksThread (const QString& text);
-        ~SeerParallelStacksThread ();
+       ~SeerParallelStacksThread ();
 
-        int                 id              () const;
-        const QString&      target_id       () const;
-        const QString&      name            () const;
-        const QString&      state           () const;
-        int                 current         () const;
-        QString             toString        () const;
+        void                                    parse           (const QString& text);
 
-        int                 frameCount      () const;
-        const SeerParallelStacksFrame&        frame           (int i) const;
-        const SeerParallelStacksFrames&       frames          () const;
+        int                                     id              () const;
+        const QString&                          target_id       () const;
+        const QString&                          name            () const;
+        const QString&                          state           () const;
+        int                                     current         () const;
+        QString                                 toString        () const;
+
+        int                                     frameCount      () const;
+        const SeerParallelStacksFrame&          frame           (int i) const;
+        const SeerParallelStacksFrames&         frames          () const;
 
     private:
-        int                 _id;
-        QString             _target_id;
-        QString             _name;
-        QString             _state;
-        int                 _current;
+        int                                     _id;
+        QString                                 _target_id;
+        QString                                 _name;
+        QString                                 _state;
+        int                                     _current;
 
-        SeerParallelStacksFrames              _frames;
+        SeerParallelStacksFrames                _frames;
 };
 
 typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 
 struct SeerParallelStacksStackNode {
-    QString                                 function;    // empty == root
-    int                                     depth  = 0;
+    QString                                                   function;    // empty == root
+    int                                                       depth  = 0;
     QVector<SeerParallelStacksThread*>                        threads;     // non-owning pointers
     QVector<std::shared_ptr<SeerParallelStacksStackNode>>     children;
 };
