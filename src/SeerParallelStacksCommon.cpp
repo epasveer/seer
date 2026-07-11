@@ -144,12 +144,12 @@ QString SeerParallelStacksThread::toString() const {
     return result;
 }
 
-static std::shared_ptr<SeerParallelStacksStackNode> buildImpl(const QVector<SeerParallelStacksThread>& threads, const QString& currentFunction, int depth) {
+static SeerParallelStacksNode buildImpl(const QVector<SeerParallelStacksThread>& threads, const QString& currentFunction, int depth) {
 
-    auto node      = std::make_shared<SeerParallelStacksStackNode>();
-    node->depth    = depth;
-    node->function = currentFunction;
-    node->threads  = threads;
+    SeerParallelStacksNode node;
+    node.depth    = depth;
+    node.function = currentFunction;
+    node.threads  = threads;
 
     // Group threads by the function at position [-depth-1] (bottom-up).
     QMap<QString, QVector<SeerParallelStacksThread>> functionThreads;
@@ -157,6 +157,7 @@ static std::shared_ptr<SeerParallelStacksStackNode> buildImpl(const QVector<Seer
     int level = -depth - 1;
 
     for (const SeerParallelStacksThread& t : threads) {
+
         int idx = t.frames().size() + level; // convert negative index
 
         if (idx < 0 || idx >= t.frames().size()) {
@@ -170,45 +171,45 @@ static std::shared_ptr<SeerParallelStacksStackNode> buildImpl(const QVector<Seer
 
     for (auto it = functionThreads.begin(); it != functionThreads.end(); ++it) {
         auto child = buildImpl(it.value(), it.key(), depth + 1);
-        node->children.append(child);
+        node.children.append(child);
     }
 
     return node;
 }
 
-std::shared_ptr<SeerParallelStacksStackNode> SeerParallelStacksBuildParallelStacks(const QVector<SeerParallelStacksThread>& threads) {
+SeerParallelStacksNode SeerParallelStacksBuildParallelStacks(const QVector<SeerParallelStacksThread>& threads) {
 
     return buildImpl(threads, QString(), 0);
 }
 
 // ---------------------------------------------------------------
-// fillStack — flatten SeerParallelStacksStackNode tree into Stack tree for graphing
+// fillStack — flatten SeerParallelStacksNode tree into Stack tree for graphing
 // ---------------------------------------------------------------
-std::shared_ptr<SeerParallelStacksStack> SeerParallelStacksFillStack(const std::shared_ptr<SeerParallelStacksStackNode>& node) {
+SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode& node) {
 
-    auto stack         = std::make_shared<SeerParallelStacksStack>();
-    stack->threadCount = static_cast<int>(node->threads.size());
+    SeerParallelStacksStack stack;
+    stack.threadCount = node.threads.size();
 
     // Collect thread IDs for this node
-    for (const SeerParallelStacksThread& t : node->threads) {
-        stack->threadIds.append(t.id());
+    for (const SeerParallelStacksThread& t : node.threads) {
+        stack.threadIds.append(t.id());
     }
 
-    if (!node->function.isEmpty()) {
-        stack->functions.append(node->function);
+    if (!node.function.isEmpty()) {
+        stack.functions.append(node.function);
     }
 
-    if (node->children.size() == 1) {
+    if (node.children.size() == 1) {
         // Merge single child into this stack (chain of frames).
         // Keep the IDs from the leaf (most specific) node.
-        auto child = SeerParallelStacksFillStack(node->children[0]);
-        stack->functions  += child->functions;
-        stack->stacks      = child->stacks;
-        stack->threadCount = child->threadCount;
-        stack->threadIds   = child->threadIds;
+        auto child = SeerParallelStacksFillStack(node.children[0]);
+        stack.functions  += child.functions;
+        stack.stacks      = child.stacks;
+        stack.threadCount = child.threadCount;
+        stack.threadIds   = child.threadIds;
     } else {
-        for (const auto& childNode : node->children) {
-            stack->stacks.append(SeerParallelStacksFillStack(childNode));
+        for (const auto& childNode : node.children) {
+            stack.stacks.append(SeerParallelStacksFillStack(childNode));
         }
     }
 

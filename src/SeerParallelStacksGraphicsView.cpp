@@ -749,11 +749,11 @@ void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 
-void SeerParallelStacksGraphicsView::setStack(const std::shared_ptr<SeerParallelStacksStack>& root) {
+void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& root) {
 
     _scene->clear();
 
-    if (!root) return;
+    // XXX if (!root) return;
 
     auto* rootPN = new PlacedNode;
     buildPlacedTree(rootPN, root, nullptr);
@@ -826,17 +826,17 @@ void SeerParallelStacksGraphicsView::alignParentlessToBottom(PlacedNode* pn, qre
     }
 }
 
-void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const std::shared_ptr<SeerParallelStacksStack>& stack, PlacedNode* parentPN) {
+void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerParallelStacksStack& stack, PlacedNode* parentPN) {
 
     pn->stack  = stack;
     pn->parent = parentPN;
 
-    if (!stack->functions.isEmpty()) {
-        pn->item = new SeerParallelStacksStackBoxItem(*stack);
+    if (!stack.functions.isEmpty()) {
+        pn->item = new SeerParallelStacksStackBoxItem(stack);
         _scene->addItem(pn->item);
     }
 
-    for (const auto& child : stack->stacks) {
+    for (const auto& child : stack.stacks) {
         auto* childPN = new PlacedNode;
         buildPlacedTree(childPN, child, pn);
         pn->children.append(childPN);

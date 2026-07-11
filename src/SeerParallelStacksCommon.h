@@ -72,22 +72,22 @@ class SeerParallelStacksThread {
 
 typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 
-struct SeerParallelStacksStackNode {
-    QString                                                   function;    // empty == root
-    int                                                       depth  = 0;
-    QVector<SeerParallelStacksThread>                         threads;
-    QVector<std::shared_ptr<SeerParallelStacksStackNode>>     children;
+struct SeerParallelStacksNode {
+    QString                                     function;    // empty == root
+    int                                         depth  = 0;
+    QVector<SeerParallelStacksThread>           threads;
+    QVector<SeerParallelStacksNode>             children;
 };
 
 // Flat "Stack" representation used when building the graph.
 struct SeerParallelStacksStack {
-    QVector<int>                                              threadIds;   // IDs of every thread in this node
-    QVector<QString>                                          functions;
+    QVector<int>                                threadIds;   // IDs of every thread in this node
+    QVector<QString>                            functions;
 
-    QVector<std::shared_ptr<SeerParallelStacksStack>>         stacks;
-    int                                                       threadCount = 0;
+    QVector<SeerParallelStacksStack>            stacks;
+    int                                         threadCount = 0;
 };
 
-std::shared_ptr<SeerParallelStacksStackNode>      SeerParallelStacksBuildParallelStacks     (const QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
-std::shared_ptr<SeerParallelStacksStack>          SeerParallelStacksFillStack               (const std::shared_ptr<SeerParallelStacksStackNode>& node);
+SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
+SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node);
 

@@ -177,7 +177,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     public:
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
-        void            setStack                        (const std::shared_ptr<SeerParallelStacksStack>& root);
+        void            setStack                        (const SeerParallelStacksStack& root);
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
@@ -198,26 +198,26 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
     private:
         struct PlacedNode {
-            std::shared_ptr<SeerParallelStacksStack>   stack;
-            SeerParallelStacksStackBoxItem*            item   = nullptr;
-            PlacedNode*                                parent = nullptr;
-            QVector<PlacedNode*>                       children;
-            qreal                                      cx     = 0;
-            qreal                                      cy     = 0;
+            SeerParallelStacksStack                 stack;
+            SeerParallelStacksStackBoxItem*         item   = nullptr;
+            PlacedNode*                             parent = nullptr;
+            QVector<PlacedNode*>                    children;
+            qreal                                   cx     = 0;
+            qreal                                   cy     = 0;
         };
 
-        void            buildPlacedTree                 (PlacedNode* pn, const std::shared_ptr<SeerParallelStacksStack>& stack, PlacedNode* parentPN);
-        void            layoutTree                      (PlacedNode* pn, qreal& xCursor, qreal yTop);
-        void            collectMaxBottom                (PlacedNode* pn, qreal& maxBottom);
-        void            alignParentlessToBottom         (PlacedNode* pn, qreal maxBottom);
-        void            addEdges                        (PlacedNode* pn);
-        void            deleteTree                      (PlacedNode* pn);
-        void            repositionMiniMap               (); // keeps it pinned to bottom-right corner
+        void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, PlacedNode* parentPN);
+        void            layoutTree                  (PlacedNode* pn, qreal& xCursor, qreal yTop);
+        void            collectMaxBottom            (PlacedNode* pn, qreal& maxBottom);
+        void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);
+        void            addEdges                    (PlacedNode* pn);
+        void            deleteTree                  (PlacedNode* pn);
+        void            repositionMiniMap           (); // keeps it pinned to bottom-right corner
 
-        QGraphicsScene*                   _scene;
-        SeerParallelStacksMiniMapWidget*  _miniMap;
-        bool                              _panning = false;
-        QPoint                            _panStartPos;  // viewport coords at pan start
+        QGraphicsScene*                             _scene;
+        SeerParallelStacksMiniMapWidget*            _miniMap;
+        bool                                        _panning = false;
+        QPoint                                      _panStartPos;  // viewport coords at pan start
 
         friend class SeerParallelStacksMiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
