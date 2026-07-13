@@ -25,11 +25,12 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
     _threadIds.resize(0);
-    _rows.resize(0);
+    _stack = stack;
 
-    if (!stack.threadIds.isEmpty()) {
+    // Text for BoxItem list of thread ids.
+    if (_stack.threadIds.isEmpty() == false) {
 
-        _threadIds = stack.threadIds;
+        _threadIds = _stack.threadIds;
 
         int shown = std::min<qsizetype>(_threadIds.size(), 8);
 
@@ -47,10 +48,6 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
         }
     }
 
-    for (int i = stack.functions.size() - 1; i >= 0; --i) {
-        _rows.append({ stack.functions[i], Function });
-    }
-
     QFont        boldFont;  boldFont.setBold(true);
     QFontMetrics boldFm(boldFont);
     QFont        normFont;
@@ -59,12 +56,14 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
     qreal maxTextW = headerW;
 
-    for (const auto& row : _rows) {
-        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(row.text));
+    for (const auto& function : _stack.functions) {
+        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(function));
     }
 
     _width  = maxTextW + 2 * kPadX;
-    _height = kPadY + kRowH * (1 + (int)_rows.size()) + kPadY;
+    _height = kPadY + kRowH * (1 + (int)_stack.functions.size()) + kPadY;
+
+    qDebug() << _stack.stacks.size();
 }
 
 SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem() {
@@ -117,8 +116,8 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setFont(normFont);
     painter->setPen(QColor(0x00, 0x7A, 0x33));
 
-    for (const auto& row : _rows) {
-        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, row.text);
+    for (const auto& function : _stack.functions) {
+        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, function);
         y += kRowH;
     }
 
@@ -206,8 +205,8 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
 
         QString function;
 
-        if (_rows.size() > 0) {
-            function = _rows[0].text;
+        if (_stack.functions.size() > 0) {
+            function = _stack.functions[0];
         }
 
         _popup = new SeerParallelStacksPopupTableWidget();

@@ -260,8 +260,8 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     }
 
     // Build parallel-stacks tree
-    auto root  = SeerParallelStacksBuildParallelStacks(_threads);
-    auto stack = SeerParallelStacksFillStack(root);
+    SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_threads);
+    SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack);
 }

@@ -68,7 +68,8 @@ const QString& SeerParallelStacksFrame::type () const {
 }
 
 QString SeerParallelStacksFrame::toString() const {
-    return QString("level: %1, address: '%2', function: '%3', file: '%4', fullname: '%5'") .arg(_level).arg(_addr).arg(_function).arg(_file).arg(_fullname);
+    // XXX return QString("level: %1, address: '%2', function: '%3', file: '%4', fullname: '%5'") .arg(_level).arg(_addr).arg(_function).arg(_file).arg(_fullname);
+    return QString("level: %1, address: '%2', file: '%3', fullname: '%4'") .arg(_level).arg(_addr).arg(_file).arg(_fullname);
 }
 
 SeerParallelStacksThread::SeerParallelStacksThread () {
@@ -135,16 +136,18 @@ const SeerParallelStacksFrames& SeerParallelStacksThread::frames () const {
 
 QString SeerParallelStacksThread::toString() const {
 
-    QString result = QString("Thread %1").arg(_id);
+    QString result = QString("Thread %1: #Frames %2").arg(_id).arg(QString::number(_frames.size()));
 
     for (const auto& f : _frames) {
-        result += "\n  " + f.toString();
+        // XXX result += "\n  " + f.toString();
     }
+
+    result += "\n";
 
     return result;
 }
 
-static SeerParallelStacksNode buildImpl(const QVector<SeerParallelStacksThread>& threads, const QString& currentFunction, int depth) {
+static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads, const QString& currentFunction, int depth) {
 
     SeerParallelStacksNode node;
     node.depth    = depth;
@@ -164,20 +167,22 @@ static SeerParallelStacksNode buildImpl(const QVector<SeerParallelStacksThread>&
             continue;
         }
 
-        const QString& fn = t.frames()[idx].function();
+        const QString& fn = t.frame(idx).function();
 
         functionThreads[fn].append(t);
+
+        qDebug() << t.toString();
     }
 
     for (auto it = functionThreads.begin(); it != functionThreads.end(); ++it) {
-        auto child = buildImpl(it.value(), it.key(), depth + 1);
+        SeerParallelStacksNode child = buildImpl(it.value(), it.key(), depth + 1);
         node.children.append(child);
     }
 
     return node;
 }
 
-SeerParallelStacksNode SeerParallelStacksBuildParallelStacks(const QVector<SeerParallelStacksThread>& threads) {
+SeerParallelStacksNode SeerParallelStacksBuildParallelStacks(const SeerParallelStacksThreads& threads) {
 
     return buildImpl(threads, QString(), 0);
 }
@@ -195,7 +200,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         stack.threadIds.append(t.id());
     }
 
-    if (!node.function.isEmpty()) {
+    if (node.function.isEmpty() == false) {
         stack.functions.append(node.function);
     }
 

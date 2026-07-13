@@ -55,21 +55,18 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         void                    handleDeletePopup   ();
 
     private:
-        enum RowKind { Function };
-        struct Row { QString text; RowKind kind; };
-
+        QVector<int>                            _threadIds;
+        SeerParallelStacksStack                 _stack;
         QString                                 _headerLeft;
         QString                                 _headerRight;
-        QVector<Row>                            _rows;
         qreal                                   _width  = 0;
         qreal                                   _height = 0;
         SeerParallelStacksPopupTableWidget*     _popup  = 0;
-        QVector<int>                            _threadIds;
 
         bool                                    _dragging  = false;
         QPointF                                 _dragOffset;
 
-        QVector<SeerParallelStacksLiveEdge*>                      _edges;   // non-owning
+        QVector<SeerParallelStacksLiveEdge*>    _edges;   // non-owning
 
         static constexpr qreal  kPadX      = 12;
         static constexpr qreal  kPadY      =  8;

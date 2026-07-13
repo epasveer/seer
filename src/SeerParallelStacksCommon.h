@@ -75,19 +75,19 @@ typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 struct SeerParallelStacksNode {
     QString                                     function;    // empty == root
     int                                         depth  = 0;
-    QVector<SeerParallelStacksThread>           threads;
+    SeerParallelStacksThreads                   threads;
     QVector<SeerParallelStacksNode>             children;
 };
 
 // Flat "Stack" representation used when building the graph.
 struct SeerParallelStacksStack {
+    int                                         threadCount = 0;
     QVector<int>                                threadIds;   // IDs of every thread in this node
-    QVector<QString>                            functions;
+    SeerParallelStacksFrames                    frames;
 
     QVector<SeerParallelStacksStack>            stacks;
-    int                                         threadCount = 0;
 };
 
-SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const QVector<SeerParallelStacksThread>& threads);   // Build the parallel-stacks tree from a flat list of threads.
+SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const SeerParallelStacksThreads& threads);   // Build the parallel-stacks tree from a flat list of threads.
 SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node);
 
