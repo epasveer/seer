@@ -1083,6 +1083,14 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 
 void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
 
+    if (scatterRadioButton->isChecked()) {
+        pointsCheckBox->setChecked(true);
+        pointsCheckBox->setEnabled(false);
+    }else{
+        pointsCheckBox->setChecked(false);
+        pointsCheckBox->setEnabled(true);
+    }
+
     handleDataChanged();
 }
 
