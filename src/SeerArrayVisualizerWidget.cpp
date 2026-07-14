@@ -952,19 +952,19 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
             _aSeries->setPointLabelsVisible(false);
             _aSeries->setPointLabelsClipping(true);
 
-            const QVector<double>& xvalues = arrayTableWidget->aArrayValues();
-            const QVector<double>& yvalues = arrayTableWidget->bArrayValues();
+            const QVector<double>& avalues = arrayTableWidget->aArrayValues();
+            const QVector<double>& bvalues = arrayTableWidget->bArrayValues();
 
-            if (arrayTableWidget->aAxis() == "Y" && arrayTableWidget->bAxis() == "X") {
+            if (arrayTableWidget->aAxis() == "X" && arrayTableWidget->bAxis() == "Y") {
 
-                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
-                    _aSeries->append(xvalues[i], yvalues[i]);
+                for (int i = 0; i < std::min(avalues.size(),bvalues.size()); ++i) {
+                    _aSeries->append(avalues[i], bvalues[i]);
                 }
 
-            }else if (arrayTableWidget->aAxis() == "X" && arrayTableWidget->bAxis() == "Y") {
+            }else if (arrayTableWidget->aAxis() == "Y" && arrayTableWidget->bAxis() == "X") {
 
-                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
-                    _aSeries->append(yvalues[i], xvalues[i]);
+                for (int i = 0; i < std::min(avalues.size(),bvalues.size()); ++i) {
+                    _aSeries->append(bvalues[i], avalues[i]);
                 }
 
             }else{
