@@ -24,6 +24,30 @@
 #include <QtCore/QDebug>
 #include <QtGlobal>
 
+//
+// Qt Charts 6.x workaround: scatter marker items can be (re)created without
+// inheriting the series' pen/brush, leaving near-invisible ~1px markers.
+// Small arrays usually render fine; large ones (e.g. 4000 points) reliably
+// degrade. The series-level state is correct in both cases (verified with an
+// instrumented build), so the style is lost at the marker-item level inside
+// Qt Charts. Because the series setters are guarded (a call with an unchanged
+// value is a no-op), we force two *actual* value transitions so the style is
+// pushed down to the marker items unconditionally.
+//
+static void redecorateScatterSeries (QXYSeries* series) {
+
+    QScatterSeries* scatter = qobject_cast<QScatterSeries*>(series);
+
+    if (scatter == nullptr) {
+        return;
+    }
+
+    scatter->setPen(QPen(Qt::transparent));
+    scatter->setBrush(QBrush(Qt::transparent));
+    scatter->setPen(QPen(Qt::NoPen));
+    scatter->setBrush(QBrush(QColor(31, 119, 180)));
+}
+
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
@@ -983,6 +1007,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
         arrayChartView->chart()->addSeries(_aSeries);
         arrayChartView->chart()->createDefaultAxes();
+        redecorateScatterSeries(_aSeries);
     }
 
     if (_bSeries) {
@@ -990,6 +1015,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
         arrayChartView->chart()->addSeries(_bSeries);
         arrayChartView->chart()->createDefaultAxes();
+        redecorateScatterSeries(_bSeries);
     }
 
     // Zoom out slightly to allow for text label at edges.
