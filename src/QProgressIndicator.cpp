@@ -44,6 +44,7 @@ void QProgressIndicator::paintEvent(QPaintEvent* e) {
     if (!_timer->isActive()) {
         _angle = 0;
         _scale = 0.0f;
+        return; // Draw nothing when stopped. stop() expects the indicator to be erased from the view.
     }
 
     QPainter painter(this);
