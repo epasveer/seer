@@ -627,7 +627,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
         dlg.setProjectFilename(projectFilename());
     // Otherwise use the default project, if there is one.
     }else{
-        if (loadDefaultProject) {
+        if (loadDefaultProject && executableName() == "") {
             dlg.loadDefaultProjectSettings();
         }
     }
