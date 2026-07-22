@@ -68,10 +68,12 @@ namespace Seer {
     bool                        isFileExistNotify   (const QString& filename);
     bool                        isDirExistNotify    (const QString& dirname);
 
-    void                        colorizeAllIcons            (QWidget* parent, const QSize& size = QSize(32,32));
-    void                        colorizeListWidgetItemIcon  (QListWidgetItem* item, const QSize& size = QSize(32,32));
-    void                        colorizeChartViewItem       (QChartView* item);
-    QIcon                       colorizeIcon                (const QIcon& icon, const QSize& size = QSize(32,32));
+    void                        setIconColorMode            (const QString& colorMode);
+    const QString&              iconColorMode               ();
+    void                        colorizeAllIcons            (QWidget* parent, const QString& colorMode, const QSize& size = QSize(32,32));
+    void                        colorizeListWidgetItemIcon  (QListWidgetItem* item, const QString& colorMode, const QSize& size = QSize(32,32));
+    void                        colorizeChartViewItem       (QChartView* item, const QString& colorMode);
+    QIcon                       colorizeIcon                (const QIcon& icon, const QString& colorMode, const QSize& size = QSize(32,32));
     QIcon                       colorizeIcon                (const QIcon& icon, const QColor& color, const QSize& size = QSize(32,32));
 }
 

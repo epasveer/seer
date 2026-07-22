@@ -1383,90 +1383,142 @@ namespace Seer {
         }
     }
 
-    void colorizeAllIcons (QWidget* parent, const QSize& size) {
+    //
+    // Icon colorization.
+    //
+    static QString _iconColorMode = "auto";
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    void setIconColorMode (const QString& colorMode) {
+        _iconColorMode = colorMode;
+    }
+
+    const QString& iconColorMode () {
+        return _iconColorMode;
+    }
+
+    void colorizeAllIcons (QWidget* parent, const QString& colorMode, const QSize& size) {
+
         if (parent == nullptr) {
             return;
         }
 
-        // Get the current color scheme
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-        // Look for all button types.
-        const auto buttons = parent->findChildren<QAbstractButton*>();
-
-        for (QAbstractButton* button : buttons) {
-
-            if (colorScheme == Qt::ColorScheme::Dark) {
-                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("white"), size));
-            }else{
-                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("black"), size));
-            }
-        }
-
-        // Look for all menu types.
-        const auto menus = parent->findChildren<QMenu*>();
-
-        for (QMenu* menu : menus) {
-
-            if (colorScheme == Qt::ColorScheme::Dark) {
-                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("white"), size));
-            }else{
-                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("black"), size));
-            }
-        }
-
-        // Look for all action types.
-        const auto actions = parent->findChildren<QAction*>();
-
-        for (QAction* action : actions) {
-
-            if (colorScheme == Qt::ColorScheme::Dark) {
-                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("white"), size));
-            }else{
-                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("black"), size));
-            }
-        }
-
-        // Look for the app's titlebar icon.
-        // XXX Doesn't work!
-        // XXX Titlebar icon remains the same. It doesn't change. Don't know why.
-        if (colorScheme == Qt::ColorScheme::Dark) {
-            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("white"), size));
-        }else{
-            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
-        }
-#else
-        Q_UNUSED(parent);
-        Q_UNUSED(size);
-#endif
-    }
-
-    void colorizeListWidgetItemIcon (QListWidgetItem* item, const QSize& size) {
+        if (colorMode == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+            // Get the current color scheme
+            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+            if (colorScheme == Qt::ColorScheme::Light) {
+                return colorizeAllIcons(parent, "light");
+            }else if (colorScheme == Qt::ColorScheme::Dark) {
+                return colorizeAllIcons(parent, "dark");
+            }else{
+                qDebug() << "Bad colorScheme of: " << colorScheme;
+            }
+
+#endif
+            return;
+
+        }else if (colorMode == "light") {
+
+            // Look for all button types.
+            const auto buttons = parent->findChildren<QAbstractButton*>();
+
+            for (QAbstractButton* button : buttons) {
+                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("black"), size));
+            }
+
+            // Look for all menu types.
+            const auto menus = parent->findChildren<QMenu*>();
+
+            for (QMenu* menu : menus) {
+                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("black"), size));
+            }
+
+            // Look for all action types.
+            const auto actions = parent->findChildren<QAction*>();
+
+            for (QAction* action : actions) {
+                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("black"), size));
+            }
+
+            // Look for the app's titlebar icon.
+            // XXX Doesn't work!
+            // XXX Titlebar icon remains the same. It doesn't change. Don't know why.
+            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
+
+            return;
+
+        }else if (colorMode == "dark") {
+
+            // Look for all button types.
+            const auto buttons = parent->findChildren<QAbstractButton*>();
+
+            for (QAbstractButton* button : buttons) {
+                button->setIcon(Seer::colorizeIcon(button->icon(), QColor("white"), size));
+            }
+
+            // Look for all menu types.
+            const auto menus = parent->findChildren<QMenu*>();
+
+            for (QMenu* menu : menus) {
+                menu->setIcon(Seer::colorizeIcon(menu->icon(), QColor("white"), size));
+            }
+
+            // Look for all action types.
+            const auto actions = parent->findChildren<QAction*>();
+
+            for (QAction* action : actions) {
+                action->setIcon(Seer::colorizeIcon(action->icon(), QColor("white"), size));
+            }
+
+            // Look for the app's titlebar icon.
+            // XXX Doesn't work!
+            // XXX Titlebar icon remains the same. It doesn't change. Don't know why.
+            QApplication::setWindowIcon(Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"), QColor("black"), size));
+
+            return;
+        }
+
+        qDebug() << "Bad iconColorMode of: " << colorMode;
+    }
+
+    void colorizeListWidgetItemIcon (QListWidgetItem* item, const QString& colorMode, const QSize& size) {
+
         if (item == nullptr) {
             return;
         }
 
-        // Get the current color scheme
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-        if (colorScheme == Qt::ColorScheme::Dark) {
-            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
-        }else{
-            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
-        }
-#else
-        Q_UNUSED(item);
-        Q_UNUSED(size);
-#endif
-    }
-
-    void colorizeChartViewItem (QChartView* item) {
+        if (colorMode == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+            // Get the current color scheme
+            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+            if (colorScheme == Qt::ColorScheme::Light) {
+                item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
+            }else if (colorScheme == Qt::ColorScheme::Dark) {
+                item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
+            }else{
+                qDebug() << "Bad colorScheme of: " << colorScheme;
+            }
+
+#endif
+            return;
+
+        }else if (colorMode == "light") {
+            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
+            return;
+        }else if (colorMode == "dark") {
+            item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
+            return;
+        }
+
+        qDebug() << "Bad iconColorMode of: " << colorMode;
+    }
+
+    void colorizeChartViewItem (QChartView* item, const QString& colorMode) {
+
         if (item == nullptr) {
             return;
         }
@@ -1477,35 +1529,62 @@ namespace Seer {
             return;
         }
 
-        // Get the current color scheme
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-        if (colorScheme == Qt::ColorScheme::Dark) {
-            chart->setTheme(QChart::ChartThemeDark);
-        }else{
-            chart->setTheme(QChart::ChartThemeLight);
-        }
-#else
-        Q_UNUSED(item);
-#endif
-    }
-
-    QIcon colorizeIcon (const QIcon& icon, const QSize& size) {
+        if (colorMode == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-        // Get the current color scheme
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+            // Get the current color scheme
+            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
 
-        if (colorScheme == Qt::ColorScheme::Dark) {
+            if (colorScheme == Qt::ColorScheme::Light) {
+                chart->setTheme(QChart::ChartThemeLight);
+            }else if (colorScheme == Qt::ColorScheme::Dark) {
+                chart->setTheme(QChart::ChartThemeDark);
+            }else{
+                qDebug() << "Bad colorScheme of: " << colorScheme;
+            }
+
+#endif
+            return;
+
+        }else if (colorMode == "light") {
+            chart->setTheme(QChart::ChartThemeLight);
+            return;
+        }else if (colorMode == "dark") {
+            chart->setTheme(QChart::ChartThemeDark);
+            return;
+        }
+
+        qDebug() << "Bad iconColorMode of: " << colorMode;
+    }
+
+    QIcon colorizeIcon (const QIcon& icon, const QString& colorMode, const QSize& size) {
+
+        if (colorMode == "auto") {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+            // Get the current color scheme
+            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+            if (colorScheme == Qt::ColorScheme::Light) {
+                return Seer::colorizeIcon(icon, QColor("black"), size);
+            }else if (colorScheme == Qt::ColorScheme::Dark) {
+                return Seer::colorizeIcon(icon, QColor("white"), size);
+            }else{
+                qDebug() << "Bad colorScheme of: " << colorScheme;
+            }
+
+#endif
+            return icon;
+
+        }else if (colorMode == "light") {
             return Seer::colorizeIcon(icon, QColor("white"), size);
-        }else{
+        }else if (colorMode == "dark") {
             return Seer::colorizeIcon(icon, QColor("black"), size);
         }
-#else
-        Q_UNUSED(size);
+
+        qDebug() << "Bad iconColorMode of: " << colorMode;
 
         return icon;
-#endif
     }
 
     QIcon colorizeIcon (const QIcon& icon, const QColor& color, const QSize& size) {
@@ -1531,6 +1610,7 @@ namespace Seer {
 
         return QIcon(coloredPixmap);
 #else
+        Q_UNUSED(icon);
         Q_UNUSED(color);
         Q_UNUSED(size);
 

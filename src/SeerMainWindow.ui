@@ -61,9 +61,18 @@
      <addaction name="actionConsoleDetached"/>
      <addaction name="actionConsoleDetachedMinimized"/>
     </widget>
-    <widget class="QMenu" name="menuStyles">
+    <widget class="QMenu" name="menuThemeStyle">
      <property name="title">
-      <string>Styles</string>
+      <string>Theme Style</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resource.qrc">
+       <normaloff>:/seer/resources/icons-icons/style.png</normaloff>:/seer/resources/icons-icons/style.png</iconset>
+     </property>
+    </widget>
+    <widget class="QMenu" name="menuIconColor">
+     <property name="title">
+      <string>Icon Color</string>
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">
@@ -79,7 +88,8 @@
     <addaction name="actionViewAssembly"/>
     <addaction name="actionViewGdbMonitor"/>
     <addaction name="menuConsole"/>
-    <addaction name="menuStyles"/>
+    <addaction name="menuThemeStyle"/>
+    <addaction name="menuIconColor"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">

@@ -65,7 +65,7 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 
     // Restore window settings.
     readSettings();
@@ -647,7 +647,7 @@ void SeerMatrixVisualizerWidget::handleDataChanged () {
 void SeerMatrixVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 }
 
 void SeerMatrixVisualizerWidget::writeSettings() {

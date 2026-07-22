@@ -76,6 +76,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
+        void                        setIconColorName                        (const QString& name);
+        const QString&              iconColorName                           ();
 
     private slots:
         void                        handleFileDebugWithDefaultProject       ();
@@ -105,7 +107,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleHelpToolButtonClicked             ();
         void                        handleTerminateExecutable               ();
         void                        handleRestartExecutable                 ();
-        void                        handleStyleMenuChanged                  ();
+        void                        handleThemeStyleMenuChanged             ();
+        void                        handleIconColorMenuChanged              ();
         void                        handleShowMessage                       (QString message, int time);
         void                        handleGdbStateChanged                   ();
         void                        handleGdbTargetRunning                  ();
@@ -125,8 +128,10 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        refreshShortCuts                        ();
 
     private:
-        QActionGroup*               _styleMenuActionGroup;
+        QActionGroup*               _themeStyleMenuActionGroup;
+        QActionGroup*               _iconColorMenuActionGroup;
         QString                     _styleName;
+        QString                     _iconColorName;
         QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;

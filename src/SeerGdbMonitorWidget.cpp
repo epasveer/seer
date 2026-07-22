@@ -67,7 +67,7 @@ SeerGdbMonitorWidget::SeerGdbMonitorWidget (QWidget* parent) : QWidget(parent) {
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 
     // Restore window settings.
     readSettings();
@@ -196,7 +196,7 @@ void SeerGdbMonitorWidget::handleMacroToolButtonClicked (QAbstractButton* button
 void SeerGdbMonitorWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 }
 
 void SeerGdbMonitorWidget::writeSettings() {

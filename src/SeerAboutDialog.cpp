@@ -53,7 +53,7 @@ SeerAboutDialog::~SeerAboutDialog () {
 void SeerAboutDialog::handleThemeChanged () {
 
     // Get the colorized icon.
-    QIcon icon = Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/256x256/seergdb.png"), QSize(256,256));
+    QIcon icon = Seer::colorizeIcon(QIcon(":/seer/resources/icons/hicolor/256x256/seergdb.png"), Seer::iconColorMode(), QSize(256,256));
 
     // Set the label's pixmap
     label->setPixmap(icon.pixmap(QSize(256,256)));

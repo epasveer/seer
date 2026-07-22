@@ -53,7 +53,7 @@ SeerStructVisualizerWidget::SeerStructVisualizerWidget (QWidget* parent) : QWidg
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 
     // Restore window settings.
     readSettings();
@@ -511,7 +511,7 @@ void SeerStructVisualizerWidget::handleVariableNameLineEdit () {
 void SeerStructVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorMode());
 }
 
 void SeerStructVisualizerWidget::writeSettings () {
