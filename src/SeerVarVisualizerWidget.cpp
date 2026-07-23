@@ -90,7 +90,7 @@ SeerVarVisualizerWidget::SeerVarVisualizerWidget (QWidget* parent) : QWidget(par
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Show/hide columns.
     handleDebugCheckBox();
@@ -946,7 +946,7 @@ void SeerVarVisualizerWidget::handleIndexEditingFinished (const QModelIndex& ind
 void SeerVarVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 
 QTreeWidgetItem* SeerVarVisualizerWidget::findItem (const QString& text, Qt::MatchFlags flags, int column) {

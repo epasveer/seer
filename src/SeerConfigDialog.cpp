@@ -110,14 +110,14 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     connect(buttonBox,          &QDialogButtonBox::clicked,         this, &SeerConfigDialog::handleButtonClicked);
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this,                           Seer::iconColorMode());
-    Seer::colorizeListWidgetItemIcon(configSeerButton,     Seer::iconColorMode(), QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configGdbButton,      Seer::iconColorMode(), QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configEditorButton,   Seer::iconColorMode(), QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configSourceButton,   Seer::iconColorMode(), QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configAssemblyButton, Seer::iconColorMode(), QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configKeysButton,     Seer::iconColorMode(), QSize(128,128));
- // Seer::colorizeListWidgetItemIcon(configRRButton,       Seer::iconColorMode(), QSize(128,128)); // Don't change. It's a multi-colored icon.
+    Seer::colorizeAllIcons(this,                           Seer::iconColorTheme());
+    Seer::colorizeListWidgetItemIcon(configSeerButton,     Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configGdbButton,      Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configEditorButton,   Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configSourceButton,   Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configAssemblyButton, Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configKeysButton,     Seer::iconColorTheme(), QSize(128,128));
+ // Seer::colorizeListWidgetItemIcon(configRRButton,       Seer::iconColorTheme(), QSize(128,128)); // Don't change. It's a multi-colored icon.
 
     // Set to first page.
     contentsListWidget->setCurrentRow(0);

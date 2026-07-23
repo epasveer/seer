@@ -1386,23 +1386,28 @@ namespace Seer {
     //
     // Icon colorization.
     //
-    static QString _iconColorMode = "auto";
+    static QString _iconColorTheme = "auto";
 
-    void setIconColorMode (const QString& colorMode) {
-        _iconColorMode = colorMode;
+    void setIconColorTheme (const QString& colorTheme) {
+
+        if (colorTheme == "auto" || colorTheme == "dark" || colorTheme == "light") {
+            _iconColorTheme = colorTheme;
+        }else{
+            qDebug() << "Bad iconColorTheme of: " << colorTheme;
+        }
     }
 
-    const QString& iconColorMode () {
-        return _iconColorMode;
+    const QString& iconColorTheme () {
+        return _iconColorTheme;
     }
 
-    void colorizeAllIcons (QWidget* parent, const QString& colorMode, const QSize& size) {
+    void colorizeAllIcons (QWidget* parent, const QString& colorTheme, const QSize& size) {
 
         if (parent == nullptr) {
             return;
         }
 
-        if (colorMode == "auto") {
+        if (colorTheme == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
             // Get the current color scheme
@@ -1419,7 +1424,7 @@ namespace Seer {
 #endif
             return;
 
-        }else if (colorMode == "light") {
+        }else if (colorTheme == "light") {
 
             // Look for all button types.
             const auto buttons = parent->findChildren<QAbstractButton*>();
@@ -1449,7 +1454,7 @@ namespace Seer {
 
             return;
 
-        }else if (colorMode == "dark") {
+        }else if (colorTheme == "dark") {
 
             // Look for all button types.
             const auto buttons = parent->findChildren<QAbstractButton*>();
@@ -1480,16 +1485,16 @@ namespace Seer {
             return;
         }
 
-        qDebug() << "Bad iconColorMode of: " << colorMode;
+        qDebug() << "Bad iconColorTheme of: " << colorTheme;
     }
 
-    void colorizeListWidgetItemIcon (QListWidgetItem* item, const QString& colorMode, const QSize& size) {
+    void colorizeListWidgetItemIcon (QListWidgetItem* item, const QString& colorTheme, const QSize& size) {
 
         if (item == nullptr) {
             return;
         }
 
-        if (colorMode == "auto") {
+        if (colorTheme == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
             // Get the current color scheme
@@ -1506,18 +1511,18 @@ namespace Seer {
 #endif
             return;
 
-        }else if (colorMode == "light") {
+        }else if (colorTheme == "light") {
             item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
             return;
-        }else if (colorMode == "dark") {
+        }else if (colorTheme == "dark") {
             item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
             return;
         }
 
-        qDebug() << "Bad iconColorMode of: " << colorMode;
+        qDebug() << "Bad iconColorTheme of: " << colorTheme;
     }
 
-    void colorizeChartViewItem (QChartView* item, const QString& colorMode) {
+    void colorizeChartViewItem (QChartView* item, const QString& colorTheme) {
 
         if (item == nullptr) {
             return;
@@ -1529,7 +1534,7 @@ namespace Seer {
             return;
         }
 
-        if (colorMode == "auto") {
+        if (colorTheme == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
             // Get the current color scheme
@@ -1546,20 +1551,20 @@ namespace Seer {
 #endif
             return;
 
-        }else if (colorMode == "light") {
+        }else if (colorTheme == "light") {
             chart->setTheme(QChart::ChartThemeLight);
             return;
-        }else if (colorMode == "dark") {
+        }else if (colorTheme == "dark") {
             chart->setTheme(QChart::ChartThemeDark);
             return;
         }
 
-        qDebug() << "Bad iconColorMode of: " << colorMode;
+        qDebug() << "Bad iconColorTheme of: " << colorTheme;
     }
 
-    QIcon colorizeIcon (const QIcon& icon, const QString& colorMode, const QSize& size) {
+    QIcon colorizeIcon (const QIcon& icon, const QString& colorTheme, const QSize& size) {
 
-        if (colorMode == "auto") {
+        if (colorTheme == "auto") {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
             // Get the current color scheme
@@ -1576,13 +1581,13 @@ namespace Seer {
 #endif
             return icon;
 
-        }else if (colorMode == "light") {
+        }else if (colorTheme == "light") {
             return Seer::colorizeIcon(icon, QColor("white"), size);
-        }else if (colorMode == "dark") {
+        }else if (colorTheme == "dark") {
             return Seer::colorizeIcon(icon, QColor("black"), size);
         }
 
-        qDebug() << "Bad iconColorMode of: " << colorMode;
+        qDebug() << "Bad iconColorTheme of: " << colorTheme;
 
         return icon;
     }

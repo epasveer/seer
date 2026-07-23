@@ -253,7 +253,7 @@ SeerMainWindow::SeerMainWindow(QWidget* parent) : QMainWindow(parent) {
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     handleRecordSettingsChanged();
 
@@ -607,17 +607,15 @@ const QString& SeerMainWindow::styleName () {
     return _styleName;
 }
 
-void SeerMainWindow::setIconColorName (const QString& name) {
+void SeerMainWindow::setIconColorTheme(const QString& mode) {
 
-    // Check for Dark/Light style from Seer's resource tree.
-    if (name == "auto" || name == "dark" || name == "light") {
+    Seer::setIconColorTheme(mode);
 
-        _iconColorName = name;
-    }
+    handleThemeChanged(); // Will trigger the icon colorization.
 }
 
-const QString& SeerMainWindow::iconColorName () {
-    return _iconColorName;
+const QString& SeerMainWindow::iconColorTheme () {
+    return Seer::iconColorTheme();
 }
 
 void SeerMainWindow::handleFileDebugWithDefaultProject () {
@@ -1078,7 +1076,7 @@ void SeerMainWindow::handleIconColorMenuChanged () {
         return;
     }
 
-    setIconColorName(action->text());
+    setIconColorTheme(action->text());
 }
 
 void SeerMainWindow::handleShowMessage (QString message, int time) {
@@ -1746,7 +1744,7 @@ void SeerMainWindow::writeConfigSettings () {
 
     settings.beginGroup("mainwindow"); {
         settings.setValue("qtstyle", styleName());
-        settings.setValue("iconcolor", iconColorName());
+        settings.setValue("iconcolortheme", iconColorTheme());
     } settings.endGroup();
 
     settings.beginGroup("gdb"); {
@@ -1830,8 +1828,8 @@ void SeerMainWindow::readConfigSettings () {
         if (settings.contains("qtstyle")) {
             setStyleName(settings.value("qtstyle").toString());
         }
-        if (settings.contains("iconcolor")) {
-            setIconColorName(settings.value("iconcolor").toString());
+        if (settings.contains("iconcolortheme")) {
+            setIconColorTheme(settings.value("iconcolortheme").toString());
         }
     } settings.endGroup();
 
@@ -2197,6 +2195,6 @@ void SeerMainWindow::handleGdbTargetInterrupt() {
 void SeerMainWindow::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 

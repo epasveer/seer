@@ -27,7 +27,7 @@ SeerHelpPageDialog::SeerHelpPageDialog(QDialog* parent) : QDialog(parent) {
     QObject::connect(okPushButton,     &QPushButton::clicked,          this,  &SeerHelpPageDialog::handleOkPushButton);
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();

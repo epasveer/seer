@@ -137,8 +137,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
-    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
+    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -1123,10 +1123,10 @@ void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
 void SeerArrayVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // And the ChartView.
-    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorMode());
+    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorTheme());
 }
 
 void SeerArrayVisualizerWidget::createASeries() {

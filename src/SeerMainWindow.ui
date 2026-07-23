@@ -72,7 +72,7 @@
     </widget>
     <widget class="QMenu" name="menuIconColor">
      <property name="title">
-      <string>Icon Color</string>
+      <string>Icon Theme</string>
      </property>
      <property name="icon">
       <iconset resource="resource.qrc">

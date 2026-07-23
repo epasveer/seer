@@ -54,7 +54,7 @@ SeerImageVisualizerWidget::SeerImageVisualizerWidget (QWidget* parent) : QWidget
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -421,7 +421,7 @@ void SeerImageVisualizerWidget::handleCreateImage (const QByteArray& array) {
 void SeerImageVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 
 void SeerImageVisualizerWidget::writeSettings() {

@@ -79,7 +79,7 @@ SeerMemoryVisualizerWidget::SeerMemoryVisualizerWidget (QWidget* parent) : QWidg
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -497,7 +497,7 @@ void SeerMemoryVisualizerWidget::handleSaveButton () {
 void SeerMemoryVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this, Seer::iconColorMode());
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 
 void SeerMemoryVisualizerWidget::writeSettings() {

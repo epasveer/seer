@@ -76,8 +76,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
-        void                        setIconColorName                        (const QString& name);
-        const QString&              iconColorName                           ();
+        void                        setIconColorTheme                       (const QString& theme);
+        const QString&              iconColorTheme                          ();
 
     private slots:
         void                        handleFileDebugWithDefaultProject       ();
@@ -131,7 +131,6 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         QActionGroup*               _themeStyleMenuActionGroup;
         QActionGroup*               _iconColorMenuActionGroup;
         QString                     _styleName;
-        QString                     _iconColorName;
         QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
         SeerKeySettings             _keySettings;
