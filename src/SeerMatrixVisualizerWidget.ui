@@ -160,6 +160,23 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="matrixStorageOrderComboBox">
+       <property name="toolTip">
+        <string>How the 2D matrix is laid out in memory: row-major (row by row) or column-major (column by column).</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>row-major (C, NumPy)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>column-major (Fortran, Eigen)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
@@ -458,6 +475,7 @@
   <tabstop>matrixOffsetLineEdit</tabstop>
   <tabstop>matrixStrideLineEdit</tabstop>
   <tabstop>matrixDisplayFormatComboBox</tabstop>
+  <tabstop>matrixStorageOrderComboBox</tabstop>
   <tabstop>refreshToolButton</tabstop>
   <tabstop>helpToolButton</tabstop>
   <tabstop>matrixTableWidget</tabstop>
