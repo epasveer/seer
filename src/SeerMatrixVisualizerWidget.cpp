@@ -417,6 +417,13 @@ void SeerMatrixVisualizerWidget::handleText (const QString& text) {
             matrixStrideLineEdit->setFocus();
         }
 
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleRefreshButton();
+        }
+
     }else{
         // Ignore anything else.
     }
