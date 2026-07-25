@@ -38,8 +38,8 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
 
     _enableLineNumberArea = false;
     _enableOffsetArea     = false;
-    _enableBreakPointArea = false;
     _enableOpcodeArea     = false;
+    _enableBreakPointArea = false;
     _enableSourceLines    = false;
     _sourceTabSize        = 4;
     _convertUppercase     = false;
@@ -65,16 +65,16 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
 
     enableLineNumberArea(true);
     enableOffsetArea(true);
-    enableBreakPointArea(true);
     enableOpcodeArea(true);
+    enableBreakPointArea(true);
     enableSourceLines(true);
     setConvertUppercase(false);
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOffsetArea);
-    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOpcodeArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
     setCurrentLine("");
@@ -84,8 +84,8 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     // Forward the scroll events in the various areas to the text edit.
     SeerPlainTextWheelEventForwarder* lineNumberAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* offsetAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
-    SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* opcodeAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _offsetArea->installEventFilter(offsetAreaWheelForwarder);
@@ -426,19 +426,7 @@ int SeerEditorWidgetAssemblyArea::offsetAreaWidth () {
 
     QString tmp = QString("<+%1>").arg(offset);
 
-
     int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * tmp.length();
-
-    return space;
-}
-
-int SeerEditorWidgetAssemblyArea::breakPointAreaWidth () {
-
-    if (breakPointAreaEnabled() == false) {
-        return 0;
-    }
-
-    int space = 3 + 20;
 
     return space;
 }
@@ -462,6 +450,17 @@ int SeerEditorWidgetAssemblyArea::opcodeAreaWidth () {
     }
 
     int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * chars;
+
+    return space;
+}
+
+int SeerEditorWidgetAssemblyArea::breakPointAreaWidth () {
+
+    if (breakPointAreaEnabled() == false) {
+        return 0;
+    }
+
+    int space = 3 + 20;
 
     return space;
 }
@@ -500,23 +499,6 @@ void SeerEditorWidgetAssemblyArea::updateOffsetArea (const QRect& rect, int dy) 
     }
 }
 
-void SeerEditorWidgetAssemblyArea::updateBreakPointArea (const QRect& rect, int dy) {
-
-    if (breakPointAreaEnabled() == false) {
-        return;
-    }
-
-    if (dy) {
-        _breakPointArea->scroll(0, dy);
-    }else{
-        _breakPointArea->update(0, rect.y(), _breakPointArea->width(), rect.height());
-    }
-
-    if (rect.contains(viewport()->rect())) {
-        updateMarginAreasWidth(0);
-    }
-}
-
 void SeerEditorWidgetAssemblyArea::updateOpcodeArea (const QRect& rect, int dy) {
 
     if (opcodeAreaEnabled() == false) {
@@ -527,6 +509,23 @@ void SeerEditorWidgetAssemblyArea::updateOpcodeArea (const QRect& rect, int dy) 
         _opcodeArea->scroll(0, dy);
     }else{
         _opcodeArea->update(0, rect.y(), _opcodeArea->width(), rect.height());
+    }
+
+    if (rect.contains(viewport()->rect())) {
+        updateMarginAreasWidth(0);
+    }
+}
+
+void SeerEditorWidgetAssemblyArea::updateBreakPointArea (const QRect& rect, int dy) {
+
+    if (breakPointAreaEnabled() == false) {
+        return;
+    }
+
+    if (dy) {
+        _breakPointArea->scroll(0, dy);
+    }else{
+        _breakPointArea->update(0, rect.y(), _breakPointArea->width(), rect.height());
     }
 
     if (rect.contains(viewport()->rect())) {
@@ -698,7 +697,7 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
-    QTextCharFormat format = highlighterSettings().get("Assembly Text");
+    QTextCharFormat format = highlighterSettings().get("Margin");
 
     QPainter painter(_opcodeArea);
     painter.fillRect(event->rect(), format.background().color());
@@ -722,9 +721,9 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
 
             if (_lineOpcodeMap.contains(blockNumber+1)) {
                 if (convertUppercase()) {
-                    opcode = _lineOpcodeMap[blockNumber+1].toUpper();
+                    opcode = " " + _lineOpcodeMap[blockNumber+1].toUpper();
                 }else{
-                    opcode = _lineOpcodeMap[blockNumber+1];
+                    opcode = " " + _lineOpcodeMap[blockNumber+1];
                 }
             }
 
@@ -758,16 +757,16 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
         leftbias += offsetAreaWidth();
     }
 
-    if (breakPointAreaEnabled()) {
-        _breakPointArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), breakPointAreaWidth(), cr.height()));
-
-        leftbias += breakPointAreaWidth();
-    }
-
     if (opcodeAreaEnabled()) {
         _opcodeArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), opcodeAreaWidth(), cr.height()));
 
         leftbias += opcodeAreaWidth();
+    }
+
+    if (breakPointAreaEnabled()) {
+        _breakPointArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), breakPointAreaWidth(), cr.height()));
+
+        leftbias += breakPointAreaWidth();
     }
 }
 
@@ -1434,6 +1433,10 @@ QString SeerEditorWidgetAssemblyArea::sourceForLine (const QString& fullname, co
         _fileFullname = fullname;
         _fileName     = file;
 
+        if (_fileFullname == "") {
+            return "";
+        }
+
         bool f = Seer::readFile(_fileFullname, _fileLines);
         if (f == false) {
             qDebug() << "Can't read:" << _fileFullname;
@@ -1583,18 +1586,13 @@ void SeerEditorWidgetAssemblyArea::handleText (const QString& text) {
 
 void SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged () {
 
-    // Set base color for background and text color.
-    // Use the palette to do this. Some people say to use the stylesheet.
-    // But the palettle method works (for now).
-    QTextCharFormat format = highlighterSettings().get("Text");
+    // When this handler is called, the new Highlight settings have
+    // already been set. So we just need to redo the text area.
+    updateTextArea();
 
-    QPalette p = palette();
-    p.setColor(QPalette::Base, format.background().color());
-    p.setColor(QPalette::Text, format.foreground().color());
-    setPalette(p);
-
-    // Note. The margins are automatically updated by their own paint events.
-    //       The new highlighter settings will be used.
+    // Note.
+    // The margins are automatically updated by their own paint events.
+    // The new highlighter settings will be used.
 }
 
 //
@@ -1698,56 +1696,6 @@ void SeerEditorWidgetAssemblyOffsetArea::mouseReleaseEvent (QMouseEvent* event) 
 }
 
 //
-// Breakpoint Area.
-//
-
-SeerEditorWidgetAssemblyBreakPointArea::SeerEditorWidgetAssemblyBreakPointArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
-}
-
-QSize SeerEditorWidgetAssemblyBreakPointArea::sizeHint () const {
-    return QSize(_editorWidget->breakPointAreaWidth(), 0);
-}
-
-void SeerEditorWidgetAssemblyBreakPointArea::paintEvent (QPaintEvent* event) {
-    _editorWidget->breakPointAreaPaintEvent(event);
-}
-
-void SeerEditorWidgetAssemblyBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
-
-    if (event->button() == Qt::LeftButton) {
-        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
-            _editorWidget->setQuickRunToAddress(event);
-        }else{
-            _editorWidget->setQuickBreakpoint(event);
-        }
-
-    }else{
-        QWidget::mouseDoubleClickEvent(event);
-    }
-}
-
-void SeerEditorWidgetAssemblyBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
-
-    QWidget::mouseMoveEvent(event);
-}
-
-void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event) {
-
-    if (event->button() == Qt::RightButton) {
-        _editorWidget->showContextMenu(event);
-
-    }else{
-        QWidget::mousePressEvent(event);
-    }
-}
-
-void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
-
-    QWidget::mouseReleaseEvent(event);
-}
-
-//
 // Opcode Area.
 //
 
@@ -1793,6 +1741,56 @@ void SeerEditorWidgetAssemblyOpcodeArea::mousePressEvent (QMouseEvent* event) {
 }
 
 void SeerEditorWidgetAssemblyOpcodeArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+//
+// Breakpoint Area.
+//
+
+SeerEditorWidgetAssemblyBreakPointArea::SeerEditorWidgetAssemblyBreakPointArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+}
+
+QSize SeerEditorWidgetAssemblyBreakPointArea::sizeHint () const {
+    return QSize(_editorWidget->breakPointAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->breakPointAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseDoubleClickEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+            _editorWidget->setQuickRunToAddress(event);
+        }else{
+            _editorWidget->setQuickBreakpoint(event);
+        }
+
+    }else{
+        QWidget::mouseDoubleClickEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseMoveEvent (QMouseEvent* event) {
+
+    QWidget::mouseMoveEvent(event);
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::RightButton) {
+        _editorWidget->showContextMenu(event);
+
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
 
     QWidget::mouseReleaseEvent(event);
 }

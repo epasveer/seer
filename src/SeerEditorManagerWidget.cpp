@@ -353,7 +353,7 @@ void SeerEditorManagerWidget::setEditorHighlighterSettings (const SeerHighlighte
     SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
 
     if (assemblyWidget) {
-        assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
+        assemblyWidget->assemblyArea()->setHighlighterSettings(_editorHighlighterSettings);
     }
 }
 

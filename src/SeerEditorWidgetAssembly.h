@@ -152,8 +152,8 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
         SeerEditorWidgetAssemblyLineNumberArea*     _lineNumberArea;
         SeerEditorWidgetAssemblyOffsetArea*         _offsetArea;
-        SeerEditorWidgetAssemblyBreakPointArea*     _breakPointArea;
         SeerEditorWidgetAssemblyOpcodeArea*         _opcodeArea;
+        SeerEditorWidgetAssemblyBreakPointArea*     _breakPointArea;
 
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
@@ -217,12 +217,12 @@ class SeerEditorWidgetAssemblyOffsetArea : public QWidget {
         SeerEditorWidgetAssemblyArea*               _editorWidget;
 };
 
-class SeerEditorWidgetAssemblyBreakPointArea : public QWidget {
+class SeerEditorWidgetAssemblyOpcodeArea : public QWidget {
 
     Q_OBJECT
 
     public:
-        SeerEditorWidgetAssemblyBreakPointArea (SeerEditorWidgetAssemblyArea* editorWidget);
+        SeerEditorWidgetAssemblyOpcodeArea (SeerEditorWidgetAssemblyArea* editorWidget);
 
         QSize                                       sizeHint                            () const override;
 
@@ -237,12 +237,12 @@ class SeerEditorWidgetAssemblyBreakPointArea : public QWidget {
         SeerEditorWidgetAssemblyArea*               _editorWidget;
 };
 
-class SeerEditorWidgetAssemblyOpcodeArea : public QWidget {
+class SeerEditorWidgetAssemblyBreakPointArea : public QWidget {
 
     Q_OBJECT
 
     public:
-        SeerEditorWidgetAssemblyOpcodeArea (SeerEditorWidgetAssemblyArea* editorWidget);
+        SeerEditorWidgetAssemblyBreakPointArea (SeerEditorWidgetAssemblyArea* editorWidget);
 
         QSize                                       sizeHint                            () const override;
 
