@@ -379,7 +379,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
 
         // Use the editor's own background/text colors (not the gutter's
         // "Margin" color) so the mini-map matches the editor's color scheme.
-        _miniMapPixmap.fill(textFormat.background().color());
+        _miniMapPixmap.fill(marginFormat.background().color());
 
         int   maxChars    = 1;
         qreal docHeightPx = 0;
@@ -424,7 +424,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
             // must be set explicitly to the same "Text" color the editor
             // itself uses, or unformatted text would render in the wrong
             // (default black) color instead of matching the editor's theme.
-            docPainter.setPen(textFormat.foreground().color());
+            docPainter.setPen(marginFormat.foreground().color());
 
             qreal y = 0;
 
