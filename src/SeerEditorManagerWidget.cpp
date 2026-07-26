@@ -97,12 +97,11 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
 
     // Add combination shortcut for re-open closed file (Ctrl + Shift + T)
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+Shift+T"), this);
-    QObject::connect(shortcut,              &QShortcut::activated,    [this] () {
-            if (!_stackClosedFiles.empty())
-            {
+    QObject::connect(shortcut, &QShortcut::activated,    [this] () {
+            if (!_stackClosedFiles.empty()) {
                 SeerEditorWidgetSourceArea::SeerCurrentFile topValue = _stackClosedFiles.top();  // read the top
                 _stackClosedFiles.pop();
-                handleOpenFileWithDetails(topValue.file, topValue.fullname, topValue.cursorRow, topValue.cursorCol, topValue.firstDisplayLine); 
+                handleOpenFileWithDetails(topValue.file, topValue.fullname, topValue.cursorRow, topValue.cursorCol, topValue.firstDisplayLine);
             }
         }
     );
@@ -1581,48 +1580,40 @@ void SeerEditorManagerWidget::handleSessionTerminated () {
 }
 
 // Clear the stack of recently closed files backward/forward list whenever a new gdb session starts
-void SeerEditorManagerWidget::handleGdbStateChanged()
-{
+void SeerEditorManagerWidget::handleGdbStateChanged() {
     while (!_stackClosedFiles.empty()) {
         _stackClosedFiles.pop();
     }
     _listForwardFiles.clear();
     _forwardFilesIndex = -1;
 }
+
 /***********************************************************************************************************************
  * Function for handling mouse navigation
  **********************************************************************************************************************/
-void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile)
-{
+void SeerEditorManagerWidget::handleAddToMouseNavigation(const SeerEditorWidgetSourceArea::SeerCurrentFile& currentFile) {
+
     // Record this file in the forward list.
-    if (currentFile.file != "")
-    {
+    if (currentFile.file != "") {
+
         // Check if the last added file is the same as currentFile
-        if (!_listForwardFiles.empty())
-        {
+        if (!_listForwardFiles.empty()) {
             const SeerEditorWidgetSourceArea::SeerCurrentFile& lastFile = _listForwardFiles[_listForwardFiles.size() -1];
-            if (currentFile == lastFile)
-            {
+            if (currentFile == lastFile) {
                 return;
             }
         }
 
         // if _forwardFilesIndex is at the end of the list, just append
-        if (_forwardFilesIndex >= _listForwardFiles.size() - 1)
-        {
+        if (_forwardFilesIndex >= _listForwardFiles.size() - 1) {
             _listForwardFiles.append(currentFile);
             _forwardFilesIndex ++;
-        }
-        else    // else remove all entries after _forwardFilesIndex and then append
-        {
+        } else {  // else remove all entries after _forwardFilesIndex and then append
             int removeCount = _listForwardFiles.size() - 1 - _forwardFilesIndex;
-            if ((currentFile == _listForwardFiles[_listForwardFiles.size() -1]) || (currentFile == _listForwardFiles[0]) 
-                || (currentFile == _listForwardFiles[_listForwardFiles.size() - 1 - removeCount]) )
-            {
+            if ((currentFile == _listForwardFiles[_listForwardFiles.size() -1]) || (currentFile == _listForwardFiles[0]) || (currentFile == _listForwardFiles[_listForwardFiles.size() - 1 - removeCount]) ) {
                 return;
             }
-            for (int i=0; i < removeCount; i++)
-            {
+            for (int i=0; i < removeCount; i++) {
                 _listForwardFiles.removeLast();
             }
             _listForwardFiles.append(currentFile);
@@ -1701,8 +1692,8 @@ void SeerEditorManagerWidget::handleThemeChanged () {
 }
 
 // Handle mouse press events for navigation
-void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event)
-{
+void SeerEditorManagerWidget::mousePressEvent(QMouseEvent *event) {
+
     // Back button (XButton1) clicked
     if (event->button() == Qt::XButton1) {
         if (_forwardFilesIndex - 1 < 0)
