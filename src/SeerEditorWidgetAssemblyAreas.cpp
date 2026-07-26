@@ -24,7 +24,6 @@
 #include <QtGui/QTextCursor>
 #include <QtGui/QPalette>
 #include <QtCore/QList>
-#include <QtCore/QHash>
 #include <QtCore/QString>
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
@@ -805,29 +804,25 @@ void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
-    QTextCharFormat textFormat = highlighterSettings().get("Text");
+    QTextCharFormat marginFormat = highlighterSettings().get("Margin");
 
     // Rebuild the cached content pixmap if the document, theme, or size changed.
-    // Rendering uses the document's real font/layout (so tab-stops and glyph
-    // shaping stay correct) and only shrinks the *rasterized* output via a
-    // scaled QPainter - unlike shrinking the live font's point size, which is
-    // known to break tab-stop rendering (see setEditorFont()'s comments).
+    // Rendering uses the document's real font (so glyph shaping stays correct)
+    // and only shrinks the *rasterized* output via a scaled QPainter - unlike
+    // shrinking the live font's point size, which is known to break tab-stop
+    // rendering (see setEditorFont()'s comments).
     //
-    // Note: unlike the source editor, this view has no QSyntaxHighlighter
-    // attached to the document - each whole line (a source line or an
-    // assembly instruction line) is colored via a QTextEdit::ExtraSelection
-    // in _sourceLinesExtraSelections (see updateTextArea()), not per-token
-    // QTextLayout formats. So instead of relying on QTextLayout::draw() to
-    // pick up per-character colors, the per-line foreground color is looked
-    // up from those same selections and set as the painter's pen before
-    // drawing each line - keeping the mini-map colors identical to the ones
-    // the real editor uses for source vs. assembly lines.
+    // Text is drawn as plain strings in a single color - the real editor
+    // colors whole lines differently (source vs. assembly) via
+    // _sourceLinesExtraSelections, but at mini-map scale mixing those line
+    // colors in just looks like wrong/inconsistent colors rather than useful
+    // information, so the mini-map ignores it and uses one uniform color.
     if (_miniMapPixmapDirty || _miniMapPixmap.size() != _miniMapArea->size()) {
 
         QSize size = _miniMapArea->size();
 
         _miniMapPixmap = QPixmap(size);
-        _miniMapPixmap.fill(textFormat.background().color());
+        _miniMapPixmap.fill(marginFormat.background().color());
 
         int   maxChars    = 1;
         qreal docHeightPx = 0;
@@ -859,28 +854,23 @@ void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
             // any listing short enough to hit the cap.
             _miniMapContentHeight = docHeightPx * sy;
 
-            // Map each colored block number to its line's foreground color.
-            QHash<int, QColor> lineForeground;
-
-            for (const QTextEdit::ExtraSelection& sel : std::as_const(_sourceLinesExtraSelections)) {
-                lineForeground.insert(sel.cursor.blockNumber(), sel.format.foreground().color());
-            }
-
             QPainter docPainter(&_miniMapPixmap);
             docPainter.setRenderHint(QPainter::Antialiasing, true);
             docPainter.setRenderHint(QPainter::TextAntialiasing, true);
             docPainter.scale(sx, sy);
+            docPainter.setFont(font());
+            docPainter.setPen(marginFormat.foreground().color());
 
-            qreal y = 0;
+            qreal         y      = 0;
+            QFontMetricsF fm     (font());
+            qreal         ascent = fm.ascent();
 
             for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
 
-                QTextLayout* layout = block.layout();
+                QString text = block.text();
+                text.replace(QLatin1Char('\t'), QLatin1String("    "));
 
-                if (layout) {
-                    docPainter.setPen(lineForeground.value(block.blockNumber(), textFormat.foreground().color()));
-                    layout->draw(&docPainter, QPointF(0, y));
-                }
+                docPainter.drawText(QPointF(0, y + ascent), text);
 
                 y += blockBoundingRect(block).height();
             }

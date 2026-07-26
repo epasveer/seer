@@ -357,20 +357,19 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
     }
 
     QTextCharFormat marginFormat = highlighterSettings().get("Margin");
-    QTextCharFormat textFormat   = highlighterSettings().get("Text");
 
     // Rebuild the cached content pixmap if the document, theme, or size changed.
-    // Rendering uses the document's real font/layout (so tab-stops and glyph
-    // shaping stay correct) and only shrinks the *rasterized* output via a
-    // scaled QPainter - unlike shrinking the live font's point size, which is
-    // known to break tab-stop rendering (see setEditorFont()'s comments).
+    // Rendering uses the document's real font (so glyph shaping stays correct)
+    // and only shrinks the *rasterized* output via a scaled QPainter - unlike
+    // shrinking the live font's point size, which is known to break tab-stop
+    // rendering (see setEditorFont()'s comments).
     //
-    // Note: QTextDocument::drawContents() is NOT used here - it's not the
-    // rendering path QPlainTextEdit itself uses (QPlainTextDocumentLayout
-    // doesn't support it), so instead each block's QTextLayout (already
-    // populated with the syntax highlighter's format runs) is drawn directly,
-    // the same primitive lineNumberAreaPaintEvent()/breakPointAreaPaintEvent()
-    // already use via blockBoundingRect() to walk lines.
+    // Text is drawn as plain strings in a single color, deliberately ignoring
+    // the syntax highlighter's per-character formats (QTextLayout::draw()
+    // would honor those, but at mini-map scale the anti-aliased blend of many
+    // small runs of different keyword/comment/string colors just looks like
+    // wrong/muddy colors rather than useful highlighting) - lineNumberAreaPaintEvent()/
+    // breakPointAreaPaintEvent() walk lines the same way via blockBoundingRect().
     if (_miniMapPixmapDirty || _miniMapPixmap.size() != _miniMapArea->size()) {
 
         QSize size = _miniMapArea->size();
@@ -416,25 +415,19 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
             docPainter.setRenderHint(QPainter::TextAntialiasing, true);
             docPainter.scale(sx, sy);
 
-            // The syntax highlighter only calls setFormat() on matched runs
-            // (keywords, comments, strings, etc.) - plain text (identifiers,
-            // operators, numbers) is left unformatted and normally picks up
-            // the editor's palette text color instead. QTextLayout::draw()
-            // has no palette to fall back on, so the painter's default pen
-            // must be set explicitly to the same "Text" color the editor
-            // itself uses, or unformatted text would render in the wrong
-            // (default black) color instead of matching the editor's theme.
+            docPainter.setFont(font());
             docPainter.setPen(marginFormat.foreground().color());
 
-            qreal y = 0;
+            qreal         y      = 0;
+            QFontMetricsF fm     (font());
+            qreal         ascent = fm.ascent();
 
             for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
 
-                QTextLayout* layout = block.layout();
+                QString text = block.text();
+                text.replace(QLatin1Char('\t'), QLatin1String("    "));
 
-                if (layout) {
-                    layout->draw(&docPainter, QPointF(0, y));
-                }
+                docPainter.drawText(QPointF(0, y + ascent), text);
 
                 y += blockBoundingRect(block).height();
             }
