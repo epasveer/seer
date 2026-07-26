@@ -4,9 +4,12 @@
 
 #include "QProgressIndicator.h"
 
-#include <QDebug>
-#include <QtGlobal>
-#include <QPoint>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
+#include <QtCore/QDebug>
+#include <QtCore/QPoint>
 #include <limits>
 #include <cmath>
 
@@ -25,7 +28,10 @@ QProgressIndicator::QProgressIndicator(QWidget* parent) : QWidget(parent) {
 
     _timer = new QTimer();
 
-    connect(_timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+    QObject::connect(_timer,                            &QTimer::timeout,                       this, &QProgressIndicator::onTimeout);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(),     &QStyleHints::colorSchemeChanged,       this, &QProgressIndicator::handleThemeChanged);
+#endif
 
     update();
 }
@@ -145,6 +151,25 @@ int QProgressIndicator::interval () {
 void QProgressIndicator::setInterval (int interval) {
 
     _interval = interval;
+}
+
+void QProgressIndicator::handleThemeChanged () {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    // Get the current color scheme
+    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+    if (colorScheme == Qt::ColorScheme::Light) {
+        setColor(QColor("black"));
+    }else if (colorScheme == Qt::ColorScheme::Dark) {
+        setColor(QColor("white"));
+    }else{
+        setColor(QColor("black"));
+        qDebug() << "Bad colorScheme of: " << colorScheme;
+    }
+#else
+    setColor(QColor("black"));
+#endif
 }
 
 void QProgressIndicator::onTimeout() {
