@@ -743,7 +743,9 @@ void SeerEditorWidgetSourceArea::openText (const QString& text, const QString& f
     _file = file;
     SeerSourceHighlighter* highlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (highlighter) {
+
         _sourceHighlighter = highlighter;
+
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
         }else{
@@ -2070,8 +2072,15 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
     setPalette(p);
 
     // Update the syntax highlighter.
-    _sourceHighlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
     if (_sourceHighlighter) {
+        delete _sourceHighlighter; _sourceHighlighter = 0;
+    }
+
+    SeerSourceHighlighter* highlighter = SeerSourceHighlighter::getSourceHighlighter(_file, _sourceHighlighterSettings);
+
+    if (highlighter) {
+
+        _sourceHighlighter = highlighter;
 
         if (highlighterEnabled()) {
             _sourceHighlighter->setDocument(document());
@@ -2085,7 +2094,6 @@ void SeerEditorWidgetSourceArea::handleHighlighterSettingsChanged () {
 
     // Note. The margins are automatically updated by their own paint events.
     //       The new highlighter settings will be used.
-
     invalidateMiniMapCache();
 }
 

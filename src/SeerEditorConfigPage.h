@@ -30,6 +30,9 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                setHighlighterEnabled           (bool flag);
         bool                                highlighterEnabled              () const;
 
+        void                                setMinimapEnabled               (bool flag);
+        bool                                minimapEnabled                  () const;
+
         void                                setExternalEditorCommand        (const QString& externalEditorCommand);
         QString                             externalEditorCommand           () const;
 
@@ -44,7 +47,8 @@ class SeerEditorConfigPage : public QWidget, public Ui::SeerEditorConfigPage {
         void                                handleFontChanged               (const QFont& font);
         void                                handleFontDialog                ();
         void                                handleHighlighterChanged        ();
-        void                                handleEnabledChanged            ();
+        void                                handleHighlighterEnabledChanged ();
+        void                                handleMinimapEnabledChanged     ();
         void                                handleApplyTheme                ();
         void                                handleLanguageTabChanged        (int index);
 

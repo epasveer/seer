@@ -25,7 +25,8 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(fontSizeComboBox,            &QComboBox::currentTextChanged,           this, &SeerEditorConfigPage::handleFontSizeChanged);
     QObject::connect(fontNameComboBox,            &QFontComboBox::currentFontChanged,       this, &SeerEditorConfigPage::handleFontChanged);
     QObject::connect(fontDialogButton,            &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleFontDialog);
-    QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleEnabledChanged);
+    QObject::connect(highlighterEnabledCheckBox,  &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleHighlighterEnabledChanged);
+    QObject::connect(minimapEnabledCheckBox,      &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleMinimapEnabledChanged);
     QObject::connect(cppSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
@@ -161,6 +162,8 @@ const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const
 
 void SeerEditorConfigPage::setHighlighterEnabled (bool flag) {
 
+    qDebug() << flag;
+
     highlighterEnabledCheckBox->setChecked(flag);
 
     editorWidget->sourceArea()->setHighlighterEnabled(flag);
@@ -169,6 +172,18 @@ void SeerEditorConfigPage::setHighlighterEnabled (bool flag) {
 bool SeerEditorConfigPage::highlighterEnabled () const {
 
     return editorWidget->sourceArea()->highlighterEnabled();
+}
+
+void SeerEditorConfigPage::setMinimapEnabled (bool flag) {
+
+    minimapEnabledCheckBox->setChecked(flag);
+
+    editorWidget->sourceArea()->enableMiniMapArea(flag);
+}
+
+bool SeerEditorConfigPage::minimapEnabled () const {
+
+    return editorWidget->sourceArea()->miniMapAreaEnabled();
 }
 
 void SeerEditorConfigPage::setExternalEditorCommand (const QString& externalEditorCommand) {
@@ -197,6 +212,7 @@ void SeerEditorConfigPage::reset () {
     setEditorTabSize(4);
     setHighlighterSettings(SeerHighlighterSettings::populate(""));
     setHighlighterEnabled(true);
+    setMinimapEnabled(false);
     setExternalEditorCommand("");
     setAutoSourceReload(false);
 }
@@ -324,9 +340,14 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
     setHighlighterSettings(languageSettings);
 }
 
-void SeerEditorConfigPage::handleEnabledChanged () {
+void SeerEditorConfigPage::handleHighlighterEnabledChanged () {
 
     setHighlighterEnabled(highlighterEnabledCheckBox->isChecked());
+}
+
+void SeerEditorConfigPage::handleMinimapEnabledChanged () {
+
+    setMinimapEnabled(minimapEnabledCheckBox->isChecked());
 }
 
 void SeerEditorConfigPage::handleApplyTheme () {
@@ -395,7 +416,7 @@ void SeerEditorConfigPage::handleLanguageTabChanged (int index) {
                                              "end Main;",
                                              "sample.adb");
     }
-    
+
     editorWidget->sourceArea()->setCurrentLine(0);
 }
 
