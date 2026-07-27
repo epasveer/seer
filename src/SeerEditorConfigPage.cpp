@@ -162,8 +162,6 @@ const SeerHighlighterSettings& SeerEditorConfigPage::highlighterSettings() const
 
 void SeerEditorConfigPage::setHighlighterEnabled (bool flag) {
 
-    qDebug() << flag;
-
     highlighterEnabledCheckBox->setChecked(flag);
 
     editorWidget->sourceArea()->setHighlighterEnabled(flag);

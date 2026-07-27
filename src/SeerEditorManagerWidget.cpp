@@ -32,6 +32,7 @@ SeerEditorManagerWidget::SeerEditorManagerWidget (QWidget* parent) : QWidget(par
     _editorFont                     = QFont("monospace", 10);                // Default font.
     _editorHighlighterSettings      = SeerHighlighterSettings::populate(""); // Default syntax highlighting.
     _editorHighlighterEnabled       = true;
+    _editorMinimapEnabled           = false;
     _editorKeySettings              = SeerKeySettings::populate();           // Default key settings.
     _editorTabSize                  = 4;
     _editorExternalEditorCommand    = "";
@@ -384,7 +385,34 @@ void SeerEditorManagerWidget::setEditorHighlighterEnabled (bool flag) {
 
 bool SeerEditorManagerWidget::editorHighlighterEnabled () const {
 
+
     return _editorHighlighterEnabled;
+}
+
+void SeerEditorManagerWidget::setEditorMinimapEnabled (bool flag) {
+
+    _editorMinimapEnabled = flag;
+
+    // Update current editors.
+    SeerEditorManagerEntries::iterator b = beginEntry();
+    SeerEditorManagerEntries::iterator e = endEntry();
+
+    while (b != e) {
+        b->widget->sourceArea()->enableMiniMapArea(_editorMinimapEnabled);
+        b++;
+    }
+
+    // Don't forget about the assembly widget.
+    SeerEditorWidgetAssembly* assemblyWidget = assemblyWidgetTab();
+
+    if (assemblyWidget) {
+        assemblyWidget->assemblyArea()->enableMiniMapArea(_editorMinimapEnabled);
+    }
+}
+
+bool SeerEditorManagerWidget::editorMinimapEnabled () const {
+
+    return _editorMinimapEnabled;
 }
 
 void SeerEditorManagerWidget::setEditorAlternateDirectories (const QStringList alternateDirectories) {
@@ -797,7 +825,7 @@ void SeerEditorManagerWidget::handleText (const QString& text) {
         }
 
     }else if (text.startsWith("*running")) {
-        // target / program is running, should erase 'yellow' color is for the current line 
+        // target / program is running, should erase 'yellow' color is for the current line
         // _lastFrameList is invoked to erase previously "colored" line
         for ( const auto& frame_text : _lastFrameList  ) {
             QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
@@ -926,7 +954,7 @@ void SeerEditorManagerWidget::handleOpenFileWithDetails (const QString& file, co
     }
 
     if (firstDisplayLine > 0) {
-        // firstDisplayLine is always > 0 
+        // firstDisplayLine is always > 0
         // this means the function is handling open closed files, set cursor position and first display line
         QPlainTextEdit* textEdit = editorWidget->sourceArea();
         // Create a small helper lambda that does the actual restoration
@@ -1076,6 +1104,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
+    editorWidget->sourceArea()->enableMiniMapArea(editorMinimapEnabled());
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
@@ -1141,6 +1170,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     editorWidget->sourceArea()->setHighlighterSettings(editorHighlighterSettings());
     editorWidget->sourceArea()->setHighlighterEnabled(editorHighlighterEnabled());
     editorWidget->sourceArea()->setAlternateDirectories(editorAlternateDirectories());
+    editorWidget->sourceArea()->enableMiniMapArea(editorMinimapEnabled());
     editorWidget->setKeySettings(editorKeySettings());
 
     // Set the tooltip for the tab.
@@ -1240,6 +1270,7 @@ SeerEditorWidgetAssembly* SeerEditorManagerWidget::createAssemblyWidgetTab () {
     assemblyWidget->assemblyArea()->setEditorTabSize(editorTabSize());
     assemblyWidget->assemblyArea()->setHighlighterSettings(editorHighlighterSettings());
     assemblyWidget->assemblyArea()->setHighlighterEnabled(editorHighlighterEnabled());
+    assemblyWidget->assemblyArea()->enableMiniMapArea(editorMinimapEnabled());
 
     assemblyWidget->setShowAddressColumn(assemblyShowAddressColumn());
     assemblyWidget->setShowOffsetColumn(assemblyShowOffsetColumn());

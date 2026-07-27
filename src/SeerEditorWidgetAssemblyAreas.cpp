@@ -72,7 +72,7 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     enableOffsetArea(true);
     enableOpcodeArea(true);
     enableBreakPointArea(true);
-    enableMiniMapArea(true);
+    enableMiniMapArea(false);
     enableSourceLines(true);
     setConvertUppercase(false);
 

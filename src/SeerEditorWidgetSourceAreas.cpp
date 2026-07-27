@@ -71,7 +71,7 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 
     enableLineNumberArea(true);
     enableBreakPointArea(true);
-    enableMiniMapArea(true);
+    enableMiniMapArea(false);
 
     _altHeldTimer->setInterval(40);  // 40 ms interval = 25Hz update rate
     QObject::connect(_altHeldTimer, &QTimer::timeout, this, [this]() {
@@ -108,26 +108,31 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
 }
 
 void SeerEditorWidgetSourceArea::enableLineNumberArea (bool flag) {
+
     _enableLineNumberArea = flag;
 
     updateMarginAreasWidth(0);
 }
 
 bool SeerEditorWidgetSourceArea::lineNumberAreaEnabled () const {
+
     return _enableLineNumberArea;
 }
 
 void SeerEditorWidgetSourceArea::enableBreakPointArea (bool flag) {
+
     _enableBreakPointArea = flag;
 
     updateMarginAreasWidth(0);
 }
 
 bool SeerEditorWidgetSourceArea::breakPointAreaEnabled () const {
+
     return _enableBreakPointArea;
 }
 
 void SeerEditorWidgetSourceArea::enableMiniMapArea (bool flag) {
+
     _enableMiniMapArea = flag;
 
     invalidateMiniMapCache();
@@ -135,6 +140,7 @@ void SeerEditorWidgetSourceArea::enableMiniMapArea (bool flag) {
 }
 
 bool SeerEditorWidgetSourceArea::miniMapAreaEnabled () const {
+
     return _enableMiniMapArea;
 }
 
