@@ -158,6 +158,8 @@ void SeerEditorWidgetAssemblyArea::enableMiniMapArea (bool flag) {
 
     _enableMiniMapArea = flag;
 
+    setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+
     invalidateMiniMapCache();
     updateMarginAreasWidth(0);
 }
