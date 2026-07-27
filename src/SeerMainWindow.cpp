@@ -819,7 +819,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     dlg.setEditorTabSize(gdbWidget->editorManager()->editorTabSize());
     dlg.setEditorHighlighterSettings(gdbWidget->editorManager()->editorHighlighterSettings());
     dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
-    dlg.setEditorHighlighterEnabled(gdbWidget->editorManager()->editorHighlighterEnabled());
+    dlg.setEditorMinimapEnabled(gdbWidget->editorManager()->editorMinimapEnabled());
     dlg.setExternalEditorCommand(gdbWidget->editorManager()->editorExternalEditorCommand());
     dlg.setEditorAutoSourceReload(gdbWidget->editorManager()->editorAutoSourceReload());
     dlg.setSourceAlternateDirectories(gdbWidget->sourceAlternateDirectories());
@@ -866,6 +866,7 @@ void SeerMainWindow::handleSettingsConfiguration () {
     gdbWidget->editorManager()->setEditorTabSize(dlg.editorTabSize());
     gdbWidget->editorManager()->setEditorHighlighterSettings(dlg.editorHighlighterSettings());
     gdbWidget->editorManager()->setEditorHighlighterEnabled(dlg.editorHighlighterEnabled());
+    gdbWidget->editorManager()->setEditorMinimapEnabled(dlg.editorMinimapEnabled());
     gdbWidget->editorManager()->setEditorExternalEditorCommand(dlg.externalEditorCommand());
     gdbWidget->editorManager()->setEditorAutoSourceReload(dlg.editorAutoSourceReload());
     gdbWidget->setSourceAlternateDirectories(dlg.sourceAlternateDirectories());
@@ -1772,6 +1773,7 @@ void SeerMainWindow::writeConfigSettings () {
         settings.setValue("tabsize",               gdbWidget->editorManager()->editorTabSize());
         settings.setValue("externaleditorcommand", gdbWidget->editorManager()->editorExternalEditorCommand());
         settings.setValue("autosourcereload",      gdbWidget->editorManager()->editorAutoSourceReload());
+        settings.setValue("minimapenabled",        gdbWidget->editorManager()->editorMinimapEnabled());
 
         settings.beginGroup("highlighter"); {
 
@@ -1874,6 +1876,7 @@ void SeerMainWindow::readConfigSettings () {
         gdbWidget->editorManager()->setEditorTabSize(settings.value("tabsize", 4).toInt());
         gdbWidget->editorManager()->setEditorExternalEditorCommand(settings.value("externaleditorcommand").toString());
         gdbWidget->editorManager()->setEditorAutoSourceReload(settings.value("autosourcereload").toBool());
+        gdbWidget->editorManager()->setEditorMinimapEnabled(settings.value("minimapenabled",false).toBool());
 
         settings.beginGroup("highlighter"); {
 

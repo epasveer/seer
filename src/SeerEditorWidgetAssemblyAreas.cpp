@@ -40,9 +40,13 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _enableOffsetArea     = false;
     _enableOpcodeArea     = false;
     _enableBreakPointArea = false;
+    _enableMiniMapArea    = false;
     _enableSourceLines    = false;
     _sourceTabSize        = 4;
     _convertUppercase     = false;
+    _miniMapArea          = 0;
+    _miniMapPixmapDirty   = true;
+    _miniMapContentHeight = 0;
 
     _addressLineMap.clear();
     _offsetLineMap.clear();
@@ -62,19 +66,23 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     _offsetArea     = new SeerEditorWidgetAssemblyOffsetArea(this);
     _breakPointArea = new SeerEditorWidgetAssemblyBreakPointArea(this);
     _opcodeArea     = new SeerEditorWidgetAssemblyOpcodeArea(this);
+    _miniMapArea    = new SeerEditorWidgetAssemblyMiniMapArea(this);
 
     enableLineNumberArea(true);
     enableOffsetArea(true);
     enableOpcodeArea(true);
     enableBreakPointArea(true);
+    enableMiniMapArea(false);
     enableSourceLines(true);
     setConvertUppercase(false);
 
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::updateMarginAreasWidth);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::blockCountChanged,                this, &SeerEditorWidgetAssemblyArea::invalidateMiniMapCache);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateLineNumberArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOffsetArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateOpcodeArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateBreakPointArea);
+    QObject::connect(this, &SeerEditorWidgetAssemblyArea::updateRequest,                    this, &SeerEditorWidgetAssemblyArea::updateMiniMapArea);
     QObject::connect(this, &SeerEditorWidgetAssemblyArea::highlighterSettingsChanged,       this, &SeerEditorWidgetAssemblyArea::handleHighlighterSettingsChanged);
 
     setCurrentLine("");
@@ -86,11 +94,13 @@ SeerEditorWidgetAssemblyArea::SeerEditorWidgetAssemblyArea(QWidget* parent) : Se
     SeerPlainTextWheelEventForwarder* offsetAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* opcodeAreaWheelForwarder     = new SeerPlainTextWheelEventForwarder(this);
     SeerPlainTextWheelEventForwarder* breakPointAreaWheelForwarder = new SeerPlainTextWheelEventForwarder(this);
+    SeerPlainTextWheelEventForwarder* miniMapAreaWheelForwarder    = new SeerPlainTextWheelEventForwarder(this);
 
     _lineNumberArea->installEventFilter(lineNumberAreaWheelForwarder);
     _offsetArea->installEventFilter(offsetAreaWheelForwarder);
     _breakPointArea->installEventFilter(breakPointAreaWheelForwarder);
     _opcodeArea->installEventFilter(opcodeAreaWheelForwarder);
+    _miniMapArea->installEventFilter(miniMapAreaWheelForwarder);
 
     // Calling close() will clear the text document.
     close();
@@ -142,6 +152,21 @@ void SeerEditorWidgetAssemblyArea::enableOpcodeArea (bool flag) {
 bool SeerEditorWidgetAssemblyArea::opcodeAreaEnabled () const {
 
     return _enableOpcodeArea;
+}
+
+void SeerEditorWidgetAssemblyArea::enableMiniMapArea (bool flag) {
+
+    _enableMiniMapArea = flag;
+
+    setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+
+    invalidateMiniMapCache();
+    updateMarginAreasWidth(0);
+}
+
+bool SeerEditorWidgetAssemblyArea::miniMapAreaEnabled () const {
+
+    return _enableMiniMapArea;
 }
 
 void SeerEditorWidgetAssemblyArea::enableSourceLines (bool flag) {
@@ -371,6 +396,8 @@ void SeerEditorWidgetAssemblyArea::updateTextArea () {
 
     // Set the cursor back.
     QApplication::restoreOverrideCursor();
+
+    invalidateMiniMapCache();
 }
 
 void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
@@ -378,7 +405,7 @@ void SeerEditorWidgetAssemblyArea::updateMarginAreasWidth (int newBlockCount) {
     Q_UNUSED(newBlockCount);
 
     int leftMarginWidth  = lineNumberAreaWidth() + offsetAreaWidth() + breakPointAreaWidth() + opcodeAreaWidth();
-    int rightMarginWidth = 0;
+    int rightMarginWidth = miniMapAreaWidth();
 
     setViewportMargins(leftMarginWidth, 0, rightMarginWidth, 0);
 }
@@ -404,6 +431,15 @@ int SeerEditorWidgetAssemblyArea::lineNumberAreaWidth () {
     int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * chars;
 
     return space;
+}
+
+int SeerEditorWidgetAssemblyArea::miniMapAreaWidth () {
+
+    if (miniMapAreaEnabled() == false) {
+        return 0;
+    }
+
+    return 120;
 }
 
 int SeerEditorWidgetAssemblyArea::offsetAreaWidth () {
@@ -530,6 +566,30 @@ void SeerEditorWidgetAssemblyArea::updateBreakPointArea (const QRect& rect, int 
 
     if (rect.contains(viewport()->rect())) {
         updateMarginAreasWidth(0);
+    }
+}
+
+void SeerEditorWidgetAssemblyArea::updateMiniMapArea (const QRect& rect, int dy) {
+
+    Q_UNUSED(rect);
+    Q_UNUSED(dy);
+
+    if (miniMapAreaEnabled() == false) {
+        return;
+    }
+
+    // The mini-map's cached content is a whole-document rendering, not a
+    // viewport-following strip, so there's nothing to scroll - just repaint
+    // the (cheap) viewport-position overlay on top of the cached pixmap.
+    _miniMapArea->update();
+}
+
+void SeerEditorWidgetAssemblyArea::invalidateMiniMapCache () {
+
+    _miniMapPixmapDirty = true;
+
+    if (_miniMapArea) {
+        _miniMapArea->update();
     }
 }
 
@@ -738,6 +798,113 @@ void SeerEditorWidgetAssemblyArea::opcodeAreaPaintEvent (QPaintEvent* event) {
     }
 }
 
+void SeerEditorWidgetAssemblyArea::miniMapAreaPaintEvent (QPaintEvent* event) {
+
+    Q_UNUSED(event);
+
+    if (miniMapAreaEnabled() == false) {
+        return;
+    }
+
+    QTextCharFormat marginFormat = highlighterSettings().get("Margin");
+
+    // Rebuild the cached content pixmap if the document, theme, or size changed.
+    // Rendering uses the document's real font (so glyph shaping stays correct)
+    // and only shrinks the *rasterized* output via a scaled QPainter - unlike
+    // shrinking the live font's point size, which is known to break tab-stop
+    // rendering (see setEditorFont()'s comments).
+    //
+    // Text is drawn as plain strings in a single color - the real editor
+    // colors whole lines differently (source vs. assembly) via
+    // _sourceLinesExtraSelections, but at mini-map scale mixing those line
+    // colors in just looks like wrong/inconsistent colors rather than useful
+    // information, so the mini-map ignores it and uses one uniform color.
+    if (_miniMapPixmapDirty || _miniMapPixmap.size() != _miniMapArea->size()) {
+
+        QSize size = _miniMapArea->size();
+
+        _miniMapPixmap = QPixmap(size);
+        _miniMapPixmap.fill(marginFormat.background().color());
+
+        int   maxChars    = 1;
+        qreal docHeightPx = 0;
+
+        for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
+            maxChars     = qMax(maxChars, block.text().length());
+            docHeightPx += blockBoundingRect(block).height();   // also forces the block's layout
+        }
+
+        qreal docWidthPx = maxChars * qreal(fontMetrics().horizontalAdvance(QLatin1Char('9')));
+
+        _miniMapContentHeight = 0;
+
+        if (size.isEmpty() == false && docWidthPx > 0 && docHeightPx > 0) {
+
+            qreal sx = size.width()  / docWidthPx;
+            qreal sy = size.height() / docHeightPx;
+
+            // Cap the vertical scale so very short files don't get stretched
+            // into oversized, blurry-looking lines.
+            qreal maxScaleY = 3.0 / qreal(qMax(1, fontMetrics().height()));
+            sy = qMin(sy, maxScaleY);
+
+            // Remember the actual on-screen height the content was rendered
+            // at (which may be less than the widget's full height, since sy
+            // is capped above) so the viewport overlay and click/drag-to-jump
+            // math below use the same scale as the cached pixmap - otherwise
+            // the overlay drifts out of sync with the rendered content for
+            // any listing short enough to hit the cap.
+            _miniMapContentHeight = docHeightPx * sy;
+
+            QPainter docPainter(&_miniMapPixmap);
+            docPainter.setRenderHint(QPainter::Antialiasing, true);
+            docPainter.setRenderHint(QPainter::TextAntialiasing, true);
+            docPainter.scale(sx, sy);
+            docPainter.setFont(font());
+            docPainter.setPen(marginFormat.foreground().color());
+
+            qreal         y      = 0;
+            QFontMetricsF fm     (font());
+            qreal         ascent = fm.ascent();
+
+            for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
+
+                QString text = block.text();
+                text.replace(QLatin1Char('\t'), QLatin1String("    "));
+
+                docPainter.drawText(QPointF(0, y + ascent), text);
+
+                y += blockBoundingRect(block).height();
+            }
+        }
+
+        _miniMapPixmapDirty = false;
+    }
+
+    QPainter painter(_miniMapArea);
+    painter.drawPixmap(0, 0, _miniMapPixmap);
+
+    // Overlay: highlight the portion of the document currently visible in the editor.
+    // Use the content's actual rendered height (not the widget's full height)
+    // so the overlay stays aligned with the cached pixmap even when the
+    // vertical scale was capped (see above).
+    int   totalLines = qMax(1, document()->blockCount());
+    qreal pxPerLine  = _miniMapContentHeight / qreal(totalLines);
+
+    int firstLine    = firstVisibleBlock().blockNumber();
+    int visibleLines = qMax(1, int(viewport()->height() / qMax(1, fontMetrics().height())) + 1);
+
+    QRectF overlay(0, firstLine * pxPerLine, _miniMapArea->width(), qMax(4.0, visibleLines * pxPerLine));
+
+    QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
+    QColor          overlayColor      = currentLineFormat.background().color();
+    overlayColor.setAlpha(90);
+
+    painter.fillRect(overlay, overlayColor);
+    painter.setPen(currentLineFormat.background().color());
+    painter.drawRect(overlay.adjusted(0, 0, -1, -1));
+}
+
 void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
 
     QPlainTextEdit::resizeEvent(e);
@@ -767,6 +934,13 @@ void SeerEditorWidgetAssemblyArea::resizeEvent (QResizeEvent* e) {
         _breakPointArea->setGeometry (QRect(cr.left() + leftbias, cr.top(), breakPointAreaWidth(), cr.height()));
 
         leftbias += breakPointAreaWidth();
+    }
+
+    if (miniMapAreaEnabled()) {
+        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() + 1, cr.top(), miniMapAreaWidth(), cr.height()));
+
+        // The widget's height changed, so the cached pixmap's vertical scale is stale.
+        invalidateMiniMapCache();
     }
 }
 
@@ -992,6 +1166,26 @@ void SeerEditorWidgetAssemblyArea::scrollToLine (const QString& address) {
     setTextCursor(cursor);
 
     centerCursor();
+}
+
+void SeerEditorWidgetAssemblyArea::jumpToMiniMapY (int y) {
+
+    if (miniMapAreaEnabled() == false) {
+        return;
+    }
+
+    int totalLines = qMax(1, document()->blockCount());
+    qreal pxPerLine = _miniMapContentHeight / qreal(totalLines);
+
+    if (pxPerLine <= 0) {
+        return;
+    }
+
+    int lineno = int(y / pxPerLine) + 1;
+
+    // Reuse the existing address/offset/linenumber scroll-to entry point -
+    // a plain integer string is parsed as a line number (see above).
+    scrollToLine(QString::number(lineno));
 }
 
 void SeerEditorWidgetAssemblyArea::clearCurrentLines () {
@@ -1459,6 +1653,8 @@ void SeerEditorWidgetAssemblyArea::setEditorFont (const QFont& font) {
 
     setFont(font);
 
+    invalidateMiniMapCache();
+
     // See: SeerEditorSourceArea::setEditorFont()
 }
 
@@ -1791,6 +1987,45 @@ void SeerEditorWidgetAssemblyBreakPointArea::mousePressEvent (QMouseEvent* event
 }
 
 void SeerEditorWidgetAssemblyBreakPointArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    QWidget::mouseReleaseEvent(event);
+}
+
+SeerEditorWidgetAssemblyMiniMapArea::SeerEditorWidgetAssemblyMiniMapArea(SeerEditorWidgetAssemblyArea* editorWidget) : QWidget(editorWidget) {
+    _editorWidget = editorWidget;
+    _dragging     = false;
+}
+
+QSize SeerEditorWidgetAssemblyMiniMapArea::sizeHint () const {
+    return QSize(_editorWidget->miniMapAreaWidth(), 0);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::paintEvent (QPaintEvent* event) {
+    _editorWidget->miniMapAreaPaintEvent(event);
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mousePressEvent (QMouseEvent* event) {
+
+    if (event->button() == Qt::LeftButton) {
+        _dragging = true;
+        _editorWidget->jumpToMiniMapY(event->pos().y());
+    }else{
+        QWidget::mousePressEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
+
+    if (_dragging && (event->buttons() & Qt::LeftButton)) {
+        _editorWidget->jumpToMiniMapY(event->pos().y());
+    }else{
+        QWidget::mouseMoveEvent(event);
+    }
+}
+
+void SeerEditorWidgetAssemblyMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
+
+    _dragging = false;
 
     QWidget::mouseReleaseEvent(event);
 }

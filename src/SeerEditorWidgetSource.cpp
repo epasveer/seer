@@ -79,6 +79,9 @@ SeerEditorWidgetSource::SeerEditorWidgetSource(QWidget* parent) : QWidget(parent
     QObject::connect(_alternateDirShortcut,             &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleAlternateDirectoryShortcut);
     QObject::connect(_toggleBreakpointShortcut,         &QShortcut::activated,                                  this,          &SeerEditorWidgetSource::handleToggleBreakpointShortcut);
     QObject::connect(_gotoDefinitionShortcut,           &QShortcut::activated,                                  sourceArea(),  &SeerEditorWidgetSourceArea::handleGotoDefinition);
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 
 SeerEditorWidgetSource::~SeerEditorWidgetSource () {

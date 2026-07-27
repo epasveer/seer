@@ -315,6 +315,16 @@ bool SeerConfigDialog::editorHighlighterEnabled () const {
     return _editorConfigPage->highlighterEnabled();
 }
 
+void SeerConfigDialog::setEditorMinimapEnabled (bool flag) {
+
+    _editorConfigPage->setMinimapEnabled(flag);
+}
+
+bool SeerConfigDialog::editorMinimapEnabled () const {
+
+    return _editorConfigPage->minimapEnabled();
+}
+
 void SeerConfigDialog::setExternalEditorCommand (const QString& externalEditorCommand) {
 
     _editorConfigPage->setExternalEditorCommand(externalEditorCommand);

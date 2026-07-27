@@ -166,12 +166,12 @@
        </property>
        <item>
         <property name="text">
-         <string>row-major (C, NumPy)</string>
+         <string>row-major</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>column-major (Fortran, Eigen)</string>
+         <string>column-major</string>
         </property>
        </item>
       </widget>
@@ -241,13 +241,13 @@
      <item row="0" column="1">
       <widget class="QLineEdit" name="countLineEdit">
        <property name="toolTip">
-        <string># values in matrix</string>
+        <string># values</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string># values in matrix</string>
+        <string># values</string>
        </property>
       </widget>
      </item>
@@ -264,13 +264,13 @@
      <item row="0" column="3">
       <widget class="QLineEdit" name="rowsLineEdit">
        <property name="toolTip">
-        <string># rows in matrix</string>
+        <string># rows</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string># rows in matrix</string>
+        <string># rows</string>
        </property>
       </widget>
      </item>
@@ -287,13 +287,13 @@
      <item row="0" column="5">
       <widget class="QLineEdit" name="columnsLineEdit">
        <property name="toolTip">
-        <string># columns in matrix</string>
+        <string># columns</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string># columns in matrix</string>
+        <string># columns</string>
        </property>
       </widget>
      </item>
@@ -310,13 +310,13 @@
      <item row="0" column="7">
       <widget class="QLineEdit" name="minimumLineEdit">
        <property name="toolTip">
-        <string>Minimum value in matrix</string>
+        <string>Minimum value</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Minimum value in matrix</string>
+        <string>Minimum value</string>
        </property>
       </widget>
      </item>
@@ -333,13 +333,13 @@
      <item row="0" column="9">
       <widget class="QLineEdit" name="maximumLineEdit">
        <property name="toolTip">
-        <string>Maximum value in matrix</string>
+        <string>Maximum value</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Maximum value in matrix</string>
+        <string>Maximum value</string>
        </property>
       </widget>
      </item>
@@ -369,13 +369,13 @@
      <item row="1" column="1">
       <widget class="QLineEdit" name="sumLineEdit">
        <property name="toolTip">
-        <string>Sum of all matrix values</string>
+        <string>Sum of values</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Sum of all matrix values</string>
+        <string>Sum of values</string>
        </property>
       </widget>
      </item>
@@ -392,13 +392,13 @@
      <item row="1" column="3">
       <widget class="QLineEdit" name="averageLineEdit">
        <property name="toolTip">
-        <string>Average of all matrix values</string>
+        <string>Average of values</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Average of all matrix values</string>
+        <string>Average of values</string>
        </property>
       </widget>
      </item>
@@ -415,13 +415,13 @@
      <item row="1" column="5">
       <widget class="QLineEdit" name="medianLineEdit">
        <property name="toolTip">
-        <string>Median of all matrix values</string>
+        <string>Median of values</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>Median of all matrix values</string>
+        <string>Median of values</string>
        </property>
       </widget>
      </item>
@@ -438,13 +438,13 @@
      <item row="1" column="7">
       <widget class="QLineEdit" name="rmsLineEdit">
        <property name="toolTip">
-        <string>RMS of all matrix values</string>
+        <string>RMS of values</string>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="placeholderText">
-        <string>RMS of all matrix values</string>
+        <string>RMS of values</string>
        </property>
       </widget>
      </item>
