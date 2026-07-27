@@ -285,6 +285,16 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="8" rowspan="2">
+      <widget class="QCheckBox" name="autoRefreshCheckBox">
+       <property name="toolTip">
+        <string>Automatically refresh after each stopping point.</string>
+       </property>
+       <property name="text">
+        <string>Auto</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="SeerHistoryLineEdit" name="aVariableNameLineEdit">
        <property name="toolTip">
@@ -528,6 +538,7 @@
   <tabstop>aArrayStrideLineEdit</tabstop>
   <tabstop>aArrayDisplayFormatComboBox</tabstop>
   <tabstop>aRefreshToolButton</tabstop>
+  <tabstop>autoRefreshCheckBox</tabstop>
   <tabstop>bAxisComboBox</tabstop>
   <tabstop>bVariableNameLineEdit</tabstop>
   <tabstop>bVariableAddressLineEdit</tabstop>

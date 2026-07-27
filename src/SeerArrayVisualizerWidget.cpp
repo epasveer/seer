@@ -705,6 +705,14 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             bArrayStrideLineEdit->setFocus();
         }
 
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleaRefreshButton();
+            handlebRefreshButton();
+        }
+
     }else{
         // Ignore anything else.
     }
