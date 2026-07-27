@@ -19,6 +19,9 @@ This part of the Visualizer specifies the array to view. Here are the details fo
 * Array offset. How many elements to initially skip. Default 0 (start at the begining of the array).
 * Array stride. How the elements are accessed in the array. Default 1 (use every element). 2 would access every second element.
 * Array data type.
+* Array memory layout. How the 2D matrix is laid out in memory: row-major (row by row) or column-major (column by column
+    * row-major (C, NumPy)
+    * column-major (Fortran, Eigen)
 * Refresh.
 
 By having array offset and array stride, it's possible to handle oddly constructed arrays.
