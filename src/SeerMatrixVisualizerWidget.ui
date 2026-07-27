@@ -177,6 +177,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="autoRefreshCheckBox">
+       <property name="toolTip">
+        <string>Automatically refresh after each stopping point.</string>
+       </property>
+       <property name="text">
+        <string>Auto</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
@@ -476,6 +486,7 @@
   <tabstop>matrixStrideLineEdit</tabstop>
   <tabstop>matrixDisplayFormatComboBox</tabstop>
   <tabstop>matrixStorageOrderComboBox</tabstop>
+  <tabstop>autoRefreshCheckBox</tabstop>
   <tabstop>refreshToolButton</tabstop>
   <tabstop>helpToolButton</tabstop>
   <tabstop>matrixTableWidget</tabstop>
