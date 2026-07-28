@@ -86,7 +86,7 @@ SeerDebugDialog::SeerDebugDialog (QWidget* parent) : QDialog(parent) {
     QObject::connect(loadAddrCheckBox,                     &QCheckBox::stateChanged,            this, &SeerDebugDialog::handleLoadAddrCheckBox);
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Set initial run mode.
     handleRunModeChanged(0);

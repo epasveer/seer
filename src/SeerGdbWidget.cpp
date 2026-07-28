@@ -2044,7 +2044,13 @@ void SeerGdbWidget::handleGdbExecutablePostCommands () {
 
 void SeerGdbWidget::handleGdbSessionLoadBreakpoints () {
 
-    handleGdbCommand(QString("source -v /tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid()));
+    QString filename = QString("/tmp/breakpoints.seer.%1").arg(QCoreApplication::applicationPid());
+
+    if (QFile::exists(filename) == false) {
+        return;
+    }
+
+    handleGdbCommand(QString("source -v %1").arg(filename));
     handleGdbGenericpointList();
 }
 

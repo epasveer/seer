@@ -10,6 +10,9 @@
 #include <QtGui/QShowEvent>
 #include <QtCore/QString>
 #include <QtCore/QSocketNotifier>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QtCore/QStringConverter>
+#endif
 #include "ui_SeerConsoleWidget.h"
 
 class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
@@ -73,5 +76,8 @@ class SeerConsoleWidget : public QWidget, protected Ui::SeerConsoleWidgetForm {
         QSocketNotifier*    _ttyListener;
         bool                _enableStdout;
         bool                _enableWrap;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QStringDecoder      _utf8Decoder{QStringConverter::Utf8}; // Keeps state across reads so multi-byte sequences split by the 1024-byte buffer decode correctly.
+#endif
 };
 

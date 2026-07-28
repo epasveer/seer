@@ -76,6 +76,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
 
         void                        setStyleName                            (const QString& name);
         const QString&              styleName                               ();
+        void                        setIconColorTheme                       (const QString& theme);
+        const QString&              iconColorTheme                          ();
 
         // OpenOCD getter and setter functions
         // ::Main
@@ -127,7 +129,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        handleHelpToolButtonClicked             ();
         void                        handleTerminateExecutable               ();
         void                        handleRestartExecutable                 ();
-        void                        handleStyleMenuChanged                  ();
+        void                        handleThemeStyleMenuChanged             ();
+        void                        handleIconColorMenuChanged              ();
         void                        handleShowMessage                       (QString message, int time);
         void                        handleGdbStateChanged                   ();
         void                        handleGdbTargetRunning                  ();
@@ -147,7 +150,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         void                        refreshShortCuts                        ();
 
     private:
-        QActionGroup*               _styleMenuActionGroup;
+        QActionGroup*               _themeStyleMenuActionGroup;
+        QActionGroup*               _iconColorMenuActionGroup;
         QString                     _styleName;
         QAction*                    _interruptAction;
         SeerProgressIndicator*      _progressIndicator;
