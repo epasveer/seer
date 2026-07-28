@@ -695,7 +695,7 @@ QJsonDocument SeerDebugDialog::makeJsonDoc() const {
         QJsonObject modeJson;
         // Main Tab
         modeJson["openocdExe"]                  = executableOpenOCDPathLineEdit->text();
-        modeJson["openocdCommand"]              = openOCDCommandLineEdit->toPlainText();
+        modeJson["openocdOptions"]              = openOCDOptionsLineEdit->toPlainText();
 
         // Symbol File Tab
         modeJson["symbolFile"]                  = symbolFileLineEdit->text();
@@ -894,7 +894,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
     if (openocdModeJson.isEmpty() == false) {
         // Main Tab
         executableOpenOCDPathLineEdit           ->setText(openocdModeJson["openocdExe"].toString());
-        openOCDCommandLineEdit                  ->setPlainText(openocdModeJson["openocdCommand"].toString());
+        openOCDOptionsLineEdit                  ->setPlainText(openocdModeJson["openocdOptions"].toString());
 
         // Symbol file Tab
         symbolFileLineEdit                      ->setText(openocdModeJson["symbolFile"].toString());
@@ -927,16 +927,16 @@ void SeerDebugDialog::setOpenocdExe(const QString& path)
     executableOpenOCDPathLineEdit->setText(path);
 }
 
-const QString SeerDebugDialog::openocdCommand()
+const QString SeerDebugDialog::openocdOptions()
 {
-    QString tmp = openOCDCommandLineEdit->toPlainText();
+    QString tmp = openOCDOptionsLineEdit->toPlainText();
     tmp.replace("\n", " ");
     return tmp;
 }
 
-void SeerDebugDialog::setOpenocdCommand(const QString& command)
+void SeerDebugDialog::setOpenocdOptions(const QString& options)
 {
-    openOCDCommandLineEdit->setPlainText(command);
+    openOCDOptionsLineEdit->setPlainText(options);
 }
 
 // ::Symbol Files

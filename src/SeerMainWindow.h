@@ -83,8 +83,8 @@ class SeerMainWindow : public QMainWindow, protected Ui::SeerMainWindowForm {
         // ::Main
         const QString&              openocdExe                              ();
         void                        setOpenocdExe                           (const QString& path);
-        const QString&              openocdCommand                          ();
-        void                        setOpenocdCommand                       (const QString& command);
+        const QString&              openocdOptions                          ();
+        void                        setOpenocdOptions                       (const QString& options);
         // ::GDB Multiarch
         const QString&              openocdGdbExe                           ();
         void                        setOpenocdGdbExe                        (const QString& path);

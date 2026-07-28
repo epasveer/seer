@@ -95,25 +95,25 @@ class SeerDebugDialog : public QDialog, protected Ui::SeerDebugDialogForm {
 
         // openocd get and set functions
         // ::Main
-        const QString                       openocdExe                          ();
-        void                                setOpenocdExe                       (const QString& path);
-        const QString                       openocdCommand                      ();
-        void                                setOpenocdCommand                   (const QString& command);
+        const QString           openocdExe                                      ();
+        void                    setOpenocdExe                                   (const QString& path);
+        const QString           openocdOptions                                  ();
+        void                    setOpenocdOptions                               (const QString& options);
         // ::GDB Multiarch
-        const QString                       openocdGdbExe                       ();
-        void                                setOpenocdGdbExe                    (const QString& path);
-        const QString                       openocdGdbPort                      ();
-        void                                setOpenocdGdbPort                   (const QString& port);
-        const QString                       openocdGdbCommand                   ();
-        void                                setOpenocdGdbCommand                (const QString& command);
+        const QString           openocdGdbExe                                   ();
+        void                    setOpenocdGdbExe                                (const QString& path);
+        const QString           openocdGdbPort                                  ();
+        void                    setOpenocdGdbPort                               (const QString& port);
+        const QString           openocdGdbOptions                               ();
+        void                    setOpenocdGdbOptions                            (const QString& options);
         // ::Symbol Files
-        const QString                       symbolFile                          ();
-        void                                setSymbolFile                       (const QString& path);
-        const QString                       workingDirectory                    ();
-        void                                setWorkingDirectory                 (const QString& path);
-        bool                                hasLoadAddress                      ();
-        const QString                       loadAddress                         ();
-        void                                setLoadAddress                      (const QString& address);
+        const QString           symbolFile                                      ();
+        void                    setSymbolFile                                   (const QString& path);
+        const QString           workingDirectory                                ();
+        void                    setWorkingDirectory                             (const QString& path);
+        bool                    hasLoadAddress                                  ();
+        const QString           loadAddress                                     ();
+        void                    setLoadAddress                                  (const QString& address);
 
     protected slots:
         void                    handleExecutableNameToolButton                  ();

@@ -661,9 +661,10 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
     dlg.setCoreFilename(executableCoreFilename());
     dlg.setPreGdbCommands(executablePreGdbCommands());
     dlg.setPostGdbCommands(executablePostGdbCommands());
+
     // OpenOCD
     dlg.setOpenocdExe(openocdExe());
-    dlg.setOpenocdCommand(openocdCommand());
+    dlg.setOpenocdOptions(openocdOptions());
     dlg.setSymbolFile(symbolFile());
 
     // If there's a project, use it.
@@ -713,7 +714,7 @@ void SeerMainWindow::handleFileDebug (bool loadDefaultProject) {
 
     // read openocd variables
     setOpenocdExe(dlg.openocdExe());
-    setOpenocdCommand(dlg.openocdCommand());
+    setOpenocdOptions(dlg.openocdOptions());
     setSymbolFile(dlg.symbolFile());
 
     launchExecutable(launchMode, breakMode);
@@ -2264,12 +2265,12 @@ void SeerMainWindow::setOpenocdExe (const QString& path) {
     gdbWidget->setOpenocdExe(path);
 }
 
-const QString& SeerMainWindow::openocdCommand() {
-    return gdbWidget->openocdCommand();
+const QString& SeerMainWindow::openocdOptions() {
+    return gdbWidget->openocdOptions();
 }
 
-void SeerMainWindow::setOpenocdCommand (const QString& command){
-    gdbWidget->setOpenocdCommand(command);
+void SeerMainWindow::setOpenocdOptions (const QString& options){
+    gdbWidget->setOpenocdOptions(options);
 }
 
 // ::GDB Multiarch
