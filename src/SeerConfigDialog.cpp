@@ -110,14 +110,14 @@ SeerConfigDialog::SeerConfigDialog(QWidget* parent) : QDialog(parent) {
     connect(buttonBox,          &QDialogButtonBox::clicked,         this, &SeerConfigDialog::handleButtonClicked);
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
-    Seer::colorizeListWidgetItemIcon(configSeerButton,     QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configGdbButton,      QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configEditorButton,   QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configSourceButton,   QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configAssemblyButton, QSize(128,128));
-    Seer::colorizeListWidgetItemIcon(configKeysButton,     QSize(128,128));
-    // Seer::colorizeListWidgetItemIcon(configRRButton,       QSize(128,128)); // Don't change. It's a multi-colored icon.
+    Seer::colorizeAllIcons(this,                           Seer::iconColorTheme());
+    Seer::colorizeListWidgetItemIcon(configSeerButton,     Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configGdbButton,      Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configEditorButton,   Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configSourceButton,   Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configAssemblyButton, Seer::iconColorTheme(), QSize(128,128));
+    Seer::colorizeListWidgetItemIcon(configKeysButton,     Seer::iconColorTheme(), QSize(128,128));
+ // Seer::colorizeListWidgetItemIcon(configRRButton,       Seer::iconColorTheme(), QSize(128,128)); // Don't change. It's a multi-colored icon.
 
     // Set to first page.
     contentsListWidget->setCurrentRow(0);
@@ -313,6 +313,16 @@ void SeerConfigDialog::setEditorHighlighterEnabled (bool flag) {
 bool SeerConfigDialog::editorHighlighterEnabled () const {
 
     return _editorConfigPage->highlighterEnabled();
+}
+
+void SeerConfigDialog::setEditorMinimapEnabled (bool flag) {
+
+    _editorConfigPage->setMinimapEnabled(flag);
+}
+
+bool SeerConfigDialog::editorMinimapEnabled () const {
+
+    return _editorConfigPage->minimapEnabled();
 }
 
 void SeerConfigDialog::setExternalEditorCommand (const QString& externalEditorCommand) {

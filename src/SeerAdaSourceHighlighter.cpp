@@ -55,7 +55,7 @@ void SeerAdaSourceHighlighter::setHighlighterSettings(const SeerHighlighterSetti
 
     // Set class format and expression.
     // (Ada typically doesn't have a distinguished class case convention, but we can reuse uppercase Start)
-    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Z][A-z0-9_]*\\b"));
+    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Z][A-Za-z0-9_]*\\b"));
     rule.format  = _classFormat;
     _highlightingRules.append(rule);
 
@@ -74,7 +74,7 @@ void SeerAdaSourceHighlighter::setHighlighterSettings(const SeerHighlighterSetti
     }
 
     // Set quote format and expression.
-    rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
+    rule.pattern = QRegularExpression(QStringLiteral("\"[^\"]*\""));
     rule.format  = _quotationFormat;
     _highlightingRules.append(rule);
 

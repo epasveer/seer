@@ -1,0 +1,25 @@
+{
+    "seerproject": {
+        "executable": "hello481",
+        "postgdbcommands": [
+            ""
+        ],
+        "pregdbcommands": [
+            ""
+        ],
+        "startmode": {
+            "arguments": "",
+            "breakatfirstinstruction": false,
+            "breakinfunction": false,
+            "breakinfunctionname": "",
+            "breakinmain": true,
+            "breakpointsfile": "/nas/erniep/Development/seer/tests/hello481/breakpoints.seer",
+            "nobreak": false,
+            "nonstopmode": false,
+            "randomizestartaddress": false,
+            "showassemblytabmode": "auto"
+        },
+        "symbolfile": "",
+        "workingdirectory": ""
+    }
+}

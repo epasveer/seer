@@ -79,11 +79,6 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
     rule.format = _classFormat;
     _highlightingRules.append(rule);
 
-    // Set quote format and expression.
-    rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
-    rule.format = _quotationFormat;
-    _highlightingRules.append(rule);
-
     // Set function format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\s*\\()"));
     rule.format = _functionFormat;
@@ -95,6 +90,13 @@ void SeerCppSourceHighlighter::setHighlighterSettings (const SeerHighlighterSett
         rule.format  = _keywordFormat;
         _highlightingRules.append(rule);
     }
+
+    // Set quote format and expression. This rule must come after the function
+    // and keyword rules so that string contents keep the quote format (same
+    // order as the Ada highlighter).
+    rule.pattern = QRegularExpression(QStringLiteral("\"[^\"]*\""));
+    rule.format = _quotationFormat;
+    _highlightingRules.append(rule);
 
     // Set single line comment format and expression.
     rule.pattern = QRegularExpression(QStringLiteral("//[^\n]*"));

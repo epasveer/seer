@@ -41,6 +41,11 @@ class SeerMatrixWidget: public QTableWidget {
             Float64MatrixType    = 8
         };
 
+        enum StorageOrder {
+            RowMajor             = 0,
+            ColumnMajor          = 1
+        };
+
         SeerMatrixWidget(QWidget* parent = 0);
        ~SeerMatrixWidget();
 
@@ -53,6 +58,8 @@ class SeerMatrixWidget: public QTableWidget {
 
         void                            setDataType             (SeerMatrixWidget::MatrixType dataType);
         SeerMatrixWidget::MatrixType    dataType                () const;
+        void                            setStorageOrder         (SeerMatrixWidget::StorageOrder order);
+        SeerMatrixWidget::StorageOrder  storageOrder            () const;
         QString                         dataTypeString          () const;
         const QVector<double>&          dataValues              () const;
         int                             dataRows                () const;
@@ -78,6 +85,7 @@ class SeerMatrixWidget: public QTableWidget {
         int                             _dataRows;
         int                             _dataColumns;
         SeerMatrixWidget::MatrixType    _dataType;
+        SeerMatrixWidget::StorageOrder  _storageOrder;
         QVector<double>                 _dataValues;
 };
 

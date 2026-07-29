@@ -107,6 +107,9 @@ SeerEditorWidgetAssembly::SeerEditorWidgetAssembly(QWidget* parent) : QWidget(pa
     setRegiserNameSP("$sp");
     setRegiserNameFLAGS("$ps");
 
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
+
     readSettings();
 }
 

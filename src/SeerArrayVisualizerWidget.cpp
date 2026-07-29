@@ -24,6 +24,30 @@
 #include <QtCore/QDebug>
 #include <QtGlobal>
 
+//
+// Qt Charts 6.x workaround: scatter marker items can be (re)created without
+// inheriting the series' pen/brush, leaving near-invisible ~1px markers.
+// Small arrays usually render fine; large ones (e.g. 4000 points) reliably
+// degrade. The series-level state is correct in both cases (verified with an
+// instrumented build), so the style is lost at the marker-item level inside
+// Qt Charts. Because the series setters are guarded (a call with an unchanged
+// value is a no-op), we force two *actual* value transitions so the style is
+// pushed down to the marker items unconditionally.
+//
+static void redecorateScatterSeries (QXYSeries* series) {
+
+    QScatterSeries* scatter = qobject_cast<QScatterSeries*>(series);
+
+    if (scatter == nullptr) {
+        return;
+    }
+
+    scatter->setPen(QPen(Qt::transparent));
+    scatter->setBrush(QBrush(Qt::transparent));
+    scatter->setPen(QPen(Qt::NoPen));
+    scatter->setBrush(QBrush(QColor(31, 119, 180)));
+}
+
 SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
@@ -113,8 +137,8 @@ SeerArrayVisualizerWidget::SeerArrayVisualizerWidget (QWidget* parent) : QWidget
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
-    Seer::colorizeChartViewItem(arrayChartView);
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
+    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -681,6 +705,14 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             bArrayStrideLineEdit->setFocus();
         }
 
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleaRefreshButton();
+            handlebRefreshButton();
+        }
+
     }else{
         // Ignore anything else.
     }
@@ -952,19 +984,19 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
             _aSeries->setPointLabelsVisible(false);
             _aSeries->setPointLabelsClipping(true);
 
-            const QVector<double>& xvalues = arrayTableWidget->aArrayValues();
-            const QVector<double>& yvalues = arrayTableWidget->bArrayValues();
+            const QVector<double>& avalues = arrayTableWidget->aArrayValues();
+            const QVector<double>& bvalues = arrayTableWidget->bArrayValues();
 
-            if (arrayTableWidget->aAxis() == "Y" && arrayTableWidget->bAxis() == "X") {
+            if (arrayTableWidget->aAxis() == "X" && arrayTableWidget->bAxis() == "Y") {
 
-                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
-                    _aSeries->append(xvalues[i], yvalues[i]);
+                for (int i = 0; i < std::min(avalues.size(),bvalues.size()); ++i) {
+                    _aSeries->append(avalues[i], bvalues[i]);
                 }
 
-            }else if (arrayTableWidget->aAxis() == "X" && arrayTableWidget->bAxis() == "Y") {
+            }else if (arrayTableWidget->aAxis() == "Y" && arrayTableWidget->bAxis() == "X") {
 
-                for (int i = 0; i < std::min(xvalues.size(),yvalues.size()); ++i) {
-                    _aSeries->append(yvalues[i], xvalues[i]);
+                for (int i = 0; i < std::min(avalues.size(),bvalues.size()); ++i) {
+                    _aSeries->append(bvalues[i], avalues[i]);
                 }
 
             }else{
@@ -983,6 +1015,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
         arrayChartView->chart()->addSeries(_aSeries);
         arrayChartView->chart()->createDefaultAxes();
+        redecorateScatterSeries(_aSeries);
     }
 
     if (_bSeries) {
@@ -990,6 +1023,7 @@ void SeerArrayVisualizerWidget::handleDataChanged () {
 
         arrayChartView->chart()->addSeries(_bSeries);
         arrayChartView->chart()->createDefaultAxes();
+        redecorateScatterSeries(_bSeries);
     }
 
     // Zoom out slightly to allow for text label at edges.
@@ -1083,16 +1117,24 @@ void SeerArrayVisualizerWidget::handleLabelsCheckBox () {
 
 void SeerArrayVisualizerWidget::handleLineTypeButtonGroup () {
 
+    if (scatterRadioButton->isChecked()) {
+        pointsCheckBox->setChecked(true);
+        pointsCheckBox->setEnabled(false);
+    }else{
+        pointsCheckBox->setChecked(false);
+        pointsCheckBox->setEnabled(true);
+    }
+
     handleDataChanged();
 }
 
 void SeerArrayVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // And the ChartView.
-    Seer::colorizeChartViewItem(arrayChartView);
+    Seer::colorizeChartViewItem(arrayChartView, Seer::iconColorTheme());
 }
 
 void SeerArrayVisualizerWidget::createASeries() {

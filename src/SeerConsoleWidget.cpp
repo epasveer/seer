@@ -89,7 +89,11 @@ void SeerConsoleWidget::handleText (const char* buffer, int count) {
     }
 
     // Write text to Ansi widget.
-    QString str = QString::fromLatin1(buffer, count);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QString str = _utf8Decoder.decode(QByteArrayView(buffer, count));
+#else
+    QString str = QString::fromUtf8(buffer, count);
+#endif
 
     textEdit->insertAnsiText(str);
     textEdit->ensureCursorVisible();

@@ -40,8 +40,10 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     setAttribute(Qt::WA_DeleteOnClose);
 
     matrixDisplayFormatComboBox->setCurrentIndex(0);
+    matrixStorageOrderComboBox->setCurrentIndex(0);
 
     handleMatrixDisplayFormatComboBox(0);
+    handleMatrixStorageOrderComboBox(0);
 
     variableNameLineEdit->enableReturnPressedOnClear();
 
@@ -59,13 +61,14 @@ SeerMatrixVisualizerWidget::SeerMatrixVisualizerWidget (QWidget* parent) : QWidg
     QObject::connect(matrixStrideLineEdit,          &SeerHistoryLineEdit::returnPressed,                       this,            &SeerMatrixVisualizerWidget::handleRefreshButton);
     QObject::connect(matrixStrideLineEdit,          &SeerHistoryLineEdit::editingFinished,                     this,            &SeerMatrixVisualizerWidget::handleElementStrideLineEdit);
     QObject::connect(matrixDisplayFormatComboBox,   QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerMatrixVisualizerWidget::handleMatrixDisplayFormatComboBox);
+    QObject::connect(matrixStorageOrderComboBox,    QOverload<int>::of(&QComboBox::currentIndexChanged),       this,            &SeerMatrixVisualizerWidget::handleMatrixStorageOrderComboBox);
     QObject::connect(matrixTableWidget,             &SeerMatrixWidget::dataChanged,                            this,            &SeerMatrixVisualizerWidget::handleDataChanged);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                          this,            &SeerMatrixVisualizerWidget::handleThemeChanged);
 #endif
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -414,6 +417,13 @@ void SeerMatrixVisualizerWidget::handleText (const QString& text) {
             matrixStrideLineEdit->setFocus();
         }
 
+    // At a stopping point, refresh.
+    }else if (text.startsWith("*stopped,reason=\"")) {
+
+        if (autoRefreshCheckBox->isChecked()) {
+            handleRefreshButton();
+        }
+
     }else{
         // Ignore anything else.
     }
@@ -563,6 +573,16 @@ void SeerMatrixVisualizerWidget::handleMatrixDisplayFormatComboBox (int index) {
     handleRefreshButton();
 }
 
+void SeerMatrixVisualizerWidget::handleMatrixStorageOrderComboBox (int index) {
+
+    // Same bytes, only the cell mapping changes, so no memory re-read is needed.
+    if (index == 1) {
+        matrixTableWidget->setStorageOrder(SeerMatrixWidget::ColumnMajor);
+    }else{
+        matrixTableWidget->setStorageOrder(SeerMatrixWidget::RowMajor);
+    }
+}
+
 void SeerMatrixVisualizerWidget::handleDataChanged () {
 
     // Update the meta information.
@@ -647,7 +667,7 @@ void SeerMatrixVisualizerWidget::handleDataChanged () {
 void SeerMatrixVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
-    Seer::colorizeAllIcons(this);
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 }
 
 void SeerMatrixVisualizerWidget::writeSettings() {

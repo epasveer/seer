@@ -47,6 +47,7 @@ class QProgressIndicator : public QWidget {
         void                setInterval         (int interval);
 
     private slots:
+        void                handleThemeChanged  ();
         void                onTimeout           ();
 
     private:

@@ -88,6 +88,9 @@ class SeerConfigDialog : public QDialog, protected Ui::SeerConfigDialogForm {
         void                                setEditorHighlighterEnabled                     (bool flag);
         bool                                editorHighlighterEnabled                        () const;
 
+        void                                setEditorMinimapEnabled                         (bool flag);
+        bool                                editorMinimapEnabled                            () const;
+
         void                                setExternalEditorCommand                        (const QString& externalEditorCommand);
         QString                             externalEditorCommand                           () const;
 

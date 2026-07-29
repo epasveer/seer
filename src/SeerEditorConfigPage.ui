@@ -130,7 +130,17 @@
         <string>Enable or disable highlighting for supported languages' files.</string>
        </property>
        <property name="text">
-        <string>Syntax highlighting.</string>
+        <string>Syntax highlighting</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="minimapEnabledCheckBox">
+       <property name="toolTip">
+        <string>Enable or disable the minimap for source and assembly editors.</string>
+       </property>
+       <property name="text">
+        <string>Minimap</string>
        </property>
       </widget>
      </item>

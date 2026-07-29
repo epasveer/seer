@@ -63,6 +63,8 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         const SeerHighlighterSettings&                  editorHighlighterSettings           () const;
         void                                            setEditorHighlighterEnabled         (bool flag);
         bool                                            editorHighlighterEnabled            () const;
+        void                                            setEditorMinimapEnabled             (bool flag);
+        bool                                            editorMinimapEnabled                () const;
         void                                            setEditorAlternateDirectories       (const QStringList alternateDirectories);
         const QStringList&                              editorAlternateDirectories          () const;
         void                                            setEditorIgnoreDirectories          (const QStringList ignoreDirectories);
@@ -162,6 +164,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         SeerEditorManagerEntries                        _entries;
         SeerHighlighterSettings                         _editorHighlighterSettings;
         bool                                            _editorHighlighterEnabled;
+        bool                                            _editorMinimapEnabled;
         QFont                                           _editorFont;
         QStringList                                     _editorAlternateDirectories;
         QStringList                                     _editorIgnoreDirectories;

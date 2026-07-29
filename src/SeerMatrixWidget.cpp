@@ -25,6 +25,7 @@ SeerMatrixWidget::SeerMatrixWidget(QWidget* parent) : QTableWidget(parent) {
     _dataRows       = 0;
     _dataColumns    = 0;
     _dataType       = SeerMatrixWidget::UnknownMatrixType;
+    _storageOrder   = SeerMatrixWidget::RowMajor;
     _addressOffset  = 0;
     _addressStride  = 1;
 
@@ -133,6 +134,18 @@ void SeerMatrixWidget::setDataType (SeerMatrixWidget::MatrixType dataType) {
 
 SeerMatrixWidget::MatrixType SeerMatrixWidget::dataType () const {
     return _dataType;
+}
+
+void SeerMatrixWidget::setStorageOrder (SeerMatrixWidget::StorageOrder order) {
+
+    _storageOrder = order;
+
+    // This repaints the widget with the new storage order.
+    create();
+}
+
+SeerMatrixWidget::StorageOrder SeerMatrixWidget::storageOrder () const {
+    return _storageOrder;
 }
 
 QString SeerMatrixWidget::dataTypeString () const {
@@ -315,10 +328,20 @@ void SeerMatrixWidget::create () {
 
             _dataValues.push_back(val);
 
-            col++;
-            if (col == dataColumns()) {
-                col = 0;
+            // Advance to the next cell. Row-major fills a row at a time;
+            // column-major fills a column at a time (eg: Fortran, Eigen).
+            if (storageOrder() == SeerMatrixWidget::ColumnMajor) {
                 row++;
+                if (row == dataRows()) {
+                    row = 0;
+                    col++;
+                }
+            }else{
+                col++;
+                if (col == dataColumns()) {
+                    col = 0;
+                    row++;
+                }
             }
         }
     }
