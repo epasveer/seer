@@ -46,6 +46,21 @@ class SeerArrayWidget: public QTableWidget {
 
         int                         elementsPerLine         () const;
 
+        // RAII guard: coalesces a burst of property changes into a single
+        // rebuild. While a guard is alive create() is deferred; the single
+        // rebuild happens when it goes out of scope. Nesting is supported.
+        // Prefer a guard over the private begin/end pair so the matching end
+        // is guaranteed even on early return or exception.
+        class BulkUpdate {
+            public:
+                explicit BulkUpdate     (SeerArrayWidget* widget);
+                               ~BulkUpdate ();
+                                BulkUpdate (const BulkUpdate&) = delete;
+                BulkUpdate&     operator= (const BulkUpdate&) = delete;
+            private:
+                SeerArrayWidget*        _widget;
+        };
+
         const QString&              aAxis                   () const;
         void                        setAAxis                (const QString& axis);
         const QString&              aLabel                  () const;
@@ -88,6 +103,11 @@ class SeerArrayWidget: public QTableWidget {
 
     private:
         void                        create                  ();
+        void                        beginBulkUpdate         ();
+        void                        endBulkUpdate           ();
+
+        int                         _bulkUpdateDepth;
+        bool                        _createPending;
 
         QString                     _aAxis;
         QString                     _aLabel;

@@ -33,6 +33,9 @@ SeerArrayWidget::SeerArrayWidget(QWidget* parent) : QTableWidget(parent) {
     _bAddressOffset  = 0;
     _bAddressStride  = 1;
 
+    _bulkUpdateDepth = 0;
+    _createPending   = false;
+
     setAAddressOffset(0);
     setAAddressStride(1);
 
@@ -314,6 +317,14 @@ void SeerArrayWidget::setBData(const QString& label, SeerArrayWidget::DataStorag
 
 void SeerArrayWidget::create () {
 
+    // Coalesce a burst of property changes: while a bulk update is active,
+    // defer the (expensive) table rebuild and just record that one is pending.
+    // endBulkUpdate() performs the single rebuild once the burst is complete.
+    if (_bulkUpdateDepth > 0) {
+        _createPending = true;
+        return;
+    }
+
     // Clear the table. We're going to recreate it.
     clear();
     setRowCount(0);
@@ -582,6 +593,32 @@ void SeerArrayWidget::create () {
     }
 
     emit dataChanged();
+}
+
+void SeerArrayWidget::beginBulkUpdate () {
+
+    _bulkUpdateDepth++;
+}
+
+void SeerArrayWidget::endBulkUpdate () {
+
+    if (_bulkUpdateDepth > 0) {
+        _bulkUpdateDepth--;
+    }
+
+    // Once fully unwound, do the single deferred rebuild (if any setter fired).
+    if (_bulkUpdateDepth == 0 && _createPending) {
+        _createPending = false;
+        create();
+    }
+}
+
+SeerArrayWidget::BulkUpdate::BulkUpdate (SeerArrayWidget* widget) : _widget(widget) {
+    _widget->beginBulkUpdate();
+}
+
+SeerArrayWidget::BulkUpdate::~BulkUpdate () {
+    _widget->endBulkUpdate();
 }
 
 SeerArrayWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {

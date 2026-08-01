@@ -28,11 +28,18 @@
 // Qt Charts 6.x workaround: scatter marker items can be (re)created without
 // inheriting the series' pen/brush, leaving near-invisible ~1px markers.
 // Small arrays usually render fine; large ones (e.g. 4000 points) reliably
-// degrade. The series-level state is correct in both cases (verified with an
-// instrumented build), so the style is lost at the marker-item level inside
-// Qt Charts. Because the series setters are guarded (a call with an unchanged
-// value is a no-op), we force two *actual* value transitions so the style is
-// pushed down to the marker items unconditionally.
+// degrade. The series-level state is correct in both cases, so the style is
+// lost at the marker-item level inside Qt Charts. Re-applying the pen/brush
+// after the series is added pushes the style down to the marker items.
+//
+// Two passes suffice, not four. This runs after addSeries(), so the series
+// already carries the chart theme's pen/brush; setPen(NoPen) and setBrush()
+// are therefore real value transitions (no built-in Qt theme uses NoPen for
+// a scatter pen nor this exact colour for the brush) and are not swallowed
+// by the guarded setters. Even if one were a no-op, the other setter's
+// update re-pushes both pen and brush to every marker item. Two passes over
+// the (up to thousands of) marker items instead of four roughly halves this
+// step's cost, with no visible change to the markers.
 //
 static void redecorateScatterSeries (QXYSeries* series) {
 
@@ -42,8 +49,6 @@ static void redecorateScatterSeries (QXYSeries* series) {
         return;
     }
 
-    scatter->setPen(QPen(Qt::transparent));
-    scatter->setBrush(QBrush(Qt::transparent));
     scatter->setPen(QPen(Qt::NoPen));
     scatter->setBrush(QBrush(QColor(31, 119, 180)));
 }
@@ -164,6 +169,10 @@ void SeerArrayVisualizerWidget::setAVariableName (const QString& name) {
         return;
     }
 
+    // Coalesce this variable's setup (address reset + data/offset/stride) into
+    // a single table rebuild; the guard flushes it when it leaves scope.
+    SeerArrayWidget::BulkUpdate bulk(arrayTableWidget);
+
     setAVariableAddress("");
 
     // Clear old contents.
@@ -281,6 +290,10 @@ void SeerArrayVisualizerWidget::setBVariableName (const QString& name) {
 
         return;
     }
+
+    // Coalesce this variable's setup (address reset + data/offset/stride) into
+    // a single table rebuild; the guard flushes it when it leaves scope.
+    SeerArrayWidget::BulkUpdate bulk(arrayTableWidget);
 
     setBVariableAddress("");
 
@@ -540,6 +553,8 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
                 // Give the byte array to the hex widget.
                 bool ok;
+                SeerArrayWidget::BulkUpdate bulk(arrayTableWidget);
+
                 arrayTableWidget->setAData(arrayTableWidget->aLabel(), new SeerArrayWidget::DataStorageArray(array));
 
                 if (aArrayOffsetLineEdit->text() != "") {
@@ -587,6 +602,8 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
                 // Give the byte array to the hex widget.
                 bool ok;
+                SeerArrayWidget::BulkUpdate bulk(arrayTableWidget);
+
                 arrayTableWidget->setBData(arrayTableWidget->bLabel(), new SeerArrayWidget::DataStorageArray(array));
 
                 if (bArrayOffsetLineEdit->text() != "") {
