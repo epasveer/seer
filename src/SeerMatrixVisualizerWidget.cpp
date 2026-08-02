@@ -618,8 +618,8 @@ void SeerMatrixVisualizerWidget::handleDataChanged () {
 
     // Calculate statistics.
     double val  = 0.0;
-    double min  = 0.0;
-    double max  = 0.0;
+    double min  = values[0];
+    double max  = values[0];
     double sum  = 0.0;
     double sum2 = 0.0;
     double avg  = 0.0;
