@@ -10,6 +10,10 @@
 #include <QtWidgets/QFileDialog>
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtCore/QSettings>
@@ -32,10 +36,17 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     setAttribute(Qt::WA_DeleteOnClose);
 
     // Connect things.
-    QObject::connect(refreshToolButton,  &QToolButton::clicked,      this,  &SeerParallelStacksVisualizerWidget::handleRefreshButton);
-    QObject::connect(helpToolButton,     &QToolButton::clicked,      this,  &SeerParallelStacksVisualizerWidget::handleHelpButton);
-    QObject::connect(printToolButton,    &QToolButton::clicked,      this,  &SeerParallelStacksVisualizerWidget::handlePrintButton);
-    QObject::connect(saveToolButton,     &QToolButton::clicked,      this,  &SeerParallelStacksVisualizerWidget::handleSaveButton);
+    QObject::connect(refreshToolButton,             &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleRefreshButton);
+    QObject::connect(helpToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleHelpButton);
+    QObject::connect(printToolButton,               &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handlePrintButton);
+    QObject::connect(saveToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleSaveButton);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+    QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,       this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
+#endif
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
+    // XXX Seer::colorizeChartViewItem(graphicsView, Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -225,6 +236,15 @@ void SeerParallelStacksVisualizerWidget::handleSaveButton () {
     }
 
     QMessageBox::information(this, "Done", "Scene saved to:\n" + fileName);
+}
+
+void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
+
+    // Colorize icons for theme.
+    Seer::colorizeAllIcons(this, Seer::iconColorTheme());
+
+    // And the ChartView.
+    // XXX Seer::colorizeChartViewItem(graphicsView, Seer::iconColorTheme());
 }
 
 void SeerParallelStacksVisualizerWidget::writeSettings() {

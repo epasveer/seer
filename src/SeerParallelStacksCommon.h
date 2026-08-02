@@ -73,7 +73,7 @@ class SeerParallelStacksThread {
 typedef QVector<SeerParallelStacksThread> SeerParallelStacksThreads;
 
 struct SeerParallelStacksNode {
-    QString                                     function;    // empty == root
+    SeerParallelStacksFrame                     function;    // function().isEmpty() == root
     int                                         depth  = 0;
     SeerParallelStacksThreads                   threads;
     QVector<SeerParallelStacksNode>             children;

@@ -147,15 +147,16 @@ QString SeerParallelStacksThread::toString() const {
     return result;
 }
 
-static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads, const QString& currentFunction, int depth) {
+static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads, const SeerParallelStacksFrame& currentFrame, int depth) {
 
     SeerParallelStacksNode node;
     node.depth    = depth;
-    node.function = currentFunction;
+    node.function = currentFrame;
     node.threads  = threads;
 
     // Group threads by the function at position [-depth-1] (bottom-up).
-    QMap<QString, QVector<SeerParallelStacksThread>> functionThreads;
+    QMap<QString, SeerParallelStacksFrame>            functionFrames;
+    QMap<QString, QVector<SeerParallelStacksThread>>  functionThreads;
 
     int level = -depth - 1;
 
@@ -167,7 +168,12 @@ static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads
             continue;
         }
 
-        const QString& fn = t.frame(idx).function();
+        const SeerParallelStacksFrame& frame = t.frame(idx);
+        const QString&                 fn    = frame.function();
+
+        if (functionFrames.contains(fn) == false) {
+            functionFrames[fn] = frame;
+        }
 
         functionThreads[fn].append(t);
 
@@ -175,7 +181,7 @@ static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads
     }
 
     for (auto it = functionThreads.begin(); it != functionThreads.end(); ++it) {
-        SeerParallelStacksNode child = buildImpl(it.value(), it.key(), depth + 1);
+        SeerParallelStacksNode child = buildImpl(it.value(), functionFrames[it.key()], depth + 1);
         node.children.append(child);
     }
 
@@ -184,7 +190,7 @@ static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads
 
 SeerParallelStacksNode SeerParallelStacksBuildParallelStacks(const SeerParallelStacksThreads& threads) {
 
-    return buildImpl(threads, QString(), 0);
+    return buildImpl(threads, SeerParallelStacksFrame(), 0);
 }
 
 // ---------------------------------------------------------------
@@ -200,7 +206,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         stack.threadIds.append(t.id());
     }
 
-    if (node.function.isEmpty() == false) {
+    if (node.function.function().isEmpty() == false) {
         stack.frames.append(node.function);
     }
 
@@ -208,7 +214,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         // Merge single child into this stack (chain of frames).
         // Keep the IDs from the leaf (most specific) node.
         auto child = SeerParallelStacksFillStack(node.children[0]);
-        stack.functions  += child.functions;
+        stack.frames     += child.frames;
         stack.stacks      = child.stacks;
         stack.threadCount = child.threadCount;
         stack.threadIds   = child.threadIds;

@@ -752,7 +752,9 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
 
     _scene->clear();
 
-    // XXX if (!root) return;
+    if (root.threadCount == 0) {
+        return;
+    }
 
     auto* rootPN = new PlacedNode;
     buildPlacedTree(rootPN, root, nullptr);

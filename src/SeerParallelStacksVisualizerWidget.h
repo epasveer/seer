@@ -28,6 +28,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleHelpButton                    ();
         void                        handlePrintButton                   ();
         void                        handleSaveButton                    ();
+        void                        handleThemeChanged                  ();
 
     protected:
         void                        writeSettings                       ();
