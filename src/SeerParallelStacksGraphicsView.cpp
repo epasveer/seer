@@ -8,10 +8,75 @@
 #include <QCursor>
 #include <QHeaderView>
 #include <QVBoxLayout>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
+#endif
 #include <algorithm>
 #include <cmath>
 
 class SeerParallelStacksPopupTableWidget;
+
+// ================================================================
+// Theme-aware palette. SeerParallelStacksGraphicsView::setColorTheme()
+// resolves "auto"/"light"/"dark" (mirroring Seer::colorizeChartViewItem())
+// and flips g_darkTheme; the box/edge/minimap paint() methods below all
+// read colors from here so they stay in sync with the app's color scheme.
+// ================================================================
+namespace {
+
+    struct BoxColors {
+        QColor background;
+        QColor border;
+        QColor headerText;
+        QColor threadIdsText;
+        QColor divider;
+        QColor frameText;
+        QColor dragOutline;
+    };
+
+    struct MiniMapColors {
+        QColor panelBackground;
+        QColor panelBorder;
+        QColor boxMarker;
+        QColor viewportFill;
+        QColor viewportBorder;
+    };
+
+    bool g_darkTheme = false;
+
+    const BoxColors& boxColors () {
+
+        static const BoxColors light { QColor(0xFA, 0xFA, 0xFA), QColor(0x88, 0x88, 0x88), QColor(0x22, 0x22, 0x22), QColor(0x1A, 0x52, 0xA8), QColor(0xCC, 0xCC, 0xCC), QColor(0x00, 0x7A, 0x33), QColor(0x1A, 0x52, 0xA8) };
+        static const BoxColors dark  { QColor(0x3A, 0x3A, 0x3A), QColor(0x77, 0x77, 0x77), QColor(0xEE, 0xEE, 0xEE), QColor(0x6F, 0xA8, 0xF0), QColor(0x5A, 0x5A, 0x5A), QColor(0x4C, 0xD9, 0x87), QColor(0x6F, 0xA8, 0xF0) };
+
+        return g_darkTheme ? dark : light;
+    }
+
+    QColor edgeColor () {
+
+        static const QColor light(0x55, 0x55, 0x55);
+        static const QColor dark (0xBB, 0xBB, 0xBB);
+
+        return g_darkTheme ? dark : light;
+    }
+
+    const MiniMapColors& miniMapColors () {
+
+        static const MiniMapColors light { QColor(0xFF, 0xFF, 0xFF, 230), QColor(0x88, 0x88, 0x88), QColor(0x5A, 0x8F, 0xD6), QColor(0x1A, 0x52, 0xA8, 40), QColor(0x1A, 0x52, 0xA8) };
+        static const MiniMapColors dark  { QColor(0x2B, 0x2B, 0x2B, 230), QColor(0x77, 0x77, 0x77), QColor(0x6F, 0xA8, 0xF0), QColor(0x6F, 0xA8, 0xF0, 60), QColor(0x6F, 0xA8, 0xF0) };
+
+        return g_darkTheme ? dark : light;
+    }
+
+    QColor viewBackground () {
+
+        static const QColor light(0xF0, 0xF0, 0xF0);
+        static const QColor dark (0x2B, 0x2B, 0x2B);
+
+        return g_darkTheme ? dark : light;
+    }
+}
 
 // ================================================================
 // SeerParallelStacksStackBoxItem
@@ -90,8 +155,10 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    painter->setBrush(QColor(0xFA, 0xFA, 0xFA));
-    painter->setPen(QPen(QColor(0x88, 0x88, 0x88), 1.5));
+    const BoxColors& colors = boxColors();
+
+    painter->setBrush(colors.background);
+    painter->setPen(QPen(colors.border, 1.5));
     painter->drawRoundedRect(boundingRect(), 6, 6);
 
     QFont boldFont;  boldFont.setBold(true);
@@ -100,21 +167,21 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     qreal y = kPadY;
 
     painter->setFont(boldFont);
-    painter->setPen(QColor(0x22, 0x22, 0x22));
+    painter->setPen(colors.headerText);
     painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
 
     if (!_headerRight.isEmpty()) {
-        painter->setPen(QColor(0x1A, 0x52, 0xA8));
+        painter->setPen(colors.threadIdsText);
         painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
     }
 
     y += kRowH;
 
-    painter->setPen(QPen(QColor(0xCC, 0xCC, 0xCC), 1));
+    painter->setPen(QPen(colors.divider, 1));
     painter->drawLine(QPointF(0, y), QPointF(_width, y));
 
     painter->setFont(normFont);
-    painter->setPen(QColor(0x00, 0x7A, 0x33));
+    painter->setPen(colors.frameText);
 
     for (const auto& frame : _stack.frames) {
         painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.function());
@@ -123,7 +190,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
 
     if (_dragging) {
         painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen(QColor(0x1A, 0x52, 0xA8), 2.0, Qt::DashLine));
+        painter->setPen(QPen(colors.dragOutline, 2.0, Qt::DashLine));
         painter->drawRoundedRect(boundingRect().adjusted(1, 1, -1, -1), 6, 6);
     }
 }
@@ -369,14 +436,16 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
     path.moveTo(base);
     path.cubicTo(base + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
 
-    painter->setPen(QPen(QColor(0x55, 0x55, 0x55), 1.5));
+    const QColor color = edgeColor();
+
+    painter->setPen(QPen(color, 1.5));
     painter->setBrush(Qt::NoBrush);
     painter->drawPath(path);
 
     QPolygonF arrowHead;
     arrowHead << tip << a1 << a2;
     painter->setPen(Qt::NoPen);
-    painter->setBrush(QColor(0x55, 0x55, 0x55));
+    painter->setBrush(color);
     painter->drawPolygon(arrowHead);
 }
 
@@ -408,9 +477,11 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
+    const MiniMapColors& colors = miniMapColors();
+
     // Panel background
-    painter.setBrush(QColor(0xFF, 0xFF, 0xFF, 230));
-    painter.setPen(QPen(QColor(0x88, 0x88, 0x88), 1.5));
+    painter.setBrush(colors.panelBackground);
+    painter.setPen(QPen(colors.panelBorder, 1.5));
     painter.drawRoundedRect(rect().adjusted(0, 0, -1, -1), 6, 6);
 
     if (!_view || !_view->scene()) {
@@ -442,7 +513,7 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
     // Draw a small marker for every SeerParallelStacksStackBoxItem so the overall shape
     // of the graph is recognisable at a glance.
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(0x5A, 0x8F, 0xD6));
+    painter.setBrush(colors.boxMarker);
 
     for (QGraphicsItem* item : _view->scene()->items()) {
         if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
@@ -458,8 +529,8 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
 
     QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()), sceneToWidget(visibleScene.bottomRight()));
 
-    painter.setBrush(QColor(0x1A, 0x52, 0xA8, 40));
-    painter.setPen(QPen(QColor(0x1A, 0x52, 0xA8), 1.5));
+    painter.setBrush(colors.viewportFill);
+    painter.setPen(QPen(colors.viewportBorder, 1.5));
     painter.drawRect(viewportMarker);
 }
 
@@ -639,17 +710,51 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
     setRenderHint(QPainter::Antialiasing);
     setDragMode(QGraphicsView::NoDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    setBackgroundBrush(QColor(0xF0, 0xF0, 0xF0));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     _miniMap = new SeerParallelStacksMiniMapWidget(this, this);
     _miniMap->raise();
 
-
     // Connect things.
     QObject::connect(_scene, &QGraphicsScene::changed,      this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
     QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &SeerParallelStacksMiniMapWidget::refresh);
+}
+
+void SeerParallelStacksGraphicsView::setColorTheme (const QString& colorTheme) {
+
+    bool dark = false;
+
+    if (colorTheme == "auto") {
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
+        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+
+        if (colorScheme == Qt::ColorScheme::Dark) {
+            dark = true;
+        }else if (colorScheme != Qt::ColorScheme::Light) {
+            qDebug() << "Bad colorScheme of: " << colorScheme;
+        }
+#endif
+
+    }else if (colorTheme == "dark") {
+        dark = true;
+
+    }else if (colorTheme != "light") {
+        qDebug() << "Bad colorTheme of: " << colorTheme;
+    }
+
+    g_darkTheme = dark;
+
+    setBackgroundBrush(viewBackground());
+
+    if (_scene) {
+        _scene->update();
+    }
+
+    if (_miniMap) {
+        _miniMap->update();
+    }
 }
 
 void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {

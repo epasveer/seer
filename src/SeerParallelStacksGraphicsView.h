@@ -175,6 +175,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
         void            setStack                        (const SeerParallelStacksStack& root);
+        void            setColorTheme                   (const QString& colorTheme);
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;

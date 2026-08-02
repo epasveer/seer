@@ -44,9 +44,9 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,       this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
 
-    // Colorize icons for theme.
+    // Colorize icons and the graph for theme.
     Seer::colorizeAllIcons(this, Seer::iconColorTheme());
-    // XXX Seer::colorizeChartViewItem(graphicsView, Seer::iconColorTheme());
+    graphicsView->setColorTheme(Seer::iconColorTheme());
 
     // Restore window settings.
     readSettings();
@@ -243,8 +243,8 @@ void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
     // Colorize icons for theme.
     Seer::colorizeAllIcons(this, Seer::iconColorTheme());
 
-    // And the ChartView.
-    // XXX Seer::colorizeChartViewItem(graphicsView, Seer::iconColorTheme());
+    // And the graph.
+    graphicsView->setColorTheme(Seer::iconColorTheme());
 }
 
 void SeerParallelStacksVisualizerWidget::writeSettings() {
