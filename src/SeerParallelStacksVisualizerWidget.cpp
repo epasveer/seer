@@ -32,7 +32,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Setup the widgets
     setWindowIcon(QIcon(":/seer/resources/icons/hicolor/64x64/seergdb.png"));
-    setWindowTitle("Seer ParallelStacks Visualizer");
+    setWindowTitle("Seer ParallelStacks Visualizer (BETA - please report bugs/features)");
     setAttribute(Qt::WA_DeleteOnClose);
 
     // Connect things.
