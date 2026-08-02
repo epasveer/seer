@@ -351,12 +351,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbArrayEvaluateExpression            (int expressionid, QString address, int count);
         void                                handleGdbGetAssembly                        (QString address);
         void                                handleGdbGetSourceAndAssembly               (QString address);
+        void                                handleGdbParallelStackFrames                (int expressionid);
         void                                handleGdbMemoryVisualizer                   ();
         void                                handleGdbArrayVisualizer                    ();
         void                                handleGdbMatrixVisualizer                   ();
         void                                handleGdbStructVisualizer                   ();
         void                                handleGdbVarVisualizer                      ();
         void                                handleGdbImageVisualizer                    ();
+        void                                handleGdbParallelStacksVisualizer           ();
         void                                handleGdbMonitor                            ();
         void                                handleSplitterMoved                         (int pos, int index);
         void                                handleGdbAssemblyDisassemblyFlavor          ();

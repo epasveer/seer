@@ -1,0 +1,44 @@
+// SPDX-FileCopyrightText: 2021 Ernie Pasveer <epasveer@att.net>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#pragma once
+
+#include <QtWidgets/QWidget>
+#include <QString>
+#include "ui_SeerParallelStacksVisualizerWidget.h"
+
+class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerParallelStacksVisualizerWidgetForm {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerParallelStacksVisualizerWidget (QWidget* parent = 0);
+       ~SeerParallelStacksVisualizerWidget ();
+
+    signals:
+        void                        refreshParallelStackFrames          (int id);
+
+    public slots:
+        void                        refresh                             ();
+        void                        handleText                          (const QString& text);
+
+    protected slots:
+        void                        handleRefreshButton                 ();
+        void                        handleHelpButton                    ();
+        void                        handlePrintButton                   ();
+        void                        handleSaveButton                    ();
+        void                        handleThemeChanged                  ();
+
+    protected:
+        void                        writeSettings                       ();
+        void                        readSettings                        ();
+        void                        resizeEvent                         (QResizeEvent* event);
+
+    private:
+        void                        createDirectedGraph                 ();
+
+        int                         _id;
+        SeerParallelStacksThreads   _threads;
+};
+

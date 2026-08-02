@@ -62,8 +62,20 @@ def parse_gdb_output(gdb_output):
                 )
                 current_thread.frames.append(frame)
             else:
-                break
-                #raise SyntaxError("gdb output: '{}'".format(gdb_output_line))
+                # special gdb frames only have a text to display
+                match_obj = re.match('#(?P<level>\\d+) +(?P<msg><.+>)', gdb_output_line)
+                if match_obj:
+                    frame = Frame(
+                        level=int(match_obj.group('level')),
+                        address='',
+                        function=match_obj.group('msg'),
+                        parameters='',
+                        filename=''
+                    )
+                    current_thread.frames.append(frame)
+                else:
+                    break
+                    #raise SyntaxError("gdb output: '{}'".format(gdb_output_line))
 
     return threads
 
@@ -109,10 +121,10 @@ def print_parallel_stack(node, first_node=True, indent='', last_node=False):
         function_indent = indent + ('' if last_node else '│') + base_indent
     if first_node:
         thread_count = len(node.threads)
-        print(before_thread_indent, file=sys.stderr)
-        print('{}Threads: {}'.format(thread_indent, thread_count, file=sys.stderr))
+        print(before_thread_indent)
+        print('{}Threads: {}'.format(thread_indent, thread_count))
     if node.function:
-        print('{}{}'.format(function_indent, node.function, file=sys.stderr))
+        print('{}{}'.format(function_indent, node.function))
     if len(node.nodes) == 1:
         print_parallel_stack(node.nodes[0], False, indent, last_node)
         return
@@ -153,7 +165,11 @@ def add_stack_to_graph(dot, stack, node_id=0, parent_node_name=None):
         row_template = '<tr><td align="{}">{}</td></tr>'
         rows += row_template.format('right', '<b>{} Threads</b>'.format(stack.thread_count))
         for function in reversed(stack.functions):
-            rows += row_template.format('left', '<font color="darkgreen">{}</font>'.format(html.escape(function)))
+            # gray out special entries
+            if function[0] == '<' and function[-1] == '>':
+                rows += row_template.format('left', '<font color="darkgray">{}</font>'.format(html.escape(function)))
+            else:
+                rows += row_template.format('left', '<font color="darkgreen">{}</font>'.format(html.escape(function)))
         table = '<table BORDER="0" CELLBORDER="1" CELLSPACING="0">{}</table>'.format(rows)
         node_name = ''
         if parent_node_name:
@@ -178,9 +194,11 @@ def get_graph(node):
 
 
 def main():
-    arg_parser = argparse.ArgumentParser(description='Shows Parallel Stacks of a Process', epilog='Data sources are a process, a log file or standard input.')
+    arg_parser = argparse.ArgumentParser(description='Shows Parallel Stacks of a Process',
+                                         epilog='Data sources are a process, a log file or standard input.')
     data_source_group = arg_parser.add_mutually_exclusive_group()
-    data_source_group.add_argument('-l', '--log_file', metavar='filename', help='a GDB log file with backtraces', type=argparse.FileType('r'), default=sys.stdin)
+    data_source_group.add_argument('-l', '--log_file', metavar='filename', help='a GDB log file with backtraces',
+                                   type=argparse.FileType('r'), default=sys.stdin)
     data_source_group.add_argument('-p', '--pid', type=int, required=False, help='a process ID')
     args = arg_parser.parse_args()
 
@@ -195,12 +213,12 @@ def main():
         gdb_output = input_file.read().splitlines()
     threads = parse_gdb_output(gdb_output)
     for thread in threads:
-        print(thread, file=sys.stderr)
+        print(thread)
 
     tree = get_parallel_stacks(threads)
     print_parallel_stack(tree)
-    get_graph(tree).render('DirectedGraph.gv', view=True, format='png')
-    print(get_graph(tree).source, file=sys.stderr)
+    get_graph(tree).render(view=True)
+    #print(get_graph(tree).source)
 
 
 if __name__ == "__main__":

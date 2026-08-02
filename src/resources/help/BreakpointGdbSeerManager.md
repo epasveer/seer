@@ -123,10 +123,11 @@ Seer maintains a history of N commands, as set in the Seer Config dialogs. This 
 
 There are 10 macros you can create for custom commands. They are labelled "M1" through "M0". Think of your keyboard with numeric
 keys 1 through 0. They have hotkeys mapped from Ctrl+Shift+1 through Ctrl+Shift+0. Clicking the button or using the hotkey will
-execute the commands in the macro. Holding down the button will bring up an editor to edit the contents of the macro.
+execute the commands in the macro. Holding down the button will bring up an editor to edit the contents of the macro. A "nickname"
+can be assigned to the macro. This will be shown in the macro tooltip.
 
-Typically the macro contains gdb commands. Output will go to the GDB output tab. The macro is executed using gdb's
-"source" command, which can handle a lot off unique cases.
+Typically the macro contains gdb commands. Output will go to the GDB output tab. The macro is executed as if its commands are typed at the (gdb)
+prompt.
 
 ### References
 

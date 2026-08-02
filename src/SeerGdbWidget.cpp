@@ -10,6 +10,7 @@
 #include "SeerStructVisualizerWidget.h"
 #include "SeerVarVisualizerWidget.h"
 #include "SeerImageVisualizerWidget.h"
+#include "SeerParallelStacksVisualizerWidget.h"
 #include "SeerGdbMonitorWidget.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -855,13 +856,13 @@ void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors)
 void SeerGdbWidget::handleGdbCommands (const QStringList& commands) {
 
     // This may not be as good as using "source file.gdb" because it doesn't
-    // stop on errors.
+    // stop on errors. But "source" doesn't support running mi commands.
     //
     // Leaving it here, though.
 
-    for (auto command : commands) {
-        handleGdbCommand(command, true);
-    }
+    QString c = commands.join('\n');
+
+    handleGdbCommand(c, true);
 }
 
 void SeerGdbWidget::handleGdbMonitorCommand (int id, const QString& command) {
@@ -3029,6 +3030,15 @@ void SeerGdbWidget::handleGdbGetSourceAndAssembly (QString address) {
     handleGdbCommand(command);
 }
 
+void SeerGdbWidget::handleGdbParallelStackFrames (int expressionid) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString::number(expressionid) + "-frames-list");
+}
+
 void SeerGdbWidget::handleGdbMemoryVisualizer () {
 
     handleGdbMemoryAddExpression("");
@@ -3057,6 +3067,24 @@ void SeerGdbWidget::handleGdbVarVisualizer () {
 void SeerGdbWidget::handleGdbImageVisualizer () {
 
     handleGdbImageAddExpression("");
+}
+
+void SeerGdbWidget::handleGdbParallelStacksVisualizer () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    SeerParallelStacksVisualizerWidget* w = new SeerParallelStacksVisualizerWidget(0);
+    w->show();
+
+    // Connect things.
+    QObject::connect(_gdbMonitor,  &GdbMonitor::astrixTextOutput,                                       w,       &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(_gdbMonitor,  &GdbMonitor::caretTextOutput,                                        w,       &SeerParallelStacksVisualizerWidget::handleText);
+    QObject::connect(w,            &SeerParallelStacksVisualizerWidget::refreshParallelStackFrames,     this,    &SeerGdbWidget::handleGdbParallelStackFrames);
+
+    // Force a inital refresh.
+    w->refresh();
 }
 
 void SeerGdbWidget::handleGdbMonitor () {

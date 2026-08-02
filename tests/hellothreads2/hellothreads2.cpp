@@ -11,7 +11,7 @@ void foo(int Z) {
 
     for (int i = 0; i < Z; i++) {
         std::cout << "Thread using function pointer as callable" << std::endl;
-        sleep(2);
+        sleep(20);
     }
     sleep(5);
 }
@@ -22,9 +22,9 @@ class thread_obj {
         void operator()(int x) {
             for (int i = 0; i < x; i++) {
                 std::cout << "Thread using function object as  callable" << std::endl;
-                sleep(3);
+                sleep(30);
             }
-            sleep(1);
+            sleep(5);
         }
 };
 

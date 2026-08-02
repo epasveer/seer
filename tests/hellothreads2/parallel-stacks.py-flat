@@ -81,21 +81,26 @@ def get_parallel_stacks(threads, current_function=None, depth=0):
     node.depth = depth
     node.function = current_function
     node.threads = threads
+
     function_threads = {}
     level = -depth - 1
+    unique_counter = 0
+
     for thread in threads:
         if depth >= len(thread.frames):
             continue
-        function = thread.frames[level].function
-        threads = function_threads.get(function, None)
-        if threads:
-            threads.append(thread)
-        else:
-            function_threads[function] = [thread]
+
+        # Each frame gets a unique key, preventing any grouping
+        function = f"{thread.frames[level].function}_unique_{unique_counter}"
+        unique_counter += 1
+
+        # Since every key is unique, this will always create a new entry
+        function_threads[function] = [thread]
 
     for function in function_threads:
         child_node = get_parallel_stacks(function_threads[function], function, depth + 1)
         node.nodes.append(child_node)
+
     return node
 
 

@@ -36,7 +36,7 @@ QImageViewer::QImageViewer (QWidget* parent) : QWidget(parent) {
 
     layout->addWidget(_scrollArea);
 
-    _imageLabel->setPixmap(QPixmap::fromImage(_image));
+    clearImage();
 }
 
 QImageViewer::~QImageViewer () {
@@ -98,6 +98,13 @@ void QImageViewer::setImage (const QImage& image) {
 const QImage& QImageViewer::image () const {
 
     return _image;
+}
+
+void QImageViewer::clearImage () {
+
+    _image = QImage();
+
+    _imageLabel->setPixmap(QPixmap());
 }
 
 void QImageViewer::setText (const QString& text) {

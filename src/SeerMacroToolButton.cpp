@@ -75,6 +75,16 @@ const QString& SeerMacroToolButton::macroFileName () const {
     return _macroFileName;
 }
 
+void SeerMacroToolButton::setMacroNickname (const QString& nickname) {
+
+    _macroNickname = nickname;
+}
+
+const QString& SeerMacroToolButton::macroNickname () const {
+
+    return _macroNickname;
+}
+
 void SeerMacroToolButton::setCommands (const QStringList& commands) {
 
     _commands = commands;
@@ -115,6 +125,17 @@ void SeerMacroToolButton::writeMacro () {
 
         file.close();
     }
+
+    // Write macro settings.
+    QSettings settings;
+
+    settings.beginGroup("macrogdbcommands"); {
+        settings.setValue(macroName()+"_nickname", macroNickname());
+        settings.setValue(macroName()+"_filename", macroFileName());
+    } settings.endGroup();
+
+    // Update the tooltip.
+    updateToolTip();
 }
 
 void SeerMacroToolButton::readMacro () {
@@ -195,9 +216,11 @@ void SeerMacroToolButton::handleEditMacro () {
     SeerMacroEditorDialog dlg;
 
     dlg.setMacroName(macroName());
+    dlg.setMacroNickname(macroNickname());
     dlg.setCommands(commands());
 
     if (dlg.exec()) {
+        setMacroNickname(dlg.macroNickname());
         setCommands(dlg.commands());
         writeMacro();
     }

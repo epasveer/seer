@@ -24,6 +24,7 @@ class QImageViewer : public QWidget {
         bool                    saveFileDialog          (const QString& file);
         void                    setImage                (const QImage& image);
         const QImage&           image                   () const;
+        void                    clearImage              ();
         void                    setText                 (const QString& text);
 
         double                  zoomFactor              () const;
