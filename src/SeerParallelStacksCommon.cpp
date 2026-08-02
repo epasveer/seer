@@ -139,7 +139,7 @@ QString SeerParallelStacksThread::toString() const {
     QString result = QString("Thread %1: #Frames %2").arg(_id).arg(QString::number(_frames.size()));
 
     for (const auto& f : _frames) {
-        // XXX result += "\n  " + f.toString();
+        result += "\n  " + f.toString();
     }
 
     result += "\n";
@@ -201,7 +201,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
     }
 
     if (node.function.isEmpty() == false) {
-        stack.functions.append(node.function);
+        stack.frames.append(node.function);
     }
 
     if (node.children.size() == 1) {

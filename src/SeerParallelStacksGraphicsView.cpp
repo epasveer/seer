@@ -56,12 +56,12 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
     qreal maxTextW = headerW;
 
-    for (const auto& function : _stack.functions) {
-        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(function));
+    for (const auto& frame : _stack.frames) {
+        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.function()));
     }
 
     _width  = maxTextW + 2 * kPadX;
-    _height = kPadY + kRowH * (1 + (int)_stack.functions.size()) + kPadY;
+    _height = kPadY + kRowH * (1 + (int)_stack.frames.size()) + kPadY;
 
     qDebug() << _stack.stacks.size();
 }
@@ -116,8 +116,8 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setFont(normFont);
     painter->setPen(QColor(0x00, 0x7A, 0x33));
 
-    for (const auto& function : _stack.functions) {
-        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, function);
+    for (const auto& frame : _stack.frames) {
+        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.function());
         y += kRowH;
     }
 
@@ -203,16 +203,16 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
 
     if (_popup == nullptr) {
 
-        QString function;
+        QString frame;
 
-        if (_stack.functions.size() > 0) {
-            function = _stack.functions[0];
+        if (_stack.frames.size() > 0) {
+            frame = _stack.frames[0].function();
         }
 
         _popup = new SeerParallelStacksPopupTableWidget();
 
         for (const auto& id : _threadIds) {
-            _popup->addRow(id, function);
+            _popup->addRow(id, frame);
         }
 
         QGraphicsView* view = scene()->views().first(); // scene() is always valid here
@@ -581,7 +581,7 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     _closeTimer->start();
 }
 
-void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& function) {
+void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& frame) {
 
     int nrows = _table->rowCount();
 
@@ -591,7 +591,7 @@ void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& fu
     item0->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     item0->setFlags(item0->flags()|Qt::ItemIsEditable);
 
-    QTableWidgetItem* item1 = new QTableWidgetItem(function);
+    QTableWidgetItem* item1 = new QTableWidgetItem(frame);
     item1->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     item1->setFlags(item1->flags()|Qt::ItemIsEditable);
 
@@ -830,7 +830,7 @@ void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerP
     pn->stack  = stack;
     pn->parent = parentPN;
 
-    if (!stack.functions.isEmpty()) {
+    if (!stack.frames.isEmpty()) {
         pn->item = new SeerParallelStacksStackBoxItem(stack);
         _scene->addItem(pn->item);
     }
