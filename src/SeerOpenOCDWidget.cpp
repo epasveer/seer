@@ -173,7 +173,7 @@ bool SeerOpenOCDWidget::startGdbLiveWatch (const QString &gdbExe)
         _gdbLiveWatchProcess->start(gdbExe, QStringList() << "-q" << "--interpreter=mi");
     }
     connect(_liveWatchTimer, &QTimer::timeout, [this](){
-        gdbLiveWatchRunCommand("-var-update-live-watch");
+        _gdbLiveWatchProcess->write("-var-update-live-watch");
     });
     _liveWatchTimer->start(500);       // Hard code Refresh rate = 2Hz
     connect(_gdbLiveWatchProcess, &QProcess::readyReadStandardOutput,   this, &SeerOpenOCDWidget::handleGdbOutput);
@@ -194,7 +194,7 @@ void SeerOpenOCDWidget::terminateGdbLiveWatch()
 {
     if (_gdbLiveWatchProcess) {
         _gdbLiveWatchProcess->terminate();
-        _gdbLiveWatchProcess->waitForFinished();
+        // _gdbLiveWatchProcess->waitForFinished();
         delete _gdbLiveWatchProcess;
         _gdbLiveWatchProcess = nullptr;
         _liveWatchTimer->stop();
@@ -210,6 +210,15 @@ void SeerOpenOCDWidget::handleGdbOutput()
         for (const QString& line : output.split('\n', Qt::SkipEmptyParts))
             if (line.contains("^done,value="))
                     emit toTracker(line);
+    }
+    // If output contains symbol of functions, variables, struct -> handle go to definition -> emit to SeerEditorManagerWidget::handleText
+    if (output.contains(QRegularExpression("^([0-9]+)\\^done,symbols="))) {
+        // Format: 4^done,symbols={debug=[{filename="/usr/src/kernel/init/main.c",
+        //                          fullname="/usr/src/kernel/init/main.c",
+        //                          symbols=[{line="887",name="arch_call_rest_init",type="void (void)",
+        //                          description="void arch_call_rest_init(void);"}]}]}
+        
+        emit toEditor(output);
     }
 }
 
