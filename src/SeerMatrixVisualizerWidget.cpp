@@ -417,8 +417,9 @@ void SeerMatrixVisualizerWidget::handleText (const QString& text) {
             matrixStrideLineEdit->setFocus();
         }
 
-    // At a stopping point, refresh.
-    }else if (text.startsWith("*stopped,reason=\"")) {
+    // At a stopping point, refresh. Skip the "exited" reasons: the program
+    // is gone and reading the matrix would fail with a memory error.
+    }else if (text.startsWith("*stopped,reason=\"") && text.startsWith("*stopped,reason=\"exited") == false) {
 
         if (autoRefreshCheckBox->isChecked()) {
             handleRefreshButton();
