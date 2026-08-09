@@ -36,6 +36,7 @@ class SeerOpenOCDWidget: public SeerLogWidget{
     signals:
         void                                openocdStartFailed              ();
         void                                toTracker                       (const QString& text);
+        void                                toEditor                        (const QString& text);
 
     private slots:
         void                                handleReadOutput                ();

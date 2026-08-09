@@ -1910,7 +1910,13 @@ void SeerGdbWidget::handleGdbExecutableFunctions (int id, const QString& functio
     }
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
-    handleGdbCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
+    
+    // If openocd is running, then let _gdbLiveWatchProcess handles it
+    if (executableLaunchMode() == "openocd") {
+        _openocdWidget->gdbLiveWatchRunCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
+    }
+    else
+        handleGdbCommand(QString("%1-symbol-info-functions --include-nondebug --name %2").arg(id).arg(functionRegex));
     QApplication::restoreOverrideCursor();
 }
 
@@ -4088,7 +4094,8 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     QObject::connect(this,          &SeerGdbWidget::sessionTerminated,  _openocdWidget, &SeerOpenOCDWidget::terminate, Qt::UniqueConnection);
     // Openocd Live watch
     QObject::connect(_gdbMonitor,   &GdbMonitor::caretTextOutput,       _openocdWidget, &SeerOpenOCDWidget::handleText,Qt::UniqueConnection);
-    QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toTracker,      variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText,Qt::UniqueConnection);
+    QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toTracker,      variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText,  Qt::UniqueConnection);
+    QObject::connect(_openocdWidget,&SeerOpenOCDWidget::toEditor,       editorManagerWidget,                                            &SeerEditorManagerWidget::handleText,           Qt::UniqueConnection);
 
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     // Start OpenOCD with the given path and command
@@ -4155,6 +4162,11 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
         if (newExecutableFlag() == true) {
             if (executablePreGdbCommands().isEmpty() == false)
                 handleGdbExecutablePreCommands();               // Run any 'pre' commands before program is loaded.
+
+            // Openocd handle gdb pre commands
+            for (const auto& i : _executablePreGdbCommands) {
+                _openocdWidget->gdbLiveWatchRunCommand(i);
+            }
 
             if (gdbServerDebug()) {
                 handleGdbCommand("-gdb-set debug remote 1"); // Turn on gdbserver debug
