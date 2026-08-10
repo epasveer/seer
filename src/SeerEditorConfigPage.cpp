@@ -31,6 +31,7 @@ SeerEditorConfigPage::SeerEditorConfigPage(QWidget* parent) : QWidget(parent) {
     QObject::connect(rustSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(odinSuffixesLineEdit,        &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(adaSuffixesLineEdit,         &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
+    QObject::connect(fortranSuffixesLineEdit,     &QHistoryLineEdit::lostFocus,             this, &SeerEditorConfigPage::handleHighlighterChanged);
     QObject::connect(languageTabWidget,           &QTabWidget::currentChanged,              this, &SeerEditorConfigPage::handleLanguageTabChanged);
     QObject::connect(themeApplyToolButton,        &QToolButton::clicked,                    this, &SeerEditorConfigPage::handleApplyTheme);
 
@@ -149,6 +150,8 @@ void SeerEditorConfigPage::setHighlighterSettings (const SeerHighlighterSettings
     odinSuffixesLineEdit->setCursorPosition(0);
     adaSuffixesLineEdit->setText(_highlighterSettings.adaSourceSuffixes());
     adaSuffixesLineEdit->setCursorPosition(0);
+    fortranSuffixesLineEdit->setText(_highlighterSettings.fortranSourceSuffixes());
+    fortranSuffixesLineEdit->setCursorPosition(0);
 
     // Update our sample editor.
     editorWidget->sourceArea()->setHighlighterSettings(highlighterSettings());
@@ -333,6 +336,7 @@ void SeerEditorConfigPage::handleHighlighterChanged () {
     languageSettings.setRustSourceSuffixes(rustSuffixesLineEdit->text());
     languageSettings.setOdinSourceSuffixes(odinSuffixesLineEdit->text());
     languageSettings.setAdaSourceSuffixes(adaSuffixesLineEdit->text());
+    languageSettings.setFortranSourceSuffixes(fortranSuffixesLineEdit->text());
 
     // Update our view.
     setHighlighterSettings(languageSettings);

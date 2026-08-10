@@ -6,6 +6,7 @@
 #include "SeerAdaSourceHighlighter.h"
 #include "SeerOdinSourceHighlighter.h"
 #include "SeerCppSourceHighlighter.h"
+#include "SeerFortranSourceHighlighter.h"
 #include "SeerRustSourceHighlighter.h"
 
 SeerSourceHighlighter::SeerSourceHighlighter (QTextDocument* parent) : QSyntaxHighlighter(parent) {}
@@ -24,6 +25,11 @@ SeerSourceHighlighter* SeerSourceHighlighter::getSourceHighlighter(QString const
     QRegularExpression cpp_re("(?:" + settings.cppSourceSuffixes() + ")$");
     if (file.contains(cpp_re)) {
       return new SeerCppSourceHighlighter(0);
+    }
+
+    QRegularExpression fortran_re("(?:" + settings.fortranSourceSuffixes() + ")$");
+    if (file.contains(fortran_re)) {
+      return new SeerFortranSourceHighlighter(0);
     }
 
     QRegularExpression odin_re("(?:" + settings.odinSourceSuffixes() + ")$");

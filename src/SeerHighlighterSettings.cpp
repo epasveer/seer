@@ -23,10 +23,11 @@ SeerHighlighterSettings& SeerHighlighterSettings::operator= (const SeerHighlight
 
     _keys               = rhs._keys;
     _formats            = rhs._formats;
-    _adaSourceSuffixes  = rhs._adaSourceSuffixes;
-    _cppSourceSuffixes  = rhs._cppSourceSuffixes;
-    _rustSourceSuffixes = rhs._rustSourceSuffixes;
-    _odinSourceSuffixes = rhs._odinSourceSuffixes;
+    _adaSourceSuffixes     = rhs._adaSourceSuffixes;
+    _cppSourceSuffixes     = rhs._cppSourceSuffixes;
+    _fortranSourceSuffixes = rhs._fortranSourceSuffixes;
+    _rustSourceSuffixes    = rhs._rustSourceSuffixes;
+    _odinSourceSuffixes    = rhs._odinSourceSuffixes;
 
     return *this;
 }
@@ -87,6 +88,11 @@ void SeerHighlighterSettings::setCppSourceSuffixes (const QString& suffixes) {
     _cppSourceSuffixes = suffixes;
 }
 
+void SeerHighlighterSettings::setFortranSourceSuffixes (const QString& suffixes) {
+
+    _fortranSourceSuffixes = suffixes;
+}
+
 void SeerHighlighterSettings::setOdinSourceSuffixes (const QString& suffixes) {
 
     _odinSourceSuffixes = suffixes;
@@ -100,6 +106,11 @@ void SeerHighlighterSettings::setRustSourceSuffixes (const QString& suffixes) {
 const QString& SeerHighlighterSettings::cppSourceSuffixes () {
 
     return _cppSourceSuffixes;
+}
+
+const QString& SeerHighlighterSettings::fortranSourceSuffixes () {
+
+    return _fortranSourceSuffixes;
 }
 
 const QString& SeerHighlighterSettings::odinSourceSuffixes () {
@@ -245,6 +256,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_light () {
 
     languageSettings.setAdaSourceSuffixes(".ada|.adb|.ads");
     languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setFortranSourceSuffixes(".f90|.F90|.f95|.F95|.f03|.F03|.f08|.F08");
     languageSettings.setOdinSourceSuffixes(".odin");
     languageSettings.setRustSourceSuffixes(".rs");
 
@@ -343,6 +355,7 @@ SeerHighlighterSettings SeerHighlighterSettings::populate_dark () {
 
     languageSettings.setAdaSourceSuffixes(".ada|.adb|.ads");
     languageSettings.setCppSourceSuffixes(".c|.C|.cpp|.CPP|.cxx|.CXX|.h|.H|.hpp|.hxx|.Hxx|.HXX");
+    languageSettings.setFortranSourceSuffixes(".f90|.F90|.f95|.F95|.f03|.F03|.f08|.F08");
     languageSettings.setOdinSourceSuffixes(".odin");
     languageSettings.setRustSourceSuffixes(".rs");
 

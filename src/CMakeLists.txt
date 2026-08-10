@@ -153,6 +153,7 @@ set(HEADER_FILES
     SeerWatchpointsBrowserWidget.h
     SeerSourceHighlighter.h
     SeerAdaSourceHighlighter.h
+    SeerFortranSourceHighlighter.h
     SeerCppSourceHighlighter.h
     SeerOdinSourceHighlighter.h
     SeerRustSourceHighlighter.h
@@ -270,6 +271,7 @@ set(SOURCE_FILES
     SeerWatchpointsBrowserWidget.cpp
     SeerSourceHighlighter.cpp
     SeerAdaSourceHighlighter.cpp
+    SeerFortranSourceHighlighter.cpp
     SeerCppSourceHighlighter.cpp
     SeerOdinSourceHighlighter.cpp
     SeerRustSourceHighlighter.cpp

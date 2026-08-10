@@ -25,10 +25,12 @@ class SeerHighlighterSettings {
         int                                     count                   () const;
         void                                    setAdaSourceSuffixes    (const QString& suffixes);
         void                                    setCppSourceSuffixes    (const QString& suffixes);
+        void                                    setFortranSourceSuffixes(const QString& suffixes);
         void                                    setOdinSourceSuffixes   (const QString& suffixes);
         void                                    setRustSourceSuffixes   (const QString& suffixes);
         const QString&                          adaSourceSuffixes       ();
         const QString&                          cppSourceSuffixes       ();
+        const QString&                          fortranSourceSuffixes   ();
         const QString&                          odinSourceSuffixes      ();
         const QString&                          rustSourceSuffixes      ();
 
@@ -42,6 +44,7 @@ class SeerHighlighterSettings {
         QList<QTextCharFormat>                  _formats;
         QString                                 _adaSourceSuffixes;
         QString                                 _cppSourceSuffixes;
+        QString                                 _fortranSourceSuffixes;
         QString                                 _odinSourceSuffixes;
         QString                                 _rustSourceSuffixes;
 };
