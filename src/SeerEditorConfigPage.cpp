@@ -417,6 +417,17 @@ void SeerEditorConfigPage::handleLanguageTabChanged (int index) {
                                              "   Put_Line (\"Hello, Seer!\"); -- Greetings\n"
                                              "end Main;",
                                              "sample.adb");
+    } else if (index == 4) { // Fortran90
+        editorWidget->sourceArea()->openText("!\n"
+                                             "! Seer, Copyright 2026 (c)\n"
+                                             "! Ernie Pasveer (epasveer@att.net)\n"
+                                             "! Fortran90 example\n"
+                                             "!\n"
+                                             "program hello_world\n"
+                                             "   implicit none\n"
+                                             "   print *, \"Hello, World!\"\n"
+                                             "end program hello_world\n",
+                                             "sample.f90");
     }
 
     editorWidget->sourceArea()->setCurrentLine(0);
