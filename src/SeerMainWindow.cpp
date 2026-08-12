@@ -1800,10 +1800,11 @@ void SeerMainWindow::writeConfigSettings () {
                 } settings.endGroup();
             }
 
-            settings.setValue("cppsuffixes",  highlighter.cppSourceSuffixes());
-            settings.setValue("odinsuffixes", highlighter.odinSourceSuffixes());
-            settings.setValue("rustsuffixes", highlighter.rustSourceSuffixes());
-            settings.setValue("adasuffixes",  highlighter.adaSourceSuffixes());
+            settings.setValue("cppsuffixes",     highlighter.cppSourceSuffixes());
+            settings.setValue("odinsuffixes",    highlighter.odinSourceSuffixes());
+            settings.setValue("rustsuffixes",    highlighter.rustSourceSuffixes());
+            settings.setValue("adasuffixes",     highlighter.adaSourceSuffixes());
+            settings.setValue("fortransuffixes", highlighter.fortranSourceSuffixes());
         } settings.endGroup();
 
     } settings.endGroup();
@@ -1918,10 +1919,11 @@ void SeerMainWindow::readConfigSettings () {
                 } settings.endGroup();
             }
 
-            if (settings.contains("cppsuffixes"))  highlighter.setCppSourceSuffixes(settings.value("cppsuffixes").toString());
-            if (settings.contains("odinsuffixes")) highlighter.setOdinSourceSuffixes(settings.value("odinsuffixes").toString());
-            if (settings.contains("rustsuffixes")) highlighter.setRustSourceSuffixes(settings.value("rustsuffixes").toString());
-            if (settings.contains("adasuffixes"))  highlighter.setAdaSourceSuffixes(settings.value("adasuffixes").toString());
+            if (settings.contains("cppsuffixes"))     highlighter.setCppSourceSuffixes(settings.value("cppsuffixes").toString());
+            if (settings.contains("odinsuffixes"))    highlighter.setOdinSourceSuffixes(settings.value("odinsuffixes").toString());
+            if (settings.contains("rustsuffixes"))    highlighter.setRustSourceSuffixes(settings.value("rustsuffixes").toString());
+            if (settings.contains("adasuffixes"))     highlighter.setAdaSourceSuffixes(settings.value("adasuffixes").toString());
+            if (settings.contains("fortransuffixes")) highlighter.setFortranSourceSuffixes(settings.value("fortransuffixes").toString());
 
             gdbWidget->editorManager()->setEditorHighlighterSettings(highlighter);
 

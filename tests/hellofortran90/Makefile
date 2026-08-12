@@ -1,5 +1,5 @@
 # Fortran compiler
-FC = gfortran-12
+FC = gfortran
 FFLAGS = -g
 
 # Source files

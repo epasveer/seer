@@ -272,6 +272,33 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabFortran">
+      <attribute name="title">
+       <string>Fortran</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayoutFortran">
+       <item>
+        <widget class="QLabel" name="fortranLabel">
+         <property name="text">
+          <string>Suffixes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QHistoryLineEdit" name="fortranSuffixesLineEdit">
+         <property name="toolTip">
+          <string>Fortran source suffixes. Separated by '|'.</string>
+         </property>
+         <property name="placeholderText">
+          <string>Fortran source suffixes.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item row="3" column="0">
