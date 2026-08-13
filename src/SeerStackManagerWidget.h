@@ -10,6 +10,7 @@
 #include "SeerStackDumpBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QTabWidget>
 
 #include "ui_SeerStackManagerWidget.h"
 
@@ -51,5 +52,20 @@ class SeerStackManagerWidget : public QWidget, protected Ui::SeerStackManagerWid
         SeerStackArgumentsBrowserWidget*                _stackArgumentsBrowserWidget;
         SeerStackLocalsBrowserWidget*                   _stackLocalsBrowserWidget;
         SeerStackDumpBrowserWidget*                     _stackDumpBrowserWidget;
+};
+
+class SeerStackManagerEventFilter : public QObject {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerStackManagerEventFilter(QTabWidget* tabWidget, QObject *parent = nullptr) : QObject(parent), _tabWidget(tabWidget) {}
+       ~SeerStackManagerEventFilter() = default;
+
+    protected:
+        bool                                            eventFilter                             (QObject *watched, QEvent *event) override;
+
+    private:
+        QTabWidget*                                     _tabWidget;
 };
 

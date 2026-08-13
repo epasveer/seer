@@ -10,6 +10,7 @@
 #include "SeerSignalValuesBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QTabWidget>
 
 #include "ui_SeerVariableManagerWidget.h"
 
@@ -44,5 +45,20 @@ class SeerVariableManagerWidget : public QWidget, protected Ui::SeerVariableMana
         SeerVariableLoggerBrowserWidget*                _variableLoggerBrowserWidget;
         SeerRegisterValuesBrowserWidget*                _registerValuesBrowserWidget;
         SeerSignalValuesBrowserWidget*                  _signalValuesBrowserWidget;
+};
+
+class SeerVariableManagerEventFilter : public QObject {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerVariableManagerEventFilter(QTabWidget* tabWidget, QObject *parent = nullptr) : QObject(parent), _tabWidget(tabWidget) {}
+       ~SeerVariableManagerEventFilter() = default;
+
+    protected:
+        bool                                            eventFilter                             (QObject *watched, QEvent *event) override;
+
+    private:
+        QTabWidget*                                     _tabWidget;
 };
 

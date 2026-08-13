@@ -14,6 +14,7 @@
 #include "SeerPrintpointsBrowserWidget.h"
 #include "SeerCheckpointsBrowserWidget.h"
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QTabWidget>
 
 #include "ui_SeerCommandLogsWidget.h"
 
@@ -95,5 +96,20 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
         SeerGdbLogWidget*                   _gdbOutputLog;
         SeerSeerLogWidget*                  _seerOutputLog;
+};
+
+class SeerCommandLogsEventFilter : public QObject {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerCommandLogsEventFilter(QTabWidget* tabWidget, QObject *parent = nullptr) : QObject(parent), _tabWidget(tabWidget) {}
+       ~SeerCommandLogsEventFilter() = default;
+
+    protected:
+        bool                                            eventFilter                             (QObject *watched, QEvent *event) override;
+
+    private:
+        QTabWidget*                                     _tabWidget;
 };
 

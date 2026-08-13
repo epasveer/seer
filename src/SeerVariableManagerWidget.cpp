@@ -12,6 +12,7 @@
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <QtGui/QWheelEvent>
 
 SeerVariableManagerWidget::SeerVariableManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -66,6 +67,10 @@ SeerVariableManagerWidget::SeerVariableManagerWidget (QWidget* parent) : QWidget
     QObject::connect(tabWidget->tabBar(),           &QTabBar::currentChanged,                       this,  &SeerVariableManagerWidget::handleTabChanged);
     QObject::connect(_variableLoggerBrowserWidget,  &SeerVariableLoggerBrowserWidget::raiseTab,     this,  &SeerVariableManagerWidget::handleRaiseLoggerTab);
     QObject::connect(_variableTrackerBrowserWidget, &SeerVariableTrackerBrowserWidget::raiseTab,    this,  &SeerVariableManagerWidget::handleRaiseTrackerTab);
+
+    // Install event filter to swallow wheel events on the tab bar if the number of tabs is greater than the number of visible tabs.
+    SeerVariableManagerEventFilter* eventFilterHandler = new SeerVariableManagerEventFilter(tabWidget, this);
+    tabWidget->tabBar()->installEventFilter(eventFilterHandler);
 }
 
 SeerVariableManagerWidget::~SeerVariableManagerWidget () {
@@ -288,5 +293,31 @@ void SeerVariableManagerWidget::handleTabsContextMenuButtonClicked() {
     contextMenu.addAction(action);
 
     contextMenu.exec(QCursor::pos());
+}
+
+bool SeerVariableManagerEventFilter::eventFilter(QObject *watched, QEvent *event) {
+
+    if (event->type() == QEvent::Wheel) {
+
+        // Count the number of visible tabs.
+        int visibleCount = 0;
+
+        for (int i=0; i<_tabWidget->count(); i++) {
+            if (_tabWidget->isTabVisible(i)) {
+                visibleCount++;
+            }
+        }
+
+        int index = _tabWidget->currentIndex();
+
+        QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+
+        // Swallow the wheel event only if it would move past the last visible tab, to avoid landing on a hidden one.
+        if (wheelEvent->angleDelta().y() < 0 && index >= visibleCount - 1) {
+            return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
 }
 

@@ -13,6 +13,7 @@
 #include <QtGui/QIcon>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <QtGui/QWheelEvent>
 
 SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(parent) {
 
@@ -65,6 +66,10 @@ SeerStackManagerWidget::SeerStackManagerWidget (QWidget* parent) : QWidget(paren
     QObject::connect(helpToolButton,        &QToolButton::clicked,         this,  &SeerStackManagerWidget::handleHelpToolButtonClicked);
     QObject::connect(tabWidget->tabBar(),   &QTabBar::tabMoved,            this,  &SeerStackManagerWidget::handleTabMoved);
     QObject::connect(tabWidget->tabBar(),   &QTabBar::currentChanged,      this,  &SeerStackManagerWidget::handleTabChanged);
+
+    // Install event filter to swallow wheel events on the tab bar if the number of tabs is greater than the number of visible tabs.
+    SeerStackManagerEventFilter* eventFilterHandler = new SeerStackManagerEventFilter(tabWidget, this);
+    tabWidget->tabBar()->installEventFilter(eventFilterHandler);
 }
 
 SeerStackManagerWidget::~SeerStackManagerWidget () {
@@ -330,4 +335,29 @@ void SeerStackManagerWidget::handleTabsContextMenuButtonClicked() {
     contextMenu.exec(QCursor::pos());
 }
 
+bool SeerStackManagerEventFilter::eventFilter(QObject *watched, QEvent *event) {
+
+    if (event->type() == QEvent::Wheel) {
+
+        // Count the number of visible tabs.
+        int visibleCount = 0;
+
+        for (int i=0; i<_tabWidget->count(); i++) {
+            if (_tabWidget->isTabVisible(i)) {
+                visibleCount++;
+            }
+        }
+
+        int index = _tabWidget->currentIndex();
+
+        QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+
+        // Swallow the wheel event only if it would move past the last visible tab, to avoid landing on a hidden one.
+        if (wheelEvent->angleDelta().y() < 0 && index >= visibleCount - 1) {
+            return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
 
