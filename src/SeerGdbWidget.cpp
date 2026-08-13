@@ -3992,14 +3992,14 @@ void SeerGdbWidget::setOpenocdExe (const QString& path)
     _openocdExe = path;
 }
 
-const QString& SeerGdbWidget::openocdCommand ()
+const QString& SeerGdbWidget::openocdOptions ()
 {
-    return _openocdCommands;
+    return _openocdOptions;
 }
 
-void SeerGdbWidget::setOpenocdCommand (const QString& command)
+void SeerGdbWidget::setOpenocdOptions (const QString& options)
 {
-    _openocdCommands = command;
+    _openocdOptions = options;
 }
 
 // ::GDB Multiarch
@@ -4099,11 +4099,11 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
 
     _openocdWidget->createOpenOCDConsole(commandLogsWidget->logsTabWidgetInstance());
     // Start OpenOCD with the given path and command
-    bool foo = _openocdWidget->startOpenOCD(openocdExe(), openocdCommand());
+    bool foo = _openocdWidget->startOpenOCD(openocdExe(), openocdOptions());
     if (foo == false) {
         QMessageBox::warning(this, "Seer",
                                    QString("Unable to launch the OpenOCD program.\n\n") +
-                                   QString("'%1 %2'").arg(SeerGdbWidget::openocdExe()).arg(SeerGdbWidget::openocdCommand()) + "\n\n" +
+                                   QString("'%1 %2'").arg(SeerGdbWidget::openocdExe()).arg(SeerGdbWidget::openocdOptions()) + "\n\n" +
                                    QString("Please check your OpenOCD configuration."),
                                    QMessageBox::Ok);
         _openocdWidget->terminate();
