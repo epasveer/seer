@@ -76,6 +76,8 @@ class SeerArrayVisualizerWidget : public QWidget, protected Ui::SeerArrayVisuali
         void                resizeEvent                         (QResizeEvent* event);
 
     private:
+        void                readaMemory                         ();
+        void                readbMemory                         ();
         void                createASeries                       ();
         void                createBSeries                       ();
 
