@@ -55,6 +55,8 @@ class SeerMatrixVisualizerWidget : public QWidget, protected Ui::SeerMatrixVisua
         void                resizeEvent                             (QResizeEvent* event);
 
     private:
+        void                readMemory                              ();
+
         int                 _variableId;
         int                 _memoryId;
         int                 _rowsId;

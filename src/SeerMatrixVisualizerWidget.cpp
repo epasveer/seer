@@ -238,8 +238,10 @@ void SeerMatrixVisualizerWidget::handleText (const QString& text) {
                 }
             }
 
-            // Set the variable address.
+            // Set the variable address and read the memory there.
             setVariableAddress(address);
+
+            readMemory();
         }
 
         if (id_text.toInt() == _rowsId) {
@@ -436,6 +438,14 @@ void SeerMatrixVisualizerWidget::handleRefreshButton () {
         return;
     }
 
+    // Re-evaluate the variable's address first: it may have changed since the
+    // last stop (or the variable may not have existed yet). The answer then
+    // reads the memory at the fresh address. See readMemory().
+    emit evaluateVariableExpression(_variableId, variableNameLineEdit->text());
+}
+
+void SeerMatrixVisualizerWidget::readMemory () {
+
     if (variableAddressLineEdit->text() == "") {
         return;
     }
@@ -444,7 +454,18 @@ void SeerMatrixVisualizerWidget::handleRefreshButton () {
         return;
     }
 
+    // A null address can't be read (a matrix before its construction, for
+    // example). Keep the "0x0" visible but don't ask gdb.
+    if (variableAddressLineEdit->text() == "0x0") {
+        return;
+    }
+
     int bytes = matrixRowsLineEdit->text().toInt() * matrixColumnsLineEdit->text().toInt() * Seer::typeBytes(matrixDisplayFormatComboBox->currentText());
+
+    // Nothing to read yet (no rows/columns).
+    if (bytes <= 0) {
+        return;
+    }
 
     // qDebug() << "Asking for" << bytes << "bytes of matrix data.";
 

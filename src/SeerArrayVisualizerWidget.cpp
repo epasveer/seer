@@ -430,8 +430,10 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
                 }
             }
 
-            // Set the variable address.
+            // Set the variable address and read the memory there.
             setAVariableAddress(address);
+
+            readaMemory();
         }
 
         if (id_text.toInt() == _aLengthId) {
@@ -489,8 +491,10 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
                 }
             }
 
-            // Set the variable address.
+            // Set the variable address and read the memory there.
             setBVariableAddress(address);
+
+            readbMemory();
         }
 
         if (id_text.toInt() == _bLengthId) {
@@ -742,6 +746,26 @@ void SeerArrayVisualizerWidget::handleaRefreshButton () {
         return;
     }
 
+    // Re-evaluate the variable's address first: it may have changed since the
+    // last stop (or the variable may not have existed yet). The answer then
+    // reads the memory at the fresh address. See readaMemory().
+    emit evaluateVariableExpression(_aVariableId, aVariableNameLineEdit->text());
+}
+
+void SeerArrayVisualizerWidget::handlebRefreshButton () {
+
+    if (bVariableNameLineEdit->text() == "") {
+        return;
+    }
+
+    // Re-evaluate the variable's address first: it may have changed since the
+    // last stop (or the variable may not have existed yet). The answer then
+    // reads the memory at the fresh address. See readbMemory().
+    emit evaluateVariableExpression(_bVariableId, bVariableNameLineEdit->text());
+}
+
+void SeerArrayVisualizerWidget::readaMemory () {
+
     if (aVariableAddressLineEdit->text() == "") {
         return;
     }
@@ -750,18 +774,25 @@ void SeerArrayVisualizerWidget::handleaRefreshButton () {
         return;
     }
 
+    // A null address can't be read (a std::vector before its construction,
+    // for example). Keep the "0x0" visible but don't ask gdb.
+    if (aVariableAddressLineEdit->text() == "0x0") {
+        return;
+    }
+
     int bytes = aArrayLengthLineEdit->text().toInt() * Seer::typeBytes(aArrayDisplayFormatComboBox->currentText());
+
+    // Nothing to read yet (no length).
+    if (bytes <= 0) {
+        return;
+    }
 
     //qDebug() << _aMemoryId << aVariableAddressLineEdit->text() << aArrayLengthLineEdit->text() << aArrayDisplayFormatComboBox->currentText() << bytes;
 
     emit evaluateMemoryExpression(_aMemoryId, aVariableAddressLineEdit->text(), bytes);
 }
 
-void SeerArrayVisualizerWidget::handlebRefreshButton () {
-
-    if (bVariableNameLineEdit->text() == "") {
-        return;
-    }
+void SeerArrayVisualizerWidget::readbMemory () {
 
     if (bVariableAddressLineEdit->text() == "") {
         return;
@@ -771,7 +802,18 @@ void SeerArrayVisualizerWidget::handlebRefreshButton () {
         return;
     }
 
+    // A null address can't be read (a std::vector before its construction,
+    // for example). Keep the "0x0" visible but don't ask gdb.
+    if (bVariableAddressLineEdit->text() == "0x0") {
+        return;
+    }
+
     int bytes = bArrayLengthLineEdit->text().toInt() * Seer::typeBytes(bArrayDisplayFormatComboBox->currentText());
+
+    // Nothing to read yet (no length).
+    if (bytes <= 0) {
+        return;
+    }
 
     //qDebug() << _bMemoryId << bVariableAddressLineEdit->text() << bArrayLengthLineEdit->text() << bArrayDisplayFormatComboBox->currentText() << bytes;
 
