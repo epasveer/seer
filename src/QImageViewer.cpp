@@ -19,6 +19,8 @@
 
 QImageViewer::QImageViewer (QWidget* parent) : QWidget(parent) {
 
+    setFocusPolicy(Qt::StrongFocus); // So the widget can take focus and receive the +/-/ESC zoom keys.
+
     _zoomFactor = 1.0;
 
     // Setup the widgets
@@ -174,7 +176,7 @@ void QImageViewer::keyPressEvent (QKeyEvent* event) {
     }
 }
 
-void QImageViewer::enterEvent (QEvent* event) {
+void QImageViewer::enterEvent (QEnterEvent* event) {
 
     Q_UNUSED(event);
 
