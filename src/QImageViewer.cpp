@@ -9,6 +9,7 @@
 #include <QtGui/QImageReader>
 #include <QtGui/QImageWriter>
 #include <QtGui/QPainter>
+#include <QtGui/QWheelEvent>
 #include <QtCore/QDebug>
 #include <QtPrintSupport/QPrintDialog>
 
@@ -35,6 +36,10 @@ QImageViewer::QImageViewer (QWidget* parent) : QWidget(parent) {
     _scrollArea->setBackgroundRole(QPalette::Dark);
     _scrollArea->setWidget(_imageLabel);
     _scrollArea->setWidgetResizable(false);
+
+    // The scroll area consumes wheel events for scrolling, so watch its
+    // viewport to catch Ctrl+wheel for zooming.
+    _scrollArea->viewport()->installEventFilter(this);
 
     layout->addWidget(_scrollArea);
 
@@ -174,6 +179,29 @@ void QImageViewer::keyPressEvent (QKeyEvent* event) {
             QWidget::keyPressEvent(event);
             break;
     }
+}
+
+bool QImageViewer::eventFilter (QObject* object, QEvent* event) {
+
+    // Ctrl+wheel over the image zooms in or out. A plain wheel keeps
+    // scrolling the image as usual.
+    if (object == _scrollArea->viewport() && event->type() == QEvent::Wheel) {
+
+        QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+
+        if (wheelEvent->modifiers() & Qt::ControlModifier) {
+
+            if (wheelEvent->angleDelta().y() > 0) {
+                zoomIn();
+            }else if (wheelEvent->angleDelta().y() < 0) {
+                zoomOut();
+            }
+
+            return true;
+        }
+    }
+
+    return QWidget::eventFilter(object, event);
 }
 
 void QImageViewer::enterEvent (QEnterEvent* event) {
