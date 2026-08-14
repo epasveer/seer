@@ -78,5 +78,6 @@ Available Quick keys while in the Image Visualizer:
     '+'   zoom in
     '-'   zoom out
     ESC   reset to default zoom level.
+    Ctrl+mouse wheel   zoom in or out.
 ```
 
