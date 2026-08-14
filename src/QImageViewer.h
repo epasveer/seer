@@ -38,8 +38,8 @@ class QImageViewer : public QWidget {
 
     protected slots:
         void                    keyPressEvent           (QKeyEvent* event);
-        void                    enterEvent              (QEvent*    event);
-        void                    leaveEvent              (QEvent*    event);
+        void                    enterEvent              (QEnterEvent* event) override;
+        void                    leaveEvent              (QEvent*    event) override;
 
     private:
         QImage                  _image;
