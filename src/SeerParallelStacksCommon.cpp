@@ -206,19 +206,26 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         stack.threadIds.append(t.id());
     }
 
-    if (node.function.function().isEmpty() == false) {
-        stack.frames.append(node.function);
-    }
-
     if (node.children.size() == 1) {
         // Merge single child into this stack (chain of frames).
         // Keep the IDs from the leaf (most specific) node.
+        // Children are deeper (more toward the top of the call stack) than
+        // this node, so their frames go first — the resulting list reads
+        // top of stack (innermost) to bottom of stack (outermost).
         auto child = SeerParallelStacksFillStack(node.children[0]);
-        stack.frames     += child.frames;
-        stack.stacks      = child.stacks;
-        stack.threadCount = child.threadCount;
-        stack.threadIds   = child.threadIds;
+        stack.frames       = child.frames;
+        stack.stacks       = child.stacks;
+        stack.threadCount  = child.threadCount;
+        stack.threadIds    = child.threadIds;
+
+        if (node.function.function().isEmpty() == false) {
+            stack.frames.append(node.function);
+        }
     } else {
+        if (node.function.function().isEmpty() == false) {
+            stack.frames.append(node.function);
+        }
+
         for (const auto& childNode : node.children) {
             stack.stacks.append(SeerParallelStacksFillStack(childNode));
         }
