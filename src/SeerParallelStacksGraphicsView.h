@@ -52,26 +52,32 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         void                    hoverLeaveEvent     (QGraphicsSceneHoverEvent* event) override;
 
     private slots:
-        void                    handleDeletePopup   ();
+        void                    handleDeletePopup       ();
+        void                    handleShowPopup         ();
+        void                    handleMaybeClosePopup   ();
 
     private:
+        // Global (screen) rect this box occupies, used to test whether the
+        // cursor is still over the node.
+        QRect                                    globalRect      () const;
+
+        QVector<SeerParallelStacksLiveEdge*>    _edges;   // non-owning
         QVector<int>                            _threadIds;
         SeerParallelStacksStack                 _stack;
         QString                                 _headerLeft;
         QString                                 _headerRight;
-        qreal                                   _width  = 0;
-        qreal                                   _height = 0;
-        SeerParallelStacksPopupTableWidget*     _popup  = 0;
-
-        bool                                    _dragging  = false;
+        qreal                                   _width          = 0;
+        qreal                                   _height         = 0;
+        SeerParallelStacksPopupTableWidget*     _popup          = 0;
+        QTimer*                                 _hoverTimer     = 0;
+        static constexpr int                    _kHoverDelayMs  = 1000;
+        static constexpr int                    _kCloseGraceMs  =  150;
+        bool                                    _dragging       = false;
         QPointF                                 _dragOffset;
-
-        QVector<SeerParallelStacksLiveEdge*>    _edges;   // non-owning
-
-        static constexpr qreal  kPadX      = 12;
-        static constexpr qreal  kPadY      =  8;
-        static constexpr qreal  kRowH      = 20;
-        static constexpr qreal  kHeaderGap = 16;
+        static constexpr qreal                  _kPadX          = 12;
+        static constexpr qreal                  _kPadY          =  8;
+        static constexpr qreal                  _kRowH          = 20;
+        static constexpr qreal                  _kHeaderGap     = 16;
 };
 
 // ---------------------------------------------------------------
@@ -82,7 +88,7 @@ class SeerParallelStacksLiveEdge : public QGraphicsItem {
 
     public:
         SeerParallelStacksLiveEdge(SeerParallelStacksStackBoxItem* from, SeerParallelStacksStackBoxItem* to, QGraphicsItem* parent = nullptr);
-        ~SeerParallelStacksLiveEdge() override;
+       ~SeerParallelStacksLiveEdge() override;
 
         QRectF          boundingRect     () const override;
         QPainterPath    shape            () const override;
@@ -95,11 +101,11 @@ class SeerParallelStacksLiveEdge : public QGraphicsItem {
 
 
     private:
-        SeerParallelStacksStackBoxItem*           _from;   // child  (bottom anchor)
-        SeerParallelStacksStackBoxItem*           _to;     // parent (top anchor)
+        SeerParallelStacksStackBoxItem*     _from;   // child  (bottom anchor)
+        SeerParallelStacksStackBoxItem*     _to;     // parent (top anchor)
 
-        static constexpr qreal  kArrow = 8.0;
-        static constexpr qreal  kVCtrl = 60.0 * 0.4;   // bezier control-point stretch
+        static constexpr qreal              _kArrow = 8.0;
+        static constexpr qreal              _kVCtrl = 60.0 * 0.4;   // bezier control-point stretch
 };
 
 
@@ -142,7 +148,8 @@ class SeerParallelStacksMiniMapWidget : public QWidget {
 };
 
 // A frameless popup window that wraps a QTableWidget inside a small
-// bordered frame, and closes/deletes itself when the mouse leaves it.
+// bordered frame. Its lifetime is owned by the SeerParallelStacksStackBoxItem
+// that created it — it stays up for as long as the mouse is in that node.
 class SeerParallelStacksPopupTableWidget : public QFrame {
 
     Q_OBJECT
@@ -153,18 +160,13 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
         void            addRow                          (int threadid, const QString& function);
 
     protected:
-        void            enterEvent                      (QEnterEvent* event) override;
         void            leaveEvent                      (QEvent* event) override;
-
-    protected slots:
-        void            handleCloseTimer                ();
 
     signals:
         void            mouseLeftPopup                  ();
 
     private:
         QTableWidget*   _table;
-        QTimer*         _closeTimer;
 };
 
 class SeerParallelStacksGraphicsView : public QGraphicsView {
