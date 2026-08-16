@@ -87,6 +87,12 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
     setAcceptHoverEvents(true);
 
+    _hoverTimer = new QTimer(this);
+    _hoverTimer->setSingleShot(true);
+    _hoverTimer->setInterval(_kHoverDelayMs);
+
+    QObject::connect(_hoverTimer, &QTimer::timeout, this, &SeerParallelStacksStackBoxItem::handleShowPopup);
+
     _headerLeft = QString("%1 Thread%2") .arg(stack.threadCount) .arg(stack.threadCount == 1 ? "" : "s");
 
     _threadIds.resize(0);
@@ -118,15 +124,15 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     QFont        normFont;
     QFontMetrics normFm(normFont);
 
-    qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + kHeaderGap;
+    qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + _kHeaderGap;
     qreal maxTextW = headerW;
 
     for (const auto& frame : _stack.frames) {
         maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.function()));
     }
 
-    _width  = maxTextW + 2 * kPadX;
-    _height = kPadY + kRowH * (1 + (int)_stack.frames.size()) + kPadY;
+    _width  = maxTextW + 2 * _kPadX;
+    _height = _kPadY + _kRowH * (1 + (int)_stack.frames.size()) + _kPadY;
 
     qDebug() << _stack.stacks.size();
 }
@@ -163,19 +169,19 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
 
     QFont boldFont;  boldFont.setBold(true);
     QFont normFont;
-    const qreal innerW = _width - 2 * kPadX;
-    qreal y = kPadY;
+    const qreal innerW = _width - 2 * _kPadX;
+    qreal y = _kPadY;
 
     painter->setFont(boldFont);
     painter->setPen(colors.headerText);
-    painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
+    painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
 
     if (!_headerRight.isEmpty()) {
         painter->setPen(colors.threadIdsText);
-        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
+        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
     }
 
-    y += kRowH;
+    y += _kRowH;
 
     painter->setPen(QPen(colors.divider, 1));
     painter->drawLine(QPointF(0, y), QPointF(_width, y));
@@ -184,8 +190,8 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setPen(colors.frameText);
 
     for (const auto& frame : _stack.frames) {
-        painter->drawText(QRectF(kPadX, y, innerW, kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.function());
-        y += kRowH;
+        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.function());
+        y += _kRowH;
     }
 
     if (_dragging) {
@@ -269,37 +275,82 @@ void SeerParallelStacksStackBoxItem::hoverEnterEvent(QGraphicsSceneHoverEvent* e
     QGraphicsItem::hoverEnterEvent(event);
 
     if (_popup == nullptr) {
-
-        QString frame;
-
-        if (_stack.frames.size() > 0) {
-            frame = _stack.frames[0].function();
-        }
-
-        _popup = new SeerParallelStacksPopupTableWidget();
-
-        for (const auto& id : _threadIds) {
-            _popup->addRow(id, frame);
-        }
-
-        QGraphicsView* view = scene()->views().first(); // scene() is always valid here
-
-        // Position below the item, aligned to its left edge
-        QRectF sceneRect  = mapToScene(boundingRect()).boundingRect();
-        QPoint viewportPt = view->mapFromScene(sceneRect.bottomLeft());
-        QPoint globalPt   = view->viewport()->mapToGlobal(viewportPt);
-        _popup->move(globalPt);
-
-        _popup->show();
-
-        // Connect things.
-        QObject::connect(_popup, &SeerParallelStacksPopupTableWidget::mouseLeftPopup,      this, &SeerParallelStacksStackBoxItem::handleDeletePopup);
+        _hoverTimer->start();
     }
 }
 
 void SeerParallelStacksStackBoxItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
 
     QGraphicsItem::hoverLeaveEvent(event);
+
+    // Cancel a pending popup if the mouse left before the delay elapsed.
+    _hoverTimer->stop();
+
+    // A popup that's already showing stays up if the mouse just moved onto
+    // it — give handleMaybeClosePopup() a moment to check for that.
+    handleMaybeClosePopup();
+}
+
+QRect SeerParallelStacksStackBoxItem::globalRect() const {
+
+    QGraphicsView* view = scene()->views().first(); // scene() is always valid here
+
+    QRectF sceneRect    = mapToScene(boundingRect()).boundingRect();
+    QPoint topLeft      = view->viewport()->mapToGlobal(view->mapFromScene(sceneRect.topLeft()));
+    QPoint bottomRight  = view->viewport()->mapToGlobal(view->mapFromScene(sceneRect.bottomRight()));
+
+    return QRect(topLeft, bottomRight);
+}
+
+void SeerParallelStacksStackBoxItem::handleShowPopup() {
+
+    if (_popup != nullptr) {
+        return;
+    }
+
+    QString frame;
+
+    if (_stack.frames.size() > 0) {
+        frame = _stack.frames[0].function();
+    }
+
+    _popup = new SeerParallelStacksPopupTableWidget();
+
+    for (const auto& id : _threadIds) {
+        _popup->addRow(id, frame);
+    }
+
+    // Position below the item, aligned to its left edge
+    _popup->move(globalRect().bottomLeft());
+
+    _popup->show();
+
+    QObject::connect(_popup, &SeerParallelStacksPopupTableWidget::mouseLeftPopup, this, &SeerParallelStacksStackBoxItem::handleMaybeClosePopup);
+}
+
+void SeerParallelStacksStackBoxItem::handleMaybeClosePopup() {
+
+    if (_popup == nullptr) {
+        return;
+    }
+
+    // The mouse may have simply crossed from the node onto the popup (or
+    // vice versa) — give that a moment to register before deciding the
+    // mouse has truly left both, then re-check with the cursor's live
+    // position rather than relying on possibly-stale hover state.
+    QTimer::singleShot(_kCloseGraceMs, this, [this]() {
+
+        if (_popup == nullptr) {
+            return;
+        }
+
+        bool overNode  = globalRect().contains(QCursor::pos());
+        bool overPopup = _popup->frameGeometry().contains(QCursor::pos());
+
+        if (overNode == false && overPopup == false) {
+            handleDeletePopup();
+        }
+    });
 }
 
 void SeerParallelStacksStackBoxItem::handleDeletePopup() {
@@ -358,7 +409,7 @@ QRectF SeerParallelStacksLiveEdge::boundingRect() const {
     QPointF f = _from->sceneBottom();
     QPointF t = _to->sceneTop();
 
-    qreal pad = kArrow + kVCtrl + 4;
+    qreal pad = _kArrow + _kVCtrl + 4;
 
     return QRectF(f, t).normalized().adjusted(-pad, -pad, pad, pad);
 }
@@ -382,39 +433,8 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
     QPointF from = _from->sceneBottom();
     QPointF to   = _to->sceneTop();
 
-    /*
-    // Bezier: control points pull vertically toward each other
-    QPainterPath path;
-    path.moveTo(from);
-    path.cubicTo(from + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
-
-    painter->setPen(QPen(QColor(0x55, 0x55, 0x55), 1.5));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawPath(path);
-
-    // Arrowhead at `to` pointing downward (into the parent box)
-    // The tangent direction at the end of the cubic is (to - cp2)
-    QPointF cp2  = to + QPointF(0, -kVCtrl);
-    QPointF dir  = to - cp2;
-    double  len  = std::hypot(dir.x(), dir.y());
-    if (len < 1e-6) return;
-    dir /= len;   // normalise
-
-    // Perpendicular
-    QPointF perp(-dir.y(), dir.x());
-
-    QPointF a1 = to - dir * kArrow + perp * (kArrow * 0.5);
-    QPointF a2 = to - dir * kArrow - perp * (kArrow * 0.5);
-
-    QPolygonF arrowHead;
-    arrowHead << to << a1 << a2;
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(QColor(0x55, 0x55, 0x55));
-    painter->drawPolygon(arrowHead);
-    */
-
     // --- Arrowhead: tip touches the child box bottom (`from`),
-    //     base is kArrow further along toward `to`.
+    //     base is _kArrow further along toward `to`.
     //     The bezier starts at the base so the line never overlaps the head.
     QPointF delta = to - from;
     double  len   = std::hypot(delta.x(), delta.y());
@@ -425,16 +445,16 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
     QPointF perp(-dir.y(), dir.x());      // perpendicular
 
     QPointF tip  = from;                  // touches child box
-    QPointF base = from + dir * kArrow;   // where the line begins
+    QPointF base = from + dir * _kArrow;   // where the line begins
 
-    QPointF a1 = base + perp * (kArrow * 0.5);
-    QPointF a2 = base - perp * (kArrow * 0.5);
+    QPointF a1 = base + perp * (_kArrow * 0.5);
+    QPointF a2 = base - perp * (_kArrow * 0.5);
 
     // Bezier runs from the arrowhead base to the parent box top.
     QPainterPath path;
 
     path.moveTo(base);
-    path.cubicTo(base + QPointF(0,  kVCtrl), to   + QPointF(0, -kVCtrl), to);
+    path.cubicTo(base + QPointF(0,  _kVCtrl), to   + QPointF(0, -_kVCtrl), to);
 
     const QColor color = edgeColor();
 
@@ -641,15 +661,6 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setContentsMargins(6, 6, 6, 6);
     layout->addWidget(_table);
-
-    _closeTimer = new QTimer(this);
-    _closeTimer->setSingleShot(true); // Ensures it only fires once
-    _closeTimer->setInterval(1500);   // Delay
-
-    // Connect things.
-    QObject::connect(_closeTimer, &QTimer::timeout,      this, &SeerParallelStacksPopupTableWidget::handleCloseTimer);
-
-    _closeTimer->start();
 }
 
 void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& frame) {
@@ -673,28 +684,10 @@ void SeerParallelStacksPopupTableWidget::addRow (int threadid, const QString& fr
     _table->resizeColumnToContents(1);
 }
 
-void SeerParallelStacksPopupTableWidget::enterEvent(QEnterEvent* event) {
-
-    // If the user moves the cursor into the table, cancel the timer.
-    if (_closeTimer->isActive()) {
-        _closeTimer->stop();
-    }
-
-    QFrame::enterEvent(event);
-}
-
 void SeerParallelStacksPopupTableWidget::leaveEvent(QEvent* event) {
 
-    // If the user leaves the table, ask for the table to be closed.
     QFrame::leaveEvent(event);
 
-    emit mouseLeftPopup();
-}
-
-void SeerParallelStacksPopupTableWidget::handleCloseTimer() {
-
-    // If the user doesn't move the cursor into the table in the default time,
-    // ask the table to be closed.
     emit mouseLeftPopup();
 }
 
