@@ -128,7 +128,7 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     qreal maxTextW = headerW;
 
     for (const auto& frame : _stack.frames) {
-        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.function()));
+        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.functionOrAddr()));
     }
 
     _width  = maxTextW + 2 * _kPadX;
@@ -190,7 +190,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setPen(colors.frameText);
 
     for (const auto& frame : _stack.frames) {
-        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.function());
+        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.functionOrAddr());
         y += _kRowH;
     }
 
@@ -311,7 +311,7 @@ void SeerParallelStacksStackBoxItem::handleShowPopup() {
     QString frame;
 
     if (_stack.frames.size() > 0) {
-        frame = _stack.frames[0].function();
+        frame = _stack.frames[0].functionOrAddr();
     }
 
     _popup = new SeerParallelStacksPopupTableWidget();
