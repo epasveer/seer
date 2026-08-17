@@ -43,6 +43,15 @@ const QString& SeerParallelStacksFrame::function () const {
     return _function;
 }
 
+QString SeerParallelStacksFrame::functionOrAddr () const {
+
+    if (_function == "??") {
+        return _addr;
+    }
+
+    return _function;
+}
+
 const QString& SeerParallelStacksFrame::arch () const {
     return _arch;
 }

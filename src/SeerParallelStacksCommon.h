@@ -19,6 +19,7 @@ class SeerParallelStacksFrame {
         int                 level           () const;
         const QString&      addr            () const;
         const QString&      function        () const;
+        QString             functionOrAddr  () const;
         const QString&      arch            () const;
         const QString&      from            () const;
         const QString&      file            () const;
