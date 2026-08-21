@@ -10,6 +10,7 @@
 #include "SeerAdaTasksBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QTabWidget>
 
 #include "ui_SeerThreadManagerWidget.h"
 
@@ -60,5 +61,20 @@ class SeerThreadManagerWidget : public QWidget, protected Ui::SeerThreadManagerW
         SeerThreadIdsBrowserWidget*                     _threadIdsBrowserWidget;
         SeerThreadGroupsBrowserWidget*                  _threadGroupsBrowserWidget;
         SeerAdaTasksBrowserWidget*                      _adaTasksBrowserWidget;
+};
+
+class SeerThreadManagerEventFilter : public QObject {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerThreadManagerEventFilter(QTabWidget* tabWidget, QObject *parent = nullptr) : QObject(parent), _tabWidget(tabWidget) {}
+       ~SeerThreadManagerEventFilter() = default;
+
+    protected:
+        bool                                            eventFilter                             (QObject *watched, QEvent *event) override;
+
+    private:
+        QTabWidget*                                     _tabWidget;
 };
 

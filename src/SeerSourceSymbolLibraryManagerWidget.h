@@ -13,6 +13,7 @@
 #include "SeerSkipBrowserWidget.h"
 
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QTabWidget>
 
 #include "ui_SeerSourceSymbolLibraryManagerWidget.h"
 
@@ -54,3 +55,17 @@ class SeerSourceSymbolLibraryManagerWidget : public QWidget, protected Ui::SeerS
         QTabWidget*                                     _dumpTab;
 };
 
+class SeerSourceSymbolLibraryEventFilter : public QObject {
+
+    Q_OBJECT
+
+    public:
+        explicit SeerSourceSymbolLibraryEventFilter(QTabWidget* tabWidget, QObject *parent = nullptr) : QObject(parent), _tabWidget(tabWidget) {}
+       ~SeerSourceSymbolLibraryEventFilter() = default;
+
+    protected:
+        bool                                            eventFilter                             (QObject *watched, QEvent *event) override;
+
+    private:
+        QTabWidget*                                     _tabWidget;
+};

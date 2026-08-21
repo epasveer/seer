@@ -1936,7 +1936,12 @@ void SeerGdbWidget::handleGdbExecutableTypes (int id, const QString& typeRegex) 
 
     //qDebug() << id << typeRegex;
 
-    handleGdbCommand(QString("%1-symbol-info-types --name %2").arg(id).arg(typeRegex));
+    // If openocd is running, then let _gdbLiveWatchProcess handles it
+    if (executableLaunchMode() == "openocd") {
+        _openocdWidget->gdbLiveWatchRunCommand(QString("%1-symbol-info-types --name %2").arg(id).arg(typeRegex));
+    }
+    else
+        handleGdbCommand(QString("%1-symbol-info-types --name %2").arg(id).arg(typeRegex));
 }
 
 void SeerGdbWidget::handleGdbExecutableVariables (int id, const QString& variableNameRegex, const QString& variableTypeRegex) {
@@ -1963,7 +1968,12 @@ void SeerGdbWidget::handleGdbExecutableVariables (int id, const QString& variabl
         command += QString(" --type %1").arg(variableTypeRegex);
     }
 
-    handleGdbCommand(command);
+    // If openocd is running, then let _gdbLiveWatchProcess handles it
+    if (executableLaunchMode() == "openocd") {
+        _openocdWidget->gdbLiveWatchRunCommand(command);
+    }
+    else
+        handleGdbCommand(command);
 }
 
 void SeerGdbWidget::handleGdbExecutableLibraries () {
