@@ -439,7 +439,7 @@ int SeerEditorWidgetAssemblyArea::miniMapAreaWidth () {
         return 0;
     }
 
-    return 120;
+    return 80;
 }
 
 int SeerEditorWidgetAssemblyArea::offsetAreaWidth () {
