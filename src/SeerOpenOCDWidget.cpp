@@ -9,10 +9,11 @@
  **********************************************************************************************************************/
 SeerOpenOCDWidget::SeerOpenOCDWidget (QWidget* parent) : SeerLogWidget(parent) {
     Q_UNUSED(parent);
-    _openocdProcess         = nullptr;
-    _gdbLiveWatchProcess    = nullptr;
-    _openocdLogsTabWidget   = nullptr;
-    _telnetSocket           = nullptr;
+    _openocdProcess             = nullptr;
+    _gdbLiveWatchProcess        = nullptr;
+    _openocdLogsTabWidget       = nullptr;
+    _openocdLogsTabWidgetParent = nullptr;
+    _telnetSocket               = nullptr;
     _liveWatchTimer         = new QTimer(this);
 }
 
@@ -72,8 +73,15 @@ void SeerOpenOCDWidget::terminate ()
         }
     }
     if (_openocdLogsTabWidget) {
+        if (_openocdLogsTabWidgetParent) {
+            int index = _openocdLogsTabWidgetParent->indexOf(_openocdLogsTabWidget);
+            if (index != -1) {
+                _openocdLogsTabWidgetParent->removeTab(index);  // Relinquishes Qt's ownership of the widget.
+            }
+        }
         delete _openocdLogsTabWidget;
         _openocdLogsTabWidget = nullptr;
+        _openocdLogsTabWidgetParent = nullptr;
     }
     terminateGdbLiveWatch();
 }
@@ -253,6 +261,7 @@ void SeerOpenOCDWidget::createOpenOCDConsole (QDetachTabWidget* parent)
         return;
     }
     _openocdLogsTabWidget = new SeerLogWidget();
+    _openocdLogsTabWidgetParent = parent;
     parent->addTab(_openocdLogsTabWidget, "OpenOCD output");
     _openocdLogsTabWidget->setPlaceholderText("[OpenOCD output]");
     _openocdLogsTabWidget->setLogEnabled(true);
@@ -265,7 +274,9 @@ SeerLogWidget* SeerOpenOCDWidget::openocdConsole()
 
 void SeerOpenOCDWidget::setConsoleVisible (bool flag)
 {
-    _openocdLogsTabWidget->setVisible(flag);
+    if (_openocdLogsTabWidget) {
+        _openocdLogsTabWidget->setVisible(flag);
+    }
 }
 
 /***********************************************************************************************************************
@@ -274,7 +285,9 @@ void SeerOpenOCDWidget::setConsoleVisible (bool flag)
 void SeerOpenOCDWidget::handleReadOutput ()
 {
     QString Text = QString::fromLocal8Bit(_openocdProcess->readAllStandardOutput());
-    _openocdLogsTabWidget->handleText(Text);
+    if (_openocdLogsTabWidget) {
+        _openocdLogsTabWidget->handleText(Text);
+    }
 }
 
 void SeerOpenOCDWidget::handleReadError ()
@@ -291,5 +304,7 @@ void SeerOpenOCDWidget::handleReadError ()
         emit openocdStartFailed();
         QMessageBox::warning(this, "Seer", "OpenOCD failed to start. \nCheck openOCD output for details.", QMessageBox::Ok);
     }
-    _openocdLogsTabWidget->handleText(Text);
+    if (_openocdLogsTabWidget) {
+        _openocdLogsTabWidget->handleText(Text);
+    }
 }
