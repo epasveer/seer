@@ -398,7 +398,10 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
 
     //qDebug() << text;
 
-    if (text.contains(QRegularExpression("^([0-9]+)\\^done,value="))) {
+    static const QRegularExpression valueResponse = QRegularExpression("^([0-9]+)\\^done,value=");
+    static const QRegularExpression memoryResponse = QRegularExpression("^([0-9]+)\\^done,memory=");
+	static const QRegularExpression errorResponse = QRegularExpression("^([0-9]+)\\^error,msg=");
+    if (text.contains(valueResponse)) {
 
         // 11^done,value="1"
         // 11^done,value="0x7fffffffd538"
@@ -527,7 +530,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             handlebRefreshButton();
         }
 
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^done,memory="))) {
+    }else if (text.contains(memoryResponse)) {
 
         // 3^done,memory=[{begin="0x0000000000613e70",offset="0x0000000000000000",end="0x0000000000613e71",contents="00"}]
         // 4^done,memory=[{begin="0x0000000000613e70",offset="0x0000000000000000",end="0x0000000000613ed4",contents="000000000000000000000000"}]
@@ -632,7 +635,7 @@ void SeerArrayVisualizerWidget::handleText (const QString& text) {
             }
         }
 
-    }else if (text.contains(QRegularExpression("^([0-9]+)\\^error,msg="))) {
+    }else if (text.contains(errorResponse)) {
 
         // 12^error,msg="No symbol \"return\" in current context."
         // 13^error,msg="No symbol \"cout\" in current context."
