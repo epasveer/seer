@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerParallelStacksVisualizerWidget.h"
+#include "SeerParallelStacksSettingsDialog.h"
 #include "SeerParallelStacksCommon.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -40,6 +41,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(helpToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleHelpButton);
     QObject::connect(printToolButton,               &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleSaveButton);
+    QObject::connect(settingsToolButton,            &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleSettingsButton);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,       this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
@@ -236,6 +238,19 @@ void SeerParallelStacksVisualizerWidget::handleSaveButton () {
     }
 
     QMessageBox::information(this, "Done", "Scene saved to:\n" + fileName);
+}
+
+void SeerParallelStacksVisualizerWidget::handleSettingsButton () {
+
+    // Bring up the settings dialog.
+    SeerParallelStacksSettingsDialog dlg(this);
+
+    // Set dialog things.
+
+    // Execute the dialog.
+    if (dlg.exec()) {
+        // Set things.
+    }
 }
 
 void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
