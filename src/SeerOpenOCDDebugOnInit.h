@@ -32,6 +32,9 @@ class SeerOpenOCDDebugOnInit : public QDialog, protected Ui::SeerOpenOCDDebugOnI
         void            handleComboBoxTextChanged                   ();
 
     private:
+        void            readSettings                                ();
+        void            writeSettings                               ();
+
         QString         _moduleName;
         QString         _commandToTerm;
         QString         _kernelModuleSymbolPath;

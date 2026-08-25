@@ -53,12 +53,15 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="moduleNameLineEdit">
+        <widget class="SeerHistoryLineEdit" name="moduleNameLineEdit">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Scroll (mouse wheel or Up/Down arrows) to cycle through previously entered module names.</string>
          </property>
         </widget>
        </item>
@@ -142,7 +145,11 @@
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLineEdit" name="kernelModuleSymbolLineEdit"/>
+          <widget class="SeerHistoryLineEdit" name="kernelModuleSymbolLineEdit">
+           <property name="toolTip">
+            <string>Scroll (mouse wheel or Up/Down arrows) to cycle through previously used paths.</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="kernelModuleSymbolButton">
@@ -195,7 +202,11 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLineEdit" name="kernelModuleSourceCodeLineEdit"/>
+          <widget class="SeerHistoryLineEdit" name="kernelModuleSourceCodeLineEdit">
+           <property name="toolTip">
+            <string>Scroll (mouse wheel or Up/Down arrows) to cycle through previously used paths.</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="kernelModuleSourceCodeButton">
@@ -244,6 +255,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeerHistoryLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">SeerHistoryLineEdit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resource.qrc"/>
  </resources>

@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QSerialPortInfo>
+#include <QtCore/QSettings>
 
 SeerOpenOCDDebugOnInit::SeerOpenOCDDebugOnInit (QWidget* parent) : QDialog(parent) {
 
@@ -39,7 +40,8 @@ SeerOpenOCDDebugOnInit::SeerOpenOCDDebugOnInit (QWidget* parent) : QDialog(paren
         if (!port.portName().contains("ttyUSB"))
             serialComboBox->addItem(QString(port.systemLocation()));
     }
-    
+
+    readSettings();
 }
 
 SeerOpenOCDDebugOnInit::~SeerOpenOCDDebugOnInit () {
@@ -101,7 +103,7 @@ const QString SeerOpenOCDDebugOnInit::serialPortPath()
  * Slot handling open file / folder
  **********************************************************************************************************************/
 void SeerOpenOCDDebugOnInit::handleKernelModuleSymbolButton () {
-    QString name = QFileDialog::getOpenFileName(this, "Selec Kernel Module Symbol.", kernelModuleSymbolPath(), "", nullptr, QFileDialog::DontUseNativeDialog);
+    QString name = QFileDialog::getOpenFileName(this, "Select Kernel Module Symbol.", kernelModuleSymbolPath(), "", nullptr, QFileDialog::DontUseNativeDialog);
 
     if (name != "") {
         setkernelModuleSymbolPath(name);
@@ -125,8 +127,40 @@ void SeerOpenOCDDebugOnInit::handleComboBoxTextChanged()
 
 void SeerOpenOCDDebugOnInit::onAccepted()
 {
+    // Push the current text into the history (in case focus was never lost).
+    moduleNameLineEdit->execute();
+    kernelModuleSymbolLineEdit->execute();
+    kernelModuleSourceCodeLineEdit->execute();
+
     setModuleName(moduleNameLineEdit->text());
     setCommandToTerm(commandLineEdit->text());
     setkernelModuleSymbolPath(kernelModuleSymbolLineEdit->text());
     setKernelModuleSourceCodePath(kernelModuleSourceCodeLineEdit->text());
+
+    writeSettings();
+}
+
+/***********************************************************************************************************************
+ * Settings
+ **********************************************************************************************************************/
+void SeerOpenOCDDebugOnInit::readSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("openocddebuginit"); {
+        moduleNameLineEdit->setHistory(settings.value("modulenamehistory").toStringList());
+        kernelModuleSymbolLineEdit->setHistory(settings.value("kernelmodulesymbolhistory").toStringList());
+        kernelModuleSourceCodeLineEdit->setHistory(settings.value("kernelmodulesourcecodehistory").toStringList());
+    } settings.endGroup();
+}
+
+void SeerOpenOCDDebugOnInit::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("openocddebuginit"); {
+        settings.setValue("modulenamehistory", moduleNameLineEdit->history());
+        settings.setValue("kernelmodulesymbolhistory", kernelModuleSymbolLineEdit->history());
+        settings.setValue("kernelmodulesourcecodehistory", kernelModuleSourceCodeLineEdit->history());
+    } settings.endGroup();
 }
