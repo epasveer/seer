@@ -1416,7 +1416,7 @@ void SeerEditorWidgetAssemblyArea::showContextMenu (const QPoint& pos, const QPo
 
     QMenu matrixVisualizerMenu("Add address to a Matrix Visualizer");
     matrixVisualizerMenu.addAction(addMatrixAddressVisualizerAction);
-    menu.addMenu(&arrayVisualizerMenu);
+    menu.addMenu(&matrixVisualizerMenu);
 
     QMenu structVisualizerMenu("Add address to a Struct Visualizer");
     structVisualizerMenu.addAction(addStructAddressVisualizerAction);
