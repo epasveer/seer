@@ -25,7 +25,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, int functionNameLength, QGraphicsItem* parent = nullptr);
+        explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, const SeerParallelStacksSettings& settings, QGraphicsItem* parent = nullptr);
        ~SeerParallelStacksStackBoxItem() override;
 
         QRectF                  boundingRect            () const override;
@@ -64,7 +64,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         QVector<SeerParallelStacksLiveEdge*>            _edges;   // non-owning
         QVector<int>                                    _threadIds;
         SeerParallelStacksStack                         _stack;
-        int                                             _functionNameLength;
+        SeerParallelStacksSettings                      _settings;
         QString                                         _headerLeft;
         QString                                         _headerRight;
         qreal                                           _width          = 0;
@@ -177,7 +177,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     public:
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
-        void            setStack                        (const SeerParallelStacksStack& root, int functionNameLength);
+        void            setStack                        (const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings);
         void            setColorTheme                   (const QString& colorTheme);
 
     protected:
@@ -207,7 +207,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
             qreal                                   cy     = 0;
         };
 
-        void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, int functionNameLength, PlacedNode* parentPN);
+        void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, const SeerParallelStacksSettings& settings, PlacedNode* parentPN);
         void            layoutTree                  (PlacedNode* pn, qreal& xCursor, qreal yTop);
         void            collectMaxBottom            (PlacedNode* pn, qreal& maxBottom);
         void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);

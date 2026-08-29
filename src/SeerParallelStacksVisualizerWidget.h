@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "SeerParallelStacksCommon.h"
 #include <QtWidgets/QWidget>
 #include <QString>
 #include "ui_SeerParallelStacksVisualizerWidget.h"
@@ -16,6 +17,11 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         explicit SeerParallelStacksVisualizerWidget (QWidget* parent = 0);
        ~SeerParallelStacksVisualizerWidget ();
 
+        void                        setSettings                         (const SeerParallelStacksSettings& settings);
+        SeerParallelStacksSettings  settings                            () const;
+
+        void                        setShowFullFunctionName             (bool flag);
+        bool                        showFullFunctionName                () const;
         void                        setFunctionNameLength               (int length);
         int                         functionNameLength                  () const;
 
@@ -44,6 +50,6 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
 
         int                         _id;
         SeerParallelStacksThreads   _threads;
-        int                         _functionNameLength;
+        SeerParallelStacksSettings  _settings;
 };
 

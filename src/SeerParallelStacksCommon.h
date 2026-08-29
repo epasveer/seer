@@ -89,6 +89,14 @@ struct SeerParallelStacksStack {
     QVector<SeerParallelStacksStack>            stacks;
 };
 
+struct SeerParallelStacksSettings {
+    QString  showMinimapMode;
+    bool     showFullFunctionName;
+    int      functionNameLength;
+    bool     showFullStackSize;
+    int      stackSize;
+};
+
 SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const SeerParallelStacksThreads& threads);   // Build the parallel-stacks tree from a flat list of threads.
 SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node);
 

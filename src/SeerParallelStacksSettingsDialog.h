@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "SeerParallelStacksCommon.h"
 #include <QtWidgets/QDialog>
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -18,27 +19,32 @@ class SeerParallelStacksSettingsDialog : public QDialog, protected Ui::SeerParal
         explicit SeerParallelStacksSettingsDialog (QWidget* parent = 0);
        ~SeerParallelStacksSettingsDialog ();
 
-        void                        setShowMinimap              (const QString& when);
-        QString                     showMinimap                 () const;
+        void                        setSettings                         (const SeerParallelStacksSettings& settings);
+        SeerParallelStacksSettings  settings                            () const;
 
-        void                        setShowFullFunctionName     (bool flag);
-        bool                        showFullFunctionName        () const;
-        void                        setFunctionNameLength       (int length);
-        int                         functionNameLength          () const;
+        void                        setShowMinimap                      (const QString& when);
+        QString                     showMinimap                         () const;
 
-        void                        setShowFullStackSize        (bool flag);
-        bool                        showFullStackSize           () const;
-        void                        setStackSize                (int size);
-        int                         stackSize                   () const;
+        void                        setShowFullFunctionName             (bool flag);
+        bool                        showFullFunctionName                () const;
+        void                        setFunctionNameLength               (int length);
+        int                         functionNameLength                  () const;
+
+        void                        setShowFullStackSize                (bool flag);
+        bool                        showFullStackSize                   () const;
+        void                        setStackSize                        (int size);
+        int                         stackSize                           () const;
 
     public slots:
 
     private slots:
+        void                        handleFunctionNameLengthClicked     ();
+        void                        handleStackFrameSizeClicked         ();
 
     protected:
-        void                        writeSettings               ();
-        void                        readSettings                ();
-        void                        resizeEvent                 (QResizeEvent* event);
+        void                        writeSettings                       ();
+        void                        readSettings                        ();
+        void                        resizeEvent                         (QResizeEvent* event);
 
     private:
 };

@@ -13,21 +13,50 @@ SeerParallelStacksSettingsDialog::SeerParallelStacksSettingsDialog (QWidget* par
     setupUi(this);
 
     // Setup the widgets
-
-    // Connect things.
-
-
     setShowMinimap("WhenNeeded");
     setShowFullFunctionName(true);
     setFunctionNameLength(64);
     setShowFullStackSize(true);
     setStackSize(20);
 
+    // Connect things.
+    QObject::connect(functionNameLengthAllCheckBox,  &QCheckBox::clicked,         this,  &SeerParallelStacksSettingsDialog::handleFunctionNameLengthClicked);
+    QObject::connect(stackFrameSizeAllCheckBox,      &QCheckBox::clicked,         this,  &SeerParallelStacksSettingsDialog::handleStackFrameSizeClicked);
+
+    // Set UI for click buttons.
+    handleFunctionNameLengthClicked();
+    handleStackFrameSizeClicked();
+
     // Restore window settings.
     readSettings();
 }
 
 SeerParallelStacksSettingsDialog::~SeerParallelStacksSettingsDialog () {
+}
+
+void SeerParallelStacksSettingsDialog::setSettings (const SeerParallelStacksSettings& settings) {
+
+    setShowMinimap(settings.showMinimapMode);
+    setShowFullFunctionName(settings.showFullFunctionName);
+    setFunctionNameLength(settings.functionNameLength);
+    setShowFullStackSize(settings.showFullStackSize);
+    setStackSize(settings.stackSize);
+
+    handleFunctionNameLengthClicked();
+    handleStackFrameSizeClicked();
+}
+
+SeerParallelStacksSettings SeerParallelStacksSettingsDialog::settings () const {
+
+    SeerParallelStacksSettings settings;
+
+    settings.showMinimapMode      = showMinimap();
+    settings.showFullFunctionName = showFullFunctionName();
+    settings.functionNameLength   = functionNameLength();
+    settings.showFullStackSize    = showFullStackSize();
+    settings.stackSize            = stackSize();
+
+    return settings;
 }
 
 void SeerParallelStacksSettingsDialog::setShowMinimap (const QString& when) {
@@ -85,6 +114,24 @@ void SeerParallelStacksSettingsDialog::setStackSize (int size) {
 
 int SeerParallelStacksSettingsDialog::stackSize () const {
     return stackFrameSizeSpinBox->value();
+}
+
+void SeerParallelStacksSettingsDialog::handleFunctionNameLengthClicked () {
+
+    if (functionNameLengthAllCheckBox->isChecked()) {
+        functionNameLengthSpinBox->setEnabled(false);
+    }else{
+        functionNameLengthSpinBox->setEnabled(true);
+    }
+}
+
+void SeerParallelStacksSettingsDialog::handleStackFrameSizeClicked () {
+
+    if (stackFrameSizeAllCheckBox->isChecked()) {
+        stackFrameSizeSpinBox->setEnabled(false);
+    }else{
+        stackFrameSizeSpinBox->setEnabled(true);
+    }
 }
 
 void SeerParallelStacksSettingsDialog::writeSettings() {
