@@ -192,7 +192,7 @@ int SeerEditorWidgetSourceArea::miniMapAreaWidth () {
         return 0;
     }
 
-    return 120;
+    return 80;
 }
 
 void SeerEditorWidgetSourceArea::updateLineNumberArea (const QRect& rect, int dy) {

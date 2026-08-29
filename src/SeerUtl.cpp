@@ -841,7 +841,7 @@ namespace Seer {
         }
 
         // The string is too long. Add elilde in the middle.
-        if (mode == Qt::ElideRight) {
+        if (mode == Qt::ElideMiddle) {
             int halve = length / 2;
             return str.left(halve) + middleElide + str.right(halve);
         }

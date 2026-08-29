@@ -185,8 +185,6 @@ static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads
         }
 
         functionThreads[fn].append(t);
-
-        qDebug() << t.toString();
     }
 
     for (auto it = functionThreads.begin(); it != functionThreads.end(); ++it) {

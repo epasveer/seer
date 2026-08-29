@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerParallelStacksVisualizerWidget.h"
+#include "SeerParallelStacksSettingsDialog.h"
 #include "SeerParallelStacksCommon.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -25,7 +26,8 @@
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _id = Seer::createID(); // ID for parallelstacks command.
+    _id       = Seer::createID(); // ID for parallelstacks command.
+    _settings = {"WhenNeeded", true, 64, true, 20};
 
     // Set up UI.
     setupUi(this);
@@ -40,6 +42,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(helpToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleHelpButton);
     QObject::connect(printToolButton,               &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handlePrintButton);
     QObject::connect(saveToolButton,                &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleSaveButton);
+    QObject::connect(settingsToolButton,            &QToolButton::clicked,                  this,  &SeerParallelStacksVisualizerWidget::handleSettingsButton);
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,       this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
@@ -57,6 +60,42 @@ SeerParallelStacksVisualizerWidget::~SeerParallelStacksVisualizerWidget () {
     if (QGraphicsScene* scene = graphicsView->scene()) {
         scene->clear();
     }
+}
+
+void SeerParallelStacksVisualizerWidget::setSettings (const SeerParallelStacksSettings& settings) {
+
+    _settings = settings;
+
+    writeSettings();
+}
+
+SeerParallelStacksSettings SeerParallelStacksVisualizerWidget::settings () const {
+
+    return _settings;
+}
+
+void SeerParallelStacksVisualizerWidget::setShowFullFunctionName (bool flag) {
+
+    _settings.showFullFunctionName = flag;
+
+    writeSettings();
+}
+
+bool SeerParallelStacksVisualizerWidget::showFullFunctionName () const {
+
+    return _settings.showFullFunctionName;
+}
+
+void SeerParallelStacksVisualizerWidget::setFunctionNameLength (int length) {
+
+    _settings.functionNameLength = length;
+
+    writeSettings();
+}
+
+int SeerParallelStacksVisualizerWidget::functionNameLength () const {
+
+    return _settings.functionNameLength;
 }
 
 void SeerParallelStacksVisualizerWidget::refresh () {
@@ -97,13 +136,7 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
                 SeerParallelStacksThread thread(thread_text);
 
                 _threads.push_back(thread);
-
-                //qDebug().noquote() << thread_text;
             }
-
-            //for (const auto& thread : _threads ) {
-            //    qDebug() << "Thread" << thread.id() << "has" << thread.frameCount() << "frames.";
-            //}
 
             createDirectedGraph();
         }
@@ -238,6 +271,25 @@ void SeerParallelStacksVisualizerWidget::handleSaveButton () {
     QMessageBox::information(this, "Done", "Scene saved to:\n" + fileName);
 }
 
+void SeerParallelStacksVisualizerWidget::handleSettingsButton () {
+
+    // Bring up the settings dialog.
+    SeerParallelStacksSettingsDialog dialog(this);
+
+    // Set dialog things.
+    dialog.setSettings(_settings);
+
+    // Execute the dialog.
+    if (dialog.exec()) {
+
+        // Set things.
+        setSettings(dialog.settings());
+
+        // Redraw scene with new settings.
+        createDirectedGraph();
+    }
+}
+
 void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
 
     // Colorize icons for theme.
@@ -251,18 +303,26 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("parallelstacksvisualizerwindow");
-    settings.setValue("size", size());
-    settings.endGroup();
+    settings.beginGroup("parallelstacksvisualizerwindow"); {
+
+        settings.setValue("size", size());
+        settings.setValue("functionnamelength", _settings.functionNameLength);
+        settings.setValue("showfullfunctionname", _settings.showFullFunctionName);
+    } settings.endGroup();
 }
 
 void SeerParallelStacksVisualizerWidget::readSettings() {
 
     QSettings settings;
 
-    settings.beginGroup("parallelstacksvisualizerwindow");
-    resize(settings.value("size", QSize(800, 400)).toSize());
-    settings.endGroup();
+    settings.beginGroup("parallelstacksvisualizerwindow"); {
+
+        resize(settings.value("size", QSize(800, 400)).toSize());
+
+        _settings.showFullFunctionName = settings.value("showfullfunctionname", true).toBool();
+        _settings.functionNameLength   = settings.value("functionnamelength", 64).toInt();
+
+    } settings.endGroup();
 }
 
 void SeerParallelStacksVisualizerWidget::resizeEvent (QResizeEvent* event) {
@@ -283,6 +343,6 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_threads);
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
-    graphicsView->setStack(stack);
+    graphicsView->setStack(stack, settings());
 }
 
