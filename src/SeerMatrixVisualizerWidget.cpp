@@ -550,7 +550,7 @@ void SeerMatrixVisualizerWidget::handleElementStrideLineEdit () {
 
     // A regular integer? Return.
     QRegularExpression re("[0-9]+");
-    QRegularExpressionMatch match = re.match(variableRows());
+    QRegularExpressionMatch match = re.match(variableStride());
 
     if (match.hasMatch()) {
         return;
