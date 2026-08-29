@@ -68,18 +68,8 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QRadioButton" name="functionNameLengthAllRadioButton">
-          <property name="toolTip">
-           <string>Keep the full length of function names.</string>
-          </property>
-          <property name="text">
-           <string>Full</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
-         <widget class="QRadioButton" name="showMiniMapAlwaysRadioButton">
+         <widget class="QRadioButton" name="showMinimapAlwaysRadioButton">
           <property name="toolTip">
            <string>Always show the minimap.</string>
           </property>
@@ -89,16 +79,6 @@
           <attribute name="buttonGroup">
            <string notr="true">minimapbuttonGroup</string>
           </attribute>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QRadioButton" name="stackFrameSizeAllRadioButton">
-          <property name="toolTip">
-           <string>Keep all frames of the stack.</string>
-          </property>
-          <property name="text">
-           <string>All</string>
-          </property>
          </widget>
         </item>
         <item row="2" column="0">
@@ -124,6 +104,26 @@
           </property>
           <property name="value">
            <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="functionNameLengthAllCheckBox">
+          <property name="toolTip">
+           <string>Keep the full length of function names.</string>
+          </property>
+          <property name="text">
+           <string>Full</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="stackFrameSizeAllCheckBox">
+          <property name="toolTip">
+           <string>Keep all frames of the stack.</string>
+          </property>
+          <property name="text">
+           <string>All</string>
           </property>
          </widget>
         </item>
@@ -160,6 +160,14 @@
   <zorder>buttonBox</zorder>
   <zorder>verticalSpacer</zorder>
  </widget>
+ <tabstops>
+  <tabstop>showMinimapAlwaysRadioButton</tabstop>
+  <tabstop>showMinimapWhenNeededRadioButton</tabstop>
+  <tabstop>functionNameLengthAllCheckBox</tabstop>
+  <tabstop>functionNameLengthSpinBox</tabstop>
+  <tabstop>stackFrameSizeAllCheckBox</tabstop>
+  <tabstop>stackFrameSizeSpinBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

@@ -16,6 +16,9 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         explicit SeerParallelStacksVisualizerWidget (QWidget* parent = 0);
        ~SeerParallelStacksVisualizerWidget ();
 
+        void                        setFunctionNameLength               (int length);
+        int                         functionNameLength                  () const;
+
     signals:
         void                        refreshParallelStackFrames          (int id);
 
@@ -41,5 +44,6 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
 
         int                         _id;
         SeerParallelStacksThreads   _threads;
+        int                         _functionNameLength;
 };
 

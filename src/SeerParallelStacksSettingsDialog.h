@@ -23,8 +23,8 @@ class SeerParallelStacksSettingsDialog : public QDialog, protected Ui::SeerParal
 
         void                        setShowFullFunctionName     (bool flag);
         bool                        showFullFunctionName        () const;
-        void                        setFunctionNameLenght       (int length);
-        int                         functionNameLenght          () const;
+        void                        setFunctionNameLength       (int length);
+        int                         functionNameLength          () const;
 
         void                        setShowFullStackSize        (bool flag);
         bool                        showFullStackSize           () const;

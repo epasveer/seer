@@ -27,6 +27,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Init variables.
     _id = Seer::createID(); // ID for parallelstacks command.
+    _functionNameLength = 16;
 
     // Set up UI.
     setupUi(this);
@@ -59,6 +60,18 @@ SeerParallelStacksVisualizerWidget::~SeerParallelStacksVisualizerWidget () {
     if (QGraphicsScene* scene = graphicsView->scene()) {
         scene->clear();
     }
+}
+
+void SeerParallelStacksVisualizerWidget::setFunctionNameLength (int length) {
+
+    _functionNameLength = length;
+
+    writeSettings();
+}
+
+int SeerParallelStacksVisualizerWidget::functionNameLength () const {
+
+    return _functionNameLength;
 }
 
 void SeerParallelStacksVisualizerWidget::refresh () {
@@ -99,13 +112,7 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
                 SeerParallelStacksThread thread(thread_text);
 
                 _threads.push_back(thread);
-
-                //qDebug().noquote() << thread_text;
             }
-
-            //for (const auto& thread : _threads ) {
-            //    qDebug() << "Thread" << thread.id() << "has" << thread.frameCount() << "frames.";
-            //}
 
             createDirectedGraph();
         }
@@ -246,10 +253,15 @@ void SeerParallelStacksVisualizerWidget::handleSettingsButton () {
     SeerParallelStacksSettingsDialog dlg(this);
 
     // Set dialog things.
+    dlg.setFunctionNameLength(functionNameLength());
 
     // Execute the dialog.
     if (dlg.exec()) {
         // Set things.
+        setFunctionNameLength(dlg.functionNameLength());
+
+        // Redraw scene with new settings.
+        createDirectedGraph();
     }
 }
 
@@ -268,6 +280,7 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
 
     settings.beginGroup("parallelstacksvisualizerwindow");
     settings.setValue("size", size());
+    settings.setValue("functionnamelength", functionNameLength());
     settings.endGroup();
 }
 
@@ -277,6 +290,7 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
 
     settings.beginGroup("parallelstacksvisualizerwindow");
     resize(settings.value("size", QSize(800, 400)).toSize());
+    setFunctionNameLength(settings.value("functionnamelength", 16).toInt());
     settings.endGroup();
 }
 
@@ -298,6 +312,6 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_threads);
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
-    graphicsView->setStack(stack);
+    graphicsView->setStack(stack, functionNameLength());
 }
 

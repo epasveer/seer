@@ -1,4 +1,5 @@
 #include "SeerParallelStacksGraphicsView.h"
+#include "SeerUtl.h"
 #include <QPainter>
 #include <QPainterPath>
 #include <QWheelEvent>
@@ -81,7 +82,7 @@ namespace {
 // ================================================================
 // SeerParallelStacksStackBoxItem
 // ================================================================
-SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, QGraphicsItem* parent) : QGraphicsItem(parent) {
+SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, int functionNameLength, QGraphicsItem* parent) : QGraphicsItem(parent) {
 
     // Enable geometry-change notifications so itemChange() fires on setPos()
     setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
@@ -97,6 +98,7 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
 
     _threadIds.resize(0);
     _stack = stack;
+    _functionNameLength = functionNameLength;
 
     // Text for BoxItem list of thread ids.
     if (_stack.threadIds.isEmpty() == false) {
@@ -128,13 +130,11 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     qreal maxTextW = headerW;
 
     for (const auto& frame : _stack.frames) {
-        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.functionOrAddr()));
+        maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(Seer::elideText(frame.functionOrAddr(), Qt::ElideMiddle, _functionNameLength)));
     }
 
     _width  = maxTextW + 2 * _kPadX;
     _height = _kPadY + _kRowH * (1 + (int)_stack.frames.size()) + _kPadY;
-
-    qDebug() << _stack.stacks.size();
 }
 
 SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem() {
@@ -190,7 +190,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setPen(colors.frameText);
 
     for (const auto& frame : _stack.frames) {
-        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.functionOrAddr());
+        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, Seer::elideText(frame.functionOrAddr(), Qt::ElideMiddle, _functionNameLength));
         y += _kRowH;
     }
 
@@ -199,6 +199,22 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
         painter->setPen(QPen(colors.dragOutline, 2.0, Qt::DashLine));
         painter->drawRoundedRect(boundingRect().adjusted(1, 1, -1, -1), 6, 6);
     }
+}
+
+qreal SeerParallelStacksStackBoxItem::width() const {
+    return _width;
+}
+
+qreal SeerParallelStacksStackBoxItem::height() const {
+    return _height;
+}
+
+void SeerParallelStacksStackBoxItem::registerEdge(SeerParallelStacksLiveEdge* e) {
+    _edges.append(e);
+}
+
+void SeerParallelStacksStackBoxItem::unregisterEdge(SeerParallelStacksLiveEdge* e) {
+    _edges.removeAll(e);
 }
 
 QPointF SeerParallelStacksStackBoxItem::sceneBottom() const {
@@ -846,7 +862,7 @@ void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 
-void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& root) {
+void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& root, int functionNameLength) {
 
     _scene->clear();
 
@@ -855,7 +871,7 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
     }
 
     auto* rootPN = new PlacedNode;
-    buildPlacedTree(rootPN, root, nullptr);
+    buildPlacedTree(rootPN, root, functionNameLength, nullptr);
 
     qreal xCursor = 0;
     layoutTree(rootPN, xCursor, 0);
@@ -925,19 +941,19 @@ void SeerParallelStacksGraphicsView::alignParentlessToBottom(PlacedNode* pn, qre
     }
 }
 
-void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerParallelStacksStack& stack, PlacedNode* parentPN) {
+void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerParallelStacksStack& stack, int functionNameLength, PlacedNode* parentPN) {
 
     pn->stack  = stack;
     pn->parent = parentPN;
 
     if (!stack.frames.isEmpty()) {
-        pn->item = new SeerParallelStacksStackBoxItem(stack);
+        pn->item = new SeerParallelStacksStackBoxItem(stack, functionNameLength);
         _scene->addItem(pn->item);
     }
 
     for (const auto& child : stack.stacks) {
         auto* childPN = new PlacedNode;
-        buildPlacedTree(childPN, child, pn);
+        buildPlacedTree(childPN, child, functionNameLength, pn);
         pn->children.append(childPN);
     }
 }

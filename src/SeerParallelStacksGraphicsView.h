@@ -12,7 +12,7 @@
 
 class SeerParallelStacksPopupTableWidget;
 
-class SeerParallelStacksLiveEdge;   // forward — SeerParallelStacksStackBoxItem needs to know it
+class SeerParallelStacksLiveEdge;
 
 // ---------------------------------------------------------------
 // A single box in the graph: shows thread count + IDs + call frames.
@@ -25,31 +25,31 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, QGraphicsItem* parent = nullptr);
-        ~SeerParallelStacksStackBoxItem() override;
+        explicit SeerParallelStacksStackBoxItem(const SeerParallelStacksStack& stack, int functionNameLength, QGraphicsItem* parent = nullptr);
+       ~SeerParallelStacksStackBoxItem() override;
 
-        QRectF                  boundingRect        () const override;
-        void                    paint               (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+        QRectF                  boundingRect            () const override;
+        void                    paint                   (QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
-        qreal                   width               () const { return _width;  }
-        qreal                   height              () const { return _height; }
+        qreal                   width                   () const;
+        qreal                   height                  () const;
 
         // Edge registry — called by LiveEdge on construction/destruction
-        void                    registerEdge        (SeerParallelStacksLiveEdge* e) { _edges.append(e); }
-        void                    unregisterEdge      (SeerParallelStacksLiveEdge* e) { _edges.removeAll(e); }
+        void                    registerEdge            (SeerParallelStacksLiveEdge* e);
+        void                    unregisterEdge          (SeerParallelStacksLiveEdge* e);
 
         // Bottom-centre and top-centre in scene coordinates (edge attach points)
-        QPointF                 sceneBottom         () const;
-        QPointF                 sceneTop            () const;
+        QPointF                 sceneBottom             () const;
+        QPointF                 sceneTop                () const;
 
     protected:
-        QVariant                itemChange          (GraphicsItemChange change, const QVariant& value) override;
+        QVariant                itemChange              (GraphicsItemChange change, const QVariant& value) override;
 
-        void                    mousePressEvent     (QGraphicsSceneMouseEvent* event) override;
-        void                    mouseMoveEvent      (QGraphicsSceneMouseEvent* event) override;
-        void                    mouseReleaseEvent   (QGraphicsSceneMouseEvent* event) override;
-        void                    hoverEnterEvent     (QGraphicsSceneHoverEvent* event) override;
-        void                    hoverLeaveEvent     (QGraphicsSceneHoverEvent* event) override;
+        void                    mousePressEvent         (QGraphicsSceneMouseEvent* event) override;
+        void                    mouseMoveEvent          (QGraphicsSceneMouseEvent* event) override;
+        void                    mouseReleaseEvent       (QGraphicsSceneMouseEvent* event) override;
+        void                    hoverEnterEvent         (QGraphicsSceneHoverEvent* event) override;
+        void                    hoverLeaveEvent         (QGraphicsSceneHoverEvent* event) override;
 
     private slots:
         void                    handleDeletePopup       ();
@@ -59,25 +59,26 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
     private:
         // Global (screen) rect this box occupies, used to test whether the
         // cursor is still over the node.
-        QRect                                    globalRect      () const;
+        QRect                   globalRect              () const;
 
-        QVector<SeerParallelStacksLiveEdge*>    _edges;   // non-owning
-        QVector<int>                            _threadIds;
-        SeerParallelStacksStack                 _stack;
-        QString                                 _headerLeft;
-        QString                                 _headerRight;
-        qreal                                   _width          = 0;
-        qreal                                   _height         = 0;
-        SeerParallelStacksPopupTableWidget*     _popup          = 0;
-        QTimer*                                 _hoverTimer     = 0;
-        static constexpr int                    _kHoverDelayMs  = 1000;
-        static constexpr int                    _kCloseGraceMs  =  150;
-        bool                                    _dragging       = false;
-        QPointF                                 _dragOffset;
-        static constexpr qreal                  _kPadX          = 12;
-        static constexpr qreal                  _kPadY          =  8;
-        static constexpr qreal                  _kRowH          = 20;
-        static constexpr qreal                  _kHeaderGap     = 16;
+        QVector<SeerParallelStacksLiveEdge*>            _edges;   // non-owning
+        QVector<int>                                    _threadIds;
+        SeerParallelStacksStack                         _stack;
+        int                                             _functionNameLength;
+        QString                                         _headerLeft;
+        QString                                         _headerRight;
+        qreal                                           _width          = 0;
+        qreal                                           _height         = 0;
+        SeerParallelStacksPopupTableWidget*             _popup          = 0;
+        QTimer*                                         _hoverTimer     = 0;
+        static constexpr int                            _kHoverDelayMs  = 1000;
+        static constexpr int                            _kCloseGraceMs  = 150;
+        bool                                            _dragging       = false;
+        QPointF                                         _dragOffset;
+        static constexpr qreal                          _kPadX          = 12;
+        static constexpr qreal                          _kPadY          =  8;
+        static constexpr qreal                          _kRowH          = 20;
+        static constexpr qreal                          _kHeaderGap     = 16;
 };
 
 // ---------------------------------------------------------------
@@ -176,7 +177,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     public:
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
-        void            setStack                        (const SeerParallelStacksStack& root);
+        void            setStack                        (const SeerParallelStacksStack& root, int functionNameLength);
         void            setColorTheme                   (const QString& colorTheme);
 
     protected:
@@ -206,7 +207,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
             qreal                                   cy     = 0;
         };
 
-        void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, PlacedNode* parentPN);
+        void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, int functionNameLength, PlacedNode* parentPN);
         void            layoutTree                  (PlacedNode* pn, qreal& xCursor, qreal yTop);
         void            collectMaxBottom            (PlacedNode* pn, qreal& maxBottom);
         void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);
