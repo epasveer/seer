@@ -95,6 +95,10 @@ void SeerMatrixVisualizerWidget::setVariableName (const QString& name) {
         return;
     }
 
+    // Coalesce this variable's setup (data reset + offset/stride) into
+    // a single table rebuild; the guard flushes it when it leaves scope.
+    SeerMatrixWidget::BulkUpdate bulk(matrixTableWidget);
+
     setVariableAddress("");
 
     // Clear old contents.
@@ -314,6 +318,11 @@ void SeerMatrixVisualizerWidget::handleText (const QString& text) {
 
                 // Give the byte array to the hex widget.
                 bool ok;
+
+                // Coalesce the data/offset/stride/dimensions updates into a
+                // single table rebuild; the guard flushes it when it leaves scope.
+                SeerMatrixWidget::BulkUpdate bulk(matrixTableWidget);
+
                 matrixTableWidget->setData(new SeerMatrixWidget::DataStorageArray(array));
 
                 if (matrixOffsetLineEdit->text() != "") {
