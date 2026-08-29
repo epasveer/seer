@@ -46,6 +46,11 @@ void fillBig (int step) {
 //    Check 'Auto' and 'Continue' a few times: each stop refreshes a
 //    10000 cell table.
 //
+//  * The same 10000 elements shown as a wide matrix: rows 10 and
+//    columns 1000 (or rows 5 and columns 2000). Exercises a table with
+//    many columns, which stresses the rebuild differently than the
+//    square layout.
+//
 //  * '&smallRowMajor[0]', rows 3, columns 4, type 'float64', 'row-major'.
 //    The table must read 11 12 13 14 / 21 22 23 24 / 31 32 33 34.
 //
