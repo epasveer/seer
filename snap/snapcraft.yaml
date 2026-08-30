@@ -43,6 +43,8 @@ parts:
   seergdb:
     plugin: cmake
     source: src
+    build-attributes:
+      - enable-patchelf          # classic snap: relink bundled libs to each other
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DQTVERSION=QT6
@@ -65,6 +67,9 @@ parts:
       - libqt6openglwidgets6t64
       - qt6-gtk-platformtheme
       - qt6-qpa-plugins
+      - libfreetype6              # pin the font stack explicitly, all from noble
+      - libharfbuzz0b
+      - libfontconfig1
     stage:
       - -usr/lib/*/cmake
       - -usr/include
