@@ -1,0 +1,87 @@
+name: seergdb
+title: Seer
+summary: A GUI frontend to gdb
+description: |
+  Seer is a graphical frontend to the GDB debugger that provides a rich
+  development environment for debugging programs, including:
+
+  - Source code browsing and breakpoint management
+  - Variable inspection and modification
+  - Stack frame navigation
+  - Memory inspection
+  - Assembly view
+  - Register view
+
+  Seer runs the host's own gdb and attaches to/launches the programs you
+  ask it to debug, so this snap uses classic confinement: it needs
+  unrestricted access to the filesystem (to find source and binaries
+  anywhere on the system) and to ptrace arbitrary processes, neither of
+  which is possible from a strictly confined snap.
+
+website: https://github.com/epasveer/seer
+issues: https://github.com/epasveer/seer/issues
+license: GPL-3.0-or-later
+icon: src/resources/icons/hicolor/256x256/seergdb.png
+
+version: '2.8.0'
+base: core24
+confinement: classic
+grade: stable
+compression: lzo
+
+architectures:
+  - build-on: amd64
+
+apps:
+  seergdb:
+    command: bin/seergdb-launch
+    desktop: usr/share/applications/seergdb.desktop
+
+parts:
+  seergdb:
+    plugin: cmake
+    source: src
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DQTVERSION=QT6
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCONFIG_SEER_INSTALL_ICONS=1
+    build-packages:
+      - qt6-base-dev
+      - qt6-charts-dev
+      - qt6-svg-dev
+      - libgl1-mesa-dev
+      - libglx-dev
+    stage-packages:
+      - libqt6core6t64
+      - libqt6gui6t64
+      - libqt6widgets6t64
+      - libqt6printsupport6t64
+      - libqt6charts6
+      - libqt6svg6
+      - libqt6opengl6t64
+      - libqt6openglwidgets6t64
+      - qt6-gtk-platformtheme
+      - qt6-qpa-plugins
+    stage:
+      - -usr/lib/*/cmake
+      - -usr/include
+    prime:
+      - -usr/lib/*/cmake
+      - -usr/include
+
+  desktop-file:
+    plugin: dump
+    source: src/resources
+    organize:
+      seergdb.desktop: usr/share/applications/seergdb.desktop
+    stage:
+      - usr/share/applications/seergdb.desktop
+    prime:
+      - usr/share/applications/seergdb.desktop
+
+  launcher:
+    plugin: dump
+    source: snap/local
+    organize:
+      launcher.sh: bin/seergdb-launch

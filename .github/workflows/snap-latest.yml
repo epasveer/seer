@@ -1,0 +1,37 @@
+name: snap-latest Development Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  snap:
+    name: Build Snap
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create/update tag
+      uses: rickstaa/action-create-tag@v1
+      with:
+        tag: snap-latest
+        message: Tag from latest ${{ github.ref_name }} branch.
+        force_push_tag: true
+
+    - name: Build snap
+      uses: snapcore/action-build@v1
+      id: build
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Snap Development Release
+        body: Build from latest ${{ github.ref_name }} branch.
+        files: |
+          ${{ steps.build.outputs.snap }}
+        tag_name: snap-latest
+        draft: false
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
