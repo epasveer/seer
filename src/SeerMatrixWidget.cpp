@@ -21,6 +21,9 @@ SeerMatrixWidget::SeerMatrixWidget(QWidget* parent) : QTableWidget(parent) {
 
     horizontalHeader()->setDefaultAlignment(Qt::AlignRight);
 
+    _bulkUpdateDepth = 0;
+    _createPending   = false;
+
     _data           = 0;
     _dataRows       = 0;
     _dataColumns    = 0;
@@ -211,6 +214,14 @@ void SeerMatrixWidget::setDimensions (int rows, int colums) {
 
 void SeerMatrixWidget::create () {
 
+    // Coalesce a burst of property changes: while a bulk update is active,
+    // defer the (expensive) table rebuild and just record that one is pending.
+    // endBulkUpdate() performs the single rebuild once the burst is complete.
+    if (_bulkUpdateDepth > 0) {
+        _createPending = true;
+        return;
+    }
+
     // Clear the table. We're going to recreate it.
     clear();
     setRowCount(0);
@@ -252,19 +263,17 @@ void SeerMatrixWidget::create () {
 
         // setHorizontalHeaderItem(_aColumnId, new QTableWidgetItem(QString("%1:%2:%3").arg(aLabel()).arg(aAddressOffset()).arg(aAddressStride())));
 
+        // Set the column headers. Set their labels.
+        for (int c=0; c < dataColumns(); c++) {
+            QTableWidgetItem* colHeaderitem = new QTableWidgetItem(QString::number(c));
+            colHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+            setHorizontalHeaderItem(c, colHeaderitem);
+        }
+
         for (int i=elementSize()*addressOffset(); i<_data->size(); i+=elementSize()*addressStride()) {
 
             // qDebug() << "Displaying element" << i;
-
-            // Set column header if we need to. Set its label.
-            if (row == 0) {
-                for (int c=0; c < dataColumns(); c++) {
-                    QTableWidgetItem* colHeaderitem = new QTableWidgetItem(QString::number(c));
-                    colHeaderitem->setTextAlignment(Qt::AlignRight|Qt::AlignHCenter);
-
-                    setHorizontalHeaderItem(c, colHeaderitem);
-                }
-            }
 
             // Set row header if we need to. Set its label.
             if (col == 0) {
@@ -347,6 +356,32 @@ void SeerMatrixWidget::create () {
     }
 
     emit dataChanged();
+}
+
+void SeerMatrixWidget::beginBulkUpdate () {
+
+    _bulkUpdateDepth++;
+}
+
+void SeerMatrixWidget::endBulkUpdate () {
+
+    if (_bulkUpdateDepth > 0) {
+        _bulkUpdateDepth--;
+    }
+
+    // Once fully unwound, do the single deferred rebuild (if any setter fired).
+    if (_bulkUpdateDepth == 0 && _createPending) {
+        _createPending = false;
+        create();
+    }
+}
+
+SeerMatrixWidget::BulkUpdate::BulkUpdate (SeerMatrixWidget* widget) : _widget(widget) {
+    _widget->beginBulkUpdate();
+}
+
+SeerMatrixWidget::BulkUpdate::~BulkUpdate () {
+    _widget->endBulkUpdate();
 }
 
 SeerMatrixWidget::DataStorageArray::DataStorageArray(const QByteArray& arr) {
