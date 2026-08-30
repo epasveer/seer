@@ -1,0 +1,34 @@
+================================================================================
+RELEASING SEERGDB TO THE SNAPCRAFT.IO STORE
+================================================================================
+
+1. Set Up Your Developer Account
+* Create an Account: Visit https://ubuntu.com to create a free developer identity.
+* Complete Profile: Navigate to https://snapcraft.io to choose your public publisher name.
+
+2. Prepare the CLI Environment
+* Install Snapcraft: Ensure you have the packaging tool installed locally:
+  sudo snap install snapcraft --classic
+
+* Authenticate: Log into your developer account via the command line terminal:
+  snapcraft login
+
+3. Register the Snap Name
+* Reserve Name: Claim ownership of the unique store identifier for your app:
+  snapcraft register seergdb
+
+4. Build the Local Package
+* Navigate to Root: Move to the folder containing your snapcraft.yaml configuration file.
+* Compile Binary: Run the compiler package command to build a clean .snap artifact:
+  snapcraft pack
+
+5. Upload and Release to the Store
+* Simultaneous Push: To upload the package and publish it directly to the public stable channel, execute:
+  snapcraft upload seergdb_*.snap --release=stable
+
+* Alternative Safety Route: If you want to test the package safely before a wide public rollout, push it to a pre-release channel first:
+  snapcraft upload seergdb_*.snap --release=edge
+
+* Manual Channel Promotion: If you used the safety route, review the automated security check and manually promote that version when ready:
+  snapcraft release seergdb <revision_number> stable
+
