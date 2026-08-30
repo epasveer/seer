@@ -64,6 +64,12 @@ Download ```seer.flatpak```. Install it:
 
     $ flatpak install -y --bundle --user seer.flatpak
 
+### Snap
+
+Beta Seer versions. [Seer's release page](https://github.com/epasveer/seer/releases/tag/snap-latest) on github.
+
+    $ snap install seergdb_<version>.snap --dangerous
+
 
 Install from source
 ---------
