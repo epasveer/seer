@@ -754,7 +754,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
 
             runProgramArgumentsLineEdit->setText(runModeJson["arguments"].toString());
             loadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
-            rrLoadBreakpointsFilenameLineEdit->setText(startModeJson["breakpointsfile"].toString());
+            rrLoadBreakpointsFilenameLineEdit->setText(runModeJson["breakpointsfile"].toString());
 
             if (runModeJson["nobreak"].toBool()) {
                 noBreakpointRadioButton->setChecked(true);
@@ -797,7 +797,7 @@ bool SeerDebugDialog::loadJsonDoc (const QJsonDocument& jsonDoc, const QString& 
                 breakpointInFunctionRadioButton->setChecked(true);
             }
 
-            if (runModeJson["breakatfirstinstruction"].toBool()) {
+            if (startModeJson["breakatfirstinstruction"].toBool()) {
                 breakpointAtFirstInstructionRadioButton->setChecked(true);
             }
 
