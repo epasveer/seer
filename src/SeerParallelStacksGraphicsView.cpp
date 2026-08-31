@@ -253,6 +253,12 @@ void SeerParallelStacksStackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* e
         _dragging   = true;
         _dragOffset = event->pos();
 
+        // A node being dragged must not show its popup. Cancel any pending
+        // popup and tear down one that's already visible.
+        _hoverTimer->stop();
+
+        handleDeletePopup();
+
         setZValue(10);
         update();
 
@@ -285,6 +291,13 @@ void SeerParallelStacksStackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*
 
         setZValue(0);
         update();
+
+        // The drag suppressed the popup and no fresh hoverEnterEvent will
+        // arrive (the mouse never left the node). If it's still hovering,
+        // restart the delay so the popup can appear again.
+        if (isUnderMouse() && _popup == nullptr) {
+            _hoverTimer->start();
+        }
 
         event->accept();
 
@@ -329,6 +342,11 @@ QRect SeerParallelStacksStackBoxItem::globalRect() const {
 void SeerParallelStacksStackBoxItem::handleShowPopup() {
 
     if (_popup != nullptr) {
+        return;
+    }
+
+    // Don't pop up while the node is being dragged.
+    if (_dragging) {
         return;
     }
 
