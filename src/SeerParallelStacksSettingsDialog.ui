@@ -29,19 +29,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QRadioButton" name="showMinimapWhenNeededRadioButton">
-          <property name="toolTip">
-           <string>Only show the minimap if the contents exceeds the display area.</string>
-          </property>
-          <property name="text">
-           <string>When needed</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">minimapbuttonGroup</string>
-          </attribute>
-         </widget>
-        </item>
         <item row="2" column="2">
          <widget class="QSpinBox" name="stackFrameSizeSpinBox">
           <property name="toolTip">
@@ -66,19 +53,6 @@
           <property name="text">
            <string>Function Name Length</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="showMinimapAlwaysRadioButton">
-          <property name="toolTip">
-           <string>Always show the minimap.</string>
-          </property>
-          <property name="text">
-           <string>Always</string>
-          </property>
-          <attribute name="buttonGroup">
-           <string notr="true">minimapbuttonGroup</string>
-          </attribute>
          </widget>
         </item>
         <item row="2" column="0">
@@ -127,6 +101,28 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QComboBox" name="showMinimapComboBox">
+          <property name="toolTip">
+           <string>Show the Minimap when needed, always, or never.</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Auto</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Always</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Never</string>
+           </property>
+          </item>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -161,8 +157,7 @@
   <zorder>verticalSpacer</zorder>
  </widget>
  <tabstops>
-  <tabstop>showMinimapAlwaysRadioButton</tabstop>
-  <tabstop>showMinimapWhenNeededRadioButton</tabstop>
+  <tabstop>showMinimapComboBox</tabstop>
   <tabstop>functionNameLengthAllCheckBox</tabstop>
   <tabstop>functionNameLengthSpinBox</tabstop>
   <tabstop>stackFrameSizeAllCheckBox</tabstop>
@@ -203,7 +198,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="minimapbuttonGroup"/>
- </buttongroups>
 </ui>

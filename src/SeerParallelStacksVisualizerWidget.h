@@ -24,6 +24,8 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         bool                        showFullFunctionName                () const;
         void                        setFunctionNameLength               (int length);
         int                         functionNameLength                  () const;
+        void                        setShowMinimapMode                  (const QString& mode);
+        const QString&              showMinimapMode                     () const;
 
     signals:
         void                        refreshParallelStackFrames          (int id);

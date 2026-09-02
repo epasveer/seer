@@ -751,6 +751,8 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
     _miniMap = new SeerParallelStacksMiniMapWidget(this, this);
     _miniMap->raise();
 
+    updateMiniMapVisibility();
+
     // Connect things.
     QObject::connect(_scene, &QGraphicsScene::changed,      this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
     QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &SeerParallelStacksMiniMapWidget::refresh);
@@ -792,11 +794,52 @@ void SeerParallelStacksGraphicsView::setColorTheme (const QString& colorTheme) {
     }
 }
 
+void SeerParallelStacksGraphicsView::setShowMinimapMode (const QString& mode) {
+
+    if (mode == "Always" || mode == "Never" || mode == "Auto") {
+        _showMinimapMode = mode;
+    }else{
+        _showMinimapMode = "Auto";
+    }
+
+    updateMiniMapVisibility();
+}
+
+void SeerParallelStacksGraphicsView::updateMiniMapVisibility () {
+
+    if (!_miniMap) {
+        return;
+    }
+
+    bool visible = false;
+
+    if (_showMinimapMode == "Always") {
+        visible = true;
+
+    }else if (_showMinimapMode == "Never") {
+        visible = false;
+
+    }else{
+        // "Auto" — show only when a scrollbar is active, meaning the scene
+        // doesn't fully fit in the viewport.
+        visible = (horizontalScrollBar()->minimum() != horizontalScrollBar()->maximum()) ||
+                  (verticalScrollBar()->minimum()   != verticalScrollBar()->maximum());
+    }
+
+    _miniMap->setVisible(visible);
+
+    if (visible) {
+        _miniMap->raise();
+    }
+}
+
 void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
 
     const double factor = event->angleDelta().y() > 0 ? 1.15 : 1.0 / 1.15;
 
     scale(factor, factor);
+
+    updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
 }
@@ -825,11 +868,15 @@ void SeerParallelStacksGraphicsView::resizeEvent(QResizeEvent* event) {
     QGraphicsView::resizeEvent(event);
 
     repositionMiniMap();
+
+    updateMiniMapVisibility();
 }
 
 void SeerParallelStacksGraphicsView::scrollContentsBy(int dx, int dy) {
 
     QGraphicsView::scrollContentsBy(dx, dy);
+
+    updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
 }
@@ -890,6 +937,8 @@ void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
 
 void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings) {
 
+    setShowMinimapMode(settings.showMinimapMode);
+
     _scene->clear();
 
     if (root.threadCount == 0) {
@@ -934,6 +983,8 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
     fitInView(bounds, Qt::KeepAspectRatio);
 
     repositionMiniMap();
+
+    updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
 }
@@ -1061,5 +1112,7 @@ void SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems() {
     if (!current.contains(needed)) {
         _scene->setSceneRect(current.united(needed));
     }
+
+    updateMiniMapVisibility();
 }
 

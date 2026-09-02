@@ -13,7 +13,7 @@ SeerParallelStacksSettingsDialog::SeerParallelStacksSettingsDialog (QWidget* par
     setupUi(this);
 
     // Setup the widgets
-    setShowMinimap("WhenNeeded");
+    setShowMinimap("Auto");
     setShowFullFunctionName(true);
     setFunctionNameLength(64);
     setShowFullStackSize(true);
@@ -61,27 +61,15 @@ SeerParallelStacksSettings SeerParallelStacksSettingsDialog::settings () const {
 
 void SeerParallelStacksSettingsDialog::setShowMinimap (const QString& when) {
 
-    if (when == "Always") {
-        showMinimapAlwaysRadioButton->setChecked(true);
-    }else if (when == "WhenNeeded") {
-        showMinimapWhenNeededRadioButton->setChecked(true);
+    if (when == "Auto" || when == "Always" || when == "Never") {
+        showMinimapComboBox->setCurrentText(when);
     }else{
-        qDebug() << "Invalid Minimap mode of:" << when;
-        showMinimapWhenNeededRadioButton->setChecked(true);
+        showMinimapComboBox->setCurrentText("Auto");
     }
 }
 
 QString SeerParallelStacksSettingsDialog::showMinimap () const {
-
-    if (showMinimapAlwaysRadioButton->isChecked()) {
-        return "Always";
-    }
-
-    if (showMinimapWhenNeededRadioButton->isChecked()) {
-        return "WhenNeeded";
-    }
-
-    return "WhenNeeded";
+    return showMinimapComboBox->currentText();
 }
 
 void SeerParallelStacksSettingsDialog::setShowFullFunctionName (bool flag) {

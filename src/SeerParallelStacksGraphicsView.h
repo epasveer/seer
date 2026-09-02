@@ -179,6 +179,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
         void            setStack                        (const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings);
         void            setColorTheme                   (const QString& colorTheme);
+        void            setShowMinimapMode              (const QString& mode);   // "Always", "Never", or "Auto"
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
@@ -215,8 +216,14 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            deleteTree                  (PlacedNode* pn);
         void            repositionMiniMap           (); // keeps it pinned to bottom-right corner
 
+        // Shows or hides the minimap according to _showMinimapMode. In "Auto"
+        // mode the minimap is shown only while one of the view's scrollbars is
+        // active (i.e. the scene doesn't fully fit in the viewport).
+        void            updateMiniMapVisibility     ();
+
         QGraphicsScene*                             _scene;
         SeerParallelStacksMiniMapWidget*            _miniMap;
+        QString                                     _showMinimapMode = "Auto";
         bool                                        _panning = false;
         QPoint                                      _panStartPos;  // viewport coords at pan start
 
