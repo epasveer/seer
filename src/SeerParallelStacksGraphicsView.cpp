@@ -77,6 +77,16 @@ namespace {
 
         return g_darkTheme ? dark : light;
     }
+
+    // The SeerParallelStacksGraphicsView an item lives in, if any.
+    SeerParallelStacksGraphicsView* viewOf (const QGraphicsItem* item) {
+
+        if (item && item->scene() && !item->scene()->views().isEmpty()) {
+            return qobject_cast<SeerParallelStacksGraphicsView*>(item->scene()->views().first());
+        }
+
+        return nullptr;
+    }
 }
 
 // ================================================================
@@ -262,6 +272,8 @@ void SeerParallelStacksStackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* e
         setZValue(10);
         update();
 
+        if (auto* v = viewOf(this)) v->beginNodeDragScroll();
+
         event->accept();
 
         return;
@@ -291,6 +303,8 @@ void SeerParallelStacksStackBoxItem::mouseReleaseEvent(QGraphicsSceneMouseEvent*
 
         setZValue(0);
         update();
+
+        if (auto* v = viewOf(this)) v->endDragScroll();
 
         // The drag suppressed the popup and no fresh hoverEnterEvent will
         // arrive (the mouse never left the node). If it's still hovering,
@@ -518,7 +532,7 @@ SeerParallelStacksMiniMapWidget::SeerParallelStacksMiniMapWidget(SeerParallelSta
 
     setAttribute(Qt::WA_NoSystemBackground, false);
     setCursor(Qt::PointingHandCursor);
-    setToolTip(QStringLiteral("Click or drag to jump around the graph"));
+    setToolTip(QStringLiteral("Click or drag to jump around the graph.\nShift + drag to move the minimap."));
     resize(sizeHint());
 }
 
@@ -532,6 +546,31 @@ QRectF SeerParallelStacksMiniMapWidget::contentRect() const {
 void SeerParallelStacksMiniMapWidget::refresh() {
 
     update();
+}
+
+QRectF SeerParallelStacksMiniMapWidget::overviewSceneRect() const {
+
+    if (!_view || !_view->scene()) {
+        return QRectF();
+    }
+
+    QRectF r;
+
+    for (QGraphicsItem* item : _view->scene()->items()) {
+        if (dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
+            r = r.united(item->sceneBoundingRect());
+        }
+    }
+
+    // Always keep the current visible region in frame so the viewport marker
+    // stays inside the overview.
+    r = r.united(_view->mapToScene(_view->viewport()->rect()).boundingRect());
+
+    if (r.isEmpty()) {
+        r = _view->sceneRect();
+    }
+
+    return r.adjusted(-20, -20, 20, 20);
 }
 
 void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
@@ -550,7 +589,7 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
         return;
     }
 
-    const QRectF sceneRect = _view->sceneRect();
+    const QRectF sceneRect = overviewSceneRect();
 
     if (sceneRect.isEmpty()) {
         return;
@@ -600,7 +639,7 @@ void SeerParallelStacksMiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
 
     if (!_view || !_view->scene()) return;
 
-    const QRectF sceneRect = _view->sceneRect();
+    const QRectF sceneRect = overviewSceneRect();
 
     if (sceneRect.isEmpty()) return;
 
@@ -623,6 +662,16 @@ void SeerParallelStacksMiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
 
 void SeerParallelStacksMiniMapWidget::mousePressEvent(QMouseEvent* event) {
 
+    // Shift + left-drag repositions the minimap widget itself.
+    if (event->button() == Qt::LeftButton && (event->modifiers() & Qt::ShiftModifier)) {
+        _moving         = true;
+        _moveGrabOffset = event->pos();
+        setCursor(Qt::ClosedHandCursor);
+        if (_view) _view->beginMiniMapDragScroll();
+        event->accept();
+        return;
+    }
+
     if (event->button() == Qt::LeftButton) {
         _dragging = true;
         jumpToWidgetPos(event->pos());
@@ -635,6 +684,18 @@ void SeerParallelStacksMiniMapWidget::mousePressEvent(QMouseEvent* event) {
 
 void SeerParallelStacksMiniMapWidget::mouseMoveEvent(QMouseEvent* event) {
 
+    if (_moving) {
+        const QPoint topLeft = mapToParent(event->pos()) - _moveGrabOffset;
+        if (_view) {
+            _view->placeMiniMapAt(topLeft);
+            _view->updateDragScroll(_view->viewport()->mapFromGlobal(mapToGlobal(event->pos())));
+        }else{
+            move(topLeft);
+        }
+        event->accept();
+        return;
+    }
+
     if (_dragging) {
         jumpToWidgetPos(event->pos());
         event->accept();
@@ -645,6 +706,14 @@ void SeerParallelStacksMiniMapWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void SeerParallelStacksMiniMapWidget::mouseReleaseEvent(QMouseEvent* event) {
+
+    if (_moving && event->button() == Qt::LeftButton) {
+        _moving = false;
+        setCursor(Qt::PointingHandCursor);
+        if (_view) _view->endDragScroll();
+        event->accept();
+        return;
+    }
 
     if (_dragging && event->button() == Qt::LeftButton) {
         _dragging = false;
@@ -751,9 +820,14 @@ SeerParallelStacksGraphicsView::SeerParallelStacksGraphicsView(QWidget* parent) 
     _miniMap = new SeerParallelStacksMiniMapWidget(this, this);
     _miniMap->raise();
 
+    updateMiniMapVisibility();
+
+    _autoScrollTimer.setInterval(16);
+
     // Connect things.
-    QObject::connect(_scene, &QGraphicsScene::changed,      this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
-    QObject::connect(_scene, &QGraphicsScene::changed,      _miniMap, &SeerParallelStacksMiniMapWidget::refresh);
+    QObject::connect(_scene,            &QGraphicsScene::changed, this,     &SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems);
+    QObject::connect(_scene,            &QGraphicsScene::changed, _miniMap, &SeerParallelStacksMiniMapWidget::refresh);
+    QObject::connect(&_autoScrollTimer, &QTimer::timeout,         this,     &SeerParallelStacksGraphicsView::handleAutoScrollTick);
 }
 
 void SeerParallelStacksGraphicsView::setColorTheme (const QString& colorTheme) {
@@ -792,19 +866,111 @@ void SeerParallelStacksGraphicsView::setColorTheme (const QString& colorTheme) {
     }
 }
 
-void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
+void SeerParallelStacksGraphicsView::setShowMinimapMode (const QString& mode) {
 
-    const double factor = event->angleDelta().y() > 0 ? 1.15 : 1.0 / 1.15;
+    if (mode == "Always" || mode == "Never" || mode == "Auto") {
+        _showMinimapMode = mode;
+    }else{
+        _showMinimapMode = "Auto";
+    }
 
+    updateMiniMapVisibility();
+}
+
+void SeerParallelStacksGraphicsView::updateMiniMapVisibility () {
+
+    if (!_miniMap) {
+        return;
+    }
+
+    bool visible = false;
+
+    if (_showMinimapMode == "Always") {
+        visible = true;
+
+    }else if (_showMinimapMode == "Never") {
+        visible = false;
+
+    }else{
+        // "Auto" — show only when a scrollbar is active, meaning the scene
+        // doesn't fully fit in the viewport.
+        visible = (horizontalScrollBar()->minimum() != horizontalScrollBar()->maximum()) ||
+                  (verticalScrollBar()->minimum()   != verticalScrollBar()->maximum());
+    }
+
+    _miniMap->setVisible(visible);
+
+    if (visible) {
+        _miniMap->raise();
+        repositionMiniMap();
+        growSceneForMiniMap();
+    }
+}
+
+void SeerParallelStacksGraphicsView::zoomBy(double factor, QGraphicsView::ViewportAnchor anchor) {
+
+    const QGraphicsView::ViewportAnchor prev = transformationAnchor();
+
+    setTransformationAnchor(anchor);
     scale(factor, factor);
+    setTransformationAnchor(prev);
+
+    repositionMiniMap();
+    growSceneForMiniMap();
+    updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
+}
+
+void SeerParallelStacksGraphicsView::resetZoom() {
+
+    const QRectF bounds = _scene->itemsBoundingRect();
+
+    if (bounds.isEmpty()) {
+        resetTransform();
+    }else{
+        fitInView(bounds.adjusted(-40, -40, 40, 40), Qt::KeepAspectRatio);
+    }
+
+    repositionMiniMap();
+    growSceneForMiniMap();
+    updateMiniMapVisibility();
+
+    if (_miniMap) _miniMap->refresh();
+}
+
+void SeerParallelStacksGraphicsView::wheelEvent(QWheelEvent* event) {
+
+    zoomBy(event->angleDelta().y() > 0 ? 1.15 : 1.0 / 1.15, QGraphicsView::AnchorUnderMouse);
 }
 
 void SeerParallelStacksGraphicsView::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_Shift) {
         setDragMode(QGraphicsView::ScrollHandDrag);
+    }
+
+    switch (event->key()) {
+
+        case Qt::Key_Plus:
+        case Qt::Key_Equal:        // so '+' works without needing Shift
+            zoomBy(1.15, QGraphicsView::AnchorViewCenter);
+            event->accept();
+            return;
+
+        case Qt::Key_Minus:
+        case Qt::Key_Underscore:
+            zoomBy(1.0 / 1.15, QGraphicsView::AnchorViewCenter);
+            event->accept();
+            return;
+
+        case Qt::Key_Escape:
+            resetZoom();
+            event->accept();
+            return;
+
+        default:
+            break;
     }
 
     QGraphicsView::keyPressEvent(event);
@@ -825,13 +991,59 @@ void SeerParallelStacksGraphicsView::resizeEvent(QResizeEvent* event) {
     QGraphicsView::resizeEvent(event);
 
     repositionMiniMap();
+    updateMiniMapVisibility();
 }
 
 void SeerParallelStacksGraphicsView::scrollContentsBy(int dx, int dy) {
 
     QGraphicsView::scrollContentsBy(dx, dy);
 
+    // An anchored minimap travels with the graph, so re-place it on every scroll.
+    repositionMiniMap();
+    updateMiniMapVisibility();
+
     if (_miniMap) _miniMap->refresh();
+}
+
+void SeerParallelStacksGraphicsView::placeMiniMapAt(const QPoint& viewTopLeft) {
+
+    if (!_miniMap) return;
+
+    // Turn the widget position into a scene anchor so, from now on, the
+    // minimap travels with the graph exactly like a dragged node.
+    const QPoint vpTopLeft = viewTopLeft - viewport()->pos();
+
+    _miniMapAnchor   = mapToScene(vpTopLeft);
+    _miniMapAnchored = true;
+
+    growSceneForMiniMap();
+    repositionMiniMap();
+}
+
+QRectF SeerParallelStacksGraphicsView::miniMapSceneRect() const {
+
+    if (!_miniMap) return QRectF();
+
+    // The scene area the minimap widget currently covers (its pixel size
+    // mapped back through the view transform).
+    const QRect vp(mapFromScene(_miniMapAnchor), _miniMap->sizeHint());
+
+    return mapToScene(vp).boundingRect();
+}
+
+void SeerParallelStacksGraphicsView::growSceneForMiniMap() {
+
+    if (!_miniMap || !_miniMapAnchored || !_miniMap->isVisible()) return;
+
+    // Keep the scene rect big enough to hold the minimap plus the same 40px
+    // margin handleGrowSceneRectToFitItems() keeps around the nodes — this is
+    // what "makes room" for it as it's dragged toward an edge. Grow only.
+    const QRectF needed  = miniMapSceneRect().adjusted(-40, -40, 40, 40);
+    const QRectF current = _scene->sceneRect();
+
+    if (!current.contains(needed)) {
+        _scene->setSceneRect(current.united(needed));
+    }
 }
 
 void SeerParallelStacksGraphicsView::repositionMiniMap() {
@@ -839,9 +1051,103 @@ void SeerParallelStacksGraphicsView::repositionMiniMap() {
     if (!_miniMap) return;
 
     const QSize s = _miniMap->sizeHint();
-    const int margin = 10;
 
-    _miniMap->setGeometry(width() - s.width() - margin, height() - s.height() - margin, s.width(), s.height());
+    // Until the user Shift-drags it, the minimap is pinned to the bottom-right
+    // corner of the viewport.
+    if (!_miniMapAnchored) {
+        const int margin = 10;
+        _miniMap->setGeometry(width() - s.width() - margin, height() - s.height() - margin, s.width(), s.height());
+        return;
+    }
+
+    // Anchored: derive the widget position from the scene anchor so it scrolls
+    // and zooms with the graph.
+    _miniMap->setGeometry(QRect(viewport()->pos() + mapFromScene(_miniMapAnchor), s));
+}
+
+// ================================================================
+// Drag-autoscroll
+// ================================================================
+void SeerParallelStacksGraphicsView::beginNodeDragScroll() {
+
+    _nodeDragScroll = true;
+}
+
+void SeerParallelStacksGraphicsView::beginMiniMapDragScroll() {
+
+    _miniMapDragScroll = true;
+}
+
+void SeerParallelStacksGraphicsView::endDragScroll() {
+
+    _nodeDragScroll     = false;
+    _miniMapDragScroll  = false;
+    _autoScrollVelocity = QPoint();
+    _autoScrollTimer.stop();
+}
+
+void SeerParallelStacksGraphicsView::updateDragScroll(const QPoint& viewportPos) {
+
+    if (!_nodeDragScroll && !_miniMapDragScroll) return;
+
+    const QRect r    = viewport()->rect();
+    const int   band = 28;   // start scrolling when the cursor is this close to an edge
+    const int   maxV = 24;   // fastest scroll, px per tick
+
+    // depth: how far the cursor is past the band's inner edge (>0 => push).
+    auto push = [maxV](int depth) -> int {
+        if (depth <= 0) return 0;
+        return qBound(3, depth / 2 + 3, maxV);
+    };
+
+    int vx = 0, vy = 0;
+
+    vx -= push((r.left()  + band) - viewportPos.x());
+    vx += push(viewportPos.x() - (r.right()  - band));
+    vy -= push((r.top()   + band) - viewportPos.y());
+    vy += push(viewportPos.y() - (r.bottom() - band));
+
+    _autoScrollVelocity = QPoint(vx, vy);
+
+    if (_autoScrollVelocity.isNull()) {
+        _autoScrollTimer.stop();
+    }else if (!_autoScrollTimer.isActive()) {
+        _autoScrollTimer.start();
+    }
+}
+
+void SeerParallelStacksGraphicsView::handleAutoScrollTick() {
+
+    if (_autoScrollVelocity.isNull()) {
+        _autoScrollTimer.stop();
+        return;
+    }
+
+    const qreal m11 = transform().m11();
+    const qreal m22 = transform().m22();
+    const qreal sx  = (m11 != 0.0) ? _autoScrollVelocity.x() / m11 : 0.0;
+    const qreal sy  = (m22 != 0.0) ? _autoScrollVelocity.y() / m22 : 0.0;
+
+    // Move the dragged object in the scroll direction so, once we scroll, it
+    // stays put under the cursor — and grow the scene to its new extent so the
+    // scrollbars actually have somewhere to go.
+    if (_miniMapDragScroll) {
+        _miniMapAnchor += QPointF(sx, sy);
+        growSceneForMiniMap();
+    }else if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(_scene->mouseGrabberItem())) {
+        box->moveBy(sx, sy);
+        handleGrowSceneRectToFitItems();
+    }else{
+        endDragScroll();
+        return;
+    }
+
+    horizontalScrollBar()->setValue(horizontalScrollBar()->value() + _autoScrollVelocity.x());
+    verticalScrollBar()->setValue(verticalScrollBar()->value()   + _autoScrollVelocity.y());
+
+    if (_miniMapDragScroll) {
+        repositionMiniMap();
+    }
 }
 
 void SeerParallelStacksGraphicsView::mousePressEvent(QMouseEvent* event) {
@@ -872,6 +1178,12 @@ void SeerParallelStacksGraphicsView::mouseMoveEvent(QMouseEvent* event) {
         return;
     }
 
+    // Keep the autoscroll in step with a node being Shift-dragged (the minimap
+    // widget feeds updateDragScroll() itself).
+    if (_nodeDragScroll) {
+        updateDragScroll(event->pos());
+    }
+
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -884,11 +1196,19 @@ void SeerParallelStacksGraphicsView::mouseReleaseEvent(QMouseEvent* event) {
         return;
     }
 
+    if (event->button() == Qt::LeftButton) {
+        endDragScroll();
+    }
+
     QGraphicsView::mouseReleaseEvent(event);
 }
 
 
 void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings) {
+
+    setShowMinimapMode(settings.showMinimapMode);
+
+    endDragScroll();   // a rebuild invalidates any in-progress drag
 
     _scene->clear();
 
@@ -933,7 +1253,11 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
 
     fitInView(bounds, Qt::KeepAspectRatio);
 
+    // Re-place the minimap for the new graph and, if it's been dragged out,
+    // grow the scene back so it stays reachable.
     repositionMiniMap();
+    growSceneForMiniMap();
+    updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
 }
@@ -1061,5 +1385,7 @@ void SeerParallelStacksGraphicsView::handleGrowSceneRectToFitItems() {
     if (!current.contains(needed)) {
         _scene->setSceneRect(current.united(needed));
     }
+
+    updateMiniMapVisibility();
 }
 

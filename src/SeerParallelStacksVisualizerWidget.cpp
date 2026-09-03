@@ -27,7 +27,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Init variables.
     _id       = Seer::createID(); // ID for parallelstacks command.
-    _settings = {"WhenNeeded", true, 64, true, 20};
+    _settings = {"Auto", true, 64, true, 20};
 
     // Set up UI.
     setupUi(this);
@@ -79,6 +79,9 @@ void SeerParallelStacksVisualizerWidget::setShowFullFunctionName (bool flag) {
     _settings.showFullFunctionName = flag;
 
     writeSettings();
+
+    // Redraw scene with new settings.
+    createDirectedGraph();
 }
 
 bool SeerParallelStacksVisualizerWidget::showFullFunctionName () const {
@@ -91,11 +94,29 @@ void SeerParallelStacksVisualizerWidget::setFunctionNameLength (int length) {
     _settings.functionNameLength = length;
 
     writeSettings();
+
+    // Redraw scene with new settings.
+    createDirectedGraph();
 }
 
 int SeerParallelStacksVisualizerWidget::functionNameLength () const {
 
     return _settings.functionNameLength;
+}
+
+void SeerParallelStacksVisualizerWidget::setShowMinimapMode (const QString& mode) {
+
+    _settings.showMinimapMode = mode;
+
+    writeSettings();
+
+    // Redraw scene with new settings.
+    createDirectedGraph();
+}
+
+const QString& SeerParallelStacksVisualizerWidget::showMinimapMode () const {
+
+    return _settings.showMinimapMode;
 }
 
 void SeerParallelStacksVisualizerWidget::refresh () {
@@ -306,8 +327,9 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
     settings.beginGroup("parallelstacksvisualizerwindow"); {
 
         settings.setValue("size", size());
-        settings.setValue("functionnamelength", _settings.functionNameLength);
+        settings.setValue("functionnamelength",   _settings.functionNameLength);
         settings.setValue("showfullfunctionname", _settings.showFullFunctionName);
+        settings.setValue("showminimapmode",      _settings.showMinimapMode);
     } settings.endGroup();
 }
 
@@ -321,6 +343,7 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
 
         _settings.showFullFunctionName = settings.value("showfullfunctionname", true).toBool();
         _settings.functionNameLength   = settings.value("functionnamelength", 64).toInt();
+        _settings.showMinimapMode      = settings.value("showminimapmode", "Auto").toString();
 
     } settings.endGroup();
 }

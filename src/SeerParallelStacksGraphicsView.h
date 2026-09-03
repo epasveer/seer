@@ -115,7 +115,8 @@ class SeerParallelStacksGraphicsView;
 // ---------------------------------------------------------------
 // Small overlay widget showing the entire scene at a glance, with a
 // rectangle marking the main view's current visible region. Click or
-// drag inside it to jump/pan the main view there.
+// drag inside it to jump/pan the main view there. Shift + left-drag
+// moves the minimap widget itself to a new spot in the view.
 // ---------------------------------------------------------------
 class SeerParallelStacksMiniMapWidget : public QWidget {
 
@@ -144,8 +145,15 @@ class SeerParallelStacksMiniMapWidget : public QWidget {
         // drawn into, preserving the scene's aspect ratio.
         QRectF  contentRect             () const;
 
+        // The scene region the overview frames: the graph's nodes plus the
+        // current visible region (so the viewport marker is always shown),
+        // independent of where the minimap itself has been parked.
+        QRectF  overviewSceneRect       () const;
+
         SeerParallelStacksGraphicsView* _view;
-        bool                            _dragging = false;
+        bool                            _dragging = false;   // plain left-drag: navigating the graph
+        bool                            _moving   = false;   // shift + left-drag: repositioning this widget
+        QPoint                          _moveGrabOffset;     // cursor offset within the widget at move start
 };
 
 // A frameless popup window that wraps a QTableWidget inside a small
@@ -179,6 +187,16 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
         void            setStack                        (const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings);
         void            setColorTheme                   (const QString& colorTheme);
+        void            setShowMinimapMode              (const QString& mode);   // "Always", "Never", or "Auto"
+
+        // Drag-autoscroll hooks. While a node or the minimap is being dragged
+        // near a viewport edge, the view scrolls (and grows the scene) to keep
+        // the dragged object under the cursor. Driven by the node item and the
+        // minimap widget.
+        void            beginNodeDragScroll             ();
+        void            beginMiniMapDragScroll          ();
+        void            updateDragScroll                (const QPoint& viewportPos);
+        void            endDragScroll                   ();
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
@@ -197,6 +215,10 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         // QGraphicsScene::changed, which fires on item moves/repaints.
         void            handleGrowSceneRectToFitItems   ();
 
+        // Fires while a drag sits near a viewport edge: nudges the scrollbars
+        // (and the dragged object) so it keeps following the cursor.
+        void            handleAutoScrollTick            ();
+
     private:
         struct PlacedNode {
             SeerParallelStacksStack                 stack;
@@ -213,12 +235,48 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);
         void            addEdges                    (PlacedNode* pn);
         void            deleteTree                  (PlacedNode* pn);
-        void            repositionMiniMap           (); // keeps it pinned to bottom-right corner
+
+        // Zoom: '+'/'-' step (keyboard, centered), mouse wheel (under cursor).
+        void            zoomBy                      (double factor, QGraphicsView::ViewportAnchor anchor);
+        // 'Esc' — refit the whole graph to the viewport (normal zoom level).
+        void            resetZoom                   ();
+
+        // Places the minimap widget. Until the user Shift-drags it, this pins
+        // it to the bottom-right corner of the viewport. Once dragged, the
+        // minimap is anchored to a scene position and travels with the graph —
+        // like a node — and this re-derives its widget geometry.
+        void            repositionMiniMap           ();
+
+        // Anchors the minimap at the scene point currently under viewTopLeft
+        // (view coordinates). Called by the minimap widget while it is being
+        // Shift-dragged.
+        void            placeMiniMapAt              (const QPoint& viewTopLeft);
+
+        // Scene rectangle the minimap widget currently covers.
+        QRectF          miniMapSceneRect            () const;
+
+        // Grows the scene rect so it always contains the (Shift-dragged)
+        // minimap plus padding — the "make room for it" behavior nodes get
+        // from handleGrowSceneRectToFitItems().
+        void            growSceneForMiniMap         ();
+
+        // Shows or hides the minimap according to _showMinimapMode. In "Auto"
+        // mode the minimap is shown only while one of the view's scrollbars is
+        // active (i.e. the scene doesn't fully fit in the viewport).
+        void            updateMiniMapVisibility     ();
 
         QGraphicsScene*                             _scene;
         SeerParallelStacksMiniMapWidget*            _miniMap;
+        QString                                     _showMinimapMode = "Auto";
+        bool                                        _miniMapAnchored = false;   // true once the user has Shift-dragged it
+        QPointF                                     _miniMapAnchor;             // scene coords of the minimap's top-left
         bool                                        _panning = false;
         QPoint                                      _panStartPos;  // viewport coords at pan start
+
+        QTimer                                      _autoScrollTimer;
+        QPoint                                      _autoScrollVelocity;        // px/tick, from cursor proximity to the edges
+        bool                                        _nodeDragScroll    = false;
+        bool                                        _miniMapDragScroll = false;
 
         friend class SeerParallelStacksMiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
