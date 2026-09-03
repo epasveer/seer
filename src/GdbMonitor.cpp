@@ -43,6 +43,11 @@ void GdbMonitor::handleReadyReadStandardError () {
 
     QProcess* p = (QProcess*)sender();
 
+    // canReadLine()/readLine() work on the current read channel, which
+    // defaults to stdout. Point them at stderr for this handler, then
+    // switch back for the stdout handler.
+    p->setReadChannel(QProcess::StandardError);
+
     // Read a line at a time.
     while (p->canReadLine()) {
 
@@ -61,6 +66,8 @@ void GdbMonitor::handleReadyReadStandardError () {
         // Start broadcasting it around.
         emit allTextOutput(text);
     }
+
+    p->setReadChannel(QProcess::StandardOutput);
 }
 
 void GdbMonitor::handleReadyReadStandardOutput () {

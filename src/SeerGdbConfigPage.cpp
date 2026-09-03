@@ -132,7 +132,7 @@ void SeerGdbConfigPage::reset () {
 #ifdef SEER_GDB_NAME
     setGdbProgram(STRINGIFY(SEER_GDB_NAME));
 #else
-    setGdbProgram("/usr/bin/gdb";
+    setGdbProgram("/usr/bin/gdb");
 #endif
 
 #ifdef SEER_GDB_LAUNCHER
