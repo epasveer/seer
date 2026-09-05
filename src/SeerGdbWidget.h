@@ -242,9 +242,14 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         void                                handleGdbMultiarchOpenOCDExecutable         ();
 
+        // Openocd Debug On Init: the whole sequence runs inside gdb via the '-debug-on-init' Python
+        // MI command (resources/mi-python/MIDebugOnInit.py). These just track whether a run is in
+        // progress.
+        void                                setDebugOnInitFlag                          (bool flag);
+        bool                                isDebugOnInit                               ();
+
     public slots:
         void                                handleText                                  (const QString& text);
-        void                                handleTextDebugOnInit                       (const QString& text);
         void                                handleManualCommandExecute                  (QString command);
         void                                handleGdbCommand                            (const QString& command, bool ignoreErrors=false);
         void                                handleGdbCommands                           (const QStringList& commands);
@@ -406,6 +411,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
 
         void                                handleAboutToQuit                           ();
         void                                handleDebugOnInit                           ();
+        void                                firePendingDebugOnInitCommand               ();
 
     signals:
         void                                stoppingPointReached                        ();
@@ -504,5 +510,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         QString                             _kernelModuleSymbolPath;
         QString                             _kernelModuleSourceCodePath;
         QString                             _serialPortPath;
+
+        bool                                _debugOnInitFlag;               // A debug-on-init sequence is in progress.
+        QString                             _debugOnInitPendingCommand;     // The '-debug-on-init ...' MI command, held until the target is stopped (fired from handleText() on the *stopped).
 };
 

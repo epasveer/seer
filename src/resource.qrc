@@ -99,6 +99,7 @@
     <file>resources/mi-python/MIStart.py</file>
     <file>resources/mi-python/MIMonitor.py</file>
     <file>resources/mi-python/MIlsmod.py</file>
+    <file>resources/mi-python/MIDebugOnInit.py</file>
   </qresource>
 </RCC>
 
