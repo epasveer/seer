@@ -15,6 +15,7 @@
 #include "SeerUtl.h"
 #include "QHContainerWidget.h"
 #include "SeerOpenOCDWidget.h"
+#include "SeerOpenOCDDebugOnInit.h"
 #include <QtGui/QFont>
 #include <QtGui/QGuiApplication>
 #include <QtWidgets/QApplication>
@@ -30,6 +31,7 @@
 #include <QtCore/QFileInfoList>
 #include <QtCore/QThread>
 #include <QtCore/QDebug>
+#include <QTimer>
 #include <QtGlobal>
 #include <unistd.h>
 #include <stdlib.h>
@@ -54,6 +56,9 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _executableRRTraceDirectory             = "";
     _executableCoreFilename                 = "";
     _executablePid                          = 0;
+
+    // Openocd Debug On Init
+    _debugOnInitFlag                        = false;
 
     _gdbMonitor                             = 0;
     _gdbProcess                             = 0;
@@ -797,6 +802,11 @@ void SeerGdbWidget::handleText (const QString& text) {
         _openocdRunningState = "stopped";
         emit stoppingPointReached();
 
+        // A Debug on Init run was waiting for the target to stop before starting - go now.
+        if (isDebugOnInit() == true) {
+            firePendingDebugOnInitCommand();
+        }
+
     }else if (text.startsWith("=breakpoint-created,")) {
 
         handleGdbGenericpointList();
@@ -818,6 +828,44 @@ void SeerGdbWidget::handleText (const QString& text) {
     }else if (text.startsWith("~\"@refresh-signal-values\"")) {
 
         handleGdbSignalListValues("all");
+
+    // MIDebugOnInit.py emits '@debug-on-init-warning <detail>' for a non-fatal notice while the
+    // sequence is still running (e.g. it couldn't write the load command to the serial port itself -
+    // permission denied - so the user needs to type it manually on the target). Unlike
+    // '@debug-on-init-complete' below, this does NOT clear _debugOnInitFlag: the sequence is still
+    // in progress, waiting on the breakpoint.
+    }else if (text.contains("@debug-on-init-warning")) {
+
+        QString detail = text.section("@debug-on-init-warning", 1);
+        detail.replace("\\n", " ").replace("\\\"", "\"").remove('"').replace("\\t", " ");
+        detail = detail.trimmed();
+        QMessageBox::warning(this, "Seer", QString("Debug on Init needs your help.\n\n%1").arg(detail));
+
+    // MIDebugOnInit.py emits '@debug-on-init-complete <ok|error> <detail>' when the -debug-on-init
+    // sequence finishes (success or failure).
+    }else if (text.contains("@debug-on-init-complete")) {
+
+        setDebugOnInitFlag(false);
+
+        QString detail = text.section("@debug-on-init-complete", 1);
+        detail.replace("\\n", " ").replace("\\\"", "\"").remove('"').replace("\\t", " ");
+        detail = detail.trimmed();
+
+        bool ok = detail.startsWith("ok");
+        detail.remove(0, ok ? 2 : 5);            // strip the "ok"/"error" keyword
+        detail = detail.trimmed();
+
+        if (ok) {
+            QMessageBox::information(this, "Seer", detail.isEmpty()
+                                     ? QString("Debug on Init complete.")
+                                     : QString("Debug on Init complete.\n\n%1").arg(detail));
+        }else{
+            QMessageBox::warning(this, "Seer", QString("Debug on Init failed.\n\n%1").arg(detail));
+        }
+
+        // Bring Seer's views back in sync with wherever the target ended up stopped.
+        emit stoppingPointReached();
+        handleGdbGenericpointList();
 
     }else{
         // All other text is ignored by this widget.
@@ -4241,4 +4289,103 @@ void SeerGdbWidget::handleGdbMultiarchOpenOCDExecutable ()
     QApplication::restoreOverrideCursor();
 
     qCDebug(LC) << "Finishing 'gdb-multiarch connect'.";
+}
+
+/***********************************************************************************************************************
+ * Start of handle Debug On Init
+ **********************************************************************************************************************/
+void SeerGdbWidget::handleDebugOnInit () {
+
+    if (isDebugOnInit() == true) {
+        QMessageBox::warning(nullptr, "Seer", QString("A Debug on Init sequence is already running."), QMessageBox::Ok);
+        return;
+    }
+
+    // Promtp a dialog, tell user to input kernel module that they want to debug
+    SeerOpenOCDDebugOnInit dlg(this);
+    int ret = dlg.exec();
+    if (ret == 0)
+        return;
+
+    _moduleName                 = dlg.moduleName();
+    _commandToTerm              = dlg.commandToTerm();
+    _kernelModuleSymbolPath     = dlg.kernelModuleSymbolPath();
+    _kernelModuleSourceCodePath = dlg.kernelModuleSourceCodePath();
+    _serialPortPath             = dlg.serialPortPath();
+
+    // Checkpoint
+    if (_kernelModuleSymbolPath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module symbol is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+    if (_kernelModuleSourceCodePath == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Path to kernel module source code is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+    if ( Seer::isFileExistNotify(_kernelModuleSymbolPath) == false)
+        return;
+    if ( Seer::isDirExistNotify(_kernelModuleSourceCodePath) == false)
+        return;
+    if ( Seer::isFileExistNotify(_serialPortPath) == false)
+        return;
+    if (_moduleName == "" || _commandToTerm == "")
+    {
+        QMessageBox::warning(nullptr, "Seer", QString("Command to terminal is empty. Abort!"), QMessageBox::Ok);
+        return;
+    }
+
+    // The whole sequence runs inside gdb, driven by the -debug-on-init Python MI command
+    // (resources/mi-python/MIDebugOnInit.py). It runs synchronously there (mi-async off, blocking
+    // 'continue'), so there are no MI-async races to orchestrate around from here - Seer just
+    // fires the command and waits for the '@debug-on-init-complete' console line (or an ^error).
+    setDebugOnInitFlag(true);
+
+    auto quote = [](const QString& s) { QString q = s; q.replace("\\", "\\\\").replace("\"", "\\\""); return QString("\"") + q + "\""; };
+
+    _debugOnInitPendingCommand = "-debug-on-init "
+                               + quote(_moduleName)                 + " "
+                               + quote(_serialPortPath)             + " "
+                               + quote(_kernelModuleSymbolPath)     + " "
+                               + quote(_kernelModuleSourceCodePath) + " "
+                               + quote(_commandToTerm);
+
+    // The Python command needs the target stopped ('set mi-async off' fails while it runs), and a
+    // Python MI command can't wait for a stop itself (gdb's event loop doesn't run inside invoke()).
+    // So do the stop here: unless we know it's already stopped, SIGINT and fire the command from
+    // handleText() on the *stopped. The timer is a fallback for when no *stopped arrives (it was
+    // already stopped) - firePendingDebugOnInitCommand() only sends once.
+    if (_openocdRunningState == "stopped") {
+        firePendingDebugOnInitCommand();
+    }else{
+        handleGdbInterruptSIGINT();
+    }
+
+    QTimer::singleShot(2000, this, [this]() { firePendingDebugOnInitCommand(); });
+}
+
+// Sends the queued '-debug-on-init ...' command once (whichever of handleText()/the fallback timer
+// gets here first); a no-op afterwards.
+void SeerGdbWidget::firePendingDebugOnInitCommand () {
+
+    if (_debugOnInitPendingCommand.isEmpty()) {
+        return;
+    }
+
+    QString command = _debugOnInitPendingCommand;
+    _debugOnInitPendingCommand.clear();
+
+    handleGdbCommand(command);
+}
+
+/***********************************************************************************************************************
+ * Openocd Debug On Init                                                                                               *
+ **********************************************************************************************************************/
+void SeerGdbWidget::setDebugOnInitFlag (bool flag) {
+    _debugOnInitFlag = flag;
+}
+
+bool SeerGdbWidget::isDebugOnInit () {
+    return _debugOnInitFlag;
 }
