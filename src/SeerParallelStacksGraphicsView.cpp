@@ -110,6 +110,9 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     _stack    = stack;
     _settings = settings;
 
+    // Precompute the frame rows to draw, honoring the stack-size setting.
+    _frameRows = buildFrameRows();
+
     // Text for BoxItem list of thread ids.
     if (_stack.threadIds.isEmpty() == false) {
 
@@ -139,16 +142,52 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + _kHeaderGap;
     qreal maxTextW = headerW;
 
-    for (const auto& frame : _stack.frames) {
+    for (const auto& row : _frameRows) {
         if (_settings.showFullFunctionName) {
-            maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(frame.functionOrAddr()));
+            maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(row));
         }else{
-            maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(Seer::elideText(frame.functionOrAddr(), Qt::ElideMiddle, _settings.functionNameLength)));
+            maxTextW = std::max(maxTextW, (qreal)normFm.horizontalAdvance(Seer::elideText(row, Qt::ElideMiddle, _settings.functionNameLength)));
         }
     }
 
     _width  = maxTextW + 2 * _kPadX;
-    _height = _kPadY + _kRowH * (1 + (int)_stack.frames.size()) + _kPadY;
+    _height = _kPadY + _kRowH * (1 + (int)_frameRows.size()) + _kPadY;
+}
+
+QStringList SeerParallelStacksStackBoxItem::buildFrameRows() const {
+
+    QStringList rows;
+
+    const int frameCount = (int)_stack.frames.size();
+
+    // Show every frame when asked to, or when the stack is already small
+    // enough, or when the limit isn't a sane positive number.
+    if (_settings.showFullStackSize || _settings.stackSize <= 0 || frameCount <= _settings.stackSize) {
+
+        for (const auto& frame : _stack.frames) {
+            rows.append(frame.functionOrAddr());
+        }
+
+        return rows;
+    }
+
+    // Split the allowed frame count in half: top frames from the front,
+    // the remainder from the back, with a single "[...]" row standing in
+    // for the removed middle frames.
+    const int topCount    = _settings.stackSize / 2;
+    const int bottomCount = _settings.stackSize - topCount;
+
+    for (int i = 0; i < topCount; ++i) {
+        rows.append(_stack.frames[i].functionOrAddr());
+    }
+
+    rows.append("[...]");
+
+    for (int i = frameCount - bottomCount; i < frameCount; ++i) {
+        rows.append(_stack.frames[i].functionOrAddr());
+    }
+
+    return rows;
 }
 
 SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem() {
@@ -203,11 +242,11 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     painter->setFont(normFont);
     painter->setPen(colors.frameText);
 
-    for (const auto& frame : _stack.frames) {
+    for (const auto& row : _frameRows) {
         if (_settings.showFullFunctionName) {
-            painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, frame.functionOrAddr());
+            painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, row);
         }else{
-            painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, Seer::elideText(frame.functionOrAddr(), Qt::ElideMiddle, _settings.functionNameLength));
+            painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, Seer::elideText(row, Qt::ElideMiddle, _settings.functionNameLength));
         }
         y += _kRowH;
     }
