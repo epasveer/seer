@@ -127,7 +127,12 @@ def _really_stopped():
 
 def _module_is_loaded(name):
     try:
-        modules = gdb.lookup_global_symbol("modules").value()
+        # The kernel's "modules" list head is `static` (kernel/module/main.c), so
+        # lookup_global_symbol() alone returns None here - same fallback used for
+        # load_module() below.
+        sym = (gdb.lookup_global_symbol("modules")
+               or gdb.lookup_static_symbol("modules"))
+        modules = sym.value()
         mtype   = gdb.lookup_type("struct module")
         offset  = mtype['list'].bitpos // 8
         voidp   = gdb.lookup_type("void").pointer()
