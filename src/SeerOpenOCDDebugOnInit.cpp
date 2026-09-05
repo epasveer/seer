@@ -15,7 +15,7 @@ SeerOpenOCDDebugOnInit::SeerOpenOCDDebugOnInit (QWidget* parent) : QDialog(paren
     // Connect signal and slots
     QObject::connect(kernelModuleSymbolButton,          &QToolButton::clicked,          this,           &SeerOpenOCDDebugOnInit::handleKernelModuleSymbolButton);
     QObject::connect(kernelModuleSourceCodeButton,      &QToolButton::clicked,          this,           &SeerOpenOCDDebugOnInit::handleKernelModuleSourceCodeButton);
-    QObject::connect(moduleNameLineEdit,                &QLineEdit::textChanged,        [&](const QString &text){   commandLineEdit->setText("insmod " + text + ".ko");   });
+    QObject::connect(moduleNameLineEdit,                &QLineEdit::textChanged,        [&](const QString &text){   commandLineEdit->setText("taskset -c 0 insmod " + text + ".ko");   });
     QObject::connect(buttonBox,                         &QDialogButtonBox::accepted,    this,           &SeerOpenOCDDebugOnInit::onAccepted);
     QObject::connect(serialComboBox,                    &QComboBox::currentTextChanged, this,           &SeerOpenOCDDebugOnInit::handleComboBoxTextChanged);
     
