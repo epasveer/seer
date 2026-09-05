@@ -186,6 +186,52 @@ Two ways to deal with this, with different trade-offs:
   documentation/scripts, since watchdog presence, register layout, and the daemon managing it are
   entirely target-specific.
 
+### Debugging interrupts, workqueues, and kthreads
+
+`taskset` only pins a *userspace process* — it works for anything your module does synchronously
+inside a syscall/VFS op triggered by a process you control (`insmod`, `rmmod`, a `cat`/`echo`
+against a sysfs file, an ioctl from your own test program, etc.), including a module that's already
+loaded and running (found via `/sys/module/<name>/sections/...` and loaded manually with
+`add-symbol-file`/`hbreak`, without using Debug on Init at all) — the core that ran the module's
+`init` doesn't matter once it's loaded; only the core that will run the code you're about to break
+on matters. But `taskset` has nothing to pin for interrupt handlers, workqueue callbacks, or a
+module's own kernel threads, since there's no userspace process to point it at. Same underlying
+idea (force the code onto core 0, the one the breakpoint is armed on), different mechanism per
+subsystem:
+
+* **Interrupt handlers.** Pin the IRQ itself, not a process, via `/proc/irq/<N>/smp_affinity`:
+  ```bash
+  cat /proc/interrupts                    # find <N> for your driver, by name
+  echo 1 > /proc/irq/<N>/smp_affinity     # bitmask 1 = CPU0 only
+  ```
+  Not all interrupts allow this — some are hardware-pinned per core (timers, IPIs) and reject a
+  changed affinity. Ordinary peripheral IRQs (GPIO, UART, network, etc.) normally accept it.
+
+* **Workqueues.** Depends on how the module queues work:
+  * `schedule_work()`/`queue_work()` on a normal (non-`WQ_UNBOUND`) workqueue: by default the work
+    item runs on the *same core that queued it*. If you control/pin whatever triggers the
+    `schedule_work()` call (a process via `taskset`, or an IRQ via `smp_affinity` above), the work
+    callback follows it onto the same core — no extra step needed.
+  * A module-private workqueue created with `WQ_SYSFS`: it exposes
+    `/sys/devices/virtual/workqueue/<name>/cpumask` — write a mask to restrict which cores it's
+    allowed to use.
+  * `WQ_UNBOUND` with no `WQ_SYSFS` cpumask: not pinnable from userspace at all; see `target smp`
+    below.
+
+* **The module's own kthreads** (`kthread_run()`/`kthread_create()`). These have a normal PID, so
+  pin them exactly like any process, just with `-p` instead of a command to launch:
+  ```bash
+  ps | grep <thread name>
+  taskset -p 0x1 <pid>          # pin to CPU0
+  ```
+
+* **Nothing above applies** (an unpinnable `WQ_UNBOUND` workqueue, a hardware-pinned interrupt, or a
+  bug that only reproduces with genuine multi-core parallelism, where forcing everything onto one
+  core would hide it). This is the case `target smp` exists for — see "Multi-core (SMP) targets"
+  above, including the hardware-watchdog trade-off. There is no way to get breakpoint coverage on
+  every core without also getting the whole-group cross-halt that comes with it; picking per-context
+  pinning above versus `target smp` here is a real trade-off, not a Seer limitation.
+
 ### References
 
 * [OpenOCD User's Guide](https://openocd.org/doc/html/index.html)
