@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QPointF>
 #include <QVector>
+#include <QStringList>
 
 class SeerParallelStacksPopupTableWidget;
 
@@ -61,9 +62,17 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // cursor is still over the node.
         QRect                   globalRect              () const;
 
+        // Build the list of frame-row texts to draw. Honors the
+        // showFullStackSize / stackSize settings: when the full stack is
+        // hidden, only the top and bottom stackSize frames are shown and the
+        // removed middle ones are replaced by a single "[...]" row. The
+        // underlying _stack.frames is left untouched.
+        QStringList             buildFrameRows          () const;
+
         QVector<SeerParallelStacksLiveEdge*>            _edges;   // non-owning
         QVector<int>                                    _threadIds;
         SeerParallelStacksStack                         _stack;
+        QStringList                                     _frameRows;
         SeerParallelStacksSettings                      _settings;
         QString                                         _headerLeft;
         QString                                         _headerRight;

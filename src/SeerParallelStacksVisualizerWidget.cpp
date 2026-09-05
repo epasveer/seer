@@ -329,6 +329,8 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
         settings.setValue("size", size());
         settings.setValue("functionnamelength",   _settings.functionNameLength);
         settings.setValue("showfullfunctionname", _settings.showFullFunctionName);
+        settings.setValue("showfullstacksize",    _settings.showFullStackSize);
+        settings.setValue("stacksize",            _settings.stackSize);
         settings.setValue("showminimapmode",      _settings.showMinimapMode);
     } settings.endGroup();
 }
@@ -343,6 +345,8 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
 
         _settings.showFullFunctionName = settings.value("showfullfunctionname", true).toBool();
         _settings.functionNameLength   = settings.value("functionnamelength", 64).toInt();
+        _settings.showFullStackSize    = settings.value("showfullstacksize", true).toBool();
+        _settings.stackSize            = settings.value("stacksize", 20).toInt();
         _settings.showMinimapMode      = settings.value("showminimapmode", "Auto").toString();
 
     } settings.endGroup();
