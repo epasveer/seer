@@ -829,6 +829,18 @@ void SeerGdbWidget::handleText (const QString& text) {
 
         handleGdbSignalListValues("all");
 
+    // MIDebugOnInit.py emits '@debug-on-init-warning <detail>' for a non-fatal notice while the
+    // sequence is still running (e.g. it couldn't write the load command to the serial port itself -
+    // permission denied - so the user needs to type it manually on the target). Unlike
+    // '@debug-on-init-complete' below, this does NOT clear _debugOnInitFlag: the sequence is still
+    // in progress, waiting on the breakpoint.
+    }else if (text.contains("@debug-on-init-warning")) {
+
+        QString detail = text.section("@debug-on-init-warning", 1);
+        detail.replace("\\n", " ").replace("\\\"", "\"").remove('"').replace("\\t", " ");
+        detail = detail.trimmed();
+        QMessageBox::warning(this, "Seer", QString("Debug on Init needs your help.\n\n%1").arg(detail));
+
     // MIDebugOnInit.py emits '@debug-on-init-complete <ok|error> <detail>' when the -debug-on-init
     // sequence finishes (success or failure).
     }else if (text.contains("@debug-on-init-complete")) {

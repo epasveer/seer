@@ -99,6 +99,18 @@ def _diag(msg):
         pass
 
 
+def _diag_warn(msg):
+    # Non-fatal notice for Seer: shown as a popup but does NOT end the sequence (unlike
+    # '@debug-on-init-complete') - used e.g. when we can't write CMD to SERIAL ourselves, so the
+    # user can type it manually while we keep waiting on the breakpoint. Main thread only.
+    _log("WARNING: " + msg)
+    try:
+        gdb.write("@debug-on-init-warning %s\n" % msg)
+        gdb.flush()
+    except Exception:
+        pass
+
+
 def _autobool_str(v):
     # gdb.parameter() gives an auto-boolean back as True / False / None.
     if v is None:
@@ -368,13 +380,20 @@ class MIDebugOnInit(gdb.MICommand):
 
             data = (command + "\n").encode()
 
-            def _send():
+            # Open the serial port now, in the main thread, so a permission error (e.g. /dev/ttyUSB0
+            # owned by root) is caught and reported immediately instead of only surfacing as an
+            # opaque 30s "breakpoint never hit" timeout. This does NOT abort the sequence: we still
+            # arm the breakpoint and wait for it below - the user can type CMD manually on the
+            # target's console in the meantime.
+            try:
+                serial_fd = os.open(serial, os.O_WRONLY | os.O_NONBLOCK | os.O_NOCTTY)
+            except OSError as e:
+                serial_fd = None
+                _diag_warn("Cannot open %s (%s) - enter this command manually on the target now: \n%s"
+                           % (serial, e, command))
+
+            def _send(fd):
                 time.sleep(SERIAL_DELAY_S)
-                try:
-                    fd = os.open(serial, os.O_WRONLY | os.O_NONBLOCK | os.O_NOCTTY)
-                except OSError as e:
-                    _log("serial: cannot open %s: %s" % (serial, e))
-                    return
                 try:
                     buf = data
                     deadline = time.time() + 5.0
@@ -387,7 +406,8 @@ class MIDebugOnInit(gdb.MICommand):
                 finally:
                     os.close(fd)
 
-            threading.Thread(target=_send, daemon=True).start()
+            if serial_fd is not None:
+                threading.Thread(target=_send, args=(serial_fd,), daemon=True).start()
 
             try:
                 _log("breakpoints before continue:\n" + gdb.execute("info breakpoints", to_string=True))
