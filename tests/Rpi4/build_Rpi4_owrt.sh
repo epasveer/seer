@@ -2,7 +2,7 @@
 
 # Script to build OpenWrt image for Raspberry Pi 4 with debug symbols
 # Assumes OpenWrt build environment is set up (docker)
-# I have tested with kernel version 6.15 but vmlinux symbol file is optimized out so feature Debug on init can't be 
+# I have tested with kernel version 6.15 but vmlinux symbol file is optimized out so feature Debug on init can't be
 # performed with kernel v6.15
 # It is recommended to use Linux kernel version 5.15
 
@@ -16,7 +16,7 @@ git config --global http.maxRequestBuffer 100M
 git config --global http.version HTTP/1.1
 git config --global http.maxRequests 100
 git config --global core.compression 0
-git config --global --unset http.proxy 
+git config --global --unset http.proxy
 git config --global --unset https.proxy
 # Define variables
 TOPDIR=$PWD
@@ -49,6 +49,19 @@ echo "Updating feeds..."
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
+# Add out-of-tree packages BEFORE any "make defconfig": defconfig silently drops
+# CONFIG_PACKAGE_* entries for packages that are not yet present in the tree, so
+# these must be copied in first or they never get built.
+# hello world kernel module
+rm -rf $HELLO_WORLD_DIR/helloworld
+cp -rfT $TOPDIR/helloworld_owrt $HELLO_WORLD_DIR/helloworld
+# myplatform kernel module
+rm -rf $HELLO_WORLD_DIR/myplatform
+cp -rfT $TOPDIR/myplatform_owrt $HELLO_WORLD_DIR/myplatform
+# recursive-test userspace program (math_toolkit) for gdbserver + Seer
+rm -rf $OPENWRT_DIR/package/utils/recursive-test
+cp -rfT $TOPDIR/recursive_test_owrt $OPENWRT_DIR/package/utils/recursive-test
+
 # Step 3: Configure OpenWrt for Raspberry Pi 4
 echo "Configuring OpenWrt for Raspberry Pi 4..."
 make defconfig
@@ -67,6 +80,9 @@ CONFIG_KALLSYMS_ALL=y
 CONFIG_DEBUG_KERNEL=y
 CONFIG_PACKAGE_kmod-helloworld=y
 CONFIG_PACKAGE_kmod-myplatform=y
+CONFIG_PACKAGE_iptables-nft=y
+CONFIG_PACKAGE_gdbserver=y
+CONFIG_PACKAGE_recursive-test=y
 EOF
 make defconfig
 
@@ -81,16 +97,25 @@ echo 'CONFIG_KALLSYMS_ALL=y' >> .config
 echo 'CONFIG_DEBUG_KERNEL=y' >> .config
 echo 'CONFIG_PACKAGE_kmod-helloworld=y' >> .config
 echo 'CONFIG_PACKAGE_kmod-myplatform=y' >> .config
+echo 'CONFIG_PACKAGE_iptables-nft=y' >> .config
+echo 'CONFIG_PACKAGE_gdbserver=y' >> .config
+echo 'CONFIG_PACKAGE_recursive-test=y' >> .config
 echo 'CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=n' >> .config
 
 sed -i 's|CONFIG_KERNEL_DEBUG_INFO_REDUCED=y|CONFIG_KERNEL_DEBUG_INFO_REDUCED=n|g' .config
 
-# add hello world module
-rm -rf $HELLO_WORLD_DIR/helloworld
-cp -rfT $TOPDIR/helloworld_owrt $HELLO_WORLD_DIR/helloworld
-# add myplatform module
-rm -rf $HELLO_WORLD_DIR/myplatform
-cp -rfT $TOPDIR/myplatform_owrt $HELLO_WORLD_DIR/myplatform
+# Resolve dependencies for every option appended above (iptables-nft pulls in
+# kmod-nft-core / xtables-nft / kmod-ipt-core, etc.). Without this opkg fails
+# package/install with "cannot find dependency ...".
+make defconfig
+
+# Confirm the out-of-tree packages survived dependency resolution.
+grep -q '^CONFIG_PACKAGE_recursive-test=y' .config || { echo_red "recursive-test missing from .config"; exit 1; }
+
+# Force recursive-test to rebuild even when only its compile recipe changed
+# (OpenWrt's build stamp does not track the recipe text).
+make package/recursive-test/clean V=s || true
+
 # Path config.txt
 cp -f $TOPDIR/patches/config.txt $TOPDIR/openwrt/target/linux/bcm27xx/image/config.txt
 # Apply patched DTS with myplatform node
@@ -105,6 +130,8 @@ sed -i 's|# CONFIG_KALLSYMS_ALL is not set|CONFIG_KALLSYMS_ALL=y|g' \
             $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/.config
 echo 'CONFIG_IKCONFIG_PROC=y' >> $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/.config
 echo 'CONFIG_CORESIGHT_CPU_DEBUG=y' >> $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/.config
+sed -i 's|# CONFIG_GDB_SCRIPTS is not set|CONFIG_GDB_SCRIPTS=y|g' \
+            $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/.config
 
 sed -i 's|MAKEFLAGS += -rR|MAKEFLAGS += -g -rR|g' \
             $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/Makefile
@@ -112,7 +139,8 @@ if grep -q "KBUILD_HOSTCFLAGS   := " $OPENWRT_DIR/build_dir/target-aarch64_corte
     sed -i 's|KBUILD_HOSTCFLAGS   := |KBUILD_HOSTCFLAGS   := -g -O0 |g' \
             $OPENWRT_DIR/build_dir/target-aarch64_cortex-a72_musl/linux-bcm27xx_bcm2711/linux-5.15.132/Makefile
 fi
-# And recompile
+# And recompile. iptables-nft, gdbserver and recursive-test are already enabled
+# (with their dependencies) in .config above, so just rebuild.
 make -j4
 ########################################################################################################################
 # Check build result
