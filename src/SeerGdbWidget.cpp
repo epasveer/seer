@@ -1173,6 +1173,9 @@ void SeerGdbWidget::handleGdbConnectExecutable (bool loadSessionBreakpoints) {
                 break;
             }
 
+            handleGdbCommand("-gdb-set mi-async on");
+            handleGdbCommand("-gdb-set non-stop off");
+
             handleGdbLoadMICommands();
             handleGdbSourceScripts();
             handleGdbLoadSkips();
@@ -2114,6 +2117,20 @@ void SeerGdbWidget::handleGdbBreakpointDelete (QString breakpoints) {
         return;
     }
 
+    if (executableLaunchMode() == "connect") {
+
+        // Same problem as insert (see handleGdbBreakpointInsert()):
+        // '-break-delete' refuses to touch a live remote target while it's
+        // running. '-break-delete-safe' (MIBreakpointDeleteSafe.py, sourced
+        // by handleGdbLoadMICommands()) applies the identical stop-if-
+        // needed/delete/resume-if-we-stopped-it pattern, done entirely
+        // inside gdb via gdb.events.stop.
+        gdbMonitor()->setBlockSignals(true);
+        handleGdbCommand("-break-delete-safe " + breakpoints);
+        handleGdbGenericpointList();
+        return;
+    }
+
     handleGdbCommand("-break-delete " + breakpoints);
     handleGdbGenericpointList();
 }
@@ -2167,6 +2184,22 @@ void SeerGdbWidget::handleGdbBreakpointsInsert (QString breakpoints) {
 void SeerGdbWidget::handleGdbBreakpointInsert (QString breakpoint) {
 
     if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (executableLaunchMode() == "connect") {
+
+        // '-break-insert' refuses to touch a live remote target while it's
+        // running. '-break-insert-safe' (MIBreakpointInsertSafe.py, sourced
+        // by handleGdbLoadMICommands()) is a gdb Python MI command that
+        // stops the target first if needed, inserts, and resumes - done
+        // entirely inside gdb using gdb.events.stop, so there's no external
+        // race between Seer and gdb over whether the target has actually
+        // stopped yet. See that file for the full story, including why a
+        // naive synchronous approach hangs gdb outright.
+        gdbMonitor()->setBlockSignals(true);
+        handleGdbCommand("-break-insert-safe " + breakpoint);
+        handleGdbGenericpointList();
         return;
     }
 

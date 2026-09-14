@@ -96,6 +96,8 @@
     <file>resources/mi-python/MISignals.py</file>
     <file>resources/mi-python/MIStart.py</file>
     <file>resources/mi-python/MIMonitor.py</file>
+    <file>resources/mi-python/MIBreakpointInsertSafe.py</file>
+    <file>resources/mi-python/MIBreakpointDeleteSafe.py</file>
   </qresource>
 </RCC>
 
