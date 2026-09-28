@@ -31,7 +31,6 @@ namespace {
         QColor activeBackground;
         QColor border;
         QColor headerText;
-        QColor threadIdsText;
         QColor divider;
         QColor frameText;
         QColor dragOutline;
@@ -49,8 +48,8 @@ namespace {
 
     const BoxColors& boxColors () {
 
-        static const BoxColors light { QColor(0xFA, 0xFA, 0xFA), QColor(0xFF, 0xF3, 0xC4), QColor(0x88, 0x88, 0x88), QColor(0x22, 0x22, 0x22), QColor(0x1A, 0x52, 0xA8), QColor(0xCC, 0xCC, 0xCC), QColor(0x00, 0x7A, 0x33), QColor(0x1A, 0x52, 0xA8) };
-        static const BoxColors dark  { QColor(0x3A, 0x3A, 0x3A), QColor(0x5A, 0x4A, 0x1A), QColor(0x77, 0x77, 0x77), QColor(0xEE, 0xEE, 0xEE), QColor(0x6F, 0xA8, 0xF0), QColor(0x5A, 0x5A, 0x5A), QColor(0x4C, 0xD9, 0x87), QColor(0x6F, 0xA8, 0xF0) };
+        static const BoxColors light { QColor(0xFA, 0xFA, 0xFA), QColor(0xFF, 0xF3, 0xC4), QColor(0x88, 0x88, 0x88), QColor(0x22, 0x22, 0x22), QColor(0xCC, 0xCC, 0xCC), QColor(0x00, 0x7A, 0x33), QColor(0x1A, 0x52, 0xA8) };
+        static const BoxColors dark  { QColor(0x3A, 0x3A, 0x3A), QColor(0x5A, 0x4A, 0x1A), QColor(0x77, 0x77, 0x77), QColor(0xEE, 0xEE, 0xEE), QColor(0x5A, 0x5A, 0x5A), QColor(0x4C, 0xD9, 0x87), QColor(0x6F, 0xA8, 0xF0) };
 
         return g_darkTheme ? dark : light;
     }
@@ -107,9 +106,9 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
 
     _headerLeft = QString("%1 Thread%2").arg(stack.threadCount).arg(stack.threadCount == 1 ? "" : "s");
 
-    _threadIds.resize(0);
-    _stack    = stack;
-    _settings = settings;
+    _stack     = stack;
+    _settings  = settings;
+    _threadIds = stack.threadIds;   // the header shows only the count; the ids are listed in the hover popup
 
     // _isActiveStack starts false; the owning view sets it via
     // setHighlightedThreadId() right after building the graph.
@@ -117,31 +116,10 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     // Precompute the frame rows to draw, honoring the stack-size setting.
     buildFrameRows();
 
-    // Text for BoxItem list of thread ids.
-    if (_stack.threadIds.isEmpty() == false) {
-
-        _threadIds = _stack.threadIds;
-
-        int shown = std::min<qsizetype>(_threadIds.size(), 8);
-
-        QStringList parts;
-        parts.reserve(shown);
-
-        for (int i = 0; i < shown; ++i) {
-            parts.append(QString::number(_threadIds[i]));
-        }
-
-        if (_threadIds.size() > 8) {
-            _headerRight = QString("[%1 … +%2]").arg(parts.join(", ")).arg(_threadIds.size() - 8);
-        }else{
-            _headerRight = "[" + parts.join(", ") + "]";
-        }
-    }
-
     QFont        boldFont;  boldFont.setBold(true);
     QFontMetrics boldFm(boldFont);
 
-    qreal headerW  = boldFm.horizontalAdvance(_headerLeft) + boldFm.horizontalAdvance(_headerRight) + _kHeaderGap;
+    qreal headerW  = boldFm.horizontalAdvance(_headerLeft);
     qreal maxTextW = headerW;
 
     // Highlighting is applied later (see setHighlightedFrameDepth()), so any
@@ -238,12 +216,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
 
     painter->setFont(boldFont);
     painter->setPen(colors.headerText);
-    painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignLeft | Qt::AlignVCenter, _headerLeft);
-
-    if (!_headerRight.isEmpty()) {
-        painter->setPen(colors.threadIdsText);
-        painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignRight | Qt::AlignVCenter, _headerRight);
-    }
+    painter->drawText(QRectF(_kPadX, y, innerW, _kRowH), Qt::AlignCenter, _headerLeft);
 
     y += _kRowH;
 

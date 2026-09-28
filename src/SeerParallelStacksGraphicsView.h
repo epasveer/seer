@@ -99,7 +99,6 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         bool                                            _isActiveStack  = false;  // holds the graph's current thread
         int                                             _highlightedFrameDepth = -1;  // bolded iff _isActiveStack is also true
         QString                                         _headerLeft;
-        QString                                         _headerRight;
         qreal                                           _width          = 0;
         qreal                                           _height         = 0;
         SeerParallelStacksPopupTableWidget*             _popup          = 0;
@@ -111,7 +110,6 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         static constexpr qreal                          _kPadX          = 12;
         static constexpr qreal                          _kPadY          =  8;
         static constexpr qreal                          _kRowH          = 20;
-        static constexpr qreal                          _kHeaderGap     = 16;
 };
 
 // ---------------------------------------------------------------
