@@ -64,6 +64,10 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleSaveButton                    ();
         void                        handleSettingsButton                ();
         void                        handleThemeChanged                  ();
+        void                        handleMethodViewToggled             (bool checked);
+
+        // A thread was picked in one of the graph's popup tables.
+        void                        handleGraphThreadSelected           (int threadId);
 
     protected:
         void                        writeSettings                       ();
@@ -73,10 +77,22 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
     private:
         void                        createDirectedGraph                 ();
 
+        bool                        isMethodView                        () const;
+
+        // Method View's pivot: the function in the current thread's current
+        // frame, or "" if that frame can't be found.
+        QString                     currentPivotFunction                () const;
+
+        // Selecting a different thread/frame re-pivots Method View (like
+        // Visual Studio), so the graph has to be rebuilt, not just
+        // re-highlighted. Threads view only needs the re-highlight.
+        void                        updateForSelection                  ();
+
         int                         _id;
         SeerParallelStacksThreads   _threads;
-        int                         _currentThreadId;
-        int                         _currentFrameLevel;
+        int                         _currentThreadId    = -1;
+        int                         _currentFrameLevel  = 0;
+        QString                     _methodPivot;           // the pivot the current Method View graph was built on
         SeerParallelStacksSettings  _settings;
 };
 

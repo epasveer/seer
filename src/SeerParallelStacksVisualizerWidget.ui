@@ -107,6 +107,22 @@
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="methodViewToolButton">
+       <property name="toolTip">
+        <string>Toggle Method View. Pivot the graph on the current frame's function, showing its callers below and its callees above.</string>
+       </property>
+       <property name="text">
+        <string>Method View</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextOnly</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

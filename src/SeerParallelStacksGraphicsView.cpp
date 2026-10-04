@@ -172,7 +172,7 @@ void SeerParallelStacksStackBoxItem::buildFrameRows() {
     }
 
     _frameRows.append("[...]");
-    _frameRowDepths.append(-1);
+    _frameRowDepths.append(kNoFrameDepth);
 
     for (int i = frameCount - bottomCount; i < frameCount; ++i) {
         appendFrame(_stack.frames[i]);
@@ -192,6 +192,15 @@ SeerParallelStacksStackBoxItem::~SeerParallelStacksStackBoxItem() {
     }
 
     _edges.clear();
+
+    // A rebuild (refresh, or a Method View re-pivot) can destroy this box
+    // while its popup is open. The popup is a parentless top-level window,
+    // so it would otherwise stay on screen, orphaned. deleteLater() since
+    // this may run from inside one of the popup's own signals.
+    if (_popup) {
+        _popup->deleteLater();
+        _popup = nullptr;
+    }
 }
 
 QRectF SeerParallelStacksStackBoxItem::boundingRect() const {
@@ -206,7 +215,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     const BoxColors& colors = boxColors();
 
     painter->setBrush(_isActiveStack ? colors.activeBackground : colors.background);
-    painter->setPen(QPen(colors.border, 1.5));
+    painter->setPen(_isPivot ? QPen(colors.dragOutline, 3.0) : QPen(colors.border, 1.5));
     painter->drawRoundedRect(boundingRect(), 6, 6);
 
     QFont boldFont;  boldFont.setBold(true);
@@ -234,7 +243,7 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
         // frame at that depth (e.g. depth 1, which nearly all of them have)
         // would bold a row, not just the debugger's actual current
         // thread/frame.
-        bool isCurrentFrame = _isActiveStack && _frameRowDepths[i] >= 0 && _frameRowDepths[i] == _highlightedFrameDepth;
+        bool isCurrentFrame = _isActiveStack && _frameRowDepths[i] != kNoFrameDepth && _frameRowDepths[i] == _highlightedFrameDepth;
 
         painter->setFont(isCurrentFrame ? boldFont : normFont);
 
@@ -299,6 +308,17 @@ void SeerParallelStacksStackBoxItem::setHighlightedFrameDepth(int frameDepth) {
     }
 
     _highlightedFrameDepth = frameDepth;
+
+    update();
+}
+
+void SeerParallelStacksStackBoxItem::setPivot(bool flag) {
+
+    if (flag == _isPivot) {
+        return;
+    }
+
+    _isPivot = flag;
 
     update();
 }
@@ -1359,6 +1379,64 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
     addEdges(rootPN);
     deleteTree(rootPN);
 
+    fitSceneToItems();
+
+    // Boxes start unhighlighted — the caller re-applies the highlight
+    // afterward (see SeerParallelStacksVisualizerWidget::highlightDirectedGraph()).
+}
+
+void SeerParallelStacksGraphicsView::setMethodStacks(const SeerParallelStacksMethodStacks& method, const SeerParallelStacksSettings& settings) {
+
+    setShowMinimapMode(settings.showMinimapMode);
+
+    endDragScroll();   // a rebuild invalidates any in-progress drag
+
+    // Purely structural, like setStack() — highlighting is re-applied by
+    // the caller afterward.
+    _scene->clear();
+
+    if (method.threadCount == 0 || method.callees.frames.isEmpty()) {
+        return;
+    }
+
+    // --- Callees: the pivot box is this tree's root, so the regular
+    // layout leaves it at the bottom with its callees branching above.
+    auto* calleePN = new PlacedNode;
+    buildPlacedTree(calleePN, method.callees, settings, nullptr);
+
+    SeerParallelStacksStackBoxItem* pivotItem = calleePN->item;
+    pivotItem->setPivot(true);
+
+    qreal xCursor = 0;
+    layoutTree(calleePN, xCursor, 0);
+    addEdges(calleePN);
+
+    // --- Callers: laid out downward on their own, then moved so they hang
+    // centered under the pivot. The two halves occupy separate vertical
+    // bands, so they can't collide.
+    auto* callerPN = new PlacedNode;
+    buildPlacedTree(callerPN, method.callers, settings, nullptr);
+
+    if (callerPN->item || callerPN->children.isEmpty() == false) {
+
+        qreal callerX = 0;
+        layoutTreeDown(callerPN, callerX, 0);
+
+        qreal dx = calleePN->cx - callerPN->cx;
+        qreal dy = pivotItem->y() + pivotItem->height() + kVGap;
+
+        translateTree(callerPN, dx, dy);
+        addEdgesDown(callerPN, pivotItem);
+    }
+
+    deleteTree(calleePN);
+    deleteTree(callerPN);
+
+    fitSceneToItems();
+}
+
+void SeerParallelStacksGraphicsView::fitSceneToItems() {
+
     // Let the scene rect track item bounds dynamically (Qt recomputes it
     // automatically as items move/grow). A fixed rect set once here would
     // go stale once items are dragged via Ctrl+LMB, leaving the scrollbar
@@ -1379,9 +1457,6 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
     repositionMiniMap();
     growSceneForMiniMap();
     updateMiniMapVisibility();
-
-    // Boxes start unhighlighted — the caller re-applies the highlight
-    // afterward (see SeerParallelStacksVisualizerWidget::highlightDirectedGraph()).
 
     if (_miniMap) _miniMap->refresh();
 }
@@ -1472,6 +1547,72 @@ void SeerParallelStacksGraphicsView::layoutTree(PlacedNode* pn, qreal& xCursor, 
         }else{
             pn->cy = parentY;
         }
+    }
+}
+
+// Mirror of layoutTree(): a parent sits above its children, centered over
+// them, and each level is placed kVGap below the tallest box of the level
+// above it. Leaves still advance xCursor left to right. Sets cx (center x)
+// and cy (bottom y) the same way layoutTree() does.
+void SeerParallelStacksGraphicsView::layoutTreeDown(PlacedNode* pn, qreal& xCursor, qreal yTop) {
+
+    qreal itemW = pn->item ? pn->item->width()  : 0;
+    qreal itemH = pn->item ? pn->item->height() : 0;
+
+    pn->cy = yTop + itemH;
+
+    if (pn->children.isEmpty()) {
+        pn->cx = xCursor + itemW / 2.0;
+        xCursor += itemW + kHGap;
+    }else{
+        qreal childY  = pn->item ? pn->cy + kVGap : yTop;
+        qreal firstCx = -1, lastCx = -1;
+
+        for (auto* child : pn->children) {
+            layoutTreeDown(child, xCursor, childY);
+            if (firstCx < 0) firstCx = child->cx;
+            lastCx = child->cx;
+        }
+
+        pn->cx = (firstCx + lastCx) / 2.0;
+
+        // A single child that's narrower than this box would otherwise
+        // leave the box hanging off the left of xCursor's column.
+        xCursor = std::max(xCursor, pn->cx + itemW / 2.0 + kHGap);
+    }
+
+    if (pn->item) {
+        pn->item->setPos(pn->cx - itemW / 2.0, yTop);
+    }
+}
+
+void SeerParallelStacksGraphicsView::translateTree(PlacedNode* pn, qreal dx, qreal dy) {
+
+    pn->cx += dx;
+    pn->cy += dy;
+
+    if (pn->item) {
+        pn->item->setPos(pn->item->x() + dx, pn->item->y() + dy);
+    }
+
+    for (auto* child : pn->children) {
+        translateTree(child, dx, dy);
+    }
+}
+
+void SeerParallelStacksGraphicsView::addEdgesDown(PlacedNode* pn, SeerParallelStacksStackBoxItem* above) {
+
+    // Same direction as the Threads view: from the callee (upper box) to
+    // its caller (lower box). An item-less node passes `above` through to
+    // its children, so they all connect to it directly.
+    if (pn->item && above) {
+        _scene->addItem(new SeerParallelStacksLiveEdge(above, pn->item));
+    }
+
+    SeerParallelStacksStackBoxItem* anchor = pn->item ? pn->item : above;
+
+    for (auto* child : pn->children) {
+        addEdgesDown(child, anchor);
     }
 }
 
