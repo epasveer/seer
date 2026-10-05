@@ -2,14 +2,14 @@
 .gitattributes  export-ignore
 .gitignore      export-ignore
 
-debian/         export-ignore
-images/         export-ignore
-notes/          export-ignore
-scripts/        export-ignore
-tests/          export-ignore
-flatpak/        export-ignore
-snap/           export-ignore
+/debian/         export-ignore
+/images/         export-ignore
+/notes/          export-ignore
+/scripts/        export-ignore
+/tests/          export-ignore
+/flatpak/        export-ignore
+/snap/           export-ignore
 
-notes/Theme_dark.png   export-ignore
-notes/Theme_light.png  export-ignore
-tests/helloname/core.helloname.*  export-ignore
+/notes/Theme_dark.png   export-ignore
+/notes/Theme_light.png  export-ignore
+/tests/helloname/core.helloname.*  export-ignore

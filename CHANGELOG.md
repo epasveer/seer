@@ -6,6 +6,9 @@
 * Add a 'starti' mode to start debugging at the first instruction.
   Helpful for debugging programs written in assembly.
 
+## [2.7.1] - 2026-10-05
+* Packaging: Fix .gitattributes so the release source archive includes src/resources/icons/ (hicolor icons).
+
 ## [2.7] - 2026-04-06
 * SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)
 * VariableTracker: Add 'deleteselect' and 'deleteall' to RMB context menu.
