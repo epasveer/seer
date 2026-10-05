@@ -1,6 +1,9 @@
 
 # Seer Change Log
 
+## [2.7.1] - 2026-10-05
+* Packaging: Fix .gitattributes so the release source archive includes src/resources/icons/ (hicolor icons).
+
 ## [2.7] - 2026-04-06
 * Starting version 2.7 development cycle.
 * SyntaxHighlighting: Refactored syntax highlighting code. Supports C/C++/Rust/Odin. (Thanks RaphGL!)
