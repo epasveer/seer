@@ -51,13 +51,11 @@ int main (int argc, char* argv[]) {
     qSetMessagePattern("[%{time hh:mm:ss}][%{function}:%{line}][%{category}] %{message}");
 
     //
-    // Create the app.
+    // Set the app's names. These are static and are safe to set before the app is created.
     //
-    QApplication app(argc, argv);
-
     QCoreApplication::setApplicationName("seergdb");
     QCoreApplication::setOrganizationName("seergdb");
-    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2025");
+    QCoreApplication::setApplicationVersion(Seer::version() + " - Ernie Pasveer (c)2021 - 2026");
 
     //
     // Parse arguments.
@@ -141,6 +139,52 @@ int main (int argc, char* argv[]) {
     // A positional argument for executable name.
     // All other arguments after that are treated as positional arguments for the executable.
     parser.addPositionalArgument("executableandarguments", "");
+
+#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
+    //
+    // Make sure there's a display to connect to. Otherwise Qt aborts with a
+    // cryptic message (its "could not connect to display" warning is filtered out above).
+    // Skip the check if the user has explicitly picked a platform (offscreen, vnc, eglfs, ...).
+    //
+    bool platformSpecified = qEnvironmentVariableIsSet("QT_QPA_PLATFORM");
+
+    for (int i=1; i<argc; i++) {
+        if (qstrcmp(argv[i], "-platform") == 0 || qstrcmp(argv[i], "--platform") == 0) {
+            platformSpecified = true;
+        }
+    }
+
+    if (platformSpecified == false && qEnvironmentVariableIsEmpty("DISPLAY") && qEnvironmentVariableIsEmpty("WAYLAND_DISPLAY")) {
+
+        // Help and version don't need a display. Handle them here, before Qt tries to open one.
+        // Errors are ignored. They'll be reported once there's a display.
+        QStringList arguments;
+        for (int i=0; i<argc; i++) {
+            arguments << QString::fromLocal8Bit(argv[i]);
+        }
+
+        parser.parse(arguments);
+
+        if (parser.isSet(helpOption)) {
+            seerhelp();
+        }
+
+        if (parser.isSet("version")) {
+            parser.showVersion();
+        }
+
+        std::cerr << "seergdb: cannot open a display. Neither DISPLAY nor WAYLAND_DISPLAY is set." << std::endl;
+        std::cerr << "seergdb: Seer is a graphical program and needs an X11 or Wayland session." << std::endl;
+        std::cerr << "seergdb: If running remotely, try 'ssh -X' or 'ssh -Y', or set DISPLAY (eg: export DISPLAY=:0)." << std::endl;
+
+        return 1;
+    }
+#endif
+
+    //
+    // Create the app.
+    //
+    QApplication app(argc, argv);
 
     // Process the arguments.
     parser.process(app);
