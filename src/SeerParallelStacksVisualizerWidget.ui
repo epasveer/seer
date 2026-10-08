@@ -34,6 +34,44 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="viewModeComboBox">
+       <property name="toolTip">
+        <string>Select the view mode. Stack shows all threads' merged call stacks. Method pivots the graph on the current frame's function, showing its callers below and its callees above.</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>Stack</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Method</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="settingsToolButton">
+       <property name="toolTip">
+        <string>Settings.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="printToolButton">
        <property name="toolTip">
         <string>Print the display.</string>
@@ -69,20 +107,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="settingsToolButton">
-       <property name="toolTip">
-        <string>Settings.</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="resource.qrc">
-         <normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</normaloff>:/seer/resources/RelaxLightIcons/application-menu.svg</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="refreshToolButton">
        <property name="toolTip">
         <string>Refresh the display.</string>
@@ -103,22 +127,6 @@
        </property>
        <property name="text">
         <string>Auto</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="methodViewToolButton">
-       <property name="toolTip">
-        <string>Toggle Method View. Pivot the graph on the current frame's function, showing its callers below and its callees above.</string>
-       </property>
-       <property name="text">
-        <string>Method View</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextOnly</enum>
        </property>
       </widget>
      </item>

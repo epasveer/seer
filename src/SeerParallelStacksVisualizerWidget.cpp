@@ -9,6 +9,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QComboBox>
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
@@ -29,7 +30,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Init variables.
     _id       = Seer::createID(); // ID for parallelstacks command.
-    _settings = {"Auto", "Threads", true, 64, true, 20};
+    _settings = {"Auto", "Stack", true, 64, true, 20};
 
     // Set up UI.
     setupUi(this);
@@ -49,7 +50,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
     QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThread, this,  &SeerParallelStacksVisualizerWidget::handleGraphThreadSelected);
-    QObject::connect(methodViewToolButton,          &QToolButton::toggled,                           this,  &SeerParallelStacksVisualizerWidget::handleMethodViewToggled);
+    QObject::connect(viewModeComboBox,              &QComboBox::currentTextChanged,                  this,  &SeerParallelStacksVisualizerWidget::handleViewModeChanged);
     QObject::connect(autoRefreshCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::writeSettings);
 
     // Colorize icons and the graph for theme.
@@ -418,9 +419,9 @@ void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
     graphicsView->setColorTheme(Seer::iconColorTheme());
 }
 
-void SeerParallelStacksVisualizerWidget::handleMethodViewToggled (bool checked) {
+void SeerParallelStacksVisualizerWidget::handleViewModeChanged (const QString& mode) {
 
-    _settings.viewMode = checked ? "Method" : "Threads";
+    _settings.viewMode = mode;
 
     writeSettings();
 
@@ -459,11 +460,16 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
         _settings.showFullStackSize    = settings.value("showfullstacksize", true).toBool();
         _settings.stackSize            = settings.value("stacksize", 20).toInt();
         _settings.showMinimapMode      = settings.value("showminimapmode", "Auto").toString();
-        _settings.viewMode             = settings.value("viewmode", "Threads").toString();
+        _settings.viewMode             = settings.value("viewmode", "Stack").toString();
 
-        // No graph to redraw yet, so don't let the toggle trigger one.
-        QSignalBlocker blocker(methodViewToolButton);
-        methodViewToolButton->setChecked(isMethodView());
+        // Unknown (or older "Threads") values fall back to Stack.
+        if (viewModeComboBox->findText(_settings.viewMode) < 0) {
+            _settings.viewMode = "Stack";
+        }
+
+        // No graph to redraw yet, so don't let the change trigger one.
+        QSignalBlocker blocker(viewModeComboBox);
+        viewModeComboBox->setCurrentText(_settings.viewMode);
 
         autoRefreshCheckBox->setChecked(settings.value("autorefresh", false).toBool());
 

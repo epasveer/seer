@@ -64,7 +64,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleSaveButton                    ();
         void                        handleSettingsButton                ();
         void                        handleThemeChanged                  ();
-        void                        handleMethodViewToggled             (bool checked);
+        void                        handleViewModeChanged               (const QString& mode);
 
         // A thread was picked in one of the graph's popup tables.
         void                        handleGraphThreadSelected           (int threadId);

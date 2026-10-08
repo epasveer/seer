@@ -744,7 +744,17 @@ void SeerParallelStacksMiniMapWidget::jumpToWidgetPos(const QPoint& widgetPos) {
     // Inverse of sceneToWidget()
     const QPointF scenePos( sceneRect.left() + (widgetPos.x() - origin.x()) / s, sceneRect.top()  + (widgetPos.y() - origin.y()) / s);
 
+    // An anchored (Shift-dragged) minimap travels with the graph, so
+    // centering the view would scroll it out from under the cursor.
+    // Re-anchor it at its current on-screen spot so it stays put while
+    // being used to navigate.
+    const QPoint before = pos();
+
     _view->centerOn(scenePos);
+
+    if (_view->_miniMapAnchored) {
+        _view->placeMiniMapAt(before);
+    }
 
     refresh();
 }

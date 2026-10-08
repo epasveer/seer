@@ -135,7 +135,7 @@ struct SeerParallelStacksMethodStacks {
 
 struct SeerParallelStacksSettings {
     QString  showMinimapMode;
-    QString  viewMode;              // "Threads" or "Method"
+    QString  viewMode;              // "Stack" or "Method"
     bool     showFullFunctionName;
     int      functionNameLength;
     bool     showFullStackSize;
