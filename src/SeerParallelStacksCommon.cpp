@@ -151,6 +151,26 @@ const SeerParallelStacksFrames& SeerParallelStacksThread::frames () const {
     return _frames;
 }
 
+SeerParallelStacksThread SeerParallelStacksThread::withFrames (const SeerParallelStacksFrames& frames) const {
+
+    SeerParallelStacksThread thread = *this;
+    thread._frames = frames;
+
+    return thread;
+}
+
+int SeerParallelStacksThread::indexOfFunction (const QString& function) const {
+
+    // Frames are innermost-first, so the first match is the innermost call.
+    for (int i = 0; i < _frames.size(); ++i) {
+        if (_frames[i].functionOrAddr() == function) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 QString SeerParallelStacksThread::toString() const {
 
     QString result = QString("Thread %1: #Frames %2").arg(_id).arg(QString::number(_frames.size()));
@@ -223,7 +243,7 @@ SeerParallelStacksNode SeerParallelStacksBuildParallelStacks(const SeerParallelS
 // ---------------------------------------------------------------
 // fillStack — flatten SeerParallelStacksNode tree into Stack tree for graphing
 // ---------------------------------------------------------------
-SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode& node) {
+SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode& node, bool downward) {
 
     SeerParallelStacksStack stack;
     stack.threadCount = node.threads.size();
@@ -236,17 +256,24 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
     if (node.children.size() == 1) {
         // Merge single child into this stack (chain of frames).
         // Keep the IDs from the leaf (most specific) node.
-        // Children are deeper (more toward the top of the call stack) than
-        // this node, so their frames go first — the resulting list reads
-        // top of stack (innermost) to bottom of stack (outermost).
-        auto child = SeerParallelStacksFillStack(node.children[0]);
+        // Normally children are deeper (more toward the top of the call
+        // stack) than this node, so their frames go first — the resulting
+        // list reads top of stack (innermost) to bottom of stack
+        // (outermost). When drawn downward (Method View's callers), the
+        // children are this node's callers instead, so they go last to
+        // keep that same innermost-to-outermost reading order.
+        auto child = SeerParallelStacksFillStack(node.children[0], downward);
         stack.frames      = child.frames;
         stack.stacks      = child.stacks;
         stack.threadCount = child.threadCount;
         stack.threadIds   = child.threadIds;
 
         if (node.function.function().isEmpty() == false) {
-            stack.frames.append(node.function);
+            if (downward) {
+                stack.frames.prepend(node.function);
+            }else{
+                stack.frames.append(node.function);
+            }
         }
     } else {
         if (node.function.function().isEmpty() == false) {
@@ -254,10 +281,106 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         }
 
         for (const auto& childNode : node.children) {
-            stack.stacks.append(SeerParallelStacksFillStack(childNode));
+            stack.stacks.append(SeerParallelStacksFillStack(childNode, downward));
         }
     }
 
     return stack;
+}
+
+// Re-tags every frame in the tree with a signed distance from Method View's
+// pivot, in place of buildImpl()'s depth-from-bottom: depth() becomes
+// sign * (node.depth + offset).
+static void renumberDepths(SeerParallelStacksNode& node, int offset, int sign) {
+
+    if (node.function.function().isEmpty() == false) {
+        node.function.setDepth(sign * (node.depth + offset));
+    }
+
+    for (auto& child : node.children) {
+        renumberDepths(child, offset, sign);
+    }
+}
+
+// ---------------------------------------------------------------
+// Method View — split every thread that calls pivotFunction at its
+// innermost call of it (so, with recursion, the callee half never contains
+// the pivot again), then build each half with the same buildImpl() the
+// Threads view uses:
+//
+//   callees: frames[0..idx]         — the pivot is the last (outermost)
+//            frame, so the tree's root has exactly one child: the pivot.
+//   callers: frames[idx+1..], reversed — so the immediate caller is the
+//            outermost frame, and the tree grows from the pivot out
+//            toward each thread's entry point.
+// ---------------------------------------------------------------
+SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks(const SeerParallelStacksThreads& threads, const QString& pivotFunction) {
+
+    SeerParallelStacksMethodStacks result;
+    result.pivotFunction = pivotFunction;
+
+    SeerParallelStacksThreads calleeThreads;
+    SeerParallelStacksThreads callerThreads;
+
+    for (const SeerParallelStacksThread& t : threads) {
+
+        int idx = t.indexOfFunction(pivotFunction);
+
+        if (idx < 0) {
+            continue;
+        }
+
+        const SeerParallelStacksFrames& frames = t.frames();
+
+        SeerParallelStacksFrames callees = frames.mid(0, idx + 1);
+        SeerParallelStacksFrames callers;
+
+        for (int i = frames.size() - 1; i > idx; --i) {
+            callers.append(frames[i]);
+        }
+
+        calleeThreads.append(t.withFrames(callees));
+        callerThreads.append(t.withFrames(callers));
+    }
+
+    result.threadCount = calleeThreads.size();
+
+    if (result.threadCount == 0) {
+        return result;
+    }
+
+    // Callees. The pivot node is at buildImpl() depth 1, so offset -1 makes
+    // it depth 0 and its callees +1, +2, ...
+    SeerParallelStacksNode calleeRoot = buildImpl(calleeThreads, SeerParallelStacksFrame(), 0);
+    renumberDepths(calleeRoot, -1, +1);
+
+    if (calleeRoot.children.size() == 1) {
+
+        // Build the pivot's box by hand rather than via FillStack(), which
+        // would merge it into its callee chain whenever there's only one
+        // callee branch — the pivot should always sit in a box of its own.
+        const SeerParallelStacksNode& pivotNode = calleeRoot.children[0];
+
+        result.callees.threadCount = pivotNode.threads.size();
+
+        for (const SeerParallelStacksThread& t : pivotNode.threads) {
+            result.callees.threadIds.append(t.id());
+        }
+
+        result.callees.frames.append(pivotNode.function);
+
+        for (const auto& childNode : pivotNode.children) {
+            result.callees.stacks.append(SeerParallelStacksFillStack(childNode));
+        }
+    }
+
+    // Callers. The immediate caller is at buildImpl() depth 1, so negating
+    // gives -1, -2, ... going outward.
+    SeerParallelStacksNode callerRoot = buildImpl(callerThreads, SeerParallelStacksFrame(), 0);
+    renumberDepths(callerRoot, 0, -1);
+
+    result.callers = SeerParallelStacksFillStack(callerRoot, true);
+
+    return result;
 }
 

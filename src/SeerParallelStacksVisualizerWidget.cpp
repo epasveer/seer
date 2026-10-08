@@ -9,6 +9,7 @@
 #include "SeerUtl.h"
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
+#include <QtWidgets/QComboBox>
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
@@ -21,13 +22,15 @@
 #include <QtCore/QProcess>
 #include <QtCore/QStringList>
 #include <QtCore/QFile>
+#include <QtCore/QSignalBlocker>
+#include <QtCore/QTimer>
 #include <QtCore/QDebug>
 
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
     _id       = Seer::createID(); // ID for parallelstacks command.
-    _settings = {"Auto", true, 64, true, 20};
+    _settings = {"Auto", "Stack", true, 64, true, 20};
 
     // Set up UI.
     setupUi(this);
@@ -46,7 +49,8 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
-    QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThread, this,  &SeerParallelStacksVisualizerWidget::selectedThread);
+    QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThread, this,  &SeerParallelStacksVisualizerWidget::handleGraphThreadSelected);
+    QObject::connect(viewModeComboBox,              &QComboBox::currentTextChanged,                  this,  &SeerParallelStacksVisualizerWidget::handleViewModeChanged);
     QObject::connect(autoRefreshCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::writeSettings);
 
     // Colorize icons and the graph for theme.
@@ -138,11 +142,22 @@ void SeerParallelStacksVisualizerWidget::highlightDirectedGraph (int threadId, i
     // relative to the thread it came from. depth() starts at 1 for the
     // outermost frame, so the conversion is frameCount - level, not
     // frameCount - 1 - level.
-    int frameDepth = -1;
+    //
+    // In Method View, depth is instead the signed distance from the pivot
+    // (see SeerParallelStacksFrame::depth()): pivot index - level. If this
+    // thread never calls the pivot, it isn't in the graph, so no frame is.
+    int frameDepth = kNoFrameDepth;
 
     for (const auto& t : _threads) {
         if (t.id() == threadId) {
-            frameDepth = t.frameCount() - frameLevel;
+            if (isMethodView()) {
+                int pivotIdx = t.indexOfFunction(_methodPivot);
+                if (pivotIdx >= 0) {
+                    frameDepth = pivotIdx - frameLevel;
+                }
+            }else{
+                frameDepth = t.frameCount() - frameLevel;
+            }
             break;
         }
     }
@@ -152,16 +167,48 @@ void SeerParallelStacksVisualizerWidget::highlightDirectedGraph (int threadId, i
 
 void SeerParallelStacksVisualizerWidget::highlightSelectedThread (int threadId) {
 
-    _currentThreadId = threadId;
+    // Switching threads selects that thread's innermost frame, so the old
+    // frame level (from some other thread) no longer applies.
+    _currentThreadId   = threadId;
+    _currentFrameLevel = 0;
 
-    highlightDirectedGraph(threadId, _currentFrameLevel);
+    updateForSelection();
 }
 
 void SeerParallelStacksVisualizerWidget::highlightSelectedFrame (int frameLevel) {
 
     _currentFrameLevel = frameLevel;
 
-    highlightDirectedGraph(_currentThreadId, frameLevel);
+    updateForSelection();
+}
+
+void SeerParallelStacksVisualizerWidget::handleGraphThreadSelected (int threadId) {
+
+    // The graph has already highlighted threadId itself. Track it here too,
+    // so a later frame selection (or Method View rebuild) uses it rather
+    // than a stale thread.
+    _currentThreadId   = threadId;
+    _currentFrameLevel = 0;
+
+    emit selectedThread(threadId);
+
+    // This is reached from inside a box's popup-table signal, and a rebuild
+    // clears the scene — deleting that box. Defer it until the signal has
+    // unwound.
+    if (isMethodView()) {
+        QTimer::singleShot(0, this, [this]() {
+            updateForSelection();
+        });
+    }
+}
+
+void SeerParallelStacksVisualizerWidget::updateForSelection () {
+
+    if (isMethodView() && currentPivotFunction() != _methodPivot) {
+        createDirectedGraph();
+    }
+
+    highlightDirectedGraph(_currentThreadId, _currentFrameLevel);
 }
 
 void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
@@ -350,8 +397,12 @@ void SeerParallelStacksVisualizerWidget::handleSettingsButton () {
     // Execute the dialog.
     if (dialog.exec()) {
 
-        // Set things.
-        setSettings(dialog.settings());
+        // Set things. The dialog doesn't know about the view mode (that's
+        // the toolbar's toggle), so carry it across.
+        SeerParallelStacksSettings settings = dialog.settings();
+        settings.viewMode = _settings.viewMode;
+
+        setSettings(settings);
 
         // Redraw scene with new settings.
         createDirectedGraph();
@@ -368,6 +419,17 @@ void SeerParallelStacksVisualizerWidget::handleThemeChanged () {
     graphicsView->setColorTheme(Seer::iconColorTheme());
 }
 
+void SeerParallelStacksVisualizerWidget::handleViewModeChanged (const QString& mode) {
+
+    _settings.viewMode = mode;
+
+    writeSettings();
+
+    // Redraw scene in the new mode.
+    createDirectedGraph();
+    highlightDirectedGraph(_currentThreadId, _currentFrameLevel);
+}
+
 void SeerParallelStacksVisualizerWidget::writeSettings() {
 
     QSettings settings;
@@ -380,6 +442,7 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
         settings.setValue("showfullstacksize",    _settings.showFullStackSize);
         settings.setValue("stacksize",            _settings.stackSize);
         settings.setValue("showminimapmode",      _settings.showMinimapMode);
+        settings.setValue("viewmode",             _settings.viewMode);
         settings.setValue("autorefresh",          autoRefreshCheckBox->isChecked());
     } settings.endGroup();
 }
@@ -397,6 +460,16 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
         _settings.showFullStackSize    = settings.value("showfullstacksize", true).toBool();
         _settings.stackSize            = settings.value("stacksize", 20).toInt();
         _settings.showMinimapMode      = settings.value("showminimapmode", "Auto").toString();
+        _settings.viewMode             = settings.value("viewmode", "Stack").toString();
+
+        // Unknown (or older "Threads") values fall back to Stack.
+        if (viewModeComboBox->findText(_settings.viewMode) < 0) {
+            _settings.viewMode = "Stack";
+        }
+
+        // No graph to redraw yet, so don't let the change trigger one.
+        QSignalBlocker blocker(viewModeComboBox);
+        viewModeComboBox->setCurrentText(_settings.viewMode);
 
         autoRefreshCheckBox->setChecked(settings.value("autorefresh", false).toBool());
 
@@ -417,11 +490,52 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
         scene->clear();
     }
 
+    // Method View: pivot on the current thread's current function.
+    if (isMethodView()) {
+
+        _methodPivot = currentPivotFunction();
+
+        SeerParallelStacksMethodStacks method = SeerParallelStacksBuildMethodStacks(_threads, _methodPivot);
+
+        graphicsView->setMethodStacks(method, settings());
+
+        if (_methodPivot.isEmpty()) {
+            messageLineEdit->setText("Method View: no current frame to pivot on.");
+        }else{
+            messageLineEdit->setText(QString("Method View: %1 (%2 of %3 threads)").arg(_methodPivot).arg(method.threadCount).arg(_threads.size()));
+        }
+
+        return;
+    }
+
+    _methodPivot.clear();
+    messageLineEdit->setText("");
+
     // Build parallel-stacks tree. Purely structural — no highlighting here;
     // see highlightDirectedGraph().
     SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_threads);
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack, settings());
+}
+
+
+bool SeerParallelStacksVisualizerWidget::isMethodView () const {
+
+    return _settings.viewMode == "Method";
+}
+
+QString SeerParallelStacksVisualizerWidget::currentPivotFunction () const {
+
+    for (const auto& t : _threads) {
+        if (t.id() == _currentThreadId) {
+            if (_currentFrameLevel >= 0 && _currentFrameLevel < t.frameCount()) {
+                return t.frame(_currentFrameLevel).functionOrAddr();
+            }
+            break;
+        }
+    }
+
+    return "";
 }
 

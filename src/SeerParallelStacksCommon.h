@@ -7,6 +7,11 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QVector>
 #include <QtCore/QString>
+#include <limits>
+
+// Sentinel for "no frame depth" (no highlight, or a "[...]" placeholder
+// row). Not -1, since Method View uses negative depths for callers.
+constexpr int kNoFrameDepth = std::numeric_limits<int>::min();
 
 class SeerParallelStacksFrame {
     public:
@@ -35,7 +40,13 @@ class SeerParallelStacksFrame {
         // for every thread sharing this call-tree position, since it's set
         // from the tree's own recursion depth, not from any one thread's
         // frame count. Set by SeerParallelStacksCommon.cpp while building
-        // the tree; -1 until then.
+        // the tree; kNoFrameDepth until then.
+        //
+        // In Method View the meaning changes to a signed distance from the
+        // pivot frame instead: 0 for the pivot, +1, +2, ... for its callees
+        // (upward) and -1, -2, ... for its callers (downward). Negative
+        // values are therefore legitimate there — use kNoFrameDepth, not -1,
+        // to mean "no frame".
         int                 depth           () const;
         void                setDepth        (int depth);
 
@@ -49,7 +60,7 @@ class SeerParallelStacksFrame {
         QString             _fullname;
         int                 _line;
         QString             _type;
-        int                 _depth = -1;
+        int                 _depth = kNoFrameDepth;
 };
 
 typedef QVector<SeerParallelStacksFrame> SeerParallelStacksFrames;
@@ -72,6 +83,14 @@ class SeerParallelStacksThread {
         int                                     frameCount      () const;
         const SeerParallelStacksFrame&          frame           (int i) const;
         const SeerParallelStacksFrames&         frames          () const;
+
+        // A copy of this thread (same id/name/state) with its frames
+        // replaced — used by Method View to split a stack at the pivot.
+        SeerParallelStacksThread                withFrames      (const SeerParallelStacksFrames& frames) const;
+
+        // Index (== level) of the innermost frame whose function() is
+        // function, or -1 if this thread never calls it.
+        int                                     indexOfFunction (const QString& function) const;
 
     private:
         int                                     _id;
@@ -104,8 +123,19 @@ struct SeerParallelStacksStack {
     QVector<SeerParallelStacksStack>            stacks;
 };
 
+// Method View: the graph pivots on one function. The pivot sits alone in
+// the callees root box; its callees branch upward from it and its callers
+// branch downward, toward each thread's outermost frame.
+struct SeerParallelStacksMethodStacks {
+    QString                                     pivotFunction;
+    int                                         threadCount = 0;    // threads whose stack contains the pivot
+    SeerParallelStacksStack                     callees;            // root = the pivot box itself; children grow upward
+    SeerParallelStacksStack                     callers;            // item-less root; children grow downward
+};
+
 struct SeerParallelStacksSettings {
     QString  showMinimapMode;
+    QString  viewMode;              // "Stack" or "Method"
     bool     showFullFunctionName;
     int      functionNameLength;
     bool     showFullStackSize;
@@ -113,5 +143,6 @@ struct SeerParallelStacksSettings {
 };
 
 SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const SeerParallelStacksThreads& threads);   // Build the parallel-stacks tree from a flat list of threads.
-SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node);
+SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node, bool downward = false);  // downward: parent box sits above its children (Method View callers).
+SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks  (const SeerParallelStacksThreads& threads, const QString& pivotFunction);  // Build Method View's two halves around pivotFunction.
 

@@ -49,7 +49,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // is only ever one highlight, not two independent ones.
         void                    setHighlightedThreadId  (int threadId);
 
-        // Sets which frame depth to bold (-1 clears it) — depth-from-bottom
+        // Sets which frame depth to bold (kNoFrameDepth clears it) — depth-from-bottom
         // (SeerParallelStacksFrame::depth()), not the thread-relative
         // level() number, so this stays correct no matter which thread the
         // caller means by "current" (see SeerParallelStacksCommon.cpp).
@@ -58,6 +58,10 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // tree, so without that gate nearly every box would bold a
         // same-depth row.
         void                    setHighlightedFrameDepth (int frameDepth);
+
+        // Marks this box as Method View's pivot (drawn with a heavier,
+        // accent-colored border).
+        void                    setPivot                (bool flag);
 
     signals:
         // Forwarded from this box's popup table when a row is selected there.
@@ -94,12 +98,12 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         QVector<int>                                    _threadIds;
         SeerParallelStacksStack                         _stack;
         QStringList                                     _frameRows;
-        QVector<int>                                    _frameRowDepths;    // parallel to _frameRows; each row's frame depth() (-1 for a "[...]" placeholder row)
+        QVector<int>                                    _frameRowDepths;    // parallel to _frameRows; each row's frame depth() (kNoFrameDepth for a "[...]" placeholder row)
         SeerParallelStacksSettings                      _settings;
         bool                                            _isActiveStack  = false;  // holds the graph's current thread
-        int                                             _highlightedFrameDepth = -1;  // bolded iff _isActiveStack is also true
+        int                                             _highlightedFrameDepth = kNoFrameDepth;  // bolded iff _isActiveStack is also true
+        bool                                            _isPivot        = false;  // Method View's pivot box
         QString                                         _headerLeft;
-        QString                                         _headerRight;
         qreal                                           _width          = 0;
         qreal                                           _height         = 0;
         SeerParallelStacksPopupTableWidget*             _popup          = 0;
@@ -111,7 +115,6 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         static constexpr qreal                          _kPadX          = 12;
         static constexpr qreal                          _kPadY          =  8;
         static constexpr qreal                          _kRowH          = 20;
-        static constexpr qreal                          _kHeaderGap     = 16;
 };
 
 // ---------------------------------------------------------------
@@ -233,6 +236,11 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         explicit SeerParallelStacksGraphicsView(QWidget* parent = nullptr);
 
         void            setStack                        (const SeerParallelStacksStack& root, const SeerParallelStacksSettings& settings);
+
+        // Method View counterpart to setStack(): the pivot box in the
+        // middle, its callees above it (laid out like the Threads view) and
+        // its callers below it (mirrored, growing downward).
+        void            setMethodStacks                 (const SeerParallelStacksMethodStacks& method, const SeerParallelStacksSettings& settings);
         void            setColorTheme                   (const QString& colorTheme);
         void            setShowMinimapMode              (const QString& mode);   // "Always", "Never", or "Auto"
 
@@ -316,9 +324,17 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
         void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, const SeerParallelStacksSettings& settings, PlacedNode* parentPN);
         void            layoutTree                  (PlacedNode* pn, qreal& xCursor, qreal yTop);
+        void            layoutTreeDown              (PlacedNode* pn, qreal& xCursor, qreal yTop);    // mirror of layoutTree(): children below their parent
+        void            translateTree               (PlacedNode* pn, qreal dx, qreal dy);
         void            collectMaxBottom            (PlacedNode* pn, qreal& maxBottom);
         void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);
         void            addEdges                    (PlacedNode* pn);
+        void            addEdgesDown                (PlacedNode* pn, SeerParallelStacksStackBoxItem* above);   // edges for a layoutTreeDown() tree hanging below `above`
+
+        // Shared tail of setStack()/setMethodStacks(): sizes the scene rect
+        // to the laid-out items, fits it into the viewport, and re-places
+        // the minimap.
+        void            fitSceneToItems             ();
         void            deleteTree                  (PlacedNode* pn);
 
         // Zoom: '+'/'-' step (keyboard, centered), mouse wheel (under cursor).
@@ -369,7 +385,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         bool                                        _miniMapDragScroll = false;
 
         int                                         _currentThreadId   = -1;   // the graph's current thread; reset from gdb's real one on every setStack() refresh
-        int                                         _currentFrameDepth = -1;   // the graph's current frame depth(); reset from gdb's real one on every setStack() refresh
+        int                                         _currentFrameDepth = kNoFrameDepth;   // the graph's current frame depth(); reset from gdb's real one on every setStack() refresh
 
         friend class SeerParallelStacksMiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
