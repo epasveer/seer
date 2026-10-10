@@ -24,12 +24,39 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLineEdit" name="messageLineEdit">
-       <property name="frame">
+      <widget class="QLineEdit" name="searchLineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Highlight every frame in the graph whose function matches this regular expression (case-insensitive).
+
+Enter or Ctrl+G jumps to the next matching node.
+Shift+Enter or Ctrl+Shift+G to the previous one.
+Ctrl+F to focus.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Search functions (regex)</string>
+       </property>
+       <property name="clearButtonEnabled">
         <bool>true</bool>
        </property>
-       <property name="readOnly">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="searchStatusLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>

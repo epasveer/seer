@@ -34,6 +34,8 @@ namespace {
         QColor divider;
         QColor frameText;
         QColor dragOutline;
+        QColor searchBackground;
+        QColor searchOutline;
     };
 
     struct MiniMapColors {
@@ -42,14 +44,15 @@ namespace {
         QColor boxMarker;
         QColor viewportFill;
         QColor viewportBorder;
+        QColor searchMarker;
     };
 
     bool g_darkTheme = false;
 
     const BoxColors& boxColors () {
 
-        static const BoxColors light { QColor(0xFA, 0xFA, 0xFA), QColor(0xFF, 0xF3, 0xC4), QColor(0x88, 0x88, 0x88), QColor(0x22, 0x22, 0x22), QColor(0xCC, 0xCC, 0xCC), QColor(0x00, 0x7A, 0x33), QColor(0x1A, 0x52, 0xA8) };
-        static const BoxColors dark  { QColor(0x3A, 0x3A, 0x3A), QColor(0x5A, 0x4A, 0x1A), QColor(0x77, 0x77, 0x77), QColor(0xEE, 0xEE, 0xEE), QColor(0x5A, 0x5A, 0x5A), QColor(0x4C, 0xD9, 0x87), QColor(0x6F, 0xA8, 0xF0) };
+        static const BoxColors light { QColor(0xFA, 0xFA, 0xFA), QColor(0xFF, 0xF3, 0xC4), QColor(0x88, 0x88, 0x88), QColor(0x22, 0x22, 0x22), QColor(0xCC, 0xCC, 0xCC), QColor(0x00, 0x7A, 0x33), QColor(0x1A, 0x52, 0xA8), QColor(0xFF, 0xC8, 0x8A), QColor(0xE0, 0x6C, 0x00) };
+        static const BoxColors dark  { QColor(0x3A, 0x3A, 0x3A), QColor(0x5A, 0x4A, 0x1A), QColor(0x77, 0x77, 0x77), QColor(0xEE, 0xEE, 0xEE), QColor(0x5A, 0x5A, 0x5A), QColor(0x4C, 0xD9, 0x87), QColor(0x6F, 0xA8, 0xF0), QColor(0x8A, 0x4A, 0x10), QColor(0xFF, 0x9A, 0x3C) };
 
         return g_darkTheme ? dark : light;
     }
@@ -64,8 +67,8 @@ namespace {
 
     const MiniMapColors& miniMapColors () {
 
-        static const MiniMapColors light { QColor(0xFF, 0xFF, 0xFF, 230), QColor(0x88, 0x88, 0x88), QColor(0x5A, 0x8F, 0xD6), QColor(0x1A, 0x52, 0xA8, 40), QColor(0x1A, 0x52, 0xA8) };
-        static const MiniMapColors dark  { QColor(0x2B, 0x2B, 0x2B, 230), QColor(0x77, 0x77, 0x77), QColor(0x6F, 0xA8, 0xF0), QColor(0x6F, 0xA8, 0xF0, 60), QColor(0x6F, 0xA8, 0xF0) };
+        static const MiniMapColors light { QColor(0xFF, 0xFF, 0xFF, 230), QColor(0x88, 0x88, 0x88), QColor(0x5A, 0x8F, 0xD6), QColor(0x1A, 0x52, 0xA8, 40), QColor(0x1A, 0x52, 0xA8), QColor(0xE0, 0x6C, 0x00) };
+        static const MiniMapColors dark  { QColor(0x2B, 0x2B, 0x2B, 230), QColor(0x77, 0x77, 0x77), QColor(0x6F, 0xA8, 0xF0), QColor(0x6F, 0xA8, 0xF0, 60), QColor(0x6F, 0xA8, 0xF0), QColor(0xFF, 0x9A, 0x3C) };
 
         return g_darkTheme ? dark : light;
     }
@@ -116,6 +119,8 @@ SeerParallelStacksStackBoxItem::SeerParallelStacksStackBoxItem(const SeerParalle
     // Precompute the frame rows to draw, honoring the stack-size setting.
     buildFrameRows();
 
+    _frameRowMatches.fill(false, _frameRows.size());
+
     QFont        boldFont;  boldFont.setBold(true);
     QFontMetrics boldFm(boldFont);
 
@@ -142,6 +147,7 @@ void SeerParallelStacksStackBoxItem::buildFrameRows() {
 
     _frameRows.clear();
     _frameRowDepths.clear();
+    _hiddenFrameRows.clear();
 
     auto appendFrame = [this](const SeerParallelStacksFrame& frame) {
         _frameRows.append(frame.functionOrAddr());
@@ -173,6 +179,10 @@ void SeerParallelStacksStackBoxItem::buildFrameRows() {
 
     _frameRows.append("[...]");
     _frameRowDepths.append(kNoFrameDepth);
+
+    for (int i = topCount; i < frameCount - bottomCount; ++i) {
+        _hiddenFrameRows.append(_stack.frames[i].functionOrAddr());
+    }
 
     for (int i = frameCount - bottomCount; i < frameCount; ++i) {
         appendFrame(_stack.frames[i]);
@@ -215,7 +225,11 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
     const BoxColors& colors = boxColors();
 
     painter->setBrush(_isActiveStack ? colors.activeBackground : colors.background);
-    painter->setPen(_isPivot ? QPen(colors.dragOutline, 3.0) : QPen(colors.border, 1.5));
+    if (_isCurrentSearchMatch) {
+        painter->setPen(QPen(colors.searchOutline, 3.0));
+    }else{
+        painter->setPen(_isPivot ? QPen(colors.dragOutline, 3.0) : QPen(colors.border, 1.5));
+    }
     painter->drawRoundedRect(boundingRect(), 6, 6);
 
     QFont boldFont;  boldFont.setBold(true);
@@ -244,6 +258,10 @@ void SeerParallelStacksStackBoxItem::paint(QPainter* painter, const QStyleOption
         // would bold a row, not just the debugger's actual current
         // thread/frame.
         bool isCurrentFrame = _isActiveStack && _frameRowDepths[i] != kNoFrameDepth && _frameRowDepths[i] == _highlightedFrameDepth;
+
+        if (_frameRowMatches[i]) {
+            painter->fillRect(QRectF(_kPadX / 2.0, y + 1, _width - _kPadX, _kRowH - 2), colors.searchBackground);
+        }
 
         painter->setFont(isCurrentFrame ? boldFont : normFont);
 
@@ -319,6 +337,59 @@ void SeerParallelStacksStackBoxItem::setPivot(bool flag) {
     }
 
     _isPivot = flag;
+
+    update();
+}
+
+int SeerParallelStacksStackBoxItem::setSearchExpression(const QRegularExpression& re) {
+
+    const bool active = re.isValid() && re.pattern().isEmpty() == false;
+
+    int count = 0;
+
+    for (int i = 0; i < _frameRows.size(); ++i) {
+
+        bool match = false;
+
+        if (active) {
+            if (_frameRowDepths[i] == kNoFrameDepth) {
+                for (const auto& hidden : _hiddenFrameRows) {
+                    if (re.match(hidden).hasMatch()) {
+                        match = true;
+                        break;
+                    }
+                }
+            }else{
+                match = re.match(_frameRows[i]).hasMatch();
+            }
+        }
+
+        _frameRowMatches[i] = match;
+
+        if (match) {
+            count++;
+        }
+    }
+
+    _isCurrentSearchMatch = false;
+
+    update();
+
+    return count;
+}
+
+bool SeerParallelStacksStackBoxItem::hasSearchMatch() const {
+
+    return _frameRowMatches.contains(true);
+}
+
+void SeerParallelStacksStackBoxItem::setCurrentSearchMatch(bool flag) {
+
+    if (flag == _isCurrentSearchMatch) {
+        return;
+    }
+
+    _isCurrentSearchMatch = flag;
 
     update();
 }
@@ -703,13 +774,14 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
     // Draw a small marker for every SeerParallelStacksStackBoxItem so the overall shape
     // of the graph is recognisable at a glance.
     painter.setPen(Qt::NoPen);
-    painter.setBrush(colors.boxMarker);
 
+    // Boxes holding a search match stand out in their own color.
     for (QGraphicsItem* item : _view->scene()->items()) {
         if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
             QRectF r(sceneToWidget(box->sceneBoundingRect().topLeft()), sceneToWidget(box->sceneBoundingRect().bottomRight()));
             if (r.width() < 2) r.setWidth(2);
             if (r.height() < 2) r.setHeight(2);
+            painter.setBrush(box->hasSearchMatch() ? colors.searchMarker : colors.boxMarker);
             painter.drawRoundedRect(r, 1, 1);
         }
     }
@@ -1714,3 +1786,76 @@ void SeerParallelStacksGraphicsView::applyCurrentHighlight() {
     }
 }
 
+void SeerParallelStacksGraphicsView::setSearchExpression(const QRegularExpression& re) {
+
+    _searchExpression = re;
+    _searchMatchCount = 0;
+    _searchIndex      = -1;
+    _searchBoxes.clear();
+
+    for (QGraphicsItem* item : _scene->items()) {
+        if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
+
+            int count = box->setSearchExpression(re);
+
+            if (count > 0) {
+                _searchMatchCount += count;
+                _searchBoxes.append(box);
+            }
+        }
+    }
+
+    // Visit matches in reading order: top-to-bottom, then left-to-right.
+    std::sort(_searchBoxes.begin(), _searchBoxes.end(), [](const QPointer<SeerParallelStacksStackBoxItem>& a, const QPointer<SeerParallelStacksStackBoxItem>& b) {
+        const QPointF pa = a->scenePos();
+        const QPointF pb = b->scenePos();
+        return pa.y() != pb.y() ? pa.y() < pb.y() : pa.x() < pb.x();
+    });
+
+    if (_miniMap) _miniMap->refresh();
+}
+
+int SeerParallelStacksGraphicsView::searchMatchCount() const {
+
+    return _searchMatchCount;
+}
+
+int SeerParallelStacksGraphicsView::searchBoxCount() const {
+
+    return _searchBoxes.size();
+}
+
+int SeerParallelStacksGraphicsView::searchCurrentIndex() const {
+
+    return _searchIndex;
+}
+
+void SeerParallelStacksGraphicsView::findNextSearchMatch(bool backward) {
+
+    const int n = _searchBoxes.size();
+
+    if (n == 0) {
+        return;
+    }
+
+    if (_searchIndex >= 0 && _searchIndex < n && _searchBoxes[_searchIndex]) {
+        _searchBoxes[_searchIndex]->setCurrentSearchMatch(false);
+    }
+
+    if (_searchIndex < 0) {
+        _searchIndex = backward ? n - 1 : 0;
+    }else{
+        _searchIndex = (_searchIndex + (backward ? n - 1 : 1)) % n;
+    }
+
+    // The boxes are gone if the scene was cleared behind our back.
+    SeerParallelStacksStackBoxItem* box = _searchBoxes[_searchIndex];
+
+    if (box == nullptr) {
+        return;
+    }
+
+    box->setCurrentSearchMatch(true);
+
+    centerOn(box);
+}

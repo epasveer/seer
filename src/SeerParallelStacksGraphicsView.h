@@ -10,6 +10,8 @@
 #include <QPointF>
 #include <QVector>
 #include <QStringList>
+#include <QPointer>
+#include <QRegularExpression>
 
 class SeerParallelStacksPopupTableWidget;
 
@@ -63,6 +65,16 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // accent-colored border).
         void                    setPivot                (bool flag);
 
+        // Marks every frame row whose function matches re (an empty or
+        // invalid re clears them). A "[...]" row matches if any of the
+        // frames it stands in for does. Returns the number of matching rows.
+        int                     setSearchExpression     (const QRegularExpression& re);
+        bool                    hasSearchMatch          () const;
+
+        // Marks this box as the search match the view last jumped to
+        // (drawn with a search-colored border).
+        void                    setCurrentSearchMatch   (bool flag);
+
     signals:
         // Forwarded from this box's popup table when a row is selected there.
         void                    selectedThread          (int threadId);
@@ -99,10 +111,13 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         SeerParallelStacksStack                         _stack;
         QStringList                                     _frameRows;
         QVector<int>                                    _frameRowDepths;    // parallel to _frameRows; each row's frame depth() (kNoFrameDepth for a "[...]" placeholder row)
+        QVector<bool>                                   _frameRowMatches;   // parallel to _frameRows; row matches the search expression
+        QStringList                                     _hiddenFrameRows;   // the frames the "[...]" row stands in for
         SeerParallelStacksSettings                      _settings;
         bool                                            _isActiveStack  = false;  // holds the graph's current thread
         int                                             _highlightedFrameDepth = kNoFrameDepth;  // bolded iff _isActiveStack is also true
         bool                                            _isPivot        = false;  // Method View's pivot box
+        bool                                            _isCurrentSearchMatch = false;  // the search match last jumped to
         QString                                         _headerLeft;
         qreal                                           _width          = 0;
         qreal                                           _height         = 0;
@@ -282,6 +297,18 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         // highlightDirectedGraph() uses, since it always knows both together.
         void            setCurrentHighlight             (int threadId, int frameDepth);
 
+        // Highlights every frame row, in every box, whose function matches
+        // re (an empty or invalid re clears it). Not kept across rebuilds —
+        // the caller re-applies it after setStack()/setMethodStacks().
+        void            setSearchExpression             (const QRegularExpression& re);
+        int             searchMatchCount                () const;   // matching frame rows
+        int             searchBoxCount                  () const;   // boxes holding at least one
+        int             searchCurrentIndex              () const;   // index of the box last jumped to, -1 if none
+
+        // Centers the view on the next (or previous) box holding a match,
+        // wrapping around. Boxes are visited top-to-bottom, left-to-right.
+        void            findNextSearchMatch             (bool backward = false);
+
     signals:
         // Forwarded from whichever StackBoxItem's popup table had a row selected.
         void            selectedThread                  (int threadId);
@@ -386,6 +413,11 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
 
         int                                         _currentThreadId   = -1;   // the graph's current thread; reset from gdb's real one on every setStack() refresh
         int                                         _currentFrameDepth = kNoFrameDepth;   // the graph's current frame depth(); reset from gdb's real one on every setStack() refresh
+
+        QRegularExpression                          _searchExpression;
+        QVector<QPointer<SeerParallelStacksStackBoxItem>> _searchBoxes;         // boxes holding a match; QPointer since a scene clear deletes them
+        int                                         _searchMatchCount  = 0;
+        int                                         _searchIndex       = -1;
 
         friend class SeerParallelStacksMiniMapWidget;    // needs sceneRect()/mapToScene()/centerOn() access
 };
