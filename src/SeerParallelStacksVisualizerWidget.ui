@@ -67,6 +67,23 @@ Ctrl+F to focus.</string>
       </widget>
      </item>
      <item>
+      <widget class="QToolButton" name="filterToolButton">
+       <property name="toolTip">
+        <string>Show only the threads that pass through the selected libraries, functions or threads.</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/view-filter.svg</normaloff>:/seer/resources/RelaxLightIcons/view-filter.svg</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="Line" name="line_4">
        <property name="orientation">
         <enum>Qt::Vertical</enum>

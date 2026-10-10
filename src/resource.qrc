@@ -43,6 +43,7 @@
     <file>resources/RelaxLightIcons/list-add.svg</file>
     <file>resources/RelaxLightIcons/list-remove.svg</file>
     <file>resources/RelaxLightIcons/view-refresh.svg</file>
+    <file>resources/RelaxLightIcons/view-filter.svg</file>
     <file>resources/RelaxLightIcons/debug-execute-from-cursor.svg</file>
     <file>resources/RelaxLightIcons/debug-execute-to-cursor.svg</file>
     <file>resources/RelaxLightIcons/debug-run-cursor.svg</file>

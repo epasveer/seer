@@ -45,6 +45,22 @@ Typing jumps to the first matching node. 'Enter' (or 'Ctrl+G') moves to the next
 (or 'Ctrl+Shift+G') to the previous one. The label beside the field shows which match you're on; hover over it for the
 total count of matching frames. The search is reapplied whenever the graph is refreshed.
 
+### Filter
+
+The filter button (the funnel) opens a list of every library, function and thread found in the threads' stacks, arranged
+as a tree: library, then the functions in that library, then the threads that call each function. Frames with no shared
+library (the program itself) are listed under '(program)'. The text field at the top narrows the list.
+
+Checking items hides every thread that doesn't pass through them. A thread is shown if any of its frames is in a checked
+library or a checked function, or if the thread itself is checked. Checking a library or function checks everything under it.
+The graph updates as you check items, and the filter button stays pressed while a filter is active. Hover over it to see
+how many threads are shown.
+
+'Clear Filters' unchecks everything and shows all threads again.
+
+The filter applies to both the 'Stack' and 'Method' views, and is kept when the graph is refreshed. Libraries and functions
+are remembered by name and threads by id, so they apply to whatever stacks the next refresh brings.
+
 ### ParallelStacks interaction
 
 Available Quick keys while in the ParallelStacks Visualizer:

@@ -4,6 +4,7 @@
 
 #include "SeerParallelStacksVisualizerWidget.h"
 #include "SeerParallelStacksSettingsDialog.h"
+#include "SeerParallelStacksFilterWidget.h"
 #include "SeerParallelStacksCommon.h"
 #include "SeerHelpPageDialog.h"
 #include "SeerUtl.h"
@@ -13,6 +14,7 @@
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
 #include <QtGui/QShortcut>
+#include <QtGui/QScreen>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
@@ -57,6 +59,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(searchLineEdit,                &QLineEdit::textChanged,                         this,  &SeerParallelStacksVisualizerWidget::handleSearchTextChanged);
     QObject::connect(searchLineEdit,                &QLineEdit::returnPressed,                       this,  &SeerParallelStacksVisualizerWidget::handleSearchReturnPressed);
     QObject::connect(searchRegexCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::handleSearchRegexToggled);
+    QObject::connect(filterToolButton,              &QToolButton::clicked,                           this,  &SeerParallelStacksVisualizerWidget::handleFilterButton);
 
     // Same search keys as the source editor.
     QShortcut* searchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")),       this);
@@ -73,6 +76,8 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Restore window settings.
     readSettings();
+
+    updateFilterButton();
 }
 
 SeerParallelStacksVisualizerWidget::~SeerParallelStacksVisualizerWidget () {
@@ -268,6 +273,8 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
             createDirectedGraph();
             highlightDirectedGraph(_currentThreadId, _currentFrameLevel);
+
+            updateFilterButton();
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
@@ -537,6 +544,95 @@ void SeerParallelStacksVisualizerWidget::updateSearchStatus () {
     searchStatusLabel->setToolTip(QString("%1 matching frame%2 in %3 node%4.").arg(frames).arg(frames == 1 ? "" : "s").arg(boxes).arg(boxes == 1 ? "" : "s"));
 }
 
+void SeerParallelStacksVisualizerWidget::handleFilterButton () {
+
+    // The button only opens the popup. Its checked state reflects whether a
+    // filter is active, so undo the click's own toggle.
+    updateFilterButton();
+
+    if (_filterPopup == nullptr) {
+        _filterPopup = new SeerParallelStacksFilterWidget(this);
+
+        QObject::connect(_filterPopup, &SeerParallelStacksFilterWidget::filterChanged, this, &SeerParallelStacksVisualizerWidget::handleFilterChanged);
+    }
+
+    _filterPopup->setThreads(_threads, _filterLibraries, _filterFunctions, _filterThreadIds);
+
+    // Place it like a menu: below the button, or above it if there's no room
+    // (the toolbar sits at the bottom of the window).
+    QPoint below = filterToolButton->mapToGlobal(QPoint(0, filterToolButton->height()));
+    QPoint above = filterToolButton->mapToGlobal(QPoint(0, -_filterPopup->height()));
+
+    QScreen* screen = filterToolButton->screen();
+
+    if (screen != nullptr && below.y() + _filterPopup->height() > screen->availableGeometry().bottom()) {
+        _filterPopup->move(above);
+    }else{
+        _filterPopup->move(below);
+    }
+
+    _filterPopup->show();
+    _filterPopup->raise();
+}
+
+void SeerParallelStacksVisualizerWidget::handleFilterChanged () {
+
+    _filterLibraries = _filterPopup->libraries();
+    _filterFunctions = _filterPopup->functions();
+    _filterThreadIds = _filterPopup->threadIds();
+
+    // Redraw scene with the new filter.
+    createDirectedGraph();
+    highlightDirectedGraph(_currentThreadId, _currentFrameLevel);
+
+    updateFilterButton();
+}
+
+bool SeerParallelStacksVisualizerWidget::isFiltered () const {
+
+    return !_filterLibraries.isEmpty() || !_filterFunctions.isEmpty() || !_filterThreadIds.isEmpty();
+}
+
+SeerParallelStacksThreads SeerParallelStacksVisualizerWidget::filteredThreads () const {
+
+    if (isFiltered() == false) {
+        return _threads;
+    }
+
+    SeerParallelStacksThreads threads;
+
+    for (const auto& t : _threads) {
+
+        bool keep = _filterThreadIds.contains(t.id());
+
+        for (int i = 0; keep == false && i < t.frameCount(); ++i) {
+
+            const SeerParallelStacksFrame& f = t.frame(i);
+
+            keep = _filterFunctions.contains(f.functionOrAddr()) || _filterLibraries.contains(SeerParallelStacksFilterWidget::libraryOf(f));
+        }
+
+        if (keep) {
+            threads.push_back(t);
+        }
+    }
+
+    return threads;
+}
+
+void SeerParallelStacksVisualizerWidget::updateFilterButton () {
+
+    const QString tooltip = "Show only the threads that pass through the selected libraries, functions or threads.";
+
+    filterToolButton->setChecked(isFiltered());
+
+    if (isFiltered()) {
+        filterToolButton->setToolTip(tooltip + QString("\n\n%1 of %2 threads shown.").arg(filteredThreads().size()).arg(_threads.size()));
+    }else{
+        filterToolButton->setToolTip(tooltip);
+    }
+}
+
 void SeerParallelStacksVisualizerWidget::writeSettings() {
 
     QSettings settings;
@@ -607,7 +703,7 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
         _methodPivot = currentPivotFunction();
 
-        SeerParallelStacksMethodStacks method = SeerParallelStacksBuildMethodStacks(_threads, _methodPivot);
+        SeerParallelStacksMethodStacks method = SeerParallelStacksBuildMethodStacks(filteredThreads(), _methodPivot);
 
         graphicsView->setMethodStacks(method, settings());
 
@@ -620,7 +716,7 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
     // Build parallel-stacks tree. Purely structural — no highlighting here;
     // see highlightDirectedGraph().
-    SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_threads);
+    SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(filteredThreads());
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack, settings());
