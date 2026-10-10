@@ -32,16 +32,29 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Highlight every frame in the graph whose function matches this regular expression (case-insensitive).
+        <string>Highlight every frame in the graph whose function matches this text (case-insensitive).
 
 Enter or Ctrl+G jumps to the next matching node.
 Shift+Enter or Ctrl+Shift+G to the previous one.
 Ctrl+F to focus.</string>
        </property>
        <property name="placeholderText">
-        <string>Search functions (regex)</string>
+        <string>Search functions</string>
        </property>
        <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="searchRegexCheckBox">
+       <property name="toolTip">
+        <string>Treat the search text as a regular expression. Unchecked, it's matched as plain text.</string>
+       </property>
+       <property name="text">
+        <string>Regex</string>
+       </property>
+       <property name="checked">
         <bool>true</bool>
        </property>
       </widget>

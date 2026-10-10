@@ -66,6 +66,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleThemeChanged                  ();
         void                        handleViewModeChanged               (const QString& mode);
         void                        handleSearchTextChanged             ();
+        void                        handleSearchRegexToggled            ();
         void                        handleSearchReturnPressed           ();
         void                        handleSearchShortcut                ();
         void                        handleSearchNext                    ();

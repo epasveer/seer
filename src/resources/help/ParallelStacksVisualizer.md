@@ -36,8 +36,9 @@ thread or stack frame browsers, or in the graph's own thread popup) re-pivots th
 
 ### Search
 
-The search field highlights every frame, in every node, whose function name matches the typed regular expression
-(case-insensitive). Matching nodes are also colored in the minimap. If a node's middle frames are hidden by the stack size
+The search field highlights every frame, in every node, whose function name matches the typed text (case-insensitive).
+With 'Regex' checked, the text is a regular expression. Unchecked, it's matched as plain text, so characters like '(', '*'
+or '[' need no escaping. Matching nodes are also colored in the minimap. If a node's middle frames are hidden by the stack size
 setting, its '[...]' row is highlighted when any of those hidden frames match.
 
 Typing jumps to the first matching node. 'Enter' (or 'Ctrl+G') moves to the next matching node and 'Shift+Enter'

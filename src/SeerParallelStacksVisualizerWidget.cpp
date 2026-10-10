@@ -56,6 +56,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(autoRefreshCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::writeSettings);
     QObject::connect(searchLineEdit,                &QLineEdit::textChanged,                         this,  &SeerParallelStacksVisualizerWidget::handleSearchTextChanged);
     QObject::connect(searchLineEdit,                &QLineEdit::returnPressed,                       this,  &SeerParallelStacksVisualizerWidget::handleSearchReturnPressed);
+    QObject::connect(searchRegexCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::handleSearchRegexToggled);
 
     // Same search keys as the source editor.
     QShortcut* searchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")),       this);
@@ -447,6 +448,13 @@ void SeerParallelStacksVisualizerWidget::handleSearchTextChanged () {
     applySearch(true);
 }
 
+void SeerParallelStacksVisualizerWidget::handleSearchRegexToggled () {
+
+    writeSettings();
+
+    applySearch(true);
+}
+
 void SeerParallelStacksVisualizerWidget::handleSearchReturnPressed () {
 
     // returnPressed carries no modifiers, so ask for them.
@@ -481,7 +489,10 @@ void SeerParallelStacksVisualizerWidget::applySearch (bool jumpToFirst) {
 
     const QString text = searchLineEdit->text();
 
-    QRegularExpression re(text, QRegularExpression::CaseInsensitiveOption);
+    // Plain text is escaped so characters like '(' or '*' match literally.
+    const QString pattern = searchRegexCheckBox->isChecked() ? text : QRegularExpression::escape(text);
+
+    QRegularExpression re(pattern, QRegularExpression::CaseInsensitiveOption);
 
     // Highlight nothing until the expression is complete.
     if (re.isValid() == false) {
@@ -540,6 +551,7 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
         settings.setValue("showminimapmode",      _settings.showMinimapMode);
         settings.setValue("viewmode",             _settings.viewMode);
         settings.setValue("autorefresh",          autoRefreshCheckBox->isChecked());
+        settings.setValue("searchregex",          searchRegexCheckBox->isChecked());
     } settings.endGroup();
 }
 
@@ -568,6 +580,10 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
         viewModeComboBox->setCurrentText(_settings.viewMode);
 
         autoRefreshCheckBox->setChecked(settings.value("autorefresh", false).toBool());
+
+        // No graph to search yet, so don't let the change trigger one.
+        QSignalBlocker regexBlocker(searchRegexCheckBox);
+        searchRegexCheckBox->setChecked(settings.value("searchregex", true).toBool());
 
     } settings.endGroup();
 }
