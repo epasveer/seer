@@ -28,11 +28,22 @@ merging every thread that calls it, however it got there. Threads that never cal
 * Above the pivot are its callees — what each of those threads is doing inside it.
 * Below the pivot are its callers — the paths that led to it, down to each thread's entry point.
 
-The message line shows the pivot function and how many threads call it. If the function is recursive, the graph pivots on
+The pivot box's header shows how many threads call the function. If the function is recursive, the graph pivots on
 its innermost call.
 
 Like the Visual Studio feature, Method View follows the debugger: selecting a different thread or stack frame (in Seer's
 thread or stack frame browsers, or in the graph's own thread popup) re-pivots the graph on that frame's function.
+
+### Search
+
+The search field highlights every frame, in every node, whose function name matches the typed text (case-insensitive).
+With 'Regex' checked, the text is a regular expression. Unchecked, it's matched as plain text, so characters like '(', '*'
+or '[' need no escaping. Matching nodes are also colored in the minimap. If a node's middle frames are hidden by the stack size
+setting, its '[...]' row is highlighted when any of those hidden frames match.
+
+Typing jumps to the first matching node. 'Enter' (or 'Ctrl+G') moves to the next matching node and 'Shift+Enter'
+(or 'Ctrl+Shift+G') to the previous one. The label beside the field shows which match you're on; hover over it for the
+total count of matching frames. The search is reapplied whenever the graph is refreshed.
 
 ### ParallelStacks interaction
 
@@ -42,6 +53,9 @@ Available Quick keys while in the ParallelStacks Visualizer:
     '-'             Zoom out.
     MouseScroll     Zoom in and out.
     ESC             Reset to default zoom level.
+    Ctrl+F          Focus the search field.
+    Ctrl+G          Jump to the next search match.
+    Ctrl+Shift+G    Jump to the previous search match.
     Shift+LMB       Grab a stack node so it
                     can be moved.
     Hover           Over a stack node to pop-up

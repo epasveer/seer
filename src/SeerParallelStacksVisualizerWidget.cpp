@@ -12,6 +12,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtGui/QIntValidator>
 #include <QtGui/QIcon>
+#include <QtGui/QShortcut>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
 #include <QtGui/QGuiApplication>
 #include <QtGui/QStyleHints>
@@ -24,6 +25,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QSignalBlocker>
 #include <QtCore/QTimer>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QDebug>
 
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
@@ -52,6 +54,18 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThread, this,  &SeerParallelStacksVisualizerWidget::handleGraphThreadSelected);
     QObject::connect(viewModeComboBox,              &QComboBox::currentTextChanged,                  this,  &SeerParallelStacksVisualizerWidget::handleViewModeChanged);
     QObject::connect(autoRefreshCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::writeSettings);
+    QObject::connect(searchLineEdit,                &QLineEdit::textChanged,                         this,  &SeerParallelStacksVisualizerWidget::handleSearchTextChanged);
+    QObject::connect(searchLineEdit,                &QLineEdit::returnPressed,                       this,  &SeerParallelStacksVisualizerWidget::handleSearchReturnPressed);
+    QObject::connect(searchRegexCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::handleSearchRegexToggled);
+
+    // Same search keys as the source editor.
+    QShortcut* searchShortcut     = new QShortcut(QKeySequence(tr("Ctrl+F")),       this);
+    QShortcut* searchNextShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")),       this);
+    QShortcut* searchPrevShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+G")), this);
+
+    QObject::connect(searchShortcut,                &QShortcut::activated,                           this,  &SeerParallelStacksVisualizerWidget::handleSearchShortcut);
+    QObject::connect(searchNextShortcut,            &QShortcut::activated,                           this,  &SeerParallelStacksVisualizerWidget::handleSearchNext);
+    QObject::connect(searchPrevShortcut,            &QShortcut::activated,                           this,  &SeerParallelStacksVisualizerWidget::handleSearchPrevious);
 
     // Colorize icons and the graph for theme.
     Seer::colorizeAllIcons(this, Seer::iconColorTheme());
@@ -263,6 +277,8 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
             scene->clear();
         }
 
+        applySearch(false);
+
     // At a stopping point, refresh.
     }else if (text.startsWith("*stopped,reason=\"")) {
 
@@ -278,9 +294,6 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 }
 
 void SeerParallelStacksVisualizerWidget::handleRefreshButton () {
-
-    // Clear the status.
-    messageLineEdit->setText("");
 
     emit refreshParallelStackFrames(_id);
 }
@@ -430,6 +443,100 @@ void SeerParallelStacksVisualizerWidget::handleViewModeChanged (const QString& m
     highlightDirectedGraph(_currentThreadId, _currentFrameLevel);
 }
 
+void SeerParallelStacksVisualizerWidget::handleSearchTextChanged () {
+
+    applySearch(true);
+}
+
+void SeerParallelStacksVisualizerWidget::handleSearchRegexToggled () {
+
+    writeSettings();
+
+    applySearch(true);
+}
+
+void SeerParallelStacksVisualizerWidget::handleSearchReturnPressed () {
+
+    // returnPressed carries no modifiers, so ask for them.
+    if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+        handleSearchPrevious();
+    }else{
+        handleSearchNext();
+    }
+}
+
+void SeerParallelStacksVisualizerWidget::handleSearchShortcut () {
+
+    searchLineEdit->setFocus(Qt::ShortcutFocusReason);
+    searchLineEdit->selectAll();
+}
+
+void SeerParallelStacksVisualizerWidget::handleSearchNext () {
+
+    graphicsView->findNextSearchMatch(false);
+
+    updateSearchStatus();
+}
+
+void SeerParallelStacksVisualizerWidget::handleSearchPrevious () {
+
+    graphicsView->findNextSearchMatch(true);
+
+    updateSearchStatus();
+}
+
+void SeerParallelStacksVisualizerWidget::applySearch (bool jumpToFirst) {
+
+    const QString text = searchLineEdit->text();
+
+    // Plain text is escaped so characters like '(' or '*' match literally.
+    const QString pattern = searchRegexCheckBox->isChecked() ? text : QRegularExpression::escape(text);
+
+    QRegularExpression re(pattern, QRegularExpression::CaseInsensitiveOption);
+
+    // Highlight nothing until the expression is complete.
+    if (re.isValid() == false) {
+
+        graphicsView->setSearchExpression(QRegularExpression());
+
+        searchStatusLabel->setText("Bad expression");
+        searchStatusLabel->setToolTip(re.errorString());
+
+        return;
+    }
+
+    graphicsView->setSearchExpression(re);
+
+    if (jumpToFirst) {
+        graphicsView->findNextSearchMatch(false);
+    }
+
+    updateSearchStatus();
+}
+
+void SeerParallelStacksVisualizerWidget::updateSearchStatus () {
+
+    if (searchLineEdit->text().isEmpty()) {
+        searchStatusLabel->setText("");
+        searchStatusLabel->setToolTip("");
+        return;
+    }
+
+    const int boxes  = graphicsView->searchBoxCount();
+    const int frames = graphicsView->searchMatchCount();
+    const int index  = graphicsView->searchCurrentIndex();
+
+    if (boxes == 0) {
+        searchStatusLabel->setText("No matches");
+    }else if (index < 0) {
+        searchStatusLabel->setText(QString("%1 node%2").arg(boxes).arg(boxes == 1 ? "" : "s"));
+    }else{
+        searchStatusLabel->setText(QString("%1 of %2").arg(index + 1).arg(boxes));
+    }
+
+    searchStatusLabel->setToolTip(QString("%1 matching frame%2 in %3 node%4.").arg(frames).arg(frames == 1 ? "" : "s").arg(boxes).arg(boxes == 1 ? "" : "s"));
+}
+
 void SeerParallelStacksVisualizerWidget::writeSettings() {
 
     QSettings settings;
@@ -444,6 +551,7 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
         settings.setValue("showminimapmode",      _settings.showMinimapMode);
         settings.setValue("viewmode",             _settings.viewMode);
         settings.setValue("autorefresh",          autoRefreshCheckBox->isChecked());
+        settings.setValue("searchregex",          searchRegexCheckBox->isChecked());
     } settings.endGroup();
 }
 
@@ -473,6 +581,10 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
 
         autoRefreshCheckBox->setChecked(settings.value("autorefresh", false).toBool());
 
+        // No graph to search yet, so don't let the change trigger one.
+        QSignalBlocker regexBlocker(searchRegexCheckBox);
+        searchRegexCheckBox->setChecked(settings.value("searchregex", true).toBool());
+
     } settings.endGroup();
 }
 
@@ -499,17 +611,12 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
         graphicsView->setMethodStacks(method, settings());
 
-        if (_methodPivot.isEmpty()) {
-            messageLineEdit->setText("Method View: no current frame to pivot on.");
-        }else{
-            messageLineEdit->setText(QString("Method View: %1 (%2 of %3 threads)").arg(_methodPivot).arg(method.threadCount).arg(_threads.size()));
-        }
+        applySearch(false);
 
         return;
     }
 
     _methodPivot.clear();
-    messageLineEdit->setText("");
 
     // Build parallel-stacks tree. Purely structural — no highlighting here;
     // see highlightDirectedGraph().
@@ -517,6 +624,8 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack, settings());
+
+    applySearch(false);
 }
 
 

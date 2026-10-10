@@ -65,6 +65,12 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleSettingsButton                ();
         void                        handleThemeChanged                  ();
         void                        handleViewModeChanged               (const QString& mode);
+        void                        handleSearchTextChanged             ();
+        void                        handleSearchRegexToggled            ();
+        void                        handleSearchReturnPressed           ();
+        void                        handleSearchShortcut                ();
+        void                        handleSearchNext                    ();
+        void                        handleSearchPrevious                ();
 
         // A thread was picked in one of the graph's popup tables.
         void                        handleGraphThreadSelected           (int threadId);
@@ -87,6 +93,12 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         // Visual Studio), so the graph has to be rebuilt, not just
         // re-highlighted. Threads view only needs the re-highlight.
         void                        updateForSelection                  ();
+
+        // Re-runs the search field's expression against the current graph
+        // (a rebuild discards the old highlights), optionally jumping to the
+        // first match, and refreshes the match-count label.
+        void                        applySearch                         (bool jumpToFirst);
+        void                        updateSearchStatus                  ();
 
         int                         _id;
         SeerParallelStacksThreads   _threads;

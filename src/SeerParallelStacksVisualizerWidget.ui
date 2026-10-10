@@ -24,12 +24,52 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLineEdit" name="messageLineEdit">
-       <property name="frame">
+      <widget class="QLineEdit" name="searchLineEdit">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Highlight every frame in the graph whose function matches this text (case-insensitive).
+
+Enter or Ctrl+G jumps to the next matching node.
+Shift+Enter or Ctrl+Shift+G to the previous one.
+Ctrl+F to focus.</string>
+       </property>
+       <property name="placeholderText">
+        <string>Search functions</string>
+       </property>
+       <property name="clearButtonEnabled">
         <bool>true</bool>
        </property>
-       <property name="readOnly">
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="searchRegexCheckBox">
+       <property name="toolTip">
+        <string>Treat the search text as a regular expression. Unchecked, it's matched as plain text.</string>
+       </property>
+       <property name="text">
+        <string>Regex</string>
+       </property>
+       <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="searchStatusLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
