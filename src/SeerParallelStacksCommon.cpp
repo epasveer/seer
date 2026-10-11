@@ -84,6 +84,37 @@ const QString& SeerParallelStacksFrame::type () const {
     return _type;
 }
 
+bool SeerParallelStacksFrame::hasDebugInfo () const {
+
+    return _file.isEmpty() == false || _fullname.isEmpty() == false;
+}
+
+SeerParallelStacksFrame SeerParallelStacksFrame::externalCodeFrame (int level) {
+
+    SeerParallelStacksFrame frame;
+    frame._level          = level;
+    frame._line           = 0;
+    frame._function       = "[External Code]";
+    frame._isExternalCode = true;
+
+    return frame;
+}
+
+bool SeerParallelStacksFrame::isExternalCode () const {
+    return _isExternalCode;
+}
+
+const QStringList& SeerParallelStacksFrame::externalFunctions () const {
+    return _externalFunctions;
+}
+
+void SeerParallelStacksFrame::addExternalFunction (const QString& function) {
+
+    if (_externalFunctions.contains(function) == false) {
+        _externalFunctions.append(function);
+    }
+}
+
 QString SeerParallelStacksFrame::toString() const {
     // XXX return QString("level: %1, address: '%2', function: '%3', file: '%4', fullname: '%5'") .arg(_level).arg(_addr).arg(_function).arg(_file).arg(_fullname);
     return QString("level: %1, address: '%2', file: '%3', fullname: '%4'") .arg(_level).arg(_addr).arg(_file).arg(_fullname);
@@ -171,6 +202,23 @@ int SeerParallelStacksThread::indexOfFunction (const QString& function) const {
     return -1;
 }
 
+int SeerParallelStacksThread::indexOfLevel (int level) const {
+
+    // Frames are innermost-first with increasing levels. An "[External Code]"
+    // frame carries the level of the innermost frame it merged, so the
+    // covering frame is the last one whose level is <= level.
+    int index = -1;
+
+    for (int i = 0; i < _frames.size(); ++i) {
+        if (_frames[i].level() > level) {
+            break;
+        }
+        index = i;
+    }
+
+    return index;
+}
+
 QString SeerParallelStacksThread::toString() const {
 
     QString result = QString("Thread %1: #Frames %2").arg(_id).arg(QString::number(_frames.size()));
@@ -210,6 +258,13 @@ static SeerParallelStacksNode buildImpl(const SeerParallelStacksThreads& threads
 
         if (functionFrames.contains(fn) == false) {
             functionFrames[fn] = frame;
+
+        }else if (frame.isExternalCode()) {
+            // Threads sharing this "[External Code]" node may have come
+            // through different external functions. List them all.
+            for (const QString& f : frame.externalFunctions()) {
+                functionFrames[fn].addExternalFunction(f);
+            }
         }
 
         functionThreads[fn].append(t);
@@ -384,3 +439,42 @@ SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks(const SeerPar
     return result;
 }
 
+
+// ---------------------------------------------------------------
+// Merge each run of consecutive frames without debug info into a single
+// "[External Code]" frame, like Visual Studio's "Show External Code" off.
+// Done before building the tree, so threads that differ only inside
+// library code end up sharing a node.
+// ---------------------------------------------------------------
+SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode(const SeerParallelStacksThreads& threads, const QString& keepFunction) {
+
+    SeerParallelStacksThreads result;
+
+    for (const SeerParallelStacksThread& t : threads) {
+
+        SeerParallelStacksFrames frames;
+        bool                     inRun = false;
+
+        for (const SeerParallelStacksFrame& f : t.frames()) {
+
+            bool external = f.hasDebugInfo() == false && (keepFunction.isEmpty() || f.functionOrAddr() != keepFunction);
+
+            if (external == false) {
+                frames.append(f);
+                inRun = false;
+                continue;
+            }
+
+            if (inRun == false) {
+                frames.append(SeerParallelStacksFrame::externalCodeFrame(f.level()));
+                inRun = true;
+            }
+
+            frames.last().addExternalFunction(f.functionOrAddr());
+        }
+
+        result.append(t.withFrames(frames));
+    }
+
+    return result;
+}

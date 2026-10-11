@@ -7,6 +7,7 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QVector>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <limits>
 
 // Sentinel for "no frame depth" (no highlight, or a "[...]" placeholder
@@ -32,6 +33,21 @@ class SeerParallelStacksFrame {
         int                 line            () const;
         const QString&      type            () const;
         QString             toString        () const;
+
+        // A frame with no source file — library or system code built
+        // without debug info.
+        bool                hasDebugInfo    () const;
+
+        // A run of consecutive frames without debug info, merged into one
+        // "[External Code]" frame (see SeerParallelStacksCollapseExternalCode()).
+        // Its level() is that of the innermost frame in the run, and
+        // externalFunctions() lists the functions it stands in for. When
+        // threads are merged into one node, the node's frame lists those of
+        // every thread.
+        static SeerParallelStacksFrame  externalCodeFrame   (int level);
+        bool                            isExternalCode      () const;
+        const QStringList&              externalFunctions   () const;
+        void                            addExternalFunction (const QString& function);
 
         // Distance from the bottom (outermost/root) frame of whichever
         // thread this frame was sampled from — unlike level() (that
@@ -61,6 +77,8 @@ class SeerParallelStacksFrame {
         int                 _line;
         QString             _type;
         int                 _depth = kNoFrameDepth;
+        bool                _isExternalCode = false;
+        QStringList         _externalFunctions;
 };
 
 typedef QVector<SeerParallelStacksFrame> SeerParallelStacksFrames;
@@ -91,6 +109,10 @@ class SeerParallelStacksThread {
         // Index (== level) of the innermost frame whose function() is
         // function, or -1 if this thread never calls it.
         int                                     indexOfFunction (const QString& function) const;
+
+        // Index of the frame covering gdb frame level — the frame itself,
+        // or the "[External Code]" frame it was merged into. -1 if none.
+        int                                     indexOfLevel    (int level) const;
 
     private:
         int                                     _id;
@@ -140,9 +162,11 @@ struct SeerParallelStacksSettings {
     int      functionNameLength;
     bool     showFullStackSize;
     int      stackSize;
+    bool     showExternalCode;      // false: merge frames without debug info into "[External Code]"
 };
 
 SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const SeerParallelStacksThreads& threads);   // Build the parallel-stacks tree from a flat list of threads.
 SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node, bool downward = false);  // downward: parent box sits above its children (Method View callers).
 SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks  (const SeerParallelStacksThreads& threads, const QString& pivotFunction);  // Build Method View's two halves around pivotFunction.
+SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode    (const SeerParallelStacksThreads& threads, const QString& keepFunction = QString());  // Merge each run of frames without debug info into one "[External Code]" frame. Frames of keepFunction (Method View's pivot) are left alone.
 

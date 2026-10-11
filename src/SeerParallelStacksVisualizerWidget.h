@@ -110,10 +110,16 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         // function, or that are checked themselves.
         SeerParallelStacksThreads   filteredThreads                     () const;
         bool                        isFiltered                          () const;
+
+        // filteredThreads() as drawn: with frames lacking debug info merged
+        // into "[External Code]" unless showExternalCode is set. In Method
+        // View, pivot's own frames are kept so it can still be found.
+        SeerParallelStacksThreads   graphThreads                        (const QString& pivot) const;
         void                        updateFilterButton                  ();
 
         int                         _id;
         SeerParallelStacksThreads   _threads;
+        SeerParallelStacksThreads   _graphThreads;          // the threads the current graph was built from (see graphThreads())
         int                         _currentThreadId    = -1;
         int                         _currentFrameLevel  = 0;
         QString                     _methodPivot;           // the pivot the current Method View graph was built on

@@ -197,7 +197,7 @@ Ctrl+F to focus.</string>
      <item>
       <widget class="QToolButton" name="helpToolButton">
        <property name="toolTip">
-        <string>Help on Image Visualizer</string>
+        <string>Help on ParallelStacks Visualizer</string>
        </property>
        <property name="text">
         <string/>
