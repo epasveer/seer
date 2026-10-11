@@ -1442,21 +1442,13 @@ void SeerParallelStacksGraphicsView::setStack(const SeerParallelStacksStack& roo
     auto* rootPN = new PlacedNode;
     buildPlacedTree(rootPN, root, settings, nullptr);
 
+    // Every box on the same level (row) shares a vertical center. Level 0
+    // (the outermost frames) is the bottom row; callees stack upward.
+    QVector<qreal> rowH;
+    collectRowHeights(rootPN, 0, rowH);
+
     qreal xCursor = 0;
-    layoutTree(rootPN, xCursor, 0);
-
-    // --- Align parentless items to a shared bottom row ---
-    // After layout, children sit above (smaller Y) their parents.
-    // Nodes whose PlacedNode parent has no item are the visual roots —
-    // they have nothing above them. We push them all to the same bottom
-    // Y so they form a flush baseline at the deepest point in the scene.
-
-    // 1. Find the maximum bottom edge across every placed item.
-    qreal maxBottom = 0;
-    collectMaxBottom(rootPN, maxBottom);
-
-    // 2. Shift each parentless item so its bottom aligns to maxBottom.
-    alignParentlessToBottom(rootPN, maxBottom);
+    layoutTree(rootPN, xCursor, 0, rowTops(rowH, true), rowH);
 
     addEdges(rootPN);
     deleteTree(rootPN);
@@ -1489,8 +1481,11 @@ void SeerParallelStacksGraphicsView::setMethodStacks(const SeerParallelStacksMet
     SeerParallelStacksStackBoxItem* pivotItem = calleePN->item;
     pivotItem->setPivot(true);
 
+    QVector<qreal> calleeRowH;
+    collectRowHeights(calleePN, 0, calleeRowH);
+
     qreal xCursor = 0;
-    layoutTree(calleePN, xCursor, 0);
+    layoutTree(calleePN, xCursor, 0, rowTops(calleeRowH, true), calleeRowH);
     addEdges(calleePN);
 
     // --- Callers: laid out downward on their own, then moved so they hang
@@ -1501,8 +1496,11 @@ void SeerParallelStacksGraphicsView::setMethodStacks(const SeerParallelStacksMet
 
     if (callerPN->item || callerPN->children.isEmpty() == false) {
 
+        QVector<qreal> callerRowH;
+        collectRowHeights(callerPN, 0, callerRowH);
+
         qreal callerX = 0;
-        layoutTreeDown(callerPN, callerX, 0);
+        layoutTreeDown(callerPN, callerX, 0, rowTops(callerRowH, false), callerRowH);
 
         qreal dx = calleePN->cx - callerPN->cx;
         qreal dy = pivotItem->y() + pivotItem->height() + kVGap;
@@ -1543,41 +1541,43 @@ void SeerParallelStacksGraphicsView::fitSceneToItems() {
     if (_miniMap) _miniMap->refresh();
 }
 
-// Recursively find the maximum bottom edge (item->y() + item->height()) in the tree.
-void SeerParallelStacksGraphicsView::collectMaxBottom(PlacedNode* pn, qreal& maxBottom) {
+// Record the tallest box on each level (row) of the tree. A node with a box
+// is on `level` and its children on `level+1`. An item-less node (only ever
+// the root) passes `level` straight through, so its children are level 0.
+void SeerParallelStacksGraphicsView::collectRowHeights(PlacedNode* pn, int level, QVector<qreal>& rowH) {
+
+    int childLevel = level;
 
     if (pn->item) {
-        maxBottom = std::max(maxBottom, pn->item->y() + pn->item->height());
+        if (rowH.size() <= level) {
+            rowH.resize(level + 1, 0);
+        }
+        rowH[level] = std::max(rowH[level], pn->item->height());
+        childLevel  = level + 1;
     }
 
     for (auto* child : pn->children) {
-        collectMaxBottom(child, maxBottom);
+        collectRowHeights(child, childLevel, rowH);
     }
 }
 
-// Shift every parentless item (direct visual root — parent has no box)
-// downward so its bottom edge sits at maxBottom.
-void SeerParallelStacksGraphicsView::alignParentlessToBottom(PlacedNode* pn, qreal maxBottom) {
+// Top y of each row. Upward trees put level 0 at the bottom with deeper
+// levels stacked above it; downward trees put level 0 at the top.
+QVector<qreal> SeerParallelStacksGraphicsView::rowTops(const QVector<qreal>& rowH, bool upward) const {
 
-    // When every thread shares the same outermost frames, FillStack() merges
-    // the root into that chain, so the root has a box of its own. It's then
-    // the only visual root and layoutTree() already put it at the bottom —
-    // its children have a parent box and must stay above it.
-    if (pn->item) {
-        return;
-    }
+    QVector<qreal> rowTop(rowH.size(), 0);
 
-    for (auto* child : pn->children) {
-        // child->parent == rootPN (which has no item), so child is parentless.
-        if (child->item) {
-            qreal currentBottom = child->item->y() + child->item->height();
-            qreal dy = maxBottom - currentBottom;
-            if (std::abs(dy) > 0.5) {
-                child->item->setPos(child->item->x(), child->item->y() + dy);
-            }
+    if (upward) {
+        for (int l = rowH.size() - 2; l >= 0; --l) {
+            rowTop[l] = rowTop[l+1] + rowH[l+1] + kVGap;
         }
-        // Do NOT recurse — only top-level parentless nodes are shifted.
+    }else{
+        for (int l = 1; l < rowH.size(); ++l) {
+            rowTop[l] = rowTop[l-1] + rowH[l-1] + kVGap;
+        }
     }
+
+    return rowTop;
 }
 
 void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerParallelStacksStack& stack, const SeerParallelStacksSettings& settings, PlacedNode* parentPN) {
@@ -1597,69 +1597,65 @@ void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerP
         buildPlacedTree(childPN, child, settings, pn);
         pn->children.append(childPN);
     }
+
+    // Order siblings from most frames to least (then most threads), left to right.
+    std::stable_sort(pn->children.begin(), pn->children.end(), [](const PlacedNode* a, const PlacedNode* b) {
+        if (a->stack.frames.size() != b->stack.frames.size()) {
+            return a->stack.frames.size() > b->stack.frames.size();
+        }
+        return a->stack.threadCount > b->stack.threadCount;
+    });
 }
 
-void SeerParallelStacksGraphicsView::layoutTree(PlacedNode* pn, qreal& xCursor, qreal yTop) {
+// Children sit above their parent, which is centered over them. Leaves
+// advance xCursor left to right. Each box is vertically centered in its
+// level's row (rowTop/rowH, from collectRowHeights()/rowTops()). Sets cx
+// (center x) and cy (bottom y).
+void SeerParallelStacksGraphicsView::layoutTree(PlacedNode* pn, qreal& xCursor, int level, const QVector<qreal>& rowTop, const QVector<qreal>& rowH) {
 
-    qreal itemW = pn->item ? pn->item->width()  : 0;
-    qreal itemH = pn->item ? pn->item->height() : 0;
+    qreal itemW      = pn->item ? pn->item->width()  : 0;
+    qreal itemH      = pn->item ? pn->item->height() : 0;
+    int   childLevel = pn->item ? level + 1 : level;
 
     if (pn->children.isEmpty()) {
         pn->cx = xCursor + itemW / 2.0;
-        if (pn->item) {
-            pn->item->setPos(xCursor, yTop);
-            pn->cy = yTop + itemH;
-        }
         xCursor += itemW + kHGap;
     }else{
-        qreal childY  = yTop;
         qreal firstCx = -1, lastCx = -1;
 
         for (auto* child : pn->children) {
-            layoutTree(child, xCursor, childY);
+            layoutTree(child, xCursor, childLevel, rowTop, rowH);
             if (firstCx < 0) firstCx = child->cx;
             lastCx = child->cx;
         }
 
         pn->cx = (firstCx + lastCx) / 2.0;
+    }
 
-        qreal maxChildBottom = childY;
-
-        for (auto* child : pn->children) {
-            maxChildBottom = std::max(maxChildBottom, child->cy);
-        }
-
-        qreal parentY = maxChildBottom + kVGap;
-
-        if (pn->item) {
-            pn->item->setPos(pn->cx - itemW / 2.0, parentY);
-            pn->cy = parentY + itemH;
-        }else{
-            pn->cy = parentY;
-        }
+    if (pn->item) {
+        qreal y = rowTop[level] + (rowH[level] - itemH) / 2.0;
+        pn->item->setPos(pn->cx - itemW / 2.0, y);
+        pn->cy = y + itemH;
     }
 }
 
 // Mirror of layoutTree(): a parent sits above its children, centered over
-// them, and each level is placed kVGap below the tallest box of the level
-// above it. Leaves still advance xCursor left to right. Sets cx (center x)
-// and cy (bottom y) the same way layoutTree() does.
-void SeerParallelStacksGraphicsView::layoutTreeDown(PlacedNode* pn, qreal& xCursor, qreal yTop) {
+// them, and level 0 is the top row. Leaves still advance xCursor left to
+// right. Sets cx (center x) and cy (bottom y) the same way layoutTree() does.
+void SeerParallelStacksGraphicsView::layoutTreeDown(PlacedNode* pn, qreal& xCursor, int level, const QVector<qreal>& rowTop, const QVector<qreal>& rowH) {
 
-    qreal itemW = pn->item ? pn->item->width()  : 0;
-    qreal itemH = pn->item ? pn->item->height() : 0;
-
-    pn->cy = yTop + itemH;
+    qreal itemW      = pn->item ? pn->item->width()  : 0;
+    qreal itemH      = pn->item ? pn->item->height() : 0;
+    int   childLevel = pn->item ? level + 1 : level;
 
     if (pn->children.isEmpty()) {
         pn->cx = xCursor + itemW / 2.0;
         xCursor += itemW + kHGap;
     }else{
-        qreal childY  = pn->item ? pn->cy + kVGap : yTop;
         qreal firstCx = -1, lastCx = -1;
 
         for (auto* child : pn->children) {
-            layoutTreeDown(child, xCursor, childY);
+            layoutTreeDown(child, xCursor, childLevel, rowTop, rowH);
             if (firstCx < 0) firstCx = child->cx;
             lastCx = child->cx;
         }
@@ -1672,7 +1668,9 @@ void SeerParallelStacksGraphicsView::layoutTreeDown(PlacedNode* pn, qreal& xCurs
     }
 
     if (pn->item) {
-        pn->item->setPos(pn->cx - itemW / 2.0, yTop);
+        qreal y = rowTop[level] + (rowH[level] - itemH) / 2.0;
+        pn->item->setPos(pn->cx - itemW / 2.0, y);
+        pn->cy = y + itemH;
     }
 }
 

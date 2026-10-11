@@ -350,11 +350,11 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         };
 
         void            buildPlacedTree             (PlacedNode* pn, const SeerParallelStacksStack& stack, const SeerParallelStacksSettings& settings, PlacedNode* parentPN);
-        void            layoutTree                  (PlacedNode* pn, qreal& xCursor, qreal yTop);
-        void            layoutTreeDown              (PlacedNode* pn, qreal& xCursor, qreal yTop);    // mirror of layoutTree(): children below their parent
+        void            collectRowHeights           (PlacedNode* pn, int level, QVector<qreal>& rowH);
+        QVector<qreal>  rowTops                     (const QVector<qreal>& rowH, bool upward) const;
+        void            layoutTree                  (PlacedNode* pn, qreal& xCursor, int level, const QVector<qreal>& rowTop, const QVector<qreal>& rowH);
+        void            layoutTreeDown              (PlacedNode* pn, qreal& xCursor, int level, const QVector<qreal>& rowTop, const QVector<qreal>& rowH);    // mirror of layoutTree(): children below their parent
         void            translateTree               (PlacedNode* pn, qreal dx, qreal dy);
-        void            collectMaxBottom            (PlacedNode* pn, qreal& maxBottom);
-        void            alignParentlessToBottom     (PlacedNode* pn, qreal maxBottom);
         void            addEdges                    (PlacedNode* pn);
         void            addEdgesDown                (PlacedNode* pn, SeerParallelStacksStackBoxItem* above);   // edges for a layoutTreeDown() tree hanging below `above`
 
