@@ -18,6 +18,7 @@ SeerParallelStacksSettingsDialog::SeerParallelStacksSettingsDialog (QWidget* par
     setFunctionNameLength(64);
     setShowFullStackSize(true);
     setStackSize(20);
+    setShowExternalCode(false);
 
     // Connect things.
     QObject::connect(functionNameLengthAllCheckBox,  &QCheckBox::clicked,         this,  &SeerParallelStacksSettingsDialog::handleFunctionNameLengthClicked);
@@ -41,6 +42,7 @@ void SeerParallelStacksSettingsDialog::setSettings (const SeerParallelStacksSett
     setFunctionNameLength(settings.functionNameLength);
     setShowFullStackSize(settings.showFullStackSize);
     setStackSize(settings.stackSize);
+    setShowExternalCode(settings.showExternalCode);
 
     handleFunctionNameLengthClicked();
     handleStackFrameSizeClicked();
@@ -55,6 +57,7 @@ SeerParallelStacksSettings SeerParallelStacksSettingsDialog::settings () const {
     settings.functionNameLength   = functionNameLength();
     settings.showFullStackSize    = showFullStackSize();
     settings.stackSize            = stackSize();
+    settings.showExternalCode     = showExternalCode();
 
     return settings;
 }
@@ -102,6 +105,14 @@ void SeerParallelStacksSettingsDialog::setStackSize (int size) {
 
 int SeerParallelStacksSettingsDialog::stackSize () const {
     return stackFrameSizeSpinBox->value();
+}
+
+void SeerParallelStacksSettingsDialog::setShowExternalCode (bool flag) {
+    showExternalCodeCheckBox->setChecked(flag);
+}
+
+bool SeerParallelStacksSettingsDialog::showExternalCode () const {
+    return showExternalCodeCheckBox->isChecked();
 }
 
 void SeerParallelStacksSettingsDialog::handleFunctionNameLengthClicked () {

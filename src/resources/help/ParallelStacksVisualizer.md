@@ -61,6 +61,37 @@ how many threads are shown.
 The filter applies to both the 'Stack' and 'Method' views, and is kept when the graph is refreshed. Libraries and functions
 are remembered by name and threads by id, so they apply to whatever stacks the next refresh brings.
 
+### External Code
+
+Frames without debug info (library or system code, like libc's thread start-up or a futex wait) are normally of little
+interest. Each run of consecutive frames like that is merged into a single '[External Code]' frame. Threads whose stacks
+differ only inside external code then share a node instead of each getting their own.
+
+Search sees through an '[External Code]' frame: it's highlighted when any of the functions it stands in for match.
+If the current frame is inside external code, its '[External Code]' frame is the one shown in bold. In Method View, the
+pivot function is never merged, even when it has no debug info.
+
+To see every frame, check 'Show External Code' in the settings dialog (see Settings, below).
+
+### Settings
+
+The settings button opens a dialog that controls how the graph is drawn. The settings are remembered between sessions,
+and the graph is redrawn when the dialog is closed with 'OK'.
+
+* **Show Minimap** — A small overview of the whole graph, in the corner of the view. The rectangle in it marks the part of
+  the graph that's visible. Click or drag in it to jump around the graph, and Shift+drag to move the minimap itself.
+  * 'Auto' shows it only when the graph doesn't fit in the view (when there are scrollbars).
+  * 'Always' shows it all the time.
+  * 'Never' hides it.
+* **Function Name Length** — With 'Full' checked, function names are shown at their full length. Unchecked, names longer
+  than the given number of characters are shortened by replacing their middle characters with ' ... '. Useful for long C++
+  template names. The default is 64.
+* **Stack Frame Size** — With 'All' checked, every frame of a node is shown. Unchecked, a node with more frames than the
+  given number shows only that many: half from the top of its stack and half from the bottom. A single '[...]' row
+  stands in for the frames left out of the middle. The default is 20.
+* **Show External Code** — Unchecked (the default), each run of frames without debug info is merged into a single
+  '[External Code]' frame (see External Code, above). Checked, every frame is shown.
+
 ### ParallelStacks interaction
 
 Available Quick keys while in the ParallelStacks Visualizer:

@@ -66,8 +66,9 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         void                    setPivot                (bool flag);
 
         // Marks every frame row whose function matches re (an empty or
-        // invalid re clears them). A "[...]" row matches if any of the
-        // frames it stands in for does. Returns the number of matching rows.
+        // invalid re clears them). A "[...]" or "[External Code]" row
+        // matches if any of the frames it stands in for does. Returns the
+        // number of matching rows.
         int                     setSearchExpression     (const QRegularExpression& re);
         bool                    hasSearchMatch          () const;
 
@@ -112,7 +113,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         QStringList                                     _frameRows;
         QVector<int>                                    _frameRowDepths;    // parallel to _frameRows; each row's frame depth() (kNoFrameDepth for a "[...]" placeholder row)
         QVector<bool>                                   _frameRowMatches;   // parallel to _frameRows; row matches the search expression
-        QStringList                                     _hiddenFrameRows;   // the frames the "[...]" row stands in for
+        QVector<QStringList>                            _frameRowHidden;    // parallel to _frameRows; the functions a "[...]" or "[External Code]" row stands in for
         SeerParallelStacksSettings                      _settings;
         bool                                            _isActiveStack  = false;  // holds the graph's current thread
         int                                             _highlightedFrameDepth = kNoFrameDepth;  // bolded iff _isActiveStack is also true

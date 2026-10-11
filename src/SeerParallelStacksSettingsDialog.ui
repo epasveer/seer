@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>373</width>
-    <height>200</height>
+    <height>225</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,6 +101,23 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="showExternalCodeLabel">
+          <property name="text">
+           <string>Show External Code</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QCheckBox" name="showExternalCodeCheckBox">
+          <property name="toolTip">
+           <string>Show every frame without debug info. Unchecked, each run of them is merged into a single '[External Code]' frame.</string>
+          </property>
+          <property name="text">
+           <string>Show</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="1" colspan="2">
          <widget class="QComboBox" name="showMinimapComboBox">
           <property name="toolTip">
@@ -162,6 +179,7 @@
   <tabstop>functionNameLengthSpinBox</tabstop>
   <tabstop>stackFrameSizeAllCheckBox</tabstop>
   <tabstop>stackFrameSizeSpinBox</tabstop>
+  <tabstop>showExternalCodeCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

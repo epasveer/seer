@@ -35,6 +35,9 @@ class SeerParallelStacksSettingsDialog : public QDialog, protected Ui::SeerParal
         void                        setStackSize                        (int size);
         int                         stackSize                           () const;
 
+        void                        setShowExternalCode                 (bool flag);
+        bool                        showExternalCode                    () const;
+
     public slots:
 
     private slots:

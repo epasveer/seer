@@ -34,7 +34,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
 
     // Init variables.
     _id       = Seer::createID(); // ID for parallelstacks command.
-    _settings = {"Auto", "Stack", true, 64, true, 20};
+    _settings = {"Auto", "Stack", true, 64, true, 20, false};
 
     // Set up UI.
     setupUi(this);
@@ -165,17 +165,26 @@ void SeerParallelStacksVisualizerWidget::highlightDirectedGraph (int threadId, i
     // In Method View, depth is instead the signed distance from the pivot
     // (see SeerParallelStacksFrame::depth()): pivot index - level. If this
     // thread never calls the pivot, it isn't in the graph, so no frame is.
+    //
+    // The graph's threads may have runs of frames merged into one
+    // "[External Code]" frame, so frameLevel is first mapped to the index of
+    // the frame covering it — a frame inside external code highlights its
+    // "[External Code]" row.
     int frameDepth = kNoFrameDepth;
 
-    for (const auto& t : _threads) {
+    for (const auto& t : _graphThreads) {
         if (t.id() == threadId) {
+            int frameIdx = t.indexOfLevel(frameLevel);
+            if (frameIdx < 0) {
+                break;
+            }
             if (isMethodView()) {
                 int pivotIdx = t.indexOfFunction(_methodPivot);
                 if (pivotIdx >= 0) {
-                    frameDepth = pivotIdx - frameLevel;
+                    frameDepth = pivotIdx - frameIdx;
                 }
             }else{
-                frameDepth = t.frameCount() - frameLevel;
+                frameDepth = t.frameCount() - frameIdx;
             }
             break;
         }
@@ -278,6 +287,8 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
         }
 
     }else if (text.startsWith("^error,msg=\"No registers.\"")) {
+
+        _graphThreads.clear();
 
         // Clear old scene.
         if (QGraphicsScene* scene = graphicsView->scene()) {
@@ -620,6 +631,15 @@ SeerParallelStacksThreads SeerParallelStacksVisualizerWidget::filteredThreads ()
     return threads;
 }
 
+SeerParallelStacksThreads SeerParallelStacksVisualizerWidget::graphThreads (const QString& pivot) const {
+
+    if (_settings.showExternalCode) {
+        return filteredThreads();
+    }
+
+    return SeerParallelStacksCollapseExternalCode(filteredThreads(), pivot);
+}
+
 void SeerParallelStacksVisualizerWidget::updateFilterButton () {
 
     const QString tooltip = "Show only the threads that pass through the selected libraries, functions or threads.";
@@ -644,6 +664,7 @@ void SeerParallelStacksVisualizerWidget::writeSettings() {
         settings.setValue("showfullfunctionname", _settings.showFullFunctionName);
         settings.setValue("showfullstacksize",    _settings.showFullStackSize);
         settings.setValue("stacksize",            _settings.stackSize);
+        settings.setValue("showexternalcode",     _settings.showExternalCode);
         settings.setValue("showminimapmode",      _settings.showMinimapMode);
         settings.setValue("viewmode",             _settings.viewMode);
         settings.setValue("autorefresh",          autoRefreshCheckBox->isChecked());
@@ -663,6 +684,7 @@ void SeerParallelStacksVisualizerWidget::readSettings() {
         _settings.functionNameLength   = settings.value("functionnamelength", 64).toInt();
         _settings.showFullStackSize    = settings.value("showfullstacksize", true).toBool();
         _settings.stackSize            = settings.value("stacksize", 20).toInt();
+        _settings.showExternalCode     = settings.value("showexternalcode", false).toBool();
         _settings.showMinimapMode      = settings.value("showminimapmode", "Auto").toString();
         _settings.viewMode             = settings.value("viewmode", "Stack").toString();
 
@@ -703,7 +725,9 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
         _methodPivot = currentPivotFunction();
 
-        SeerParallelStacksMethodStacks method = SeerParallelStacksBuildMethodStacks(filteredThreads(), _methodPivot);
+        _graphThreads = graphThreads(_methodPivot);
+
+        SeerParallelStacksMethodStacks method = SeerParallelStacksBuildMethodStacks(_graphThreads, _methodPivot);
 
         graphicsView->setMethodStacks(method, settings());
 
@@ -716,7 +740,9 @@ void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
     // Build parallel-stacks tree. Purely structural — no highlighting here;
     // see highlightDirectedGraph().
-    SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(filteredThreads());
+    _graphThreads = graphThreads(QString());
+
+    SeerParallelStacksNode  root  = SeerParallelStacksBuildParallelStacks(_graphThreads);
     SeerParallelStacksStack stack = SeerParallelStacksFillStack(root);
 
     graphicsView->setStack(stack, settings());

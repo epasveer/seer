@@ -147,11 +147,12 @@ void SeerParallelStacksStackBoxItem::buildFrameRows() {
 
     _frameRows.clear();
     _frameRowDepths.clear();
-    _hiddenFrameRows.clear();
+    _frameRowHidden.clear();
 
     auto appendFrame = [this](const SeerParallelStacksFrame& frame) {
         _frameRows.append(frame.functionOrAddr());
         _frameRowDepths.append(frame.depth());
+        _frameRowHidden.append(frame.externalFunctions());
     };
 
     const int frameCount = (int)_stack.frames.size();
@@ -177,12 +178,16 @@ void SeerParallelStacksStackBoxItem::buildFrameRows() {
         appendFrame(_stack.frames[i]);
     }
 
-    _frameRows.append("[...]");
-    _frameRowDepths.append(kNoFrameDepth);
+    QStringList hidden;
 
     for (int i = topCount; i < frameCount - bottomCount; ++i) {
-        _hiddenFrameRows.append(_stack.frames[i].functionOrAddr());
+        hidden.append(_stack.frames[i].functionOrAddr());
+        hidden.append(_stack.frames[i].externalFunctions());
     }
+
+    _frameRows.append("[...]");
+    _frameRowDepths.append(kNoFrameDepth);
+    _frameRowHidden.append(hidden);
 
     for (int i = frameCount - bottomCount; i < frameCount; ++i) {
         appendFrame(_stack.frames[i]);
@@ -352,15 +357,11 @@ int SeerParallelStacksStackBoxItem::setSearchExpression(const QRegularExpression
         bool match = false;
 
         if (active) {
-            if (_frameRowDepths[i] == kNoFrameDepth) {
-                for (const auto& hidden : _hiddenFrameRows) {
-                    if (re.match(hidden).hasMatch()) {
-                        match = true;
-                        break;
-                    }
-                }
-            }else{
-                match = re.match(_frameRows[i]).hasMatch();
+            // A "[...]" row matches only through the frames it hides.
+            match = _frameRowDepths[i] != kNoFrameDepth && re.match(_frameRows[i]).hasMatch();
+
+            for (int h = 0; match == false && h < _frameRowHidden[i].size(); ++h) {
+                match = re.match(_frameRowHidden[i][h]).hasMatch();
             }
         }
 
