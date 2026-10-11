@@ -45,7 +45,6 @@ SeerEditorWidgetSourceArea::SeerEditorWidgetSourceArea(QWidget* parent) : SeerPl
     _enableMiniMapArea          = false;
     _miniMapArea                = 0;
     _miniMapPixmapDirty         = true;
-    _miniMapContentHeight       = 0;
     _sourceHighlighter          = 0;
     _sourceHighlighterEnabled   = true;
     _sourceTabSize              = 4;
@@ -192,7 +191,7 @@ int SeerEditorWidgetSourceArea::miniMapAreaWidth () {
         return 0;
     }
 
-    return 80;
+    return 60;
 }
 
 void SeerEditorWidgetSourceArea::updateLineNumberArea (const QRect& rect, int dy) {
@@ -364,81 +363,22 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
         return;
     }
 
+    // The mini-map's background is the gutter's "Margin" color. Characters
+    // use the editor's text color (or their syntax highlighter color).
     QTextCharFormat marginFormat = highlighterSettings().get("Margin");
+    QTextCharFormat textFormat   = highlighterSettings().get("Text");
 
-    // Rebuild the cached content pixmap if the document, theme, or size changed.
-    // Rendering uses the document's real font (so glyph shaping stays correct)
-    // and only shrinks the *rasterized* output via a scaled QPainter - unlike
-    // shrinking the live font's point size, which is known to break tab-stop
-    // rendering (see setEditorFont()'s comments).
+    // Like Kate, the mini-map always shows the whole document. Rebuild the
+    // cached pixmap if the document, theme, or size changed.
     //
-    // Text is drawn as plain strings in a single color, deliberately ignoring
-    // the syntax highlighter's per-character formats (QTextLayout::draw()
-    // would honor those, but at mini-map scale the anti-aliased blend of many
-    // small runs of different keyword/comment/string colors just looks like
-    // wrong/muddy colors rather than useful highlighting) - lineNumberAreaPaintEvent()/
-    // breakPointAreaPaintEvent() walk lines the same way via blockBoundingRect().
+    // Characters are drawn as Kate-style marks colored by the syntax highlighter
+    // (see SeerPlainTextMiniMap::render()).
     if (_miniMapPixmapDirty || _miniMapPixmap.size() != _miniMapArea->size()) {
 
-        QSize size = _miniMapArea->size();
+        _miniMapPixmap = QPixmap(_miniMapArea->size());
 
-        _miniMapPixmap = QPixmap(size);
-
-        // Use the editor's own background/text colors (not the gutter's
-        // "Margin" color) so the mini-map matches the editor's color scheme.
-        _miniMapPixmap.fill(marginFormat.background().color());
-
-        int   maxChars    = 1;
-        qreal docHeightPx = 0;
-
-        for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
-            maxChars     = qMax(maxChars, block.text().length());
-            docHeightPx += blockBoundingRect(block).height();   // also forces the block's layout
-        }
-
-        qreal docWidthPx = maxChars * qreal(fontMetrics().horizontalAdvance(QLatin1Char('9')));
-
-        _miniMapContentHeight = 0;
-
-        if (size.isEmpty() == false && docWidthPx > 0 && docHeightPx > 0) {
-
-            qreal sx = size.width()  / docWidthPx;
-            qreal sy = size.height() / docHeightPx;
-
-            // Cap the vertical scale so very short files don't get stretched
-            // into oversized, blurry-looking lines.
-            qreal maxScaleY = 3.0 / qreal(qMax(1, fontMetrics().height()));
-            sy = qMin(sy, maxScaleY);
-
-            // Remember the actual on-screen height the content was rendered
-            // at (which may be less than the widget's full height, since sy
-            // is capped above) so the viewport overlay and click/drag-to-jump
-            // math below use the same scale as the cached pixmap - otherwise
-            // the overlay drifts out of sync with the rendered content for
-            // any file short enough to hit the cap.
-            _miniMapContentHeight = docHeightPx * sy;
-
-            QPainter docPainter(&_miniMapPixmap);
-            docPainter.setRenderHint(QPainter::Antialiasing, true);
-            docPainter.setRenderHint(QPainter::TextAntialiasing, true);
-            docPainter.scale(sx, sy);
-
-            docPainter.setFont(font());
-            docPainter.setPen(marginFormat.foreground().color());
-
-            qreal         y      = 0;
-            QFontMetricsF fm     (font());
-            qreal         ascent = fm.ascent();
-
-            for (QTextBlock block = document()->firstBlock(); block.isValid(); block = block.next()) {
-
-                QString text = block.text();
-                text.replace(QLatin1Char('\t'), QLatin1String("    "));
-
-                docPainter.drawText(QPointF(0, y + ascent), text);
-
-                y += blockBoundingRect(block).height();
-            }
+        if (_miniMapPixmap.isNull() == false) {
+            SeerPlainTextMiniMap::render(_miniMapPixmap, document(), marginFormat.background().color(), textFormat.foreground().color());
         }
 
         _miniMapPixmapDirty = false;
@@ -448,16 +388,7 @@ void SeerEditorWidgetSourceArea::miniMapAreaPaintEvent (QPaintEvent* event) {
     painter.drawPixmap(0, 0, _miniMapPixmap);
 
     // Overlay: highlight the portion of the document currently visible in the editor.
-    // Use the content's actual rendered height (not the widget's full height)
-    // so the overlay stays aligned with the cached pixmap even when the
-    // vertical scale was capped (see above).
-    int   totalLines = qMax(1, document()->blockCount());
-    qreal pxPerLine  = _miniMapContentHeight / qreal(totalLines);
-
-    int firstLine    = firstVisibleBlock().blockNumber();
-    int visibleLines = qMax(1, int(viewport()->height() / qMax(1, fontMetrics().height())) + 1);
-
-    QRectF overlay(0, firstLine * pxPerLine, _miniMapArea->width(), qMax(4.0, visibleLines * pxPerLine));
+    QRectF overlay = SeerPlainTextMiniMap::overlayRect(this, _miniMapArea->width(), _miniMapArea->height());
 
     QTextCharFormat currentLineFormat = highlighterSettings().get("Current Line");
     QColor          overlayColor      = currentLineFormat.background().color();
@@ -482,12 +413,40 @@ void SeerEditorWidgetSourceArea::resizeEvent (QResizeEvent* e) {
         _breakPointArea->setGeometry (QRect(cr.left() + lineNumberAreaWidth(), cr.top(), breakPointAreaWidth(), cr.height()));
     }
 
-    if (miniMapAreaEnabled()) {
-        _miniMapArea->setGeometry (QRect(cr.right() - miniMapAreaWidth() + 1, cr.top(), miniMapAreaWidth(), cr.height()));
+    updateMiniMapGeometry();
+}
 
-        // The widget's height changed, so the cached pixmap's vertical scale is stale.
-        invalidateMiniMapCache();
+bool SeerEditorWidgetSourceArea::viewportEvent (QEvent* event) {
+
+    // The viewport can change size without the editor changing size, when the
+    // horizontal scrollbar appears or disappears.
+    if (event->type() == QEvent::Resize) {
+        updateMiniMapGeometry();
     }
+
+    return SeerPlainTextEdit::viewportEvent(event);
+}
+
+void SeerEditorWidgetSourceArea::updateMiniMapGeometry () {
+
+    if (miniMapAreaEnabled() == false) {
+        return;
+    }
+
+    // Match the viewport's height, so the mini-map doesn't extend behind the
+    // horizontal scrollbar.
+    QRect cr = contentsRect();
+    QRect vr = viewport()->geometry();
+    QRect mr = QRect(cr.right() - miniMapAreaWidth() + 1, vr.top(), miniMapAreaWidth(), vr.height());
+
+    if (_miniMapArea->geometry() == mr) {
+        return;
+    }
+
+    _miniMapArea->setGeometry(mr);
+
+    // The mini-map's height changed, so the cached pixmap's vertical scale is stale.
+    invalidateMiniMapCache();
 }
 
 void SeerEditorWidgetSourceArea::contextMenuEvent (QContextMenuEvent* event) {
@@ -983,14 +942,7 @@ void SeerEditorWidgetSourceArea::jumpToMiniMapY (int y) {
         return;
     }
 
-    int totalLines = qMax(1, document()->blockCount());
-    qreal pxPerLine = _miniMapContentHeight / qreal(totalLines);
-
-    if (pxPerLine <= 0) {
-        return;
-    }
-
-    int lineno = int(y / pxPerLine) + 1;
+    int lineno = SeerPlainTextMiniMap::lineAt(this, _miniMapArea->height(), y) + 1;
 
     scrollToLine(lineno);
 }
@@ -2270,8 +2222,20 @@ void SeerEditorWidgetSourceBreakPointArea::mouseReleaseEvent (QMouseEvent* event
 }
 
 SeerEditorWidgetSourceMiniMapArea::SeerEditorWidgetSourceMiniMapArea(SeerEditorWidgetSourceArea* editorWidget) : QWidget(editorWidget) {
-    _editorWidget = editorWidget;
-    _dragging     = false;
+    _editorWidget   = editorWidget;
+    _dragging       = false;
+    _dragStartY     = 0;
+    _dragStartValue = 0;
+    _preview        = new SeerPlainTextMiniMapPreview(this);
+    _scrollTipTimer = new QTimer(this);
+
+    // Hide the visible-lines tooltip once wheel scrolling stops.
+    _scrollTipTimer->setSingleShot(true);
+    _scrollTipTimer->setInterval(1000);
+
+    QObject::connect(_scrollTipTimer, &QTimer::timeout, this, []() { QToolTip::hideText(); });
+
+    setMouseTracking(true);
 }
 
 QSize SeerEditorWidgetSourceMiniMapArea::sizeHint () const {
@@ -2284,9 +2248,24 @@ void SeerEditorWidgetSourceMiniMapArea::paintEvent (QPaintEvent* event) {
 
 void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
 
+    _preview->hide();
+
     if (event->button() == Qt::LeftButton) {
-        _dragging = true;
-        _editorWidget->jumpToMiniMapY(event->pos().y());
+
+        // Clicking outside the overlay jumps there. Then (or when clicking
+        // inside the overlay) dragging moves the overlay with the mouse.
+        QRectF overlay = SeerPlainTextMiniMap::overlayRect(_editorWidget, width(), height());
+
+        if (overlay.contains(overlay.center().x(), event->pos().y()) == false) {
+            _editorWidget->jumpToMiniMapY(event->pos().y());
+        }
+
+        _dragging       = true;
+        _dragStartY     = event->pos().y();
+        _dragStartValue = _editorWidget->verticalScrollBar()->value();
+
+        SeerPlainTextMiniMap::showVisibleLinesTip(_editorWidget, this, mapToGlobal(event->pos()));
+
     }else{
         QWidget::mousePressEvent(event);
     }
@@ -2295,17 +2274,69 @@ void SeerEditorWidgetSourceMiniMapArea::mousePressEvent (QMouseEvent* event) {
 void SeerEditorWidgetSourceMiniMapArea::mouseMoveEvent (QMouseEvent* event) {
 
     if (_dragging && (event->buttons() & Qt::LeftButton)) {
-        _editorWidget->jumpToMiniMapY(event->pos().y());
-    }else{
-        QWidget::mouseMoveEvent(event);
+
+        int value = SeerPlainTextMiniMap::dragValue(_editorWidget, height(), _dragStartValue, event->pos().y() - _dragStartY);
+
+        _editorWidget->verticalScrollBar()->setValue(value);
+
+        SeerPlainTextMiniMap::showVisibleLinesTip(_editorWidget, this, mapToGlobal(event->pos()));
+
+        return;
     }
+
+    // Hovering shows a preview of the code under the mouse.
+    int y = event->pos().y();
+
+    if (event->buttons() == Qt::NoButton && y >= 0 && y < _editorWidget->document()->blockCount() * SeerPlainTextMiniMap::pixelsPerLine(_editorWidget, height())) {
+
+        const SeerHighlighterSettings& settings = _editorWidget->highlighterSettings();
+
+        QTextCharFormat textFormat        = settings.get("Text");
+        QTextCharFormat currentLineFormat = settings.get("Current Line");
+        QRect           globalRect        (mapToGlobal(QPoint(0, 0)), size());
+
+        int lineno = SeerPlainTextMiniMap::lineAt(_editorWidget, height(), y);
+
+        _preview->showPreview(_editorWidget, lineno, globalRect, mapToGlobal(event->pos()).y(), textFormat.background().color(), textFormat.foreground().color(), currentLineFormat.background().color());
+
+    }else{
+        _preview->hide();
+    }
+
+    QWidget::mouseMoveEvent(event);
 }
 
 void SeerEditorWidgetSourceMiniMapArea::mouseReleaseEvent (QMouseEvent* event) {
 
     _dragging = false;
 
+    QToolTip::hideText();
+
     QWidget::mouseReleaseEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::leaveEvent (QEvent* event) {
+
+    _preview->hide();
+
+    QWidget::leaveEvent(event);
+}
+
+void SeerEditorWidgetSourceMiniMapArea::wheelEvent (QWheelEvent* event) {
+
+    // The wheel itself is forwarded to the editor (see SeerPlainTextWheelEventForwarder),
+    // which has already scrolled by now.
+    _preview->hide();
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    SeerPlainTextMiniMap::showVisibleLinesTip(_editorWidget, this, event->globalPosition().toPoint());
+#else
+    SeerPlainTextMiniMap::showVisibleLinesTip(_editorWidget, this, event->globalPos());
+#endif
+
+    _scrollTipTimer->start();
+
+    QWidget::wheelEvent(event);
 }
 
 /***********************************************************************************************************************
