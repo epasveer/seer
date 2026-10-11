@@ -6,8 +6,11 @@
 
 #include "SeerParallelStacksCommon.h"
 #include <QtWidgets/QWidget>
+#include <QtCore/QSet>
 #include <QString>
 #include "ui_SeerParallelStacksVisualizerWidget.h"
+
+class SeerParallelStacksFilterWidget;
 
 class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerParallelStacksVisualizerWidgetForm {
 
@@ -71,6 +74,8 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        handleSearchShortcut                ();
         void                        handleSearchNext                    ();
         void                        handleSearchPrevious                ();
+        void                        handleFilterButton                  ();
+        void                        handleFilterChanged                 ();
 
         // A thread was picked in one of the graph's popup tables.
         void                        handleGraphThreadSelected           (int threadId);
@@ -100,11 +105,24 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        applySearch                         (bool jumpToFirst);
         void                        updateSearchStatus                  ();
 
+        // _threads narrowed by the filter: every thread when no filter is
+        // set, otherwise those passing through a checked library, a checked
+        // function, or that are checked themselves.
+        SeerParallelStacksThreads   filteredThreads                     () const;
+        bool                        isFiltered                          () const;
+        void                        updateFilterButton                  ();
+
         int                         _id;
         SeerParallelStacksThreads   _threads;
         int                         _currentThreadId    = -1;
         int                         _currentFrameLevel  = 0;
         QString                     _methodPivot;           // the pivot the current Method View graph was built on
         SeerParallelStacksSettings  _settings;
+
+        // The filter, by name/id so it survives a refresh.
+        SeerParallelStacksFilterWidget* _filterPopup = nullptr;
+        QSet<QString>               _filterLibraries;
+        QSet<QString>               _filterFunctions;
+        QSet<int>                   _filterThreadIds;
 };
 

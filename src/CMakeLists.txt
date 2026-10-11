@@ -116,6 +116,7 @@ set(HEADER_FILES
     SeerParallelStacksGraphicsView.h
     SeerParallelStacksCommon.h
     SeerParallelStacksSettingsDialog.h
+    SeerParallelStacksFilterWidget.h
     SeerGdbMonitorWidget.h
     SeerRegisterValuesBrowserWidget.h
     SeerRegisterEditValueDialog.h
@@ -235,6 +236,7 @@ set(SOURCE_FILES
     SeerParallelStacksGraphicsView.cpp
     SeerParallelStacksCommon.cpp
     SeerParallelStacksSettingsDialog.cpp
+    SeerParallelStacksFilterWidget.cpp
     SeerGdbMonitorWidget.cpp
     SeerRegisterValuesBrowserWidget.cpp
     SeerRegisterEditValueDialog.cpp

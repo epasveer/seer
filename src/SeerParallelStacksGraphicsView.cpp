@@ -1559,6 +1559,14 @@ void SeerParallelStacksGraphicsView::collectMaxBottom(PlacedNode* pn, qreal& max
 // downward so its bottom edge sits at maxBottom.
 void SeerParallelStacksGraphicsView::alignParentlessToBottom(PlacedNode* pn, qreal maxBottom) {
 
+    // When every thread shares the same outermost frames, FillStack() merges
+    // the root into that chain, so the root has a box of its own. It's then
+    // the only visual root and layoutTree() already put it at the bottom —
+    // its children have a parent box and must stay above it.
+    if (pn->item) {
+        return;
+    }
+
     for (auto* child : pn->children) {
         // child->parent == rootPN (which has no item), so child is parentless.
         if (child->item) {
