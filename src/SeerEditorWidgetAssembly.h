@@ -133,6 +133,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
 
     protected:
         void                                        resizeEvent                         (QResizeEvent* event);
+        bool                                        viewportEvent                       (QEvent* event) override;
         void                                        contextMenuEvent                    (QContextMenuEvent* event);
 
     private slots:
@@ -146,6 +147,7 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         void                                        updateOpcodeArea                    (const QRect& rect, int dy);
         void                                        updateMiniMapArea                   (const QRect& rect, int dy);
         void                                        invalidateMiniMapCache              ();
+        void                                        updateMiniMapGeometry               ();
 
     private:
         bool                                        _enableLineNumberArea;
@@ -168,7 +170,6 @@ class SeerEditorWidgetAssemblyArea : public SeerPlainTextEdit {
         SeerEditorWidgetAssemblyMiniMapArea*        _miniMapArea;
         QPixmap                                     _miniMapPixmap;
         bool                                        _miniMapPixmapDirty;
-        qreal                                       _miniMapContentHeight;
 
         SeerHighlighterSettings                     _sourceHighlighterSettings;
         bool                                        _sourceHighlighterEnabled;
@@ -286,10 +287,16 @@ class SeerEditorWidgetAssemblyMiniMapArea : public QWidget {
         void                                        mousePressEvent                     (QMouseEvent* event) override;
         void                                        mouseMoveEvent                      (QMouseEvent* event) override;
         void                                        mouseReleaseEvent                   (QMouseEvent* event) override;
+        void                                        leaveEvent                          (QEvent* event) override;
+        void                                        wheelEvent                          (QWheelEvent* event) override;
 
     private:
         SeerEditorWidgetAssemblyArea*               _editorWidget;
         bool                                        _dragging;
+        int                                         _dragStartY;
+        int                                         _dragStartValue;
+        SeerPlainTextMiniMapPreview*                _preview;
+        QTimer*                                     _scrollTipTimer;
 };
 
 #include "ui_SeerEditorWidgetAssembly.h"
