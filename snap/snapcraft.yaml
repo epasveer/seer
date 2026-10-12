@@ -23,7 +23,7 @@ issues: https://github.com/epasveer/seer/issues
 license: GPL-3.0-or-later
 icon: src/resources/icons/hicolor/256x256/seergdb.png
 
-version: '2.8.0'
+version: '2.8.1'
 base: core24
 confinement: classic
 grade: stable

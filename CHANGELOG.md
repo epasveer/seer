@@ -1,6 +1,11 @@
 
 # Seer Change Log
 
+## [2.8.1] - 2026-10-12
+* Packaging: Fix the flatpak metainfo so the bundle reports the correct version (was showing 2.7beta).
+* Packaging: Fix icon paths in the Debian install file. Update the AppStream metainfo release version.
+* Packaging: The flatpak-latest GitHub action now builds the checked out code.
+
 ## [2.8] - 2026-10-12
 * ParallelStacks: Add a Parallel Stacks Visualizer. Shows the call stacks of all threads as a merged graph.
 * ParallelStacks: Add a 'Method View' mode.
