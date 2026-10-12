@@ -22,7 +22,9 @@ modules:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCONFIG_SEER_INSTALL_FLATHUB_FILES=1
     sources:
-      - type: git
-        url: https://github.com/epasveer/seer.git
-        branch: main
+      - type: dir
+        path: ../../..
+        skip:
+          - .git
+          - repo
 

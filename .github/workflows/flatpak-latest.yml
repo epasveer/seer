@@ -23,8 +23,15 @@ jobs:
         lscpu
 
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
+    - name: Build Flatpak
+      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      with:
+        branch: main
+        bundle: seer.flatpak
+        manifest-path: src/resources/flathub/io.github.epasveer.seer.github.yml # Builds the checked out code.
+        cache-key: flatpak-builder-${{ github.sha }}
 
     - name: Create/update tag
       uses: rickstaa/action-create-tag@v1
@@ -32,14 +39,6 @@ jobs:
         tag: flatpak-latest
         message: Tag from latest ${{ github.ref_name }} branch.
         force_push_tag: true
-
-    - name: Build Flatpak
-      uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-      with:
-        branch: main
-        bundle: seer.flatpak
-        manifest-path: src/resources/flathub/io.github.epasveer.seer.github.yml # Always uses 'main'!
-        cache-key: flatpak-builder-${{ github.sha }}
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
