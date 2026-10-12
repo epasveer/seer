@@ -1,10 +1,47 @@
 
 # Seer Change Log
 
-## [2.8] - 2026-XX-XX
-* Starting version 2.8 development cycle.
-* Add a 'starti' mode to start debugging at the first instruction.
+## [2.8] - 2026-10-12
+* ParallelStacks: Add a Parallel Stacks Visualizer. Shows the call stacks of all threads as a merged graph.
+* ParallelStacks: Add a 'Method View' mode.
+* ParallelStacks: Add search and filter functions.
+* ParallelStacks: Highlight the stack that is active in the debugger.
+* ParallelStacks: Option to limit the number of frames shown in a node.
+* ParallelStacks: Merge non-debug frames into a single "External Code" frame.
+* ParallelStacks: Option to show or hide the minimap.
+* ParallelStacks: Fixed wide nodes caused by long function names, handling of "??" function names,
+  popup frame order/timing/dragging behavior, and node placement.
+* Editor: Add a minimap to the Source and Assembly editors. Improved for large files.
+* Visualizers: Add a GDB Monitor visualizer for sending 'monitor' commands to
+  gdbserver, openocd, vgdb, qemu, and the like.
+* Debug: Add a 'starti' mode to start debugging at the first instruction.
   Helpful for debugging programs written in assembly.
+* Icons: Seer handles dark/light color theme changes. Add an Icon Theme option (auto/light/dark).
+  Helpful for themes like KDE's Breeze Dark.
+* MemoryVisualizer: Highlight bytes that change.
+* MatrixVisualizer: Add a row-major/column-major selector. Auto-refresh at each stopping point.
+  Bulk update. (Thanks tiresiasfromthebai!)
+* ArrayVisualizer: Auto-refresh at each stopping point. Faster scatter phase-portrait. (Thanks tiresiasfromthebai!)
+* ImageVisualizer: Add Ctrl+wheel zoom. Fixed zoom keys under Qt6. (Thanks tiresiasfromthebai!)
+* SyntaxHighlighting: Add Ada (Thanks mgrojo!) and Fortran (Thanks tiresiasfromthebai!).
+  Reworked the Editor config page to accommodate more languages.
+* SyntaxHighlighting: Fixed string and class-name rules. (Thanks tiresiasfromthebai!)
+* Build: Add Snap package generation.
+* Project: Fixed command-line executable and arguments being overridden by the default project.
+* Project: Load run/start settings from the correct JSON object. (Thanks tiresiasfromthebai!)
+* GDB: Read gdb's stderr channel correctly. (Thanks tiresiasfromthebai!)
+* Breakpoints: Fixed spurious "No such file or directory" warning on restart when no breakpoints are set.
+* Startup: Improved handling when the DISPLAY variable is not set.
+* Console: Decode output as UTF-8 instead of Latin-1. (Thanks tiresiasfromthebai!)
+* ProgressIndicator: Don't paint the indicator when it is stopped. (Thanks tiresiasfromthebai!)
+* ArrayVisualizer: Fixed empty scatter chart, swapped X/Y axes when plotting one array against another,
+  unstyled scatter markers with large arrays, and handleText stack usage. (Thanks tiresiasfromthebai and lvntky!)
+* MatrixVisualizer: Fixed min/max value loss and other slips. (Thanks lvntky and tiresiasfromthebai!)
+* Visualizers: Don't auto-refresh the Array/Matrix visualizers when the program exits.
+  Re-evaluate the visualized variable's address on refresh. (Thanks tiresiasfromthebai!)
+* Build: Fixed icon colorization for Qt >= 6.6.3. Fixed build on Ubuntu 22.
+* Docs: Add STYLEGUIDE.md and CONTRIBUTING.md.
+* Tests: Add a Raspberry Pi 4 gdbserver test. Update STM32 build instructions. (Thanks QuangNguyenMinh123!)
 
 ## [2.7.1] - 2026-10-05
 * Packaging: Fix .gitattributes so the release source archive includes src/resources/icons/ (hicolor icons).
