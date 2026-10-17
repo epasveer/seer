@@ -140,6 +140,7 @@ struct SeerParallelStacksNode {
 struct SeerParallelStacksStack {
     int                                         threadCount = 0;
     QVector<int>                                threadIds;   // IDs of every thread in this node
+    QStringList                                 threadNames; // Names of every thread in this node (parallel to threadIds)
     SeerParallelStacksFrames                    frames;
 
     QVector<SeerParallelStacksStack>            stacks;
