@@ -306,6 +306,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
     // Collect thread IDs for this node
     for (const SeerParallelStacksThread& t : node.threads) {
         stack.threadIds.append(t.id());
+        stack.threadNames.append(t.name());
     }
 
     if (node.children.size() == 1) {
@@ -322,6 +323,7 @@ SeerParallelStacksStack SeerParallelStacksFillStack(const SeerParallelStacksNode
         stack.stacks      = child.stacks;
         stack.threadCount = child.threadCount;
         stack.threadIds   = child.threadIds;
+        stack.threadNames = child.threadNames;
 
         if (node.function.function().isEmpty() == false) {
             if (downward) {
@@ -420,6 +422,7 @@ SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks(const SeerPar
 
         for (const SeerParallelStacksThread& t : pivotNode.threads) {
             result.callees.threadIds.append(t.id());
+            result.callees.threadNames.append(t.name());
         }
 
         result.callees.frames.append(pivotNode.function);

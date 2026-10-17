@@ -20,15 +20,15 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     threadTreeWidget->setSortingEnabled(false);
     threadTreeWidget->resizeColumnToContents(0); // active
     threadTreeWidget->resizeColumnToContents(1); // id
-    threadTreeWidget->resizeColumnToContents(2); // state
-    threadTreeWidget->resizeColumnToContents(3); // target-id
+    threadTreeWidget->resizeColumnToContents(2); // name
+    threadTreeWidget->resizeColumnToContents(3); // state
     threadTreeWidget->resizeColumnToContents(4); // func
     threadTreeWidget->resizeColumnToContents(5); // file
     threadTreeWidget->resizeColumnToContents(6); // line
     threadTreeWidget->resizeColumnToContents(7); // fullname
     threadTreeWidget->resizeColumnToContents(8); // args
-    threadTreeWidget->resizeColumnToContents(9); // name
-    threadTreeWidget->resizeColumnToContents(10); // level
+    threadTreeWidget->resizeColumnToContents(9); // level
+    threadTreeWidget->resizeColumnToContents(10); // target-id
     threadTreeWidget->resizeColumnToContents(11); // addr
     threadTreeWidget->resizeColumnToContents(12); // arch
     threadTreeWidget->resizeColumnToContents(13); // core
@@ -99,14 +99,10 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
         // current-thread-id=\"1\"
         //
 
-        //qDebug() << text;
-
         threadTreeWidget->clear();
 
         QString threads_text         = Seer::parseFirst(text, "threads=", '[', ']', false);
         QString currentthreadid_text = Seer::parseFirst(text, "current-thread-id=", '"', '"', false);
-
-        //qDebug() << threads_text;
 
         if (threads_text != "") {
 
@@ -131,8 +127,6 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 QString state_text    = Seer::parseFirst(thread_text, "state=",     '"', '"', false);
                 QString core_text     = Seer::parseFirst(thread_text, "core=",      '"', '"', false);
 
-                //qDebug() << file_text << fullname_text;
-
                 // Create the item.
                 QTreeWidgetItem* item = new QTreeWidgetItem;
 
@@ -143,15 +137,15 @@ void SeerThreadFramesBrowserWidget::handleText (const QString& text) {
                 }
 
                 item->setText(1, id_text);
-                item->setText(2, state_text);
-                item->setText(3, targetid_text);
+                item->setText(2, name_text);
+                item->setText(3, state_text);
                 item->setText(4, func_text);
                 item->setText(5, QFileInfo(file_text).fileName());
                 item->setText(6, line_text);
                 item->setText(7, fullname_text);
                 item->setText(8, args_text);
-                item->setText(9, name_text);
-                item->setText(10, level_text);
+                item->setText(9, level_text);
+                item->setText(10, targetid_text);
                 item->setText(11, addr_text);
                 item->setText(12, arch_text);
                 item->setText(13, core_text);
@@ -255,8 +249,6 @@ void SeerThreadFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, in
 void SeerThreadFramesBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {
 
     Q_UNUSED(column);
-
-    //qDebug() << item->text(1) << column;
 
     item->setToolTip(0, item->text(1) + " : " + item->text(2) + " : " + item->text(3) + " : " + item->text(5) + " : " + item->text(6));
 

@@ -116,17 +116,17 @@
      </column>
      <column>
       <property name="text">
-       <string>Thread Id</string>
+       <string>ThreadID</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Name</string>
       </property>
      </column>
      <column>
       <property name="text">
        <string>State</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Target Id</string>
       </property>
      </column>
      <column>
@@ -156,12 +156,12 @@
      </column>
      <column>
       <property name="text">
-       <string>Name</string>
+       <string>Level</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Level</string>
+       <string>TargetID</string>
       </property>
      </column>
      <column>

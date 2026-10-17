@@ -218,7 +218,7 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
     public:
         explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
 
-        void            addRow                          (int threadId, const QString& function);
+        void            addRow                          (int threadId, const QString& name, const QString& function);
 
         // Sets which row (by threadId) shows the "current thread" highlight
         // and restyles the rows already in the table to match.
