@@ -514,6 +514,20 @@ void SeerParallelStacksStackBoxItem::handleShowPopup() {
         return;
     }
 
+    // The popup hangs off the node's bottom edge. Don't pop up if that edge
+    // is scrolled (or zoomed) out of the view.
+    if (auto* v = viewOf(this)) {
+
+        const QRectF sceneRect = mapToScene(boundingRect()).boundingRect();
+        const QPoint left      = v->mapFromScene(sceneRect.bottomLeft());
+        const QPoint right     = v->mapFromScene(sceneRect.bottomRight());
+        const QRect  vp        = v->viewport()->rect();
+
+        if (left.y() < vp.top() || left.y() > vp.bottom() || right.x() < vp.left() || left.x() > vp.right()) {
+            return;
+        }
+    }
+
     QString frame;
 
     if (_stack.frames.size() > 0) {
@@ -568,6 +582,13 @@ void SeerParallelStacksStackBoxItem::handleMaybeClosePopup() {
             handleDeletePopup();
         }
     });
+}
+
+void SeerParallelStacksStackBoxItem::hidePopup() {
+
+    _hoverTimer->stop();
+
+    handleDeletePopup();
 }
 
 void SeerParallelStacksStackBoxItem::handleDeletePopup() {
@@ -706,10 +727,23 @@ QRectF SeerParallelStacksMiniMapWidget::contentRect() const {
 
 void SeerParallelStacksMiniMapWidget::refresh() {
 
+    // The graph may have changed shape (rebuilt, or a node dragged). If the
+    // minimap reshapes, have the view re-place it so it stays pinned/anchored.
+    // Don't tighten mid-drag: shrinking the scene under a dragged node (e.g.
+    // the rightmost one dragged left) clamps the scrollbars and jumps the view.
+    // endDragScroll() tightens once the drag is over.
+    if (updateShape() && _view) {
+        _view->repositionMiniMap();
+
+        if (!_view->_nodeDragScroll && !_view->_miniMapDragScroll) {
+            _view->tightenSceneRect();
+        }
+    }
+
     update();
 }
 
-QRectF SeerParallelStacksMiniMapWidget::overviewSceneRect() const {
+QRectF SeerParallelStacksMiniMapWidget::graphSceneRect() const {
 
     if (!_view || !_view->scene()) {
         return QRectF();
@@ -723,15 +757,75 @@ QRectF SeerParallelStacksMiniMapWidget::overviewSceneRect() const {
         }
     }
 
-    // Always keep the current visible region in frame so the viewport marker
-    // stays inside the overview.
-    r = r.united(_view->mapToScene(_view->viewport()->rect()).boundingRect());
-
     if (r.isEmpty()) {
-        r = _view->sceneRect();
+        return r;
     }
 
     return r.adjusted(-20, -20, 20, 20);
+}
+
+bool SeerParallelStacksMiniMapWidget::updateShape() {
+
+    const QRectF graph = graphSceneRect();
+
+    if (graph.isEmpty()) {
+        return false;
+    }
+
+    // Keep about the same area as the original 180x140 minimap, shaped to the
+    // graph's aspect ratio, within sensible limits. The limits are also capped
+    // to a fraction of the view so a very wide/tall graph can't swamp it.
+    const qreal kArea = 180.0 * 140.0;
+    const qreal kMinW = 60,  kMinH = 40;
+    qreal       maxW  = 320, maxH  = 240;
+
+    if (_view) {
+        maxW = std::max(kMinW, std::min(maxW, _view->viewport()->width()  * 0.5));
+        maxH = std::max(kMinH, std::min(maxH, _view->viewport()->height() * 0.5));
+    }
+
+    const qreal aspect = graph.width() / graph.height();
+
+    qreal w = std::sqrt(kArea * aspect);
+    qreal h = std::sqrt(kArea / aspect);
+
+    // Clamp to the max box while preserving the aspect ratio...
+    if (w > maxW) { w = maxW; h = w / aspect; }
+    if (h > maxH) { h = maxH; w = h * aspect; }
+
+    // ...then enforce the minimums (an extreme graph gets letterboxed).
+    w = std::max(w, kMinW);
+    h = std::max(h, kMinH);
+
+    const QSize newSize(qRound(w), qRound(h));
+
+    if (newSize == _size) {
+        return false;
+    }
+
+    _size = newSize;
+    updateGeometry();
+
+    return true;
+}
+
+QRectF SeerParallelStacksMiniMapWidget::overviewSceneRect() const {
+
+    if (!_view || !_view->scene()) {
+        return QRectF();
+    }
+
+    // Frame just the graph. The minimap is shaped to the graph's aspect ratio,
+    // so including the visible region (which, zoomed out, can extend well past
+    // the graph on one axis) would letterbox the overview with empty space.
+    // The viewport marker is clipped to this rect instead.
+    QRectF r = graphSceneRect();
+
+    if (r.isEmpty()) {
+        r = _view->sceneRect().adjusted(-20, -20, 20, 20);
+    }
+
+    return r;
 }
 
 void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
@@ -787,8 +881,13 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
         }
     }
 
-    // Draw the main view's current visible region as an outlined box.
-    const QRectF visibleScene = _view->mapToScene(_view->viewport()->rect()).boundingRect();
+    // Draw the main view's current visible region as an outlined box, clipped
+    // to the overview so it stays inside the minimap.
+    const QRectF visibleScene = _view->mapToScene(_view->viewport()->rect()).boundingRect().intersected(sceneRect);
+
+    if (visibleScene.isEmpty()) {
+        return;
+    }
 
     QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()), sceneToWidget(visibleScene.bottomRight()));
 
@@ -889,6 +988,7 @@ void SeerParallelStacksMiniMapWidget::mouseReleaseEvent(QMouseEvent* event) {
 
     if (_dragging && event->button() == Qt::LeftButton) {
         _dragging = false;
+        if (_view) _view->tightenSceneRect();
         event->accept();
         return;
     }
@@ -1137,6 +1237,8 @@ void SeerParallelStacksGraphicsView::updateMiniMapVisibility () {
 
 void SeerParallelStacksGraphicsView::zoomBy(double factor, QGraphicsView::ViewportAnchor anchor) {
 
+    hidePopups();
+
     const QGraphicsView::ViewportAnchor prev = transformationAnchor();
 
     setTransformationAnchor(anchor);
@@ -1144,13 +1246,24 @@ void SeerParallelStacksGraphicsView::zoomBy(double factor, QGraphicsView::Viewpo
     setTransformationAnchor(prev);
 
     repositionMiniMap();
-    growSceneForMiniMap();
+    tightenSceneRect();
     updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
 }
 
+void SeerParallelStacksGraphicsView::hidePopups() {
+
+    for (QGraphicsItem* item : _scene->items()) {
+        if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
+            box->hidePopup();
+        }
+    }
+}
+
 void SeerParallelStacksGraphicsView::resetZoom() {
+
+    hidePopups();
 
     const QRectF bounds = _scene->itemsBoundingRect();
 
@@ -1161,7 +1274,7 @@ void SeerParallelStacksGraphicsView::resetZoom() {
     }
 
     repositionMiniMap();
-    growSceneForMiniMap();
+    tightenSceneRect();
     updateMiniMapVisibility();
 
     if (_miniMap) _miniMap->refresh();
@@ -1218,6 +1331,9 @@ void SeerParallelStacksGraphicsView::resizeEvent(QResizeEvent* event) {
 
     QGraphicsView::resizeEvent(event);
 
+    // The minimap's size limits depend on the viewport size.
+    if (_miniMap) _miniMap->updateShape();
+
     repositionMiniMap();
     updateMiniMapVisibility();
 }
@@ -1263,14 +1379,39 @@ void SeerParallelStacksGraphicsView::growSceneForMiniMap() {
 
     if (!_miniMap || !_miniMapAnchored || !_miniMap->isVisible()) return;
 
-    // Keep the scene rect big enough to hold the minimap plus the same 40px
-    // margin handleGrowSceneRectToFitItems() keeps around the nodes — this is
-    // what "makes room" for it as it's dragged toward an edge. Grow only.
-    const QRectF needed  = miniMapSceneRect().adjusted(-40, -40, 40, 40);
+    // Keep the scene rect big enough to hold the minimap. While it's being
+    // Shift-dragged, also add the same 40px margin handleGrowSceneRectToFitItems()
+    // keeps around the nodes — this is what "makes room" for it as it's dragged
+    // toward an edge. Otherwise (e.g. navigating with it, which re-anchors it
+    // on every move) the margin would creep the scene outward a bit at a time
+    // whenever the minimap sits near a viewport edge. Grow only.
+    const qreal  margin  = _miniMapDragScroll ? 40 : 0;
+    const QRectF needed  = miniMapSceneRect().adjusted(-margin, -margin, margin, margin);
     const QRectF current = _scene->sceneRect();
 
     if (!current.contains(needed)) {
         _scene->setSceneRect(current.united(needed));
+    }
+}
+
+void SeerParallelStacksGraphicsView::tightenSceneRect() {
+
+    if (_scene->items().isEmpty()) {
+        return;
+    }
+
+    // The nodes plus the same 40px margin fitSceneToItems() and
+    // handleGrowSceneRectToFitItems() keep around them, plus an anchored
+    // minimap so it stays reachable. Unlike the grow-only paths, this can
+    // shrink the scene.
+    QRectF needed = _scene->itemsBoundingRect().adjusted(-40, -40, 40, 40);
+
+    if (_miniMap && _miniMapAnchored && _miniMap->isVisible()) {
+        needed = needed.united(miniMapSceneRect());
+    }
+
+    if (needed != _scene->sceneRect()) {
+        _scene->setSceneRect(needed);
     }
 }
 
@@ -1308,10 +1449,18 @@ void SeerParallelStacksGraphicsView::beginMiniMapDragScroll() {
 
 void SeerParallelStacksGraphicsView::endDragScroll() {
 
+    const bool wasDragging = _nodeDragScroll || _miniMapDragScroll;
+
     _nodeDragScroll     = false;
     _miniMapDragScroll  = false;
     _autoScrollVelocity = QPoint();
     _autoScrollTimer.stop();
+
+    // The drag only ever grew the scene; now that it's over, drop any room
+    // it made that nothing occupies any more.
+    if (wasDragging) {
+        tightenSceneRect();
+    }
 }
 
 void SeerParallelStacksGraphicsView::updateDragScroll(const QPoint& viewportPos) {

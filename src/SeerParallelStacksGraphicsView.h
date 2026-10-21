@@ -76,6 +76,10 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // (drawn with a search-colored border).
         void                    setCurrentSearchMatch   (bool flag);
 
+        // Cancels a pending popup and tears down one that's showing (e.g.
+        // because the view was zoomed out from under it).
+        void                    hidePopup               ();
+
     signals:
         // Forwarded from this box's popup table when a row is selected there.
         void                    selectedThread          (int threadId);
@@ -177,7 +181,11 @@ class SeerParallelStacksMiniMapWidget : public QWidget {
     public:
         explicit SeerParallelStacksMiniMapWidget(SeerParallelStacksGraphicsView* view, QWidget* parent = nullptr);
 
-        QSize   sizeHint                () const override { return QSize(180, 140); }
+        QSize   sizeHint                () const override { return _size; }
+
+        // Reshapes the minimap to the graph's aspect ratio, keeping roughly
+        // the same area. Returns true if the size changed.
+        bool    updateShape             ();
 
     public slots:
         void    refresh                 ();   // call whenever the scene or the main view's viewport changes
@@ -202,7 +210,12 @@ class SeerParallelStacksMiniMapWidget : public QWidget {
         // independent of where the minimap itself has been parked.
         QRectF  overviewSceneRect       () const;
 
+        // The scene region the graph's nodes occupy (plus padding). Its
+        // aspect ratio sets the minimap's shape.
+        QRectF  graphSceneRect          () const;
+
         SeerParallelStacksGraphicsView* _view;
+        QSize                           _size = QSize(180, 140);
         bool                            _dragging = false;   // plain left-drag: navigating the graph
         bool                            _moving   = false;   // shift + left-drag: repositioning this widget
         QPoint                          _moveGrabOffset;     // cursor offset within the widget at move start
@@ -369,6 +382,8 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         void            zoomBy                      (double factor, QGraphicsView::ViewportAnchor anchor);
         // 'Esc' — refit the whole graph to the viewport (normal zoom level).
         void            resetZoom                   ();
+        // Hides every box's popup — a zoom moves the boxes out from under them.
+        void            hidePopups                  ();
 
         // Places the minimap widget. Until the user Shift-drags it, this pins
         // it to the bottom-right corner of the viewport. Once dragged, the
@@ -388,6 +403,12 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         // minimap plus padding — the "make room for it" behavior nodes get
         // from handleGrowSceneRectToFitItems().
         void            growSceneForMiniMap         ();
+
+        // Resets the scene rect to exactly what's needed: the nodes plus
+        // padding, and an anchored minimap. The grow-only paths above never
+        // give space back, so this is called at rest points (end of a drag,
+        // zoom, minimap reshape) to drop room nothing occupies any more.
+        void            tightenSceneRect            ();
 
         // Shows or hides the minimap according to _showMinimapMode. In "Auto"
         // mode the minimap is shown only while one of the view's scrollbars is
