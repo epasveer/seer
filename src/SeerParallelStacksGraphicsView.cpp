@@ -729,9 +729,15 @@ void SeerParallelStacksMiniMapWidget::refresh() {
 
     // The graph may have changed shape (rebuilt, or a node dragged). If the
     // minimap reshapes, have the view re-place it so it stays pinned/anchored.
+    // Don't tighten mid-drag: shrinking the scene under a dragged node (e.g.
+    // the rightmost one dragged left) clamps the scrollbars and jumps the view.
+    // endDragScroll() tightens once the drag is over.
     if (updateShape() && _view) {
         _view->repositionMiniMap();
-        _view->tightenSceneRect();
+
+        if (!_view->_nodeDragScroll && !_view->_miniMapDragScroll) {
+            _view->tightenSceneRect();
+        }
     }
 
     update();
@@ -809,11 +815,11 @@ QRectF SeerParallelStacksMiniMapWidget::overviewSceneRect() const {
         return QRectF();
     }
 
+    // Frame just the graph. The minimap is shaped to the graph's aspect ratio,
+    // so including the visible region (which, zoomed out, can extend well past
+    // the graph on one axis) would letterbox the overview with empty space.
+    // The viewport marker is clipped to this rect instead.
     QRectF r = graphSceneRect();
-
-    // Always keep the current visible region in frame so the viewport marker
-    // stays inside the overview.
-    r = r.united(_view->mapToScene(_view->viewport()->rect()).boundingRect().adjusted(-20, -20, 20, 20));
 
     if (r.isEmpty()) {
         r = _view->sceneRect().adjusted(-20, -20, 20, 20);
@@ -875,8 +881,13 @@ void SeerParallelStacksMiniMapWidget::paintEvent(QPaintEvent* ) {
         }
     }
 
-    // Draw the main view's current visible region as an outlined box.
-    const QRectF visibleScene = _view->mapToScene(_view->viewport()->rect()).boundingRect();
+    // Draw the main view's current visible region as an outlined box, clipped
+    // to the overview so it stays inside the minimap.
+    const QRectF visibleScene = _view->mapToScene(_view->viewport()->rect()).boundingRect().intersected(sceneRect);
+
+    if (visibleScene.isEmpty()) {
+        return;
+    }
 
     QRectF viewportMarker(sceneToWidget(visibleScene.topLeft()), sceneToWidget(visibleScene.bottomRight()));
 
