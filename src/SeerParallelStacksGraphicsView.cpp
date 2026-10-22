@@ -65,6 +65,17 @@ namespace {
         return g_darkTheme ? dark : light;
     }
 
+    // Edges between active-thread boxes. Dark mode reuses the active box
+    // background; light mode's pale active background vanishes against the
+    // view, so a deeper amber of the same hue is used there instead.
+    QColor activeEdgeColor () {
+
+        static const QColor light(0xB8, 0x86, 0x0B);
+        static const QColor dark (0x5A, 0x4A, 0x1A);
+
+        return g_darkTheme ? dark : light;
+    }
+
     const MiniMapColors& miniMapColors () {
 
         static const MiniMapColors light { QColor(0xFF, 0xFF, 0xFF, 230), QColor(0x88, 0x88, 0x88), QColor(0x5A, 0x8F, 0xD6), QColor(0x1A, 0x52, 0xA8, 40), QColor(0x1A, 0x52, 0xA8), QColor(0xE0, 0x6C, 0x00) };
@@ -321,7 +332,16 @@ void SeerParallelStacksStackBoxItem::setHighlightedThreadId(int threadId) {
 
     _isActiveStack = active;
 
+    for (SeerParallelStacksLiveEdge* e : _edges) {
+        e->refreshHighlight();
+    }
+
     update();
+}
+
+bool SeerParallelStacksStackBoxItem::isActiveStack() const {
+
+    return _isActiveStack;
 }
 
 void SeerParallelStacksStackBoxItem::setHighlightedFrameDepth(int frameDepth) {
@@ -662,6 +682,17 @@ QPainterPath SeerParallelStacksLiveEdge::shape() const {
     return QPainterPath();
 }
 
+void SeerParallelStacksLiveEdge::refreshHighlight() {
+
+    bool highlighted = _from && _to && _from->isActiveStack() && _to->isActiveStack();
+
+    // Still behind the boxes (z 0), but above the plain edges (z -1) where
+    // they converge on a shared parent.
+    setZValue(highlighted ? -0.5 : -1);
+
+    update();
+}
+
 void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget*) {
 
     if (!_from || !_to) return;
@@ -694,9 +725,12 @@ void SeerParallelStacksLiveEdge::paint(QPainter* painter, const QStyleOptionGrap
     path.moveTo(base);
     path.cubicTo(base + QPointF(0,  _kVCtrl), to   + QPointF(0, -_kVCtrl), to);
 
-    const QColor color = edgeColor();
+    // An edge between two active-thread boxes follows the thread's path, so
+    // draw it in the active color and a little thicker.
+    const bool   highlighted = _from->isActiveStack() && _to->isActiveStack();
+    const QColor color       = highlighted ? activeEdgeColor() : edgeColor();
 
-    painter->setPen(QPen(color, 1.5));
+    painter->setPen(QPen(color, highlighted ? 3.0 : 1.5));
     painter->setBrush(Qt::NoBrush);
     painter->drawPath(path);
 
@@ -1011,13 +1045,33 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     setFrameShape(QFrame::Box);
     setFrameShadow(QFrame::Plain);
     setLineWidth(1);
-    setStyleSheet(
+
+    // Color the popup from the same theme-aware palette as the boxes so it
+    // matches the graph rather than the desktop's Qt palette. Set before the
+    // table is created so it (and its header/scrollbars) inherit it. A new
+    // popup is built on every hover, so it always picks up the current theme.
+    const BoxColors& colors = boxColors();
+
+    QPalette pal = palette();
+    pal.setColor(QPalette::Window,          colors.background);
+    pal.setColor(QPalette::WindowText,      colors.headerText);
+    pal.setColor(QPalette::Base,            colors.background);
+    pal.setColor(QPalette::AlternateBase,   colors.background);
+    pal.setColor(QPalette::Text,            colors.headerText);
+    pal.setColor(QPalette::Button,          colors.background);
+    pal.setColor(QPalette::ButtonText,      colors.headerText);
+    pal.setColor(QPalette::Mid,             colors.divider);
+    pal.setColor(QPalette::Highlight,       colors.dragOutline);
+    pal.setColor(QPalette::HighlightedText, colors.background);
+    setPalette(pal);
+
+    setStyleSheet(QString(
             "SeerParallelStacksPopupTableWidget {"
-            "  background-color: palette(window);"
-            "  border: 1px solid #888;"
+            "  background-color: %1;"
+            "  border: 1px solid %2;"
             "  border-radius: 4px;"
             "}"
-            );
+            ).arg(colors.background.name(), colors.border.name()));
 
     // Ensure leaveEvent fires reliably even without buttons held
     setMouseTracking(true);

@@ -50,6 +50,7 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // current thread or one the user picked in a popup table — so there
         // is only ever one highlight, not two independent ones.
         void                    setHighlightedThreadId  (int threadId);
+        bool                    isActiveStack           () const;
 
         // Sets which frame depth to bold (kNoFrameDepth clears it) — depth-from-bottom
         // (SeerParallelStacksFrame::depth()), not the thread-relative
@@ -156,6 +157,10 @@ class SeerParallelStacksLiveEdge : public QGraphicsItem {
         // the edge renders nothing and its own destructor won't touch `box`.
         void            detachEndpoint   (SeerParallelStacksStackBoxItem* box);
 
+        // Re-evaluates whether both endpoints are active-thread boxes (drawn
+        // thicker, in the active-box color, above the plain edges). Called
+        // by StackBoxItem when its active state changes.
+        void            refreshHighlight ();
 
     private:
         SeerParallelStacksStackBoxItem*     _from;   // child  (bottom anchor)
