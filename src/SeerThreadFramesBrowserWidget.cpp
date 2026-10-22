@@ -43,6 +43,7 @@ SeerThreadFramesBrowserWidget::SeerThreadFramesBrowserWidget (QWidget* parent) :
     QObject::connect(gdbFinishToolButton,       &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbFinishToolButton);
     QObject::connect(gdbContinueToolButton,     &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbContinueToolButton);
     QObject::connect(gdbInterruptToolButton,    &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleGdbInterruptToolButton);
+    QObject::connect(parallelStacksToolButton,  &QToolButton::clicked,              this, &SeerThreadFramesBrowserWidget::handleParallelStacksToolButton);
 }
 
 SeerThreadFramesBrowserWidget::~SeerThreadFramesBrowserWidget () {
@@ -325,6 +326,11 @@ void SeerThreadFramesBrowserWidget::handleGdbInterruptToolButton () {
 
         emit interruptThreadId(threadid);
     }
+}
+
+void SeerThreadFramesBrowserWidget::handleParallelStacksToolButton () {
+
+    emit launchParallelStacks();
 }
 
 void SeerThreadFramesBrowserWidget::showEvent (QShowEvent* event) {
