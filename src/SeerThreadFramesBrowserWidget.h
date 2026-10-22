@@ -30,6 +30,7 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
         void                handleGdbFinishToolButton       ();
         void                handleGdbContinueToolButton     ();
         void                handleGdbInterruptToolButton    ();
+        void                handleParallelStacksToolButton  ();
 
     signals:
         void                refreshThreadFrames             ();
@@ -44,6 +45,7 @@ class SeerThreadFramesBrowserWidget : public QWidget, protected Ui::SeerThreadFr
         void                finishThreadId                  (int threadid);
         void                continueThreadId                (int threadid);
         void                interruptThreadId               (int threadid);
+        void                launchParallelStacks            ();
 
     protected:
         void                showEvent                       (QShowEvent* event);
