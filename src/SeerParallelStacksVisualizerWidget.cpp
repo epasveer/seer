@@ -29,12 +29,14 @@
 #include <QtCore/QTimer>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QDebug>
+#include <algorithm>
 
 SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget* parent) : QWidget(parent) {
 
     // Init variables.
-    _id       = Seer::createID(); // ID for parallelstacks command.
-    _settings = {"Auto", "Stack", true, 64, true, 20, false};
+    _id            = Seer::createID(); // ID for parallelstacks command.
+    _selectFrameId = Seer::createID(); // ID for the parallelstacks command following a frame selection.
+    _settings      = {"Auto", "Stack", true, 64, true, 20, false};
 
     // Set up UI.
     setupUi(this);
@@ -54,6 +56,7 @@ SeerParallelStacksVisualizerWidget::SeerParallelStacksVisualizerWidget (QWidget*
     QObject::connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged,                this,  &SeerParallelStacksVisualizerWidget::handleThemeChanged);
 #endif
     QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThread, this,  &SeerParallelStacksVisualizerWidget::handleGraphThreadSelected);
+    QObject::connect(graphicsView,                  &SeerParallelStacksGraphicsView::selectedThreadFrame, this,  &SeerParallelStacksVisualizerWidget::handleGraphFrameSelected);
     QObject::connect(viewModeComboBox,              &QComboBox::currentTextChanged,                  this,  &SeerParallelStacksVisualizerWidget::handleViewModeChanged);
     QObject::connect(autoRefreshCheckBox,           &QCheckBox::toggled,                             this,  &SeerParallelStacksVisualizerWidget::writeSettings);
     QObject::connect(searchLineEdit,                &QLineEdit::textChanged,                         this,  &SeerParallelStacksVisualizerWidget::handleSearchTextChanged);
@@ -230,6 +233,48 @@ void SeerParallelStacksVisualizerWidget::handleGraphThreadSelected (int threadId
     }
 }
 
+void SeerParallelStacksVisualizerWidget::handleGraphFrameSelected (int threadId, int frameDepth) {
+
+    // The graph has already highlighted the frame itself. Convert its depth
+    // back to a gdb frame level for threadId — the reverse of
+    // highlightDirectedGraph(). An "[External Code]" frame maps to the
+    // innermost frame it stands in for.
+    int frameLevel = -1;
+
+    for (const auto& t : _graphThreads) {
+        if (t.id() == threadId) {
+            int frameIdx = -1;
+            if (isMethodView()) {
+                int pivotIdx = t.indexOfFunction(_methodPivot);
+                if (pivotIdx >= 0) {
+                    frameIdx = pivotIdx - frameDepth;
+                }
+            }else{
+                frameIdx = t.frameCount() - frameDepth;
+            }
+            if (frameIdx >= 0 && frameIdx < t.frameCount()) {
+                frameLevel = t.frame(frameIdx).level();
+            }
+            break;
+        }
+    }
+
+    if (frameLevel < 0) {
+        return;
+    }
+
+    _currentThreadId   = threadId;
+    _currentFrameLevel = frameLevel;
+
+    emit selectedThreadFrame(threadId, frameLevel);
+
+    // Selecting the thread makes the stack frames browser open that thread's
+    // first live frame in the editor once its refresh comes back. Follow up
+    // with a frames-list of our own, whose reply arrives after that one, and
+    // open the selected frame's source then (see handleText()).
+    emit refreshParallelStackFrames(_selectFrameId);
+}
+
 void SeerParallelStacksVisualizerWidget::updateForSelection () {
 
     if (isMethodView() && currentPivotFunction() != _methodPivot) {
@@ -258,6 +303,39 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
         QString id_text = text.section('^', 0,0);
 
+        // Reply to the frames-list sent after a graph frame selection. The
+        // stacks haven't changed, so leave the graph (and its zoom and
+        // dragged nodes) alone. Just take gdb's current thread/frame and open
+        // that frame's source.
+        if (id_text.toInt() == _selectFrameId) {
+
+            QString current_thread_id_text   = Seer::parseFirst(text, "current_thread_id=",   '"', '"', false);
+            QString current_frame_level_text = Seer::parseFirst(text, "current_frame_level=", '"', '"', false);
+
+            _currentThreadId   = current_thread_id_text.toInt();
+            _currentFrameLevel = current_frame_level_text.toInt();
+
+            updateForSelection();
+
+            for (const auto& t : _threads) {
+                if (t.id() == _currentThreadId) {
+                    int frameIdx = t.indexOfLevel(_currentFrameLevel);
+                    if (frameIdx >= 0) {
+                        const SeerParallelStacksFrame& frame = t.frame(frameIdx);
+
+                        if (frame.file() != "" && frame.fullname() != "") {
+                            emit selectedFile(frame.file(), frame.fullname(), frame.line());
+                        }
+
+                        if (frame.addr() != "") {
+                            emit maybeSelectedAddress(frame.file(), frame.fullname(), frame.addr());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         if (id_text.toInt() == _id) {
 
             _threads.clear();
@@ -273,6 +351,13 @@ void SeerParallelStacksVisualizerWidget::handleText (const QString& text) {
 
                 _threads.push_back(thread);
             }
+
+            // gdb doesn't guarantee any thread order. Sort by thread ID so
+            // every node, its hover popup, and the double-click fallback
+            // thread all list threads in ascending ID order.
+            std::stable_sort(_threads.begin(), _threads.end(), [](const SeerParallelStacksThread& a, const SeerParallelStacksThread& b) {
+                return a.id() < b.id();
+            });
 
             QString current_thread_id_text   = Seer::parseFirst(text, "current_thread_id=",   '"', '"', false);
             QString current_frame_level_text = Seer::parseFirst(text, "current_frame_level=", '"', '"', false);

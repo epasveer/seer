@@ -449,7 +449,54 @@ void SeerParallelStacksStackBoxItem::mousePressEvent(QGraphicsSceneMouseEvent* e
         return;
     }
 
+    // Accept a plain left press, so the scene keeps this box as the target
+    // of the double-click that may follow. The base class ignores presses on
+    // items that aren't movable or selectable.
+    if (event->button() == Qt::LeftButton) {
+        event->accept();
+        return;
+    }
+
     QGraphicsItem::mousePressEvent(event);
+}
+
+void SeerParallelStacksStackBoxItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+
+    if (event->button() != Qt::LeftButton || event->modifiers() & Qt::ShiftModifier) {
+        QGraphicsItem::mouseDoubleClickEvent(event);
+        return;
+    }
+
+    event->accept();
+
+    // Frame rows start below the header row.
+    const qreal rowsTop = _kPadY + _kRowH;
+
+    if (event->pos().y() < rowsTop) {
+        return;
+    }
+
+    const int row = (int)((event->pos().y() - rowsTop) / _kRowH);
+
+    // A "[...]" row stands in for several frames, so it has no single one to select.
+    if (row < 0 || row >= _frameRowDepths.size() || _frameRowDepths[row] == kNoFrameDepth) {
+        return;
+    }
+
+    if (_threadIds.isEmpty()) {
+        return;
+    }
+
+    // Stay on the graph's current thread if it passes through this box.
+    int threadId = _threadIds.first();
+
+    if (auto* v = viewOf(this)) {
+        if (_threadIds.contains(v->currentThreadId())) {
+            threadId = v->currentThreadId();
+        }
+    }
+
+    emit selectedThreadFrame(threadId, _frameRowDepths[row]);
 }
 
 void SeerParallelStacksStackBoxItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
@@ -1802,6 +1849,7 @@ void SeerParallelStacksGraphicsView::buildPlacedTree(PlacedNode* pn, const SeerP
         _scene->addItem(pn->item);
 
         QObject::connect(pn->item, &SeerParallelStacksStackBoxItem::selectedThread, this, &SeerParallelStacksGraphicsView::handleThreadSelected);
+        QObject::connect(pn->item, &SeerParallelStacksStackBoxItem::selectedThreadFrame, this, &SeerParallelStacksGraphicsView::handleFrameSelected);
     }
 
     for (const auto& child : stack.stacks) {
@@ -1988,6 +2036,13 @@ void SeerParallelStacksGraphicsView::handleThreadSelected(int threadId) {
     setCurrentThreadId(threadId);
 
     emit selectedThread(threadId);
+}
+
+void SeerParallelStacksGraphicsView::handleFrameSelected(int threadId, int frameDepth) {
+
+    setCurrentHighlight(threadId, frameDepth);
+
+    emit selectedThreadFrame(threadId, frameDepth);
 }
 
 void SeerParallelStacksGraphicsView::applyCurrentHighlight() {
