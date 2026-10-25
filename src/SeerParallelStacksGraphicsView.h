@@ -85,10 +85,16 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // Forwarded from this box's popup table when a row is selected there.
         void                    selectedThread          (int threadId);
 
+        // A frame row was double-clicked. threadId is the graph's current
+        // thread if this box holds it, otherwise this box's first thread.
+        // frameDepth is the row's depth() (see setHighlightedFrameDepth()).
+        void                    selectedThreadFrame     (int threadId, int frameDepth);
+
     protected:
         QVariant                itemChange              (GraphicsItemChange change, const QVariant& value) override;
 
         void                    mousePressEvent         (QGraphicsSceneMouseEvent* event) override;
+        void                    mouseDoubleClickEvent   (QGraphicsSceneMouseEvent* event) override;
         void                    mouseMoveEvent          (QGraphicsSceneMouseEvent* event) override;
         void                    mouseReleaseEvent       (QGraphicsSceneMouseEvent* event) override;
         void                    hoverEnterEvent         (QGraphicsSceneHoverEvent* event) override;
@@ -307,8 +313,7 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         // frame picked in the external stack frames browser) is responsible
         // for converting a level to a depth using that thread's own frame
         // count, since only it knows which thread the level came from. The
-        // graph has no frame-selection UI of its own, so there's no
-        // popup-driven counterpart to this one.
+        // double-click-driven counterpart is handleFrameSelected().
         void            setCurrentFrameDepth            (int frameDepth);
 
         // Sets both at once, restyling the graph in a single pass instead of
@@ -331,6 +336,9 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
     signals:
         // Forwarded from whichever StackBoxItem's popup table had a row selected.
         void            selectedThread                  (int threadId);
+
+        // Forwarded from whichever StackBoxItem had a frame row double-clicked.
+        void            selectedThreadFrame             (int threadId, int frameDepth);
 
     protected:
         void            wheelEvent                      (QWheelEvent* event) override;
@@ -357,6 +365,11 @@ class SeerParallelStacksGraphicsView : public QGraphicsView {
         // graph's current thread, restyles every box that holds it, and
         // forwards the selection on via the selectedThread signal.
         void            handleThreadSelected            (int threadId);
+
+        // A frame row was double-clicked in some box. Makes threadId and
+        // frameDepth the graph's current highlight and forwards them on via
+        // the selectedThreadFrame signal.
+        void            handleFrameSelected             (int threadId, int frameDepth);
 
     private:
         struct PlacedNode {

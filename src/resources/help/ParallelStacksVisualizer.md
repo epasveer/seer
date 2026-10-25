@@ -109,6 +109,11 @@ Available Quick keys while in the ParallelStacks Visualizer:
                     its list of threads.
     LMB+Click       On one of the threads in the
                     pop-up to select that thread.
+    LMB+DoubleClick On a frame in a stack node to
+                    select that frame in Seer. The
+                    current thread is kept if it's in
+                    the node, otherwise the node's
+                    first thread is selected.
 ```
 
 ### Resources
