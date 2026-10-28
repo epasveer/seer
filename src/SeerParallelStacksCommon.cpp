@@ -89,6 +89,17 @@ bool SeerParallelStacksFrame::hasDebugInfo () const {
     return _file.isEmpty() == false || _fullname.isEmpty() == false;
 }
 
+bool SeerParallelStacksFrame::isExternal (const QStringList& filePatterns) const {
+
+    if (hasDebugInfo() == false) {
+        return true;
+    }
+
+    const QString& filename = _fullname.isEmpty() ? _file : _fullname;
+
+    return Seer::matchesWildcard(filePatterns, filename);
+}
+
 SeerParallelStacksFrame SeerParallelStacksFrame::externalCodeFrame (int level) {
 
     SeerParallelStacksFrame frame;
@@ -444,12 +455,13 @@ SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks(const SeerPar
 
 
 // ---------------------------------------------------------------
-// Merge each run of consecutive frames without debug info into a single
-// "[External Code]" frame, like Visual Studio's "Show External Code" off.
+// Merge each run of consecutive external frames (no debug info, or a source
+// file matching externalFilePatterns) into a single "[External Code]" frame,
+// like Visual Studio's "Show External Code" off.
 // Done before building the tree, so threads that differ only inside
 // library code end up sharing a node.
 // ---------------------------------------------------------------
-SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode(const SeerParallelStacksThreads& threads, const QString& keepFunction) {
+SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode(const SeerParallelStacksThreads& threads, const QStringList& externalFilePatterns, const QString& keepFunction) {
 
     SeerParallelStacksThreads result;
 
@@ -460,7 +472,7 @@ SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode(const SeerParal
 
         for (const SeerParallelStacksFrame& f : t.frames()) {
 
-            bool external = f.hasDebugInfo() == false && (keepFunction.isEmpty() || f.functionOrAddr() != keepFunction);
+            bool external = f.isExternal(externalFilePatterns) && (keepFunction.isEmpty() || f.functionOrAddr() != keepFunction);
 
             if (external == false) {
                 frames.append(f);

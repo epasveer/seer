@@ -11,10 +11,13 @@
 #include <QtWidgets/QPushButton>
 #include <QtCore/QSet>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
 // Popup for the ParallelStacks filter (like Visual Studio's). A checkable
 // tree of library -> function -> thread, built from every frame of every
 // thread. Checking an item keeps only the threads that pass through it.
+// With hideExternalCode, external frames (see SeerParallelStacksFrame::
+// isExternal()) are left out, as they are of the graph.
 //
 // The selection is reported as three sets, so it can be reapplied by name
 // after a refresh:
@@ -30,7 +33,7 @@ class SeerParallelStacksFilterWidget : public QWidget {
         explicit SeerParallelStacksFilterWidget (QWidget* parent = 0);
        ~SeerParallelStacksFilterWidget ();
 
-        void                        setThreads                  (const SeerParallelStacksThreads& threads, const QSet<QString>& libraries, const QSet<QString>& functions, const QSet<int>& threadIds);
+        void                        setThreads                  (const SeerParallelStacksThreads& threads, bool hideExternalCode, const QStringList& externalFilePatterns, const QSet<QString>& libraries, const QSet<QString>& functions, const QSet<int>& threadIds);
 
         QSet<QString>               libraries                   () const;
         QSet<QString>               functions                   () const;

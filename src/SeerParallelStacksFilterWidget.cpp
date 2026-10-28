@@ -67,7 +67,7 @@ QString SeerParallelStacksFilterWidget::libraryOf (const SeerParallelStacksFrame
     return frame.from();
 }
 
-void SeerParallelStacksFilterWidget::setThreads (const SeerParallelStacksThreads& threads, const QSet<QString>& libraries, const QSet<QString>& functions, const QSet<int>& threadIds) {
+void SeerParallelStacksFilterWidget::setThreads (const SeerParallelStacksThreads& threads, bool hideExternalCode, const QStringList& externalFilePatterns, const QSet<QString>& libraries, const QSet<QString>& functions, const QSet<int>& threadIds) {
 
     // Collect library -> function -> thread id -> thread name. QMap keeps
     // each level sorted, and collapses a recursive function's repeats.
@@ -75,6 +75,12 @@ void SeerParallelStacksFilterWidget::setThreads (const SeerParallelStacksThreads
 
     for (const auto& t : threads) {
         for (const auto& f : t.frames()) {
+
+            // Folded into "[External Code]" in the graph, so not offered here.
+            if (hideExternalCode && f.isExternal(externalFilePatterns)) {
+                continue;
+            }
+
             tree[libraryOf(f)][f.functionOrAddr()][t.id()] = t.name();
         }
     }

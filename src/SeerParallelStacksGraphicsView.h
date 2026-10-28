@@ -81,6 +81,10 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // because the view was zoomed out from under it).
         void                    hidePopup               ();
 
+        // Brings a showing popup up to date with the graph's current thread
+        // and this box's highlighted frame. No-op without a popup.
+        void                    refreshPopup            ();
+
     signals:
         // Forwarded from this box's popup table when a row is selected there.
         void                    selectedThread          (int threadId);
@@ -109,6 +113,10 @@ class SeerParallelStacksStackBoxItem : public QObject, public QGraphicsItem {
         // Global (screen) rect this box occupies, used to test whether the
         // cursor is still over the node.
         QRect                   globalRect              () const;
+
+        // The function of the frame this box bolds (see paint()), or empty
+        // if it bolds none.
+        QString                 activeFunction          () const;
 
         // Fills _frameRows (and the parallel _frameRowDepths) with the
         // frame-row texts to draw. Honors the showFullStackSize / stackSize
@@ -242,11 +250,15 @@ class SeerParallelStacksPopupTableWidget : public QFrame {
     public:
         explicit SeerParallelStacksPopupTableWidget(QWidget* parent = nullptr);
 
-        void            addRow                          (int threadId, const QString& name, const QString& function);
+        void            addRow                          (int threadId, const QString& name);
 
         // Sets which row (by threadId) shows the "current thread" highlight
         // and restyles the rows already in the table to match.
         void            setCurrentThreadId              (int threadId);
+
+        // Shows function in every row — the box's threads all share its
+        // frames. Empty blanks them.
+        void            setActiveFunction               (const QString& function);
 
     protected:
         void            leaveEvent                      (QEvent* event) override;

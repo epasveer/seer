@@ -38,6 +38,11 @@ class SeerParallelStacksFrame {
         // without debug info.
         bool                hasDebugInfo    () const;
 
+        // Library or system code — a frame without debug info, or one whose
+        // source file matches one of filePatterns (Seer's Source Config
+        // "Ignore" patterns).
+        bool                isExternal      (const QStringList& filePatterns) const;
+
         // A run of consecutive frames without debug info, merged into one
         // "[External Code]" frame (see SeerParallelStacksCollapseExternalCode()).
         // Its level() is that of the innermost frame in the run, and
@@ -163,11 +168,11 @@ struct SeerParallelStacksSettings {
     int      functionNameLength;
     bool     showFullStackSize;
     int      stackSize;
-    bool     showExternalCode;      // false: merge frames without debug info into "[External Code]"
+    bool     showExternalCode;      // false: merge external frames (see SeerParallelStacksFrame::isExternal()) into "[External Code]"
 };
 
 SeerParallelStacksNode    SeerParallelStacksBuildParallelStacks     (const SeerParallelStacksThreads& threads);   // Build the parallel-stacks tree from a flat list of threads.
 SeerParallelStacksStack   SeerParallelStacksFillStack               (const SeerParallelStacksNode& node, bool downward = false);  // downward: parent box sits above its children (Method View callers).
 SeerParallelStacksMethodStacks SeerParallelStacksBuildMethodStacks  (const SeerParallelStacksThreads& threads, const QString& pivotFunction);  // Build Method View's two halves around pivotFunction.
-SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode    (const SeerParallelStacksThreads& threads, const QString& keepFunction = QString());  // Merge each run of frames without debug info into one "[External Code]" frame. Frames of keepFunction (Method View's pivot) are left alone.
+SeerParallelStacksThreads SeerParallelStacksCollapseExternalCode    (const SeerParallelStacksThreads& threads, const QStringList& externalFilePatterns = QStringList(), const QString& keepFunction = QString());  // Merge each run of external frames (no debug info, or a file matching externalFilePatterns) into one "[External Code]" frame. Frames of keepFunction (Method View's pivot) are left alone.
 
