@@ -49,7 +49,9 @@ total count of matching frames. The search is reapplied whenever the graph is re
 
 The filter button (the funnel) opens a list of every library, function and thread found in the threads' stacks, arranged
 as a tree: library, then the functions in that library, then the threads that call each function. Frames with no shared
-library (the program itself) are listed under '(program)'. The text field at the top narrows the list.
+library (the program itself) are listed under '(program)'. Unless 'Show External Code' is checked, functions that are
+external code (see External Code, below) are left out of the list, and unchecking 'Show External Code' drops any
+filter on them. The text field at the top narrows the list.
 
 Checking items hides every thread that doesn't pass through them. A thread is shown if any of its frames is in a checked
 library or a checked function, or if the thread itself is checked. Checking a library or function checks everything under it.
@@ -64,12 +66,13 @@ are remembered by name and threads by id, so they apply to whatever stacks the n
 ### External Code
 
 Frames without debug info (library or system code, like libc's thread start-up or a futex wait) are normally of little
-interest. Each run of consecutive frames like that is merged into a single '[External Code]' frame. Threads whose stacks
-differ only inside external code then share a node instead of each getting their own.
+interest. So are frames whose source file matches one of the 'Ignore' file patterns on Seer's Source config page.
+Each run of consecutive frames like that is merged into a single '[External Code]' frame. Threads whose stacks differ only inside external code then share a node instead of each
+getting their own. The patterns are read when the visualizer is opened.
 
 Search sees through an '[External Code]' frame: it's highlighted when any of the functions it stands in for match.
 If the current frame is inside external code, its '[External Code]' frame is the one shown in bold. In Method View, the
-pivot function is never merged, even when it has no debug info.
+pivot function is never merged, even when it's external.
 
 To see every frame, check 'Show External Code' in the settings dialog (see Settings, below).
 
@@ -89,7 +92,7 @@ and the graph is redrawn when the dialog is closed with 'OK'.
 * **Stack Frame Size** — With 'All' checked, every frame of a node is shown. Unchecked, a node with more frames than the
   given number shows only that many: half from the top of its stack and half from the bottom. A single '[...]' row
   stands in for the frames left out of the middle. The default is 20.
-* **Show External Code** — Unchecked (the default), each run of frames without debug info is merged into a single
+* **Show External Code** — Unchecked (the default), each run of external frames is merged into a single
   '[External Code]' frame (see External Code, above). Checked, every frame is shown.
 
 ### ParallelStacks interaction

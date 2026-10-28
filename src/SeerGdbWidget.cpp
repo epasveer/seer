@@ -3091,6 +3091,7 @@ void SeerGdbWidget::handleGdbParallelStacksVisualizer () {
     }
 
     SeerParallelStacksVisualizerWidget* w = new SeerParallelStacksVisualizerWidget(0);
+    w->setExternalFilePatterns(sourceIgnoreFilePatterns());
     w->show();
 
     // Connect things.

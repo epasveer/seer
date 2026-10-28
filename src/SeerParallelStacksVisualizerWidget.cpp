@@ -134,6 +134,16 @@ int SeerParallelStacksVisualizerWidget::functionNameLength () const {
     return _settings.functionNameLength;
 }
 
+void SeerParallelStacksVisualizerWidget::setExternalFilePatterns (const QStringList& patterns) {
+
+    _externalFilePatterns = patterns;
+}
+
+const QStringList& SeerParallelStacksVisualizerWidget::externalFilePatterns () const {
+
+    return _externalFilePatterns;
+}
+
 void SeerParallelStacksVisualizerWidget::setShowMinimapMode (const QString& mode) {
 
     _settings.showMinimapMode = mode;
@@ -518,7 +528,14 @@ void SeerParallelStacksVisualizerWidget::handleSettingsButton () {
         SeerParallelStacksSettings settings = dialog.settings();
         settings.viewMode = _settings.viewMode;
 
+        bool hidingExternalCode = _settings.showExternalCode && settings.showExternalCode == false;
+
         setSettings(settings);
+
+        if (hidingExternalCode) {
+            removeExternalFilters();
+            updateFilterButton();
+        }
 
         // Redraw scene with new settings.
         createDirectedGraph();
@@ -652,7 +669,7 @@ void SeerParallelStacksVisualizerWidget::handleFilterButton () {
         QObject::connect(_filterPopup, &SeerParallelStacksFilterWidget::filterChanged, this, &SeerParallelStacksVisualizerWidget::handleFilterChanged);
     }
 
-    _filterPopup->setThreads(_threads, _filterLibraries, _filterFunctions, _filterThreadIds);
+    _filterPopup->setThreads(_threads, _settings.showExternalCode == false, _externalFilePatterns, _filterLibraries, _filterFunctions, _filterThreadIds);
 
     // Place it like a menu: below the button, or above it if there's no room
     // (the toolbar sits at the bottom of the window).
@@ -722,7 +739,36 @@ SeerParallelStacksThreads SeerParallelStacksVisualizerWidget::graphThreads (cons
         return filteredThreads();
     }
 
-    return SeerParallelStacksCollapseExternalCode(filteredThreads(), pivot);
+    return SeerParallelStacksCollapseExternalCode(filteredThreads(), _externalFilePatterns, pivot);
+}
+
+void SeerParallelStacksVisualizerWidget::removeExternalFilters () {
+
+    QSet<QString> shownLibraries;
+    QSet<QString> shownFunctions;
+    QSet<int>     shownThreadIds;
+    QSet<QString> externalLibraries;
+    QSet<QString> externalFunctions;
+    QSet<int>     externalThreadIds;
+
+    for (const auto& t : _threads) {
+        for (const auto& f : t.frames()) {
+
+            if (f.isExternal(_externalFilePatterns)) {
+                externalLibraries.insert(SeerParallelStacksFilterWidget::libraryOf(f));
+                externalFunctions.insert(f.functionOrAddr());
+                externalThreadIds.insert(t.id());
+            }else{
+                shownLibraries.insert(SeerParallelStacksFilterWidget::libraryOf(f));
+                shownFunctions.insert(f.functionOrAddr());
+                shownThreadIds.insert(t.id());
+            }
+        }
+    }
+
+    _filterLibraries.subtract(externalLibraries - shownLibraries);
+    _filterFunctions.subtract(externalFunctions - shownFunctions);
+    _filterThreadIds.subtract(externalThreadIds - shownThreadIds);
 }
 
 void SeerParallelStacksVisualizerWidget::updateFilterButton () {

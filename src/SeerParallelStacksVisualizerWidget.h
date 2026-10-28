@@ -30,6 +30,12 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        setShowMinimapMode                  (const QString& mode);
         const QString&              showMinimapMode                     () const;
 
+        // Frames whose source file matches one of these (Seer's Source
+        // Config "Ignore" patterns) are external code, like
+        // frames without debug info. Takes effect on the next refresh.
+        void                        setExternalFilePatterns             (const QStringList& patterns);
+        const QStringList&          externalFilePatterns                () const;
+
     signals:
         void                        refreshParallelStackFrames          (int id);
         void                        selectedThread                      (int threadId);
@@ -123,6 +129,12 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         SeerParallelStacksThreads   graphThreads                        (const QString& pivot) const;
         void                        updateFilterButton                  ();
 
+        // Drop filter entries the popup no longer lists once external code
+        // is hidden: functions and libraries seen only in external frames,
+        // and threads made only of them. Entries not in the current stacks
+        // at all are kept, for later refreshes.
+        void                        removeExternalFilters               ();
+
         int                         _id;
         int                         _selectFrameId;         // ID for the frames-list sent after a graph frame selection (see handleGraphFrameSelected())
         SeerParallelStacksThreads   _threads;
@@ -131,6 +143,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         int                         _currentFrameLevel  = 0;
         QString                     _methodPivot;           // the pivot the current Method View graph was built on
         SeerParallelStacksSettings  _settings;
+        QStringList                 _externalFilePatterns;
 
         // The filter, by name/id so it survives a refresh.
         SeerParallelStacksFilterWidget* _filterPopup = nullptr;

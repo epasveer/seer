@@ -595,12 +595,6 @@ void SeerParallelStacksStackBoxItem::handleShowPopup() {
         }
     }
 
-    QString frame;
-
-    if (_stack.frames.size() > 0) {
-        frame = _stack.frames[0].functionOrAddr();
-    }
-
     // Match the graph's current highlighted thread — there's no such thing
     // as "gdb's real current thread" at this level any more (the stack tree
     // is now purely structural); the view is the sole source of that.
@@ -614,8 +608,10 @@ void SeerParallelStacksStackBoxItem::handleShowPopup() {
     _popup->setCurrentThreadId(currentThreadId);
 
     for (int i = 0; i < _threadIds.size(); ++i) {
-        _popup->addRow(_threadIds[i], _stack.threadNames.value(i), frame);
+        _popup->addRow(_threadIds[i], _stack.threadNames.value(i));
     }
+
+    _popup->setActiveFunction(activeFunction());
 
     // Position below the item, aligned to its left edge
     _popup->move(globalRect().bottomLeft());
@@ -649,6 +645,36 @@ void SeerParallelStacksStackBoxItem::handleMaybeClosePopup() {
             handleDeletePopup();
         }
     });
+}
+
+void SeerParallelStacksStackBoxItem::refreshPopup() {
+
+    if (_popup == nullptr) {
+        return;
+    }
+
+    if (auto* v = viewOf(this)) {
+        _popup->setCurrentThreadId(v->currentThreadId());
+    }
+
+    _popup->setActiveFunction(activeFunction());
+}
+
+QString SeerParallelStacksStackBoxItem::activeFunction() const {
+
+    if (_isActiveStack == false || _highlightedFrameDepth == kNoFrameDepth) {
+        return QString();
+    }
+
+    // Searched in _stack.frames, not _frameRows, so it's found even when
+    // it's folded into a "[...]" row.
+    for (const SeerParallelStacksFrame& f : _stack.frames) {
+        if (f.depth() == _highlightedFrameDepth) {
+            return f.functionOrAddr();
+        }
+    }
+
+    return QString();
 }
 
 void SeerParallelStacksStackBoxItem::hidePopup() {
@@ -1152,7 +1178,7 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     layout->addWidget(_table);
 }
 
-void SeerParallelStacksPopupTableWidget::addRow (int threadId, const QString& name, const QString& frame) {
+void SeerParallelStacksPopupTableWidget::addRow (int threadId, const QString& name) {
 
     int nrows = _table->rowCount();
 
@@ -1167,7 +1193,7 @@ void SeerParallelStacksPopupTableWidget::addRow (int threadId, const QString& na
     item1->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     item1->setFlags(item1->flags()|Qt::ItemIsEditable);
 
-    QTableWidgetItem* item2 = new QTableWidgetItem(frame);
+    QTableWidgetItem* item2 = new QTableWidgetItem();
     item2->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     item2->setFlags(item2->flags()|Qt::ItemIsEditable);
 
@@ -1187,6 +1213,15 @@ void SeerParallelStacksPopupTableWidget::setCurrentThreadId (int threadId) {
     _currentThreadId = threadId;
 
     refreshRowHighlights();
+}
+
+void SeerParallelStacksPopupTableWidget::setActiveFunction (const QString& function) {
+
+    for (int row = 0; row < _table->rowCount(); ++row) {
+        _table->item(row, 2)->setText(function);
+    }
+
+    _table->resizeColumnToContents(2);
 }
 
 void SeerParallelStacksPopupTableWidget::refreshRowHighlights () {
@@ -2055,6 +2090,7 @@ void SeerParallelStacksGraphicsView::applyCurrentHighlight() {
         if (auto* box = dynamic_cast<SeerParallelStacksStackBoxItem*>(item)) {
             box->setHighlightedThreadId(_currentThreadId);
             box->setHighlightedFrameDepth(_currentFrameDepth);
+            box->refreshPopup();
         }
     }
 }

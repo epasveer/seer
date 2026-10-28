@@ -111,7 +111,7 @@
         <item row="3" column="1" colspan="2">
          <widget class="QCheckBox" name="showExternalCodeCheckBox">
           <property name="toolTip">
-           <string>Show every frame without debug info. Unchecked, each run of them is merged into a single '[External Code]' frame.</string>
+           <string>Show every external frame (no debug info, or a file matching the Source config's Ignore patterns). Unchecked, each run of them is merged into a single '[External Code]' frame.</string>
           </property>
           <property name="text">
            <string>Show</string>
