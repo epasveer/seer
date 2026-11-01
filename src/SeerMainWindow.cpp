@@ -593,6 +593,9 @@ void SeerMainWindow::setStyleName (const QString& name) {
         }
 
         QTextStream ts(&s);
+        // Set before the stylesheet; applying it sends StyleChange events
+        // whose handlers call Seer::isAutoColorThemeDark().
+        qApp->setProperty("seerStyleName", name);
         qApp->setStyleSheet(ts.readAll());
 
         _styleName = name;
@@ -604,6 +607,8 @@ void SeerMainWindow::setStyleName (const QString& name) {
 
         _styleName = name;
     }
+
+    handleThemeChanged(); // "auto" icons follow the style.
 }
 
 const QString& SeerMainWindow::styleName () {

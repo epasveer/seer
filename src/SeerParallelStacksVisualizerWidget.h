@@ -96,6 +96,7 @@ class SeerParallelStacksVisualizerWidget : public QWidget, protected Ui::SeerPar
         void                        writeSettings                       ();
         void                        readSettings                        ();
         void                        resizeEvent                         (QResizeEvent* event);
+        void                        changeEvent                         (QEvent* event);
 
     private:
         void                        createDirectedGraph                 ();

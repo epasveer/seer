@@ -72,6 +72,7 @@ namespace Seer {
     const QString&              iconColorTheme              ();
     void                        colorizeAllIcons            (QWidget* parent, const QString& colorTheme, const QSize& size = QSize(32,32));
     void                        colorizeListWidgetItemIcon  (QListWidgetItem* item, const QString& colorTheme, const QSize& size = QSize(32,32));
+    bool                        isAutoColorThemeDark        ();
     void                        colorizeChartViewItem       (QChartView* item, const QString& colorTheme);
     QIcon                       colorizeIcon                (const QIcon& icon, const QString& colorTheme, const QSize& size = QSize(32,32));
     QIcon                       colorizeIcon                (const QIcon& icon, const QColor& color, const QSize& size = QSize(32,32));

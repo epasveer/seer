@@ -9,10 +9,6 @@
 #include <QCursor>
 #include <QHeaderView>
 #include <QVBoxLayout>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-#include <QtGui/QGuiApplication>
-#include <QtGui/QStyleHints>
-#endif
 #include <algorithm>
 #include <cmath>
 
@@ -1138,13 +1134,36 @@ SeerParallelStacksPopupTableWidget::SeerParallelStacksPopupTableWidget(QWidget* 
     pal.setColor(QPalette::HighlightedText, colors.background);
     setPalette(pal);
 
+    // The table's colors are spelled out here too. An app-wide stylesheet
+    // (e.g. Seer's qdarkstyle) overrides the palette, which would otherwise
+    // pair its text color with our row backgrounds.
     setStyleSheet(QString(
             "SeerParallelStacksPopupTableWidget {"
             "  background-color: %1;"
             "  border: 1px solid %2;"
             "  border-radius: 4px;"
             "}"
-            ).arg(colors.background.name(), colors.border.name()));
+            "QTableView {"
+            "  background-color: %1;"
+            "  color: %3;"
+            "  gridline-color: %4;"
+            "}"
+            "QTableView::item:selected {"
+            "  background-color: %5;"
+            "  color: %3;"
+            "}"
+            "QTableView::item:!selected:hover {"
+            "  background-color: %4;"
+            "  color: %3;"
+            "}"
+            "QHeaderView::section {"
+            "  background-color: %1;"
+            "  color: %3;"
+            "  border: none;"
+            "  border-bottom: 1px solid %4;"
+            "  padding: 2px 4px;"
+            "}"
+            ).arg(colors.background.name(), colors.border.name(), colors.headerText.name(), colors.divider.name(), colors.activeBackground.name()));
 
     // Ensure leaveEvent fires reliably even without buttons held
     setMouseTracking(true);
@@ -1231,6 +1250,7 @@ void SeerParallelStacksPopupTableWidget::refreshRowHighlights () {
     }
 
     const QBrush highlight(boxColors().activeBackground);
+    const QBrush text(boxColors().headerText);
 
     for (int row = 0; row < _table->rowCount(); ++row) {
 
@@ -1241,6 +1261,10 @@ void SeerParallelStacksPopupTableWidget::refreshRowHighlights () {
         _table->item(row, 0)->setBackground(background);
         _table->item(row, 1)->setBackground(background);
         _table->item(row, 2)->setBackground(background);
+
+        _table->item(row, 0)->setForeground(text);
+        _table->item(row, 1)->setForeground(text);
+        _table->item(row, 2)->setForeground(text);
     }
 }
 
@@ -1299,16 +1323,7 @@ void SeerParallelStacksGraphicsView::setColorTheme (const QString& colorTheme) {
     bool dark = false;
 
     if (colorTheme == "auto") {
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-        if (colorScheme == Qt::ColorScheme::Dark) {
-            dark = true;
-        }else if (colorScheme != Qt::ColorScheme::Light) {
-            qDebug() << "Bad colorScheme of: " << colorScheme;
-        }
-#endif
+        dark = Seer::isAutoColorThemeDark();
 
     }else if (colorTheme == "dark") {
         dark = true;
