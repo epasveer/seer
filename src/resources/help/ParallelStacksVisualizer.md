@@ -7,7 +7,7 @@ In that thread nodes can be interacted with to tell Seer to switch to different 
 that thread. Likewise, if Seer's regular Frame and Thread views are used to change the current Frame or Thread,
 the ParallelStacks Visualizer will get updated.
 
-This Visualizer is taken from a feature in VSCode.
+This Visualizer is taken from a feature in Visual Studio.
 
 ### Refresh
 
