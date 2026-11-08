@@ -846,9 +846,10 @@ void SeerParallelStacksVisualizerWidget::resizeEvent (QResizeEvent* event) {
 
 void SeerParallelStacksVisualizerWidget::changeEvent (QEvent* event) {
 
-    // Seer's Theme Style menu swaps the app-wide stylesheet, which doesn't
-    // emit colorSchemeChanged. It does send StyleChange to every widget.
-    if (event->type() == QEvent::StyleChange) {
+    // Not every theme change emits colorSchemeChanged. Seer's Theme Style
+    // menu swaps the app-wide stylesheet (StyleChange), and platform themes
+    // like qt6ct push a new palette (PaletteChange).
+    if (event->type() == QEvent::StyleChange || event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange) {
         handleThemeChanged();
     }
 

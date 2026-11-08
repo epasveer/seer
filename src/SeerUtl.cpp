@@ -1498,9 +1498,10 @@ namespace Seer {
     }
 
     // Resolve "auto" to dark or light. Seer's own qdarkstyle stylesheets win
-    // (they repaint everything but don't change what Qt reports), then the
-    // desktop's color scheme, then the palette's brightness for older Qt or
-    // when the desktop reports an unknown scheme.
+    // (they repaint everything but don't change the palette), otherwise go by
+    // the palette's brightness. The palette is what the app actually paints
+    // with, so this holds even when QStyleHints::colorScheme() is Unknown or
+    // disagrees with it (qt6ct, xdgdesktopportal "no preference", older Qt).
     bool isAutoColorThemeDark () {
 
         const QString styleName = qApp->property("seerStyleName").toString();
@@ -1510,16 +1511,6 @@ namespace Seer {
         }else if (styleName == "light") {
             return false;
         }
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-        Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-        if (colorScheme == Qt::ColorScheme::Dark) {
-            return true;
-        }else if (colorScheme == Qt::ColorScheme::Light) {
-            return false;
-        }
-#endif
 
         return QGuiApplication::palette().color(QPalette::Window).lightness() < 128;
     }
