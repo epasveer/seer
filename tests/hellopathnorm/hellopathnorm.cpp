@@ -101,18 +101,17 @@ int main (int argc, char* argv[]) {
     // MI octal escapes: gdb emits non-ASCII path bytes as \NNN octal
     // sequences on the wire. The bytes are the raw filename bytes from
     // the inferior's debug info — the ANSI code page for cmd/MSVC
-    // builds (GBK octal for '中文源码' on Windows) and UTF-8 for MSYS2
-    // builds. The monitor decodes UTF-8 first and falls back to the
-    // local 8-bit code page, so both samples below must resolve.
+    // builds and UTF-8 for MSYS2 builds. The first sample below is
+    // GBK bytes (invalid UTF-8, exercises the code-page fallback); the
+    // expected value is derived from the active code page, not
+    // hard-coded, so the test stays portable across Windows locales.
+    // The UTF-8 sample after it exercises the strict-UTF-8 path.
+    const QString gbkBytes  = QString::fromLocal8Bit("\326\320\316\304\324\264\302\353");  // '中文源码' in GBK octal
     const QString octalEscape   = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"helloworld.cpp\",fullname=\"E:/P/"
-#if defined(Q_OS_WIN)
         "\\326\\320\\316\\304\\324\\264\\302\\353"
-#else
-        "\\344\\270\\255\\346\\226\\207\\346\\272\\220\\347\\240\\201"
-#endif
         "/helloworld.cpp\",line=\"17\"}";
-    // Expected on every platform: escapes resolved, real characters.
-    const QString octalEscapeExpected = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"helloworld.cpp\",fullname=\"E:/P/中文源码/helloworld.cpp\",line=\"17\"}";
+    // Expected: escapes resolved through the active code page.
+    const QString octalEscapeExpected = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"helloworld.cpp\",fullname=\"E:/P/" + gbkBytes + "/helloworld.cpp\",line=\"17\"}";
     // MI escapes both path fields: 'file=' carries the same escaped
     // bytes as 'fullname=' and must be rewritten too. UTF-8 octals on
     // every platform (valid UTF-8 also decodes as UTF-8 on Windows).
@@ -122,6 +121,45 @@ int main (int argc, char* argv[]) {
         "\\344\\270\\255\\346\\226\\207\\346\\272\\220\\347\\240\\201/hello\\344\\270\\255\\346\\226\\207.cpp"
         "\",debug-fully-read=\"true\"}]";
     const QString octalFileFieldExpected = "^done,files=[{file=\"E:/P/中文源码/hello中文.cpp\",fullname=\"E:/P/中文源码/hello中文.cpp\",debug-fully-read=\"true\"}]";
+    // A literal backslash in the filename arrives wire-escaped as '\\'
+    // ('\141' here is five literal characters: backslash, one, four,
+    // one). The '\\141' pair must unescape atomically to '\141' text
+    // — the trailing '141' must never be eaten as an octal escape.
+    const QString literalBackslash = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"/tmp/\\\\141.c\",fullname=\"/tmp/\\\\141.c\",line=\"6\"}";
+    // Linux keeps the wire form ('\\141') for downstream escape
+    // handling; Windows treats the '\\' pair as an escaped separator
+    // ('/' + the literal '141' text survives — proof the pair was
+    // consumed atomically and '141' was not eaten as an octal escape).
+    const QString literalBackslashExpected =
+#if defined(Q_OS_WIN)
+        "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"/tmp//141.c\",fullname=\"/tmp//141.c\",line=\"6\"}";
+#else
+        literalBackslash;
+#endif
+#if defined(Q_OS_WIN)
+    // Ambiguity sample: GBK '源' is bytes d4 b4, which are ALSO valid
+    // UTF-8 (it decodes to an Armenian letter). The monitor must pick
+    // the candidate that names an existing file: the test creates the
+    // code-page spelling on disk, so the local-8-bit candidate wins.
+    const QString ambiguousBytes = QString::fromLocal8Bit("\324\264");  // '源' in GBK
+    QDir ambiguityDir(QDir::tempPath() + "/hellopathnorm-" + ambiguousBytes);
+    ambiguityDir.removeRecursively();
+    QDir().mkpath(ambiguityDir.absolutePath());
+    // The disambiguation probes the filesystem for the exact reported
+    // path, so the sample file itself must exist on disk.
+    {
+        QFile probe(ambiguityDir.absolutePath() + "/x.c");
+        if (probe.open(QIODevice::WriteOnly) == false) {
+            qCritical() << "Can't create" << probe.fileName();
+            return 1;
+        }
+        probe.close();
+    }
+    const QString octalAmbiguous = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"x.c\",fullname=\""
+        + QDir::tempPath() + "/hellopathnorm-\\324\\264/x.c\",line=\"6\"}";
+    const QString octalAmbiguousExpected = "*stopped,frame={addr=\"0xe91569\",func=\"main\",file=\"x.c\",fullname=\""
+        + QDir::tempPath() + "/hellopathnorm-" + ambiguousBytes + "/x.c\",line=\"6\"}";
+#endif
 
     // Expected forms after the monitor.
     const QString starBackslashExpected =
@@ -152,6 +190,10 @@ int main (int argc, char* argv[]) {
         f.write((groupStarted  + "\n").toUtf8());
         f.write((octalEscape   + "\n").toUtf8());
         f.write((octalFileField + "\n").toUtf8());
+        f.write((literalBackslash + "\n").toUtf8());
+#if defined(Q_OS_WIN)
+        f.write((octalAmbiguous + "\n").toUtf8());
+#endif
         f.close();
     }
 
@@ -180,16 +222,31 @@ int main (int argc, char* argv[]) {
     fake.waitForReadyRead(1000);
     QCoreApplication::processEvents();
 
-    check("collected line count", QString::number(collected.size()), "6");
+    const int expectedLines =
+#if defined(Q_OS_WIN)
+        8;
+#else
+        7;
+#endif
+    check("collected line count", QString::number(collected.size()), QString::number(expectedLines));
 
     if (collected.size() >= 6) {
         check("*stopped fullname converted",      collected[0], starBackslashExpected);
         check("^done two fullnames converted",    collected[1], doneTwoFieldsExpected);
         check("~ escaped text untouched",         collected[2], tildeEscaped);
         check("= record without fullname intact", collected[3], groupStarted);
-        check("octal escapes -> utf8 path",       collected[4], octalEscapeExpected);
+        check("octal escapes -> codepage path",   collected[4], octalEscapeExpected);
         check("octal escapes -> file field too", collected[5], octalFileFieldExpected);
     }
+    if (collected.size() >= 7) {
+        check("wire '\\\\' unescapes atomically", collected[6], literalBackslashExpected);
+    }
+#if defined(Q_OS_WIN)
+    if (collected.size() >= 8) {
+        check("ambiguous bytes -> existing file", collected[7], octalAmbiguousExpected);
+        QDir(QDir::tempPath() + "/hellopathnorm-" + ambiguousBytes).removeRecursively();
+    }
+#endif
 
     std::cout << "================ " << (g_checks - g_failures) << "/" << g_checks << " checks passed" << std::endl;
 

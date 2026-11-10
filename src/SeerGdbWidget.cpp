@@ -2376,7 +2376,7 @@ void SeerGdbWidget::handleGdbPrintpointInsert (QString type, QString function, Q
 
     handleGdbCommand("-gdb-set dprintf-style "    + type);
     handleGdbCommand("-gdb-set dprintf-function " + function);
-    handleGdbCommand("-gdb-set dprintf-channel "  + Seer::normalizeSourcePath(channel));
+    handleGdbCommand("-gdb-set dprintf-channel "  + channel);
 
     handleGdbCommand("-dprintf-insert " + parameters);
     handleGdbGenericpointList();

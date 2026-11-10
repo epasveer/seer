@@ -105,22 +105,35 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         QString text(buf);
 #endif
 
-        // Resolve MI '\NNN' octal escapes inside path fields. gdb emits
-        // non-ASCII path bytes as escaped octal sequences
+        // Resolve MI escapes inside path fields. gdb emits non-ASCII path
+        // bytes as '\NNN' octal escapes and a literal backslash as '\\'
         // (eg '中文' -> '\344\270\255\346\226\207'), so an unescaped parse
         // yields a filename with literal '\344...' text in it and the
         // editor can't open the source. Call the helper only when the
         // field carries escapes (ASCII paths take the fast path).
         //
-        // 'field' is the whole captured 'name="..."' text.
-        static auto unescapePathField = [](const QString& field) -> QString {
+        // 'field' is the whole captured 'name="..."' text. 'recordUtf8'
+        // /'recordDecided' carry this record's encoding decision from
+        // one field to the next (one record = one inferior = one
+        // encoding); they are locals of the per-line handler, so every
+        // record starts fresh.
+        bool recordUtf8    = true;
+        bool recordDecided = false;
+        auto unescapePathField = [&recordUtf8, &recordDecided](const QString& field) -> QString {
 
             if (field.contains('\\') == false) {
                 return field;
             }
 
             const int open = field.indexOf('"');   // Value starts after this.
-            QString inner = field.mid(open + 1, field.size() - open - 2);  // strip name=" and "
+            const QString inner = field.mid(open + 1, field.size() - open - 2);  // strip name=" and "
+
+            // First pass over the wire text: resolve '\NNN' octal
+            // escapes to raw bytes, consuming '\\' pairs ATOMICALLY so
+            // the second backslash of a pair can never be misread as
+            // the start of an octal escape. A consumed pair becomes a
+            // placeholder byte that no real path contains.
+            static const char marker = 0x01;
 
             QByteArray bytes;
             bytes.reserve(inner.size());
@@ -129,7 +142,11 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 
                 const QChar c = inner.at(i);
 
-                if (c == '\\' && i + 3 < inner.size() &&
+                if (c == '\\' && i + 1 < inner.size() && inner.at(i+1) == '\\') {
+                    bytes.append(marker);
+                    i += 2;
+
+                }else if (c == '\\' && i + 3 < inner.size() &&
                     inner.at(i+1).isDigit() && inner.at(i+2).isDigit() && inner.at(i+3).isDigit() &&
                     inner.at(i+1).digitValue() < 8 && inner.at(i+2).digitValue() < 8 && inner.at(i+3).digitValue() < 8) {
 
@@ -142,27 +159,79 @@ void GdbMonitor::handleReadyReadStandardOutput () {
                 }
             }
 
+            // The marker re-expands to the backslash's wire meaning: a
+            // bare separator backslash on Windows (the caller converts
+            // separators to '/', and a Windows filename can never hold a
+            // literal backslash), or the escaped '\\\\' form on Linux —
+            // downstream consumers like Seer::filterEscapes() reduce it
+            // to a literal backslash, which a Linux filename CAN hold.
+            auto decode = [&bytes](const QString& probe) -> QString {
+                QString value = probe;
+#if defined(Q_OS_WIN)
+                value.replace(QChar(marker), QString("\\"));
+#else
+                value.replace(QChar(marker), QString("\\\\"));
+#endif
+                return value;
+            };
+
             const QString prefix = field.left(open + 1);  // 'name="'
 
 #if defined(Q_OS_WIN)
-            // The escaped bytes are the raw filename bytes gdb read from
-            // the inferior's debug info, and their encoding depends on how
-            // the inferior was built: builds driven from an MSYS2 shell
+            // The bytes are the raw filename bytes gdb read from the
+            // inferior's debug info, and their encoding depends on how the
+            // inferior was built: builds driven from an MSYS2 shell
             // record paths as UTF-8, builds driven from cmd/MSVC record
-            // the ANSI code page. Try a strict UTF-8 decode first and
-            // fall back to the local 8-bit code page when it is not one.
-            // (GBK byte pairs are almost never valid UTF-8, and an
-            // ASCII-only value is identical in both.)
+            // the ANSI code page. The two spellings can each be valid in
+            // the other encoding, so when the two decodings differ, pick
+            // the one that names an existing file: the source file is on
+            // disk while it is being debugged. A relative 'file=' cannot
+            // be probed, so the record's 'fullname' (absolute) decides
+            // and the sibling reuses that decision - one inferior has
+            // one encoding. When neither candidate exists (e.g. the
+            // source moved after the build), stay with UTF-8: it is the
+            // byte form MinGW gdb prints unescaped in the same records.
+            //
+            // Filesystem probes see the marker as a literal backslash;
+            // the returned text keeps the escaped form.
+            const bool isFullname = field.startsWith("fullname=\"");
+            const bool isAbsolute = (bytes.size() > 0 && (bytes.at(0) == '/' || bytes.at(1) == ':'));
+
             QStringDecoder utf8Decoder(QStringConverter::Utf8, QStringConverter::Flag::Stateless);
-            const QString utf8Text = utf8Decoder.decode(bytes);
-            if (utf8Decoder.hasError() == false) {
-                return prefix + utf8Text + '"';
+            const QString utf8Probe = utf8Decoder.decode(bytes);
+            const bool    utf8Valid = (utf8Decoder.hasError() == false);
+            const QString localProbe = QString::fromLocal8Bit(bytes);
+
+            auto expand = [](const QString& probe) -> QString {
+                QString value = probe;
+                value.replace(QChar(marker), QString("\\"));
+                return value;
+            };
+
+            if (utf8Valid == false || utf8Probe == localProbe) {
+                // Not UTF-8, or the two decodings agree: no ambiguity.
+                recordUtf8    = utf8Valid;
+                recordDecided = true;
+                return prefix + decode(utf8Valid ? utf8Probe : localProbe) + '"';
             }
-            return prefix + QString::fromLocal8Bit(bytes) + '"';
+
+            if (recordDecided == false && (isFullname || isAbsolute)) {
+                // Absolute paths can be checked against the filesystem.
+                const bool utf8Exists  = QFile::exists(expand(utf8Probe));
+                const bool localExists = QFile::exists(expand(localProbe));
+                recordUtf8    = (localExists == false) || utf8Exists;
+                recordDecided = true;
+            }
+
+            if (recordDecided) {
+                return prefix + decode(recordUtf8 ? utf8Probe : localProbe) + '"';
+            }
+
+            return prefix + decode(utf8Probe) + '"';
 #else
             // On Linux the path bytes gdb escapes are UTF-8 (locale
             // bytes), matching the UTF-8 wire used elsewhere.
-            return prefix + QString::fromUtf8(bytes) + '"';
+            return prefix + decode(QString::fromUtf8(bytes)) + '"';
 #endif
         };
 
@@ -170,9 +239,12 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         // all consumers (editor keys, tab labels, breakpoint dialogs,
         // tables) see a single spelling. On Windows, gdb 17.x reports
         // 'fullname' MI-escaped with backslashes while its symbol table
-        // uses forward slashes: turn the '\\' pair into one '/'. On all
-        // platforms, resolve the MI octal escapes of non-ASCII paths.
-        // The line is rebuilt by segments because lengths change.
+        // uses forward slashes: turn backslash separators into '/' AFTER
+        // the wire escapes are resolved and the bytes are decoded, so a
+        // 0x5C byte inside a multi-byte character (e.g. the second byte
+        // of some GBK/CP932 characters) is never mistaken for a
+        // separator. The line is rebuilt by segments because lengths
+        // change.
         {
             static const QRegularExpression pathFieldRe("(?:fullname|file)=\"[^\"]*\"");
             QRegularExpressionMatchIterator it = pathFieldRe.globalMatch(text);
@@ -184,11 +256,14 @@ void GdbMonitor::handleReadyReadStandardOutput () {
                 QRegularExpressionMatch m = it.next();
                 newText += text.mid(last, m.capturedStart() - last);
 
-                QString value = m.captured(0);
+                QString value = unescapePathField(m.captured(0));
 #if defined(Q_OS_WIN)
-                value.replace("\\\\", "/");
+                // Backslash separators become '/' - multi-byte characters
+                // were already resolved above, so every remaining
+                // backslash in the value is a separator.
+                value.replace('\\', '/');
 #endif
-                newText += unescapePathField(value);
+                newText += value;
 
                 last = m.capturedStart() + m.capturedLength();
             }
