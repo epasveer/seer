@@ -30,6 +30,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
@@ -621,11 +622,11 @@ void SeerEditorWidgetSourceArea::open (const QString& fullname, const QString& f
     }
 
     // Save the filename.
-    _fullname           = fullname;
+    _fullname           = Seer::normalizeSourcePath(fullname);
     _file               = file;
-    _alternateDirectory = alternateDirectory;
+    _alternateDirectory = Seer::normalizeSourcePath(alternateDirectory);
 
-    setDocumentTitle(_fullname);
+    setDocumentTitle(QDir::toNativeSeparators(_fullname));
 
     // If the filename or file is null, it's a placeholder
     // widget. Show the Seer icon!
@@ -1443,7 +1444,9 @@ void SeerEditorWidgetSourceArea::showContextMenu (const QPoint& pos, const QPoin
         // Mark cursor as busy.
         QApplication::setOverrideCursor(Qt::BusyCursor);
 
-        codeEditorCmd.replace("%{file}", fullname());
+        // Native separators for the OS process; the editor's fullname
+        // is stored in the internal forward-slash form.
+        codeEditorCmd.replace("%{file}", QDir::toNativeSeparators(fullname()));
         codeEditorCmd.replace("%{line}", QString::number(lineno));
 
         QProcess* process = new QProcess(this);
@@ -1948,7 +1951,7 @@ void SeerEditorWidgetSourceArea::handleText (const QString& text) {
             return;
         }
 
-        QString fullname_text = Seer::parseFirst(frame_text, "fullname=", '"', '"', false);
+        QString fullname_text = Seer::normalizeSourcePath(Seer::parseFirst(frame_text, "fullname=", '"', '"', false));
         QString file_text     = Seer::parseFirst(frame_text, "file=",     '"', '"', false);
         QString line_text     = Seer::parseFirst(frame_text, "line=",     '"', '"', false);
 

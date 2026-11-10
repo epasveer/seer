@@ -58,8 +58,14 @@ void GdbMonitor::handleReadyReadStandardError () {
             buf.chop(1);
         }
 
-        // Convert to a string.
+        // Convert to a string. On Windows gdb emits MI output in the ANSI
+        // code page of the console locale (non-ASCII paths only appear
+        // correctly in that encoding); on other platforms it is UTF-8.
+#if defined(Q_OS_WIN)
+        QString text = QString::fromLocal8Bit(buf);
+#else
         QString text(buf);
+#endif
 
         qCDebug(LC) << text;
 
@@ -90,8 +96,93 @@ void GdbMonitor::handleReadyReadStandardOutput () {
             continue;
         }
 
-        // Convert to a string.
+        // Convert to a string. On Windows gdb emits MI output in the ANSI
+        // code page of the console locale (non-ASCII paths only appear
+        // correctly in that encoding); on other platforms it is UTF-8.
+#if defined(Q_OS_WIN)
+        QString text = QString::fromLocal8Bit(buf);
+#else
         QString text(buf);
+#endif
+
+        // Resolve MI '\NNN' octal escapes inside a 'fullname="..."' field.
+        // gdb emits non-ASCII path bytes as escaped UTF-8 octal sequences
+        // (eg '中文' -> '\344\270\255\346\226\207'), so an unescaped parse
+        // yields a filename with literal '\344...' text in it and the
+        // editor can't open the source. Call the helper only when the
+        // field carries escapes (ASCII paths take the fast path).
+        //
+        // 'field' is the whole captured 'fullname="..."' text.
+        static auto unescapeFullnameField = [](const QString& field) -> QString {
+
+            if (field.contains('\\') == false) {
+                return field;
+            }
+
+            QString inner = field.mid(10, field.size() - 11);  // strip fullname=" and "
+
+            QByteArray bytes;
+            bytes.reserve(inner.size());
+
+            for (int i = 0; i < inner.size(); ) {
+
+                const QChar c = inner.at(i);
+
+                if (c == '\\' && i + 3 < inner.size() &&
+                    inner.at(i+1).isDigit() && inner.at(i+2).isDigit() && inner.at(i+3).isDigit() &&
+                    inner.at(i+1).digitValue() < 8 && inner.at(i+2).digitValue() < 8 && inner.at(i+3).digitValue() < 8) {
+
+                    bytes.append(char(inner.at(i+1).digitValue()*64 + inner.at(i+2).digitValue()*8 + inner.at(i+3).digitValue()));
+                    i += 4;
+
+                }else{
+                    bytes.append(c.toLatin1());
+                    i++;
+                }
+            }
+
+#if defined(Q_OS_WIN)
+            // gdb resolves the octal escapes in its host charset, which,
+            // under the 'LANG=C' Seer gives it on Windows, is the ANSI
+            // code page — the same rule the whole line is decoded with.
+            return "fullname=\"" + QString::fromLocal8Bit(bytes) + "\"";
+#else
+            // On Linux the path bytes gdb escapes are UTF-8 (locale
+            // bytes), matching the UTF-8 wire used elsewhere.
+            return "fullname=\"" + QString::fromUtf8(bytes) + "\"";
+#endif
+        };
+
+        // Rewrite every 'fullname="..."' value once, so all consumers
+        // (editor keys, breakpoint dialogs, tables) see a single spelling.
+        // On Windows, gdb 17.x reports 'fullname' MI-escaped with
+        // backslashes while its symbol table uses forward slashes: turn
+        // the '\\' pair into one '/'. On all platforms, resolve the MI
+        // octal escapes of non-ASCII (UTF-8) paths. The line is rebuilt
+        // by segments because lengths change.
+        {
+            static const QRegularExpression fullnameRe("fullname=\"[^\"]*\"");
+            QRegularExpressionMatchIterator it = fullnameRe.globalMatch(text);
+
+            QString newText;
+            int     last = 0;
+
+            while (it.hasNext()) {
+                QRegularExpressionMatch m = it.next();
+                newText += text.mid(last, m.capturedStart() - last);
+
+                QString value = m.captured(0);
+#if defined(Q_OS_WIN)
+                value.replace("\\\\", "/");
+#endif
+                newText += unescapeFullnameField(value);
+
+                last = m.capturedStart() + m.capturedLength();
+            }
+
+            newText += text.mid(last);
+            text = newText;
+        }
 
         //qDebug() << "Read buffer" << buf.size() << (int)buf[buf.size()-1] << text;
         qCDebug(LC) << text;

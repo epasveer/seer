@@ -133,6 +133,33 @@ namespace Seer {
         return list;
     }
 
+    QString normalizeSourcePath (const QString& path) {
+
+        // On Windows, gdb 17.x reports a frame's 'fullname' with
+        // backslashes while its symbol table entries use forward
+        // slashes. Normalize to forward slashes so both spellings map
+        // to the same editor tab and match gdb's source lookup. On
+        // other platforms this is a no-op.
+#if defined(Q_OS_WIN)
+        return QString(path).replace('\\', '/');
+#else
+        return path;
+#endif
+    }
+
+    QString normalizeFileKey (const QString& path) {
+
+        // Canonical key for filename-based maps on Windows: forward
+        // slashes (see normalizeSourcePath) plus case folding, since
+        // Windows filesystems are case-insensitive. A no-op on other
+        // platforms.
+#if defined(Q_OS_WIN)
+        return normalizeSourcePath(path).toLower();
+#else
+        return path;
+#endif
+    }
+
     QString expandTabs (const QString& str, int tabsize, bool morph) {
 
         QString work = str;
