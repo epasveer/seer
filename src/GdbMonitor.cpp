@@ -105,21 +105,22 @@ void GdbMonitor::handleReadyReadStandardOutput () {
         QString text(buf);
 #endif
 
-        // Resolve MI '\NNN' octal escapes inside a 'fullname="..."' field.
-        // gdb emits non-ASCII path bytes as escaped UTF-8 octal sequences
+        // Resolve MI '\NNN' octal escapes inside path fields. gdb emits
+        // non-ASCII path bytes as escaped octal sequences
         // (eg '中文' -> '\344\270\255\346\226\207'), so an unescaped parse
         // yields a filename with literal '\344...' text in it and the
         // editor can't open the source. Call the helper only when the
         // field carries escapes (ASCII paths take the fast path).
         //
-        // 'field' is the whole captured 'fullname="..."' text.
-        static auto unescapeFullnameField = [](const QString& field) -> QString {
+        // 'field' is the whole captured 'name="..."' text.
+        static auto unescapePathField = [](const QString& field) -> QString {
 
             if (field.contains('\\') == false) {
                 return field;
             }
 
-            QString inner = field.mid(10, field.size() - 11);  // strip fullname=" and "
+            const int open = field.indexOf('"');   // Value starts after this.
+            QString inner = field.mid(open + 1, field.size() - open - 2);  // strip name=" and "
 
             QByteArray bytes;
             bytes.reserve(inner.size());
@@ -141,28 +142,40 @@ void GdbMonitor::handleReadyReadStandardOutput () {
                 }
             }
 
+            const QString prefix = field.left(open + 1);  // 'name="'
+
 #if defined(Q_OS_WIN)
-            // gdb resolves the octal escapes in its host charset, which,
-            // under the 'LANG=C' Seer gives it on Windows, is the ANSI
-            // code page — the same rule the whole line is decoded with.
-            return "fullname=\"" + QString::fromLocal8Bit(bytes) + "\"";
+            // The escaped bytes are the raw filename bytes gdb read from
+            // the inferior's debug info, and their encoding depends on how
+            // the inferior was built: builds driven from an MSYS2 shell
+            // record paths as UTF-8, builds driven from cmd/MSVC record
+            // the ANSI code page. Try a strict UTF-8 decode first and
+            // fall back to the local 8-bit code page when it is not one.
+            // (GBK byte pairs are almost never valid UTF-8, and an
+            // ASCII-only value is identical in both.)
+            QStringDecoder utf8Decoder(QStringConverter::Utf8, QStringConverter::Flag::Stateless);
+            const QString utf8Text = utf8Decoder.decode(bytes);
+            if (utf8Decoder.hasError() == false) {
+                return prefix + utf8Text + '"';
+            }
+            return prefix + QString::fromLocal8Bit(bytes) + '"';
 #else
             // On Linux the path bytes gdb escapes are UTF-8 (locale
             // bytes), matching the UTF-8 wire used elsewhere.
-            return "fullname=\"" + QString::fromUtf8(bytes) + "\"";
+            return prefix + QString::fromUtf8(bytes) + '"';
 #endif
         };
 
-        // Rewrite every 'fullname="..."' value once, so all consumers
-        // (editor keys, breakpoint dialogs, tables) see a single spelling.
-        // On Windows, gdb 17.x reports 'fullname' MI-escaped with
-        // backslashes while its symbol table uses forward slashes: turn
-        // the '\\' pair into one '/'. On all platforms, resolve the MI
-        // octal escapes of non-ASCII (UTF-8) paths. The line is rebuilt
-        // by segments because lengths change.
+        // Rewrite every 'fullname="..."' and 'file="..."' value once, so
+        // all consumers (editor keys, tab labels, breakpoint dialogs,
+        // tables) see a single spelling. On Windows, gdb 17.x reports
+        // 'fullname' MI-escaped with backslashes while its symbol table
+        // uses forward slashes: turn the '\\' pair into one '/'. On all
+        // platforms, resolve the MI octal escapes of non-ASCII paths.
+        // The line is rebuilt by segments because lengths change.
         {
-            static const QRegularExpression fullnameRe("fullname=\"[^\"]*\"");
-            QRegularExpressionMatchIterator it = fullnameRe.globalMatch(text);
+            static const QRegularExpression pathFieldRe("(?:fullname|file)=\"[^\"]*\"");
+            QRegularExpressionMatchIterator it = pathFieldRe.globalMatch(text);
 
             QString newText;
             int     last = 0;
@@ -175,7 +188,7 @@ void GdbMonitor::handleReadyReadStandardOutput () {
 #if defined(Q_OS_WIN)
                 value.replace("\\\\", "/");
 #endif
-                newText += unescapeFullnameField(value);
+                newText += unescapePathField(value);
 
                 last = m.capturedStart() + m.capturedLength();
             }
