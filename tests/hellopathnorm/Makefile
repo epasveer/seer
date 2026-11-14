@@ -4,7 +4,7 @@
 .PHONY: all
 all: hellopathnorm
 
-MOC     = $(shell command -v moc 2>/dev/null || echo /usr/lib/qt6/libexec/moc)
+MOC     = $(shell command -v moc 2>/dev/null || echo /usr/lib/qt6/libexec/moc)    # Maybe this instead: /usr/lib/qt6/moc
 QT_PKGS = Qt6Core Qt6Widgets Qt6Charts
 SRC     = hellopathnorm.cpp ../../src/SeerUtl.cpp ../../src/GdbMonitor.cpp moc_GdbMonitor.cpp
 HDR     = -I../../src
