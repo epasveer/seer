@@ -125,6 +125,10 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Directories/files Seer won't prompt for or list in the Source Browser.
+The ParallelStacks Visualizer also merges their frames into '[External Code]'.</string>
+          </property>
           <property name="rootIsDecorated">
            <bool>false</bool>
           </property>

@@ -21,6 +21,7 @@
 #include <QtGui/QStyleHints>
 #endif
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDir>
 #include <QtCore/QTimer>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QSettings>
@@ -1721,7 +1722,7 @@ void SeerMainWindow::handleChangeWindowTitle (QString title) {
     if (title == "") {
         setWindowTitle("Seer Debugger");
     }else{
-        setWindowTitle("Seer Debugger - '" + title + "'");
+        setWindowTitle("Seer Debugger - '" + QDir::toNativeSeparators(title) + "'");
     }
 }
 

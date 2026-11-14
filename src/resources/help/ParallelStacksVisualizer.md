@@ -7,7 +7,7 @@ In that thread nodes can be interacted with to tell Seer to switch to different 
 that thread. Likewise, if Seer's regular Frame and Thread views are used to change the current Frame or Thread,
 the ParallelStacks Visualizer will get updated.
 
-This Visualizer is taken from a feature in VSCode.
+This Visualizer is taken from a feature in Visual Studio.
 
 ### Refresh
 
@@ -65,10 +65,31 @@ are remembered by name and threads by id, so they apply to whatever stacks the n
 
 ### External Code
 
-Frames without debug info (library or system code, like libc's thread start-up or a futex wait) are normally of little
-interest. So are frames whose source file matches one of the 'Ignore' file patterns on Seer's Source config page.
-Each run of consecutive frames like that is merged into a single '[External Code]' frame. Threads whose stacks differ only inside external code then share a node instead of each
-getting their own. The patterns are read when the visualizer is opened.
+Frames that aren't your own code are normally of little interest. A frame is treated as external code when either:
+
+* It has no debug info. That is, gdb reports no source file for it (library or system code, like libc's thread
+  start-up or a futex wait). These are always external.
+* Its source file matches one of the patterns in the 'Ignore Directories/Files' list on Seer's Source config page
+  ("Settings->Configuration->Source"). This is how to hide frames that do have debug info but are still noise, like
+  C++ standard library templates, Qt internals, or a third-party library built with '-g'.
+
+Each run of consecutive frames like that is merged into a single '[External Code]' frame. Threads whose stacks differ
+only inside external code then share a node instead of each getting their own.
+
+The 'Ignore Directories/Files' list is empty by default, so only frames without debug info are merged until you add
+entries to it. Each entry is matched against the frame's full source path and wildcards are allowed. A directory
+must end with '/*'. Some examples:
+```
+    /usr/include/*              System and C++ standard library headers.
+    /usr/include/c++/*          Only the C++ standard library headers.
+    /usr/include/qt6/*          Qt headers.
+    /home/me/thirdparty/*       A third-party library you don't want to see.
+    *moc_*.cpp                  Qt's generated moc files.
+```
+
+Note, the 'Ignore Directories/Files' list is shared with the rest of Seer. Files that match it are also left out of
+the Source Browser and Seer won't prompt for their location when it can't find them. The patterns are read when the
+visualizer is opened, so reopen it after changing them.
 
 Search sees through an '[External Code]' frame: it's highlighted when any of the functions it stands in for match.
 If the current frame is inside external code, its '[External Code]' frame is the one shown in bold. In Method View, the
@@ -93,7 +114,8 @@ and the graph is redrawn when the dialog is closed with 'OK'.
   given number shows only that many: half from the top of its stack and half from the bottom. A single '[...]' row
   stands in for the frames left out of the middle. The default is 20.
 * **Show External Code** — Unchecked (the default), each run of external frames is merged into a single
-  '[External Code]' frame (see External Code, above). Checked, every frame is shown.
+  '[External Code]' frame (see External Code, above). Checked, every frame is shown. What counts as external code is
+  set by the 'Ignore Directories/Files' list on Seer's Source config page.
 
 ### ParallelStacks interaction
 

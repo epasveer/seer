@@ -9,6 +9,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QApplication>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 #include <QtCore/Qt>
 #include <QtCore/QMap>
 #include <QtCore/QDebug>
@@ -118,17 +119,22 @@ void SeerSourceBrowserWidget::handleText (const QString& text) {
 
             //qDebug() << file_text << fullname_text;
 
-            // Skip duplicates
-            if (files.contains(fullname_text)) {
+            // Skip duplicates (key folds case and separators on Windows —
+            // the same file can be reported with different spellings).
+            if (files.contains(Seer::normalizeFileKey(fullname_text))) {
                 continue;
             }
 
-            files.insert(fullname_text, file_text);
+            files.insert(Seer::normalizeFileKey(fullname_text), file_text);
 
             // Add the file to the tree.
             QTreeWidgetItem* item = new QTreeWidgetItem;
             item->setText(0, QFileInfo(file_text).fileName());
-            item->setText(1, fullname_text);
+            // Column 1 doubles as data (handleItemDoubleClicked reads it
+            // back), so keep the internal forward-slash form in UserRole
+            // and show the native form as display text.
+            item->setText(1, QDir::toNativeSeparators(fullname_text));
+            item->setData(1, Qt::UserRole, fullname_text);
 
             // See which pattern the file matches. Put the file under that folder.
             // If no match, put it in 'misc'.
@@ -176,7 +182,7 @@ void SeerSourceBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* item, in
 
     Q_UNUSED(column);
 
-    emit selectedFile(item->text(0), item->text(1), 0);
+    emit selectedFile(item->text(0), item->data(1, Qt::UserRole).toString(), 0);
 }
 
 void SeerSourceBrowserWidget::handleItemEntered (QTreeWidgetItem* item, int column) {

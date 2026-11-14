@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "SeerBreakpointCreateDialog.h"
+#include "SeerUtl.h"
 #include <QtCore/QDebug>
 
 SeerBreakpointCreateDialog::SeerBreakpointCreateDialog (QWidget* parent) : QDialog(parent) {
@@ -206,7 +207,7 @@ QString SeerBreakpointCreateDialog::breakpointText () const {
     }
 
     if (filenameText() != "") {
-        breakpointParameters += " --source \"" + filenameText() + "\"";
+        breakpointParameters += " --source \"" + Seer::normalizeSourcePath(filenameText()) + "\"";
     }
 
     if (functionNameText() != "") {

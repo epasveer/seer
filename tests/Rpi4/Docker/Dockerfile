@@ -14,6 +14,7 @@ ENV TZ=Asia/Kolkata \
 # jq is only needed for the versioning system, not required for the build part
 RUN apt-get -y update && \
     apt-get -y install xxd \
+                vim \
                 git cpio lz4 bc lsb-release man-db libmpc-dev zstd \
                 rsync opam ocaml ocaml-nox ocaml-findlib \
                 coreutils openvswitch-common openvswitch-switch \
@@ -92,7 +93,6 @@ RUN apt-get update && apt-get install -y locales gtk-doc-tools texinfo && \
     update-locale LANG=en_US.UTF-8
 
 RUN apt-get update && apt-get install -y chrpath diffstat xterm tmux nasm
-
 RUN apt-get update && apt-get install -y iasl
 
 ENV LANG=en_US.UTF-8 \

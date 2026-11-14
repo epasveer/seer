@@ -9,6 +9,7 @@
 #include <QtWidgets/QApplication>
 #include <QtGui/QFont>
 #include <QtCore/QDebug>
+#include <QDir>
 #include <QRegularExpression>
 
 
@@ -112,7 +113,7 @@ QString QProcessInfoWidget::selectedFullname () const {
         return "";
     }
 
-    return items[0]->text(2) + "/" + items[0]->text(3);
+    return items[0]->data(2, Qt::UserRole).toString() + "/" + items[0]->text(3);
 }
 
 QString QProcessInfoWidget::selectedCommandLine () const {
@@ -141,7 +142,11 @@ void QProcessInfoWidget::refreshList () {
         QTreeWidgetItem* item = new QProcessInfoWidgetItem;
         item->setText(0, QString::number(info.pid()));
         item->setText(1, info.username());
-        item->setText(2, info.path());
+        // Column 2 doubles as data (selectedFullname() rebuilds the
+        // executable path from it), so keep the internal forward-slash
+        // form in UserRole and show the native form as display text.
+        item->setText(2, QDir::toNativeSeparators(info.path()));
+        item->setData(2, Qt::UserRole, info.path());
         item->setText(3, info.name());
         item->setText(4, info.commandLine());
 

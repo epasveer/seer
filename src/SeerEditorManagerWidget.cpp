@@ -20,6 +20,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QScrollBar>
 #include <QPlainTextEdit>
@@ -140,7 +141,7 @@ void SeerEditorManagerWidget::dumpEntries () const {
 
 bool SeerEditorManagerWidget::hasEntry (const QString& fullname) const {
 
-    if (_entries.find(fullname) != _entries.end()) {
+    if (_entries.find(Seer::normalizeFileKey(fullname)) != _entries.end()) {
         return true;
     }
 
@@ -151,21 +152,26 @@ SeerEditorManagerEntries::iterator SeerEditorManagerWidget::addEntry (const QStr
 
     //qDebug() << "Add entry:" << fullname << file;
 
+    // The key folds separators and case (Windows filesystems are
+    // case-insensitive); the stored fullname keeps the forward-slash
+    // spelling with its original case.
+    const QString normalized = Seer::normalizeSourcePath(fullname);
+
     SeerEditorManagerEntry entry;
 
-    entry.fullname = fullname;
+    entry.fullname = normalized;
     entry.file     = file;
     entry.widget   = 0;
 
-    return _entries.insert(fullname, entry);
+    return _entries.insert(Seer::normalizeFileKey(fullname), entry);
 }
 
 SeerEditorManagerEntries::iterator SeerEditorManagerWidget::findEntry (const QString& fullname) {
-    return _entries.find(fullname);
+    return _entries.find(Seer::normalizeFileKey(fullname));
 }
 
 SeerEditorManagerEntries::const_iterator SeerEditorManagerWidget::findEntry (const QString& fullname) const {
-    return _entries.find(fullname);
+    return _entries.find(Seer::normalizeFileKey(fullname));
 }
 
 SeerEditorManagerEntries::iterator SeerEditorManagerWidget::beginEntry () {
@@ -417,7 +423,16 @@ bool SeerEditorManagerWidget::editorMinimapEnabled () const {
 
 void SeerEditorManagerWidget::setEditorAlternateDirectories (const QStringList alternateDirectories) {
 
-    _editorAlternateDirectories = alternateDirectories;
+    // Normalize to forward slashes so the joins in
+    // SeerEditorWidgetSourceArea::findFile() stay consistent no matter
+    // which form the directory dialog returned.
+    QStringList normalized;
+
+    for (const QString& directory : alternateDirectories) {
+        normalized << Seer::normalizeSourcePath(directory);
+    }
+
+    _editorAlternateDirectories = normalized;
 
     // Update current editors.
     SeerEditorManagerEntries::iterator b = beginEntry();
@@ -1110,7 +1125,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     // Set the tooltip for the tab.
     int tabno = tabWidget->addTab(editorWidget, QFileInfo(file).fileName());
 
-    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + fullname);
+    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + QDir::toNativeSeparators(fullname));
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
@@ -1176,7 +1191,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     // Set the tooltip for the tab.
     int tabno = tabWidget->addTab(editorWidget, QFileInfo(file).fileName());
 
-    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + fullname);
+    tabWidget->setTabToolTip(tabno, QFileInfo(file).fileName() + " : " + QDir::toNativeSeparators(fullname));
 
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);

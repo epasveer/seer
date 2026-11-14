@@ -8,6 +8,7 @@
 #include <QtWidgets/QTreeWidgetItemIterator>
 #include <QtWidgets/QApplication>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 
 SeerStackFramesBrowserWidget::SeerStackFramesBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -95,7 +96,11 @@ void SeerStackFramesBrowserWidget::handleText (const QString& text) {
                     item->setText(1, func_text);
                     item->setText(2, QFileInfo(file_text).fileName());
                     item->setText(3, line_text);
-                    item->setText(4, fullname_text);
+                    // Column 4 doubles as data (handleItemClicked reads it
+                    // back), so keep the internal forward-slash form in
+                    // UserRole and show the native form as display text.
+                    item->setText(4, QDir::toNativeSeparators(fullname_text));
+                    item->setData(4, Qt::UserRole, fullname_text);
                     item->setText(5, addr_text);
                     item->setText(6, arch_text);
 
@@ -205,13 +210,13 @@ void SeerStackFramesBrowserWidget::handleItemClicked (QTreeWidgetItem* item, int
     emit selectedFrame(item->text(0).toInt());
 
     // Select file if we can.
-    if (item->text(2) != "" && item->text(4) != "") {
-        emit selectedFile(item->text(2), item->text(4), lineno);
+    if (item->text(2) != "" && item->data(4, Qt::UserRole).toString() != "") {
+        emit selectedFile(item->text(2), item->data(4, Qt::UserRole).toString(), lineno);
     }
 
     // Select address if we can.
     if (item->text(5) != "") {
-        emit maybeSelectedAddress(item->text(2), item->text(4), item->text(5));
+        emit maybeSelectedAddress(item->text(2), item->data(4, Qt::UserRole).toString(), item->text(5));
     }
 }
 
