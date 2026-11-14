@@ -11,6 +11,7 @@
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QInputDialog>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 
 SeerBreakpointsBrowserWidget::SeerBreakpointsBrowserWidget (QWidget* parent) : QWidget(parent) {
@@ -170,7 +171,11 @@ void SeerBreakpointsBrowserWidget::handleText (const QString& text) {
                 topItem->setText(4, addr_text);
                 topItem->setText(5, func_text);
                 topItem->setText(6, QFileInfo(file_text).fileName());
-                topItem->setText(7, fullname_text);
+                // Column 7 doubles as data (handleItemDoubleClicked reads
+                // it back), so keep the internal forward-slash form in
+                // UserRole and show the native form as display text.
+                topItem->setText(7, QDir::toNativeSeparators(fullname_text));
+                topItem->setData(7, Qt::UserRole, fullname_text);
                 topItem->setText(8, line_text);
                 topItem->setText(9, thread_groups_text);
                 topItem->setText(10, cond_text);
@@ -232,8 +237,8 @@ void SeerBreakpointsBrowserWidget::handleItemDoubleClicked (QTreeWidgetItem* ite
 
     int lineno = item->text(8).toInt();
 
-    emit selectedFile(item->text(6), item->text(7), lineno);
-    emit maybeSelectedAddress(item->text(6), item->text(7), item->text(4));
+    emit selectedFile(item->text(6), item->data(7, Qt::UserRole).toString(), lineno);
+    emit maybeSelectedAddress(item->text(6), item->data(7, Qt::UserRole).toString(), item->text(4));
 }
 
 void SeerBreakpointsBrowserWidget::handleRefreshToolButton () {
