@@ -1436,20 +1436,7 @@ namespace Seer {
 
         if (colorTheme == "auto") {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-            // Get the current color scheme
-            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-            if (colorScheme == Qt::ColorScheme::Light) {
-                return colorizeAllIcons(parent, "light");
-            }else if (colorScheme == Qt::ColorScheme::Dark) {
-                return colorizeAllIcons(parent, "dark");
-            }else{
-                qDebug() << "Bad colorScheme of: " << colorScheme;
-            }
-
-#endif
-            return;
+            return colorizeAllIcons(parent, isAutoColorThemeDark() ? "dark" : "light", size);
 
         }else if (colorTheme == "light") {
 
@@ -1523,19 +1510,7 @@ namespace Seer {
 
         if (colorTheme == "auto") {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-            // Get the current color scheme
-            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-            if (colorScheme == Qt::ColorScheme::Light) {
-                item->setIcon(Seer::colorizeIcon(item->icon(), QColor("black"), size));
-            }else if (colorScheme == Qt::ColorScheme::Dark) {
-                item->setIcon(Seer::colorizeIcon(item->icon(), QColor("white"), size));
-            }else{
-                qDebug() << "Bad colorScheme of: " << colorScheme;
-            }
-
-#endif
+            item->setIcon(Seer::colorizeIcon(item->icon(), QColor(isAutoColorThemeDark() ? "white" : "black"), size));
             return;
 
         }else if (colorTheme == "light") {
@@ -1547,6 +1522,24 @@ namespace Seer {
         }
 
         qDebug() << "Bad iconColorTheme of: " << colorTheme;
+    }
+
+    // Resolve "auto" to dark or light. Seer's own qdarkstyle stylesheets win
+    // (they repaint everything but don't change the palette), otherwise go by
+    // the palette's brightness. The palette is what the app actually paints
+    // with, so this holds even when QStyleHints::colorScheme() is Unknown or
+    // disagrees with it (qt6ct, xdgdesktopportal "no preference", older Qt).
+    bool isAutoColorThemeDark () {
+
+        const QString styleName = qApp->property("seerStyleName").toString();
+
+        if (styleName == "dark") {
+            return true;
+        }else if (styleName == "light") {
+            return false;
+        }
+
+        return QGuiApplication::palette().color(QPalette::Window).lightness() < 128;
     }
 
     void colorizeChartViewItem (QChartView* item, const QString& colorTheme) {
@@ -1563,19 +1556,7 @@ namespace Seer {
 
         if (colorTheme == "auto") {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-            // Get the current color scheme
-            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-            if (colorScheme == Qt::ColorScheme::Light) {
-                chart->setTheme(QChart::ChartThemeLight);
-            }else if (colorScheme == Qt::ColorScheme::Dark) {
-                chart->setTheme(QChart::ChartThemeDark);
-            }else{
-                qDebug() << "Bad colorScheme of: " << colorScheme;
-            }
-
-#endif
+            chart->setTheme(isAutoColorThemeDark() ? QChart::ChartThemeDark : QChart::ChartThemeLight);
             return;
 
         }else if (colorTheme == "light") {
@@ -1593,20 +1574,7 @@ namespace Seer {
 
         if (colorTheme == "auto") {
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 3)
-            // Get the current color scheme
-            Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-
-            if (colorScheme == Qt::ColorScheme::Light) {
-                return Seer::colorizeIcon(icon, QColor("black"), size);
-            }else if (colorScheme == Qt::ColorScheme::Dark) {
-                return Seer::colorizeIcon(icon, QColor("white"), size);
-            }else{
-                qDebug() << "Bad colorScheme of: " << colorScheme;
-            }
-
-#endif
-            return icon;
+            return Seer::colorizeIcon(icon, QColor(isAutoColorThemeDark() ? "white" : "black"), size);
 
         }else if (colorTheme == "light") {
             return Seer::colorizeIcon(icon, QColor("white"), size);

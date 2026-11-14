@@ -171,7 +171,6 @@
   </layout>
   <zorder>groupBox</zorder>
   <zorder>buttonBox</zorder>
-  <zorder>verticalSpacer</zorder>
  </widget>
  <tabstops>
   <tabstop>showMinimapComboBox</tabstop>

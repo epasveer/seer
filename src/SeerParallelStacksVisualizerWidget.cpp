@@ -844,6 +844,18 @@ void SeerParallelStacksVisualizerWidget::resizeEvent (QResizeEvent* event) {
     QWidget::resizeEvent(event);
 }
 
+void SeerParallelStacksVisualizerWidget::changeEvent (QEvent* event) {
+
+    // Not every theme change emits colorSchemeChanged. Seer's Theme Style
+    // menu swaps the app-wide stylesheet (StyleChange), and platform themes
+    // like qt6ct push a new palette (PaletteChange).
+    if (event->type() == QEvent::StyleChange || event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange) {
+        handleThemeChanged();
+    }
+
+    QWidget::changeEvent(event);
+}
+
 void SeerParallelStacksVisualizerWidget::createDirectedGraph() {
 
     // Clear old scene.
