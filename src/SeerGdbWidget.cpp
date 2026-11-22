@@ -222,7 +222,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addArrayVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addMatrixVisualizer,                                     this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
     QObject::connect(variableManagerWidget->variableTrackerBrowserWidget(),     &SeerVariableTrackerBrowserWidget::addStructVisualizer,                                     this,                                                           &SeerGdbWidget::handleGdbVarAddExpression);
-    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,                               this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpression);
+    QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,                               this,                                                           &SeerGdbWidget::handleGdbDataEvaluateExpressionFormat);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMemoryVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMemoryAddExpression);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addArrayVisualizer,                                       this,                                                           &SeerGdbWidget::handleGdbArrayAddExpression);
     QObject::connect(variableManagerWidget->variableLoggerBrowserWidget(),      &SeerVariableLoggerBrowserWidget::addMatrixVisualizer,                                      this,                                                           &SeerGdbWidget::handleGdbMatrixAddExpression);
@@ -2629,8 +2629,18 @@ void SeerGdbWidget::handleGdbSignalSetValue (QString name, QString stop, QString
 
 void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString expression) {
 
+    handleGdbDataEvaluateExpressionFormat(expressionid, expression, "");
+}
+
+void SeerGdbWidget::handleGdbDataEvaluateExpressionFormat (int expressionid, QString expression, QString format) {
+
     if (executableLaunchMode() == "") {
         return;
+    }
+
+    // "n" means the natural format. Same as no format.
+    if (format == "n") {
+        format = "";
     }
 
     // Check if there's a ObjectiveC pretext.
@@ -2638,6 +2648,10 @@ void SeerGdbWidget::handleGdbDataEvaluateExpression (int expressionid, QString e
 
     if (expression.startsWith(token)) {
         handleGdbCommand(QString::number(expressionid) + "-objc-evaluate-expression \"" + expression.mid(token.length()) + "\"");
+
+    // A print format was asked for ("x", "o", "d", "t", "f"). Use Seer's own MI command (MIEvaluateFormat.py).
+    }else if (format != "") {
+        handleGdbCommand(QString::number(expressionid) + "-data-evaluate-expression-format " + format + " \"" + expression + "\"");
 
     // Otherwise handle normally.
     }else{
@@ -2718,7 +2732,17 @@ void SeerGdbWidget::handleGdbDataListValues () {
     }
 
     for (int i=0; i<_dataExpressionId.size(); i++) {
-        handleGdbDataEvaluateExpression(_dataExpressionId[i], _dataExpressionName[i]);
+
+        // The stored name may have a format suffix, like "st:x".
+        // If not, use the Tracker's default format.
+        QString format;
+        QString expression = Seer::splitFormatSuffix(_dataExpressionName[i], format);
+
+        if (format == "") {
+            format = variableManagerWidget->variableTrackerBrowserWidget()->defaultFormat();
+        }
+
+        handleGdbDataEvaluateExpressionFormat(_dataExpressionId[i], expression, format);
     }
 }
 

@@ -34,12 +34,53 @@ The easiest method for logging a variable is to double-click the variable text i
       Ctrl+Shift    Prepend '*&' to variable              '*&argc'
 ```
 
+A format suffix can be added to the end of the variable name to print its value in a different format. For structures, classes, and arrays, each member is printed in the chosen format.
+```
+      Suffix   Description                           Example
+      -------  ------------------------------------  -----------------------
+      None     Default format (see below)            'argc'
+      :n       Natural format (gdb's default)        'argc:n'
+      :x       Hexadecimal                           'argc:x'
+      :o       Octal                                 'argc:o'
+      :d       Decimal                               'argc:d'
+      :t       Binary                                'argc:t'
+      :f       Float                                 'argc:f'
+```
+
+The format button next to the entry field sets the default format. It is used for any variable entered without a format suffix, including variables added by double-clicking in the code editor. It starts as 'Natural' and is remembered between sessions. A suffix always overrides the default. Use ':n' to log a variable in the natural format when the default is set to something else.
+
+Some types stay readable in every format:
+```
+      Type                       Printed as
+      -------------------------  ------------------------------------------------
+      Pointers                   Always a hex address. 'char*' also shows its text.
+      char arrays                Always a string.
+      std::string, etc.          Always a string (handled by gdb's pretty printers).
+      float, double              Their raw IEEE bits. '1.5' with ':x' is '0x3fc00000'.
+                                 With ':f', they print normally.
+      unsigned with ':d'         Unsigned decimal, so large values aren't negative.
+```
+
+The ':f' suffix works like gdb's 'print/f'. It does not convert an integer to a float. Instead, the integer's bits are read as a float of the same size. This is the reverse of ':x' on a float, and is useful for integers that hold raw float bits. An ordinary integer will print as a strange value.
+```
+      Variable                                   With ':f'
+      -----------------------------------------  ----------------
+      int bits = 0x3fc00000                      1.5
+      uint64_t dbits = 0xc002000000000000        -2.25
+      int i = 42                                 5.88545355e-44
+      char c = 'a'                               97
+```
+
 There are buttons to clear some or all entries in the logger.
 
 ### Tracker
 The tracker is a method to watch several variables at a time. Manually enter a list of variable names. Their values will be updated in the Logger display at each stopping point (after a 'step' or 'next' or a breakpoint) is reached.
 
 The variable must be part of the active stack frame, as selected by the Stack Info browser.
+
+The same format suffixes as the Logger (':x', ':o', ':d', ':t', ':f', ':n') can be added to a variable name. The suffix stays with the variable, so it is printed in that format at each stopping point.
+
+The Tracker also has a format button that sets the default format for variables tracked without a suffix. Changing it updates those variables right away. It starts as 'Natural' and is remembered between sessions. Use ':n' to keep a variable in the natural format when the default is set to something else.
 
 There are buttons to clear some or all variables in the tracker.
 

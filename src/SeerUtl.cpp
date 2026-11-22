@@ -383,6 +383,37 @@ namespace Seer {
     }
 
 
+    //
+    // Split an optional format suffix off an expression.
+    //
+    //   "st:x" -> "st", format "x"   (hex)
+    //   "st:o" -> "st", format "o"   (octal)
+    //   "st:d" -> "st", format "d"   (decimal)
+    //   "st:t" -> "st", format "t"   (binary)
+    //   "st:f" -> "st", format "f"   (float)
+    //   "st:n" -> "st", format "n"   (natural, overrides a default format)
+    //   "st"   -> "st", format ""
+    //
+    // The format letters are gdb's print formats ("print/x"), plus "n" for natural.
+    // A "::" is not treated as a suffix, so C++ names like "Foo::d" are left alone.
+    //
+    QString splitFormatSuffix (const QString& expression, QString& format) {
+
+        static QRegularExpression re("^(.*[^:\\s]|[^:\\s])\\s*(?<!:):([xodtfn])\\s*$", QRegularExpression::DotMatchesEverythingOption);
+
+        format = "";
+
+        QRegularExpressionMatch match = re.match(expression);
+
+        if (match.hasMatch() == false) {
+            return expression;
+        }
+
+        format = match.captured(2);
+
+        return match.captured(1).trimmed();
+    }
+
     QString filterBookends (const QString& str, QChar startBracket, QChar endBracket) {
 
         // If the string starts with and ends with the bracket characters, then return
