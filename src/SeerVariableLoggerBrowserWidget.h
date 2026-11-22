@@ -7,6 +7,7 @@
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
 #include <QtCore/QSet>
+#include <QtGui/QAction>
 #include "ui_SeerVariableLoggerBrowserWidget.h"
 
 class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariableLoggerBrowserWidgetForm {
@@ -31,9 +32,10 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                handleItemExpanded                  (QTreeWidgetItem* item);
         void                handleItemCollapsed                 (QTreeWidgetItem* item);
         void                handleContextMenu                   (const QPoint& pos);
+        void                handleFormatMenuTriggered           (QAction* action);
 
     signals:
-        void                evaluateVariableExpression          (int expressionid, QString expression);
+        void                evaluateVariableExpression          (int expressionid, QString expression, QString format = "");
         void                addMemoryVisualizer                 (QString expression);
         void                addArrayVisualizer                  (QString expression);
         void                addMatrixVisualizer                 (QString expression);
@@ -44,7 +46,13 @@ class SeerVariableLoggerBrowserWidget : public QWidget, protected Ui::SeerVariab
         void                handleItemCreate                    (QTreeWidgetItem* parentItem, const QString& id_text, const QString& timestamp_text, const QString& name_text, const QString& value_text);
 
     private:
+        void                setDefaultFormat                    (const QString& format);
+        void                readSettings                        ();
+        void                writeSettings                       ();
+
         QSet<int>           _ids;
+        QString             _defaultFormat;     // "" (natural), "x", "o", "d", "t", or "f".
+        QMenu*              _formatMenu;
 
 };
 

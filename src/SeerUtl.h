@@ -37,6 +37,7 @@ namespace Seer {
     bool                        hasBookends                 (const QString& str, QChar startBracket, QChar endBracket);
     QString                     filterBookends              (const QString& str, QChar startBracket, QChar endBracket);
     QStringList                 filterBookends              (const QStringList& strings, QChar startBracket, QChar endBracket);
+    QString                     splitFormatSuffix           (const QString& expression, QString& format);
     QStringList                 parseCommaList              (const QString& str);
     QStringList                 parseCommaList              (const QString& str, QChar startBracket, QChar endBracket);
     QStringList                 parseArray                  (const QString& parentName, const QString& str);

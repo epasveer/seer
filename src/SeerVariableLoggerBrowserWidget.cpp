@@ -10,6 +10,8 @@
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtGui/QActionGroup>
+#include <QtCore/QSettings>
 #include <QtCore/QTime>
 #include <QtCore/QDebug>
 #include <QAction>
@@ -31,6 +33,30 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     variablesTreeWidget->setColumnHidden(3, true);  // Hide the 'id' column.
     variablesTreeWidget->clear();
 
+    // Default format menu. The action's data is the format letter. "" is the natural format.
+    _formatMenu = new QMenu(this);
+
+    QActionGroup* formatGroup = new QActionGroup(_formatMenu);
+    formatGroup->setExclusive(true);
+
+    const QList<QPair<QString,QString>> formats = {
+        { "Natural :n",  ""  },
+        { "Hex :x",      "x" },
+        { "Octal :o",    "o" },
+        { "Decimal :d",  "d" },
+        { "Binary :t",   "t" },
+        { "Float :f",    "f" },
+    };
+
+    for (const QPair<QString,QString>& f : formats) {
+        QAction* action = _formatMenu->addAction(f.first);
+        action->setData(f.second);
+        action->setCheckable(true);
+        formatGroup->addAction(action);
+    }
+
+    variableFormatPushButton->setMenu(_formatMenu);
+
     // Connect things.
     QObject::connect(this,                           &SeerVariableLoggerBrowserWidget::evaluateVariableExpression,      this, &SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression);
     QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                                         this, &SeerVariableLoggerBrowserWidget::handleAddLineEdit);
@@ -40,6 +66,10 @@ SeerVariableLoggerBrowserWidget::SeerVariableLoggerBrowserWidget (QWidget* paren
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemExpanded,                                        this, &SeerVariableLoggerBrowserWidget::handleItemExpanded);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                                         this, &SeerVariableLoggerBrowserWidget::handleItemEntered);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,                          this, &SeerVariableLoggerBrowserWidget::handleContextMenu);
+    QObject::connect(_formatMenu,                    &QMenu::triggered,                                                 this, &SeerVariableLoggerBrowserWidget::handleFormatMenuTriggered);
+
+    // Read state.
+    readSettings();
 }
 
 SeerVariableLoggerBrowserWidget::~SeerVariableLoggerBrowserWidget () {
@@ -156,13 +186,22 @@ void SeerVariableLoggerBrowserWidget::handleEvaluateVariableExpression (int expr
 
 void SeerVariableLoggerBrowserWidget::addVariableExpression (QString expression) {
 
+    // Split off an optional format suffix, like "st:x". If none, use the default format.
+    // A ":n" suffix asks for the natural format, overriding the default.
+    QString format;
+    expression = Seer::splitFormatSuffix(expression, format);
+
+    if (format == "") {
+        format = _defaultFormat;
+    }
+
     if (expression != "") {
 
         int id = Seer::createID();
 
         _ids.insert(id); // Keep track of which ones are entered.
 
-        emit evaluateVariableExpression(id, expression);
+        emit evaluateVariableExpression(id, expression, format);
     }
 }
 
@@ -172,13 +211,22 @@ void SeerVariableLoggerBrowserWidget::handleAddLineEdit () {
 
     variableAddLineEdit->clear();
 
+    // Split off an optional format suffix, like "st:x". If none, use the default format.
+    // A ":n" suffix asks for the natural format, overriding the default.
+    QString format;
+    expression = Seer::splitFormatSuffix(expression, format);
+
+    if (format == "") {
+        format = _defaultFormat;
+    }
+
     if (expression != "") {
 
         int id = Seer::createID();
 
         _ids.insert(id); // Keep track of which ones are entered.
 
-        emit evaluateVariableExpression(id, expression);
+        emit evaluateVariableExpression(id, expression, format);
     }
 }
 
@@ -575,3 +623,57 @@ void SeerVariableLoggerBrowserWidget::handleContextMenu (const QPoint& pos) {
     }
 }
 
+void SeerVariableLoggerBrowserWidget::handleFormatMenuTriggered (QAction* action) {
+
+    if (action == 0) {
+        return;
+    }
+
+    setDefaultFormat(action->data().toString());
+
+    writeSettings();
+}
+
+void SeerVariableLoggerBrowserWidget::setDefaultFormat (const QString& format) {
+
+    // Find the menu entry for this format. Fall back to "Natural :n" for an unknown one.
+    QAction* match = 0;
+
+    for (QAction* action : _formatMenu->actions()) {
+        if (action->data().toString() == format) {
+            match = action;
+            break;
+        }
+    }
+
+    if (match == 0) {
+        match = _formatMenu->actions().first();
+    }
+
+    match->setChecked(true);
+
+    _defaultFormat = match->data().toString();
+
+    variableFormatPushButton->setText(match->text());
+}
+
+void SeerVariableLoggerBrowserWidget::readSettings () {
+
+    QSettings settings;
+    QString   format;
+
+    settings.beginGroup("variableloggerwindow"); {
+        format = settings.value("defaultformat", format).toString();
+    } settings.endGroup();
+
+    setDefaultFormat(format);
+}
+
+void SeerVariableLoggerBrowserWidget::writeSettings () {
+
+    QSettings settings;
+
+    settings.beginGroup("variableloggerwindow"); {
+        settings.setValue("defaultformat", _defaultFormat);
+    } settings.endGroup();
+}

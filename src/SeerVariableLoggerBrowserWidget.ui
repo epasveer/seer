@@ -22,10 +22,20 @@
         <string>Add a variable to the loggger.</string>
        </property>
        <property name="placeholderText">
-        <string>Enter a variable name to log</string>
+        <string>Enter a variable name to log. Append :x, :o, :d, :t, :f, or :n for hex, octal, decimal, binary, float, or natural.</string>
        </property>
        <property name="clearButtonEnabled">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="variableFormatPushButton">
+       <property name="toolTip">
+        <string>Default format for variables entered without a format suffix.</string>
+       </property>
+       <property name="text">
+        <string>Natural :n</string>
        </property>
       </widget>
      </item>

@@ -6,6 +6,7 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCore/QString>
+#include <QtGui/QAction>
 #include "ui_SeerVariableTrackerBrowserWidget.h"
 
 class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVariableTrackerBrowserWidgetForm {
@@ -15,6 +16,8 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
     public:
         explicit SeerVariableTrackerBrowserWidget (QWidget* parent = 0);
        ~SeerVariableTrackerBrowserWidget ();
+
+        const QString&      defaultFormat                   () const;
 
     public slots:
         void                handleText                      (const QString& text);
@@ -32,6 +35,7 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                handleItemCollapsed             (QTreeWidgetItem* item);
         void                handleContextMenu               (const QPoint& pos);
         void                handleRememberToolButton        (bool checked);
+        void                handleFormatMenuTriggered       (QAction* action);
 
     signals:
         void                refreshVariableTrackerNames     ();
@@ -50,8 +54,12 @@ class SeerVariableTrackerBrowserWidget : public QWidget, protected Ui::SeerVaria
         void                showEvent                       (QShowEvent* event);
 
     private:
+        void                setDefaultFormat                (const QString& format);
         void                readSettings                    ();
         void                writeSettings                   ();
+
+        QString             _defaultFormat;     // "" (natural), "x", "o", "d", "t", or "f".
+        QMenu*              _formatMenu;
 
 };
 

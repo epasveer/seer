@@ -330,6 +330,7 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbSignalListValues                   (QString names);
         void                                handleGdbSignalSetValue                     (QString name, QString stop, QString print, QString pass);
         void                                handleGdbDataEvaluateExpression             (int expressionid, QString expression);
+        void                                handleGdbDataEvaluateExpressionFormat       (int expressionid, QString expression, QString format);
         void                                handleGdbVarObjCreate                       (int expressionid, QString expression);
         void                                handleGdbVarObjListChildren                 (int expressionid, QString objname);
         void                                handleGdbVarObjUpdate                       (int expressionid, QString objname);

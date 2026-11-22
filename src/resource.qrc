@@ -97,6 +97,7 @@
     <file>resources/mi-python/MISignals.py</file>
     <file>resources/mi-python/MIStart.py</file>
     <file>resources/mi-python/MIMonitor.py</file>
+    <file>resources/mi-python/MIEvaluateFormat.py</file>
   </qresource>
 </RCC>
 

@@ -10,6 +10,7 @@
 #include <QtWidgets/QMenu>
 #include <QtGui/QFontDatabase>
 #include <QtGui/QClipboard>
+#include <QtGui/QActionGroup>
 #include <QtCore/QTimer>
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
@@ -32,6 +33,30 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     variablesTreeWidget->setColumnHidden(3, true);  // Hide the 'used' column.
     variablesTreeWidget->clear();
 
+    // Default format menu. The action's data is the format letter. "" is the natural format.
+    _formatMenu = new QMenu(this);
+
+    QActionGroup* formatGroup = new QActionGroup(_formatMenu);
+    formatGroup->setExclusive(true);
+
+    const QList<QPair<QString,QString>> formats = {
+        { "Natural :n",  ""  },
+        { "Hex :x",      "x" },
+        { "Octal :o",    "o" },
+        { "Decimal :d",  "d" },
+        { "Binary :t",   "t" },
+        { "Float :f",    "f" },
+    };
+
+    for (const QPair<QString,QString>& f : formats) {
+        QAction* action = _formatMenu->addAction(f.first);
+        action->setData(f.second);
+        action->setCheckable(true);
+        formatGroup->addAction(action);
+    }
+
+    variableFormatPushButton->setMenu(_formatMenu);
+
     // Connect things.
     QObject::connect(variableAddLineEdit,            &QLineEdit::returnPressed,                     this, &SeerVariableTrackerBrowserWidget::handleAddLineEdit);
     QObject::connect(variableDeleteToolButton,       &QToolButton::clicked,                         this, &SeerVariableTrackerBrowserWidget::handleDeleteToolButton);
@@ -41,6 +66,7 @@ SeerVariableTrackerBrowserWidget::SeerVariableTrackerBrowserWidget (QWidget* par
     QObject::connect(variablesTreeWidget,            &QTreeWidget::itemEntered,                     this, &SeerVariableTrackerBrowserWidget::handleItemEntered);
     QObject::connect(variablesTreeWidget,            &QTreeWidget::customContextMenuRequested,      this, &SeerVariableTrackerBrowserWidget::handleContextMenu);
     QObject::connect(variableRememberToolButton,     &QToolButton::toggled,                         this, &SeerVariableTrackerBrowserWidget::handleRememberToolButton);
+    QObject::connect(_formatMenu,                    &QMenu::triggered,                             this, &SeerVariableTrackerBrowserWidget::handleFormatMenuTriggered);
 
     // Read state.
     readSettings();
@@ -592,18 +618,21 @@ void SeerVariableTrackerBrowserWidget::handleContextMenu (const QPoint& pos) {
     QAction* copyValueOnlyAction = menu.addAction("Copy selected value");
     QAction* copyAllAction       = menu.addAction("Copy all");
 
+    // A tracked name may have a format suffix, like "st:x". Visualizers want the plain expression.
+    QString format;
+
     QString actionText;
     if (item != 0) {
-        actionText = item->text(0);
+        actionText = Seer::splitFormatSuffix(item->text(0), format);
     }
 
     QString variable;
     if (item != 0) {
         // Build up a variable string, incase it is a nested struct.
         QTreeWidgetItem* i = item;
-        variable = item->text(0);
+        variable = Seer::splitFormatSuffix(item->text(0), format);
         while (i->parent() != 0) {
-            variable = i->parent()->text(0) + "." + variable;
+            variable = Seer::splitFormatSuffix(i->parent()->text(0), format) + "." + variable;
             i = i->parent();
         }
     }
@@ -834,11 +863,16 @@ void SeerVariableTrackerBrowserWidget::readSettings () {
     QSettings settings;
     bool      remember = false;
 
+    QString   format;
+
     settings.beginGroup("variabletrackerwindow"); {
         remember = settings.value("remembervariablenames", remember).toBool();
+        format   = settings.value("defaultformat",         format).toString();
     } settings.endGroup();
 
     variableRememberToolButton->setChecked(remember);
+
+    setDefaultFormat(format);
 }
 
 void SeerVariableTrackerBrowserWidget::writeSettings () {
@@ -847,6 +881,48 @@ void SeerVariableTrackerBrowserWidget::writeSettings () {
 
     settings.beginGroup("variabletrackerwindow"); {
         settings.setValue("remembervariablenames", variableRememberToolButton->isChecked());
+        settings.setValue("defaultformat",         _defaultFormat);
     } settings.endGroup();
 }
 
+const QString& SeerVariableTrackerBrowserWidget::defaultFormat () const {
+
+    return _defaultFormat;
+}
+
+void SeerVariableTrackerBrowserWidget::handleFormatMenuTriggered (QAction* action) {
+
+    if (action == 0) {
+        return;
+    }
+
+    setDefaultFormat(action->data().toString());
+
+    writeSettings();
+
+    // Show the tracked variables in the new default format.
+    refreshValues();
+}
+
+void SeerVariableTrackerBrowserWidget::setDefaultFormat (const QString& format) {
+
+    // Find the menu entry for this format. Fall back to "Natural :n" for an unknown one.
+    QAction* match = 0;
+
+    for (QAction* action : _formatMenu->actions()) {
+        if (action->data().toString() == format) {
+            match = action;
+            break;
+        }
+    }
+
+    if (match == 0) {
+        match = _formatMenu->actions().first();
+    }
+
+    match->setChecked(true);
+
+    _defaultFormat = match->data().toString();
+
+    variableFormatPushButton->setText(match->text());
+}
