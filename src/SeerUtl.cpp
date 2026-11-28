@@ -1648,5 +1648,114 @@ namespace Seer {
         return icon;
 #endif
     }
+
+    //
+    // Split a gdb/mi tuple or list (without its outer brackets) into its top-level entries.
+    // Commas and brackets within quoted strings are left alone, because trace actions and
+    // collected values are full of them.
+    //
+    // name="v[0]@8",value="{1, 2}"    ->  ("name","v[0]@8") ("value","{1, 2}")
+    // "collect a, b","collect c"      ->  ("","collect a, b") ("","collect c")
+    // {name="a"},{name="b"}           ->  ("",name="a") ("",name="b")
+    //
+    // Quoted strings have their quotes and one level of escapes removed.
+    //
+    QList<QStringPair> splitMI (const QString& text) {
+
+        QList<QStringPair> entries;
+
+        int start   = 0;
+        int equals  = -1;
+        int level   = 0;
+        bool quoted = false;
+
+        for (int i=0; i<=text.length(); i++) {
+
+            if (i < text.length()) {
+
+                QChar c = text[i];
+
+                if (quoted) {
+                    if (c == '\\') {
+                        i++;
+                    }else if (c == '"') {
+                        quoted = false;
+                    }
+                    continue;
+                }
+
+                if (c == '"') {
+                    quoted = true;
+                    continue;
+                }
+
+                if (c == '{' || c == '[') {
+                    level++;
+                    continue;
+                }
+
+                if (c == '}' || c == ']') {
+                    level--;
+                    continue;
+                }
+
+                if (c == '=' && level == 0 && equals < 0) {
+                    equals = i;
+                    continue;
+                }
+
+                if (c != ',' || level > 0) {
+                    continue;
+                }
+            }
+
+            // At a top-level comma, or at the end.
+            if (i > start) {
+
+                QString name  = (equals < 0 ? QString() : text.mid(start, equals-start));
+                int     from  = (equals < 0 ? start : equals+1);
+                QString value = text.mid(from, i-from);
+
+                if (value.length() >= 2 && value.startsWith('"')) {
+
+                    QString plain;
+
+                    for (int j=1; j<value.length()-1; j++) {
+                        if (value[j] == '\\' && j+1 < value.length()-1) {
+                            j++;
+                            plain += (value[j] == 'n' ? QChar('\n') : value[j] == 't' ? QChar('\t') : value[j]);
+                        }else{
+                            plain += value[j];
+                        }
+                    }
+
+                    value = plain;
+
+                }else if (value.length() >= 2 && (value.startsWith('{') || value.startsWith('['))) {
+                    value = value.mid(1, value.length()-2);
+                }
+
+                entries.append(QStringPair(name, value));
+            }
+
+            start  = i+1;
+            equals = -1;
+        }
+
+        return entries;
+    }
+
+    QMap<QString,QString> mapMI (const QString& text) {
+
+        QMap<QString,QString> map;
+
+        const QList<QStringPair> entries = splitMI(text);
+
+        for (const auto& entry : entries) {
+            map[entry.first] = entry.second;
+        }
+
+        return map;
+    }
 }
 

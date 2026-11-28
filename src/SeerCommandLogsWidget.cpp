@@ -46,27 +46,31 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     m9ToolButton->setMacroName("M9");
     m0ToolButton->setMacroName("M0");
 
-    _messagesBrowserWidget    = new SeerMessagesBrowserWidget(this);
-    _breakpointsBrowserWidget = new SeerBreakpointsBrowserWidget(this);
-    _watchpointsBrowserWidget = new SeerWatchpointsBrowserWidget(this);
-    _catchpointsBrowserWidget = new SeerCatchpointsBrowserWidget(this);
-    _printpointsBrowserWidget = new SeerPrintpointsBrowserWidget(this);
-    _checkpointsBrowserWidget = new SeerCheckpointsBrowserWidget(this);
+    _messagesBrowserWidget         = new SeerMessagesBrowserWidget(this);
+    _breakpointsBrowserWidget      = new SeerBreakpointsBrowserWidget(this);
+    _watchpointsBrowserWidget      = new SeerWatchpointsBrowserWidget(this);
+    _catchpointsBrowserWidget      = new SeerCatchpointsBrowserWidget(this);
+    _printpointsBrowserWidget      = new SeerPrintpointsBrowserWidget(this);
+    _tracepointsBrowserWidget      = new SeerTracepointsBrowserWidget(this);
+    _tracepointOutputBrowserWidget = new SeerTracepointOutputBrowserWidget(this);
+    _checkpointsBrowserWidget      = new SeerCheckpointsBrowserWidget(this);
 
-    _gdbOutputLog             = new SeerGdbLogWidget(this);
-    _seerOutputLog            = new SeerSeerLogWidget(this);
+    _gdbOutputLog                  = new SeerGdbLogWidget(this);
+    _seerOutputLog                 = new SeerSeerLogWidget(this);
     _gdbOutputLog->setPlaceholderText("[gdb output]");
     _seerOutputLog->setPlaceholderText("[seer output]");
 
     logsTabWidget->clear();
-    logsTabWidget->addTab(_messagesBrowserWidget,    "Messages");
-    logsTabWidget->addTab(_breakpointsBrowserWidget, "Breakpoints");
-    logsTabWidget->addTab(_watchpointsBrowserWidget, "Watchpoints");
-    logsTabWidget->addTab(_catchpointsBrowserWidget, "Catchpoints");
-    logsTabWidget->addTab(_printpointsBrowserWidget, "Printpoints");
-    logsTabWidget->addTab(_checkpointsBrowserWidget, "Checkpoints");
-    logsTabWidget->addTab(_gdbOutputLog,             "GDB output");
-    logsTabWidget->addTab(_seerOutputLog,            "Seer output");
+    logsTabWidget->addTab(_messagesBrowserWidget,         "Messages");
+    logsTabWidget->addTab(_breakpointsBrowserWidget,      "Breakpoints");
+    logsTabWidget->addTab(_watchpointsBrowserWidget,      "Watchpoints");
+    logsTabWidget->addTab(_catchpointsBrowserWidget,      "Catchpoints");
+    logsTabWidget->addTab(_printpointsBrowserWidget,      "Printpoints");
+    logsTabWidget->addTab(_tracepointsBrowserWidget,      "Tracepoints");
+    logsTabWidget->addTab(_tracepointOutputBrowserWidget, "TracepointOutput");
+    logsTabWidget->addTab(_checkpointsBrowserWidget,      "Checkpoints");
+    logsTabWidget->addTab(_gdbOutputLog,                  "GDB output");
+    logsTabWidget->addTab(_seerOutputLog,                 "Seer output");
     logsTabWidget->setCurrentIndex(0);
 
     QToolButton* tabsContextMenuButton = new QToolButton(logsTabWidget);
@@ -97,21 +101,33 @@ SeerCommandLogsWidget::SeerCommandLogsWidget (QWidget* parent) : QWidget(parent)
     readLogSettings();
 
     // Connect things.
-    QObject::connect(tabsContextMenuButton,             &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleTabsContextMenuButtonClicked);
-    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::tabMoved,                             this,   &SeerCommandLogsWidget::handleLogsTabMoved);
-    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::currentChanged,                       this,   &SeerCommandLogsWidget::handleLogsTabChanged);
-    QObject::connect(manualCommandComboBox->lineEdit(), &QLineEdit::returnPressed,                      this,   &SeerCommandLogsWidget::handleManualCommandExecute);
-    QObject::connect(manualCommandComboBox,             QOverload<int>::of(&QComboBox::activated),      this,   &SeerCommandLogsWidget::handleManualCommandChanged);
-    QObject::connect(_messagesBrowserWidget,            &SeerMessagesBrowserWidget::showMessages,       this,   &SeerCommandLogsWidget::handleRaiseMessageTab);
-    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);
-    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logTimeStampChanged,            this,   &SeerCommandLogsWidget::handleLogOutputChanged);
-    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logEnabledChanged,              this,   &SeerCommandLogsWidget::handleLogOutputChanged);
-    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logTimeStampChanged,            this,   &SeerCommandLogsWidget::handleLogOutputChanged);
-    QObject::connect(breakpointsLoadToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbLoadBreakpoints);
-    QObject::connect(breakpointsSaveToolButton,         &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleGdbSaveBreakpoints);
-    QObject::connect(helpToolButton,                    &QToolButton::clicked,                          this,   &SeerCommandLogsWidget::handleHelpToolButtonClicked);
-    QObject::connect(macroButtonGroup,                  &QButtonGroup::buttonClicked,                   this,   &SeerCommandLogsWidget::handleMacroToolButtonClicked);
-    QObject::connect(qApp,                              &QCoreApplication::aboutToQuit,                 this,   &SeerCommandLogsWidget::handleAboutToQuit);
+    QObject::connect(tabsContextMenuButton,             &QToolButton::clicked,                                this,                             &SeerCommandLogsWidget::handleTabsContextMenuButtonClicked);
+    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::tabMoved,                                   this,                             &SeerCommandLogsWidget::handleLogsTabMoved);
+    QObject::connect(logsTabWidget->tabBar(),           &QTabBar::currentChanged,                             this,                             &SeerCommandLogsWidget::handleLogsTabChanged);
+    QObject::connect(manualCommandComboBox->lineEdit(), &QLineEdit::returnPressed,                            this,                             &SeerCommandLogsWidget::handleManualCommandExecute);
+    QObject::connect(manualCommandComboBox,             QOverload<int>::of(&QComboBox::activated),            this,                             &SeerCommandLogsWidget::handleManualCommandChanged);
+    QObject::connect(_messagesBrowserWidget,            &SeerMessagesBrowserWidget::showMessages,             this,                             &SeerCommandLogsWidget::handleRaiseMessageTab);
+    QObject::connect(_tracepointsBrowserWidget,         &SeerTracepointsBrowserWidget::tracepointSelected,    _tracepointOutputBrowserWidget,   &SeerTracepointOutputBrowserWidget::handleTracepointSelected);
+    QObject::connect(_tracepointOutputBrowserWidget,    &SeerTracepointOutputBrowserWidget::tracepointSelected,   _tracepointsBrowserWidget,  &SeerTracepointsBrowserWidget::selectTracepoint);
+    QObject::connect(_tracepointsBrowserWidget,         &SeerTracepointsBrowserWidget::showTracepointOutput,  this,   [this]() {
+
+        int idx = logsTabWidget->indexOf(_tracepointOutputBrowserWidget);
+
+        if (idx >= 0) {
+            logsTabWidget->setTabVisible(idx, true);    // It might have been hidden by the user.
+            logsTabWidget->setCurrentIndex(idx);
+        }
+    });
+
+    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logEnabledChanged,                    this,                             &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_gdbOutputLog,                     &SeerLogWidget::logTimeStampChanged,                  this,                             &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logEnabledChanged,                    this,                             &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(_seerOutputLog,                    &SeerLogWidget::logTimeStampChanged,                  this,                             &SeerCommandLogsWidget::handleLogOutputChanged);
+    QObject::connect(breakpointsLoadToolButton,         &QToolButton::clicked,                                this,                             &SeerCommandLogsWidget::handleGdbLoadBreakpoints);
+    QObject::connect(breakpointsSaveToolButton,         &QToolButton::clicked,                                this,                             &SeerCommandLogsWidget::handleGdbSaveBreakpoints);
+    QObject::connect(helpToolButton,                    &QToolButton::clicked,                                this,                             &SeerCommandLogsWidget::handleHelpToolButtonClicked);
+    QObject::connect(macroButtonGroup,                  &QButtonGroup::buttonClicked,                         this,                             &SeerCommandLogsWidget::handleMacroToolButtonClicked);
+    QObject::connect(qApp,                              &QCoreApplication::aboutToQuit,                       this,                             &SeerCommandLogsWidget::handleAboutToQuit);
 }
 
 SeerCommandLogsWidget::~SeerCommandLogsWidget () {
@@ -142,6 +158,16 @@ SeerCatchpointsBrowserWidget* SeerCommandLogsWidget::catchpointsBrowser () {
 SeerPrintpointsBrowserWidget* SeerCommandLogsWidget::printpointsBrowser () {
 
     return _printpointsBrowserWidget;
+}
+
+SeerTracepointsBrowserWidget* SeerCommandLogsWidget::tracepointsBrowser () {
+
+    return _tracepointsBrowserWidget;
+}
+
+SeerTracepointOutputBrowserWidget* SeerCommandLogsWidget::tracepointOutputBrowser () {
+
+    return _tracepointOutputBrowserWidget;
 }
 
 SeerCheckpointsBrowserWidget* SeerCommandLogsWidget::checkpointsBrowser () {
@@ -473,7 +499,8 @@ void SeerCommandLogsWidget::handleGdbSaveBreakpoints () {
     if (breakpointsBrowser()->isEmpty() &&
         watchpointsBrowser()->isEmpty() &&
         catchpointsBrowser()->isEmpty() &&
-        printpointsBrowser()->isEmpty()) {
+        printpointsBrowser()->isEmpty() &&
+        tracepointsBrowser()->isEmpty()) {
 
         QMessageBox::information(this, "Seer", "No breakpoints of any kind to save.");
 

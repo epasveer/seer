@@ -43,6 +43,8 @@ namespace Seer {
     QStringList                 parseArray                  (const QString& parentName, const QString& str);
     QMap<QString,QString>       createKeyValueMap           (const QStringList& list, QChar separator);
     QStringPair                 parseNameValue              (const QString& str, QChar separator);
+    QList<QStringPair>          splitMI                     (const QString& text);
+    QMap<QString,QString>       mapMI                       (const QString& text);
     QString                     quoteChars                  (const QString& str, const QString& chars);
     QStringList                 quoteChars                  (const QStringList& strings, const QString& chars);
     QString                     varObjParent                (const QString& str);

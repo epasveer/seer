@@ -1130,6 +1130,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertPrintpoint,              this, &SeerEditorManagerWidget::handleInsertPrintpoint);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertTracepoint,              this, &SeerEditorManagerWidget::handleInsertTracepoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
@@ -1196,6 +1197,7 @@ SeerEditorWidgetSource* SeerEditorManagerWidget::createEditorWidgetTab (const QS
     // Connect signals.
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertBreakpoint,              this, &SeerEditorManagerWidget::handleInsertBreakpoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertPrintpoint,              this, &SeerEditorManagerWidget::handleInsertPrintpoint);
+    QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::insertTracepoint,              this, &SeerEditorManagerWidget::handleInsertTracepoint);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::deleteBreakpoints,             this, &SeerEditorManagerWidget::handleDeleteBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::enableBreakpoints,             this, &SeerEditorManagerWidget::handleEnableBreakpoints);
     QObject::connect(editorWidget->sourceArea(), &SeerEditorWidgetSourceArea::disableBreakpoints,            this, &SeerEditorManagerWidget::handleDisableBreakpoints);
@@ -1470,6 +1472,12 @@ void SeerEditorManagerWidget::handleInsertPrintpoint (QString type, QString func
 
     // rethrow
     emit insertPrintpoint (type, function, channel, parameters);
+}
+
+void SeerEditorManagerWidget::handleInsertTracepoint (QString parameters, QStringList actions, int passcount) {
+
+    // rethrow
+    emit insertTracepoint (parameters, actions, passcount);
 }
 
 void SeerEditorManagerWidget::handleDeleteBreakpoints (QString breakpoints) {

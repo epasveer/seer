@@ -13,8 +13,10 @@
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
 #include "SeerPrintpointsBrowserWidget.h"
+#include "SeerTracepointsBrowserWidget.h"
 #include "SeerCheckpointsBrowserWidget.h"
 #include "GdbMonitor.h"
+#include <QtCore/QMap>
 #include <QtCore/QProcess>
 #include <QtCore/QVector>
 #include <QtWidgets/QWidget>
@@ -307,6 +309,17 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleGdbPrintpointEnable                   (QString breakpoints);
         void                                handleGdbPrintpointDisable                  (QString breakpoints);
         void                                handleGdbPrintpointInsert                   (QString type, QString function, QString channel, QString parameters);
+        void                                handleGdbTracepointInsert                   (QString parameters, QStringList actions, int passcount);
+        void                                handleGdbTracepointPasscount                (QString tracepoint, int count);
+        void                                handleGdbTracepointReplies                  (const QString& text);
+        void                                handleGdbTraceStart                         ();
+        void                                handleGdbTraceStop                          ();
+        void                                handleGdbTraceStatus                        ();
+        void                                handleGdbTraceFind                          (int frameno);
+        void                                handleGdbTraceScan                          (QList<int> frames, int selectedFrame);
+        void                                handleGdbTraceScanReply                     (const QString& text);
+        void                                handleGdbTraceCollected                     ();
+        void                                handleGdbTraceSave                          (QString filename);
         void                                handleGdbThreadListFrames                   ();
         void                                handleGdbThreadListIds                      ();
         void                                handleGdbThreadListGroups                   ();
@@ -379,6 +392,8 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         void                                handleAboutToQuit                           ();
 
     signals:
+        void                                traceFrameScanned                           (int frameno, QString tracepoint);
+        void                                traceScanFinished                           ();
         void                                stoppingPointReached                        ();
         void                                sessionTerminated                           ();
         void                                changeWindowTitle                           (QString title);
@@ -411,6 +426,15 @@ class SeerGdbWidget : public QWidget, protected Ui::SeerGdbWidgetForm {
         bool                                _gdbASyncMode;
         bool                                _gdbNonStopMode;
         bool                                _gdbServerDebug;
+        bool                                _targetRunning;
+        bool                                _traceFrameSelected;
+        int                                 _traceFindIgnore;
+        int                                 _traceScanID;               // Zero if not scanning.
+        int                                 _traceScanEndID;
+        QList<int>                          _traceScanFrames;
+        int                                 _traceScanSelected;
+        QMap<int,QStringList>               _pendingTracepointActions;
+        QMap<int,int>                       _pendingTracepointPasscounts;
         bool                                _gdbHandleTerminatingException;
         bool                                _gdbRandomizeStartAddress;
         bool                                _gdbEnablePrettyPrinting;

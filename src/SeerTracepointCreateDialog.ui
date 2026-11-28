@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerTracepointCreateDialogForm</class>
+ <widget class="QDialog" name="SeerTracepointCreateDialogForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>607</width>
+    <height>560</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Create a Tracepoint</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="locationGroupBox">
+     <property name="title">
+      <string>Tracepoint Location</string>
+     </property>
+     <layout class="QGridLayout" name="locationGroupBoxLayout">
+      <item colspan="1" column="0" row="0">
+       <widget class="QLabel" name="filenameLabel">
+        <property name="text">
+         <string>Filename</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="0">
+       <widget class="QLineEdit" name="filenameLineEdit">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="1">
+       <widget class="QLabel" name="lineNumberLabel">
+        <property name="text">
+         <string>Line number</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="1">
+       <widget class="QLineEdit" name="lineNumberLineEdit">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="2">
+       <widget class="QLabel" name="functionLabel">
+        <property name="text">
+         <string>Function</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="2">
+       <widget class="QLineEdit" name="functionLineEdit">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="3">
+       <widget class="QLabel" name="labelLabel">
+        <property name="text">
+         <string>Label</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="3">
+       <widget class="QLineEdit" name="labelLineEdit">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="conditionsGroupBox">
+     <property name="title">
+      <string>Tracepoint Conditions</string>
+     </property>
+     <layout class="QGridLayout" name="conditionsGroupBoxLayout">
+      <item colspan="1" column="0" row="0">
+       <widget class="QCheckBox" name="conditionalCheckBox">
+        <property name="text">
+         <string>Conditional</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="0">
+       <widget class="QLineEdit" name="conditionalLineEdit">
+        <property name="clearButtonEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="1">
+       <widget class="QCheckBox" name="passcountCheckBox">
+        <property name="toolTip">
+         <string>Stop tracing after this many hits.</string>
+        </property>
+        <property name="text">
+         <string>Pass Count</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="1">
+       <widget class="QSpinBox" name="passcountSpinBox">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>2147483647</number>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="2">
+       <widget class="QCheckBox" name="pendingCheckBox">
+        <property name="text">
+         <string>Pending</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="2">
+       <widget class="QCheckBox" name="disabledCheckBox">
+        <property name="text">
+         <string>Disabled</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="0" row="3">
+       <widget class="QCheckBox" name="fastCheckBox">
+        <property name="toolTip">
+         <string>Use a fast tracepoint. Requires the in-process agent library in the program.</string>
+        </property>
+        <property name="text">
+         <string>Fast</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="actionsGroupBox">
+     <property name="title">
+      <string>Tracepoint Actions</string>
+     </property>
+     <layout class="QGridLayout" name="actionsGroupBoxLayout">
+      <item colspan="1" column="0" row="0">
+       <widget class="QLabel" name="actionsLabel">
+        <property name="text">
+         <string>One action per line. For example: collect $args, $locals</string>
+        </property>
+       </widget>
+      </item>
+      <item colspan="1" column="1" row="0">
+       <widget class="QToolButton" name="helpToolButton">
+        <property name="toolTip">
+         <string>Help about Tracepoints.</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="resource.qrc">
+          <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>
+          :/seer/resources/RelaxLightIcons/help-about.svg
+         </iconset>
+        </property>
+       </widget>
+      </item>
+      <item colspan="2" column="0" row="1">
+       <widget class="QPlainTextEdit" name="actionsPlainTextEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SeerTracepointCreateDialogForm</receiver>
+   <slot>accept()</slot>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SeerTracepointCreateDialogForm</receiver>
+   <slot>reject()</slot>
+  </connection>
+ </connections>
+</ui>
