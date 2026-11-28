@@ -37,6 +37,8 @@
     <file>resources/RelaxLightIcons/edit-find.svg</file>
     <file>resources/RelaxLightIcons/go-down.svg</file>
     <file>resources/RelaxLightIcons/go-up.svg</file>
+    <file>resources/RelaxLightIcons/go-first.svg</file>
+    <file>resources/RelaxLightIcons/go-last.svg</file>
     <file>resources/RelaxLightIcons/go-next.svg</file>
     <file>resources/RelaxLightIcons/go-previous.svg</file>
     <file>resources/RelaxLightIcons/list-add.svg</file>
@@ -82,6 +84,7 @@
     <file>resources/help/RRDebugMode.md</file>
     <file>resources/help/CorefileDebugMode.md</file>
     <file>resources/help/Printpoints.md</file>
+    <file>resources/help/Tracepoints.md</file>
     <file>resources/help/Skips.md</file>
     <file>resources/mi-python/MIEcho.py</file>
     <file>resources/mi-python/MISkip.py</file>

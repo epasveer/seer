@@ -12,6 +12,8 @@
 #include "SeerWatchpointsBrowserWidget.h"
 #include "SeerCatchpointsBrowserWidget.h"
 #include "SeerPrintpointsBrowserWidget.h"
+#include "SeerTracepointsBrowserWidget.h"
+#include "SeerTracepointOutputBrowserWidget.h"
 #include "SeerCheckpointsBrowserWidget.h"
 #include <QtWidgets/QWidget>
 
@@ -30,6 +32,8 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         SeerWatchpointsBrowserWidget*       watchpointsBrowser              ();
         SeerCatchpointsBrowserWidget*       catchpointsBrowser              ();
         SeerPrintpointsBrowserWidget*       printpointsBrowser              ();
+        SeerTracepointsBrowserWidget*       tracepointsBrowser              ();
+        SeerTracepointOutputBrowserWidget*  tracepointOutputBrowser         ();
         SeerCheckpointsBrowserWidget*       checkpointsBrowser              ();
         SeerGdbLogWidget*                   gdbOutputLog                    ();
         SeerSeerLogWidget*                  seerOutputLog                   ();
@@ -91,6 +95,8 @@ class SeerCommandLogsWidget : public QWidget, protected Ui::SeerCommandLogsWidge
         SeerWatchpointsBrowserWidget*       _watchpointsBrowserWidget;
         SeerCatchpointsBrowserWidget*       _catchpointsBrowserWidget;
         SeerPrintpointsBrowserWidget*       _printpointsBrowserWidget;
+        SeerTracepointsBrowserWidget*       _tracepointsBrowserWidget;
+        SeerTracepointOutputBrowserWidget*  _tracepointOutputBrowserWidget;
         SeerCheckpointsBrowserWidget*       _checkpointsBrowserWidget;
         SeerGdbLogWidget*                   _gdbOutputLog;
         SeerSeerLogWidget*                  _seerOutputLog;

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SeerTracepointsBrowserWidgetForm</class>
+ <widget class="QWidget" name="SeerTracepointsBrowserWidgetForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1173</width>
+    <height>528</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Seer - Tracepoints</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="listLayout">
+     <item>
+      <widget class="QTreeWidget" name="tracepointsTreeWidget">
+       <property name="columnCount">
+        <number>16</number>
+       </property>
+       <column>
+        <property name="text">
+         <string>Number</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Type</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Disposition</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Enabled</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Address</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Function</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>File</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Fullname</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Line</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Actions</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Thread Groups</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Condition</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Times</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Pass Count</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Installed</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Original Location</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="statusLayout">
+       <item>
+        <widget class="QLabel" name="statusLabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="startPushButton">
+         <property name="toolTip">
+          <string>Start tracing all enabled tracepoints.</string>
+         </property>
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stopPushButton">
+         <property name="toolTip">
+          <string>Stop tracing all tracepoints.</string>
+         </property>
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="savePushButton">
+         <property name="toolTip">
+          <string>Save the snapshots to a file.</string>
+         </property>
+         <property name="text">
+          <string>Save...</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="outputPushButton">
+         <property name="toolTip">
+          <string>Show the snapshots of the selected tracepoint.</string>
+         </property>
+         <property name="text">
+          <string>Show</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="buttonLayout">
+     <item row="0" column="0">
+      <widget class="QToolButton" name="addTracepointToolButton">
+       <property name="toolTip">
+        <string>Add a new tracepoint.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/document-new.svg</normaloff>:/seer/resources/RelaxLightIcons/document-new.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QToolButton" name="refreshTracepointsToolButton">
+       <property name="toolTip">
+        <string>Refresh the list of tracepoints and the trace status.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</normaloff>:/seer/resources/RelaxLightIcons/view-refresh.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QToolButton" name="enableTracepointsToolButton">
+       <property name="toolTip">
+        <string>Enable selected tracepoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</normaloff>:/seer/resources/RelaxLightIcons/list-add.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QToolButton" name="disableTracepointsToolButton">
+       <property name="toolTip">
+        <string>Disable selected tracepoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</normaloff>:/seer/resources/RelaxLightIcons/list-remove.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QToolButton" name="conditionTracepointToolButton">
+       <property name="toolTip">
+        <string>Add condition to selected tracepoint.</string>
+       </property>
+       <property name="text">
+        <string>?</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QToolButton" name="passcountTracepointToolButton">
+       <property name="toolTip">
+        <string>Set pass count of selected tracepoint. Tracing stops after this many hits.</string>
+       </property>
+       <property name="text">
+        <string>#</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QToolButton" name="actionsTracepointToolButton">
+       <property name="toolTip">
+        <string>Edit the collect actions of selected tracepoint.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</normaloff>:/seer/resources/RelaxLightIcons/go-next.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QToolButton" name="deleteTracepointsToolButton">
+       <property name="toolTip">
+        <string>Delete selected tracepoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</normaloff>:/seer/resources/RelaxLightIcons/edit-delete.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QToolButton" name="helpToolButton">
+       <property name="toolTip">
+        <string>Help about Tracepoints.</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resource.qrc">
+         <normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</normaloff>:/seer/resources/RelaxLightIcons/help-about.svg</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <spacer name="buttonSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections/>
+</ui>

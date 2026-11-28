@@ -79,6 +79,9 @@ set(HEADER_FILES
     SeerCatchpointsBrowserWidget.h
     SeerPrintpointCreateDialog.h
     SeerPrintpointsBrowserWidget.h
+    SeerTracepointCreateDialog.h
+    SeerTracepointOutputBrowserWidget.h
+    SeerTracepointsBrowserWidget.h
     SeerCheckpointsBrowserWidget.h
     SeerCommandLogsWidget.h
     SeerSeerLogWidget.h
@@ -200,6 +203,9 @@ set(SOURCE_FILES
     SeerCatchpointsBrowserWidget.cpp
     SeerPrintpointCreateDialog.cpp
     SeerPrintpointsBrowserWidget.cpp
+    SeerTracepointCreateDialog.cpp
+    SeerTracepointOutputBrowserWidget.cpp
+    SeerTracepointsBrowserWidget.cpp
     SeerCheckpointsBrowserWidget.cpp
     SeerCommandLogsWidget.cpp
     SeerSeerLogWidget.cpp

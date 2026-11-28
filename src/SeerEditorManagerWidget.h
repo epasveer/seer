@@ -87,6 +87,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            handleMaybeOpenAddress              (const QString& file, const QString& fullname, const QString& address);
         void                                            handleInsertBreakpoint              (QString breakpoint);
         void                                            handleInsertPrintpoint              (QString type, QString function, QString channel, QString parameters);
+        void                                            handleInsertTracepoint              (QString parameters, QStringList actions, int passcount);
         void                                            handleDeleteBreakpoints             (QString breakpoints);
         void                                            handleEnableBreakpoints             (QString breakpoints);
         void                                            handleDisableBreakpoints            (QString breakpoints);
@@ -127,6 +128,7 @@ class SeerEditorManagerWidget : public QWidget, protected Ui::SeerEditorManagerW
         void                                            refreshStackFrames                  ();
         void                                            insertBreakpoint                    (QString breakpoint);
         void                                            insertPrintpoint                    (QString type, QString function, QString channel, QString parameters);
+        void                                            insertTracepoint                    (QString parameters, QStringList actions, int passcount);
         void                                            deleteBreakpoints                   (QString breakpoints);
         void                                            enableBreakpoints                   (QString breakpoints);
         void                                            disableBreakpoints                  (QString breakpoints);

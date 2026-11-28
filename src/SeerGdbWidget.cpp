@@ -74,6 +74,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     _gdbASyncMode                           = true;
     _gdbNonStopMode                         = false;
     _gdbServerDebug                         = false;
+    _targetRunning                          = false;
+    _traceFrameSelected                     = false;
+    _traceFindIgnore                        = 0;
+    _traceScanID                            = 0;
+    _traceScanEndID                         = 0;
+    _traceScanSelected                      = -1;
     _assemblyDisassemblyFlavor              = "att";
     _gdbHandleTerminatingException          = true;
     _gdbRandomizeStartAddress               = false;
@@ -129,7 +135,12 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleText);
-    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->checkpointsBrowser(),                                      &SeerCheckpointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->tracepointsBrowser(),                        &SeerTracepointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               commandLogsWidget->tracepointsBrowser(),                        &SeerTracepointsBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::equalTextOutput,                                                               commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleText);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               this,                                                           &SeerGdbWidget::handleGdbTracepointReplies);
+    QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               commandLogsWidget->checkpointsBrowser(),                        &SeerCheckpointsBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableTrackerBrowserWidget(),          &SeerVariableTrackerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->variableLoggerBrowserWidget(),           &SeerVariableLoggerBrowserWidget::handleText);
     QObject::connect(_gdbMonitor,                                               &GdbMonitor::caretTextOutput,                                                               variableManagerWidget->registerValuesBrowserWidget(),           &SeerRegisterValuesBrowserWidget::handleText);
@@ -151,6 +162,7 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::refreshStackFrames,                                               this,                                                           &SeerGdbWidget::handleGdbStackListFrames);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::insertBreakpoint,                                                 this,                                                           &SeerGdbWidget::handleGdbBreakpointInsert);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::insertPrintpoint,                                                 this,                                                           &SeerGdbWidget::handleGdbPrintpointInsert);
+    QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::insertTracepoint,                                                 this,                                                           &SeerGdbWidget::handleGdbTracepointInsert);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::deleteBreakpoints,                                                this,                                                           &SeerGdbWidget::handleGdbBreakpointDelete);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::enableBreakpoints,                                                this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
     QObject::connect(editorManagerWidget,                                       &SeerEditorManagerWidget::disableBreakpoints,                                               this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
@@ -308,6 +320,27 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::addBreakpointIgnore,                                         this,                                                           &SeerGdbWidget::handleGdbBreakpointIgnore);
     QObject::connect(commandLogsWidget->printpointsBrowser(),                   &SeerPrintpointsBrowserWidget::addBreakpointCommand,                                        this,                                                           &SeerGdbWidget::handleGdbBreakpointCommand);
 
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::refreshTracepointsList,                                      this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->tracepointOutputBrowser(),              &SeerTracepointOutputBrowserWidget::refreshTracepointsList,                                 this,                                                           &SeerGdbWidget::handleGdbGenericpointList);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::refreshTraceStatus,                                          this,                                                           &SeerGdbWidget::handleGdbTraceStatus);
+    QObject::connect(commandLogsWidget->tracepointOutputBrowser(),              &SeerTracepointOutputBrowserWidget::refreshTraceStatus,                                     this,                                                           &SeerGdbWidget::handleGdbTraceStatus);
+    QObject::connect(commandLogsWidget->tracepointOutputBrowser(),              &SeerTracepointOutputBrowserWidget::refreshTraceCollected,                                  this,                                                           &SeerGdbWidget::handleGdbTraceCollected);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::deleteTracepoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointDelete);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::enableTracepoints,                                           this,                                                           &SeerGdbWidget::handleGdbBreakpointEnable);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::disableTracepoints,                                          this,                                                           &SeerGdbWidget::handleGdbBreakpointDisable);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::addBreakpointCondition,                                      this,                                                           &SeerGdbWidget::handleGdbBreakpointCondition);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::addBreakpointCommands,                                       this,                                                           &SeerGdbWidget::handleGdbBreakpointCommands);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::addTracepointPasscount,                                      this,                                                           &SeerGdbWidget::handleGdbTracepointPasscount);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::insertTracepoint,                                            this,                                                           &SeerGdbWidget::handleGdbTracepointInsert);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::startTrace,                                                  this,                                                           &SeerGdbWidget::handleGdbTraceStart);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::stopTrace,                                                   this,                                                           &SeerGdbWidget::handleGdbTraceStop);
+    QObject::connect(commandLogsWidget->tracepointOutputBrowser(),              &SeerTracepointOutputBrowserWidget::findTraceFrame,                                         this,                                                           &SeerGdbWidget::handleGdbTraceFind);
+    QObject::connect(commandLogsWidget->tracepointOutputBrowser(),              &SeerTracepointOutputBrowserWidget::scanTraceFrames,                                        this,                                                           &SeerGdbWidget::handleGdbTraceScan);
+    QObject::connect(this,                                                      &SeerGdbWidget::traceFrameScanned,                                                          commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleTraceFrameScanned);
+    QObject::connect(this,                                                      &SeerGdbWidget::traceScanFinished,                                                          commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleTraceScanFinished);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::saveTrace,                                                   this,                                                           &SeerGdbWidget::handleGdbTraceSave);
+    QObject::connect(commandLogsWidget->tracepointsBrowser(),                   &SeerTracepointsBrowserWidget::selectedFile,                                                editorManagerWidget,                                            &SeerEditorManagerWidget::handleOpenFile);
+
     QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::refreshCheckpointsList,                                      this,                                                           &SeerGdbWidget::handleGdbCheckpointList);
     QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::insertCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointInsert);
     QObject::connect(commandLogsWidget->checkpointsBrowser(),                   &SeerCheckpointsBrowserWidget::selectCheckpoint,                                            this,                                                           &SeerGdbWidget::handleGdbCheckpointSelect);
@@ -330,6 +363,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->tracepointsBrowser(),                        &SeerTracepointsBrowserWidget::handleStoppingPointReached);
+    QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleStoppingPointReached);
     QObject::connect(this,                                                      &SeerGdbWidget::stoppingPointReached,                                                       commandLogsWidget->checkpointsBrowser(),                        &SeerCheckpointsBrowserWidget::handleStoppingPointReached);
 
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          editorManagerWidget,                                            &SeerEditorManagerWidget::handleSessionTerminated);
@@ -356,6 +391,8 @@ SeerGdbWidget::SeerGdbWidget (QWidget* parent) : QWidget(parent) {
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->watchpointsBrowser(),                        &SeerWatchpointsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->catchpointsBrowser(),                        &SeerCatchpointsBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->printpointsBrowser(),                        &SeerPrintpointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->tracepointsBrowser(),                        &SeerTracepointsBrowserWidget::handleSessionTerminated);
+    QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->tracepointOutputBrowser(),                   &SeerTracepointOutputBrowserWidget::handleSessionTerminated);
     QObject::connect(this,                                                      &SeerGdbWidget::sessionTerminated,                                                          commandLogsWidget->checkpointsBrowser(),                        &SeerCheckpointsBrowserWidget::handleSessionTerminated);
 
     QObject::connect(leftCenterRightSplitter,                                   &QSplitter::splitterMoved,                                                                  this,                                                           &SeerGdbWidget::handleSplitterMoved);
@@ -785,6 +822,14 @@ void SeerGdbWidget::addMessage (const QString& message, QMessageBox::Icon messag
 
 void SeerGdbWidget::handleText (const QString& text) {
 
+    // Keep track if the target is running. See handleGdbTraceStatus().
+    if (text.startsWith("*running")) {
+        _targetRunning = true;
+    }else if (text.startsWith("*stopped") || text.startsWith("=thread-group-exited,")) {
+        _targetRunning   = false;
+        _traceFindIgnore = 0;
+    }
+
     if (text.startsWith("*running,thread-id=\"all\"")) {
 
     // Probably a better way to handle all these types of stops.
@@ -795,6 +840,13 @@ void SeerGdbWidget::handleText (const QString& text) {
     }else if (text.startsWith("=breakpoint-created,")) {
 
         handleGdbGenericpointList();
+
+    // A snapshot was selected by a manual 'tfind'. Refresh the browsers to show it.
+    }else if (text.startsWith("=traceframe-changed,")) {
+
+        _traceFrameSelected = text.contains("num=");
+
+        emit stoppingPointReached();
 
     }else if (text.startsWith("=thread-group-started,")) {
         // =thread-group-started,id="i1",pid="30916"
@@ -842,6 +894,25 @@ void SeerGdbWidget::handleGdbCommand (const QString& command, bool ignoreErrors)
                                  QMessageBox::Ok);
         }
         return;
+    }
+
+    // Gdb won't resume the program while looking at a snapshot. Go back to the live program first.
+    if (_traceFrameSelected) {
+
+        static const QRegularExpression resume("^-exec-(run|continue|next|step|finish|until|return|jump)");
+
+        if (command.contains(resume)) {
+            _traceFrameSelected = false;
+            _traceFindIgnore++;         // The program will be running, so don't refresh for this reply.
+            handleGdbCommand("-trace-find none", ignoreErrors);
+        }
+    }
+
+    // Resuming, or moving to another snapshot, ends a scan that hasn't sent its batch yet.
+    if (_traceScanFrames.isEmpty() == false && (command.startsWith("-exec-") || command.startsWith("-trace-find"))) {
+        _traceScanFrames.clear();
+        _traceScanID = 0;
+        emit traceScanFinished();
     }
 
     QString str = command + "\n";    // Ensure there's a trailing RETURN.
@@ -1510,6 +1581,16 @@ void SeerGdbWidget::handleGdbTerminateExecutable (bool confirm) {
 
             // Print a message.
             addMessage("Program terminated.", QMessageBox::Warning);
+
+            // Forget any tracing state.
+            _targetRunning      = false;
+            _traceFrameSelected = false;
+            _traceFindIgnore    = 0;
+            _traceScanID        = 0;
+            _traceScanEndID     = 0;
+            _traceScanFrames.clear();
+            _pendingTracepointActions.clear();
+            _pendingTracepointPasscounts.clear();
 
             // Alert listeners the session has been terminated.
             emit sessionTerminated();
@@ -2380,6 +2461,240 @@ void SeerGdbWidget::handleGdbPrintpointInsert (QString type, QString function, Q
 
     handleGdbCommand("-dprintf-insert " + parameters);
     handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbTracepointInsert (QString parameters, QStringList actions, int passcount) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    // The actions and pass count need the tracepoint's number, which isn't known
+    // until gdb replies. See handleGdbTracepointReplies().
+    int id = Seer::createID();
+
+    _pendingTracepointActions[id]    = actions;
+    _pendingTracepointPasscounts[id] = passcount;
+
+    handleGdbCommand(QString("%1-break-insert %2").arg(id).arg(parameters));
+}
+
+void SeerGdbWidget::handleGdbTracepointPasscount (QString tracepoint, int count) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand(QString("-break-passcount %1 %2").arg(tracepoint).arg(count));
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbTracepointReplies (const QString& text) {
+
+    // Reply from -trace-find. It doesn't cause a =traceframe-changed. Refresh the browsers.
+    if (text.startsWith("^done,found=")) {
+
+        if (_traceFindIgnore > 0) {
+            _traceFindIgnore--;
+            return;
+        }
+
+        _traceFrameSelected = text.startsWith("^done,found=\"1\"");
+
+        emit stoppingPointReached();
+
+        return;
+    }
+
+    // Replies from handleGdbTraceScan().
+    if (_traceScanID > 0 && text.startsWith(QString::number(_traceScanID) + "^")) {
+        handleGdbTraceScanReply(text.mid(text.indexOf('^')));
+        return;
+    }
+
+    if (_traceScanEndID > 0 && text.startsWith(QString::number(_traceScanEndID) + "^")) {
+        _traceScanID    = 0;
+        _traceScanEndID = 0;
+        emit traceScanFinished();
+        return;
+    }
+
+    // Reply from handleGdbTracepointInsert().
+    //
+    // 7^done,bkpt={number="1",type="tracepoint",...}
+    // 7^error,msg="..."
+    if (_pendingTracepointActions.isEmpty()) {
+        return;
+    }
+
+    int caret = text.indexOf('^');
+    int id    = text.left(caret).toInt();
+
+    if (caret <= 0 || _pendingTracepointActions.contains(id) == false) {
+        return;
+    }
+
+    QStringList actions   = _pendingTracepointActions.take(id);
+    int         passcount = _pendingTracepointPasscounts.take(id);
+
+    if (text.mid(caret).startsWith("^done,bkpt=")) {
+
+        QString number = Seer::parseFirst(text, "number=", '"', '"', false);
+
+        if (number != "") {
+
+            if (passcount > 0) {
+                handleGdbCommand(QString("-break-passcount %1 %2").arg(number).arg(passcount));
+            }
+
+            if (actions.isEmpty() == false) {
+                handleGdbBreakpointCommands(number, actions);
+            }
+        }
+    }
+
+    handleGdbGenericpointList();
+}
+
+void SeerGdbWidget::handleGdbTraceStart () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    // Starting discards the snapshots, so don't be looking at one.
+    if (_traceFrameSelected) {
+        handleGdbCommand("-trace-find none");
+    }
+
+    handleGdbCommand("-trace-start");
+    handleGdbGenericpointList();
+    handleGdbTraceStatus();
+}
+
+void SeerGdbWidget::handleGdbTraceStop () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-trace-stop");
+    handleGdbTraceStatus();
+}
+
+void SeerGdbWidget::handleGdbTraceStatus () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    // A remote target can't be asked while it's running.
+    if (_targetRunning) {
+        return;
+    }
+
+    handleGdbCommand("-trace-status");
+}
+
+void SeerGdbWidget::handleGdbTraceFind (int frameno) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (frameno < 0) {
+        handleGdbCommand("-trace-find none");
+    }else{
+        handleGdbCommand(QString("-trace-find frame-number %1").arg(frameno));
+    }
+}
+
+//
+// Find which tracepoint each of the snapshots belongs to. There isn't an MI command for this,
+// so visit them all, then put things back. The commands have an ID so no other browser reacts
+// to the replies. They're sent as one batch so no other command sees the wrong snapshot.
+//
+// Moving between snapshots resets gdb's selected stack frame. So ask for that first.
+//
+void SeerGdbWidget::handleGdbTraceScan (QList<int> frames, int selectedFrame) {
+
+    if (executableLaunchMode() == "" || _targetRunning || frames.isEmpty()) {
+        emit traceScanFinished();
+        return;
+    }
+
+    _traceScanID       = Seer::createID();
+    _traceScanFrames   = frames;
+    _traceScanSelected = selectedFrame;
+
+    handleGdbCommand(QString("%1-stack-info-frame").arg(_traceScanID));
+}
+
+void SeerGdbWidget::handleGdbTraceScanReply (const QString& text) {
+
+    // The stack frame. Send the batch. The last one tells when it's done.
+    //
+    // ^done,frame={level="1",...}
+    if (_traceScanFrames.isEmpty() == false) {
+
+        QList<int> frames = _traceScanFrames;
+        QString    level  = Seer::parseFirst(text, "level=", '"', '"', false);
+
+        _traceScanFrames.clear();
+
+        if (_targetRunning) {
+            _traceScanID = 0;
+            emit traceScanFinished();
+            return;
+        }
+
+        _traceScanEndID = Seer::createID();
+
+        for (int frame : frames) {
+            handleGdbCommand(QString("%1-trace-find frame-number %2").arg(_traceScanID).arg(frame));
+        }
+
+        if (_traceScanSelected < 0) {
+            handleGdbCommand(QString("%1-trace-find none").arg(Seer::createID()));
+        }else{
+            handleGdbCommand(QString("%1-trace-find frame-number %2").arg(Seer::createID()).arg(_traceScanSelected));
+        }
+
+        // There's no level if there isn't a stack.
+        handleGdbCommand(QString("%1-stack-select-frame %2").arg(_traceScanEndID).arg(level == "" ? "0" : level));
+
+        return;
+    }
+
+    // ^done,found="1",tracepoint="1",traceframe="0",frame={...}
+    if (text.startsWith("^done,found=")) {
+
+        if (text.startsWith("^done,found=\"1\"")) {
+            emit traceFrameScanned(Seer::parseFirst(text, "traceframe=", '"', '"', false).toInt(), Seer::parseFirst(text, "tracepoint=", '"', '"', false));
+        }
+    }
+}
+
+void SeerGdbWidget::handleGdbTraceCollected () {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    if (_targetRunning) {
+        return;
+    }
+
+    handleGdbCommand("-trace-frame-collected --var-print-values --all-values --comp-print-values --all-values");
+}
+
+void SeerGdbWidget::handleGdbTraceSave (QString filename) {
+
+    if (executableLaunchMode() == "") {
+        return;
+    }
+
+    handleGdbCommand("-trace-save \"" + filename + "\"");
 }
 
 
