@@ -33,7 +33,7 @@ Requirements
    * Qt6 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt6
 
 * QT5
-   * **Seer no longer compiles with Qt5.** The 2.3 source tree is the last one that does.
+   * **Seer no longer compiles with Qt5.** Seer's 2.3 source tree is the last one that does.
    * Qt5 build instructions are here: https://github.com/epasveer/seer/wiki/Building-Seer---Qt5
 
 Install from package
@@ -146,7 +146,7 @@ The main view for Seer looks like this:
     * Can execute to a specific line by RMB on a specific line.
     * Tabs in this view can be detached by double-clicking a tab.
 
-* Breakpoints, Watchpoints, Catchpoints, Printpoints, manual gdb commands, and logs.
+* Breakpoints, Watchpoints, Catchpoints, Tracepoints, Printpoints, manual gdb commands, and logs.
     * The area below the Code Manager.
     * Manual commands.  Manually enter a gdb or gdbmi command.
       The commands are remembered for the next Seer use.
@@ -155,6 +155,9 @@ The main view for Seer looks like this:
       A watchpoint monitors when a variable is accessed (read, write, read/write).
     * Catchpoint manager. Create and manage catchpoints.
       A catchpoint stops execution on a C++ throw/rethrow/catch call.
+    * Tracepoint manager. Create and manage tracepoints.
+      A tracepoint briefly stops execution at a point to gather variable/state information. Then resumes.
+      The variable/state information can be viewed later in the debugging session.
     * Printpoint manager. Create and manage printpoints.
       A printpoint is like a breakpoint but it allows you to print variables at
       that printpoint. See gdb's 'dprintf' call.
